@@ -1,0 +1,170 @@
+/*
+    Note: 
+    -----
+    If you make your own nice style sheet, then please let us know about it. 
+    We may want to include in the official version!
+*/
+
+/*************************
+ * General
+ *************************/
+
+html {overflow-y: scroll;} /* Keep page alignment uniform. */
+
+body 
+{
+    background-color: black;
+    background-image: url(../images/bg2.jpg);
+    background-repeat: repeat-y;
+    background-position: top center;
+    font: 12px Tahoma;
+}
+
+/* td/tr definitions */
+tr.dark      {background-color: #BBBBBB;}
+tr.light     {background-color: #CCCCCC;}
+tr.lightest  {background-color: #DDDDDD;}
+td.dark      {background-color: #BBBBBB;}
+td.light     {background-color: #CCCCCC;}
+td.lightest  {background-color: #DDDDDD;}
+td.seperator {height:15px;}
+
+/* Boxes */
+.boxTitle1 {background-color: #6699FF; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Blue.   Used for: Team info. box */
+.boxTitle2 {background-color: #99CC99; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Green.  Used for: Team management box */
+.boxTitle3 {background-color: #FFBB33; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Yellow. Used for: Admin actions box */
+.boxTitle4 {background-color: #C0C0C0; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Grey.   Used for: Coach list box */
+.boxBody   {border-top: 1px solid #545454; padding: 10px;}
+table.boxTable {border-spacing: 5px;}
+
+/* Container for rows */
+div.row {width: inherit; clear: both; background-color: inherit;}
+
+/* White font */
+font.white  {color: #eeeeee;}
+
+/*************************
+ * Containers and tables
+ *************************/
+
+/* Main two containers */
+div.everything {width: 1000px; margin: auto; background-color: #eeeeee;}
+div.section {margin: 5px; padding-bottom: 40px; background-color: inherit;}
+
+/* Menu/banner table */
+table.menu
+{
+    width: 100%;
+    height: 177px;
+   
+    background-image: url(../images/banner_lowres.jpg); /* 177x1000px */
+    background-repeat: no-repeat;
+    background-position: top left;
+}
+
+td.menu {vertical-align: bottom;}
+a.menu {color: #eeeeee;}
+a.menuSpecial {color: orange;}
+
+/* Title for sections */
+
+.title
+{
+    clear: both;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: inherit;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Sort table(s) style */
+
+table.sort
+{
+    border: none; 
+    width: 100%;
+    background-color: inherit; 
+}
+
+/* General text (only) tables */
+
+table.text
+{
+    border: none; 
+    width: 100%;
+    background-color: inherit; 
+}
+
+/* For coaches section when specific coach chosen */
+
+table.picAndText 
+{
+    border: none; 
+    width: 100%; 
+    background-color: inherit; 
+    
+    border-spacing: 5px;
+}
+
+/* Teams section (logo list) */
+
+table.teams /* "border-spacing" property (cellspacing) is defined as HTML tags. */
+{ 
+    border: none; 
+    width: 100%; 
+    background-color: inherit; 
+    
+    border-spacing: 15px;
+    table-layout: fixed;
+} 
+
+/* Fixtures table */
+
+table.fixtues
+{
+    border: none; 
+    width: 100%; 
+    background-color: inherit; 
+    
+    margin-left: auto; 
+    margin-right: auto; 
+    padding: 10px;
+}
+
+/* Main */
+
+div.main_title      {clear: both; padding-left: 20px; padding-top: 20px; padding-bottom: 5px; font-size: 18px; background-color: inherit;}
+div.main_lcolLinks  {clear: both; text-align: right; padding-right: 20px; background-color: inherit;} /* Padding should be the same as lcolBox padding. */
+div.main_lcol       {float: left; width: 500px; background-color: inherit;}
+div.main_rcol       {float: right; width: 450px; background-color: inherit;}
+div.main_lcolBox    {margin: 20px; border: 1px solid #545454;} 
+div.main_rcolBox    {margin: 10px; border: 1px solid #545454;}
+div.main_cpy        {clear: both; font-size: 10px; padding: 30px; padding-top: 20px; background-color: inherit;}
+
+/* Team's page */
+div.tpageBox {float: left; width: 270px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
+
+/* Administration */
+div.admin_menu {clear: both; width: inherit; text-align: center;}
+div.adminBox   {float: left; margin: 20px; border: 1px solid #545454;}
+
+/* Records */
+table.recBoxTable {width: 100%; border-spacing: 2px;}
+div.recBox        {clear: both; width: 800px; border: 1px solid #545454; margin: 30px auto 30px auto;}
+
+/* Match form */
+table.match_form {width: 100%; padding:10px;}
+
+/* Player roaster */
+.pboxLong  {width: 900px; border: 1px solid #545454; margin: 10px; margin-left: 30px; float: left;}
+.pboxShort {width: 425px; border: 1px solid #545454; margin: 10px; margin-left: 30px; float: left;}
+table.pbox {font: inherit; width: 100%;}
+
+/* Guest book */
+div.gb {clear: both; width: 450px; border: 1px solid #545454; margin-left: auto; margin-right: auto; margin-bottom: 5px;}
+

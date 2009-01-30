@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    OBBLM team import XML schema 
+    Please DO NOT change or delete any XML tag identifiers!
+-->
+<xmlimport>
+
+    <coach>Coach name</coach>
+    <name>Team name</name>
+    <race>Amazons</race>
+    <treasury>0</treasury>
+    <apothecary>0</apothecary>
+    <rerolls>0</rerolls>
+    <fan_factor>0</fan_factor>
+    <ass_coaches>0</ass_coaches>
+    <cheerleaders>0</cheerleaders>
+
+        <player>
+            <name>Player #1 name</name>
+            <position>Linewoman</position>
+            <!-- Status may be one of the following: "ready", "mng" or "dead" -->
+            <status>ready</status>
+            <!-- Stats: cp/td/int/bh/si/ki/mvp -->
+            <stats>0/0/0/0/0/0/0</stats>
+            <!-- Injuries: ma/st/ag/av/ni -->
+            <injs>0/0/0/0/0</injs>
+        </player>
+        
+        <player>
+            <name>Player #2 name</name>
+            <position>Linewoman</position>
+            <status>ready</status>
+            <stats>0/0/0/0/0/0/0</stats>
+            <injs>0/0/0/0/0</injs>
+        </player>
+        
+        <!-- To add more players simply add more player tags in the same way as done above -->
+</xmlimport>

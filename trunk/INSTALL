@@ -1,0 +1,155 @@
+-------
+INSTALL
+-------
+
+To install this software please edit the settings.php file so that it fits your needs.
+Afterwards run install.php from a web-browser which will setup MySQL for OBBLM.
+It is recommended that you delete the install.php file when done.
+
+-----------------------------------
+MYSQL, PHP AND WEBSERVER SETUP HELP
+-----------------------------------
+
+Here is a small guide if you are not sure on how to actually use and "start" OBBLM:
+
+OBBLM is a web application which means that it is run from a web browser.
+The browser you open must load the OBBLM pages from a webserver, which can be ANY computer with webserver software installed on it.
+The webserver software itself depends on another piece of software to interpret the OBBLM program files. This interpretation software is called PHP.
+Now you are almost ready to go. OBBLM depends on yet another piece of software to store your league data (in a database) for later retrieval. This software is called MySQL.
+By installing all three from above you are all set.
+
+Installation guide for MySQL, PHP and Apache (webserver): http://www.mjmwired.net/resources/mjm-apache-windows.html
+
+Please note that by installing the above dependant software, you are able to use OBBLM without internet access!
+
+---------
+UPGRADING
+---------
+
+NOTE: When upgrading please save your old settings file as a reference for when filling out the new settings file.
+
+0.36 -> 0.37
+
+    Replace all OBBLM files.
+    Execute the following (Yes, there are many this time!) MySQL queries:
+        
+        ALTER TABLE match_data MODIFY f_player_id MEDIUMINT SIGNED;
+        INSERT INTO texts (type, f_id, txt) SELECT 7, match_id, comment FROM matches ORDER BY match_id ASC;
+        ALTER TABLE matches DROP comment;
+
+        UPDATE players SET `ach_nor_skills` = REPLACE(`ach_nor_skills`, "Dumb-Off", "Dump-Off") WHERE `ach_nor_skills` LIKE "%Dumb-Off%";
+        UPDATE players SET `ach_dob_skills` = REPLACE(`ach_dob_skills`, "Dumb-Off", "Dump-Off") WHERE `ach_dob_skills` LIKE "%Dumb-Off%";
+        UPDATE players SET `extra_skills` = REPLACE(`extra_skills`, "Dumb-Off", "Dump-Off") WHERE `extra_skills` LIKE "%Dumb-Off%";
+
+        ALTER TABLE match_data ADD COLUMN f_tour_id MEDIUMINT UNSIGNED AFTER f_match_id;
+        UPDATE match_data, matches SET match_data.f_tour_id = matches.f_tour_id WHERE match_data.f_match_id = matches.match_id;
+        UPDATE match_data, teams SET f_coach_id = owned_by_coach_id WHERE f_team_id = team_id;
+        
+        ALTER TABLE match_data MODIFY f_match_id MEDIUMINT SIGNED;
+        ALTER TABLE matches MODIFY match_id MEDIUMINT SIGNED NOT NULL AUTO_INCREMENT;
+        UPDATE match_data, matches SET f_match_id = -1 WHERE f_match_id = match_id AND team1_id = 0 AND team2_id = 0 AND round = 0 AND matches.f_tour_id = 0;
+        UPDATE matches SET match_id = -1 WHERE team1_id = 0 AND team2_id = 0 AND round = 0 AND matches.f_tour_id = 0;
+
+        UPDATE teams SET `race` = REPLACE(`race`, "Amazons", "Amazon")              WHERE `race` = "Amazons";
+        UPDATE teams SET `race` = REPLACE(`race`, "Chaos Dwarfs", "Chaos Dwarf")    WHERE `race` = "Chaos Dwarfs";
+        UPDATE teams SET `race` = REPLACE(`race`, "Dark elves", "Dark Elf")         WHERE `race` = "Dark elves";
+        UPDATE teams SET `race` = REPLACE(`race`, "Dwarfs", "Dwarf")                WHERE `race` = "Dwarfs";
+        UPDATE teams SET `race` = REPLACE(`race`, "Elves", "Elf")                   WHERE `race` = "Elves";
+        UPDATE teams SET `race` = REPLACE(`race`, "Goblins", "Goblin")              WHERE `race` = "Goblins";
+        UPDATE teams SET `race` = REPLACE(`race`, "Halflings", "Halfling")          WHERE `race` = "Halflings";
+        UPDATE teams SET `race` = REPLACE(`race`, "High Elves", "High Elf")         WHERE `race` = "High Elves";
+        UPDATE teams SET `race` = REPLACE(`race`, "Humans", "Human")                WHERE `race` = "Humans";
+        UPDATE teams SET `race` = REPLACE(`race`, "Lizardmen", "Lizardman")         WHERE `race` = "Lizardmen";
+        UPDATE teams SET `race` = REPLACE(`race`, "Orcs", "Orc")                    WHERE `race` = "Orcs";
+        UPDATE teams SET `race` = REPLACE(`race`, "Necromantics", "Necromantic")    WHERE `race` = "Necromantics";
+        UPDATE teams SET `race` = REPLACE(`race`, "Nurgles", "Nurgle")              WHERE `race` = "Nurgles";
+        UPDATE teams SET `race` = REPLACE(`race`, "Ogres", "Ogre")                  WHERE `race` = "Ogres";
+        UPDATE teams SET `race` = REPLACE(`race`, "Vampires", "Vampire")            WHERE `race` = "Vampires";
+        UPDATE teams SET `race` = REPLACE(`race`, "Wood Elves", "Wood Elf")         WHERE `race` = "Wood Elves";
+        
+        ALTER TABLE players DROP date_retired;
+        ALTER TABLE players ADD COLUMN type TINYINT UNSIGNED DEFAULT 1 AFTER player_id;
+        UPDATE players SET type = 2 WHERE date_bought = 0;
+
+        UPDATE 
+            (players
+            LEFT JOIN 
+            (SELECT f_player_id AS 'pid', MIN(date_played) AS 'date' FROM matches, match_data WHERE f_match_id = match_id GROUP BY f_player_id) AS FMD 
+            ON FMD.pid = players.player_id)
+        SET players.date_bought = IF(FMD.date IS NULL, NOW(), SUBTIME(FMD.date,'0 0:0:10')) WHERE players.type = 2;
+
+        ALTER TABLE texts       ADD INDEX idx_f_id                  (f_id);
+        ALTER TABLE texts       ADD INDEX idx_type                  (type);
+        ALTER TABLE players     ADD INDEX idx_owned_by_team_id      (owned_by_team_id);
+        ALTER TABLE teams       ADD INDEX idx_owned_by_coach_id     (owned_by_coach_id);
+        ALTER TABLE matches     ADD INDEX idx_f_tour_id             (f_tour_id);
+        ALTER TABLE matches     ADD INDEX idx_team1_id_team2_id     (team1_id,team2_id);
+        ALTER TABLE matches     ADD INDEX idx_team2_id              (team2_id);
+        ALTER TABLE match_data  ADD INDEX idx_m                     (f_match_id);
+        ALTER TABLE match_data  ADD INDEX idx_tr                    (f_tour_id);
+        ALTER TABLE match_data  ADD INDEX idx_p_m                   (f_player_id,f_match_id);
+        ALTER TABLE match_data  ADD INDEX idx_t_m                   (f_team_id,  f_match_id);
+        ALTER TABLE match_data  ADD INDEX idx_c_m                   (f_coach_id, f_match_id);
+        ALTER TABLE match_data  ADD INDEX idx_p_tr                  (f_player_id,f_tour_id);
+        ALTER TABLE match_data  ADD INDEX idx_t_tr                  (f_team_id,  f_tour_id);
+        ALTER TABLE match_data  ADD INDEX idx_c_tr                  (f_coach_id, f_tour_id);
+        
+        ALTER TABLE tours ADD COLUMN rs TINYINT UNSIGNED DEFAULT 1 AFTER date_created;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+0.35 -> 0.36
+
+    Replace all OBBLM files.
+    Save your old folder "player_pics", you will need to re-upload all player pictures after upgrading.
+    Execute the following MySQL queries:
+    
+        RENAME TABLE messages TO texts;
+        ALTER TABLE texts CHANGE COLUMN msg_id txt_id       MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT;
+        ALTER TABLE texts CHANGE COLUMN f_coach_id f_id     MEDIUMINT UNSIGNED;
+        ALTER TABLE texts CHANGE COLUMN date_posted date    DATETIME;
+        ALTER TABLE texts CHANGE COLUMN title txt2          TEXT;
+        ALTER TABLE texts CHANGE COLUMN message txt         TEXT;
+        ALTER TABLE texts ADD COLUMN type TINYINT UNSIGNED AFTER txt_id;
+        UPDATE texts SET type = 1;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                
+0.34 -> 0.35
+
+    Replace all OBBLM files and execute the following MySQL queries:
+    
+    UPDATE teams SET race="Halflings" WHERE race="Haflings";
+    UPDATE players SET position="Halfling" WHERE position="Hafling";
+    
+    Also, you will have to manually edit your database's "players" table, so that each player who has the incorrect spelled skill "Dirt player" has this skill corrected to "Dirty player" instead.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+0.32, 0.33 -> 0.34
+
+    Replace all OBBLM files.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+0.31 -> 0.32
+
+    Replace all OBBLM files.
+    NOTE: There is NO backwards compatibility for knock-out tournaments!
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+0.3 -> 0.31
+
+    Replace all OBBLM files.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+0.2 -> 0.3:
+
+    To upgrade from v. 0.2 to 0.3, replace all of your OBBLM PHP-files with the files from the new version, and execute the following MySQL queries:
+    
+        UPDATE players SET extra_spp = 0 WHERE extra_spp IS NULL;
+        ALTER TABLE teams ADD fan_factor MEDIUMINT UNSIGNED AFTER rerolls;
+        UPDATE teams SET fan_factor = 0 WHERE fan_factor IS NULL;
+        ALTER TABLE tours DROP COLUMN date_finished;
