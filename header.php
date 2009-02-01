@@ -25,8 +25,8 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.38a');
-$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman');
+define('OBBLM_VERSION', '0.38b');
+$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried');
 
 // This limits the number of rows shown in the "recent games" tables.
 define('MAX_RECENT_GAMES', 15);
@@ -70,6 +70,7 @@ define('COLOR_HTML_DEAD',     '#F78771');
 define('COLOR_HTML_SOLD',     '#D2B477');
 define('COLOR_HTML_STARMERC', '#bb99bb');
 define('COLOR_HTML_JOURNEY',  '#99BBBB');
+define('COLOR_HTML_NEWSKILL', '#BBBBBB');
 //-----
 define('COLOR_HTML_CHR_EQP1', '#90EE90'); // Characteristic equal plus one.
 define('COLOR_HTML_CHR_GTP1', '#50FF50'); // Characteristic greater than plus one.
@@ -84,6 +85,7 @@ define('COLOR_ROSTER_DEAD',     '');
 define('COLOR_ROSTER_SOLD',     '');
 define('COLOR_ROSTER_STARMERC', '');
 define('COLOR_ROSTER_JOURNEY',  COLOR_HTML_JOURNEY);
+define('COLOR_ROSTER_NEWSKILL', COLOR_HTML_NEWSKILL);
 //-----
 define('COLOR_ROSTER_CHR_EQP1', COLOR_HTML_CHR_EQP1); // Characteristic equal plus one.
 define('COLOR_ROSTER_CHR_GTP1', COLOR_HTML_CHR_GTP1); // Characteristic greater than plus one.
