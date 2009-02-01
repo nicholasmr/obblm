@@ -1,6 +1,6 @@
 <?php
 /**
- *  Copyright (c) Juergen Unfried <juergen.unfried@gmail.com>2009. All Rights Reserved.
+ *  Copyright (c) Juergen Unfried <juergen.unfried@gmail.com> 2009. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -96,10 +96,10 @@ class OBBLMRssWriter {
   	 *
   	 */
 	function generateNewsRssFeed() {
-		$dom = new DOMDocument();
-		$dom->formatOutput = true;
-		
-		$el_root = $dom->appendChild($dom->createElement('rss'));
+        $dom = new DOMDocument();
+        $dom->formatOutput = true;
+
+        $el_root = $dom->appendChild($dom->createElement('rss'));
         $el_root->setAttribute('version', '2.0');
         
         $el_channel = $el_root->appendChild($dom->createElement('channel'));
@@ -116,33 +116,29 @@ class OBBLMRssWriter {
         $el_channel->appendChild($dom->createElement('lastBuildDate', date(DATE_RSS)));
         $el_channel->appendChild($dom->createElement('generator', 'OBBLM ' . OBBLM_VERSION));
         
-		$conn = mysql_up();
-	    if ($conn) {
-	        if (is_array($this->type)) {
-	        	$this->type = implode(',', $this->type);
-	        }
-	        
-	        $sql = "SELECT UNIX_TIMESTAMP(date) as timestamp,txt,txt2 FROM texts WHERE type in ($this->type) ORDER BY timestamp desc";
-	      	$result = mysql_query($sql);
-	       
-	        while ($row = mysql_fetch_assoc($result)) {
-	            $el_item = $dom->createElement('item');
-	            $el_item->appendChild($dom->createElement('title', $row['txt2']));
-	            $el_item->appendChild($dom->createElement('description', $row['txt']));
-	            $el_item->appendChild($dom->createElement('link', $this->link));
-	            $el_item->appendChild($dom->createElement('pubDate', date(DATE_RSS, $row['timestamp'])));
-	            
-	            $el_channel->appendChild($el_item);
-	        }
-	        mysql_close($conn);
-	    }
+        if (is_array($this->type)) {
+        	$this->type = implode(',', $this->type);
+        }
         
-	    // Write the file
-	    $handle = fopen ("../rss.xml", "w");
-	    fwrite($handle, $dom->saveXML());
-	    fclose($handle);
-	    
+        $sql = "SELECT UNIX_TIMESTAMP(date) as timestamp,txt,txt2 FROM texts WHERE type in ($this->type) ORDER BY timestamp desc LIMIT 20";
+        	$result = mysql_query($sql);
+        
+        while ($row = mysql_fetch_assoc($result)) {
+            $el_item = $dom->createElement('item');
+            $el_item->appendChild($dom->createElement('title', $row['txt2']));
+            $el_item->appendChild($dom->createElement('description', $row['txt']));
+            $el_item->appendChild($dom->createElement('link', $this->link));
+            $el_item->appendChild($dom->createElement('pubDate', date(DATE_RSS, $row['timestamp'])));
+            
+            $el_channel->appendChild($el_item);
+        }
+        
+        // Write the file
+        $handle = fopen ("rss.xml", "w");
+        fwrite($handle, $dom->saveXML());
+        fclose($handle);
+        
         return $dom->saveXML();
-	}
+    }
 }
 ?>

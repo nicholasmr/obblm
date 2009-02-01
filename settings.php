@@ -13,6 +13,7 @@ $db_host   = 'localhost';
  * OBBLM display settings 
  *************************/
 
+$settings['site_url'] = 'http://localhost/~nicholas/obblm2'; // URL to where OBBLM can be accessed.
 $settings['lang'] = 'en-GB';          // Language. Existing: en-GB.
 $settings['league_name'] = 'UNNAMED'; // League name.
 $settings['stylesheet'] = 1;          // Default is 1. OBBLM CSS stylesheet. Currently stylesheet 1 is the only existing stylesheet.
