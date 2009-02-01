@@ -156,6 +156,12 @@ function team_roaster($team_id) {
     foreach ($players as $p) {
     
         /* 
+            Misc
+        */
+        $p->name = preg_replace('/\s/', '&nbsp;', $p->name);
+        $p->position = preg_replace('/\s/', '&nbsp;', $p->position);
+    
+        /* 
             Colors
         */        
         
@@ -167,11 +173,12 @@ function team_roaster($team_id) {
         elseif ($p->is_dead && $DETAILED)   $p->HTMLbcolor = COLOR_HTML_DEAD;
         elseif ($p->is_mng)                 $p->HTMLbcolor = COLOR_HTML_MNG;
         elseif ($p->is_journeyman)          $p->HTMLbcolor = COLOR_HTML_JOURNEY;
+        elseif ($p->mayHaveNewSkill())      $p->HTMLbcolor = COLOR_HTML_NEWSKILL;
         elseif ($DETAILED)                  $p->HTMLbcolor = COLOR_HTML_READY;
 
-        $p->skills   = $p->getSkillsStr(true);
+        $p->skills   = '<small>'.$p->getSkillsStr(true).'</small>';
         $p->injs     = $p->getInjsStr(true);
-        $p->position = "<img src='$p->icon' alt='player avatar'>".$p->position;
+        $p->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$p->icon' alt='player avatar'></td><td>$p->position</td></tr></table>";
 
         if ($DETAILED) {
             $p->cas = "$p->bh/$p->si/$p->ki";
@@ -238,15 +245,16 @@ function team_roaster($team_id) {
     
         $stars = array();
         foreach (Star::getStars($team->team_id, false, false) as $s) {
-            $s->name = 'All '.$s->name.' hirings';
+            $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
             $s->player_id = $s->star_id;
             $s->nr = 0;
-            $s->position = "<img src='$s->icon' alt='player avatar'><i>Star-player</i>";
-            $s->skills = implode(', ', $s->skills);
+            $s->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$s->icon' alt='player avatar'></td><td><i>Star&nbsp;player</i></td></tr></table>";
+            $s->skills = '<small>'.implode(', ', $s->skills).'</small>';
             $s->injs = '';
             $s->value = 0;
             $s->setStats($team->team_id, false, false);
             $s->cas = "$s->bh/$s->si/$s->ki"; // Must come after setStats(), since it else would overwrite.
+            $s->is_dead = $s->is_sold = $s->is_mng = $s->is_journeyman = false;
             $s->HTMLbcolor = COLOR_HTML_STARMERC;
             array_push($stars, $s);
         }
@@ -266,7 +274,7 @@ function team_roaster($team_id) {
         }
         $smerc->player_id = ID_MERCS;
         $smerc->nr = 0;
-        $smerc->name = 'All mercenary hirings';
+        $smerc->name = 'All&nbsp;mercenary&nbsp;hirings';
         $smerc->position = "<i>Mercenaries</i>";
         $smerc->cas = "$smerc->bh/$smerc->si/$smerc->ki";
         $smerc->ma = '-';
@@ -277,6 +285,7 @@ function team_roaster($team_id) {
         $smerc->injs = '';
         $smerc->spp = '-';
         $smerc->value = 0;
+        $smerc->is_dead = $smerc->is_sold = $smerc->is_mng = $smerc->is_journeyman = false;
         $smerc->HTMLbcolor = COLOR_HTML_STARMERC;
         array_push($players, $smerc);
     }
@@ -315,7 +324,7 @@ function team_roaster($team_id) {
         "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
         $players, 
         $fields, 
-        sort_rule('player'), 
+        ($DETAILED) ? array('+is_dead', '+is_sold', '+is_mng', '+is_journeyman', '+nr', '+name') : sort_rule('player'), 
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
         array('color' => ($DETAILED) ? true : false, 'doNr' => false)
     );
@@ -347,13 +356,14 @@ function team_roaster($team_id) {
                 <td style="background-color: <?php echo COLOR_HTML_DEAD;    ?>;"><font color='black'>Dead</font></td>
                 <td style="background-color: <?php echo COLOR_HTML_SOLD;    ?>;"><font color='black'>Sold</font></td>
                 <td style="background-color: <?php echo COLOR_HTML_STARMERC;?>;"><font color='black'>Star/merc</font></td>
+                <td style="background-color: <?php echo COLOR_HTML_NEWSKILL;?>;"><font color='black'>New&nbsp;skill</font></td>
                 <?php
             }
             ?>
         </tr>
-        <tr><td class='seperator' colspan='6'></td></tr>
+        <tr><td class='seperator' colspan='8'></td></tr>
         <tr>
-            <td colspan='6'>
+            <td colspan='8'>
             <div id='SHH'>
                 <?php
                 if ($rules['enable_stars_mercs']) {
@@ -401,9 +411,9 @@ function team_roaster($team_id) {
             </div>
             </td>
         </tr>
-        <tr><td class='seperator' colspan='6'></td></tr>
+        <tr><td class='seperator' colspan='8'></td></tr>
         <tr>
-            <td colspan='6'>
+            <td colspan='8'>
             <div id='MHH'>
                 <?php
                 if ($rules['enable_stars_mercs']) {

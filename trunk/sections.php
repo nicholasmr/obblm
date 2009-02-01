@@ -191,6 +191,7 @@ function sec_main() {
         </div>
     
         <?php
+        $j = 1;
         foreach ($board as $e) {
             echo "<div class='main_lcolBox'>\n";
                 if     ($e->type == 'match') $i = 2;
@@ -198,7 +199,24 @@ function sec_main() {
                 echo "<div class='boxTitle$i'>$e->title</div>\n";
                 
                 echo "<div class='boxBody'>\n";
-                    echo "$e->message<br><br><hr>\n";
+                
+                    $isLong = (strlen($e->message) > 300);
+                    echo "<div id='short$j'>";
+                        echo substr($e->message, 0, 300)." ...&nbsp;<a href='javascript:void(0)' 
+                            onclick=\"document.getElementById('long$j').style.display='block'; document.getElementById('short$j').style.display='none';\"
+                            >[more]</a>\n";
+                    echo "</div>\n";
+                    echo "<div id='long$j'>";
+                        echo $e->message;
+                    echo "</div>\n";
+                    echo "<script language='JavaScript' type='text/javascript'>
+                        ".(($isLong) 
+                            ? "document.getElementById('long$j').style.display = 'none'; document.getElementById('short$j').style.display = 'block';"
+                            : "document.getElementById('long$j').style.display = 'block'; document.getElementById('short$j').style.display = 'none';"
+                        )."
+                    </script>\n";
+                    echo "<br><hr>\n";
+                    
                     echo "<table class='boxTable'>\n";
                         echo "<tr>\n";
                             if ($e->type == 'match') {
@@ -218,6 +236,7 @@ function sec_main() {
                 </div>
             </div>
             <?php
+            $j++;
         }
         ?>
 
