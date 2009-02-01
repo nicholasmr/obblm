@@ -25,7 +25,7 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.37');
+define('OBBLM_VERSION', '0.38a');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman');
 
 // This limits the number of rows shown in the "recent games" tables.
@@ -179,12 +179,8 @@ define('MATCH_ID_IMPORT', -1);
 
 // General OBBLM routines and data structures.
 require_once('settings.php');
-
-if ($rules['enable_lrb6x'])
-    require_once('lib/game_data_lrb6x.php');
-else
-    require_once('lib/game_data.php');
-
+if ($rules['enable_lrb6x']) { require_once('lib/game_data_lrb6x.php');}
+else                        { require_once('lib/game_data.php');}
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
 
@@ -205,6 +201,8 @@ require_once('lib/class_arraytojs.php');
 require_once('lib/class_elo.php');    // by Daniel S.
 require_once('pdf/bb_pdf_class.php'); // Roster by Daniel S.
 require_once('pdf/pdf_roster.php');   // Roster by Daniel S.
+require_once('lang/class_translations.php'); // Juergen Unfried
+require_once('lib/class_rss.php'); // Juergen Unfried
 
 // HTML interface routines.
 require_once('sections.php'); // Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -51,25 +51,8 @@ function mk_tables() {
 <small>
 <?php
 
-// Option A?
-if (isset($_POST['opt_a'])) {
-
-    // Login as root and create database + user.
-    $conn = mysql_connect($db_host, 'root', $_POST['passwd']);
-    if ($conn) {
-        mysql_query("DELETE FROM mysql.user WHERE User = '$db_user'");
-        mysql_query("FLUSH PRIVILEGES");
-        mysql_query("CREATE USER $db_user IDENTIFIED BY '$db_passwd'");
-        mysql_query("DROP DATABASE $db_name");
-        mysql_query("CREATE DATABASE $db_name");
-        mysql_query("GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user'@'$db_host' IDENTIFIED BY '$db_passwd' WITH GRANT OPTION");
-        mysql_close($conn);
-    }
-
-    mk_tables();
-}
 // Option B?
-elseif (isset($_POST['opt_b'])) {
+if (isset($_POST['opt_b'])) {
 
     // Erase old tables first.
     $conn = mysql_up();
@@ -78,29 +61,20 @@ elseif (isset($_POST['opt_b'])) {
         mysql_query("DROP TABLES IF EXISTS coaches, teams, players, matches, tours, match_data, texts");
         mysql_close($conn);
     }
+    else {
+        die("Sorry. Could not make proper database connection.");
+    }
 
+    // Make new tables.
     mk_tables();
 }
 else {
     ?>
-    <hr>
-    <b><font color="blue">Option A</font></b><br>
-    <br>
-    <b>I do not have an existing MySQL user and database to use for OBBLM. Please create them for me accordingly to the information I have stored in <i>settings.php</i>, followed by the actual database setup.</b>
-    <br><br>
+    <u><b>Please make sure that:</b></u><br><br>
+    The MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>
+
     <form method="POST">
-        <i>MySQL root password:</i>
-        <input type="password" name="passwd" size="20" maxlength="20"> 
-        <input type="submit" name="opt_a" value="Create new user and database for me!">
-    </form>
-    <br>
-    <hr>
-    <b><font color="blue">Option B</font></b><br>
-    <br>
-    <b>The MySQL user and database I have specified in settings.php exist and are valid. Please setup the database for using OBBLM without re-creating the database and user.</b>
-    <br><br>
-    <form method="POST">
-        <input type="submit" name="opt_b" value="Setup my existing database!">
+        <input type="submit" name="opt_b" value="Setup DB for OBBLM!">
     </form>
     <?php
 }

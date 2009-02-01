@@ -39,6 +39,9 @@ require('header.php'); // Includes and constants.
 // MySQL connect.
 $conn = mysql_up(true);
 
+// Load language.
+$lng = new Translations($settings['lang']);
+
 // Make 'main' the default section if no GET section request was sent.
 if (!isset($_GET['section'])) {
     $_GET['section'] = 'main';
@@ -74,44 +77,44 @@ if (isset($_GET['logout'])) {
 <body>
     <div class="everything">
         <table class="menu"> <!-- Banner and menu -->
-            <tr>
-                <td class="menu">
-                    <?php 
-                    $coach = null;
-                    if (isset($_SESSION['logged_in'])) { ?><a class='menuSpecial' href="index.php?logout=1">       <b>Logout</b></a>&nbsp;<?php }
-                    else                               { ?><a class='menuSpecial' href="index.php?section=login">  <b>Login</b></a>&nbsp;<?php }
-                    ?>
-                    <?php
-                    if (isset($_SESSION['logged_in'])) {
-                        if (is_object($coach = new Coach($_SESSION['coach_id'])) && $coach->admin) {
-                            echo "<a class='menuSpecial' href='index.php?section=admin'><b>Admin</b></a> &nbsp;\n";
-                        }
-                        echo "<a class='menu' href='index.php?section=coachcorner'><b>CC</b></a> &nbsp;\n";
-                    }
-                    ?>
-                    <font class="white"><b>|</b></font>&nbsp;
-                    <a class="menu" href="index.php?section=main">         <b>Home</b></a>         &nbsp;
-                    <a class="menu" href="index.php?section=fixturelist">  <b>Fixtures</b></a>     &nbsp;
-                    <a class="menu" href="index.php?section=standings">    <b>Standings</b></a>    &nbsp;
-                    <a class="menu" href="index.php?section=teams">        <b>Teams</b></a>        &nbsp;
-                    <a class="menu" href="index.php?section=players">      <b>Players</b></a>      &nbsp;
-                    <a class="menu" href="index.php?section=coaches">      <b>Coaches</b></a>      &nbsp;                
-                    <a class="menu" href="index.php?section=races">        <b>Races</b></a>        &nbsp;
-                    <?php
-                    if ($rules['enable_stars_mercs']) {
-                        ?><a class="menu" href="index.php?section=stars">  <b>Stars</b></a>        &nbsp;<?php
-                    }
-                    ?>
-                    <a class="menu" href="index.php?section=records">      <b>Records</b></a>      &nbsp;
-                    <a class="menu" href="index.php?section=rules">        <b>Rules</b></a>        &nbsp;
-                    <a class="menu" href="index.php?section=about">        <b>OBBLM</b></a>        &nbsp;
-                    <?php 
-                    if ($settings['enable_guest_book']) {
-                        ?><a class="menu" href="index.php?section=guest"><b>Guest book</b></a> &nbsp;<?php
-                    }
-                    ?>
-                </td>
-            </tr>
+        <tr>
+        <td class="menu">
+            <?php 
+            $coach = null;
+            if (isset($_SESSION['logged_in'])) { ?><a class='menuSpecial' href="index.php?logout=1">       <b><?php echo $lng->getTrn('global/secLinks/logout');?></b></a>&nbsp;<?php }
+            else                               { ?><a class='menuSpecial' href="index.php?section=login">  <b><?php echo $lng->getTrn('global/secLinks/login');?></b></a>&nbsp;<?php }
+            ?>
+            <?php
+            if (isset($_SESSION['logged_in'])) {
+                if (is_object($coach = new Coach($_SESSION['coach_id'])) && $coach->admin) {
+                    echo "<a class='menuSpecial' href='index.php?section=admin'><b>".$lng->getTrn('global/secLinks/admin')."</b></a> &nbsp;\n";
+                }
+                echo "<a class='menu' href='index.php?section=coachcorner'><b>".$lng->getTrn('global/secLinks/cc')."</b></a> &nbsp;\n";
+            }
+            ?>
+            <font class="white"><b>|</b></font>&nbsp;
+            <a class="menu" href="index.php?section=main">         <b><?php echo $lng->getTrn('global/secLinks/home');?></b></a>         &nbsp;
+            <a class="menu" href="index.php?section=fixturelist">  <b><?php echo $lng->getTrn('global/secLinks/fixtures');?></b></a>     &nbsp;
+            <a class="menu" href="index.php?section=standings">    <b><?php echo $lng->getTrn('global/secLinks/standings');?></b></a>    &nbsp;
+            <a class="menu" href="index.php?section=teams">        <b><?php echo $lng->getTrn('global/secLinks/teams');?></b></a>        &nbsp;
+            <a class="menu" href="index.php?section=players">      <b><?php echo $lng->getTrn('global/secLinks/players');?></b></a>      &nbsp;
+            <a class="menu" href="index.php?section=coaches">      <b><?php echo $lng->getTrn('global/secLinks/coaches');?></b></a>      &nbsp;                
+            <a class="menu" href="index.php?section=races">        <b><?php echo $lng->getTrn('global/secLinks/races');?></b></a>        &nbsp;
+            <?php
+            if ($rules['enable_stars_mercs']) {
+                ?><a class="menu" href="index.php?section=stars">  <b><?php echo $lng->getTrn('global/secLinks/stars');?></b></a>        &nbsp;<?php
+            }
+            ?>
+            <a class="menu" href="index.php?section=records">      <b><?php echo $lng->getTrn('global/secLinks/records');?></b></a>      &nbsp;
+            <a class="menu" href="index.php?section=rules">        <b><?php echo $lng->getTrn('global/secLinks/rules');?></b></a>        &nbsp;
+            <a class="menu" href="index.php?section=about">        <b>OBBLM</b></a> &nbsp;
+            <?php 
+            if ($settings['enable_guest_book']) {
+                ?><a class="menu" href="index.php?section=guest"><b><?php echo $lng->getTrn('global/secLinks/gb');?></b></a> &nbsp;<?php
+            }
+            ?>
+        </td>
+        </tr>
         </table>
         <div class="section"> <!-- This container holds the section specific content -->
         <?php

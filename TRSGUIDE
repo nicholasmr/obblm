@@ -27,7 +27,7 @@ You must, of course, use the same syntax as the other definitions use.
 The team properties used in the $rules[] definitions can be found at the top of lib/class_team.php.
 IMPORTANT: Not all team properties are available for sorting against. You will get errors in your browser if you use such team properties. No harm in experimenting!
 
-The $pts[] is merely a string description of your method for calculating team points. If you ranking system does not use points, then leave this as = '{}'.
+The $pts[] is merely a string description of your method for calculating team points. If your ranking system does not use points then leave this as = '{}'.
 
 -------------------
 lib/class_stats.php

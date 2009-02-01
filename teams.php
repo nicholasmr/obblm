@@ -1165,8 +1165,15 @@ function team_roaster($team_id) {
     <?php
   
     title("<a name='gp'>Games played</a>");
+    
+    if (isset($_POST['opid']) || isset($_POST['trid'])) {
+        $_SESSION['opid'] = (int) $_POST['opid'];
+        $_SESSION['trid'] = (int) $_POST['trid'];
+    }
+    $trid = isset($_SESSION['trid']) ? $_SESSION['trid'] : false;
+    $opid = isset($_SESSION['opid']) ? $_SESSION['opid'] : false;
+    
     ?>
-    <i>Note</i>: In order to sort against a specific column in a selected tournament and/or against a selected team, you must first sort the table and then subsequently select the tournament and/or team you wish to filter against.<br><br>
     <form method="POST">
         <b>Show matches against</b>
         <select name="opid">
@@ -1178,7 +1185,7 @@ function team_roaster($team_id) {
                 if ($t->team_id == $team->team_id)
                     continue;
                     
-                echo "<option value='$t->team_id' ".((isset($_POST['opid']) && $t->team_id == $_POST['opid']) ? ' SELECTED ' : '').">$t->name</option>\n";
+                echo "<option value='$t->team_id' ".(($opid && $t->team_id == $opid) ? ' SELECTED ' : '').">$t->name</option>\n";
             }
             ?>
         </select>
@@ -1187,7 +1194,7 @@ function team_roaster($team_id) {
             <option value='-1'>All</option>
             <?php
             foreach (Tour::getTours() as $tr) {
-                echo "<option value='$tr->tour_id' ".((isset($_POST['trid']) && $tr->tour_id == $_POST['trid']) ? ' SELECTED ' : '').">$tr->name</option>\n";
+                echo "<option value='$tr->tour_id' ".(($trid && $tr->tour_id == $trid) ? ' SELECTED ' : '').">$tr->name</option>\n";
             }
             ?>        
         </select>
@@ -1211,8 +1218,8 @@ function team_roaster($team_id) {
         $team->team_id, 
         MAX_RECENT_GAMES, 
         true,
-        ((isset($_POST['gamesSort']) && $_POST['trid'] != -1) ? (int) $_POST['trid'] : false), 
-        ((isset($_POST['gamesSort']) && $_POST['opid'] != -1) ? (int) $_POST['opid'] : false)
+        (($trid && $trid != -1) ? $trid : false), 
+        (($opid && $opid != -1) ? $opid : false)
     );
     foreach ($matches as $m) {
         $me = ($team->team_id == $m->team1_id) ? 1 : 2;

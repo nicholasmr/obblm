@@ -77,7 +77,7 @@ function sec_login() {
 
 function sec_main() {
 
-    global $settings, $rules, $coach;
+    global $settings, $rules, $coach, $lng;
     $n = (!isset($_GET['view']) || $_GET['view'] == 'normal') ? $settings['entries_messageboard'] : false; // false == show everything, else show $n board entries.
 
     /*
@@ -176,15 +176,18 @@ function sec_main() {
             <?php
             // New message link
             if (is_object($coach) && $coach->admin)
-                echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">New message</a>\n";
+                echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>\n";
 
             // View mode
             if (!empty($board)) { # Only show when messages exist.
                 if (isset($_GET['view']) && $_GET['view'] == 'all')
-                    echo "<a href='index.php?section=main&amp;view=normal'>Normal view</a>\n";
+                    echo "<a href='index.php?section=main&amp;view=normal'>".$lng->getTrn('secs/home/normal')."</a>\n";
                 else
-                    echo "<a href='index.php?section=main&amp;view=all'>Show all</a>\n";
+                    echo "<a href='index.php?section=main&amp;view=all'>".$lng->getTrn('secs/home/showall')."</a>\n";
             }
+            // RSS
+//            $rss = new OBBLMRssWriter();
+//            echo "<a href=''>RSS</a>\n";
             ?>
         </div>
     
@@ -228,7 +231,7 @@ function sec_main() {
             foreach ($standings as $sta) {
                 ?>            
                 <div class='main_rcolBox'>
-                    <div class='boxTitle1'><?php echo $sta['name'];?> standings</div>
+                    <div class='boxTitle1'><?php echo $sta['name'];?> <?php echo $lng->getTrn('global/misc/stn');?></div>
                     <div class='boxBody'>
                         <table class="boxTable" style='width:100%;'>
                             <tr>
@@ -284,7 +287,7 @@ function sec_main() {
         if ($settings['entries_latest'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'>Recent matches</div>
+                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/recent');?></div>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -323,7 +326,7 @@ function sec_main() {
         if ($settings['entries_casualties'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'>Casualties</div>
+                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/cas');?></div>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -348,7 +351,7 @@ function sec_main() {
         if ($settings['entries_touchdown'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'>Touchdowns</div>
+                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/td');?></div>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -391,7 +394,7 @@ function sec_main() {
 
 function sec_fixturelist() {
 
-    global $rules, $coach;
+    global $rules, $coach, $lng;
     $KEEP_TOUR_OPEN = false;
 
     // Admin actions made?
@@ -430,11 +433,11 @@ function sec_fixturelist() {
         }
 
         title($tour->name);
-        echo "<center><a href='index.php?section=fixturelist'>[back]</a></center><br>\n";
+        echo "<center><a href='index.php?section=fixturelist'>[".$lng->getTrn('global/misc/back')."]</a></center><br>\n";
         
-        echo "<b>Type</b>: $type<br>\n";
-        echo "<b>Ranking system</b>: $tour->rs = ".$tour->getRSSortRule(true)
-            .((is_object($coach) && $coach->admin) ? "&nbsp;&nbsp;&nbsp;<a href='index.php?section=admin&amp;subsec=chrs'>[change]</a>" : '').
+        echo "<b>".$lng->getTrn('secs/fixtures/stn/type')."</b>: $type<br>\n";
+        echo "<b>".$lng->getTrn('secs/fixtures/stn/rs')."</b>: $tour->rs = ".$tour->getRSSortRule(true)
+            .((is_object($coach) && $coach->admin) ? "&nbsp;&nbsp;&nbsp;<a href='index.php?section=admin&amp;subsec=chrs'>[".$lng->getTrn('global/misc/change')."]</a>" : '').
             "<br><br>\n";
 
         $teams = $tour->getStandings();
@@ -475,7 +478,7 @@ function sec_fixturelist() {
             unset($fields['points']);
         
         sort_table(
-            "$tour->name standings", 
+            "$tour->name ".$lng->getTrn('global/misc/stn'), 
             "index.php?section=fixturelist&amp;tour_id=$tour->tour_id", 
             $teams, 
             $fields, 
@@ -498,10 +501,10 @@ function sec_fixturelist() {
             unset($txt);
         }
 
-        title("$t->name description");
+        title("$t->name ".$lng->getTrn('secs/fixtures/tDesc/desc'));
 
         if (is_object($txt = new TourDesc($t->tour_id)) && empty($txt->txt))
-            $txt->txt = 'Nothing has been written about this tournament.';
+            $txt->txt = $lng->getTrn('secs/fixtures/tDesc/noTourDesc');
         
         $DIS = (is_object($coach) && $coach->admin) ? '' : 'DISABLED';
         
@@ -524,7 +527,7 @@ function sec_fixturelist() {
     
     title("Fixture list");
     
-    echo "<i>Note:</i> Tournament specific standings are available through the <i>[S]</i> links, tournament descriptions through the <i>[D]</i> links and tournament brackets for knockout type tournaments through the <i>[B]</i> links.<br><br>\n";
+    echo $lng->getTrn('secs/fixtures/links')."<br><br>\n";
 
     
     $flist = array( # The fixture list
@@ -578,7 +581,7 @@ function sec_fixturelist() {
                     ?>
                 </td>
                 <td style='width:85%;'>
-                    &nbsp;&nbsp;&nbsp;<?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- finished</i>' : '');?>
+                    &nbsp;&nbsp;&nbsp;<?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>' : '');?>
                 </td>
             </tr>
             <tr>
@@ -594,14 +597,14 @@ function sec_fixturelist() {
 
             // Determine what to write in "round" field.
             $org_round = $round; # Copy for later use.
-            if     ($round == RT_FINAL)         $round = 'Final';
-            elseif ($round == RT_3RD_PLAYOFF)   $round = '3rd place playoff';
-            elseif ($round == RT_SEMI)          $round = 'Semi-finals';
-            elseif ($round == RT_QUARTER)       $round = 'Quarter-finals';
-            elseif ($round == RT_ROUND16)       $round = 'Round of 16';
-            elseif ($round == RT_PLAYIN)        $round = 'Play-in games';                    
-            elseif ($round == RT_FIRST && $t->type == TT_KNOCKOUT) $round = 'First round';
-            else                                $round = "Round: $round";
+            if     ($round == RT_FINAL)         $round = $lng->getTrn('secs/fixtures/mtypes/final');
+            elseif ($round == RT_3RD_PLAYOFF)   $round = $lng->getTrn('secs/fixtures/mtypes/thirdPlayoff');
+            elseif ($round == RT_SEMI)          $round = $lng->getTrn('secs/fixtures/mtypes/semi');
+            elseif ($round == RT_QUARTER)       $round = $lng->getTrn('secs/fixtures/mtypes/quarter');
+            elseif ($round == RT_ROUND16)       $round = $lng->getTrn('secs/fixtures/mtypes/rnd16');
+            elseif ($round == RT_PLAYIN)        $round = $lng->getTrn('secs/fixtures/mtypes/playin');
+            elseif ($round == RT_FIRST && $t->type == TT_KNOCKOUT) $round = $lng->getTrn('secs/fixtures/mtypes/firstrnd');
+            else                                $round = $lng->getTrn('secs/fixtures/mtypes/rnd').": $round";
                 
             ?>
             <tr><td colspan='7' class="seperator"></td></tr>
@@ -621,11 +624,11 @@ function sec_fixturelist() {
                 ?>
                 <tr>
                 <td></td>
-                <td class="lightest" style="text-align: right;"><?php echo ($match->team1_id > 0) ? $match->team1_name : '<i>Undecided</i>';?></td>
+                <td class="lightest" style="text-align: right;"><?php echo ($match->team1_id > 0) ? $match->team1_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>';?></td>
                 <td class="lightest" style="text-align: center;"><?php echo ($match->is_played) ? $match->team1_score : '';?></td>
                 <td class="lightest" style="text-align: center;">-</td>
                 <td class="lightest" style="text-align: center;"><?php echo ($match->is_played) ? $match->team2_score : '';?></td>
-                <td class="lightest" style="text-align: left;"><?php echo ($match->team2_id > 0) ? $match->team2_name : '<i>Undecided</i>';?></td>
+                <td class="lightest" style="text-align: left;"><?php echo ($match->team2_id > 0) ? $match->team2_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>';?></td>
                 <?php
                 // Does the user have edit or view rights?
                 ?>
@@ -634,16 +637,16 @@ function sec_fixturelist() {
                     <a href="?section=fixturelist&amp;match_id=<?php echo $match->match_id; ?>">
                     <?php 
                     if (is_object($coach)) {
-                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? 'Edit' : 'View') . "</a>&nbsp;&nbsp;";
+                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;&nbsp;";
                         if ($coach->admin) {
-                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? 'Unlock' : 'Lock') . "</a>&nbsp;&nbsp;";
+                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;&nbsp;";
                             
                             if (!$match->is_played && $t->type != TT_KNOCKOUT)
-                                echo "<a onclick=\"if(!confirm('Are you sure you want to delete the match?')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id'>Delete</a>\n";
+                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id'>Delete</a>\n";
                         }
                     }
                     else {
-                        echo "View</a>\n";
+                        echo $lng->getTrn('secs/fixtures/view')."</a>\n";
                     }
                     ?>
                 </td>
@@ -656,7 +659,7 @@ function sec_fixturelist() {
             echo "<tr><td colspan='7' class='seperator'></td></tr>";
             $team = new Team($t->winner);
             echo "<tr>  <td colspan='1'></td> 
-                        <td colspan='1' class='light'><i>Winner:</i> $team->name </td> 
+                        <td colspan='1' class='light'><i>".$lng->getTrn('secs/fixtures/winner').":</i> $team->name </td> 
                         <td colspan='5'></td>
                     </tr>\n";            
         }
@@ -779,11 +782,13 @@ function sec_players() {
     global $settings;
 
     // Generate tournament selection form
-    $tour_id = isset($_POST['tour_id']) ? $_POST['tour_id'] : false;
+    if (isset($_POST['tour_id'])) {
+        $_SESSION['trid_players'] = $_POST['tour_id'];
+    }
+    $tour_id = isset($_SESSION['trid_players']) ? $_SESSION['trid_players'] : false;
     $TOUR = (bool) $tour_id;
     
     ?>
-    <i>Note</i>: In order to sort against a specific column in a selected tournament, you must first sort the table and then subsequently select the tournament you wish.<br><br>
     
     <form method="POST"><select name="tour_id">
     <optgroup label="All">
@@ -982,12 +987,14 @@ function sec_coaches() {
     */
 
     // Generate tournament selection form
-    $tour_id = isset($_POST['tour_id']) ? $_POST['tour_id'] : false;
+    if (isset($_POST['tour_id'])) {
+        $_SESSION['trid_coaches'] = $_POST['tour_id'];
+    }
+    $tour_id = isset($_SESSION['trid_coaches']) ? $_SESSION['trid_coaches'] : false;
     $TOUR = (bool) $tour_id;
 
     title("Coaches");
     ?>
-    <i>Note</i>: In order to sort against a specific column in a selected tournament, you must first sort the table and then subsequently select the tournament you wish.<br><br>
     
     <form method="POST"><select name="tour_id">
     <optgroup label="All">
@@ -1260,15 +1267,17 @@ function sec_stars() {
     }
 
     // Generate tournament selection form
-    $tour_id = isset($_POST['tour_id']) ? $_POST['tour_id'] : false;
+    if (isset($_POST['tour_id'])) {
+        $_SESSION['trid_stars'] = $_POST['tour_id'];
+    }
+    $tour_id = isset($_SESSION['trid_stars']) ? $_SESSION['trid_stars'] : false;
     $TOUR = (bool) $tour_id;
 
     title("Star players");
     
     echo "<i>Note:</i> Both tables below are sorted simultaneously.<br>\n";
-    echo "<i>Note:</i> <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.<br>\n";
+    echo "<i>Note:</i> <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.<br><br>\n";
     ?>
-    <i>Note</i>: In order to sort against a specific column in a selected tournament, you must first sort the table and then subsequently select the tournament you wish.<br><br>
     
     <form method="POST"><select name="tour_id">
     <optgroup label="All">
