@@ -171,6 +171,18 @@ switch ($_GET['type'])
         }
         break;
         
+    case 'rss':
+        global $settings;
+        $rss = new OBBLMRssWriter(
+            $settings['league_name'].' feed', 
+            $settings['site_url'], 
+            'Blood bowl league RSS feed',
+            'en-EN', 
+            array(T_TEXT_MSG)
+        );
+        echo $rss->generateNewsRssFeed();
+        break;
+        
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
 }

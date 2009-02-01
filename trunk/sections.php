@@ -186,8 +186,7 @@ function sec_main() {
                     echo "<a href='index.php?section=main&amp;view=all'>".$lng->getTrn('secs/home/showall')."</a>\n";
             }
             // RSS
-//            $rss = new OBBLMRssWriter();
-//            echo "<a href=''>RSS</a>\n";
+            echo "<a href='handler.php?type=rss'>RSS</a>\n";
             ?>
         </div>
     
