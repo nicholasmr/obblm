@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<obblm version="OBBLM v. 0.37t">
+	<!--
+		For each language/locale a block of translations is
+		provided. First, the language is specified, second the
+		locale is specified. This allows to support the same
+		language in different countries (i.e german in germany and
+		austria, spanish in spain/venezuela/Chile/..., ...
+		
+		A list of locales can be found at
+		http://www.roseindia.net/tutorials/I18N/locales-list.shtml
+		
+		Note: it is not required to use this locales, but why reinvent
+		the wheel?  
+	 -->
+	<!-- English language texts -->
+    <en-GB>
+        <displayName>English (United Kingdom)</displayName>
+        <displayIcon></displayIcon>
+
+        <translators>
+            <translator>Nicholas Mossor Rathmann (nicholas.rathmann@gmail.com)</translator>
+        </translators>
+
+        <global>
+        
+            <!-- Section links -->
+            <secLinks>
+                <login>Login</login>
+                <logout>Logout</logout>
+                <admin>Admin</admin>
+                <cc>CC</cc> <!-- Leave this untouched -->
+                <home>Home</home>
+                <fixtures>Fixtures</fixtures>
+                <standings>Standings</standings>
+                <teams>Teams</teams>
+                <players>Players</players>
+                <coaches>Coaches</coaches>
+                <races>Races</races>
+                <stars>Stars</stars>
+                <records>Records</records>
+                <rules>Rules</rules>
+                <gb>Guest book</gb>
+            </secLinks>
+            
+            <!-- Notifications for sortable tables -->
+            <sortTbl>
+                <simul><![CDATA[<i>Note</i>: Both tables below are sorted simultaneously.]]></simul>
+                <spp><![CDATA[<i>Note</i>: <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.]]></spp>
+                <!-- <><![CDATA[]]></> -->
+            </sortTbl>
+            
+            <!-- Bits and pieces -->
+            <misc>
+                <sortTbl>Sorted against</sortTbl>
+                <back>back</back>
+                <change>change</change>
+                <stn>standings</stn>
+                <all>All</all>
+                <specific>Specific</specific>
+            </misc>
+        </global>
+
+        <secs>
+            <home>
+            
+                <!-- General -->
+                <showall>Show all</showall>
+                <normal>Normal view</normal>
+                <new>New message</new>
+                
+                <!-- Titles of right column stats boxes -->
+                <recent>Recent matches</recent>
+                <cas>Casualties</cas>
+                <td>Touchdowns</td>
+            </home>
+            
+            <fixtures>
+            
+                <!-- General -->
+                <links>
+                <![CDATA[<i>Note</i>: Tournament specific standings are available through the <i>[S]</i> links, tournament descriptions through the <i>[D]</i> links and tournament brackets for knockout type tournaments through the <i>[B]</i> links.]]>
+                </links>
+                <mdel>Are you sure you want to delete the match?</mdel>
+                
+                <fin>finished</fin>
+                <undecided>Undecided</undecided>
+                <winner>Winner</winner>
+                
+                <view>View</view>
+                <edit>Edit</edit>
+                <lock>Lock</lock>
+                <unlock>Unlock</unlock>
+                
+                <!-- Match's round types -->
+                <mtypes>
+                    <final>Final</final>
+                    <thirdPlayoff> 3rd place playoff</thirdPlayoff>
+                    <semi>Semi-finals</semi>
+                    <quarter>Quarter-finals</quarter>
+                    <rnd16>Round of 16</rnd16>
+                    <rnd>Round</rnd>
+                    <firstrnd>First round</firstrnd>
+                    <playin>Play-in games</playin>
+                </mtypes>
+
+                <!-- Subsection: Tournament standings -->
+                <stn>
+                    <type>Type</type>
+                    <rs>Ranking system</rs>
+                </stn>
+
+                <!-- Subsection: Tournament description -->                
+                <tDesc>
+                    <desc>description</desc>
+                    <noTourDesc>Nothing has been written about this tournament.</noTourDesc>
+                </tDesc>
+                
+                <!-- Subsection: match report(s) -->
+                <report>
+                    <info>Game information</info>
+                    <results>Game results</results>
+                    <summary>Game summary</summary>
+                </report>
+            </fixtures>
+            
+            
+            <!--
+            BELOW HAVE NOT YET BEEN IMPLEMENTED IN .php CODE !!!
+            -->
+            
+            <standings>
+            
+                <!-- General -->
+                <tblTitle>Overall standings</tblTitle>
+                <tblTitle2>Overall standings continued (team details)</tblTitle2>
+            </standings>
+            
+            <teams>
+            </teams>
+            
+            <players>
+                
+                <!-- General -->
+                <tblTitle>Player standings</tblTitle>
+                <colors>Color descriptions</colors>
+            </players>
+            
+            <coaches>
+
+                <!-- General -->
+                <tblTitle>Coach standings</tblTitle>                
+            </coaches>
+            
+            <races>
+                <!-- General -->
+                <tblTitle>Race standings</tblTitle>
+            </races>
+            
+            <stars>
+                
+                <!-- General -->
+                <tblTitle>Star standings (1 of 2)</tblTitle>
+                <tblTitle2>Star standings (2 of 2)</tblTitle2>
+            </stars>
+            
+            <records>
+            
+                <!-- General -->
+                <menu>Please select one of the below pages.</menu>
+                
+                <!-- Subsection: Hall of fame -->
+                <hof>
+                    <desc><![CDATA[Welcome to the hall of fame.<br>Here league commissioners may exercise their power by giving publicity to players of noteworthy achievements.]]></desc>
+                    <title><![CDATA[First write a title.<br>This should be a short description of what the player has achieved, for example in which area the achievement has been made in.]]></title>
+                    <about><![CDATA[Now write about the player's achievement in detail.<br>If the player has received an bonus (extra) skill, you could also write about that.]]></about>
+                </hof>
+                
+                <!-- Subsection: Wanted players -->
+                <wanted>
+                    <desc><![CDATA[Welcome to the wall of wanted players.<br>Watch out for these player, a bounty is out for each of their heads!]]></desc>
+                    <title><![CDATA[What is the bounty for this player's head?<br>This could be anything from raw gold to a free bonus skill for one of the players on the killing team.]]></title>
+                    <about>Why is the player wanted?</about>
+                    <note>Please note: Once the player has been killed it is up to a leagues commissioner (admin) to give the appropriate award.</note>
+                </wanted>
+                
+                <!-- Subsection: Memorable matches -->
+                <memma>
+                    <desc>Which matches are worth remembering in terms of most TDs, killed and so on?</desc>
+                </memma>
+            </records>
+            
+            <admin>
+            </admin>
+        </secs>        
+
+    </en-GB>
+    
+    <da-DK>
+        <displayName>Danish</displayName>
+        <displayIcon></displayIcon>
+
+        <translators>
+            <translator>Nicholas Mossor Rathmann (nicholas.rathmann@gmail.com)</translator>
+        </translators>
+        
+
+        <global>
+            <!-- Section links -->
+            <secLinks>
+                <login>Login</login>
+                <logout>Logud</logout>
+                <admin>Admin</admin>
+                <cc>CC</cc> <!-- Leave this untouched -->
+                <home>Forside</home>
+                <fixtures>Kampe</fixtures>
+                <standings>Stillinger</standings>
+                <teams>Hold</teams>
+                <players>Spillere</players>
+                <coaches>Trænere</coaches>
+                <races>Racer</races>
+                <stars>Stjerner</stars>
+                <records>Rekorder</records>
+                <rules>Regler</rules>
+                <gb>Gæstebog</gb>
+            </secLinks>
+        </global>
+    </da-DK>
+    
+</obblm>

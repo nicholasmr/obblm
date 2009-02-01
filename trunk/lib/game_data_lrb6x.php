@@ -43,7 +43,7 @@ $DEA['Khemri']['players']['Skeleton']['Def skills'] = array ('Regeneration', 'Th
 $DEA['Khemri']['players']['Tomb Guardian'] = $DEA['Khemri']['players']['Mummie'];
 unset($DEA['Khemri']['players']['Mummie']);
 $DEA['Khemri']['players']['Tomb Guardian']['cost'] = 100000;
-$DEA['Khemri']['players']['Tomb Guardian']['st'] = 4;
+$DEA['Khemri']['players']['Tomb Guardian']['ma'] = 4;
 $DEA['Khemri']['players']['Tomb Guardian']['Def skills'] = array ('Decay', 'Regeneration');
 $DEA['Necromantic']['players']['Flesh Golem']['cost'] = 100000;
 $DEA['Skaven']['players']['Rat Ogre']['cost'] = 150000;

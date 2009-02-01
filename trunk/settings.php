@@ -4,15 +4,16 @@
  * MySQL database settings 
  **************************/
 
-$db_name   = 'obblmdb';
-$db_user   = 'obblm';
-$db_passwd = 'obblm';
+$db_name   = 'test';
+$db_user   = 'root';
+$db_passwd = '';
 $db_host   = 'localhost';
 
 /*************************
  * OBBLM display settings 
  *************************/
 
+$settings['lang'] = 'en-GB';          // Language. Existing: en-GB.
 $settings['league_name'] = 'UNNAMED'; // League name.
 $settings['stylesheet'] = 1;          // Default is 1. OBBLM CSS stylesheet. Currently stylesheet 1 is the only existing stylesheet.
 $settings['show_sort_rule'] = true;   // Default is true. Print in table footers what tables are sorted against?
