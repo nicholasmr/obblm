@@ -174,6 +174,9 @@ foreach ($players as $p) {
     else $skills_injuries=$skillstr;  // Only skills, no injuries
   }
   
+  // Colorcoding new skills available
+  if ($p->mayHaveNewSkill()) $bgc=COLOR_ROSTER_NEWSKILL;
+  
   if (!($p->is_mng)) { 
     $sum_avail_players++;
     $inj="";
