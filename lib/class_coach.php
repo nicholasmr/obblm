@@ -56,6 +56,8 @@ class Coach
     public $score_diff  = 0;    // score_team - score_opponent.
     public $fan_factor  = 0;
     public $points      = 0; // Total points.
+    public $smp         = 0; // Sportsmanship points.
+    public $tcas        = 0; // Team cas.
     //-------------------    
     
     // Non-constructor filled fields.

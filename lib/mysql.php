@@ -156,7 +156,11 @@ function setup_tables() {
                 date_played         DATETIME,
                 date_modified       DATETIME,
                 team1_score         TINYINT UNSIGNED,
-                team2_score         TINYINT UNSIGNED
+                team2_score         TINYINT UNSIGNED,
+                smp1                TINYINT SIGNED DEFAULT 0,
+                smp2                TINYINT SIGNED DEFAULT 0,
+                tcas1               TINYINT UNSIGNED DEFAULT 0,
+                tcas2               TINYINT UNSIGNED DEFAULT 0
                 )';
     mk_table($query, 'matches');
 

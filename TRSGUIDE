@@ -18,9 +18,11 @@ In lib/class_tournament.php look for the function definition of "getRSSortRules(
 
 Here you must add 2 entries for your new ranking system:
 
-    $rules[4] 
+    $rules[N] 
 and 
-    $pts[4]
+    $pts[N]
+
+where N is replaced by a non-occupied number.
 
 You must, of course, use the same syntax as the other definitions use.
     
