@@ -46,6 +46,10 @@ class Match
     public $date_modified   = '';
     public $team1_score     = 0;
     public $team2_score     = 0;
+    public $smp1            = 0;
+    public $smp2            = 0;
+    public $tcas1           = 0; // Team cas 1
+    public $tcas2           = 0; // Team cas 2
     public $comment         = '';
     
     // Other
@@ -203,7 +207,11 @@ class Match
                     date_played     = ".(($this->is_played) ? 'date_played' : 'NOW()').",
                     date_modified   = NOW(),
                     team1_score     = $input[team1_score],
-                    team2_score     = $input[team2_score]
+                    team2_score     = $input[team2_score],
+                    smp1            = $input[smp1],
+                    smp2            = $input[smp2],
+                    tcas1           = $input[tcas1],
+                    tcas2           = $input[tcas2]
         WHERE match_id = $this->match_id";
 
         if (!mysql_query($query))

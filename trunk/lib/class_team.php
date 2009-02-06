@@ -62,6 +62,8 @@ class Team
     public $score_diff  = 0;    // score_team - score_opponent
     public $fan_factor  = 0;
     public $points      = 0; // Total team points, if points ranking system is used.
+    public $smp         = 0; // Sportsmanship points.
+    public $tcas        = 0; // Team cas.
     //-------------------    
 
     // Non-constructor filled fields.

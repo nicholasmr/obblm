@@ -470,6 +470,7 @@ function sec_fixturelist() {
         $fields = array(
             'name'           => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
             'points'         => array('desc' => 'PTS'), 
+            'smp'            => array('desc' => 'SMP'), 
             'won'            => array('desc' => 'W'), 
             'lost'           => array('desc' => 'L'), 
             'draw'           => array('desc' => 'D'), 
@@ -483,6 +484,7 @@ function sec_fixturelist() {
             'score_opponent' => array('desc' => 'GA'),
             'APM_ki'         => array('desc' => 'APM Ki'),
             'APM_cas'        => array('desc' => 'APM Cas'),
+            'tcas'           => array('desc' => 'tcas'), 
             'td'             => array('desc' => 'Td'), 
             'cp'             => array('desc' => 'Cp'), 
             'intcpt'         => array('desc' => 'Int'), 
@@ -808,7 +810,8 @@ function sec_players() {
     
     ?>
     
-    <form method="POST"><select name="tour_id">
+    <form method="POST">
+    <select name="tour_id" onChange='this.form.submit();'>
     <optgroup label="All">
         <option value="0">All tournaments</option>
     </optgroup>
@@ -821,7 +824,6 @@ function sec_players() {
         ?>
     </optgroup>
     </select>
-    <input type="submit" name="submit" value="Select">
     </form>
     <br>
     <?php
@@ -1014,7 +1016,8 @@ function sec_coaches() {
     title("Coaches");
     ?>
     
-    <form method="POST"><select name="tour_id">
+    <form method="POST">
+    <select name="tour_id" onChange='this.form.submit();'>
     <optgroup label="All">
         <option value="0">All tournaments</option>
     </optgroup>
@@ -1027,7 +1030,6 @@ function sec_coaches() {
         ?>
     </optgroup>
     </select>
-    <input type="submit" name="submit" value="Select">
     </form>
     <br>
     <?php
@@ -1297,7 +1299,8 @@ function sec_stars() {
     echo "<i>Note:</i> <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.<br><br>\n";
     ?>
     
-    <form method="POST"><select name="tour_id">
+    <form method="POST">
+    <select name="tour_id" onChange='this.form.submit();'>
     <optgroup label="All">
         <option value="0">All tournaments</option>
     </optgroup>
@@ -1310,7 +1313,6 @@ function sec_stars() {
         ?>
     </optgroup>
     </select>
-    <input type="submit" name="submit" value="Select">
     </form>
     <br>
     <?php

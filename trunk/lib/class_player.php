@@ -67,6 +67,8 @@ class Player
 #    public $score_diff  = 0;    // score_team - score_opponent
 #    public $fan_factor  = 0;
 #    public $points      = 0; // Total team points, if points ranking system is used.
+#    public $smp         = 0; // Sportsmanship points.
+#    public $tcas        = 0; // Team cas.
     //-------------------  
 
     // Characteristics
@@ -818,7 +820,12 @@ class Player
         if ($this->inj_st > 0) array_push($injs, "-$this->inj_st St");
         if ($this->inj_ag > 0) array_push($injs, "-$this->inj_ag Ag");
         if ($this->inj_av > 0) array_push($injs, "-$this->inj_av Av");
-        if ($this->inj_ni > 0) array_push($injs, "$this->inj_ni Ni");
+        if ($HTML) {
+            if ($this->inj_ni > 0) array_push($injs, "<font color='red'>$this->inj_ni Ni</font>");
+        }
+        else {
+            if ($this->inj_ni > 0) array_push($injs, "$this->inj_ni Ni");
+        }
         if ($this->is_mng)     array_push($injs, "MNG");
         
         return implode(', ', $injs);

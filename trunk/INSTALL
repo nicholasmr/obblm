@@ -28,6 +28,16 @@ UPGRADING
 
 NOTE: When upgrading please save your old settings file as a reference for when filling out the new settings file.
 
+0.37 -> 0.38
+
+    Replace all OBBLM files.
+    Execute the following MySQL queries:
+
+        ALTER TABLE matches ADD COLUMN smp1 TINYINT SIGNED DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN smp2 TINYINT SIGNED DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN tcas1 TINYINT UNSIGNED DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN tcas2 TINYINT UNSIGNED DEFAULT 0;
+
 0.36 -> 0.37
 
     Replace all OBBLM files.

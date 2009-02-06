@@ -596,12 +596,14 @@ class Tour
         $rules[1] = array('-won', '-draw', '+lost', '-score_diff', '-cas', '+name');
         $rules[2] = array('-points', '-td', '+name');
         $rules[3] = array('-points', '-tdcas', '+name');
+        $rules[4] = array('-points', '-td', '+name');
         
         // String descriptions of how points are calculated. Only used when $mkStr is true.
         $pts[0] = '{}';
         $pts[1] = '{}';
         $pts[2] = '{3*[won] + [draw]}';
         $pts[3] = '{[won]/[played] + 0.5*[draw]/[played]}';
+        $pts[4] = '{10*[won] + 5*[draw] + TDs + CAS | TDs & CAS max 3 per match}';
         
         if ($mkStr) {
             foreach ($rules as $i => &$rule) {

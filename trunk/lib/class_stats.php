@@ -175,6 +175,8 @@ public static function getMatchStats($grp, $id, $trid = false)
                         IF(team2_score < team1_score, 1, 0), 0))
                 ) AS 'lost', 
                 SUM(IF(team1_id = $tid, ffactor1, IF(team2_id = $tid, ffactor2, 0))) AS 'fan_factor', 
+                SUM(IF(team1_id = $tid, smp1, IF(team2_id = $tid, smp2, 0))) AS 'smp', 
+                SUM(IF(team1_id = $tid, tcas1, IF(team2_id = $tid, tcas2, 0))) AS 'tcas', 
                 SUM(IF(team1_id = $tid, team1_score, IF(team2_id = $tid, team2_score, 0))) AS 'score_team', 
                 SUM(IF(team1_id = $tid, team2_score, IF(team2_id = $tid, team1_score, 0))) AS 'score_opponent' 
                 FROM $from WHERE date_played IS NOT NULL $query_suffix $where";
@@ -192,7 +194,30 @@ public static function getMatchStats($grp, $id, $trid = false)
         switch (get_alt_col('tours', 'tour_id', $trid, 'rs'))
         {
             case '2': $s['points'] = $s['won']*3 + $s['draw']; break;
-            case '3': $s['points'] = ($s['played'] == 0) ? 0 : $s['won']/$s['played'] + $s['draw']/(2*$s['played']); break;            
+            case '3': $s['points'] = ($s['played'] == 0) ? 0 : $s['won']/$s['played'] + $s['draw']/(2*$s['played']); break;
+            case '4':
+                /* 
+                    Although none of the points definitions make sense for other $grp types than = STATS_TEAM, it 
+                    is anyway necessary for this case to only be executed if $grp = team.
+                    
+                    pts += Win 10p, Draw 5p, Loss 0p, 1p per TD up to 3p, 1p per (player, not team) CAS up to 3p.
+                */
+                if ($grp == STATS_TEAM) {
+                    $query = "
+                        SELECT SUM(td) AS 'td', SUM(cas) AS 'cas' FROM 
+                        (
+                        SELECT 
+                            f_match_id, 
+                            IF(SUM(td) > 3, 3, SUM(td)) AS 'td', 
+                            IF(SUM(bh+ki+si) > 3, 3, SUM(bh+ki+si)) AS 'cas'
+                        FROM match_data WHERE f_team_id = $id GROUP BY f_match_id
+                        ) AS tmpTable
+                        ";
+                    $result = mysql_query($query);
+                    $row = mysql_fetch_assoc($result);
+                    $s['points'] = $s['won']*10 + $s['draw']*5 + $row['td'] + $row['cas'];
+                }
+                break;
         }    
     }
 

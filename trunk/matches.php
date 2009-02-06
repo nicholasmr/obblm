@@ -76,8 +76,11 @@ function match_form($match_id) {
             'income2'       => $_POST['inc_2'] ? $_POST['inc_2'] * 1000 : 0,
             'team1_score'   => $_POST['result1'] ? $_POST['result1'] : 0,
             'team2_score'   => $_POST['result2'] ? $_POST['result2'] : 0,
+            'smp1'          => (int) $_POST['smp1'],
+            'smp2'          => (int) $_POST['smp2'],
+            'tcas1'         => (int) $_POST['tcas1'],
+            'tcas2'         => (int) $_POST['tcas2'],
             'comment'       => $_POST['summary'] ? $_POST['summary'] : '',
-        
         )));
 
         // Update match's player data
@@ -195,11 +198,11 @@ function match_form($match_id) {
     <form method="POST">
         <table class="match_form">
             <tr>
-                <td colspan="13" class="dark"><b>Game information <a href="javascript:void(0)" onclick="window.open('html/game_info.html','input_GameInfoHelp','width=350,height=400')">[?]</a></b></td>
+                <td colspan="4" class="dark"><b>Game information <a href="javascript:void(0)" onclick="window.open('html/game_info.html','input_GameInfoHelp','width=350,height=400')">[?]</a></b></td>
             </tr>
-            <tr><td class='seperator' colspan='13'></td></tr>
+            <tr><td class='seperator' colspan='4'></td></tr>
             <tr>
-                <td colspan='13'>
+                <td colspan='4'>
                     <b>Stadium</b>&nbsp;
                     <select name="stadium" <?php echo $DIS;?>>
                         <?php
@@ -210,32 +213,48 @@ function match_form($match_id) {
                 </td>
             </tr>
             <tr>
-                <td colspan='13'>
+                <td colspan='4'>
                     <b>Gate</b>&nbsp;
                     <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
                 </td>
             </tr>
             
-            <tr><td class="seperator" colspan='13'></td></tr>
+            <tr><td class="seperator" colspan='4'></td></tr>
 
             <tr>
-                <td colspan="13" class="dark"><b>Game results</b></td>
+                <td class="dark"><b>Teams</b></td>
+                <td class="dark"><b>Game results (scores)</b></td>
+                <td class="dark"><b>Sportsmanship points</b></td>
+                <td class="dark"><b>Total team CAS (including players')</b></td>
             </tr>
             
-            <tr><td class='seperator' colspan='13'></td></tr>
-            
+            <tr><td class='seperator' colspan='4'></td></tr>
+
             <tr>
-                <td colspan='13'>
+                <td><?php echo $m->team1_name;?>:</td>
+                <td>
                     <input type="text" name="result1" value="<?php echo $m->team1_score ? $m->team1_score : 0;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                    <?php echo $m->team1_name;?>
+                </td>
+                <td>
+                    <input type="text" name="smp1" value="<?php echo $m->smp1;?>" size="1" maxlength="2" <?php echo $DIS;?>> points
+                </td>
+                <td>
+                    <input type="text" name="tcas1" value="<?php echo $m->tcas1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
                 </td>
             </tr>
             <tr>
-                <td colspan='13'>
+                <td><?php echo $m->team2_name;?>:</td>
+                <td>
                     <input type="text" name="result2" value="<?php echo $m->team2_score ? $m->team2_score : 0;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                    <?php echo $m->team2_name;?>
+                </td>
+                <td>
+                    <input type="text" name="smp2" value="<?php echo $m->smp2;?>" size="1" maxlength="2" <?php echo $DIS;?>> points
+                </td>
+                <td>
+                    <input type="text" name="tcas2" value="<?php echo $m->tcas2;?>" size="1" maxlength="2" <?php echo $DIS;?>>
                 </td>
             </tr>
+            
         </table>
 
         <?php
