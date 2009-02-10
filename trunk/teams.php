@@ -105,6 +105,7 @@ function team_roaster($team_id) {
                 case 'unsell_player':     status($p->unsell()); break;
                 case 'unbuy_goods':       status($team->unbuy($_POST['thing'])); break;
                 case 'bank':              status($team->dtreasury(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000)); break;
+                case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
                 case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
                 
                 case 'extra_skills':    
@@ -854,6 +855,7 @@ function team_roaster($team_id) {
                         'unsell_player'     => 'Un-fire player',
                         'unbuy_goods'       => 'Un-buy team goods',
                         'bank'              => 'Gold bank',
+                        'chown'             => 'Change ownership',
                         'spp'               => 'Manage player extra SPP',
                         'extra_skills'      => 'Manage player extra skills',
                         'ach_skills'        => 'Remove achieved player skills'
@@ -999,6 +1001,26 @@ function team_roaster($team_id) {
                                 <input type="radio" name="sign" value="-">-
                                 <input type='text' name="amount" maxlength=5 size=5>k
                                 <input type="hidden" name="type" value="bank">
+                                <?php
+                                break;
+
+                            /***************
+                             * Change team ownership
+                             **************/
+                                
+                            case 'chown':
+                                ?>
+                                Change this team's ownership.
+                                <hr><br>
+                                New owner:<br>
+                                <select name="cid">
+                                <?php
+                                foreach (Coach::getCoaches() as $c) {
+                                    echo "<option value='$c->coach_id'>$c->name</option>\n";
+                                }
+                                ?>
+                                </select>
+                                <input type="hidden" name="type" value="chown">
                                 <?php
                                 break;
                                 

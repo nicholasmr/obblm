@@ -261,6 +261,16 @@ class Team
         return true;
     }
 
+    public function setOwnership($cid) {
+
+        /**
+         * Changes team ownership to the coach ID $cid.
+         **/
+        
+        $query = "UPDATE teams SET owned_by_coach_id = $cid WHERE team_id = $this->team_id";
+        return (mysql_query($query) && ($this->owned_by_coach_id = $cid));
+    }
+
     public function getPlayers() {
 
         /**
