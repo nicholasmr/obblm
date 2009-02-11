@@ -82,13 +82,9 @@ $pdf->AddPage();
 $pdf->SetLineWidth(1.5);
 $currentx = MARGINX;
 $currenty = MARGINY;
-$c = $pdf->rgb2cmyk($pdf->hex2rgb(HEADLINEBGCOLOR));
-$pdf->SetFillColor($c['c'],$c['m'],$c['y'],$c['k']);
+$pdf->SetFillColorBB($pdf->hex2cmyk(HEADLINEBGCOLOR));
 $pdf->RoundedRect($currentx, $currenty, 802, 20, 6, 'DF'); // Filled rectangle around Team headline
-$c = $pdf->rgb2cmyk($pdf->hex2rgb(HEADLINEBGCOLOR));
-$pdf->SetFillColor($c['c'],$c['m'],$c['y'],$c['k']);
-$c = $pdf->rgb2cmyk($pdf->hex2rgb(DEFLINECOLOR));
-$pdf->SetDrawColor($c['c'],$c['m'],$c['y'],$c['k']);
+$pdf->SetDrawColorBB($pdf->hex2cmyk(DEFLINECOLOR));
 
 // Text in headline
 $pdf->SetXY($currentx+30,$currenty);
@@ -102,10 +98,8 @@ $currenty+=25;
 $currentx+=6;
 $pdf->SetXY($currentx,$currenty);
 
-$bg = $pdf->rgb2cmyk($pdf->hex2rgb(HEADLINEBGCOLOR));
-$bc = $pdf->rgb2cmyk($pdf->hex2rgb(DEFLINECOLOR));
-$pdf->SetFillColor($bg['c'], $bg['m'], $bg['y'], $bg['k']);
-$pdf->SetDrawColor($bc['c'], $bc['m'], $bc['y'], $bc['k']);
+$pdf->SetFillColorBB($pdf->hex2cmyk(HEADLINEBGCOLOR));
+$pdf->SetDrawColorBB($pdf->hex2cmyk(DEFLINECOLOR));
 $pdf->SetFont('Tahoma','B',8);
 $pdf->SetLineWidth(1.5);
 $h = 14;
@@ -118,7 +112,7 @@ $pdf->Cell(18, $h, 'MA', 1, 0, 'C', true, '');
 $pdf->Cell(18, $h, 'ST', 1, 0, 'C', true, '');
 $pdf->Cell(18, $h, 'AG', 1, 0, 'C', true, '');
 $pdf->Cell(18, $h, 'AV', 1, 0, 'C', true, '');
-$pdf->Cell(329, $h, 'Skills', 1, 0, 'L', true, '');
+$pdf->Cell(329, $h, 'Skills and Injuries', 1, 0, 'L', true, '');
 $pdf->Cell(23, $h, 'MNG', 1, 0, 'C', true, '');
 $pdf->Cell(21, $h, 'CP', 1, 0, 'C', true, '');
 $pdf->Cell(21, $h, 'TD', 1, 0, 'C', true, '');
@@ -333,6 +327,32 @@ $pdf->Image($team->getLogo(),346,436,128,128,'','',false,0);
 
 // OBBLM text lower left corner as a pic
 $pdf->Image('pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
+
+// Color legends
+$pdf->SetFont('Tahoma', '', 8);
+$currentx = MARGINX+16;
+$currenty = 570;
+$pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_MNG));
+$pdf->SetXY($currentx, $currenty);
+$pdf->Rect($currentx, $currenty, 5, 5, 'DF');
+$pdf->SetXY($currentx+=5, $currenty-=1);
+$pdf->Cell(20, 8, 'MNG', 0, 0, 'L', false);
+$pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY));
+$pdf->Rect($currentx+=20+5, $currenty+=1, 5, 5, 'DF');
+$pdf->SetXY($currentx+=5, $currenty-=1);
+$pdf->Cell(45, 8, 'Journeyman', 0, 0, 'L', false);
+$pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NEWSKILL));
+$pdf->Rect($currentx+=45+5, $currenty+=1, 5, 5, 'DF');
+$pdf->SetXY($currentx+=5, $currenty-=1);
+$pdf->Cell(70, 8, 'New skill available', 0, 0, 'L', false);
+$pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_CHR_GTP1));
+$pdf->Rect($currentx+=70+5, $currenty+=1, 5, 5, 'DF');
+$pdf->SetXY($currentx+=5, $currenty-=1);
+$pdf->Cell(50, 8, 'Stat upgrade', 0, 0, 'L', false);
+$pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_CHR_LTM1));
+$pdf->Rect($currentx+=50+5, $currenty+=1, 5, 5, 'DF');
+$pdf->SetXY($currentx+=5, $currenty-=1);
+$pdf->Cell(50, 8, 'Stat downgrade', 0, 0, 'L', false);
 
 // Output the PDF document
 $pdf->Output(utf8_decode($team->name) . date(' Y-m-d') . '.pdf', 'I');
