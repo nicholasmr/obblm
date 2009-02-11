@@ -83,96 +83,43 @@ function _Arc($x1, $y1, $x2, $y2, $x3, $y3)
             $x2*$this->k, ($h-$y2)*$this->k, $x3*$this->k, ($h-$y3)*$this->k));
 }
 
-// For CMYK colors
-function SetDrawColor() {
+function SetDrawColorBB($cmyk) {
     //Set color for all stroking operations
-    switch(func_num_args()) {
-        case 1:
-            $g = func_get_arg(0);
-            $this->DrawColor = sprintf('%.3f G', $g / 100);
-            break;
-        case 3:
-            $r = func_get_arg(0);
-            $g = func_get_arg(1);
-            $b = func_get_arg(2);
-            $this->DrawColor = sprintf('%.3f %.3f %.3f RG', $r / 255, $g / 255, $b / 255);
-            break;
-        case 4:
-            $c = func_get_arg(0);
-            $m = func_get_arg(1);
-            $y = func_get_arg(2);
-            $k = func_get_arg(3);
-            $this->DrawColor = sprintf('%.3f %.3f %.3f %.3f K', $c / 100, $m / 100, $y / 100, $k / 100);
-            break;
-        default:
-            $this->DrawColor = '0 G';
-    }
+    // $cmyk is array 0 => c, 1 => m, 2 => y, 3 => k
+    if (is_array($cmyk)) 
+        $this->DrawColor = sprintf('%.3f %.3f %.3f %.3f K', $cmyk[0] / 100, $cmyk[1] / 100, $cmyk[2] / 100, $cmyk[3] / 100);
+    else
+        $this->DrawColor = '0 G';
     if($this->page > 0)
         $this->_out($this->DrawColor);
 }
 
-// For CMYK colors
-function SetFillColor() {
-    //Set color for all filling operations
-    switch(func_num_args()) {
-        case 1:
-            $g = func_get_arg(0);
-            $this->FillColor = sprintf('%.3f g', $g / 100);
-            break;
-        case 3:
-            $r = func_get_arg(0);
-            $g = func_get_arg(1);
-            $b = func_get_arg(2);
-            $this->FillColor = sprintf('%.3f %.3f %.3f rg', $r / 255, $g / 255, $b / 255);
-            break;
-        case 4:
-            $c = func_get_arg(0);
-            $m = func_get_arg(1);
-            $y = func_get_arg(2);
-            $k = func_get_arg(3);
-            $this->FillColor = sprintf('%.3f %.3f %.3f %.3f k', $c / 100, $m / 100, $y / 100, $k / 100);
-            break;
-        default:
-            $this->FillColor = '0 g';
-    }
+function SetFillColorBB($cmyk) {
+    // Set fill color
+    // $cmyk is array 0 => c, 1 => m, 2 => y, 3 => k
+    if (is_array($cmyk)) 
+        $this->FillColor = sprintf('%.3f %.3f %.3f %.3f k', $cmyk[0] / 100, $cmyk[1] / 100, $cmyk[2] / 100, $cmyk[3] / 100);
+    else 
+        $this->FillColor = '0 g';
     $this->ColorFlag = ($this->FillColor != $this->TextColor);
     if($this->page > 0)
         $this->_out($this->FillColor);
 }
 
-// For CMYK colors
-function SetTextColor() {
+function SetTextColorBB($cmyk) {
     //Set color for text
-    switch(func_num_args()) {
-        case 1:
-            $g = func_get_arg(0);
-            $this->TextColor = sprintf('%.3f g', $g / 100);
-            break;
-        case 3:
-            $r = func_get_arg(0);
-            $g = func_get_arg(1);
-            $b = func_get_arg(2);
-            $this->TextColor = sprintf('%.3f %.3f %.3f rg', $r / 255, $g / 255, $b / 255);
-            break;
-        case 4:
-            $c = func_get_arg(0);
-            $m = func_get_arg(1);
-            $y = func_get_arg(2);
-            $k = func_get_arg(3);
-            $this->TextColor = sprintf('%.3f %.3f %.3f %.3f k', $c / 100, $m / 100, $y / 100, $k / 100);
-            break;
-        default:
-            $this->TextColor = '0 g';
-    }
+    // $cmyk is array 0 => c, 1 => m, 2 => y, 3 => k
+    if (is_array($cmyk)) 
+        $this->TextColor = sprintf('%.3f %.3f %.3f %.3f k',$cmyk[0] / 100, $cmyk[1] / 100, $cmyk[2] / 100, $cmyk[3] / 100);
+    else
+        $this->TextColor = '0 g';
     $this->ColorFlag = ($this->FillColor != $this->TextColor);
 }
 
 // Print Player row
 function print_prow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth=1, $fontsize, $ma_color, $st_color, $ag_color, $av_color) {
-  $bg = $this->rgb2cmyk($this->hex2rgb($bgcolor));
-  $bc = $this->rgb2cmyk($this->hex2rgb($bordercolor));
-  $this->SetFillColor($bg['c'], $bg['m'], $bg['y'], $bg['k']);
-  $this->SetDrawColor($bc['c'], $bc['m'], $bc['y'], $bc['k']);
+  $this->SetFillColorBB($this->hex2cmyk($bgcolor));
+  $this->SetDrawColorBB($this->hex2cmyk($bordercolor));
   $this->SetFontSize($fontsize);
   $this->SetLineWidth($linewidth);
   $this->SetXY($x,$y);
@@ -189,15 +136,15 @@ function print_prow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', 
   $this->Cell(23, $h, $p['nr'], 1, 0, 'C', true, '');
   $this->Cell(97, $h, $p['name'], 1, 0, 'L', true, '');
   $this->Cell(75, $h, $p['pos'], 1, 0, 'L', true, '');
-  $bg = $this->rgb2cmyk($this->hex2rgb($ma_color)); $this->SetFillColor($bg['c'], $bg['m'], $bg['y'], $bg['k']);
+  $this->SetFillColorBB($this->hex2cmyk($ma_color));
   $this->Cell(18, $h, $p['ma'], 1, 0, 'C', true, '');
-  $bg = $this->rgb2cmyk($this->hex2rgb($st_color)); $this->SetFillColor($bg['c'], $bg['m'], $bg['y'], $bg['k']);
+  $this->SetFillColorBB($this->hex2cmyk($st_color));
   $this->Cell(18, $h, $p['st'], 1, 0, 'C', true, '');
-  $bg = $this->rgb2cmyk($this->hex2rgb($ag_color)); $this->SetFillColor($bg['c'], $bg['m'], $bg['y'], $bg['k']);
+  $this->SetFillColorBB($this->hex2cmyk($ag_color));
   $this->Cell(18, $h, $p['ag'], 1, 0, 'C', true, '');
-  $bg = $this->rgb2cmyk($this->hex2rgb($av_color)); $this->SetFillColor($bg['c'], $bg['m'], $bg['y'], $bg['k']);
+  $this->SetFillColorBB($this->hex2cmyk($av_color));
   $this->Cell(18, $h, $p['av'], 1, 0, 'C', true, '');
-  $bg = $this->rgb2cmyk($this->hex2rgb($bgcolor)); $this->SetFillColor($bg['c'], $bg['m'], $bg['y'], $bg['k']);
+  $this->SetFillColorBB($this->hex2cmyk($bgcolor));
   $this->SetXY(($x+23+97+75+18+18+18+18),$y);
   // Need to change to MultiCell to fit Skills and Injuries text if too long
   if ($newfontsize<$fontsize) {
@@ -220,10 +167,8 @@ function print_prow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', 
 }
 
 function print_box($x, $y, $w, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth, $borderstyle, $fontsize, $font, $bold=false, $align, $text) {
-  $bg = $this->rgb2cmyk($this->hex2rgb($bgcolor));
-  $bc = $this->rgb2cmyk($this->hex2rgb($bordercolor));
-  $this->SetFillColor($bg['c'], $bg['m'], $bg['y'], $bg['k']);
-  $this->SetDrawColor($bc['c'], $bc['m'], $bc['y'], $bc['k']);
+  $this->SetFillColorBB($this->hex2cmyk($bgcolor));
+  $this->SetDrawColorBB($this->hex2cmyk($bordercolor));
   ($bold) ? $this->SetFont($font, 'B', $fontsize) : $this->SetFont($font, '', $fontsize);
   $this->SetLineWidth($linewidth);
   $this->SetXY($x,$y);
@@ -248,32 +193,20 @@ function print_team_goods($x, $y, $h, $bgcol, $linecol, $perm_name, $perm_nr, $p
   $this->print_box(($currentx += 20), $y, 45, $h, $bgcol, $linecol, 0, 0, 8, 'Tahoma', $bold, 'R', $perm_total_value);
 }
 
-function rgb2cmyk($var1,$g=0,$b=0) {
-   if(is_array($var1)) {
-      $r = $var1['r'];
-      $g = $var1['g'];
-      $b = $var1['b'];
-   }
-   else $r=$var1;
-   $cyan    = 255 - $r;
-   $magenta = 255 - $g;
-   $yellow  = 255 - $b;
-   $black   = min($cyan, $magenta, $yellow);
-   $cyan    = @(($cyan    - $black) / (255 - $black)) * 255;
-   $magenta = @(($magenta - $black) / (255 - $black)) * 255;
-   $yellow  = @(($yellow  - $black) / (255 - $black)) * 255;
-   return array('c' => $cyan / 2.55,
-                'm' => $magenta / 2.55,
-                'y' => $yellow / 2.55,
-                'k' => $black / 2.55);
-}
-
-function hex2rgb($hex) {
+function hex2cmyk($hex) {
   $color = str_replace('#','',$hex);
-  $rgb = array('r' => hexdec(substr($color,0,2)),
-               'g' => hexdec(substr($color,2,2)),
-               'b' => hexdec(substr($color,4,2)));
-  return $rgb;
+  $r = hexdec(substr($color,0,2));
+  $g = hexdec(substr($color,2,2));
+  $b = hexdec(substr($color,4,2));
+  $cyan    = 255 - $r;
+  $magenta = 255 - $g;
+  $yellow  = 255 - $b;
+  $black   = min($cyan, $magenta, $yellow);
+  $cyan    = @(($cyan    - $black) / (255 - $black)) * 255;
+  $magenta = @(($magenta - $black) / (255 - $black)) * 255;
+  $yellow  = @(($yellow  - $black) / (255 - $black)) * 255;
+  
+  return array($cyan / 2.55, $magenta / 2.55, $yellow / 2.55, $black / 2.55);
 }
 
 function GetStringRemainder($s, $cellsize) {
