@@ -484,6 +484,36 @@ class Match
         return $txt->txt;
     }
     
+    public function savePics() {
+    
+        $i = 1;
+        for ($i = 1; $i <= 10; $i++) {
+            save_pic("img$i", IMG_MATCHES, $this->match_id."_$i");
+        }
+        
+        return true;
+    }
+    
+    public function getPics() {
+        
+        $pics = array();
+        
+        for ($i = 1; $i <= 10; $i++) {
+            $p = get_pic(IMG_MATCHES, $this->match_id."_$i");
+            if (!preg_match('/nopic/', $p)) {
+                array_push($pics, $p);
+            }
+        }
+        
+        return $pics;
+    }
+    
+    public function picExists($id) {
+    
+        $p = get_pic(IMG_MATCHES, $this->match_id."_$id");
+        return (!preg_match('/nopic/', $p));
+    }
+    
     /***************
      * Statics
      ***************/

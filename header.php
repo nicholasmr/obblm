@@ -58,6 +58,7 @@ define('IMG_PLAYERS',   UPLOAD_DIR.'/players');
 define('IMG_TEAMS',     UPLOAD_DIR.'/teams'); // team togo
 define('IMG_STADIUMS',  UPLOAD_DIR.'/stadiums');
 define('IMG_COACHES',   UPLOAD_DIR.'/coaches');
+define('IMG_MATCHES',   UPLOAD_DIR.'/matches');
 
 /********************* 
  *   Roster colors

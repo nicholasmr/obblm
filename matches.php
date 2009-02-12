@@ -83,6 +83,9 @@ function match_form($match_id) {
             'comment'       => $_POST['summary'] ? $_POST['summary'] : '',
         )));
 
+        // Pictures.
+        $m->savePics();
+
         // Update match's player data
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
         
@@ -193,16 +196,17 @@ function match_form($match_id) {
      ****************/
 
     title((($m->team1_id) ? $m->team1_name : '<i>Undecided</i>') . " - " . (($m->team2_id) ? $m->team2_name : '<i>Undecided</i>'));
+    $CP = 6; // Colspan.
 
     ?>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <table class="match_form">
             <tr>
-                <td colspan="4" class="dark"><b>Game information <a href="javascript:void(0)" onclick="window.open('html/game_info.html','input_GameInfoHelp','width=350,height=400')">[?]</a></b></td>
+                <td colspan="<?php echo $CP;?>" class="dark"><b>Game information <a href="javascript:void(0)" onclick="window.open('html/game_info.html','input_GameInfoHelp','width=350,height=400')">[?]</a></b></td>
             </tr>
-            <tr><td class='seperator' colspan='4'></td></tr>
+            <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
             <tr>
-                <td colspan='4'>
+                <td colspan='<?php echo $CP;?>'>
                     <b>Stadium</b>&nbsp;
                     <select name="stadium" <?php echo $DIS;?>>
                         <?php
@@ -213,27 +217,37 @@ function match_form($match_id) {
                 </td>
             </tr>
             <tr>
-                <td colspan='4'>
+                <td colspan='<?php echo $CP;?>'>
                     <b>Gate</b>&nbsp;
                     <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
                 </td>
             </tr>
             
-            <tr><td class="seperator" colspan='4'></td></tr>
+            <tr><td class="seperator" colspan='<?php echo $CP;?>'></td></tr>
 
             <tr>
                 <td class="dark"><b>Teams</b></td>
-                <td class="dark"><b>Game results (scores)</b></td>
+                <td class="dark"><b>Score</b></td>
+                <td class="dark"><b>&Delta; treasury</b></td>
+                <td class="dark"><b>Fan factor</b></td>
                 <td class="dark"><b>Sportsmanship points</b></td>
-                <td class="dark"><b>Total team CAS (including players')</b></td>
+                <td class="dark"><b>Total team CAS</b></td>
             </tr>
             
-            <tr><td class='seperator' colspan='4'></td></tr>
+            <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
 
             <tr>
-                <td><?php echo $m->team1_name;?>:</td>
+                <td><?php echo $m->team1_name;?></td>
                 <td>
                     <input type="text" name="result1" value="<?php echo $m->team1_score ? $m->team1_score : 0;?>" size="1" maxlength="2" <?php echo $DIS;?>>
+                </td>
+                <td>
+                    <input type='text' name='inc_1' value="<?php echo ((int) $m->income1)/1000;?>" size='4' maxlength='4' <?php echo $DIS;?>>k
+                </td>
+                <td>
+                    <input <?php echo $DIS;?> type='radio' name='ff_1' value='1'  <?php echo ($m->ffactor1 == 1)  ? 'CHECKED' : '';?>><font color='green'><b>+1</b></font>
+                    <input <?php echo $DIS;?> type='radio' name='ff_1' value='0'  <?php echo ($m->ffactor1 == 0)  ? 'CHECKED' : '';?>><font color='blue'><b>+0</b></font>
+                    <input <?php echo $DIS;?> type='radio' name='ff_1' value='-1' <?php echo ($m->ffactor1 == -1) ? 'CHECKED' : '';?>><font color='red'><b>-1</b></font>
                 </td>
                 <td>
                     <input type="text" name="smp1" value="<?php echo $m->smp1;?>" size="1" maxlength="2" <?php echo $DIS;?>> points
@@ -243,9 +257,17 @@ function match_form($match_id) {
                 </td>
             </tr>
             <tr>
-                <td><?php echo $m->team2_name;?>:</td>
+                <td><?php echo $m->team2_name;?></td>
                 <td>
                     <input type="text" name="result2" value="<?php echo $m->team2_score ? $m->team2_score : 0;?>" size="1" maxlength="2" <?php echo $DIS;?>>
+                </td>
+                <td>
+                    <input type='text' name='inc_2' value="<?php echo ((int) $m->income2)/1000;?>" size='4' maxlength='4' <?php echo $DIS;?>>k
+                </td>
+                <td>
+                    <input <?php echo $DIS;?> type='radio' name='ff_2' value='1'  <?php echo ($m->ffactor2 == 1)  ? 'CHECKED' : '';?>><font color='green'><b>+1</b></font>
+                    <input <?php echo $DIS;?> type='radio' name='ff_2' value='0'  <?php echo ($m->ffactor2 == 0)  ? 'CHECKED' : '';?>><font color='blue'><b>+0</b></font>
+                    <input <?php echo $DIS;?> type='radio' name='ff_2' value='-1' <?php echo ($m->ffactor2 == -1) ? 'CHECKED' : '';?>><font color='red'><b>-1</b></font>
                 </td>
                 <td>
                     <input type="text" name="smp2" value="<?php echo $m->smp2;?>" size="1" maxlength="2" <?php echo $DIS;?>> points
@@ -259,27 +281,15 @@ function match_form($match_id) {
 
         <?php
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
-            echo "<table class='match_form'>\n";
-            echo "<tr><td class='seperator' colspan='13'></td></tr>\n";
-            echo "<tr><td colspan='13' class='dark'><b>$t->name report <a href=\"javascript:void(0)\" onclick=\"window.open('html/team_report.html','input_TeamReportHelp','width=400,height=400')\">[?]</a></b></td></tr>";
-            echo "<tr><td class='seperator' colspan='13'></td></tr>\n";
-            $str = 'income' . $id;
-            echo "<tr><td colspan='13'><b>&Delta; treasury</b>&nbsp;&nbsp;<input $DIS type='text' name='inc_$id' value='" . ($m->$str ? $m->$str/1000 : '0') . "' size='4' maxlength='4' align='right'>k</td></tr>";
-            echo "<tr><td class='seperator' colspan='13'></td></tr>\n";
-            echo "<tr>\n";
-                echo "<td colspan='13'><b>Fan factor</b>\n";
-                    $str = 'ffactor' . $id;
-                    echo "<input $DIS type='radio' name='ff_$id' ". ($m->$str == 1 ? 'CHECKED' : '') . " value='1'><font color='green'><b>+1</b></font>\n";
-
-                    echo "<input $DIS type='radio' name='ff_$id' ". ($m->$str == 0 ? 'CHECKED' : '') . " value='0'><font color='blue'><b>+0</b></font>\n";
-
-                    echo "<input $DIS type='radio' name='ff_$id' ". ($m->$str == -1 ? 'CHECKED' : '') . " value='-1'><font color='red'><b>-1</b></font>\n";
-                echo "</td>\n";
-            echo "</tr>\n";
-            
-            echo "<tr><td class='seperator' colspan='13'></td></tr>\n";
 
             ?>
+            <table class='match_form'>
+            <tr><td class='seperator' colspan='13'></td></tr>
+            <tr><td colspan='13' class='dark'>
+                <b><?php echo $t->name;?> report <a href=\"javascript:void(0)\" onclick=\"window.open('html/team_report.html','input_TeamReportHelp','width=400,height=400')\">[?]</a></b>
+            </td></tr>
+            <tr><td class='seperator' colspan='13'></td></tr>
+
             <tr>
                 <td><i>Nr</i></td>
                 <td><i>Name</i></td>
@@ -405,6 +415,35 @@ function match_form($match_id) {
             <tr>
                 <td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->comment; ?></textarea></td>
             </tr>
+            <tr>
+                <td class='seperator' colspan='13'></td>
+            </tr>
+            <tr>
+                <td colspan='13' class='dark'><b>Match photos</b></td>
+            </tr>
+            <?php
+            $rows = 3; // Number of rows of pics.
+            $ppr = 4; // Pics per row.
+            for ($pics = $m->getPics(), $i = 1; $i <= $rows; $i++) { // Limit to three rows of pics.
+                echo "<tr><td>\n";
+                for ($j = 1; $j <= $ppr && ($pic = array_shift($pics)); $j++) {
+                    echo "<a href='handler.php?type=mg&amp;mid=$m->match_id&amp;pic=".(($i-1)*$ppr+$j)."'><img alt='match photo' src='$pic' width='220'></a>\n";
+                }
+                echo "</td></tr>\n";
+            }
+            ?>
+            <tr>
+                <td class='seperator' colspan='13'></td>
+            </tr>
+            <tr>
+                <td class='seperator' colspan='13'><i>Note:</i> uploading in photo numbers already occupied will overwrite the current photo in that position.</td>
+            </tr>
+
+            <?php
+            for ($i = 1; $i <= 10; $i++) {
+                echo "<tr><td>Photo #$i: <input $DIS type='file' name='img$i'>".(($m->picExists($i)) ? '&nbsp;&nbsp;<font color="orange"><b>Occupied</b></font>' : '')."</td></tr>\n";
+            }
+            ?>
         </table>
         <br>
         <center>
