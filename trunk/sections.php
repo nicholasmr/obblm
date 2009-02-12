@@ -105,10 +105,13 @@ function sec_main() {
     
     // Now we add all game summaries.
     foreach ($reports as $r) {
-        $o = (object) array();    
+        $o = (object) array();
+        $m = new Match($r->match_id);
+        $pics = $m->getPics();
         // Specific fields:
         $o->date_mod  = $r->date_modified;
         $o->match_id  = $r->match_id;
+        $o->hasPics   = !empty($pics);
         // General fields:
         $o->type      = 'match';
         $o->author    = get_alt_col('coaches', 'coach_id', $r->submitter_id, 'name');
@@ -222,6 +225,9 @@ function sec_main() {
                             if ($e->type == 'match') {
                                 echo "<td align='left' width='100%'>Posted $e->date " . (isset($e->date_mod) ? "(last edited $e->date_mod) " : '') ."by $e->author</td>\n";
                                 echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>Show</a></td>\n";
+                                if ($e->hasPics) {
+                                    echo "<td align='right'><a href='handler.php?type=mg&amp;mid=$e->match_id'>Photos</a></td>\n";
+                                }
                             }
                             elseif ($e->type == 'msg') {
                                 echo "<td align='left' width='100%'>Posted $e->date by $e->author</td>\n";

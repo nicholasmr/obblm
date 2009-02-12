@@ -170,7 +170,10 @@ switch ($_GET['type'])
             fatal("Sorry. FPDF support is required for this feature to work.");        
         }
         break;
-        
+
+    /***************
+     *  RSS feed
+     ***************/        
     case 'rss':
         global $settings;
         $rss = new OBBLMRssWriter(
@@ -183,6 +186,32 @@ switch ($_GET['type'])
         echo $rss->generateNewsRssFeed();
         break;
         
+    /***************
+     *  Match gallery
+     ***************/
+    case 'mg':
+    
+        if (!isset($_GET['mid']) || !is_numeric($_GET['mid']) || !is_object($m = new Match($_GET['mid']))) {
+            fatal("Sorry, invalid match ID.");
+        }
+        $curPic = (isset($_GET['pic'])) ? (int) $_GET['pic']-1 : 0;
+        $pics = $m->getPics();
+        if (empty($pics)) {
+            fatal("Sorry. The requested match has no uploaded pictures.");
+        }
+        echo "<b>Photos from match: <i>$m->team1_name</i> $m->team1_score - $m->team2_score <i>$m->team2_name</i></b><br><br>\n";
+        echo "<center>\n";
+        $i = 1;
+        foreach ($pics as $p) {
+            echo "<a href='handler.php?type=mg&amp;mid=$_GET[mid]&amp;pic=$i'>[$i]</a>&nbsp;&nbsp;";
+            $i++;
+        }
+        echo "</center>\n";
+        echo "<br><br>\n";
+        echo "<img src='".$pics[$curPic]."'>\n";
+                
+        break;
+
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
 }
