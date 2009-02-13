@@ -29,6 +29,7 @@ function match_form($match_id) {
     
     global $stars;
     global $rules;
+    global $lng;
     
     $easyconvert = new array_to_js();
     @$easyconvert->add_array($stars, 'phpStars'); // Load stars array into JavaScript array.
@@ -195,19 +196,19 @@ function match_form($match_id) {
      *
      ****************/
 
-    title((($m->team1_id) ? $m->team1_name : '<i>Undecided</i>') . " - " . (($m->team2_id) ? $m->team2_name : '<i>Undecided</i>'));
+    title((($m->team1_id) ? $m->team1_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>') . " - " . (($m->team2_id) ? $m->team2_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>'));
     $CP = 6; // Colspan.
 
     ?>
     <form method="POST" enctype="multipart/form-data">
         <table class="match_form">
             <tr>
-                <td colspan="<?php echo $CP;?>" class="dark"><b>Game information <a href="javascript:void(0)" onclick="window.open('html/game_info.html','input_GameInfoHelp','width=350,height=400')">[?]</a></b></td>
+                <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/info');?> <a href="javascript:void(0)" onclick="window.open('html/game_info.html','input_GameInfoHelp','width=350,height=400')">[?]</a></b></td>
             </tr>
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
             <tr>
                 <td colspan='<?php echo $CP;?>'>
-                    <b>Stadium</b>&nbsp;
+                    <b><?php echo $lng->getTrn('secs/fixtures/report/stad');?></b>&nbsp;
                     <select name="stadium" <?php echo $DIS;?>>
                         <?php
                         echo "<option value='$team1->team_id' " . ($m->stadium == $team1->team_id ? 'SELECTED' : '' ) . ">$team1->name</option>\n";
@@ -218,7 +219,7 @@ function match_form($match_id) {
             </tr>
             <tr>
                 <td colspan='<?php echo $CP;?>'>
-                    <b>Gate</b>&nbsp;
+                    <b><?php echo $lng->getTrn('secs/fixtures/report/gate');?></b>&nbsp;
                     <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
                 </td>
             </tr>
@@ -226,12 +227,12 @@ function match_form($match_id) {
             <tr><td class="seperator" colspan='<?php echo $CP;?>'></td></tr>
 
             <tr>
-                <td class="dark"><b>Teams</b></td>
-                <td class="dark"><b>Score</b></td>
-                <td class="dark"><b>&Delta; treasury</b></td>
-                <td class="dark"><b>Fan factor</b></td>
-                <td class="dark"><b>Sportsmanship points</b></td>
-                <td class="dark"><b>Total team CAS</b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/teams');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/score');?></b></td>
+                <td class="dark"><b>&Delta; <?php echo $lng->getTrn('secs/fixtures/report/treas');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/ff');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/smp');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/tcas');?></b></td>
             </tr>
             
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
@@ -250,7 +251,7 @@ function match_form($match_id) {
                     <input <?php echo $DIS;?> type='radio' name='ff_1' value='-1' <?php echo ($m->ffactor1 == -1) ? 'CHECKED' : '';?>><font color='red'><b>-1</b></font>
                 </td>
                 <td>
-                    <input type="text" name="smp1" value="<?php echo $m->smp1;?>" size="1" maxlength="2" <?php echo $DIS;?>> points
+                    <input type="text" name="smp1" value="<?php echo $m->smp1;?>" size="1" maxlength="2" <?php echo $DIS;?>> <?php echo $lng->getTrn('secs/fixtures/report/pts');?>
                 </td>
                 <td>
                     <input type="text" name="tcas1" value="<?php echo $m->tcas1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
@@ -286,7 +287,7 @@ function match_form($match_id) {
             <table class='match_form'>
             <tr><td class='seperator' colspan='13'></td></tr>
             <tr><td colspan='13' class='dark'>
-                <b><?php echo $t->name;?> report <a href=\"javascript:void(0)\" onclick=\"window.open('html/team_report.html','input_TeamReportHelp','width=400,height=400')\">[?]</a></b>
+                <b><?php echo $t->name;?> <?php echo $lng->getTrn('secs/fixtures/report/report');?> <a href=\"javascript:void(0)\" onclick=\"window.open('html/team_report.html','input_TeamReportHelp','width=400,height=400')\">[?]</a></b>
             </td></tr>
             <tr><td class='seperator' colspan='13'></td></tr>
 
@@ -381,7 +382,7 @@ function match_form($match_id) {
                     <tr>
                         <td align="left" valign="top">
                             <b><a href='javascript:void(0)' onClick="window.open('index.php?section=stars');">Star Players</a></b>: 
-                            <input type='button' id="addStarsBtn_<?php echo $id;?>" value='Add' 
+                            <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('secs/fixtures/report/add');?>" 
                             onClick="stars = document.getElementById('stars_<?php echo $id;?>'); addStarMerc(<?php echo $id;?>, stars.options[stars.selectedIndex].value);" <?php echo $DIS; ?>>
                             <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
                                 <?php
@@ -394,7 +395,7 @@ function match_form($match_id) {
                     </tr>
                     <tr>
                         <td align="left" valign="top">
-                            <b>Mercenaries</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value='Add' onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
+                            <b>Mercenaries</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('secs/fixtures/report/add');?>" onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
                         </td>
                     </tr>
                 </table>
@@ -410,7 +411,7 @@ function match_form($match_id) {
                 <td class='seperator' colspan='13'></td>
             </tr>
             <tr>
-                <td colspan='13' class='dark'><b>Game summary</b></td>
+                <td colspan='13' class='dark'><b><?php echo $lng->getTrn('secs/fixtures/report/summary');?></b></td>
             </tr>
             <tr>
                 <td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->comment; ?></textarea></td>
@@ -419,7 +420,7 @@ function match_form($match_id) {
                 <td class='seperator' colspan='13'></td>
             </tr>
             <tr>
-                <td colspan='13' class='dark'><b>Match photos</b></td>
+                <td colspan='13' class='dark'><b><?php echo $lng->getTrn('secs/fixtures/report/photos');?></b></td>
             </tr>
             <?php
             $rows = 3; // Number of rows of pics.
@@ -436,18 +437,18 @@ function match_form($match_id) {
                 <td class='seperator' colspan='13'></td>
             </tr>
             <tr>
-                <td class='seperator' colspan='13'><i>Note:</i> uploading in photo numbers already occupied will overwrite the current photo in that position.</td>
+                <td class='seperator' colspan='13'><?php echo $lng->getTrn('secs/fixtures/report/pnote');?></td>
             </tr>
 
             <?php
             for ($i = 1; $i <= 10; $i++) {
-                echo "<tr><td>Photo #$i: <input $DIS type='file' name='img$i'>".(($m->picExists($i)) ? '&nbsp;&nbsp;<font color="orange"><b>Occupied</b></font>' : '')."</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('secs/fixtures/report/photo')." #$i: <input $DIS type='file' name='img$i'>".(($m->picExists($i)) ? '&nbsp;&nbsp;<font color="orange"><b>'.$lng->getTrn('secs/fixtures/report/occ').'</b></font>' : '')."</td></tr>\n";
             }
             ?>
         </table>
         <br>
         <center>
-            <input type="submit" name='button' value="Save match data" <?php echo $DIS; ?>>
+            <input type="submit" name='button' value="<?php echo $lng->getTrn('secs/fixtures/report/save');?>" <?php echo $DIS; ?>>
         </center>
     </form>
     <?php

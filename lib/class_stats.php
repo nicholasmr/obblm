@@ -210,7 +210,7 @@ public static function getMatchStats($grp, $id, $trid = false)
                             f_match_id, 
                             IF(SUM(td) > 3, 3, SUM(td)) AS 'td', 
                             IF(SUM(bh+ki+si) > 3, 3, SUM(bh+ki+si)) AS 'cas'
-                        FROM match_data WHERE f_team_id = $id GROUP BY f_match_id
+                        FROM match_data WHERE f_team_id = $id AND f_tour_id = $trid GROUP BY f_match_id
                         ) AS tmpTable
                         ";
                     $result = mysql_query($query);

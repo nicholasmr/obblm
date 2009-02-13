@@ -23,6 +23,8 @@
 
 function hof($ALLOW_EDIT) {
     
+    global $lng;
+    
     /* A new entry was sent. Add it to system */
     
     if (isset($_POST['player_id']) && $ALLOW_EDIT) {
@@ -81,28 +83,26 @@ function hof($ALLOW_EDIT) {
             case 'new':
                 ?>
                 <form method="POST">
-                <b>Player:</b><br>
+                <b><?php echo $lng->getTrn('secs/records/player');?>:</b><br>
                 <select name="player_id">
                     <?php
                     $players = Player::getPlayers();
                     objsort($players, array('+team_name', '+name', '+nr'));
                     foreach ($players as $p) {
-                        echo "<option ".(($player_id && $player_id == $p->player_id) ? 'SELECTED' : '')." value='$p->player_id'>$p->team_name's $p->name</option>\n";
+                        echo "<option ".(($player_id && $player_id == $p->player_id) ? 'SELECTED' : '')." value='$p->player_id'>$p->team_name: $p->name</option>\n";
                     }
                     ?>
                 </select>
                 <br><br>
-                First write a title.<br>
-                This should be a short description of what the player has achieved, for example in which area the achievement has been made in.<br>
-                <b>Title:</b><br>
+                <?php echo $lng->getTrn('secs/records/hof/title');?><br>
+                <b><?php echo $lng->getTrn('secs/records/hof/g_title');?>:</b><br>
                 <input type="text" name="title" size="60" maxlength="100" value="<?php echo $title;?>">
                 <br><br>
-                Now write about the player's achievement in detail.<br>
-                If the player has received an bonus (extra) skill, you could also write about that.<br>
-                <b>General description:</b><br>
+                <?php echo $lng->getTrn('secs/records/hof/about');?><br>
+                <b><?php echo $lng->getTrn('secs/records/hof/g_about');?>:</b><br>
                 <textarea name="about" rows="15" cols="100"><?php echo $about;?></textarea>
                 <br><br>
-                <input type="submit" value="Submit" name="Submit">
+                <input type="submit" value="<?php echo $lng->getTrn('secs/records/submit');?>" name="Submit">
                 </form>
                 <?php                
         
@@ -114,12 +114,9 @@ function hof($ALLOW_EDIT) {
     
     /* Print the hall of fame */
     
-    ?>
-    Welcome to the hall of fame.<br>
-    Here league commissioners may exercise their power by giving publicity to players of noteworthy achievements.<br><br>
-    <?php
+    echo $lng->getTrn('secs/records/hof/desc')."<br><br>\n";
     if ($ALLOW_EDIT) {
-        echo "<a href='index.php?section=records&amp;subsec=hof&amp;action=new'>New entry</a><br>\n";
+        echo "<a href='index.php?section=records&amp;subsec=hof&amp;action=new'>".$lng->getTrn('secs/records/new')."</a><br>\n";
     }
     
     $HOF = HOF::getHOF();
@@ -130,7 +127,7 @@ function hof($ALLOW_EDIT) {
     
         ?>    
         <div class="recBox">
-            <div class="boxTitle2"><?php echo "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a> from <a href='index.php?section=coachcorner&amp;team_id=$p->owned_by_team_id'>$p->team_name</a>: $h->title";?></div>
+            <div class="boxTitle2"><?php echo "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a> ".$lng->getTrn('secs/records/from')." <a href='index.php?section=coachcorner&amp;team_id=$p->owned_by_team_id'>$p->team_name</a>: $h->title";?></div>
             <div class="boxBody">
                 <table class="recBoxTable">
                     <tr>
@@ -146,15 +143,15 @@ function hof($ALLOW_EDIT) {
                     </tr>
                     <tr>
                         <td align="left">
-                        Posted <?php echo $h->date;?>
+                        <?php echo $lng->getTrn('secs/records/posted').' '. $h->date;?>
                         </td>
                         <td colspan="2" align="right">
                         <?php
                         if ($ALLOW_EDIT) {
                             ?> 
-                            <a href="index.php?section=records&amp;subsec=hof&amp;action=edit&amp;hof_id=<?php echo $h->hof_id;?>">Edit</a>
+                            <a href="index.php?section=records&amp;subsec=hof&amp;action=edit&amp;hof_id=<?php echo $h->hof_id;?>"><?php echo $lng->getTrn('secs/records/edit');?></a>
                             &nbsp;
-                            <a href="index.php?section=records&amp;subsec=hof&amp;action=delete&amp;hof_id=<?php echo $h->hof_id;?>">Delete</a> 
+                            <a href="index.php?section=records&amp;subsec=hof&amp;action=delete&amp;hof_id=<?php echo $h->hof_id;?>"><?php echo $lng->getTrn('secs/records/del');?></a> 
                             <?php
                         }
                         ?>
@@ -169,6 +166,8 @@ function hof($ALLOW_EDIT) {
 
 function wanted($ALLOW_EDIT)
 {
+    
+    global $lng;
     
     /* A new entry was sent. Add it to system */
     
@@ -228,7 +227,7 @@ function wanted($ALLOW_EDIT)
             case 'new':
                 ?>
                 <form method="POST">
-                <b>Player:</b><br>
+                <b><?php echo $lng->getTrn('secs/records/player');?>:</b><br>
                 <select name="player_id">
                     <?php
                     $players = Player::getPlayers();
@@ -237,25 +236,24 @@ function wanted($ALLOW_EDIT)
                         if ($p->is_dead || $p->is_sold) {
                             continue;
                         }
-                        echo "<option ".(($player_id && $player_id == $p->player_id) ? 'SELECTED' : '')." value='$p->player_id'>$p->team_name's $p->name</option>\n";
+                        echo "<option ".(($player_id && $player_id == $p->player_id) ? 'SELECTED' : '')." value='$p->player_id'>$p->team_name: $p->name</option>\n";
                     }
                     ?>
                 </select>
                 <br><br>
-                What is the bounty for this player's head?<br> 
-                This could be anything from raw gold to a free bonus skill for one of the players on the killing team.<br>
-                <b>Bounty:</b><br>
+                <?php echo $lng->getTrn('secs/records/wanted/title');?><br>
+                <b><?php echo $lng->getTrn('secs/records/wanted/g_title');?>:</b><br>
                 <input type="text" name="bounty" size="60" maxlength="100" value="<?php echo $bounty;?>">
                 <br><br>
-                Now, why is the player wanted?<br>
-                <b>Wanted for:</b><br>
+                <?php echo $lng->getTrn('secs/records/wanted/about');?><br>
+                <b><?php echo $lng->getTrn('secs/records/wanted/g_about');?>:</b><br>
                 <textarea name="why" rows="15" cols="100"><?php echo $why;?></textarea>
                 <br><br>
-                <input type="submit" value="Submit" name="Submit">
+                <input type="submit" value="<?php echo $lng->getTrn('secs/records/submit');?>" name="Submit">
                 </form>
                 <br>
-                <i>Please note:</i> Once the player has been killed it is up to a leagues commissioner (admin) to give the appropriate award.
-                <?php                
+                <?php
+                echo $lng->getTrn('secs/records/wanted/note');
         
                 return;
                 break;
@@ -264,12 +262,9 @@ function wanted($ALLOW_EDIT)
     }
     
     /* Print the wanted players */
-    ?>
-    Welcome to the wall of wanted players.<br>
-    Watch out for these player, a bounty is out for each of their heads!<br><br>
-    <?php
+    echo $lng->getTrn('secs/records/wanted/desc')."<br><br>\n";
     if ($ALLOW_EDIT) {
-        echo "<a href='index.php?section=records&amp;subsec=wanted&amp;action=new'>New wanted player</a><br>\n";
+        echo "<a href='index.php?section=records&amp;subsec=wanted&amp;action=new'>".$lng->getTrn('secs/records/new')."</a><br>\n";
     }
     
     $wanted = Wanted::getWanted();
@@ -280,12 +275,12 @@ function wanted($ALLOW_EDIT)
     
         ?>    
         <div class="recBox">
-            <div class="boxTitle2">Wanted: <?php echo "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>";?></div>
+            <div class="boxTitle2"><?php echo $lng->getTrn('secs/records/wanted/wanted').": <a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>";?></div>
             <div class="boxBody">
                 <table class="recBoxTable">
                     <tr>
                         <td colspan="2" align="left" valign="top">
-                            <b>Bounty:</b><br>
+                            <b><?php echo $lng->getTrn('secs/records/wanted/g_title');?>:</b><br>
                             <?php echo $w->bounty;?>
                             <br>
                         </td>
@@ -293,11 +288,11 @@ function wanted($ALLOW_EDIT)
                     <tr>
                         <td align="left" valign="top">
                         <br>
-                        <b>Wanted for:</b><br>
+                        <b><?php echo $lng->getTrn('secs/records/wanted/g_about');?>:</b><br>
                         <?php 
                         echo $w->why;
                         if ($p->is_dead) {
-                            echo "<br><br><font color='red'><b>HAS BEEN KILLED</b></font>\n";
+                            echo "<br><br><font color='red'><b>".$lng->getTrn('secs/records/wanted/killed')."</b></font>\n";
                         }
                         ?>
                         </td>
@@ -310,15 +305,15 @@ function wanted($ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td align="left">
-                        Posted <?php echo $w->date;?>
+                        <?php echo $lng->getTrn('secs/records/posted').' '. $w->date;?>
                         </td>
                         <td align="right">
                         <?php
                         if ($ALLOW_EDIT) {
                             ?> 
-                            <a href="index.php?section=records&amp;subsec=wanted&amp;action=edit&amp;wanted_id=<?php echo $w->wanted_id;?>">Edit</a>
+                            <a href="index.php?section=records&amp;subsec=wanted&amp;action=edit&amp;wanted_id=<?php echo $w->wanted_id;?>"><?php echo $lng->getTrn('secs/records/edit');?></a>
                             &nbsp;
-                            <a href="index.php?section=records&amp;subsec=wanted&amp;action=delete&amp;wanted_id=<?php echo $w->wanted_id;?>">Delete</a> 
+                            <a href="index.php?section=records&amp;subsec=wanted&amp;action=delete&amp;wanted_id=<?php echo $w->wanted_id;?>"><?php echo $lng->getTrn('secs/records/del');?></a> 
                             <?php
                         }
                         ?>
@@ -333,7 +328,10 @@ function wanted($ALLOW_EDIT)
 
 function mem_matches()
 {
-    echo "Which matches are worth remembering in terms of most TDs, killed and so on?<br><br>\n";
+
+    global $lng;
+    
+    echo $lng->getTrn('secs/records/memma/desc')."<br><br>\n";
     
     $memmatches = Stats::getMemMatches();
 
@@ -345,35 +343,35 @@ function mem_matches()
             switch ($d)
             {
                 case 'td':
-                    $title = "Most touchdowns";
+                    $title = $lng->getTrn('secs/records/memma/td');
                     break;
 
                 case 'cp':
-                    $title = "Most completions";
+                    $title = $lng->getTrn('secs/records/memma/cp');
                     break;
                     
                 case 'intcpt':
-                    $title = "Most interceptions";
+                    $title = $lng->getTrn('secs/records/memma/intcpt');
                     break;
                     
                 case 'ki':
-                    $title = "Most killed";
+                    $title = $lng->getTrn('secs/records/memma/ki');
                     break;
                     
                 case 'bh+ki+si':
-                    $title = "Most casualties";
+                    $title = $lng->getTrn('secs/records/memma/cas');
                     break;
                     
                 case 'svic':
-                    $title = 'Largest score-difference';
+                    $title = $lng->getTrn('secs/records/memma/svic');
                     break;
                     
                 case 'inc':
-                    $title = 'Largest team income';
+                    $title = $lng->getTrn('secs/records/memma/inc');
                     break;
                     
                 case 'gate':
-                    $title = 'Largest gate';
+                    $title = $lng->getTrn('secs/records/memma/gate');
                     break;
                     
                 default:
@@ -432,7 +430,7 @@ function mem_matches()
                         <td align="right" colspan="3">
                         <small>
                         <i><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?>, <?php echo $m->date_played;?></i>, 
-                        <a href="index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>">View</a> 
+                        <a href="index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('secs/records/memma/view');?></a> 
                         </small>
                         </td>
                     </tr>
@@ -443,7 +441,7 @@ function mem_matches()
                 }
                 }
                 else {
-                    ?><tr><td align="center"><br><br>More than <?php echo MAX_MEM_MATCHES;?> matches has the same record or no record exists at all.<br><br></td></tr><?php
+                    ?><tr><td align="center"><br><br><?php echo preg_replace('/\sX\s/', ' '.MAX_MEM_MATCHES.' ', $lng->getTrn('secs/records/memma/filled'));?><br><br></td></tr><?php
                 }
                 ?>
                 </table>

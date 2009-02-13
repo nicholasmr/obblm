@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<obblm version="OBBLM v. 0.37t">
-	<!--
-		For each language/locale a block of translations is
-		provided. First, the language is specified, second the
-		locale is specified. This allows to support the same
-		language in different countries (i.e german in germany and
-		austria, spanish in spain/venezuela/Chile/..., ...
-		
-		A list of locales can be found at
-		http://www.roseindia.net/tutorials/I18N/locales-list.shtml
-		
-		Note: it is not required to use this locales, but why reinvent
-		the wheel?  
-	 -->
-	<!-- English language texts -->
+<obblm version="OBBLM v. 0.38">
+    <!--
+        For each language/locale a block of translations is
+        provided. First, the language is specified, second the
+        locale is specified. This allows to support the same
+        language in different countries (i.e german in germany and
+        austria, spanish in spain/venezuela/Chile/..., ...
+
+        A list of locales can be found at
+        http://www.roseindia.net/tutorials/I18N/locales-list.shtml
+
+        Note: it is not required to use this locales, but why reinvent
+        the wheel?  
+    -->
+     
+    <!-- English language texts -->
     <en-GB>
         <displayName>English (United Kingdom)</displayName>
         <displayIcon></displayIcon>
@@ -68,6 +69,12 @@
                 <showall>Show all</showall>
                 <normal>Normal view</normal>
                 <new>New message</new>
+                <del>Delete</del>
+                <edit>Edit</edit>
+                <show>Show</show>
+                <photos>Photos</photos>
+                <posted>Posted</posted>
+                <by>by</by>
                 
                 <!-- Titles of right column stats boxes -->
                 <recent>Recent matches</recent>
@@ -91,11 +98,12 @@
                 <edit>Edit</edit>
                 <lock>Lock</lock>
                 <unlock>Unlock</unlock>
+                <del>Delete</del>
                 
                 <!-- Match's round types -->
                 <mtypes>
                     <final>Final</final>
-                    <thirdPlayoff> 3rd place playoff</thirdPlayoff>
+                    <thirdPlayoff>3rd place playoff</thirdPlayoff>
                     <semi>Semi-finals</semi>
                     <quarter>Quarter-finals</quarter>
                     <rnd16>Round of 16</rnd16>
@@ -118,16 +126,36 @@
                 
                 <!-- Subsection: match report(s) -->
                 <report>
+                    
+                    <!-- General -->
+                    <report>report</report>
+                    <add>Add</add>
+                    <save>Save match</save>
+                
+                    <!-- Subsecs of team page -->
                     <info>Game information</info>
+                        <stad>Stadium</stad>
+                        <gate>Gate</gate>
+                        
                     <results>Game results</results>
+                        <teams>Teams</teams>
+                        <score>Score</score>
+                        <treas>Treasury</treas>
+                        <ff>Fan factor</ff>
+                        <smp>Sportsmanship points</smp>
+                            <pts>points</pts>
+                        <tcas>Total team CAS</tcas>
+                        
                     <summary>Game summary</summary>
+                    <photos>Match photos</photos>
+                        <occ>Occupied</occ>
+                        <photo>Photo</photo>
+                        <pnote>
+                        <![CDATA[<i>Note:</i> uploading in photo numbers already occupied will overwrite the current photo in that position.]]>
+                        </pnote>
                 </report>
+                
             </fixtures>
-            
-            
-            <!--
-            BELOW HAVE NOT YET BEEN IMPLEMENTED IN .php CODE !!!
-            -->
             
             <standings>
             
@@ -137,6 +165,7 @@
             </standings>
             
             <teams>
+                <!-- nothing! -->
             </teams>
             
             <players>
@@ -149,12 +178,25 @@
             <coaches>
 
                 <!-- General -->
-                <tblTitle>Coach standings</tblTitle>                
+                <tblTitle>Coach standings</tblTitle>       
+                
+                <!-- Subsection: specific coach -->
+                <pic>Picture of</pic>
+                <about>About</about>
+                <teams>Teams</teams>
+                <played>Matches played</played>
+                <nowrite>Nothing has yet been written about</nowrite>
+
             </coaches>
             
             <races>
                 <!-- General -->
                 <tblTitle>Race standings</tblTitle>
+                
+                <!-- Subsection: specific race -->
+                <players>players</players>
+                <teams>teams</teams>
+                
             </races>
             
             <stars>
@@ -162,15 +204,32 @@
                 <!-- General -->
                 <tblTitle>Star standings (1 of 2)</tblTitle>
                 <tblTitle2>Star standings (2 of 2)</tblTitle2>
+                
+                <!-- Subsection: specific star -->
+                <hh>Hire history of</hh>
+                
             </stars>
             
             <records>
             
                 <!-- General -->
                 <menu>Please select one of the below pages.</menu>
+                <d_hof>Hall of fame</d_hof>
+                <d_wanted>Wanted players</d_wanted>
+                <d_memma>Memorable matches</d_memma>
+                <new>New entry</new>
+                <edit>Edit</edit>
+                <del>Delete</del>
+                <submit>Submit</submit>
+                <posted>Posted</posted>
+                <from>from</from>
+                <player>Player</player>
                 
                 <!-- Subsection: Hall of fame -->
                 <hof>
+                    <g_title>Title</g_title>
+                    <g_about>General description</g_about>
+                    
                     <desc><![CDATA[Welcome to the hall of fame.<br>Here league commissioners may exercise their power by giving publicity to players of noteworthy achievements.]]></desc>
                     <title><![CDATA[First write a title.<br>This should be a short description of what the player has achieved, for example in which area the achievement has been made in.]]></title>
                     <about><![CDATA[Now write about the player's achievement in detail.<br>If the player has received an bonus (extra) skill, you could also write about that.]]></about>
@@ -178,15 +237,34 @@
                 
                 <!-- Subsection: Wanted players -->
                 <wanted>
+                    <g_title>Bounty</g_title>
+                    <g_about>Wanted for</g_about>
+                    <killed>HAS BEEN KILLED!</killed>
+                    <wanted>Wanted</wanted>
+                
                     <desc><![CDATA[Welcome to the wall of wanted players.<br>Watch out for these player, a bounty is out for each of their heads!]]></desc>
                     <title><![CDATA[What is the bounty for this player's head?<br>This could be anything from raw gold to a free bonus skill for one of the players on the killing team.]]></title>
                     <about>Why is the player wanted?</about>
+                    
                     <note>Please note: Once the player has been killed it is up to a leagues commissioner (admin) to give the appropriate award.</note>
                 </wanted>
                 
                 <!-- Subsection: Memorable matches -->
                 <memma>
+                    <view>View</view>
                     <desc>Which matches are worth remembering in terms of most TDs, killed and so on?</desc>
+                    <filled>More than X matches have the same record or no record exists at all.</filled>
+                    
+                    <!-- Most of... -->
+                    <td>Most touchdowns</td>
+                    <cp>Most completions</cp>
+                    <intcpt>Most interceptions</intcpt>
+                    <ki>Most killed</ki>
+                    <cas>Most casualties</cas>
+                    <svic>Largest score-difference</svic>
+                    <inc>Largest team income</inc>
+                    <gate>Largest gate</gate>
+                    
                 </memma>
             </records>
             
