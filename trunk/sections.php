@@ -203,7 +203,7 @@ function sec_main() {
                 
                 echo "<div class='boxBody'>\n";
                 
-                    $isLong = (strlen($e->message) > 300);
+                    $isLong = (strlen($e->message) > 300 && $e->type != 'msg');
                     echo "<div id='short$j'>";
                         echo substr($e->message, 0, 300)." ...&nbsp;<a href='javascript:void(0)' 
                             onclick=\"document.getElementById('long$j').style.display='block'; document.getElementById('short$j').style.display='none';\"
@@ -223,17 +223,17 @@ function sec_main() {
                     echo "<table class='boxTable'>\n";
                         echo "<tr>\n";
                             if ($e->type == 'match') {
-                                echo "<td align='left' width='100%'>Posted $e->date " . (isset($e->date_mod) ? "(last edited $e->date_mod) " : '') ."by $e->author</td>\n";
-                                echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>Show</a></td>\n";
+                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date " . (isset($e->date_mod) ? "(last edited $e->date_mod) " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
+                                echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>".$lng->getTrn('secs/home/show')."</a></td>\n";
                                 if ($e->hasPics) {
-                                    echo "<td align='right'><a href='handler.php?type=mg&amp;mid=$e->match_id'>Photos</a></td>\n";
+                                    echo "<td align='right'><a href='handler.php?type=mg&amp;mid=$e->match_id'>".$lng->getTrn('secs/home/photos')."</a></td>\n";
                                 }
                             }
                             elseif ($e->type == 'msg') {
-                                echo "<td align='left' width='100%'>Posted $e->date by $e->author</td>\n";
+                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 if (is_object($coach) && $coach->admin) {
-                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=edit&amp;msg_id=$e->msg_id', 'handler_msg', 'width=550,height=450');\">Edit</a></td>\n";
-                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=delete&amp;msg_id=$e->msg_id', 'handler_msg', 'width=250,height=250');\">Delete</a></td>\n";
+                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=edit&amp;msg_id=$e->msg_id', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
+                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=delete&amp;msg_id=$e->msg_id', 'handler_msg', 'width=250,height=250');\">".$lng->getTrn('secs/home/del')."</a></td>\n";
                                 }
                             }
                         ?>
@@ -551,7 +551,7 @@ function sec_fixturelist() {
         Show fixture list.
     */
     
-    title("Fixture list");
+    title($lng->getTrn('global/secLinks/fixtures'));
     
     echo $lng->getTrn('secs/fixtures/links')."<br><br>\n";
 
@@ -668,7 +668,7 @@ function sec_fixturelist() {
                             echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;&nbsp;";
                             
                             if (!$match->is_played && $t->type != TT_KNOCKOUT)
-                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id'>Delete</a>\n";
+                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id'>".$lng->getTrn('secs/fixtures/del')."</a>\n";
                         }
                     }
                     else {
@@ -715,9 +715,11 @@ function sec_fixturelist() {
 
 function sec_standings() {
 
-    title('Overall standings');
+    global $lng;
+    
+    title($lng->getTrn('global/secLinks/standings'));
 
-    echo "<i>Note</i>: Both tables below are sorted simultaneously.<br><br>\n";
+    echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
 
     $ELORanks = ELO::getRanks(false);
     $teams = Team::getTeams();
@@ -751,7 +753,7 @@ function sec_standings() {
     );
     
     sort_table(
-        'Overall standings', 
+        $lng->getTrn('secs/standings/tblTitle'), 
         'index.php?section=standings', 
         $teams, 
         $fields, 
@@ -772,7 +774,7 @@ function sec_standings() {
     );
     
     sort_table(
-        'Overall standings continued (team details)', 
+        $lng->getTrn('secs/standings/tblTitle2'), 
         'index.php?section=standings', 
         $teams, 
         $fields, 
@@ -791,7 +793,9 @@ function sec_standings() {
 function sec_teams() {
 
     /* Generates browsable list over all teams */
-    title('Teams');
+    
+    global $lng;
+    title($lng->getTrn('global/secLinks/teams'));
     disp_teams();
 }
 
@@ -803,9 +807,9 @@ function sec_teams() {
 
 function sec_players() {
 
-    title('Player standings');
-
-    global $settings;
+    global $settings, $lng;
+    
+    title($lng->getTrn('global/secLinks/players'));
 
     // Generate tournament selection form
     if (isset($_POST['tour_id'])) {
@@ -818,10 +822,10 @@ function sec_players() {
     
     <form method="POST">
     <select name="tour_id" onChange='this.form.submit();'>
-    <optgroup label="All">
+    <optgroup label="<?php echo $lng->getTrn('global/misc/all');?>">
         <option value="0">All tournaments</option>
     </optgroup>
-    <optgroup label="Specific">
+    <optgroup label="<?php echo $lng->getTrn('global/misc/specific');?>">
         <?php
         foreach (Tour::getTours() as $t) {
             if (!$t->empty) # Only if tournament contains matches.
@@ -871,7 +875,7 @@ function sec_players() {
     );
     
     sort_table(
-        'Player standings', 
+        $lng->getTrn('secs/players/tblTitle'), 
         'index.php?section=players', 
         $players, 
         $fields, 
@@ -881,7 +885,7 @@ function sec_players() {
     );
 
     ?>
-    Color descriptions:
+    <?php echo $lng->getTrn('secs/players/colors');?>:
     <ul>
         <li style='width: 4em;background-color:<?php echo COLOR_HTML_DEAD;?>;'>Dead</li>
         <li style='width: 4em;background-color:<?php echo COLOR_HTML_SOLD;?>;'>Sold</li>
@@ -897,6 +901,8 @@ function sec_players() {
 
 function sec_coaches() {
 
+    global $lng;
+
     /* 
         Specific coach page requested? 
     */
@@ -904,13 +910,13 @@ function sec_coaches() {
         is_object($c = new Coach($_GET['coach_id'])) && $c->setExtraStats()) {
         
         title("Coach $c->name");
-        echo "<center><a href='index.php?section=coaches'>[back]</a></center><br>\n";
+        echo "<center><a href='index.php?section=coaches'>[".$lng->getTrn('global/misc/back')."]</a></center><br>\n";
         
         ?>
         <table class='picAndText'>
             <tr>
-                <td class='light'><b>Picture of <?php echo $c->name; ?></b></td>
-                <td class='light'><b>About</b></td>
+                <td class='light'><b><?php echo $lng->getTrn('secs/coaches/pic');?> <?php echo $c->name; ?></b></td>
+                <td class='light'><b><?php echo $lng->getTrn('secs/coaches/about');?></b></td>
             </tr>
             <tr>
                 <td>
@@ -922,7 +928,7 @@ function sec_coaches() {
                     <?php
                     $txt = $c->getText(); 
                     if (empty($txt)) {
-                        $txt = "Nothing has yet been written about $c->name."; 
+                        $txt = $lng->getTrn('secs/coaches/nowrite')." $c->name."; 
                     }
                     echo '<p>'.$txt."</p>\n";
                     ?>
@@ -962,7 +968,7 @@ function sec_coaches() {
         );
         
         sort_table(
-            "$c->name's teams", 
+            $lng->getTrn('secs/coaches/teams'), 
             "index.php?section=coaches&amp;coach_id=$c->coach_id", 
             $c->teams, 
             $fields, 
@@ -996,7 +1002,7 @@ function sec_coaches() {
         );
         
         sort_table(
-            '<a name="played">Games played</a>', 
+            '<a name="played">'.$lng->getTrn('secs/coaches/played').'</a>', 
             "index.php?section=coaches&amp;coach_id=$c->coach_id", 
             $matches, 
             $fields, 
@@ -1019,15 +1025,15 @@ function sec_coaches() {
     $tour_id = isset($_SESSION['trid_coaches']) ? $_SESSION['trid_coaches'] : false;
     $TOUR = (bool) $tour_id;
 
-    title("Coaches");
+    title($lng->getTrn('global/secLinks/coaches'));
     ?>
     
     <form method="POST">
     <select name="tour_id" onChange='this.form.submit();'>
-    <optgroup label="All">
+    <optgroup label="<?php echo $lng->getTrn('global/misc/all');?>">
         <option value="0">All tournaments</option>
     </optgroup>
-    <optgroup label="Specific">
+    <optgroup label="<?php echo $lng->getTrn('global/misc/specific');?>">
         <?php
         foreach (Tour::getTours() as $t) {
             if (!$t->empty) # Only if tournament contains matches.
@@ -1078,7 +1084,7 @@ function sec_coaches() {
     }
     
     sort_table(
-        'Coach standings', 
+        $lng->getTrn('secs/coaches/tblTitle'), 
         $lnk, 
         $coaches, 
         $fields, 
@@ -1095,7 +1101,7 @@ function sec_coaches() {
 
 function sec_races() {
 
-    global $DEA;
+    global $DEA, $lng;
 
     /* 
         This function can do two things:
@@ -1144,7 +1150,7 @@ function sec_races() {
             'qty'       => array('desc' => 'Max.'), 
         );
         sort_table(
-            "$r players", 
+            "$r ".$lng->getTrn('secs/races/players'), 
             "index.php?section=races&amp;race=$r",
             $players, 
             $fields, 
@@ -1185,7 +1191,7 @@ function sec_races() {
         );
         
         sort_table(
-            "<a name='teams'>$r teams</a>", 
+            "<a name='teams'>$r ".$lng->getTrn('secs/races/teams')."</a>", 
             "index.php?section=races&amp;race=$r",
             $teams, 
             $fields, 
@@ -1199,7 +1205,7 @@ function sec_races() {
     }
 
     // No specific race view was requested:
-    title('Races');    
+    title($lng->getTrn('global/secLinks/races'));    
 
     $races = array();
     foreach ($DEA as $r => $desc) {
@@ -1226,7 +1232,7 @@ function sec_races() {
     );
     
     sort_table(
-        'Race standings', 
+        $lng->getTrn('secs/races/tblTitle'), 
         'index.php?section=races', 
         $races, 
         $fields, 
@@ -1244,13 +1250,13 @@ function sec_races() {
 
 function sec_stars() {
 
-    global $stars;
+    global $stars, $lng;
 
     if (isset($_GET['sid'])) {
         $mdat = array();
         $s = new Star($_GET['sid']);
-        title("Hire history of $s->name");
-        echo '<center><a href="index.php?section=stars">[back]</a></center><br><br>';
+        title($lng->getTrn('secs/stars/hh')." $s->name");
+        echo '<center><a href="index.php?section=stars">['.$lng->getTrn('global/misc/back').']</a></center><br><br>';
         foreach ($s->getHireHistory(false, false, false) as $m) {
             $o = (object) array();
             foreach (array('match_id', 'date_played', 'hiredByName', 'hiredAgainstName') as $k) {
@@ -1281,7 +1287,7 @@ function sec_stars() {
             'spp'    => array('desc' => 'SPP'),
         );
         sort_table(
-            "$s->name's hire history", 
+            $lng->getTrn('secs/stars/hh')." $s->name", 
             'index.php?section=stars&amp;sid='.$s->star_id, 
             $mdat, 
             $fields, 
@@ -1299,18 +1305,18 @@ function sec_stars() {
     $tour_id = isset($_SESSION['trid_stars']) ? $_SESSION['trid_stars'] : false;
     $TOUR = (bool) $tour_id;
 
-    title("Star players");
+    title($lng->getTrn('global/secLinks/stars'));
     
-    echo "<i>Note:</i> Both tables below are sorted simultaneously.<br>\n";
-    echo "<i>Note:</i> <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.<br><br>\n";
+    echo $lng->getTrn('global/sortTbl/simul')."<br>\n";
+    echo $lng->getTrn('global/sortTbl/spp')."<br><br>\n";
     ?>
     
     <form method="POST">
     <select name="tour_id" onChange='this.form.submit();'>
-    <optgroup label="All">
+    <optgroup label="<?php echo $lng->getTrn('global/misc/all');?>">
         <option value="0">All tournaments</option>
     </optgroup>
-    <optgroup label="Specific">
+    <optgroup label="<?php echo $lng->getTrn('global/misc/specific');?>">
         <?php
         foreach (Tour::getTours() as $t) {
             if (!$t->empty) # Only if tournament contains matches.
@@ -1359,7 +1365,7 @@ function sec_stars() {
     );
     
     sort_table(
-        'Star standings (1 of 2)', 
+        $lng->getTrn('secs/stars/tblTitle'), 
         'index.php?section=stars', 
         $stars, 
         $fields, 
@@ -1375,7 +1381,7 @@ function sec_stars() {
     );
     
     sort_table(
-        '<a name="s2">Star standings (2 of 2)</a>', 
+        '<a name="s2">'.$lng->getTrn('secs/stars/tblTitle2').'</a>', 
         'index.php?section=stars', 
         $stars, 
         $fields, 
@@ -1393,9 +1399,11 @@ function sec_stars() {
 
 function sec_records() {
 
+    global $lng;
+
     $c = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
     $ALLOW_EDIT = (is_object($c) && $c->admin) ? true : false;
-    $subsecs = array('hof' => 'Hall of fame', 'wanted' => 'Wanted players', 'memm' => 'Memorable matches');
+    $subsecs = array('hof' => $lng->getTrn('secs/records/d_hof'), 'wanted' => $lng->getTrn('secs/records/d_wanted'), 'memm' => $lng->getTrn('secs/records/d_memma'));
 
     // This section's routines are placed in the records.php file.
     if (isset($_GET['subsec'])) {
@@ -1417,9 +1425,9 @@ function sec_records() {
         return;
     }
     
-    title("Records");
+    title($lng->getTrn('global/secLinks/records'));
     
-    echo "Please select one of the below pages.<br><br>\n";
+    echo $lng->getTrn('secs/records/menu')."<br><br>\n";
     foreach ($subsecs as $a => $b) {
         echo "<a href='index.php?section=records&amp;subsec=$a'><b>$b</b></a><br>\n";
     }
@@ -1680,7 +1688,7 @@ function sec_about() {
             <li> <a href="mailto:njustesen@gmail.com">Niels Orsleff Justesen</a>
             <li> <a href="mailto:nicholas.rathmann@gmail.com">Nicholas Mossor Rathmann</a>
         </ul>
-        With special thanks to <?php echo implode(', ', $credits); ?>.<br><br>
+        With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
         Bugs reports and suggestions are welcome.
         <br>
         OBBLM consists of valid HTML 4.01 transitional document type pages.
