@@ -482,9 +482,9 @@ function match_form($match_id) {
             <tr>
             	<td>
             		<?php echo $lng->getTrn('secs/fixtures/report/newCmt');?>:<br>
-            		<textarea name="msmrc" rows='5' cols='100' <?php if (is_object($coach)) echo $DIS;?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
+            		<textarea name="msmrc" rows='5' cols='100' <?php if (!is_object($coach)) echo 'DISABLED';?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
             		<br>
-            		<input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php if (is_object($coach)) echo $DIS;?>>
+            		<input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php if (!is_object($coach)) echo 'DISABLED';?>>
             	</td>
             </tr>
     	</table>
