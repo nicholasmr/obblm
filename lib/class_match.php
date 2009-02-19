@@ -527,7 +527,7 @@ class Match
         $m = array();
          
         $query = "SELECT match_id FROM matches 
-            WHERE date_played IS NOT NULL 
+            WHERE date_played IS NOT NULL AND match_id > 0 
             ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
         $result = mysql_query($query);
         

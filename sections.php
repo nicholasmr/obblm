@@ -112,6 +112,7 @@ function sec_main() {
         $o->date_mod  = $r->date_modified;
         $o->match_id  = $r->match_id;
         $o->hasPics   = !empty($pics);
+        $o->comments  = MSMRC::getComments($r->match_id);
         // General fields:
         $o->type      = 'match';
         $o->author    = get_alt_col('coaches', 'coach_id', $r->submitter_id, 'name');
@@ -225,6 +226,7 @@ function sec_main() {
                             if ($e->type == 'match') {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date " . (isset($e->date_mod) ? "(last edited $e->date_mod) " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>".$lng->getTrn('secs/home/show')."</a></td>\n";
+                                echo "<td align='right'><a href='javascript:void(0)' onclick=\"obj=document.getElementById('comment$e->match_id'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
                                 if ($e->hasPics) {
                                     echo "<td align='right'><a href='handler.php?type=mg&amp;mid=$e->match_id'>".$lng->getTrn('secs/home/photos')."</a></td>\n";
                                 }
@@ -239,6 +241,20 @@ function sec_main() {
                         ?>
                         </tr>
                     </table>
+                    <?php
+                    if ($e->type == 'match' && !empty($e->comments)) {
+                    	echo "<div id='comment$e->match_id'>\n";
+                    	echo "<hr>\n";
+                    	foreach ($e->comments as $c) {
+                    		echo "<br>Posted $c->date by ".get_alt_col('coaches', 'coach_id', $c->sid, 'name').":<br>\n";
+                    		echo $c->txt."<br>\n";
+                    	}
+                    	echo "</div>";
+	                    echo "<script language='JavaScript' type='text/javascript'>
+	                    	document.getElementById('comment$e->match_id').style.display = 'none';
+	                    </script>\n";
+                    }
+                    ?>
                 </div>
             </div>
             <?php

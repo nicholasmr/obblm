@@ -73,6 +73,7 @@
                 <edit>Edit</edit>
                 <show>Show</show>
                 <photos>Photos</photos>
+                <comments>Comments</comments>
                 <posted>Posted</posted>
                 <by>by</by>
                 
@@ -153,6 +154,12 @@
                         <pnote>
                         <![CDATA[<i>Note:</i> uploading in photo numbers already occupied will overwrite the current photo in that position.]]>
                         </pnote>
+                	<msmrc>Match comment(s)</msmrc>
+                		<existCmt>Existing comment(s)</existCmt>
+                		<newCmt>New comment</newCmt>
+                		<writeNewCmt>Write your new comment here</writeNewCmt>
+                		<postCmt>Post comment</postCmt>
+                		<none>None</none>
                 </report>
                 
             </fixtures>
