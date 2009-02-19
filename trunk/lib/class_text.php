@@ -495,4 +495,62 @@ class SiteLog extends Text
     }
 }
 
+/* 
+ *  Match summary comments
+ */
+
+class MSMRC extends Text
+{
+    /***************
+     * Properties 
+     ***************/
+
+    public $cid = 0; // Comment ID.
+    public $mid = 0; // ID of match to which this summary comment belongs to.
+    public $sid = 0; // Submitter's ID.
+    public $txt = '';
+
+    /***************
+     * Methods 
+     ***************/    
+
+    function __construct($cid) 
+    {
+		parent::__construct($cid);
+		$this->cid = $cid;
+		$this->mid = $this->f_id;
+		$this->sid = (int) $this->txt2; // NOTE: The submitter's ID is stored in a text field type!
+    }
+    
+    /***************
+     * Statics
+     ***************/
+     
+    public static function matchHasComments($mid)
+    {
+    	$query = "SELECT COUNT(*) AS 'cnt' FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC;
+        $result = mysql_query($query);
+        $row = mysql_fetch_assoc($result);
+   		return ((int) $row['cnt'] > 0);
+    }
+    
+    public static function getComments($mid, $sort = '-')
+    {
+    	$c = array();
+        $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC.' ORDER BY date '.(($sort == '-') ? 'DESC' : 'ASC');
+        $result = mysql_query($query);
+        if ($result && mysql_num_rows($result) > 0) {
+        	while ($row = mysql_fetch_assoc($result)) {
+            	array_push($c, new MSMRC($row['txt_id']));
+        	}
+        }    	
+    	return $c;	
+    }
+    
+    public static function create($mid, $sid, $txt)
+    {
+        return parent::create($mid, T_TEXT_MSMRC, $txt, $sid);
+    }
+}
+
 ?>
