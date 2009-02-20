@@ -508,6 +508,7 @@ class MSMRC extends Text
     public $cid = 0; // Comment ID.
     public $mid = 0; // ID of match to which this summary comment belongs to.
     public $sid = 0; // Submitter's ID.
+    public $sname = ''; // Submitter's name.
     public $txt = '';
 
     /***************
@@ -516,10 +517,13 @@ class MSMRC extends Text
 
     function __construct($cid) 
     {
-		parent::__construct($cid);
-		$this->cid = $cid;
-		$this->mid = $this->f_id;
-		$this->sid = (int) $this->txt2; // NOTE: The submitter's ID is stored in a text field type!
+        parent::__construct($cid);
+        $this->cid = $cid;
+        $this->mid = $this->f_id;
+        $this->sid = (int) $this->txt2; // NOTE: The submitter's ID is stored in a text field type!
+        $this->sname = get_alt_col('coaches', 'coach_id', $this->sid, 'name');
+        
+        return true;
     }
     
     /***************
@@ -528,23 +532,23 @@ class MSMRC extends Text
      
     public static function matchHasComments($mid)
     {
-    	$query = "SELECT COUNT(*) AS 'cnt' FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC;
+        $query = "SELECT COUNT(*) AS 'cnt' FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC;
         $result = mysql_query($query);
         $row = mysql_fetch_assoc($result);
-   		return ((int) $row['cnt'] > 0);
+        return ((int) $row['cnt'] > 0);
     }
     
     public static function getComments($mid, $sort = '-')
     {
-    	$c = array();
+        $c = array();
         $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC.' ORDER BY date '.(($sort == '-') ? 'DESC' : 'ASC');
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
-        	while ($row = mysql_fetch_assoc($result)) {
-            	array_push($c, new MSMRC($row['txt_id']));
-        	}
-        }    	
-    	return $c;	
+            while ($row = mysql_fetch_assoc($result)) {
+                array_push($c, new MSMRC($row['txt_id']));
+            }
+        }
+        return $c;
     }
     
     public static function create($mid, $sid, $txt)

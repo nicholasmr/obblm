@@ -107,7 +107,19 @@ function setup_tables() {
                 rerolls             MEDIUMINT UNSIGNED,
                 fan_factor          MEDIUMINT UNSIGNED,
                 ass_coaches         MEDIUMINT UNSIGNED,
-                cheerleaders        MEDIUMINT UNSIGNED
+                cheerleaders        MEDIUMINT UNSIGNED,
+                imported            BOOLEAN NOT NULL DEFAULT 0,
+                won_0               SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                lost_0              SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                draw_0              SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                sw_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                sl_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                sd_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                wt_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                gf_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                ga_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                tcas_0              SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                elo_0               SMALLINT UNSIGNED NOT NULL DEFAULT 0
                 )';
     mk_table($query, 'teams');
 

@@ -233,6 +233,24 @@ class Tour
             return false;
         }
     }
+    
+    public function rename($name) {
+    
+        /**
+         * Rename tournament title.
+         **/
+    
+        return (mysql_query("UPDATE tours SET name = '" . mysql_real_escape_string($name) . "' WHERE tour_id = $this->tour_id"));
+    }
+
+    public function chType($type) {
+    
+        /**
+         * Rename tournament title.
+         **/
+    
+        return (mysql_query("UPDATE tours SET type = $type WHERE tour_id = $this->tour_id"));
+    }
 
     public function chRS($rs) {
     

@@ -50,7 +50,7 @@ class Match
     public $smp2            = 0;
     public $tcas1           = 0; // Team cas 1
     public $tcas2           = 0; // Team cas 2
-    public $comment         = '';
+    public $comment         = ''; // Summary, not match comment.
     
     // Other
     public $team1_name  = '';
@@ -482,6 +482,18 @@ class Match
 
         $txt = new MSMR($this->match_id);
         return $txt->txt;
+    }
+    
+    public function hasComments() {
+        return MSMRC::matchHasComments($this->match_id);
+    }
+
+    public function getComments() {
+        return MSMRC::getComments($this->match_id, '-');
+    }
+    
+    public function newComment($sid, $txt) {
+        return MSMRC::create($this->match_id, $sid, $txt);
     }
     
     public function savePics() {

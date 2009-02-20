@@ -32,6 +32,9 @@ session_start();
 error_reporting(E_ALL);
 require('header.php'); // Includes and constants.
 
+if (!is_writable(IMG))
+    fatal('Sorry. OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
+
 /********************
  *   Main routine
  ********************/
