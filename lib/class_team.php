@@ -37,9 +37,24 @@ class Team
     public $rerolls           = 0;
     public $ass_coaches       = 0;
     public $cheerleaders      = 0;
+    public $imported          = false;
+
     public $coach_name        = '';
     private $_bought_fan_factor = 0;
-
+    
+    // MySQL stored initials for imported teams
+    public $won_0  = 0;
+    public $lost_0 = 0;
+    public $draw_0 = 0;
+    public $sw_0   = 0;
+    public $sl_0   = 0;
+    public $sd_0   = 0;
+    public $wt_0   = 0;
+    public $gf_0   = 0;
+    public $ga_0   = 0;
+    public $elo_0  = 0;
+    public $tcas_0 = 0;
+    
     // General (total) calcualted fields
     public $mvp         = 0;
     public $cp          = 0;
@@ -48,7 +63,7 @@ class Team
     public $bh          = 0;
     public $si          = 0;
     public $ki          = 0;
-    public $cas         = 0; // bh+ki+si
+    public $cas         = 0; // Sum of players' bh+ki+si.
     public $tdcas       = 0; // Is td+cas. Used by some ranking systems.
     public $spp         = 0; // Summed up SPPs.
     //-------------------
@@ -100,6 +115,7 @@ class Team
 
         $this->coach_name = get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'name');
         $this->_bought_fan_factor = $this->fan_factor;
+        $this->imported = ($this->imported == 1); // Make boolean.
         $this->setStats(false);
         $this->setValue();
         
@@ -117,6 +133,21 @@ class Team
         }
 
         $this->fan_factor += $this->_bought_fan_factor;
+        
+        // Import fields
+        if ($this->imported) {
+            $this->won            += $this->won_0;
+            $this->lost           += $this->lost_0;
+            $this->draw           += $this->draw_0;
+            $this->played         += $this->won_0 + $this->lost_0 + $this->draw_0;
+            $this->score_team     += $this->gf_0;
+            $this->score_opponent += $this->ga_0;
+            $this->tcas           += $this->tcas_0;
+            # Corrections:
+            $this->score_diff     = $this->score_team - $this->score_opponent;
+            $this->win_percentage = ($this->played == 0) ? 0 : 100*$this->won/$this->played;
+        }
+        
 
         return true;
     }
@@ -127,7 +158,7 @@ class Team
          * Set extra team stats.
          **/
     
-        $this->won_tours = count($this->getWonTours());
+        $this->won_tours = (($this->imported) ? $this->wt_0 : 0) + count($this->getWonTours());
         
         return true;
     }
@@ -140,6 +171,13 @@ class Team
 
         foreach (Stats::getStreaks(STATS_TEAM, $this->team_id, $trid) as $key => $val) {
             $this->$key = $val;
+        }
+
+        // Import fields
+        if ($this->imported) {
+            if ($this->row_won < $this->sw_0)  $this->row_won  = $this->sw_0;
+            if ($this->row_lost < $this->sl_0) $this->row_lost = $this->sl_0;
+            if ($this->row_draw < $this->sd_0) $this->row_draw = $this->sd_0;
         }
 
         return true;
@@ -661,7 +699,7 @@ class Team
         return $d;
     }
 
-    public static function create(array $input) {
+    public static function create(array $input, $init = array()) {
     
         /**
          * Creates a new team.
@@ -698,6 +736,22 @@ class Team
                         fan_factor,
                         ass_coaches,
                         cheerleaders
+                        ".((!empty($init)) 
+                            ? 
+                                ",won_0,
+                                lost_0,
+                                draw_0,
+                                sw_0,
+                                sl_0,
+                                sd_0,
+                                wt_0,
+                                gf_0,
+                                ga_0,
+                                elo_0,
+                                tcas_0,
+                                imported"
+                            : ''
+                        )."
                     )
                     VALUES
                     (
@@ -710,12 +764,25 @@ class Team
                         $rules[initial_fan_factor],
                         $rules[initial_ass_coaches],
                         $rules[initial_cheerleaders]
+                        ".((!empty($init)) 
+                            ? 
+                                ",$init[won],
+                                $init[lost],
+                                $init[draw],
+                                $init[sw],
+                                $init[sl],
+                                $init[sd],
+                                $init[wt],
+                                $init[gf],
+                                $init[ga],
+                                $init[elo],
+                                $init[tcas],
+                                1"
+                            : ''
+                        )."
                     )";
 
-        if (mysql_query($query))
-            return true;
-        else
-            return false;
+        return (mysql_query($query));
     }
 }
 ?>

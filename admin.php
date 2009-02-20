@@ -43,7 +43,7 @@ function sec_admin() {
         <a href="index.php?section=admin&amp;subsec=usrman">User management</a>&nbsp;&nbsp;&nbsp;
         <a href="index.php?section=admin&amp;subsec=tournament">Schedule matches</a>&nbsp;&nbsp;&nbsp;
         <a href="index.php?section=admin&amp;subsec=import">Import team</a>&nbsp;&nbsp;&nbsp;
-        <a href="index.php?section=admin&amp;subsec=chrs">Change tour RS</a>&nbsp;&nbsp;&nbsp;
+        <a href="index.php?section=admin&amp;subsec=chtr">Change tournament</a>&nbsp;&nbsp;&nbsp;
         <a href="index.php?section=admin&amp;subsec=log">Log</a>&nbsp;&nbsp;&nbsp;
         <hr>
     </div>
@@ -354,7 +354,8 @@ function sec_admin() {
         // Input sent?
         if (isset($_POST['button'])) {
 
-            $in = array('coach', 'name', 'race', 'treasury', 'apothecary', 'rerolls', 'fan_factor', 'ass_coaches', 'cheerleaders', 'players');
+            $in = array('coach', 'name', 'race', 'treasury', 'apothecary', 'rerolls', 'fan_factor', 'ass_coaches', 'cheerleaders', 'players',
+                'won_0', 'lost_0', 'draw_0', 'sw_0', 'sl_0', 'sd_0', 'wt_0', 'gf_0', 'ga_0', 'tcas_0', 'elo_0');
             $inputType = (isset($_FILES['xmlfile'])) ? XML : HTML;
             
             // Is input given as XML file? If so, make it appear as if it was submitted via the HTML import page (POST).
@@ -428,7 +429,10 @@ function sec_admin() {
             }
             
             // If received input was valid, then create the team.
-            if (!$err && Team::create(array('coach_id' => $_POST['coach'], 'name' => $_POST['name'], 'race' => $_POST['race']))) {
+            if (!$err && Team::create(
+                array('coach_id' => $_POST['coach'], 'name' => $_POST['name'], 'race' => $_POST['race']),
+                array('won' => $_POST['won_0'], 'lost' => $_POST['lost_0'], 'draw' => $_POST['draw_0'], 'sw' => $_POST['sw_0'], 'sl' => $_POST['sl_0'], 'sd' => $_POST['sd_0'], 'wt' => $_POST['wt_0'], 'gf' => $_POST['gf_0'], 'ga' => $_POST['ga_0'], 'tcas' => $_POST['tcas_0'], 'elo' => $_POST['elo_0'])
+                )) {
                 status(true, 'Team created.');
                 
                 // Now lets correct team properties to fit the requested.
@@ -656,6 +660,40 @@ function sec_admin() {
                     </td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <td><b>Won matches</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Lost matches</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Draw matches</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Largest win streak</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Largest lose streak</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Largest draw streak</b>&nbsp;&nbsp;&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="won_0"  size="4" maxlength="10" value="<?php echo ($err) ? $_POST['won_0'] : '0';?>"></td>
+                    <td><input type="text" name="lost_0" size="4" maxlength="10" value="<?php echo ($err) ? $_POST['lost_0'] : '0';?>"></td>
+                    <td><input type="text" name="draw_0" size="4" maxlength="10" value="<?php echo ($err) ? $_POST['draw_0'] : '0';?>"></td>
+                    <td><input type="text" name="sw_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['sw_0'] : '0';?>"></td>
+                    <td><input type="text" name="sl_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['sl_0'] : '0';?>"></td>
+                    <td><input type="text" name="sd_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['sd_0'] : '0';?>"></td>
+                </tr>
+                <tr>
+                    <td><b>Tournaments won</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Goals by team</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Goals against team</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Total team cas</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td><b>Team's current ELO</b>&nbsp;&nbsp;&nbsp;</td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="wt_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['wt_0'] : '0';?>"></td>
+                    <td><input type="text" name="gf_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['gf_0'] : '0';?>"></td>
+                    <td><input type="text" name="ga_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['ga_0'] : '0';?>"></td>
+                    <td><input type="text" name="tcas_0" size="4" maxlength="10" value="<?php echo ($err) ? $_POST['tcas_0'] : '0';?>"></td>
+                    <td><input type="text" name="elo_0"  size="4" maxlength="10" value="<?php echo ($err) ? $_POST['elo_0'] : '0';?>"></td>
+                    <td> </td>
+                </tr>
+            </table>
                     
             <br>
             <b>Players:</b>
@@ -702,19 +740,20 @@ function sec_admin() {
         </script>
         <?php
     }
-    elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'chrs') {
+    elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'chtr') {
 
-        if (isset($_POST['trid']) && isset($_POST['rs'])) {
+        if (isset($_POST['trid'])) {
             $t = new Tour($_POST['trid']);
-            status($t->chRS($_POST['rs']));
+            status($t->chRS($_POST['rs']) && $t->chType($_POST['type']) && $t->rename($_POST['tname']));
         }
 
-        title('Change tournament ranking system');
+        title('Change tournament details');
+        $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value = e['trid'].options[e['trid'].selectedIndex].text;";
         
         ?>
-        <form method="POST">
+        <form id='tourForm' method="POST">
             <b>Tournament:</b><br>
-            <select name="trid">
+            <select name="trid" onChange="<?php echo $nameChangeJScode;?>">
                 <?php
                 foreach (Tour::getTours() as $t) {
                     echo "<option value='$t->tour_id'>$t->name</option>\n";
@@ -723,7 +762,15 @@ function sec_admin() {
             </select>
 
             <br><br>
-            <b>New ranking system:</b> (the prefixes + and - specify least of and most of)<br>
+            <b>Name:</b><br>
+            <input type='text' name='tname' length='20' value=''>
+
+            <script language="JavaScript" type="text/javascript">
+                <?php echo $nameChangeJScode;?>
+            </script>
+
+            <br><br>
+            <b>Ranking system:</b> (the prefixes + and - specify least of and most of)<br>
             <select name='rs'>
             <?php
             foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
@@ -736,8 +783,17 @@ function sec_admin() {
             }
             ?>
             </select>
+           
             <br><br>
-            <input type="submit" value="Change ranking system">
+            <b>Tournament type:</b> Warning: Use this feature with caution (!!!). Please don't use it to convert K.O. tours!<br>
+            <input type="radio" name="type" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
+            <input type="radio" name="type" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
+            <input type="radio" name="type" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
+            <input type="radio" name="type" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
+            <input type="radio" name="type" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
+            <br><br>
+           
+            <input type="submit" value="Submit changes">
         </form>
         <?php
     }

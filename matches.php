@@ -44,7 +44,6 @@ function match_form($match_id) {
     // Create objects
     $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null;
     $m = new Match($match_id);
-    $msmrc = MSMRC::getComments($match_id); // Match summary comments.
     $team1 = new Team($m->team1_id);
     $team2 = new Team($m->team2_id);
     
@@ -193,8 +192,7 @@ function match_form($match_id) {
     
     // Match comment made?
     if (isset($_POST['msmrc']) && is_object($coach)) {
-    	status(MSMRC::create($match_id, $coach->coach_id, $_POST['msmrc']));
-    	$msmrc = MSMRC::getComments($match_id); // Update match summary comments to newest (contaning new entry too).
+        status($m->newComment($coach->coach_id, $_POST['msmrc']));
     }
 
     /****************
@@ -459,39 +457,42 @@ function match_form($match_id) {
         </center>
     </form>
     <br><br>
+    <?php
+    $CDIS = (!is_object($coach)) ? 'DISABLED' : '';
+    ?>
     <form method="POST">
-    	<table class="match_form">
+        <table class="match_form">
             <tr>
                 <td colspan='13' class='dark'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('secs/fixtures/report/msmrc');?></b></td>
             </tr>
-    	    <tr>
+            <tr>
                 <td class='seperator'></td>
             </tr>
             <tr>
-            	<td>
-            		<div id="msmrc">
-            			<?php echo $lng->getTrn('secs/fixtures/report/existCmt');?>: <?php if (empty($msmrc)) echo '<i>'.$lng->getTrn('secs/fixtures/report/none').'</i>';?><br><br>
-            			<?php
-            			foreach ($msmrc as $c) {
-            				echo 'Posted '.$c->date.' by <b>'.get_alt_col('coaches', 'coach_id', $c->sid, 'name').'</b>:<br>'.$c->txt."<br><br>\n";
-            			}
-            			?>
-            		</div>
-            	</td>
+                <td>
+                    <div id="msmrc">
+                        <?php echo $lng->getTrn('secs/fixtures/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('secs/fixtures/report/none').'</i>';?><br><br>
+                        <?php
+                        foreach ($m->getComments() as $c) {
+                            echo "Posted $c->date by <b>$c->sname</b>:<br>".$c->txt."<br><br>\n";
+                        }
+                        ?>
+                    </div>
+                </td>
             </tr>
             <tr>
-            	<td>
-            		<?php echo $lng->getTrn('secs/fixtures/report/newCmt');?>:<br>
-            		<textarea name="msmrc" rows='5' cols='100' <?php if (!is_object($coach)) echo 'DISABLED';?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
-            		<br>
-            		<input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php if (!is_object($coach)) echo 'DISABLED';?>>
-            	</td>
+                <td>
+                    <?php echo $lng->getTrn('secs/fixtures/report/newCmt');?>:<br>
+                    <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
+                    <br>
+                    <input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php echo $CDIS;?>>
+                </td>
             </tr>
-    	</table>
+        </table>
     </form>
-  	<script language='JavaScript' type='text/javascript'>
-  		document.getElementById('msmrc').style.display = 'none';
-  	</script>
+    <script language='JavaScript' type='text/javascript'>
+        document.getElementById('msmrc').style.display = 'none';
+    </script>
     <?php
     
     /* 

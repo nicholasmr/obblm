@@ -112,7 +112,7 @@ function sec_main() {
         $o->date_mod  = $r->date_modified;
         $o->match_id  = $r->match_id;
         $o->hasPics   = !empty($pics);
-        $o->comments  = MSMRC::getComments($r->match_id);
+        $o->comments  = $r->getComments();
         // General fields:
         $o->type      = 'match';
         $o->author    = get_alt_col('coaches', 'coach_id', $r->submitter_id, 'name');
@@ -226,7 +226,9 @@ function sec_main() {
                             if ($e->type == 'match') {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date " . (isset($e->date_mod) ? "(last edited $e->date_mod) " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>".$lng->getTrn('secs/home/show')."</a></td>\n";
-                                echo "<td align='right'><a href='javascript:void(0)' onclick=\"obj=document.getElementById('comment$e->match_id'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
+                                if (!empty($e->comments)) {
+                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"obj=document.getElementById('comment$e->match_id'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
+                                }
                                 if ($e->hasPics) {
                                     echo "<td align='right'><a href='handler.php?type=mg&amp;mid=$e->match_id'>".$lng->getTrn('secs/home/photos')."</a></td>\n";
                                 }
@@ -243,16 +245,16 @@ function sec_main() {
                     </table>
                     <?php
                     if ($e->type == 'match' && !empty($e->comments)) {
-                    	echo "<div id='comment$e->match_id'>\n";
-                    	echo "<hr>\n";
-                    	foreach ($e->comments as $c) {
-                    		echo "<br>Posted $c->date by ".get_alt_col('coaches', 'coach_id', $c->sid, 'name').":<br>\n";
-                    		echo $c->txt."<br>\n";
-                    	}
-                    	echo "</div>";
-	                    echo "<script language='JavaScript' type='text/javascript'>
-	                    	document.getElementById('comment$e->match_id').style.display = 'none';
-	                    </script>\n";
+                        echo "<div id='comment$e->match_id'>\n";
+                        echo "<hr>\n";
+                        foreach ($e->comments as $c) {
+                            echo "<br>Posted $c->date by $c->sname:<br>\n";
+                            echo $c->txt."<br>\n";
+                        }
+                        echo "</div>";
+                        echo "<script language='JavaScript' type='text/javascript'>
+                            document.getElementById('comment$e->match_id').style.display = 'none';
+                        </script>\n";
                     }
                     ?>
                 </div>
@@ -477,7 +479,7 @@ function sec_fixturelist() {
         
         echo "<b>".$lng->getTrn('secs/fixtures/stn/type')."</b>: $type<br>\n";
         echo "<b>".$lng->getTrn('secs/fixtures/stn/rs')."</b>: $tour->rs = ".$tour->getRSSortRule(true)
-            .((is_object($coach) && $coach->admin) ? "&nbsp;&nbsp;&nbsp;<a href='index.php?section=admin&amp;subsec=chrs'>[".$lng->getTrn('global/misc/change')."]</a>" : '').
+            .((is_object($coach) && $coach->admin) ? "&nbsp;&nbsp;&nbsp;<a href='index.php?section=admin&amp;subsec=chtr'>[".$lng->getTrn('global/misc/change')."]</a>" : '').
             "<br><br>\n";
 
         $teams = $tour->getStandings();
@@ -732,17 +734,25 @@ function sec_fixturelist() {
 function sec_standings() {
 
     global $lng;
+    $PMS = (isset($_GET['pms']) && $_GET['pms']); // Per match stats?
     
     title($lng->getTrn('global/secLinks/standings'));
 
     echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
+    echo '<a href="index.php?section=standings&amp;pms='.(($PMS) ? 0 : 1).'"><b>['.$lng->getTrn('global/misc/'.(($PMS) ? 'oas' : 'pms'))."]</b></a><br><br>\n";
 
     $ELORanks = ELO::getRanks(false);
     $teams = Team::getTeams();
     foreach ($teams as $t) {
         $t->setExtraStats();
         $t->setStreaks(false);
-        $t->elo = $ELORanks[$t->team_id];
+        $t->elo = $ELORanks[$t->team_id] + $t->elo_0;
+        
+        if ($PMS) {
+            foreach (array('score_team', 'score_opponent', 'tcas', 'td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki') as $f) {
+                $t->$f /= ($t->played == 0) ? 1 : $t->played;
+            }
+        }
     }
     
     $fields = array(
@@ -759,6 +769,7 @@ function sec_standings() {
         'score_team'        => array('desc' => 'GF'),
         'score_opponent'    => array('desc' => 'GA'),
         'won_tours'         => array('desc' => 'WT'), 
+        'tcas'              => array('desc' => 'tcas'),         
         'td'                => array('desc' => 'Td'), 
         'cp'                => array('desc' => 'Cp'), 
         'intcpt'            => array('desc' => 'Int'), 
@@ -770,7 +781,7 @@ function sec_standings() {
     
     sort_table(
         $lng->getTrn('secs/standings/tblTitle'), 
-        'index.php?section=standings', 
+        'index.php?section=standings'.(($PMS)? '&amp;pms=1' : ''), 
         $teams, 
         $fields, 
         sort_rule('team'), 
@@ -854,6 +865,9 @@ function sec_players() {
     <br>
     <?php
     
+    $PMS = (isset($_GET['pms']) && $_GET['pms']); // Per match stats?
+    echo '<a href="index.php?section=players&amp;pms='.(($PMS) ? 0 : 1).'"><b>['.$lng->getTrn('global/misc/'.(($PMS) ? 'oas' : 'pms'))."]</b></a><br><br>\n";
+    
     // Print table.
     $players = Player::getPlayers();
     foreach ($players as $p) {
@@ -864,6 +878,12 @@ function sec_players() {
         if ($tour_id) {
             $p->setStats($tour_id);
             $p->value = '-';
+        }
+        
+        if ($PMS) {
+            foreach (array('td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'mvp') as $f) {
+                $p->$f /= ($p->played == 0) ? 1 : $p->played;
+            }
         }
     }
     
@@ -892,7 +912,7 @@ function sec_players() {
     
     sort_table(
         $lng->getTrn('secs/players/tblTitle'), 
-        'index.php?section=players', 
+        'index.php?section=players'.(($PMS)? '&amp;pms=1' : ''), 
         $players, 
         $fields, 
         sort_rule('player_overall'), 
@@ -1062,11 +1082,20 @@ function sec_coaches() {
     <br>
     <?php
 
+    $PMS = (isset($_GET['pms']) && $_GET['pms']); // Per match stats?
+    echo '<a href="index.php?section=coaches&amp;pms='.(($PMS) ? 0 : 1).'"><b>['.$lng->getTrn('global/misc/'.(($PMS) ? 'oas' : 'pms'))."]</b></a><br><br>\n";
+
     $coaches = Coach::getCoaches();
     foreach ($coaches as $c) {
         $c->setStats($tour_id);
         $c->setExtraStats();
         $c->setStreaks($tour_id);
+        
+        if ($PMS) {
+            foreach (array('score_team', 'score_opponent', 'td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki') as $f) {
+                $c->$f /= ($c->played == 0) ? 1 : $c->played;
+            }
+        }
     }
 
     $lnk = 'index.php?section=coaches';
@@ -1101,7 +1130,7 @@ function sec_coaches() {
     
     sort_table(
         $lng->getTrn('secs/coaches/tblTitle'), 
-        $lnk, 
+        $lnk.(($PMS)? '&amp;pms=1' : ''), 
         $coaches, 
         $fields, 
         sort_rule('coach'), 
@@ -1352,6 +1381,7 @@ function sec_stars() {
         $s->setStreaks($tour_id);
         $s->skills = '<small>'.implode(', ', $s->skills).'</small>';
         $s->teams = '<small>'.implode(', ', $s->teams).'</small>';
+        $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
     }
     
     $fields = array(
@@ -1391,7 +1421,7 @@ function sec_stars() {
     );
     
     $fields = array(
-        'name'   => array('desc' => 'Star'), 
+        'name'   => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')), 
         'teams'  => array('desc' => 'Teams', 'nosort' => true),
         'skills' => array('desc' => 'Skills', 'nosort' => true), 
     );

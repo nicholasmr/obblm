@@ -20,7 +20,7 @@ By installing all three from above you are all set.
 
 Installation guide for MySQL, PHP and Apache (webserver): http://www.mjmwired.net/resources/mjm-apache-windows.html
 
-Please note that by installing the above dependant software, you are able to use OBBLM without internet access!
+Please note that by installing the above dependent software, you are able to use OBBLM without internet access!
 
 ---------
 UPGRADING
@@ -33,10 +33,23 @@ NOTE: When upgrading please save your old settings file as a reference for when 
     Replace all OBBLM files.
     Execute the following MySQL queries:
 
-        ALTER TABLE matches ADD COLUMN smp1 TINYINT SIGNED DEFAULT 0;
-        ALTER TABLE matches ADD COLUMN smp2 TINYINT SIGNED DEFAULT 0;
-        ALTER TABLE matches ADD COLUMN tcas1 TINYINT UNSIGNED DEFAULT 0;
-        ALTER TABLE matches ADD COLUMN tcas2 TINYINT UNSIGNED DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN smp1  TINYINT SIGNED   NOT NULL DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN smp2  TINYINT SIGNED   NOT NULL DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN tcas1 TINYINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN tcas2 TINYINT UNSIGNED NOT NULL DEFAULT 0;
+
+        ALTER TABLE teams ADD COLUMN imported BOOLEAN         NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN won_0  SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN lost_0 SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN draw_0 SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN sw_0   SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN sl_0   SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN sd_0   SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN wt_0   SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN gf_0   SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN ga_0   SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN elo_0  SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE teams ADD COLUMN tcas_0 SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 
 0.36 -> 0.37
 

@@ -59,6 +59,8 @@
                 <stn>standings</stn>
                 <all>All</all>
                 <specific>Specific</specific>
+                <pms>Set per match stats</pms>
+                <oas>Set over all stats</oas>
             </misc>
         </global>
 
