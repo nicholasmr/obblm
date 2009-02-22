@@ -224,7 +224,7 @@ function sec_main() {
                     echo "<table class='boxTable'>\n";
                         echo "<tr>\n";
                             if ($e->type == 'match') {
-                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date " . (isset($e->date_mod) ? "(last edited $e->date_mod) " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
+                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date " . (isset($e->date_mod) ? "(".$lng->getTrn('secs/home/lastedit')." $e->date_mod) " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>".$lng->getTrn('secs/home/show')."</a></td>\n";
                                 if (!empty($e->comments)) {
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"obj=document.getElementById('comment$e->match_id'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
@@ -1487,20 +1487,14 @@ function sec_records() {
 
 function sec_rules() {
 
-    title("Rules");
-
-    global $rules;
-
+    global $rules, $lng;
+    title($lng->getTrn('global/secLinks/rules'));
+    echo $lng->getTrn('secs/rules/intro');
     ?>
-    OBBLM supports the rules of <a href="http://www.bloodbowlonline.com/LivingRulebook5.pdf">LRB5</a>, but can be customized by editing the <i>settings.php</i> file.
-    <br><br>
-    OBBLM is currently set to use the following rules:
-    <br><br>
-    
     <table>
         <tr>
-            <td><i>Rule</i></td>
-            <td><i>Value</i></td>
+            <td><i><?php echo $lng->getTrn('secs/rules/rule');?></i></td>
+            <td><i><?php echo $lng->getTrn('secs/rules/val');?></i></td>
         </tr>
         
         <tr>
@@ -1508,98 +1502,98 @@ function sec_rules() {
         </tr>
 
         <tr>
-            <td>Initial treasury</td>
+            <td><?php echo $lng->getTrn('secs/rules/init_ts');?></td>
             <td><?php echo $rules['initial_treasury']/1000; ?>k</td>
         </tr>
         
         <tr>
-            <td>Maximum players on team</td>
+            <td><?php echo $lng->getTrn('secs/rules/max_pl');?></td>
             <td><?php echo $rules['max_team_players']; ?></td>
         </tr>
 
         <tr>
-            <td>Static re-roll prices</td>
-            <td><?php echo $rules['static_rerolls_prices'] ? "Yes" : "No"; ?></td>
+            <td><?php echo $lng->getTrn('secs/rules/rr_price');?></td>
+            <td><?php echo $rules['static_rerolls_prices'] ? $lng->getTrn('secs/rules/yes') : $lng->getTrn('secs/rules/no'); ?></td>
         </tr>
         
         <tr>
-            <td>Player refund (on firing/selling)</td>
-            <td><?php echo $rules['player_refund'] * 100 . "% refund"; ?></td>
+            <td><?php echo $lng->getTrn('secs/rules/refund');?></td>
+            <td><?php echo $rules['player_refund'] * 100 . $lng->getTrn('secs/rules/refundptc'); ?></td>
         </tr>
         
         <tr>
-            <td>Journeymen limit</td>
+            <td><?php echo $lng->getTrn('secs/rules/max_jm');?></td>
             <td><?php echo $rules['journeymen_limit']; ?></td>
         </tr>
 
         <tr>
-            <td>Initial re-rolls</td>
+            <td><?php echo $lng->getTrn('secs/rules/init_rr');?></td>
             <td><?php echo $rules['initial_rerolls']; ?></td>
         </tr>
 
         <tr>
-            <td>Initial fan factor</td>
+            <td><?php echo $lng->getTrn('secs/rules/init_ff');?></td>
             <td><?php echo $rules['initial_fan_factor']; ?></td>
         </tr>
 
         <tr>
-            <td>Initial assistant coaches</td>
+            <td><?php echo $lng->getTrn('secs/rules/init_ac');?></td>
             <td><?php echo $rules['initial_ass_coaches']; ?></td>
         </tr>
 
         <tr>
-            <td>Initial cheerleaders</td>
+            <td><?php echo $lng->getTrn('secs/rules/init_cl');?></td>
             <td><?php echo $rules['initial_cheerleaders']; ?></td>
         </tr>
 
         <tr>
-            <td>Maximum re-rolls</td>
-            <td><?php echo $rules['max_rerolls'] < 0 ? "Unlimited" : $rules['max_rerolls']; ?></td>
+            <td><?php echo $lng->getTrn('secs/rules/max_rr');?></td>
+            <td><?php echo $rules['max_rerolls'] < 0 ? $lng->getTrn('secs/rules/unlimited') : $rules['max_rerolls']; ?></td>
         </tr>
 
         <tr>
-            <td>Maximum fan factor</td>
-            <td><?php echo $rules['max_fan_factor'] < 0 ? "Unlimited" : $rules['max_fan_factor']; ?></td>
+            <td><?php echo $lng->getTrn('secs/rules/max_ff');?></td>
+            <td><?php echo $rules['max_fan_factor'] < 0 ? $lng->getTrn('secs/rules/unlimited') : $rules['max_fan_factor']; ?></td>
         </tr>
 
         <tr>
-            <td>Maximum assistant coaches</td>
-            <td><?php echo $rules['max_ass_coaches'] < 0 ? "Unlimited" : $rules['max_ass_coaches']; ?></td>
+            <td><?php echo $lng->getTrn('secs/rules/max_ac');?></td>
+            <td><?php echo $rules['max_ass_coaches'] < 0 ? $lng->getTrn('secs/rules/unlimited') : $rules['max_ass_coaches']; ?></td>
         </tr>
 
         <tr>
-            <td>Maximum cheerleaders</td>
-            <td><?php echo $rules['max_cheerleaders'] < 0 ? "Unlimited" : $rules['max_cheerleaders']; ?></td>
+            <td><?php echo $lng->getTrn('secs/rules/max_cl');?></td>
+            <td><?php echo $rules['max_cheerleaders'] < 0 ? $lng->getTrn('secs/rules/unlimited') : $rules['max_cheerleaders']; ?></td>
         </tr>
 
         <tr>
-            <td>Price of apothecary</td>
+            <td><?php echo $lng->getTrn('secs/rules/ap_price');?></td>
             <td><?php echo $rules['cost_apothecary']; ?> gp</td>
         </tr>
         
         <tr>
-            <td>Price of fan factor</td>
+            <td><?php echo $lng->getTrn('secs/rules/ff_price');?></td>
             <td><?php echo $rules['cost_fan_factor']; ?> gp</td>
         </tr>
         
         <tr>
-            <td>Price of assistant coaches</td>
+            <td><?php echo $lng->getTrn('secs/rules/ac_price');?></td>
             <td><?php echo $rules['cost_ass_coaches']; ?> gp</td>
         </tr>
         
         <tr>
-            <td>Price of cheerleaders</td>
+            <td><?php echo $lng->getTrn('secs/rules/cl_price');?></td>
             <td><?php echo $rules['cost_cheerleaders']; ?> gp</td>
         </tr>
 
         <tr>
-            <td>Enable star players and mercenaries</td>
-            <td><?php echo $rules['enable_stars_mercs'] ? "Yes" : "No"; ?></td>
+            <td><?php echo $lng->getTrn('secs/rules/enable_starmerc');?></td>
+            <td><?php echo $rules['enable_stars_mercs'] ? $lng->getTrn('secs/rules/yes') : $lng->getTrn('secs/rules/no'); ?></td>
         </tr>
         
         <tr>
-            <td>Enable LRB6 extensions</td>
-            <td><?php echo $rules['enable_lrb6x'] ? "Yes" : "No"; ?></td>
+            <td><?php echo $lng->getTrn('secs/rules/enable_lrb6');?></td>
+            <td><?php echo $rules['enable_lrb6x'] ? $lng->getTrn('secs/rules/yes') : $lng->getTrn('secs/rules/no'); ?></td>
         </tr>                    
     </table>
 
@@ -1614,31 +1608,15 @@ function sec_rules() {
 
 function sec_about() {
 
-    title("Introduction");
+    global $lng;
+
+    title($lng->getTrn('secs/obblm/intro'));
 
     ?>
     <table class="text">
         <tr>
             <td>
-                OBBLM is a Blood Bowl league manager that works by team coaches submitting match data after each played match in a tournament. 
-                League commissioners (admins) may create tournaments and include certain coaches' teams to participate in a tournament. 
-                When a tournament is created, the two coaches participating in each match may submit a match report to the system. 
-                The manager will thereby be able to update tournament stats and team details - including giving the team coach access to chose new player skills.
-                The order in which tournament matches are played/submitted does not matter, and if the need may arise, league commissioners are able to delete unplayed matches.
-                <br><br>
-                <b>The Coach Corner:</b><br>
-                    When you have received a password from a league commissioner, and you have logged on, your personal coach corner will be activated in the menu bar. 
-                    At your coach corner you will be able to create new teams, and change your password, e-mail and your coach name.
-                    <br><br>
-                    <b>Team page</b><br>
-                    At your team page you may manage your team. 
-                    This includes buying and selling players, choosing player skills when your player has the required amount of SPP, and buying other goods for your team.
-                    <br>
-                    At your team page you will be presented with your team roster. To view player details select the "detailed view"-link below the roster.
-                    <br><br>
-                <b>Submitting a played match:</b><br>
-                    Once a match has been played, you must let the system know by submitting the match data in the <i>fixtures</i> section. 
-                    This can under agreement be done by either team's coach. Only the two participating team coaches and league commissioners have edit access to the match reports.
+                <?php echo $lng->getTrn('secs/obblm/intro_txt'); ?>
             </td>
         </tr>
     </table>
@@ -1650,72 +1628,7 @@ function sec_about() {
     <table class="text">
         <tr>
             <td>
-                <i>Q:</i>
-                How do I add free zombies from matches to my team roster?<br>
-                <i>A:</i>
-                Simply buy the zombie(s) as you normally would and ask a league commissioner to return the money you spent.
-                <br><br>
-                
-                <i>Q:</i>
-                I can't seem to save a player's injury when submitting match data.<br>
-                <i>A:</i>
-                OBBLM will refuse to save a specific injury if the sum of the characteristic thereby will drop below the allowed default - 2 limit.
-                <br><br>
-                
-                <i>Q:</i>
-                I'm not able to select the achieved characteristic I wish?<br>
-                <i>A:</i>
-                You are by rule not allowed to select any further achieved characteristics if it leads to the player having more than default + 2 of that characteristic.
-                <br><br>
-
-                <i>Q:</i>
-                I have saved a match with wrong match data, and now OBBLM has created a new match with the wrong contestants. How do I correct this?<br>
-                <i>A:</i>
-                First you delete the falsely created match, and then you resave the old match with the correct match data, which recreates the new match.
-                <br><br>
-                
-                <i>Q:</i>
-                I can't seem to save -1 fan factor when submitting match data?<br>
-                <i>A:</i>
-                OBBLM will refuse to save any further negative fan factor values if your team already has 0 fan factor.
-                <br><br>
-                
-                <i>Q:</i>
-                Re-roll prices are no longer doubled?<br>
-                <i>A:</i>
-                Have you switched on the setting "static re-rolls prices"? 
-                If not, what you experience is due to your league having started on a new tournament, in which no matches yet have been played. The RR-prices will become doubled again once the first match has been played.
-                <br><br>
-                
-                <i>Q:</i>
-                I have suddenly a dead player alive again on my roster?<br>
-                <i>A:</i>
-                Re-save the match in which the player died.
-                <br><br>
-                                
-                <i>Q:</i>
-                I see only fields on the match submitting pages for the inducements stars and mercenaries, where are the others?<br>
-                <i>A:</i>
-                Such fields do not exist yet. If you wish to document these match details, you can write them in the match summary.
-                <br><br>
-               
-                <i>Q:</i>
-                I'm having trouble uploading pictures. How can i resolves this?<br>
-                <i>A:</i>
-                OBBLM supports only .gif, .jpg, .jpeg and .png file types. Still having trouble? Try a mozilla browser.
-                <br><br>
-
-                <i>Q:</i>
-                After hiring a journeyman he stays on my roster even though he has already competed in a match. Why is this so?<br>
-                <i>A:</i>
-                OBBLM does not automatically fire journeymen after their first match. You must do so yourself the same way as ordinary players are fired (via. the team page).
-                <br><br>
-
-                <i>Q:</i>
-                I would like to create my own tournament ranking system. How do I do this?<br>
-                <i>A:</i>
-                Please see the <i>TRSGUIDE</i> file that comes with OBBLM.
-
+                <?php echo $lng->getTrn('secs/obblm/faq_txt'); ?>
             </td>
         </tr>
     </table>

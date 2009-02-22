@@ -48,7 +48,6 @@
             <sortTbl>
                 <simul><![CDATA[<i>Note</i>: Both tables below are sorted simultaneously.]]></simul>
                 <spp><![CDATA[<i>Note</i>: <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.]]></spp>
-                <!-- <><![CDATA[]]></> -->
             </sortTbl>
             
             <!-- Bits and pieces -->
@@ -78,6 +77,7 @@
                 <comments>Comments</comments>
                 <posted>Posted</posted>
                 <by>by</by>
+                <lastedit>last edited</lastedit>
                 
                 <!-- Titles of right column stats boxes -->
                 <recent>Recent matches</recent>
@@ -156,12 +156,12 @@
                         <pnote>
                         <![CDATA[<i>Note:</i> uploading in photo numbers already occupied will overwrite the current photo in that position.]]>
                         </pnote>
-                	<msmrc>Match comment(s)</msmrc>
-                		<existCmt>Existing comment(s)</existCmt>
-                		<newCmt>New comment</newCmt>
-                		<writeNewCmt>Write your new comment here</writeNewCmt>
-                		<postCmt>Post comment</postCmt>
-                		<none>None</none>
+                    <msmrc>Match comment(s)</msmrc>
+                        <existCmt>Existing comment(s)</existCmt>
+                        <newCmt>New comment</newCmt>
+                        <writeNewCmt>Write your new comment here</writeNewCmt>
+                        <postCmt>Post comment</postCmt>
+                        <none>None</none>
                 </report>
                 
             </fixtures>
@@ -276,6 +276,145 @@
                     
                 </memma>
             </records>
+            
+            <rules>
+                <intro>
+                <![CDATA[
+                OBBLM supports the rules of <a href="http://www.bloodbowlonline.com/LivingRulebook5.pdf">LRB5</a>, but can be customized by editing the <i>settings.php</i> file.
+                <br><br>
+                OBBLM is currently set to use the following rules:
+                <br><br>
+                ]]>
+                </intro>
+                <rule>Rule</rule>
+                <val>Value</val>
+                
+                <yes>Yes</yes>
+                <no>No</no>
+                <unlimited>Unlimited</unlimited>
+                <refundptc>% refund</refundptc>
+                
+                <rr_price>Static re-roll prices</rr_price>
+                <ap_price>Price of apothecary</ap_price>
+                <ff_price>Price of fan factor</ff_price>
+                <ac_price>Price of assistant coaches</ac_price>
+                <cl_price>Price of cheerleaders</cl_price>
+                <init_ts>Initial treasury</init_ts>
+                <init_rr>Initial re-rolls</init_rr>
+                <init_ff>Initial fan factor</init_ff>
+                <init_ac>Initial assistant coaches</init_ac>
+                <init_cl>Initial cheerleaders</init_cl>
+                <max_rr>Maximum re-rolls</max_rr>
+                <max_ff>Maximum fan factor</max_ff>
+                <max_ac>Maximum assistant coaches</max_ac>
+                <max_cl>Maximum cheerleaders</max_cl>
+                <max_jm>Journeymen limit</max_jm>
+                <max_pl>Maximum players on team</max_pl>
+                <refund>Player refund (on firing/selling)</refund>
+                <enable_starmerc>Enable star players and mercenaries</enable_starmerc>
+                <enable_lrb6>Enable LRB6 extensions</enable_lrb6>
+                
+            </rules>
+            
+            <obblm>
+                
+                <intro>Introduction</intro>
+                <intro_txt>
+                <![CDATA[
+                OBBLM is a Blood Bowl league manager that works by team coaches submitting match data after each played match in a tournament. 
+                League commissioners (admins) may create tournaments and include certain coaches' teams to participate in a tournament. 
+                When a tournament is created, the two coaches participating in each match may submit a match report to the system. 
+                The manager will thereby be able to update tournament stats and team details - including giving the team coach access to chose new player skills.
+                The order in which tournament matches are played/submitted does not matter, and if the need may arise, league commissioners are able to delete unplayed matches.
+                <br><br>
+                <b>The Coach Corner:</b><br>
+                    When you have received a password from a league commissioner, and you have logged on, your personal coach corner will be activated in the menu bar. 
+                    At your coach corner you will be able to create new teams, and change your password, e-mail and your coach name.
+                    <br><br>
+                    <b>Team page</b><br>
+                    At your team page you may manage your team. 
+                    This includes buying and selling players, choosing player skills when your player has the required amount of SPP, and buying other goods for your team.
+                    <br>
+                    At your team page you will be presented with your team roster. To view player details select the "detailed view"-link below the roster.
+                    <br><br>
+                <b>Submitting a played match:</b><br>
+                    Once a match has been played, you must let the system know by submitting the match data in the <i>fixtures</i> section. 
+                    This can under agreement be done by either team's coach. Only the two participating team coaches and league commissioners have edit access to the match reports.
+                ]]>
+                </intro_txt>
+                
+                <faq>FAQ</faq>
+                <faq_txt>
+                <![CDATA[
+                <i>Q:</i>
+                How do I add free zombies from matches to my team roster?<br>
+                <i>A:</i>
+                Simply buy the zombie(s) as you normally would and ask a league commissioner to return the money you spent.
+                <br><br>
+                
+                <i>Q:</i>
+                I can't seem to save a player's injury when submitting match data.<br>
+                <i>A:</i>
+                OBBLM will refuse to save a specific injury if the sum of the characteristic thereby will drop below the allowed default - 2 limit.
+                <br><br>
+                
+                <i>Q:</i>
+                I'm not able to select the achieved characteristic I wish?<br>
+                <i>A:</i>
+                You are by rule not allowed to select any further achieved characteristics if it leads to the player having more than default + 2 of that characteristic.
+                <br><br>
+
+                <i>Q:</i>
+                I have saved a match with wrong match data, and now OBBLM has created a new match with the wrong contestants. How do I correct this?<br>
+                <i>A:</i>
+                First you delete the falsely created match, and then you resave the old match with the correct match data, which recreates the new match.
+                <br><br>
+                
+                <i>Q:</i>
+                I can't seem to save -1 fan factor when submitting match data?<br>
+                <i>A:</i>
+                OBBLM will refuse to save any further negative fan factor values if your team already has 0 fan factor.
+                <br><br>
+                
+                <i>Q:</i>
+                Re-roll prices are no longer doubled?<br>
+                <i>A:</i>
+                Have you switched on the setting "static re-rolls prices"? 
+                If not, what you experience is due to your league having started on a new tournament, in which no matches yet have been played. The RR-prices will become doubled again once the first match has been played.
+                <br><br>
+                
+                <i>Q:</i>
+                I have suddenly a dead player alive again on my roster?<br>
+                <i>A:</i>
+                Re-save the match in which the player died.
+                <br><br>
+                                
+                <i>Q:</i>
+                I see only fields on the match submitting pages for the inducements stars and mercenaries, where are the others?<br>
+                <i>A:</i>
+                Such fields do not exist yet. If you wish to document these match details, you can write them in the match summary.
+                <br><br>
+               
+                <i>Q:</i>
+                I'm having trouble uploading pictures. How can i resolves this?<br>
+                <i>A:</i>
+                OBBLM supports only .gif, .jpg, .jpeg and .png file types. Still having trouble? Try a mozilla browser.
+                <br><br>
+
+                <i>Q:</i>
+                After hiring a journeyman he stays on my roster even though he has already competed in a match. Why is this so?<br>
+                <i>A:</i>
+                OBBLM does not automatically fire journeymen after their first match. You must do so yourself the same way as ordinary players are fired (via. the team page).
+                <br><br>
+
+                <i>Q:</i>
+                I would like to create my own tournament ranking system. How do I do this?<br>
+                <i>A:</i>
+                Please see the <i>TRSGUIDE</i> file that comes with OBBLM.
+                ]]>
+                </faq_txt>
+                
+            </obblm>
             
             <admin>
             </admin>
