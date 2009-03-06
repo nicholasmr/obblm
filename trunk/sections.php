@@ -44,10 +44,12 @@
  
 function sec_login() {
 
+    global $lng;
+
     ?>
     <div style='padding-top:40px; text-align: center;'>
     <form method="POST" action="index.php">
-        <b>Coach</b>
+        <b><?php echo $lng->getTrn('secs/login/coach');?></b>
         <select name='coach'>
         <?php
         $coaches = Coach::getCoaches();
@@ -58,12 +60,12 @@ function sec_login() {
         ?>
         </select>
         &nbsp;&nbsp;
-        <b>Password</b>
+        <b><?php echo $lng->getTrn('secs/login/passwd');?></b>
         <input type="password" name="passwd" size="20" maxlength="50"> 
         <br><br>
         <input type="submit" name="login" value="Login">
         <br><br>
-        Please use your mouse to press the login button!
+        <?php echo $lng->getTrn('secs/login/note');?>
     </form>
     </div>
     <?php
@@ -81,7 +83,7 @@ function sec_main() {
     $n = (!isset($_GET['view']) || $_GET['view'] == 'normal') ? $settings['entries_messageboard'] : false; // false == show everything, else show $n board entries.
 
     /*
-        Left column is the message board, consisting of both admin messages and game summaries/results.
+        Left column is the message board, consisting of both commissioner messages and game summaries/results.
         To generate this table we create a general array holding the content of both.
     */
 
@@ -89,11 +91,12 @@ function sec_main() {
     $reports = Match::getReports($n);    
     $board = array();
     
-    // First we add all admin messages to the board structure.
+    // First we add all commissioner messages to the board structure.
     foreach ($msgs as $m) {
         $o = (object) array();
         // Specific fields:
         $o->msg_id    = $m->msg_id;
+        $o->author_id = $m->f_coach_id;
         // General fields:
         $o->type      = 'msg';
         $o->author    = get_alt_col('coaches', 'coach_id', $m->f_coach_id, 'name');
@@ -179,7 +182,7 @@ function sec_main() {
         <div class="main_lcolLinks">
             <?php
             // New message link
-            if (is_object($coach) && $coach->admin)
+            if (is_object($coach) && $coach->ring <= RING_COM)
                 echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>\n";
 
             // View mode
@@ -235,7 +238,7 @@ function sec_main() {
                             }
                             elseif ($e->type == 'msg') {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
-                                if (is_object($coach) && $coach->admin) {
+                                if (is_object($coach) && ($coach->admin || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=edit&amp;msg_id=$e->msg_id', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=delete&amp;msg_id=$e->msg_id', 'handler_msg', 'width=250,height=250');\">".$lng->getTrn('secs/home/del')."</a></td>\n";
                                 }
@@ -681,12 +684,12 @@ function sec_fixturelist() {
                     <a href="?section=fixturelist&amp;match_id=<?php echo $match->match_id; ?>">
                     <?php 
                     if (is_object($coach)) {
-                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;&nbsp;";
+                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;&nbsp;\n";
                         if ($coach->admin) {
-                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;&nbsp;";
-                            
-                            if (!$match->is_played && $t->type != TT_KNOCKOUT)
-                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id'>".$lng->getTrn('secs/fixtures/del')."</a>\n";
+                            if ($t->type != TT_KNOCKOUT) {
+                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;&nbsp;\n";
+                            }
+                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;&nbsp;\n";
                         }
                     }
                     else {
@@ -1622,7 +1625,7 @@ function sec_about() {
     </table>
 
     <?php
-    title("FAQ");
+    title($lng->getTrn('secs/obblm/faq'));
     ?>
     
     <table class="text">
@@ -1644,8 +1647,8 @@ function sec_about() {
         <br>
         The authors of this program are
         <ul>
-            <li> <a href="mailto:njustesen@gmail.com">Niels Orsleff Justesen</a>
             <li> <a href="mailto:nicholas.rathmann@gmail.com">Nicholas Mossor Rathmann</a>
+            <li> Niels Orsleff Justesen</a>
         </ul>
         With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
         Bugs reports and suggestions are welcome.
@@ -1698,7 +1701,7 @@ function sec_about() {
 
 function sec_guest() {
 
-    global $coach;
+    global $coach, $lng;
     
     /*
         Show guest book
@@ -1714,14 +1717,14 @@ function sec_guest() {
         unset($g);
     }
 
-    title("Guest book");    
+    title($lng->getTrn('global/secLinks/gb'));    
     ?>
     <div style="text-align: center;">
-    <b>Post new entry: </b>
+    <b>        <?php echo $lng->getTrn('secs/gb/new');?>: </b>
     <form method="POST">
         <textarea name="msg" rows="5" cols="50"></textarea>
         <br>
-        <i>Note</i>: Uses HTML formatting. Linebreaks should therefore be typed in as <i>&lt;br&gt;</i>.
+        <?php echo $lng->getTrn('secs/gb/note');?>
         <br><br>
         <input type="submit" value="Submit">
     </form>
@@ -1731,7 +1734,7 @@ function sec_guest() {
     
     foreach (GuestBook::getBook() as $g) {
         echo "<div class='gb'>\n";
-            echo "<div class='boxTitle1'>Posted $g->date</div>\n";
+            echo "<div class='boxTitle1'>".$lng->getTrn('secs/gb/posted')." $g->date</div>\n";
             echo "<div class='boxBody'>\n";
                 echo "$g->txt";
                 if (is_object($coach) && $coach->admin) {
@@ -1741,7 +1744,7 @@ function sec_guest() {
                     <tr>
                     <td style="text-align: right;">
                     <?php 
-                    echo "<a href='index.php?section=guest&amp;delete=$g->gb_id'>Delete</a>\n";
+                    echo "<a href='index.php?section=guest&amp;delete=$g->gb_id'>".$lng->getTrn('secs/gb/del')."</a>\n";
                     ?>
                     </td>
                     </tr>
@@ -1769,6 +1772,7 @@ function sec_coachcorner() {
     
     if (isset($_GET['player_id']) && $_GET['player_id'] < 0) {
         status(false, 'Sorry. Player rosters do not exist for star players and mercenaries.');
+        return;
     }
 
     // If player ID is set then show player page. This MUST be checked for before checking if a team's page is wanted, else access will be denied.
@@ -1857,12 +1861,12 @@ function sec_coachcorner() {
                 $_POST['new_name']   = isset($_POST['new_name'])   ? stripslashes($_POST['new_name']) : '';
             }
         
-            if ($_POST['button'] == 'Change password')
-                status(login($coach->name, $_POST['old_passwd'], false) && $coach->setAttr(array('type' => 'passwd', 'new_value' => $_POST['new_passwd'])));
-            elseif ($_POST['button'] == 'Change email')
-                status($coach->setAttr(array('type' => 'mail', 'new_value' => $_POST['new_email'])));
-            elseif ($_POST['button'] == 'Change name')
-                status($coach->setAttr(array('type' => 'name', 'new_value' => $_POST['new_name'])));
+            switch ($_POST['button']) 
+            {
+                case 'Change password': status(login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
+                case 'Change email':    status($coach->setMail($_POST['new_email'])); break;
+                case 'Change name':     status($coach->setName($_POST['new_name'])); break;
+            }
         }
         
         if (isset($_POST['type'])) {

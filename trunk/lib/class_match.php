@@ -133,20 +133,18 @@ class Match
     public function delete() {
     
         /**
-         * Deletes this match.
+         * Deletes this match (ignoring consequences).
          **/
     
-        // May not delete played matches.
-        if ($this->is_played)
-            return false;
-    
-        $query1 = "DELETE FROM matches WHERE date_played IS NULL AND match_id = $this->match_id"; # Again in SQL query we make sure we do NOT delete played matches!
-        $query2 = "DELETE FROM match_data WHERE f_match_id = $this->match_id";
-
-        if (mysql_query($query1) && mysql_query($query2)) 
-            return true;
-        else
-            return false;
+        $q = array();
+        $q[] = "DELETE FROM matches     WHERE match_id = $this->match_id";
+        $q[] = "DELETE FROM match_data  WHERE f_match_id = $this->match_id";
+        $status = true;
+        foreach ($q as $query) {
+            $status &= mysql_query($query);
+        }
+        
+        return $status;
     }
 
     public function chTeamId($nr, $new_tid) {
@@ -200,6 +198,7 @@ class Match
                     submitter_id    = $input[submitter_id],
                     stadium         = $input[stadium],
                     gate            = $input[gate],
+                    fans            = $input[fans],
                     ffactor1        = $input[ffactor1],
                     ffactor2        = $input[ffactor2],
                     income1         = $input[income1],

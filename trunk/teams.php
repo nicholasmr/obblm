@@ -485,6 +485,10 @@ function team_roaster($team_id) {
         <div class="boxBody">
             <table width="100%">
                 <tr>
+                    <td>Coach</td>
+                    <td><?php echo $team->coach_name; ?></td>
+                </tr>
+                <tr>
                     <td>Race</td>
                     <td><a href='index.php?section=races&amp;race=<?php echo $team->race; ?>'><?php echo $team->race; ?></a></td>
                 </tr>
@@ -519,7 +523,7 @@ function team_roaster($team_id) {
                     <td><?php echo $team->fan_factor; ?></td>
                 </tr>
                 <tr>
-                    <td>Assistant Coaches</td>
+                    <td>Ass. Coaches</td>
                     <td><?php echo $team->ass_coaches; ?></td>
                 </tr>
                 <tr>
@@ -534,11 +538,11 @@ function team_roaster($team_id) {
                     <td><?php echo $team->played; ?></td>
                 </tr>
                 <tr>
-                    <td>Percentage won</td>
+                    <td>PCT won</td>
                     <td><?php echo sprintf("%1.1f", $team->win_percentage).'%'; ?></td>
                 </tr>
                 <tr>
-                    <td>Tournaments won</td>
+                    <td>Tours won</td>
                     <td><?php echo $team->won_tours; ?></td>
                 </tr>
                 <tr>

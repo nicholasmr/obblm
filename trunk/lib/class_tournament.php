@@ -218,13 +218,25 @@ class Tour
         return $teams;
     }
 
-    public function delete() {
+    public function delete($force = false) {
     
         /**
-         * Deletes this tournament, if no matches are assigned to it.
+         * Deletes this tournament, if no matches are assigned to it, unless forced.
          **/
-    
-        if ($this->empty) {
+        
+        if ($force) {
+            $q = array();
+            // Don't use the match delete() routines. We do it ourselves.
+            $q[] = "DELETE FROM match_data WHERE f_tour_id = $this->tour_id";
+            $q[] = "DELETE FROM matches    WHERE f_tour_id = $this->tour_id";
+            $q[] = "DELETE FROM tours      WHERE tour_id = $this->tour_id";
+            $status = true;
+            foreach ($q as $query) {
+                $status &= mysql_query($query);
+            }
+            return $status;
+        }
+        elseif ($this->empty) {
             $query = "DELETE FROM tours WHERE tour_id = $this->tour_id";
             if (mysql_query($query))
                 return true;

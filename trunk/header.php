@@ -25,7 +25,7 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.38d');
+define('OBBLM_VERSION', '0.38e');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
@@ -172,6 +172,15 @@ define('RT_FIRST', 1); # First round.
 
 // Reserved (non-real) matches:
 define('MATCH_ID_IMPORT', -1);
+
+/******************** 
+ *   For matches
+ ********************/
+ 
+// Privilege rings (ie. coach access level)
+define('RING_SYS',   0); // Admins
+define('RING_COM',   1); // Commissioners.
+define('RING_COACH', 2); // Coach/ordinary user
 
 /********************
  *  Dependencies

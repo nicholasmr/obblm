@@ -70,7 +70,8 @@ function match_form($match_id) {
         status($m->update(array(
             'submitter_id'  => $_SESSION['coach_id'],
             'stadium'       => $_POST['stadium'],
-            'gate'          => $_POST['gate'] ? $_POST['gate'] * 1000 : 0,
+            'gate'          => (int) ($_POST['gate'] * 1000),
+            'fans'          => (int) $_POST['fans'],
             'ffactor1'      => $_POST['ff_1'],
             'ffactor2'      => $_POST['ff_2'],
             'income1'       => $_POST['inc_1'] ? $_POST['inc_1'] * 1000 : 0,
@@ -205,10 +206,48 @@ function match_form($match_id) {
     $CP = 6; // Colspan.
 
     ?>
+    <div>
+        <a href='javascript:void(0);' onClick="document.getElementById('helpbox').style.display = 'block';">Click here</a> for help on filling out a match report.
+    </div>
+    <div id='helpbox' style='display: none;'>
+        <br>
+        <b>Preliminary info</b><br>
+        First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
+        Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
+        <br>
+        <b>Game information fields</b><br>
+        The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
+        <br>
+        <b>Sportsmanship points</b><br>
+        Yelling, screaming, cursing at the dice, disturbing the opponent in his turn and not turning up on gaming night may be punished by giving negative sportsmanship points. Acting like a gentleman and taking a defeat with a smile may be embraced by giving positive sportsmanship points.
+        If your league on the other hand makes the needle on the evil-o-meter jump into the red area constantly, it may be more natural applying the sportsmanship points system the other way around - embracing bad manners with positive sportsmanship points.<br>
+        <br>
+        <b>Casualties in general</b><br>
+        OBBLM can keep track of <i>team casualties</i>, which is the sum of the individual player casualties, opponent self-inflicted injuries, die on a fumble in sprints and crowd killings (and possibly other things of your leagues' choice).
+        Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
+        <br>
+        <b>Player skills</b><br>
+        Once the match report has been submitted OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
+        <br>
+        <b>Incomes</b><br>
+        A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
+        If you spended more than you made in a match then simply prefix - (minus).
+        <br><br>
+        Remember these factors when you calculate:<br>
+        <ul>
+            <li>Spiraling expenses</i>
+            <li>Treasury spend on inducements</li>
+            <li>Hiring costs of star players and mercenaries</li>
+            <li>Team winnings</li>
+            <li>Tournament winnings, if the game was a final</li>
+            <li>Sponsorship deal from Bloodweiser</li>
+        </ul>
+    </div>
+    <br>
     <form method="POST" enctype="multipart/form-data">
         <table class="match_form">
             <tr>
-                <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/info');?> <a href="javascript:void(0)" onclick="window.open('html/game_info.html','input_GameInfoHelp','width=350,height=400')">[?]</a></b></td>
+                <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/info');?></b></td>
             </tr>
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
             <tr>
@@ -226,6 +265,12 @@ function match_form($match_id) {
                 <td colspan='<?php echo $CP;?>'>
                     <b><?php echo $lng->getTrn('secs/fixtures/report/gate');?></b>&nbsp;
                     <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
+                </td>
+            </tr>
+            <tr>
+                <td colspan='<?php echo $CP;?>'>
+                    <b><?php echo $lng->getTrn('secs/fixtures/report/fans');?></b>&nbsp;
+                    <input type="text" name="fans" value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
                 </td>
             </tr>
             
@@ -292,7 +337,7 @@ function match_form($match_id) {
             <table class='match_form'>
             <tr><td class='seperator' colspan='13'></td></tr>
             <tr><td colspan='13' class='dark'>
-                <b><?php echo $t->name;?> <?php echo $lng->getTrn('secs/fixtures/report/report');?> <a href=\"javascript:void(0)\" onclick=\"window.open('html/team_report.html','input_TeamReportHelp','width=400,height=400')\">[?]</a></b>
+                <b><?php echo $t->name;?> <?php echo $lng->getTrn('secs/fixtures/report/report');?></b>
             </td></tr>
             <tr><td class='seperator' colspan='13'></td></tr>
 
@@ -386,7 +431,7 @@ function match_form($match_id) {
                 <table style='border-spacing: 10px;'>
                     <tr>
                         <td align="left" valign="top">
-                            <b><a href='javascript:void(0)' onClick="window.open('index.php?section=stars');">Star Players</a></b>: 
+                            <b>Star Players</b>: 
                             <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('secs/fixtures/report/add');?>" 
                             onClick="stars = document.getElementById('stars_<?php echo $id;?>'); addStarMerc(<?php echo $id;?>, stars.options[stars.selectedIndex].value);" <?php echo $DIS; ?>>
                             <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
