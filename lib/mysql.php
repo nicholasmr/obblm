@@ -92,7 +92,7 @@ function setup_tables() {
                 name            VARCHAR(50),
                 passwd          VARCHAR(32),
                 mail            VARCHAR(129),
-                admin           BOOLEAN
+                ring            TINYINT UNSIGNED NOT NULL DEFAULT 0,
                 )';
     mk_table($query, 'coaches');
 
@@ -158,6 +158,7 @@ function setup_tables() {
                 submitter_id        MEDIUMINT UNSIGNED,
                 stadium             MEDIUMINT UNSIGNED,
                 gate                MEDIUMINT UNSIGNED,
+                fans                MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
                 ffactor1            TINYINT SIGNED,
                 ffactor2            TINYINT SIGNED,
                 income1             MEDIUMINT SIGNED,
@@ -169,10 +170,10 @@ function setup_tables() {
                 date_modified       DATETIME,
                 team1_score         TINYINT UNSIGNED,
                 team2_score         TINYINT UNSIGNED,
-                smp1                TINYINT SIGNED DEFAULT 0,
-                smp2                TINYINT SIGNED DEFAULT 0,
-                tcas1               TINYINT UNSIGNED DEFAULT 0,
-                tcas2               TINYINT UNSIGNED DEFAULT 0
+                smp1                TINYINT SIGNED NOT NULL DEFAULT 0,
+                smp2                TINYINT SIGNED NOT NULL DEFAULT 0,
+                tcas1               TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                tcas2               TINYINT UNSIGNED NOT NULL DEFAULT 0
                 )';
     mk_table($query, 'matches');
 

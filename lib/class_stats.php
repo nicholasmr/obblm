@@ -218,6 +218,9 @@ public static function getMatchStats($grp, $id, $trid = false)
                     $s['points'] = $s['won']*10 + $s['draw']*5 + $row['td'] + $row['cas'];
                 }
                 break;
+                
+            //case '5': $s['points'] = FILL IN HERE ; break;
+            //case '6': $s['points'] = FILL IN HERE ; break;
         }    
     }
 
@@ -339,10 +342,8 @@ public static function getMemMatches() {
             - Most CAS
             - Largest score-wise victory
             - Largest match income 
-            
-            // Not yet supported:
+            - Largest gate
             - Most fans
-            - Fewest fans
     */
     
     $m = array(
@@ -355,8 +356,7 @@ public static function getMemMatches() {
     'svic'      => array(),
     'inc'       => array(),
     'gate'      => array(),
-//            'mfans'     => array(), // most fans
-//            'ffans'     => array(), // fewest fans
+    'mfans'     => array(), // most fans
     );        
 
     /* Queries for finding the matches holding records. */
@@ -388,6 +388,7 @@ public static function getMemMatches() {
     ";
     
     $gate = "SELECT match_id, gate FROM matches WHERE gate = (SELECT MAX(gate) FROM matches)";
+    $mfans = "SELECT match_id, fans FROM matches WHERE fans = (SELECT MAX(fans) FROM matches)";
 
     /* Create an array to loop through containing the queries to throw at mysql. */
     
@@ -398,6 +399,7 @@ public static function getMemMatches() {
     $qryarr['svic'] = $svic;
     $qryarr['inc'] = $inc;
     $qryarr['gate'] = $gate;
+    $qryarr['mfans'] = $mfans;
     
     /* Store match objects for record holding matches. */
     

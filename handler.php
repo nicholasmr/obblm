@@ -51,14 +51,19 @@ switch ($_GET['type'])
             </script>
             <body style="font: 12px Tahoma;">
         <?php
-        // Is coach an admin?
-        if (!isset($_SESSION['logged_in']) || !is_object($coach = new Coach($_SESSION['coach_id'])) || !$coach->admin) {
-            fatal("Only admins may use this feature.");
+        // Is coach a commissioner or more privileged?
+        if (!isset($_SESSION['logged_in']) || !is_object($coach = new Coach($_SESSION['coach_id'])) || $coach->ring > RING_COM) {
+            fatal("Only commissioners may use this feature.");
         }
         // Action specified?
         if (!isset($_GET['action'])) {
             fatal("Sorry. Don't know what to do. Please specify 'action' via GET.");
         }
+        // Commissioners may only edit their own messages. Admins may edit any message.
+        if ($_GET['action'] != 'new' && is_object($msg = new Message($_GET['msg_id'])) && !$coach->admin && $msg->f_coach_id != $coach->coach_id) { 
+            fatal("Sorry. You do not have write access on this message or the messages ID does not exist.");
+        }
+        
         $title = '';
         $body = '';
         $msg = null;

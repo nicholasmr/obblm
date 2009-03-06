@@ -91,7 +91,7 @@ if (isset($_GET['logout'])) {
             ?>
             <?php
             if (isset($_SESSION['logged_in'])) {
-                if (is_object($coach = new Coach($_SESSION['coach_id'])) && $coach->admin) {
+                if (is_object($coach = new Coach($_SESSION['coach_id'])) && $coach->ring <= RING_COM) {
                     echo "<a class='menuSpecial' href='index.php?section=admin'><b>".$lng->getTrn('global/secLinks/admin')."</b></a> &nbsp;\n";
                 }
                 echo "<a class='menu' href='index.php?section=coachcorner'><b>".$lng->getTrn('global/secLinks/cc')."</b></a> &nbsp;\n";

@@ -374,6 +374,10 @@ function mem_matches()
                     $title = $lng->getTrn('secs/records/memma/gate');
                     break;
                     
+                case 'mfans':
+                    $title = $lng->getTrn('secs/records/memma/mfans');
+                    break;
+                    
                 default:
                     $matches = array(); // Make it an empty array.
             } 
@@ -417,6 +421,10 @@ function mem_matches()
                                 
                             case 'gate':
                                 echo '<h2>'.($m->gate/1000).'k</h2>';
+                                break;
+                                
+                            case 'mfans':
+                                echo '<h2>'.$m->fans.'</h2>';
                                 break;
                         } 
                         ?>

@@ -33,18 +33,31 @@ function sec_admin() {
 
     // Quit if coach does not has administrator privileges.
 
-    if (!is_object($coach) || !$coach->admin)
-        fatal("Sorry. Only administrators are allowed to access the administration section.");
+    if (!is_object($coach) || $coach->ring > RING_COM)
+        fatal("Sorry. Only site administrators and commissioners are allowed to access this section.");
+
+    $ring_sys_access = array('usrman' => 'User management', 'import' => 'Import team', 'chtr' => 'Tournament handling');
+    $ring_com_access = array('tournament' => 'Schedule matches', 'log' => 'Log');
+    
+    if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
+        fatal("Sorry. Your access level does not allow you opening the requested page.");
+
+    // Permissions OK => Continue...
 
     title("Administration");
-
+    
     ?>
     <div class="admin_menu">
-        <a href="index.php?section=admin&amp;subsec=usrman">User management</a>&nbsp;&nbsp;&nbsp;
-        <a href="index.php?section=admin&amp;subsec=tournament">Schedule matches</a>&nbsp;&nbsp;&nbsp;
-        <a href="index.php?section=admin&amp;subsec=import">Import team</a>&nbsp;&nbsp;&nbsp;
-        <a href="index.php?section=admin&amp;subsec=chtr">Change tournament</a>&nbsp;&nbsp;&nbsp;
-        <a href="index.php?section=admin&amp;subsec=log">Log</a>&nbsp;&nbsp;&nbsp;
+        <?php
+            foreach ($ring_com_access as $lnk => $desc) {
+                echo "<a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a>&nbsp;&nbsp;&nbsp;";
+            }
+            if ($coach->ring == RING_SYS) {
+                foreach ($ring_sys_access as $lnk => $desc) {
+                    echo "<a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a>&nbsp;&nbsp;&nbsp;";
+                }            
+            }
+        ?>
         <hr>
     </div>
     <?php
@@ -54,33 +67,40 @@ function sec_admin() {
     // If an admin section was requested then call it, else show admin main page.
     if (isset($_GET['subsec']) && $_GET['subsec'] == 'usrman') {
         if (isset($_POST['button'])) {
-        
-            if ($_POST['button'] == 'Create coach') {
-                if (get_magic_quotes_gpc()) {
-                    $_POST['new_name'] = stripslashes($_POST['new_name']);
-                    $_POST['new_mail'] = stripslashes($_POST['new_mail']);
-                    $_POST['new_passwd'] = stripslashes($_POST['new_passwd']);
-                }
-                status(Coach::create(array('name' => $_POST['new_name'], 
-                                            'passwd' => $_POST['new_passwd'], 
-                                            'mail' => $_POST['new_mail'], 
-                                            'admin' => isset($_POST['new_admin']) ? true : false)));
-            }
-            elseif ($_POST['button'] == 'Change status') {
-                $coach = new Coach($_POST['chadmin_coachid']);
-                if (!is_object($coach)) {
-                    status(false);
-                    return;
-                }
-                else {
-                    status($coach->setAttr(array('type' => 'admin', 'new_value' => isset($_POST['chadmin_status']) ? true : false)));
-                }
-            }
-            elseif ($_POST['button'] == 'Change password') {
-                $coach = new Coach($_POST['chpass_coachid']);
-                status($coach->setAttr(array('type' => 'passwd', 'new_value' => $_POST['ch_passwd'])));
-            }
             
+            switch ($_POST['button']) {
+            
+                case 'Create coach':
+                    if (get_magic_quotes_gpc()) {
+                        $_POST['new_name'] = stripslashes($_POST['new_name']);
+                        $_POST['new_mail'] = stripslashes($_POST['new_mail']);
+                        $_POST['new_passwd'] = stripslashes($_POST['new_passwd']);
+                    }
+                    status(Coach::create(array(
+                        'name'   => $_POST['new_name'], 
+                        'passwd' => $_POST['new_passwd'], 
+                        'mail'   => $_POST['new_mail'], 
+                        'ring'   => $_POST['new_ring'],
+                    )));
+                    break;
+                    
+                case 'Change privileges':
+                    $coach = new Coach($_POST['chring_coachid']);
+                    if (!is_object($coach)) {
+                        status(false);
+                        return;
+                    }
+                    else {
+                        status($coach->setRing($_POST['chring_ring']));
+                    }
+                    break;
+                    
+                case 'Change password':
+                    $coach = new Coach($_POST['chpass_coachid']);
+                    status($coach->setPasswd($_POST['ch_passwd']));
+                    break;
+            }
+           
             // Reload coaches objects.
             $coaches = Coach::getCoaches();
         }
@@ -94,9 +114,21 @@ function sec_admin() {
         }
 
         title('User management');
-
+        $rings = array(
+            RING_SYS    => 'Ring '.RING_SYS.': Site admin', 
+            RING_COM    => 'Ring '.RING_COM.': League commissioner', 
+            RING_COACH  => 'Ring '.RING_COACH.': Regular coach'
+        );
+        
         ?>
         <form method="POST" action="?section=admin&amp;subsec=usrman">
+        
+            <b>OBBLM access levels:</b>
+            <ul>
+                <li>Ring 2: Ordinary coaches: May manage own teams and submit match reports in which own teams play.</li>
+                <li>Ring 1: League commissioners: Same as ring 2, but may also schedule matches, view the site log and post messages on the front page board.</li>
+                <li>Ring 0: Site administrators: Same as ring 1, but has access to the whole administrators section, and may also manage other teams + submit their match reports.</li>
+            </ul>
         
             <div class="adminBox">
                 <div class="boxTitle3">
@@ -106,18 +138,26 @@ function sec_admin() {
                     Coach name:<br> <input type="text" name="new_name" size="20" maxlength="50"><br><br>
                     Mail (optional):<br> <input type="text" name="new_mail" size="20" maxlength="129"><br><br>
                     Password:<br> <input type="password" name="new_passwd" size="20" maxlength="50"><br><br>
-                    Admin: <INPUT TYPE="CHECKBOX" NAME="new_admin"><br><br>
+                    Site access level:<br>
+                    <select name="new_ring">
+                        <?php
+                        foreach ($rings as $r => $desc) {
+                            echo "<option value='$r'>$desc</option>\n";
+                        }
+                        ?>
+                    </select>
+                    <br><br>
                     <input type="submit" name="button" value="Create coach">
                 </div>
             </div>
             
             <div class="adminBox">
                 <div class="boxTitle3">
-                    Toggle admin-status
+                    Change coach access level
                 </div>
                 <div class="boxBody">
                     Coach:<br>
-                    <select name="chadmin_coachid">
+                    <select name="chring_coachid">
                         <?php
                         foreach ($coaches as $coach) {
                             echo "<option value='$coach->coach_id'>$coach->name</option>\n";
@@ -125,8 +165,16 @@ function sec_admin() {
                         ?>
                     </select>
                     <br><br>
-                    Admin: <INPUT TYPE="CHECKBOX" NAME="chadmin_status"><br><br>
-                    <input type="submit" name="button" value="Change status">
+                    Site access level:<br>
+                    <select name="chring_ring">
+                        <?php
+                        foreach ($rings as $r => $desc) {
+                            echo "<option value='$r'>$desc</option>\n";
+                        }
+                        ?>
+                    </select>
+                    <br><br>
+                    <input type="submit" name="button" value="Change privileges">
                 </div>
             </div>
             
@@ -161,14 +209,14 @@ function sec_admin() {
                             <tr>
                                 <td><b>Name</b></td>
                                 <td><b>Mail</b></td>
-                                <td><b>Admin</b></td>
+                                <td><b>Access level</b></td>
                             </tr>
                         <?php
                         foreach ($coaches as $coach) {
                             echo "<tr>\n";
                             echo "<td>$coach->name</td>\n";
                             echo "<td><a href='mailto:$coach->mail'>$coach->mail</a></td>\n";
-                            echo "<td>" . ($coach->admin ? 'Yes' : 'No') . " </td>\n";
+                            echo "<td>" . $rings[$coach->ring] . " </td>\n";
                             echo "</tr>\n";
                         }
                         echo "</table>\n";
@@ -742,12 +790,27 @@ function sec_admin() {
     }
     elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'chtr') {
 
-        if (isset($_POST['trid'])) {
-            $t = new Tour($_POST['trid']);
-            status($t->chRS($_POST['rs']) && $t->chType($_POST['type']) && $t->rename($_POST['tname']));
+        if (isset($_POST['type'])) {
+            switch ($_POST['type'])
+            {
+                case 'change':
+                    $t = new Tour($_POST['trid']);
+                    status($t->chRS($_POST['rs']) && $t->chType($_POST['type']) && $t->rename($_POST['tname']));
+                    break;
+
+                case 'delete':
+                    if (isset($_POST['delete']) && $_POST['delete']) {
+                        $t = new Tour($_POST['trid']);
+                        status($t->delete(true));
+                    }
+                    else {
+                        status(false, 'Please mark the agreement box before trying to delete a tournament.');
+                    }
+                    break;
+            }
         }
 
-        title('Change tournament details');
+        title('Tournament handling');
         $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value = e['trid'].options[e['trid'].selectedIndex].text;";
         
         ?>
@@ -792,8 +855,37 @@ function sec_admin() {
             <input type="radio" name="type" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
             <input type="radio" name="type" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
             <br><br>
-           
+            
+            <input type="hidden" name="type" value="change">
             <input type="submit" value="Submit changes">
+            <br><br>
+        </form>
+        <form method="POST">
+            <hr>
+            <?php title('Tournament deletion');?>
+            <b>I wish to delete the following tournament</b><br>
+            <select name="trid">
+                <?php
+                foreach (Tour::getTours() as $t) {
+                    echo "<option value='$t->tour_id'>$t->name</option>\n";
+                }
+                ?>
+            </select>
+            <br><br>
+            <b>I have read the below advisement:</b> 
+            <input type="checkbox" name="delete" value="1">
+            <br><br>
+            <b><u>Advisement/warning (!!!):</u></b><br>
+            This feature is only meant to be used for non-played tournaments and test-tournaments.<br>
+            If you decide to delete a proper tournament you should know that this will<br>
+            <ul>
+                <li>delete the tournament associated data forever (this includes team and player gained stats in the tournament).</li>
+                <li>generate incorrect player statuses for those matches following (date-wise) the matches deleted. Re-saving/changing old matches may therefore be problematic.</li>
+            </ul>
+            <br><br>
+           
+            <input type="hidden" name="type" value="delete">
+            <input type="submit" value="Delete" onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
         </form>
         <?php
     }

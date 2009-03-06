@@ -32,6 +32,8 @@ class Coach
     public $name        = '';
     public $passwd      = '';
     public $mail        = '';
+    public $ring       = 0; // Privilege ring (ie. coach access level).
+
     public $admin       = false;
     
     // General (total) calcualted fields
@@ -85,7 +87,7 @@ class Coach
         foreach ($row as $col => $val)
             $this->$col = $val ? $val : 0;
             
-        $this->admin = $row['admin'] ? true : false; # Re-define as boolean.
+        $this->admin = ($this->ring == RING_SYS);
         if (empty($this->mail)) $this->mail = ''; # Re-define as empty string, and not numeric zero.
         
         $this->setStats(false);
@@ -175,36 +177,26 @@ class Coach
         return $tours;
     }
 
-    public function setAttr(array $input) {
-        
-        /**
-         * Changes coach attributes: name, mail passwd, admin.
-         *
-         *  Input:
-         *  ------
-         *      type        = [name | passwd | mail | admin]
-         *      new_value   = The new value for above type.
-         **/
+    public function setRing($level) {
+        if (!in_array($level, array(RING_SYS, RING_COM, RING_COACH))) {return false;}
+        $this->ring = $level;
+        return mysql_query("UPDATE coaches SET ring = $level WHERE coach_id = $this->coach_id");
+    }
 
-        if ($input['type'] == 'name' || $input['type'] == 'passwd' || $input['type'] == 'mail') {
+    public function setPasswd($passwd) {
+        $query = "UPDATE coaches SET passwd = '".md5($passwd)."' WHERE coach_id = $this->coach_id";
+        return (mysql_query($query) && ($this->passwd = md5($passwd)));
+    }
 
-            // To avoid confusion only unique coach names are allowed.
-            if ($input['type'] == 'name' && get_alt_col('coaches', 'name', $input['new_value'], 'name'))
-                return false;
+    public function setName($name) {
+        if (!isset($name) || empty($name) || get_alt_col('coaches', 'name', $name, 'coach_id')) {return false;} // Don't allow duplicates.
+        $query = "UPDATE coaches SET name = '".mysql_real_escape_string($name)."' WHERE coach_id = $this->coach_id";
+        return (mysql_query($query) && ($this->name = $name));
+    }
 
-            if (mysql_query("UPDATE coaches 
-                            SET $input[type] = '" . ($input['type'] == 'passwd' ? md5($input['new_value']) : mysql_real_escape_string($input['new_value'])) . "' 
-                            WHERE coach_id = $this->coach_id")) {
-                $this->$input['type'] = ($input['type'] == 'passwd') ? md5($input['new_value']) : $input['new_value'];
-                return true;
-            }
-        }
-        elseif ($input['type'] == 'admin' && mysql_query("UPDATE coaches SET admin = '" . ($input['new_value'] ? 1 : 0) . "' WHERE coach_id = $this->coach_id")) {
-            $this->admin = ($input['new_value'] ? true : false);
-            return true;
-        }
-
-        return false;
+    public function setMail($mail) {
+        $query = "UPDATE coaches SET mail = '".mysql_real_escape_string($mail)."' WHERE coach_id = $this->coach_id";
+        return (mysql_query($query) && ($this->mail = $mail));
     }
 
     public function isInMatch($match_id) {
@@ -269,22 +261,19 @@ class Coach
         /**
          * Creates a new coach.
          *
-         * Input: name, passwd, mail, admin
+         * Input: name, passwd, mail, ring
          **/
 
         if (empty($input['name']) || empty($input['passwd']) || get_alt_col('coaches', 'name', $input['name'], 'coach_id')) # Name exists already?
             return false;
 
-        $query = "INSERT INTO coaches (name, passwd, mail, admin) 
+        $query = "INSERT INTO coaches (name, passwd, mail, ring) 
                     VALUES ('" . mysql_real_escape_string($input['name']) . "',
                             '" . md5($input['passwd']) . "', 
                             '" . mysql_real_escape_string($input['mail']) . "', 
-                            '" . ($input['admin'] ? 1 : 0)."')";
+                            '" . $input['ring']."')";
                             
-        if (mysql_query($query))
-            return true;
-        else
-            return false;
+        return mysql_query($query);
     }
 }
 ?>
