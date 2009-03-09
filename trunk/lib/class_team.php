@@ -38,6 +38,7 @@ class Team
     public $ass_coaches       = 0;
     public $cheerleaders      = 0;
     public $imported          = false;
+    public $is_retired        = 0;
 
     public $coach_name        = '';
     private $_bought_fan_factor = 0;
@@ -113,6 +114,8 @@ class Team
         foreach ($row as $col => $val)
             $this->$col = $val ? $val : 0;
 
+        $this->is_retired = ($this->retired || get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'retired'));
+        unset($this->retired); // We use $this->is_retired instead.
         $this->coach_name = get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'name');
         $this->_bought_fan_factor = $this->fan_factor;
         $this->imported = ($this->imported == 1); // Make boolean.
@@ -412,6 +415,11 @@ class Team
             return true;
         else
             return false;
+    }
+
+    public function setRetired($bool) {
+    
+        return mysql_query("UPDATE teams SET retired = ".(($bool) ? 1 : 0)." WHERE team_id = $this->team_id");
     }
 
     public function buy($thing) {

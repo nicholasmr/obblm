@@ -55,7 +55,8 @@ function sec_login() {
         $coaches = Coach::getCoaches();
         objsort($coaches, array('+name'));
         foreach ($coaches as $c) {
-            echo "<option value='$c->coach_id'>$c->name</option>";
+            if (!$c->retired)
+                echo "<option value='$c->coach_id'>$c->name</option>";
         }
         ?>
         </select>

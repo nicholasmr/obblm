@@ -93,6 +93,8 @@ function setup_tables() {
                 passwd          VARCHAR(32),
                 mail            VARCHAR(129),
                 ring            TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                settings        VARCHAR(320) NOT NULL,
+                retired         BOOLEAN NOT NULL DEFAULT 0
                 )';
     mk_table($query, 'coaches');
 
@@ -109,6 +111,7 @@ function setup_tables() {
                 ass_coaches         MEDIUMINT UNSIGNED,
                 cheerleaders        MEDIUMINT UNSIGNED,
                 imported            BOOLEAN NOT NULL DEFAULT 0,
+                retired             BOOLEAN NOT NULL DEFAULT 0,
                 won_0               SMALLINT UNSIGNED NOT NULL DEFAULT 0,
                 lost_0              SMALLINT UNSIGNED NOT NULL DEFAULT 0,
                 draw_0              SMALLINT UNSIGNED NOT NULL DEFAULT 0,
