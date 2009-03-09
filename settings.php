@@ -16,7 +16,7 @@ $db_host   = 'localhost';
 $settings['site_url'] = 'http://localhost/~nicholas/obblm2'; // URL to where OBBLM can be accessed.
 $settings['lang'] = 'en-GB';          // Language. Existing: en-GB.
 $settings['league_name'] = 'UNNAMED BBL'; // League name.
-$settings['stylesheet'] = 2;          // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
+$settings['stylesheet'] = 1;          // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
 $settings['show_sort_rule'] = true;   // Default is true. Print in table footers what tables are sorted against?
 
 $settings['entries_messageboard']   = 5;  // Number of entries on the main page messageboard in normal view mode. Note: A value of 0 shows all messages.
@@ -24,6 +24,7 @@ $settings['entries_standings']      = 5;  // Number of entries in the main page 
 $settings['entries_latest']         = 5;  // Number of entries in the main page table "latest games".
 $settings['entries_casualties']     = 5;  // Number of entries in the main page table "casualties".
 $settings['entries_touchdown']      = 5;  // Number of entries in the main page table "touchdowns".
+$settings['entries_completions']    = 5;  // Number of entries in the main page table "completions".
 $settings['entries_players']        = 20; // Number of entries in the players standings table. Note: A value of 0 shows all players.
 
 $settings['show_sold_journeymen'] = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
