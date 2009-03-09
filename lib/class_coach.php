@@ -34,6 +34,7 @@ class Coach
     public $mail        = '';
     public $ring        = 0; // Privilege ring (ie. coach access level).
     public $retired     = false;
+    public $settings    = array();
 
     public $admin       = false;
     
@@ -93,6 +94,18 @@ class Coach
         
         $this->setStats(false);
         
+        // Coach's site settings.
+        $this->settings = array(); // Is overwriten to type = string when loading MySQL data into this object.
+        foreach (get_list('coaches', 'coach_id', $this->coach_id, 'settings') as $set) {
+            list($key, $val) = explode('=', $set);
+            $this->settings[$key] = $val;
+        }
+        $init = array('theme' => 1, ); // Setting values which must be initialized if not stored/saved in mysql.
+        foreach ($init as $key => $val) {
+            if (!array_key_exists($key, $this->settings) || !isset($this->settings[$key]))
+                $this->settings[$key] = $val;
+        }
+        
         return true;
     }
     
@@ -141,6 +154,17 @@ class Coach
         }
 
         return true;
+    }
+    
+    public function setSetting($key, $val) {
+        
+        $this->settings[$key] = $val;
+        $settings = array();
+        foreach ($this->settings as $key => $val) {
+            $settings[] = implode('=', array($key, $val));
+        }
+        
+        return set_list('coaches', 'coach_id', $this->coach_id, 'settings', $settings);
     }
 
     public function getTeams() {

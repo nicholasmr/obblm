@@ -68,13 +68,16 @@ if (isset($_GET['logout'])) {
     session_destroy();
 }
 
+// Create coach object.
+$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null;
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <title><?php echo $settings['league_name']; ?> Blood Bowl League</title>
-    <link type="text/css" href="css/stylesheet<?php echo $settings['stylesheet']; ?>.css" rel="stylesheet">
+    <link type="text/css" href="css/stylesheet<?php echo (isset($_SESSION['logged_in'])) ? $coach->settings['theme'] : $settings['stylesheet']; ?>.css" rel="stylesheet">
     <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
     <script type="text/javascript" src="lib/misc_functions.js"></script>
     
@@ -85,13 +88,12 @@ if (isset($_GET['logout'])) {
         <tr>
         <td class="menu">
             <?php 
-            $coach = null;
             if (isset($_SESSION['logged_in'])) { ?><a class='menuSpecial' href="index.php?logout=1">       <b><?php echo $lng->getTrn('global/secLinks/logout');?></b></a>&nbsp;<?php }
             else                               { ?><a class='menuSpecial' href="index.php?section=login">  <b><?php echo $lng->getTrn('global/secLinks/login');?></b></a>&nbsp;<?php }
             ?>
             <?php
             if (isset($_SESSION['logged_in'])) {
-                if (is_object($coach = new Coach($_SESSION['coach_id'])) && $coach->ring <= RING_COM) {
+                if (is_object($coach) && $coach->ring <= RING_COM) {
                     echo "<a class='menuSpecial' href='index.php?section=admin'><b>".$lng->getTrn('global/secLinks/admin')."</b></a> &nbsp;\n";
                 }
                 echo "<a class='menu' href='index.php?section=coachcorner'><b>".$lng->getTrn('global/secLinks/cc')."</b></a> &nbsp;\n";

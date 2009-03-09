@@ -178,7 +178,7 @@ function sec_main() {
      *****/
 
     ?>
-    <div class="main_title"><?php echo $settings['league_name']; ?> Blood Bowl League</div>
+    <div class="main_title"><?php echo $settings['league_name']; ?></div>
     <div class='main_lcol'>
         <div class="main_lcolLinks">
             <?php
@@ -1867,6 +1867,7 @@ function sec_coachcorner() {
                 case 'Change password': status(login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
                 case 'Change email':    status($coach->setMail($_POST['new_email'])); break;
                 case 'Change name':     status($coach->setName($_POST['new_name'])); break;
+                case 'Change theme':    status($coach->setSetting('theme', (int) $_POST['new_theme'])); break;
             }
         }
         
@@ -1981,6 +1982,21 @@ function sec_coachcorner() {
                     <td>Old:<input type='text' name='old_name' readonly value="<?php echo $coach->name; ?>" size="20" maxlength="50"></td>
                     <td>New:<input type='text' name='new_name' size="20" maxlength="50"></td>
                     <td><input type="submit" name="button" value="Change name"></td>
+                </tr>
+                <tr>
+                    <td>Change OBBLM theme:</td>
+                    <td>Current: <?php echo $coach->settings['theme'];?></td>
+                    <td>
+                        New:
+                        <select name='new_theme'>
+                            <?php
+                            foreach (array(1 => 'Classic', 2 => 'Clean') as $theme => $desc) {
+                                echo "<option value='$theme'>$theme: $desc</option>\n";
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td><input type="submit" name="button" value="Change theme"></td>
                 </tr>
         </table>
         </form>
