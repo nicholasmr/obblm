@@ -15,8 +15,8 @@ $db_host   = 'localhost';
 
 $settings['site_url'] = 'http://localhost/~nicholas/obblm2'; // URL to where OBBLM can be accessed.
 $settings['lang'] = 'en-GB';          // Language. Existing: en-GB.
-$settings['league_name'] = 'UNNAMED'; // League name.
-$settings['stylesheet'] = 1;          // Default is 1. OBBLM CSS stylesheet. Currently stylesheet 1 is the only existing stylesheet.
+$settings['league_name'] = 'UNNAMED BBL'; // League name.
+$settings['stylesheet'] = 2;          // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
 $settings['show_sort_rule'] = true;   // Default is true. Print in table footers what tables are sorted against?
 
 $settings['entries_messageboard']   = 5;  // Number of entries on the main page messageboard in normal view mode. Note: A value of 0 shows all messages.

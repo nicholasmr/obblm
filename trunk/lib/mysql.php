@@ -47,8 +47,8 @@ function get_list($table, $col, $val, $new_col) {
     if (mysql_num_rows($result) <= 0)
         return array();
     
-    $row = mysql_assoc($result);
-    return explode(',', $row[$new_col]);
+    $row = mysql_fetch_assoc($result);
+    return (empty($row[$new_col])) ? array() : explode(',', $row[$new_col]);
 }
 
 function set_list($table, $col, $val, $new_col, $new_val = array()) {
