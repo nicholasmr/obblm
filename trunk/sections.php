@@ -170,6 +170,8 @@ function sec_main() {
     $touchdowns = Stats::getLeaders(STATS_PLAYER, $settings['entries_touchdown'], array('-td'), true);
     // Casualties
     $casualties = Stats::getLeaders(STATS_PLAYER, $settings['entries_casualties'], array('-bh+ki+si'), true);
+    // Completions
+    $completions = Stats::getLeaders(STATS_PLAYER, $settings['entries_completions'], array('-cp'), true);
 
     /*****
      *
@@ -410,6 +412,31 @@ function sec_main() {
                             echo "<tr>\n";
                             echo "<td>$p->name</td>\n";
                             echo "<td>$p->td</td>\n";
+                            echo "<td>" . $p->value/1000 . "k</td>\n";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
+            <?php
+        }
+        if ($settings['entries_completions'] != 0) {
+            ?>
+            <div class="main_rcolBox">
+                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/cp');?></div>
+                <div class='boxBody'>
+                    <table class="boxTable">
+                        <tr>
+                            <td width="100%"><b>Name</b></td>
+                            <td><b>Amount</b></td>
+                            <td><b>Value</b></td>
+                        </tr>
+                        <?php
+                        foreach ($completions as $p) {
+                            echo "<tr>\n";
+                            echo "<td>$p->name</td>\n";
+                            echo "<td>$p->cp</td>\n";
                             echo "<td>" . $p->value/1000 . "k</td>\n";
                             echo "</tr>";
                         }
@@ -1922,13 +1949,6 @@ function sec_coachcorner() {
                 }
                 echo empty($won_tours) ? '<i>None</i>' : implode(', ', $won_tours);
                 ?>
-                </td>
-            </tr>
-        </table>
-        <table class="text">
-            <tr>
-                <td class="light">
-                    <b>Your teams <a href="javascript:void(0)" onclick="window.open('html/coach_corner_teams.html','ccorner_TeamsHelp','width=350,height=400')">[?]</a></b>
                 </td>
             </tr>
         </table>

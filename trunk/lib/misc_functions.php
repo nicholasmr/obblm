@@ -329,6 +329,7 @@ function sort_table($title, $lnk, array $objs, array $fields, array $std_sort, $
             doNr => true/false. Boolean telling wheter or not to print the "Nr." column.
             limit => int. Stop printing rows when this row number is reached.
             anchor => string. Will create table sorting links, that include this identifier as an anchor.
+            noHelp => true/false. Will enable/disable help link [?].
     */
     global $settings;
     
@@ -351,7 +352,11 @@ function sort_table($title, $lnk, array $objs, array $fields, array $std_sort, $
         <tr>
             <td class="light" colspan="<?php echo $CP;?>"><b>
             <?php echo $title;?>&nbsp;
-            <a href="javascript:void(0);" onclick="window.open('html/table_desc.html','tableColumnDescriptions','width=600,height=400')">[?]</a>
+            <?php
+            if (!array_key_exists('noHelp', $extra) || !$extra['noHelp']) {
+                ?><a href="javascript:void(0);" onclick="window.open('html/table_desc.html','tableColumnDescriptions','width=600,height=400')">[?]</a><?php
+            }
+            ?>
             </b></td>
         </tr>
         <tr>

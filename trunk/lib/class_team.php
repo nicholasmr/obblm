@@ -346,6 +346,22 @@ class Team
         return $tours;
     }
     
+    public function getLatestTour() {
+        
+        /**
+         * Returns the ID of latest tournament competed in.
+         **/
+         
+        $query = "SELECT f_tour_id FROM matches WHERE team1_id = $this->team_id OR team2_id = $this->team_id ORDER BY date_played DESC LIMIT 1";
+        $result = mysql_query($query);
+        if (mysql_num_rows($result) > 0) {
+            $row = mysql_fetch_assoc($result);
+            return $row['f_tour_id'];
+        }
+        
+        return false;
+    }
+    
     public function getGoods($double_price = true) {
 
         /**
@@ -359,8 +375,11 @@ class Team
         if (!empty($this->race)) {
             // Double the re-roll prices if first match in tournament has been played.
             $tour = Tour::getLatestTour();
+            if (is_object($tour) && $tour->is_finished) {
+                $tour = null;
+            }
             $rerollcost = $DEA[$this->race]['other']['RerollCost'] * 
-                            ($double_price && !$rules['static_rerolls_prices'] && is_object($tour) && $tour->begun ? 2 : 1);
+                            (($double_price && !$rules['static_rerolls_prices'] && is_object($tour) && $tour->begun) ? 2 : 1);
         }
 
         $apothecary = true;

@@ -796,8 +796,13 @@ function team_roaster($team_id) {
                      **************/
                         
                     case 'buy_goods':
+
+                        echo "Buy team goods.";
+                        $goods_temp = $team->getGoods();
+                        if ($DEA[$team->race]['other']['RerollCost'] != $goods_temp['rerolls']['cost']) {
+                            echo "<br><br>Please note that re-roll prices are <font color='red'><b>doubled</b></font> because a tournament is currently being played.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert to overcharged amount.";
+                        }
                         ?>
-                        Buy team goods.
                         <hr><br>
                         Thing:<br>
                         <select name="thing">
@@ -862,7 +867,7 @@ function team_roaster($team_id) {
                         'chown'             => 'Change ownership',
                         'spp'               => 'Manage player extra SPP',
                         'extra_skills'      => 'Manage player extra skills',
-                        'ach_skills'        => 'Remove achieved player skills'
+                        'ach_skills'        => 'Remove ach. player skills'
                     );
 
                     // Set default choice.
@@ -1719,66 +1724,37 @@ function disp_teams($coach_id = null) {
     }
     
     objsort($teams, array('+name'));
+    
+    foreach ($teams as $t) {
+        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='" . $t->getLogo() . "'>";
+        $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
+        $lt = $t->getLatestTour();
+        $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
+        $t->awds = 'Not yet implemented';
+    }
 
-    /* 
-        Make new multidimensional array representing table to print 
-    */
+    $fields = array(
+        'logo'      => array('desc' => 'Logo', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id'), 'nosort' => true), 
+        'name'      => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
+        'race'      => array('desc' => 'Race'), 
+        'coach_name' => array('desc' => 'Coach'), 
+        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),  
+        'retired'   => array('desc' => 'Retired?', 'nosort' => true), 
+        'latest_tour' => array('desc' => 'Latest tour'), 
+        'awds'      => array('desc' => 'Awards, trophies & prizes', 'nosort' => true), 
+    );
+
+    sort_table(
+        "Teams ". (($coach_id) ? "<a href='javascript:void(0);' onclick=\"window.open('html/coach_corner_teams.html','ccorner_TeamsHelp','width=350,height=400')\">[?]</a>" : ''), 
+        "index.php?section=".(($coach_id) ? 'coachcorner' : 'teams'), 
+        $teams, 
+        $fields, 
+        array('+name'), 
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+        array('doNr' => false, 'noHelp' => true)
+    );
     
-    $teams_table = array();
-    $col = 0;
-    $row = 0;
-    foreach ($teams as $team) {
-        if ($col > 3) {
-            $row++;
-            $col = 0;
-        }
-        $teams_table[$row][$col] = $team;
-        $col++;
-    }
-    
-    /*  
-        We must correct $teams_table so that every row is filled out for when printing.
-        This way we do not break the html table design. We do this by adding NULL elements. 
-    */
-    
-    if (!empty($teams_table) && count(end($teams_table)) < 4) {
-        $extra = 4 - count(end($teams_table));
-        for ($i = 1; $i <= $extra; $i++)
-            array_push($teams_table[count($teams_table)-1], null);
-    }
-    
-    /* 
-        Print team list (make table)
-    */
-    
-    echo "<table class='teams'>\n";
-    foreach ($teams_table as $row) {
-        // Logo
-        echo "<tr>\n";
-        foreach ($row as $col) {
-            echo "<td style='text-align:center;'>\n";
-            if (isset($col)) { # Don't print NULL elements
-                echo "<a href='index.php?section=coachcorner&amp;team_id=$col->team_id'><img border='0px' height='145' width='145' alt='Team race picture' src='" . $col->getLogo() . "'></a>\n";
-            }
-            echo "</td>\n";
-        }
-        echo "</tr>\n";
-        
-        // Name
-        echo "<tr>\n";
-        foreach ($row as $col) {
-            if (isset($col)) { # Don't print NULL elements
-                echo "<td class='light' style='text-align:center;'>\n";
-                echo "$col->name" . (isset($_GET['section']) && $_GET['section'] == 'coachcorner' ? "" : " - <b>$col->coach_name</b>") . "\n";
-            }
-            else {
-                echo "<td style='text-align:center;'>\n";
-            }
-            echo "</td>\n";
-        }
-        echo "</tr>\n";
-    }
-    echo "</table>\n";
+    return true;
 }
 
 
