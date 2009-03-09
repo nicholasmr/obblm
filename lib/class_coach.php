@@ -32,7 +32,8 @@ class Coach
     public $name        = '';
     public $passwd      = '';
     public $mail        = '';
-    public $ring       = 0; // Privilege ring (ie. coach access level).
+    public $ring        = 0; // Privilege ring (ie. coach access level).
+    public $retired     = false;
 
     public $admin       = false;
     
@@ -175,6 +176,49 @@ class Coach
         }
         
         return $tours;
+    }
+
+    public function isDeletable() {
+        
+        $status = true;
+        
+        foreach ($this->getTeams() as $t) {
+            $status &= $t->isDeletable();
+        }
+        
+        return $status;
+    }
+    
+    public function delete() {
+        
+        /**
+         * Deletes coach if deletable.
+         **/
+
+        $status = true;
+        
+        if ($this->isDeletable()) {
+            
+            foreach ($this->getTeams() as $t) {
+                $status &= $t->delete();
+            }            
+
+            $status &= mysql_query("DELETE FROM coaches WHERE coach_id = ".$this->coach_id);
+        }
+        else {
+            $status = false;
+        }
+        
+        return $status;
+    }
+    
+    public function setRetired($bool) {
+
+        /**
+         * Retires coach (disables coach login).
+         **/    
+
+        return mysql_query("UPDATE coaches SET retired = ".(($bool) ? 1 : 0)." WHERE coach_id = $this->coach_id");
     }
 
     public function setRing($level) {

@@ -38,7 +38,7 @@ function team_roaster($team_id) {
     $ALLOW_EDIT = false;
     $JMP_ANC    = false; // Jump to team actions boxes HTML anchor after page load?
 
-    if (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin))
+    if (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$team->is_retired)
         $ALLOW_EDIT = true;
     
     // Detailed view wanted?
@@ -299,7 +299,7 @@ function team_roaster($team_id) {
      *
      ******************************/
 
-    title($team->name);
+    title($team->name . (($team->is_retired) ? ' <font color="red"> (Retired)</font>' : ''));
     
     $fields = array(
         'nr'        => array('desc' => 'Nr.'), 
@@ -1344,7 +1344,7 @@ function player_roaster($player_id) {
 
     $team = new Team(get_alt_col('players', 'player_id', $player_id, 'owned_by_team_id'));
     $coach = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
-    $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin)) ? true : false;
+    $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$team->is_retired);
     $p->setExtraStats(false);
     $p->setStreaks(false);
     $p->skills = $p->getSkillsStr(true);
@@ -1702,14 +1702,6 @@ function player_roaster($player_id) {
 
 function disp_teams($coach_id = null) {
 
-    $visitor = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
-    
-    // Delete team request?
-    if (isset($_GET['tdel']) && is_object($visitor) && $visitor->admin) {
-        $t = new Team($_GET['tdel']);
-        status($t->delete());
-    }
-
     /* 
         First generate array of team objects. 
     */
@@ -1778,9 +1770,6 @@ function disp_teams($coach_id = null) {
             if (isset($col)) { # Don't print NULL elements
                 echo "<td class='light' style='text-align:center;'>\n";
                 echo "$col->name" . (isset($_GET['section']) && $_GET['section'] == 'coachcorner' ? "" : " - <b>$col->coach_name</b>") . "\n";
-                if (is_object($visitor) && $visitor->admin && $col->isDeletable()) { // Delete team link.
-                    echo "<a title='Delete team' onclick=\"if(!confirm('Are you sure you want to delete the team?')){return false;}\" href='?section=$_GET[section]&amp;tdel=$col->team_id'>[X]</a>\n";
-                }
             }
             else {
                 echo "<td style='text-align:center;'>\n";

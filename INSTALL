@@ -55,6 +55,11 @@ NOTE: When upgrading please save your old settings file as a reference for when 
         ALTER TABLE coaches ADD COLUMN ring TINYINT UNSIGNED NOT NULL DEFAULT 0;
         UPDATE coaches SET ring = 2 WHERE admin = 0 OR admin IS NULL;
         ALTER TABLE coaches DROP admin;
+        
+        ALTER TABLE coaches ADD COLUMN settings VARCHAR(320) NOT NULL;
+        ALTER TABLE coaches ADD COLUMN retired BOOLEAN NOT NULL DEFAULT 0;
+        ALTER TABLE teams   ADD COLUMN retired BOOLEAN NOT NULL DEFAULT 0 AFTER imported;
+        
 
 0.36 -> 0.37
 
