@@ -795,7 +795,7 @@ function sec_admin() {
             {
                 case 'change':
                     $t = new Tour($_POST['trid']);
-                    status($t->chRS($_POST['rs']) && $t->chType($_POST['type']) && $t->rename($_POST['tname']));
+                    status($t->chRS($_POST['rs']) && $t->chType($_POST['ttype']) && $t->rename($_POST['tname']));
                     break;
 
                 case 'delete':
@@ -849,11 +849,11 @@ function sec_admin() {
            
             <br><br>
             <b>Tournament type:</b> Warning: Use this feature with caution (!!!). Please don't use it to convert K.O. tours!<br>
-            <input type="radio" name="type" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
-            <input type="radio" name="type" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
-            <input type="radio" name="type" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
-            <input type="radio" name="type" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
-            <input type="radio" name="type" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
+            <input type="radio" name="ttype" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
+            <input type="radio" name="ttype" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
+            <input type="radio" name="ttype" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
+            <input type="radio" name="ttype" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
+            <input type="radio" name="ttype" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
             <br><br>
             
             <input type="hidden" name="type" value="change">

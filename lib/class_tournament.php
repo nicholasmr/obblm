@@ -258,7 +258,7 @@ class Tour
     public function chType($type) {
     
         /**
-         * Rename tournament title.
+         * Change tournament type.
          **/
     
         return (mysql_query("UPDATE tours SET type = $type WHERE tour_id = $this->tour_id"));
@@ -701,18 +701,26 @@ class Tour
             if (!$robin->create($input['teams'])) # If can't create Round-Robin tour -> quit.
                 return false;
 
+            // Okey, so $input['rounds'] is incorrect in the sense that this is the multiplier of times to schedule the same round-set comprising the RR tour.
+            // Instead we denote $real_rounds to be the actual number of rounds in the scheduled RR tour.
+            $real_rounds = count($robin->tour);
+
             // Create inverse depiction round.
-            foreach ($robin->tour as $idx => $m) {
-                $robin->tour_inv[$idx] = array($m[1], $m[0]);
+            foreach ($robin->tour as $ridx => $r) {
+                foreach ($r as $idx => $m) {
+                    $robin->tour_inv[$ridx][$idx] = array($m[1], $m[0]);
+                }
             }
 
             // Rounds between MIN_ALLOWED_ROUNDS - MAX_ALLOWED_ROUNDS ?
             if ($input['rounds'] < MIN_ALLOWED_ROUNDS || $input['rounds'] > MAX_ALLOWED_ROUNDS)
                 return false;
-
+            
             for ($i = 1; $i <= $input['rounds']; $i++) {
-                foreach ($robin->{(($i % 2) ? 'tour' : 'tour_inv')} as $match) { // Depict round's match compets inversely for every other round.
-                    Match::create(array('team1_id' => $match[0], 'team2_id' => $match[1], 'round' => $i, 'f_tour_id' => $tour_id));
+                foreach ($robin->{(($i % 2) ? 'tour' : 'tour_inv')} as $ridx => $r) {
+                    foreach ($r as $match) { // Depict round's match compets inversely for every other round.
+                        Match::create(array('team1_id' => $match[0], 'team2_id' => $match[1], 'round' => $ridx + ($i-1)*($real_rounds), 'f_tour_id' => $tour_id));
+                    }
                 }
             }
                 
