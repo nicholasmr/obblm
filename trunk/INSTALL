@@ -60,6 +60,17 @@ NOTE: When upgrading please save your old settings file as a reference for when 
         ALTER TABLE coaches ADD COLUMN retired BOOLEAN NOT NULL DEFAULT 0;
         ALTER TABLE teams   ADD COLUMN retired BOOLEAN NOT NULL DEFAULT 0 AFTER imported;
         
+        CREATE TABLE IF NOT EXISTS prizes
+        (
+            prize_id    MEDIUMINT UNSIGNED  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            f_id        MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0,
+            ac_id       MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0,
+            type        TINYINT UNSIGNED    NOT NULL DEFAULT 0,
+            date        DATETIME,
+            title       VARCHAR(100),
+            txt         TEXT
+        );
+        
 
 0.36 -> 0.37
 

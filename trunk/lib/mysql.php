@@ -223,6 +223,18 @@ function setup_tables() {
                 txt     TEXT
                 )';
     mk_table($query, 'texts');
+    
+    $query = 'CREATE TABLE IF NOT EXISTS prizes
+                (
+                prize_id    MEDIUMINT UNSIGNED  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                f_id        MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0,
+                ac_id       MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0,
+                type        TINYINT UNSIGNED    NOT NULL DEFAULT 0,
+                date        DATETIME,
+                title       VARCHAR(100),
+                txt         TEXT
+                )';
+    mk_table($query, 'prizes');
 
     /* Add tables indexes/keys. */
     

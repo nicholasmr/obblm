@@ -361,7 +361,7 @@ function sec_admin() {
             <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
             <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
             <br>
-            <b>Number of rounds:</b> (Round-Robin only)<br>
+            <b>Number of times each team plays all others:</b> (Round-Robin only)<br>
             <select name="rounds">
             <?php
             foreach (range(1, MAX_ALLOWED_ROUNDS) as $i) echo "<option value='$i'>$i</option>\n";
