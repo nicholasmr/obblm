@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,11 +21,20 @@
  *
  */
 
+/*
+    Round-robin scheduler.
+    Uses cyclic algorithm. Example: http://www.devenezia.com/downloads/round-robin/index.html
+*/
+
 class RRobin {
 
     /* Properties */
     
-    public $tour = array();
+    public $tour = array(
+        1 => array(),  // Round 1
+        #2 => array(), // Round 2
+        #3 => array(), // Round 3
+    );
     public $tot_games = 0;
     
     // Pair 2->n/2.
@@ -64,11 +73,12 @@ class RRobin {
         
         // Generate games
         for ($round = 0; $round < $n-1; $round++) {
+            $this->tour[$round+1] = array(); // Initialize.
             if ($this->rot_out != -1) # If not ghost player.
-                array_push($this->tour, array($list[$this->fixed], $list[$this->rot_out]));
+                array_push($this->tour[$round+1], array($list[$this->fixed], $list[$this->rot_out]));
             for ($i = 0; $i <= count($this->upper)-1; $i++) { # -1 because of 0th element.
                 if ($this->upper[$i] != -1 && $this->lower[$i] != -1) # If not ghost player.
-                    array_push($this->tour, array($list[$this->upper[$i]], $list[$this->lower[$i]]));
+                    array_push($this->tour[$round+1], array($list[$this->upper[$i]], $list[$this->lower[$i]]));
             }
             $this->rotate();
         }
