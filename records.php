@@ -459,4 +459,23 @@ function mem_matches()
     }
 }
 
+function prizes($type)
+{
+
+switch ($type) 
+{
+case PRIZE_PLAYER:
+    
+break;
+case PRIZE_TEAM:
+    
+break;
+case PRIZE_COACH:
+    
+break;
+}
+
+return true;
+}
+
 ?>

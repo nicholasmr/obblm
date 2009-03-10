@@ -1480,7 +1480,14 @@ function sec_records() {
 
     $c = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
     $ALLOW_EDIT = (is_object($c) && $c->admin) ? true : false;
-    $subsecs = array('hof' => $lng->getTrn('secs/records/d_hof'), 'wanted' => $lng->getTrn('secs/records/d_wanted'), 'memm' => $lng->getTrn('secs/records/d_memma'));
+    $subsecs = array(
+        'hof'           => $lng->getTrn('secs/records/d_hof'), 
+        'wanted'        => $lng->getTrn('secs/records/d_wanted'), 
+        'memm'          => $lng->getTrn('secs/records/d_memma'),
+#        'prize_players' => 'Player prizes',
+#        'prize_teams'   => 'Team prizes',
+#        'prize_coaches' => 'Coach prizes',
+    );
 
     // This section's routines are placed in the records.php file.
     if (isset($_GET['subsec'])) {
@@ -1497,6 +1504,18 @@ function sec_records() {
 
             case 'memm':
                 mem_matches();
+                break;
+                
+            case 'prize_players':
+                prizes(PRIZE_PLAYER);
+                break;
+
+            case 'prize_teams':
+                prizes(PRIZE_TEAM);                
+                break;
+
+            case 'prize_coaches':
+                prizes(PRIZE_COACH);                
                 break;
         }
         return;

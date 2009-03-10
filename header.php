@@ -25,7 +25,7 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.38e');
+define('OBBLM_VERSION', '0.38f');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
@@ -37,6 +37,15 @@ define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of 
 define('STATS_PLAYER', 1);
 define('STATS_TEAM',   2);
 define('STATS_COACH',  3);
+
+/********************* 
+ *   Prize types. Used by Prize class.
+ *********************/
+
+// Just use the same values as for Stats class.
+define('PRIZE_PLAYER', STATS_PLAYER);
+define('PRIZE_TEAM',   STATS_TEAM);
+define('PRIZE_COACH',  STATS_COACH);
 
 /********************* 
  *   Images
@@ -55,6 +64,7 @@ define('IMG_TEAMS',     UPLOAD_DIR.'/teams'); // team togo
 define('IMG_STADIUMS',  UPLOAD_DIR.'/stadiums');
 define('IMG_COACHES',   UPLOAD_DIR.'/coaches');
 define('IMG_MATCHES',   UPLOAD_DIR.'/matches');
+define('IMG_PRIZES',    UPLOAD_DIR.'/prizes');
 
 /********************* 
  *   Roster colors
@@ -202,6 +212,7 @@ require_once('lib/class_team.php');
 require_once('lib/class_coach.php');
 require_once('lib/class_stats.php');
 require_once('lib/class_text.php');
+require_once('lib/class_prize.php');
 require_once('lib/class_rrobin.php');
 require_once('lib/class_knockout.php');
 
