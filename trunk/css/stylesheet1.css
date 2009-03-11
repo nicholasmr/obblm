@@ -148,6 +148,7 @@ div.main_cpy        {clear: both; font-size: 10px; padding: 30px; padding-top: 2
 
 /* Team's page */
 div.tpageBox {float: left; width: 270px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
+div.tnewsBox {float: left; width: 600px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
 
 /* Administration */
 div.admin_menu {clear: both; width: inherit; text-align: center;}

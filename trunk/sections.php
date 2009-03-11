@@ -214,7 +214,7 @@ function sec_main() {
                     echo "<div id='short$j'>";
                         echo substr($e->message, 0, 300)." ...&nbsp;<a href='javascript:void(0)' 
                             onclick=\"document.getElementById('long$j').style.display='block'; document.getElementById('short$j').style.display='none';\"
-                            >[more]</a>\n";
+                            >[".$lng->getTrn('secs/home/more')."]</a>\n";
                     echo "</div>\n";
                     echo "<div id='long$j'>";
                         echo $e->message;
