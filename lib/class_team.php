@@ -669,6 +669,14 @@ class Team
     public function getStadiumPic() {
         return get_pic(IMG_STADIUMS, $this->team_id);
     }
+    
+    public function writeNews($txt) {
+        return true;
+    }    
+    
+    public function getNews($n) {
+        return array();
+    }
 
     /***************
      * Statics

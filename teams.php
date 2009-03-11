@@ -348,6 +348,10 @@ function team_roaster($team_id) {
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"shh=document.getElementById('SHH'); if (shh.style.display != 'none'){shh.style.display='none'}else{shh.style.display='block'};\" title='Show/hide star hire history'><b>Star HH</b></a>\n";
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"mhh=document.getElementById('MHH'); if (mhh.style.display != 'none'){mhh.style.display='none'}else{mhh.style.display='block'};\" title='Show/hide mercenary hire history'><b>Mercenary HH</b></a>\n";
             }
+            echo "&nbsp;|&nbsp;<a href='#anc_about'><b>About</b></a>\n";
+            echo "&nbsp;|&nbsp;<a href='#anc_news'><b>News</b></a>\n";
+            echo "&nbsp;|&nbsp;<a href='#gp'><b>Matches</b></a>\n";
+            echo "&nbsp;|&nbsp;<a href='#tr'><b>Rankings</b></a>\n";
             echo "</td>\n";
             if ($DETAILED) {
                 ?>
@@ -1160,7 +1164,7 @@ function team_roaster($team_id) {
         }
     }
 
-    title("About $team->name");
+    title("<a name='anc_about'>About $team->name</a>");
     ?>
     <table class='picAndText'>
         <tr>
@@ -1179,7 +1183,7 @@ function team_roaster($team_id) {
                 pic_box($team->getStadiumPic(), $ALLOW_EDIT,  '_stad');
                 ?>
             </td>
-            <td align='center' valign='top' style='width: 100%;'>
+            <td valign='top' style='width: 100%;'>
                 <?php
                 $txt = $team->getText();
                 if (empty($txt)) {
@@ -1192,7 +1196,9 @@ function team_roaster($team_id) {
                         <textarea name='teamtext' rows='15' style='width: 100%;'><?php echo $txt;?></textarea>
                         <br><br>
                         <input type="hidden" name="type" value="teamtext">
+                        <center>
                         <input type="submit" name='Save' value='Save'>
+                        </center>
                     </form>
                     <?php
                 }
@@ -1204,6 +1210,19 @@ function team_roaster($team_id) {
         </tr>
     </table>
     <?php
+    /*
+    title("<a name='anc_news'>News</a>");
+    
+    $news = $team->getNews(MAX_TNEWS);
+    ?>
+    <div class="tnewsBox">
+        <div class="boxTitle1">Team news</div>
+        <div class="boxBody">
+        
+        </div>    
+    </div>
+    <?php
+    */
   
     title("<a name='gp'>Games played</a>");
     
@@ -1320,7 +1339,7 @@ function team_roaster($team_id) {
     );
     
     sort_table(
-        'Games played', 
+        'Rankings', 
         "index.php?section=coachcorner&amp;team_id=$team->team_id", 
         $tours, 
         $fields, 

@@ -557,4 +557,9 @@ class MSMRC extends Text
     }
 }
 
+class TNews extends Text
+{
+
+}
+
 ?>

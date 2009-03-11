@@ -29,6 +29,7 @@ define('OBBLM_VERSION', '0.38f');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
+define('MAX_TNEWS', 5); // This number of entries are shown on the team news board.
 
 /********************* 
  *   Stats types. Used by Stats class.
@@ -115,6 +116,7 @@ define('T_TEXT_TOUR',   8);
 define('T_TEXT_GUEST',  9);
 define('T_TEXT_LOG',    10);
 define('T_TEXT_MSMRC',  11); // Match summary comments.
+define('T_TEXT_TNEWS',  12); // Team news board messages.
 
 /********************* 
  *   For players
