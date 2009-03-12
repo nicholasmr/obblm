@@ -188,10 +188,29 @@ public static function getMatchStats($grp, $id, $trid = false)
     $s['score_diff'] = $s['score_team'] - $s['score_opponent'];
     $s['win_percentage'] = ($s['played'] == 0) ? 0 : 100*$s['won']/$s['played'];
 
-    // Points definitions depending on ranking system.
+    /******************** 
+     * Points definitions depending on ranking system.
+     ********************/
+     
     $s['points'] = 0;
     if ($trid) {
-        switch (get_alt_col('tours', 'tour_id', $trid, 'rs'))
+
+        // First we need to investigate if the RS's points def. requires fields not yet loaded, and if so load them.
+        
+        global $hrs; // All house RSs
+        $rs_all  = Tour::getRSSortRules(false, false); // All RSs.
+        $hrs_nr  = 0; // Current HRS nr.
+        $rs_nr   = get_alt_col('tours', 'tour_id', $trid, 'rs'); // Current RS nr.
+        $fields  = array('mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki', 'cas', 'tdcas');
+        $limit   = count($rs_all) - count($hrs); // If rs_nr is larger than this value, then the RS for this tournament is a house RS -> set extra fields.
+        
+        
+        // Is the ranking system a house ranking system? If not then don't load extra fields since non-house RSs don't use the extra fields at all.
+        if (($hrs_nr = $rs_nr - $limit) > 0 && preg_match('/'.implode('|', $fields).'/', $hrs[$hrs_nr]['points'])) {
+            $s = array_merge($s, Stats::getStats(($grp == STATS_PLAYER) ? $id : false, ($grp == STATS_TEAM) ? $id : false, ($grp == STATS_COACH) ? $id : false, false, $trid));
+        }
+
+        switch ($rs_nr)
         {
             case '2': $s['points'] = $s['won']*3 + $s['draw']; break;
             case '3': $s['points'] = ($s['played'] == 0) ? 0 : $s['won']/$s['played'] + $s['draw']/(2*$s['played']); break;
@@ -219,9 +238,21 @@ public static function getMatchStats($grp, $id, $trid = false)
                 }
                 break;
                 
-            //case '5': $s['points'] = FILL IN HERE ; break;
-            //case '6': $s['points'] = FILL IN HERE ; break;
-        }    
+            default:
+                // Only for house RS.
+                if ($hrs_nr < 1) {
+                    break;
+                }
+                $fields = array_merge($fields, array('played', 'won', 'lost', 'draw', 'fan_factor', 'smp', 'cas', 'score_team', 'score_opponent', 'score_diff', 'win_percentage'));
+                eval("\$s['points'] = ".
+                    preg_replace(
+                        array_map(create_function('$val', 'return "/\[$val\]/";'), $fields), 
+                        array_map(create_function('$val', 'return "\$s[\'$val\']";'), $fields),
+                        $hrs[$hrs_nr]['points']
+                    )
+                .";");
+                break;
+        }
     }
 
     return $s;

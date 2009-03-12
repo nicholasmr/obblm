@@ -13,11 +13,11 @@ $db_host   = 'localhost';
  * OBBLM display settings 
  *************************/
 
-$settings['site_url'] = 'http://localhost/~nicholas/obblm2'; // URL to where OBBLM can be accessed.
-$settings['lang'] = 'en-GB';          // Language. Existing: en-GB.
-$settings['league_name'] = 'UNNAMED BBL'; // League name.
-$settings['stylesheet'] = 1;          // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
-$settings['show_sort_rule'] = true;   // Default is true. Print in table footers what tables are sorted against?
+$settings['site_url'] = 'http://localhost/';// URL to where OBBLM can be accessed.
+$settings['lang'] = 'en-GB';                // Language. Existing: en-GB.
+$settings['league_name'] = 'UNNAMED BBL';   // League name.
+$settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
+$settings['show_sort_rule'] = true;         // Default is true. Print in table footers what tables are sorted against?
 
 $settings['entries_messageboard']   = 5;  // Number of entries on the main page messageboard in normal view mode. Note: A value of 0 shows all messages.
 $settings['entries_standings']      = 5;  // Number of entries in the main page table(s) "standings".
@@ -73,5 +73,68 @@ $rules['enable_stars_mercs'] = true; // Default is true. Enable star players and
  */
 
 $rules['enable_lrb6x'] = false; // Default is false.
+
+/*****************
+ * House ranking systems
+ *****************/
+
+/*
+    In the case of the already implemented ranking systems not fitting the needs of your league, you may define house ranking systems.
+    The fields/properties which you may sort teams against are:
+    
+        name, mvp, cp, td, intcpt, bh, si, ki, cas (sum of player cas), tcas (total team cas), tdcas (td + player cas),
+        played, won, lost, draw, win_percentage, score_team (total score made by this team), score_against (total score made against this team),
+        score_diff (equals to the arithmetic value of score_team - score_against), fan_factor, smp (sportsmanship points), points
+        
+    The last field, points, is a special field which is defined to be the value of some arithmetical combination of other fields.
+    For example, a typical points field could be constructed as so: points = '3*[won] + 2*[draw] + 1*[lost]'
+    But, you may of course use any of the above fields. 
+
+    The fields you will be defining, in order to make a working ranking system, are:
+    
+        rule:
+            This field must take the form of: 
+                array('+field1', '-field2', '+field3')
+            This should be interpreted as:
+                Sort first    by least of field1
+                Sort secondly by most  of field2
+                Sort at last  by least of field3
+            Note: "+" prefix indicates least of and "-" most of. You may NOT omit any prefixes. They are required for every field!
+            Note: You may define as many entries in the rule you want. It's not limited to = 3, like in this example. 
+            
+        points:
+            This field must take the form of:
+                'X*[field1] + Y*[field2] + [field3]'
+            Where X and Y may by either integers, floating point numbers or another fields. 
+            A points definition does not have to be a linear combination of fields, points = '[field1]/([field2]*[field3])' is 100% valid.
+            Note: non-numeric fields may of course not be used in the points definition.
+            
+        points_desc:
+            This is the text string shown in OBBLM when describing the points definition. 
+            Usually the points definition is best described by setting this field to the same value as the points definition, that is:
+                points_desc = points
+            But, if you, for example, find it more describing writing:
+                points_desc = 'Win = 3 points, draw = 2 points and losing = 1 point'
+            then this too is 100% valid.
+        
+    PLEASE NOTE: If you do not need the points field, because it is not included in the rule field of your ranking system, 
+    then simply leave both the "points" and "points_desc" definitions be equal to '' (that's two single quotes only).
+    
+*/
+
+// Example 1
+$hrs[1]['rule']        = array('-points', '-td', '+smp'); // Sort teams against: most points, then most TDs and then least sportsmanship points.
+$hrs[1]['points']      = '3*[won] + 2*[draw] + 1*[lost]'; // The definition of points.
+$hrs[1]['points_desc'] = $hrs[1]['points'];               // Set the description of the points to be just the same as the actual definition.
+
+// Example 2
+$hrs[2]['rule']        = array('-points', '-ki', '-mvp');                   // Sort teams against: most points, then most killed and then by most MVPs.
+$hrs[2]['points']      = '2*[score_team] - 1*[score_opponent]';             // The definition of points.
+$hrs[2]['points_desc'] = '2 pts for team score, -1 pts for opponent score'; // Set the description of the points to be this string.
+
+// Example 3
+$hrs[3]['rule']        = array('-score_diff', '-smp');  // Sort teams against: larget score difference, then most sportsmanship points.
+$hrs[3]['points']      = '';                            // Points not used.
+$hrs[3]['points_desc'] = '';                            // Points not used.
 
 ?>
