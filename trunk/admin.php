@@ -308,12 +308,7 @@ function sec_admin() {
                     <select name='rs'>
                     <?php
                     foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
-                        if ($idx == 0) {
-                            continue;
-                        }
-                        else {
-                            echo "<option value='$idx'>RS #$idx | $r</option>\n";
-                        }
+                        echo "<option value='$idx'>RS #$idx | $r</option>\n";
                     }
                     ?>
                     </select>
@@ -837,12 +832,7 @@ function sec_admin() {
             <select name='rs'>
             <?php
             foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
-                if ($idx == 0) {
-                    continue;
-                }
-                else {
-                    echo "<option value='$idx'>RS #$idx | $r</option>\n";
-                }
+                echo "<option value='$idx'>RS #$idx | $r</option>\n";
             }
             ?>
             </select>

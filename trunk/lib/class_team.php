@@ -379,7 +379,7 @@ class Team
                 $tour = null;
             }
             $rerollcost = $DEA[$this->race]['other']['RerollCost'] * 
-                            (($double_price && !$rules['static_rerolls_prices'] && is_object($tour) && $tour->begun) ? 2 : 1);
+                            (($double_price && !$rules['static_rerolls_prices'] && is_object($tour) && $tour->begun && $this->played > 0) ? 2 : 1);
         }
 
         $apothecary = true;

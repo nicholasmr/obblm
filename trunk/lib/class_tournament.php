@@ -635,12 +635,24 @@ class Tour
         $pts[3] = '{[won]/[played] + 0.5*[draw]/[played]}';
         $pts[4] = '{10*[won] + 5*[draw] + TDs + CAS | TDs & CAS max 3 per match}';
         
+        // Add house ranking systems.
+        global $hrs;
+        foreach ($hrs as $i) {
+            $rules[] = $i['rule'];
+            $pts[] = '{'.$i['points_desc'].'}';
+        }
+        
+        // Substitue points field with string definition?
         if ($mkStr) {
             foreach ($rules as $i => &$rule) {
                 $rule = implode(', ', rule_dict($rule));
                 $rule = preg_replace('/points/', $pts[$i], $rule);
             }
         }
+        
+        // Delete fake zero entry.
+        unset($rules[0]);
+        unset($pts[0]);
         
         return ($rs) ? $rules[$rs] : $rules;    
     }
