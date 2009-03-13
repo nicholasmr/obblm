@@ -86,6 +86,8 @@ function team_roaster($team_id) {
                 break;
 
             case 'teamtext': status($team->saveText($_POST['teamtext'])); break;
+            case 'news':     status($team->writeNews($_POST['txt'])); break;
+            case 'newsdel':  status($team->deleteNews($_POST['news_id'])); break;
 
             case 'pic': 
                 if (isset($_FILES['pic_stad'])) 
@@ -523,11 +525,11 @@ function team_roaster($team_id) {
                     <td><?php echo $team->rerolls; ?></td>
                 </tr>
                 <tr>
-                    <td>Fan Factor</td>
+                    <td>Fan&nbsp;Factor</td>
                     <td><?php echo $team->fan_factor; ?></td>
                 </tr>
                 <tr>
-                    <td>Ass. Coaches</td>
+                    <td>Ass.&nbsp;Coaches</td>
                     <td><?php echo $team->ass_coaches; ?></td>
                 </tr>
                 <tr>
@@ -538,28 +540,40 @@ function team_roaster($team_id) {
                     <td colspan=2><hr></td>
                 </tr>
                 <tr>
-                    <td>Games played</td>
+                    <td>Games&nbsp;played</td>
                     <td><?php echo $team->played; ?></td>
                 </tr>
                 <tr>
-                    <td>PCT won</td>
+                    <td>PCT&nbsp;won</td>
                     <td><?php echo sprintf("%1.1f", $team->win_percentage).'%'; ?></td>
                 </tr>
                 <tr>
-                    <td>Tours won</td>
+                    <td>Tours&nbsp;won</td>
                     <td><?php echo $team->won_tours; ?></td>
                 </tr>
                 <tr>
-                    <td>Win streak</td>
+                    <td>Win&nbsp;streak</td>
                     <td><?php echo $team->row_won; ?></td>
                 </tr>
                 <tr>
-                    <td>Lose streak</td>
+                    <td>Lose&nbsp;streak</td>
                     <td><?php echo $team->row_lost; ?></td>
                 </tr>
                 <tr>
-                    <td>Draw streak</td>
+                    <td>Draw&nbsp;streak</td>
                     <td><?php echo $team->row_draw; ?></td>
+                </tr>
+                <tr>
+                    <td>Latest&nbsp;tour</td>
+                    <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>None</i>'; ?></td>
+                </tr>
+                <tr valign="top">
+                    <td>Tours&nbsp;played</td>
+                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>None</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
+                </tr>
+                <tr valign="top">
+                    <td>Prizes</td>
+                    <td><small><?php $prizes = $team->getPrizes(true); echo (empty($prizes)) ? '<i>None</i>' : $prizes; ?></small></td>
                 </tr>
             </table>
         </div>
@@ -1210,19 +1224,54 @@ function team_roaster($team_id) {
         </tr>
     </table>
     <?php
-    /*
+  
     title("<a name='anc_news'>News</a>");
-    
     $news = $team->getNews(MAX_TNEWS);
     ?>
-    <div class="tnewsBox">
-        <div class="boxTitle1">Team news</div>
-        <div class="boxBody">
-        
-        </div>    
+    <div class="row">
+        <div class="tnewsBox">
+            <div class="boxTitle1">Team news</div>
+            <div class="boxBody">
+            <?php
+            $news_2 = array();
+            foreach ($news as $n) {
+                $news_2[] = '<p>'.$n->txt.'<div style="text-align: right;"><p style="display: inline;">'.$n->date.
+                (($ALLOW_EDIT) 
+                    ? " | <form method='POST' name='newsForm$n->news_id' style='display:inline; margin:0px;'>
+                        <input type='hidden' name='type' value='newsdel'>
+                        <input type='hidden' name='news_id' value='$n->news_id'>
+                        <a href='javascript:void(0);' onClick='document.newsForm$n->news_id.submit();'>[Delete]</a>
+                        </form>"
+                    : '')
+                .'</p></div><br></p>';
+            }
+            echo implode("<hr>\n", $news_2);
+            if (empty($news)) {
+                echo '<i>No entries exist.</i>';
+            }
+            ?>
+            </div>    
+        </div>
+        <?php
+        if ($ALLOW_EDIT) {
+            ?>
+            <div class="tnewsBoxNew">
+                <div class="boxTitle1">Write news</div>
+                <div class="boxBody">
+                    <form method="POST">
+                        <textarea name='txt' cols='30' rows='7'></textarea>
+                        <br><br>
+                        <input type="hidden" name="type" value="news">
+                        <input type='submit' value="Submit news">
+                    </form>
+                </div>    
+            </div>
+            <?php
+        }
+        ?>
     </div>
     <?php
-    */
+
   
     title("<a name='gp'>Games played</a>");
     

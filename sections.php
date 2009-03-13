@@ -561,6 +561,47 @@ function sec_fixturelist() {
             (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array()
         );
         
+        // Prizes
+        $trObjWithPrizes = Prize::getPrizesByTour($tour->tour_id, false);
+        
+        if (!empty($trObjWithPrizes[0]->prizes)) {
+            // For the below cut and paste to work.
+            $t = $trObjWithPrizes[0]; 
+            $ALLOW_EDIT = false;
+            /* COPY FROM RECORDS SECTION !!! */
+            ?>
+            <div class="recBox">
+                <div class="boxTitle2"><?php echo "$t->name prizes";?> <a href='javascript:void(0);' onClick="obj=document.getElementById('<?php echo 'trpr'.$t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a></div>
+                <div id="trpr<?php echo $t->tour_id;?>">
+                <div class="boxBody">
+                    <table class="recBoxTable" style='border-spacing: 10px;'>
+                        <tr>
+                            <td><b>Prize&nbsp;type</b></td>
+                            <td align='center'><b>Team</b></td>
+                            <td><b>About</b></td>
+                            <td><b>Photo</b></td>
+                        </tr>
+                        <?php
+                        $ptypes = Prize::getTypes();
+                        foreach ($t->prizes as $idx => $probj) {
+                            echo "<tr><td colspan='4'><hr></td></td>";
+                            echo "<tr>\n";
+                            $delete = ($ALLOW_EDIT) ? '<a href="index.php?section=records&amp;subsec=prize&amp;action=delete&amp;prid='.$probj->prize_id.'">[X]</a>' : '';
+                            echo "<td valign='top'><i>".preg_replace('/\s/', '&nbsp;', $ptypes[$idx])."</i>&nbsp;$delete</td>\n";
+                            echo "<td valign='top'><b>".preg_replace('/\s/', '&nbsp;', get_alt_col('teams', 'team_id', $probj->team_id, 'name'))."</b></td>\n";
+                            echo "<td valign='top'>".$probj->title."<br><br><i>".$probj->txt."</i></td>\n";
+                            echo "<td><a href='$probj->pic'><img HEIGHT=70 src='$probj->pic' alt='Photo'></a>
+    </td>\n";
+                            echo "</tr>\n";
+                        }
+                        ?>
+                    </table>
+                </div>
+                </div>
+            </div>
+            <?php
+        }
+        
         return;
     }
     
@@ -1484,9 +1525,7 @@ function sec_records() {
         'hof'           => $lng->getTrn('secs/records/d_hof'), 
         'wanted'        => $lng->getTrn('secs/records/d_wanted'), 
         'memm'          => $lng->getTrn('secs/records/d_memma'),
-#        'prize_players' => 'Player prizes',
-#        'prize_teams'   => 'Team prizes',
-#        'prize_coaches' => 'Coach prizes',
+        'prize'         => 'Prizes',
     );
 
     // This section's routines are placed in the records.php file.
@@ -1506,16 +1545,8 @@ function sec_records() {
                 mem_matches();
                 break;
                 
-            case 'prize_players':
-                prizes(PRIZE_PLAYER);
-                break;
-
-            case 'prize_teams':
-                prizes(PRIZE_TEAM);                
-                break;
-
-            case 'prize_coaches':
-                prizes(PRIZE_COACH);                
+            case 'prize':
+                prizes($ALLOW_EDIT);
                 break;
         }
         return;

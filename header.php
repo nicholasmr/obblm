@@ -25,11 +25,11 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.38f');
+define('OBBLM_VERSION', '0.38g');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
-define('MAX_TNEWS', 5); // This number of entries are shown on the team news board.
+define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 
 /********************* 
  *   Stats types. Used by Stats class.
@@ -43,10 +43,11 @@ define('STATS_COACH',  3);
  *   Prize types. Used by Prize class.
  *********************/
 
-// Just use the same values as for Stats class.
-define('PRIZE_PLAYER', STATS_PLAYER);
-define('PRIZE_TEAM',   STATS_TEAM);
-define('PRIZE_COACH',  STATS_COACH);
+define('PRIZE_1ST',     1);
+define('PRIZE_2ND',     2);
+define('PRIZE_3RD',     3);
+define('PRIZE_LETHAL',  4);
+define('PRIZE_FAIR',    5);
 
 /********************* 
  *   Images

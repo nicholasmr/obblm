@@ -557,9 +557,57 @@ class MSMRC extends Text
     }
 }
 
+/* 
+ *  Team news board.
+ */
+
 class TNews extends Text
 {
+    /***************
+     * Properties 
+     ***************/
 
+    public $news_id = 0;
+    public $f_id = 0; // Submitter (team id).
+    public $txt = '';
+
+    /***************
+     * Methods 
+     ***************/    
+
+    public function __construct($nid) 
+    {
+        $this->news_id = $nid;
+        parent::__construct($nid);
+    }
+
+    /* 
+        Parent has delete() implemented.
+    */
+
+    /***************
+     * Statics
+     ***************/
+    
+    public static function create($str, $tid)
+    {
+        return parent::create($tid, T_TEXT_TNEWS, $str, false);
+    }
+    
+    public static function getNews($tid = false, $n = false)
+    {
+        $news = array();
+        
+        $query = "SELECT txt_id FROM texts WHERE type = ".T_TEXT_TNEWS.(($tid) ? " AND f_id = $tid " : ''). " ORDER BY date DESC ".(($n) ? " LIMIT $n " : '');
+        $result = mysql_query($query);
+        if ($result && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                array_push($news, new TNews($row['txt_id']));
+            }
+        }
+        
+        return $news;
+    }
 }
 
 ?>
