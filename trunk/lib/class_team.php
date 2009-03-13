@@ -635,6 +635,23 @@ class Team
         return $ret;
     }
 
+    public function getToursPlayedIn($ids_only = false)
+    {
+        $tours = array();
+        
+        $query = "SELECT DISTINCT(f_tour_id) FROM matches, tours 
+                WHERE f_tour_id = tour_id AND team1_id = $this->team_id OR team2_id = $this->team_id 
+                ORDER BY tours.date_created ASC";
+        $result = mysql_query($query);
+        if (mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                array_push($tours, ($ids_only) ? $row['f_tour_id'] : new Tour($row['f_tour_id']));
+            }
+        }
+        
+        return $tours;
+    }
+
     public function saveText($str) {
         
         $txt = new TDesc(T_TEXT_TEAM, $this->team_id);
@@ -671,11 +688,34 @@ class Team
     }
     
     public function writeNews($txt) {
-        return true;
+        return TNews::create($txt, $this->team_id);
     }    
     
-    public function getNews($n) {
-        return array();
+    public function getNews($n = false) {
+        return TNews::getNews($this->team_id, $n);
+    }
+    
+    public function deleteNews($news_id) {
+        $news = new TNews($news_id);
+        return $news->delete();
+    }
+    
+    public function getPrizes($mkStr = false) {
+    
+        $prizes = Prize::getPrizesByTeam($this->team_id);
+        if ($mkStr) {
+            $str = array();
+            $ptypes = Prize::getTypes();
+            foreach ($ptypes as $idx => $type) {
+                $cnt = count(array_filter($prizes, create_function('$p', 'return ($p->type == '.$idx.');')));
+                if ($cnt > 0) 
+                    $str[] = $cnt.' '.$ptypes[$idx];
+            }
+            return implode(', ', $str);
+        }
+        else {
+            return $prizes;
+        }
     }
 
     /***************

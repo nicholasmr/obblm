@@ -244,6 +244,8 @@
             <posted>Posted</posted>
             <from>from</from>
             <player>Player</player>
+            <team>Team</team>
+            <tour>Tournament</tour>
             
             <!-- Subsection: Hall of fame -->
             <hof>
@@ -285,8 +287,19 @@
                 <inc>Largest team income</inc>
                 <gate>Largest gate</gate>
                 <mfans>Most fans/spectators</mfans>
-                
             </memma>
+            
+            <!-- Subsection: Prizes -->
+            <prizes>
+                <kind>Kind of prize</kind>
+                <g_title>Title</g_title>
+                <g_about>Description</g_about>
+                <desc><![CDATA[Welcome to the prizes section. Here you may find teams who have won prizes in tournaments for being 1st, 2nd and 3rd place and for being most lethal or fair.]]></desc>
+                <title><![CDATA[Short introduction to the prize or the winning team.]]></title>
+                <about>Details about the prize. Did the winning team/coach get something in real life?</about>
+                <pic>Picture</pic>
+            </prizes>
+            
         </records>
         
         <rules>

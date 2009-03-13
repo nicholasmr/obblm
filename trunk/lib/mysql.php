@@ -227,8 +227,8 @@ function setup_tables() {
     $query = 'CREATE TABLE IF NOT EXISTS prizes
                 (
                 prize_id    MEDIUMINT UNSIGNED  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                f_id        MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0,
-                ac_id       MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0,
+                team_id     MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0,
+                tour_id     MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0,
                 type        TINYINT UNSIGNED    NOT NULL DEFAULT 0,
                 date        DATETIME,
                 title       VARCHAR(100),
