@@ -184,6 +184,9 @@ function sec_main() {
     <div class='main_lcol'>
         <div class="main_lcolLinks">
             <?php
+            echo "<div class='mail_welcome'>\n";
+            readfile('WELCOME');
+            echo "</div>\n";
             // New message link
             if (is_object($coach) && $coach->ring <= RING_COM)
                 echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>\n";
@@ -1570,6 +1573,8 @@ function sec_rules() {
 
     global $rules, $lng;
     title($lng->getTrn('global/secLinks/rules'));
+    readfile('LEAGUERULES');
+    echo "<br><br><hr><br>\n";
     echo $lng->getTrn('secs/rules/intro');
     ?>
     <table>
@@ -1605,6 +1610,11 @@ function sec_rules() {
         <tr>
             <td><?php echo $lng->getTrn('secs/rules/max_jm');?></td>
             <td><?php echo $rules['journeymen_limit']; ?></td>
+        </tr>
+
+        <tr>
+            <td><?php echo $lng->getTrn('secs/rules/enable_post_ff');?></td>
+            <td><?php echo $rules['post_game_ff'] ? $lng->getTrn('secs/rules/yes') : $lng->getTrn('secs/rules/no'); ?></td>
         </tr>
 
         <tr>

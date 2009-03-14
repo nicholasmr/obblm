@@ -827,6 +827,8 @@ function team_roaster($team_id) {
                         <?php
                         $DISABLE = true;
                         foreach ($team->getGoods() as $name => $details) {
+                            if ($name == 'fan_factor' && !$rules['post_game_ff'] && $team->played > 0)
+                                continue;
                             if (($team->$name < $details['max'] || $details['max'] == -1) && $team->treasury >= $details['cost']) {
                                 echo "<option value='$name'>" . $details['cost']/1000 . "k | $details[item]</option>\n";
                                 $DISABLE = false;
@@ -1798,7 +1800,8 @@ function disp_teams($coach_id = null) {
         $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
         $lt = $t->getLatestTour();
         $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
-        $t->awds = 'Not yet implemented';
+        $prizes = $t->getPrizes(true);
+        $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;;
     }
 
     $fields = array(
@@ -1809,7 +1812,7 @@ function disp_teams($coach_id = null) {
         'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),  
         'retired'   => array('desc' => 'Retired?', 'nosort' => true), 
         'latest_tour' => array('desc' => 'Latest tour'), 
-        'awds'      => array('desc' => 'Awards, trophies & prizes', 'nosort' => true), 
+        'prizes'      => array('desc' => 'Prizes', 'nosort' => true), 
     );
 
     sort_table(
