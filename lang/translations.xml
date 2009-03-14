@@ -46,6 +46,7 @@
             <records>Records</records>
             <rules>Rules</rules>
             <gb>Guest book</gb>
+            <forum>Forum</forum>
         </secLinks>
         
         <!-- Notifications for sortable tables -->
@@ -338,6 +339,7 @@
             <refund>Player refund (on firing/selling)</refund>
             <enable_starmerc>Enable star players and mercenaries</enable_starmerc>
             <enable_lrb6>Enable LRB6 extensions</enable_lrb6>
+            <enable_post_ff>Allow post first game FF purchase</enable_post_ff>
             
         </rules>
         

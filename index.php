@@ -119,6 +119,9 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
             if ($settings['enable_guest_book']) {
                 ?><a class="menu" href="index.php?section=guest"><b><?php echo $lng->getTrn('global/secLinks/gb');?></b></a> &nbsp;<?php
             }
+            if (!empty($settings['forum_url'])) {
+                ?><a class="menu" href="<?php echo $settings['forum_url'];?>"><b><?php echo $lng->getTrn('global/secLinks/forum');?></b></a> &nbsp;<?php
+            }
             ?>
         </td>
         </tr>

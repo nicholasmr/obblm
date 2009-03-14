@@ -447,10 +447,16 @@ class Team
          * Buy team stuff (coaching staff/re-rolls/fan factor).
          **/
 
+        global $rules;
+
         $team_goods = $this->getGoods();
 
         // Valid item?
         if (!array_key_exists($thing, $team_goods))
+            return false;
+
+        // Is post game FF purchaseable?
+        if ($thing == 'fan_factor' && !$rules['post_game_ff'] && $this->played > 0)
             return false;
 
         // Enough money?
