@@ -71,6 +71,7 @@ NOTE: When upgrading please save your old settings file as a reference for when 
             txt         TEXT
         );
         
+        ALTER TABLE coaches ADD COLUMN phone VARCHAR(25) NOT NULL AFTER mail;
 
 0.36 -> 0.37
 

@@ -92,6 +92,7 @@ function setup_tables() {
                 name            VARCHAR(50),
                 passwd          VARCHAR(32),
                 mail            VARCHAR(129),
+                phone           VARCHAR(25) NOT NULL,
                 ring            TINYINT UNSIGNED NOT NULL DEFAULT 0,
                 settings        VARCHAR(320) NOT NULL,
                 retired         BOOLEAN NOT NULL DEFAULT 0

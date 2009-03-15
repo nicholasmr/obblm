@@ -1945,16 +1945,18 @@ function sec_coachcorner() {
         
             if (get_magic_quotes_gpc()) {
                 $_POST['new_passwd'] = isset($_POST['new_passwd']) ? stripslashes($_POST['new_passwd']) : '';
+                $_POST['new_phone']  = isset($_POST['new_phone'])  ? stripslashes($_POST['new_phone']) : '';
                 $_POST['new_email']  = isset($_POST['new_email'])  ? stripslashes($_POST['new_email']) : '';
                 $_POST['new_name']   = isset($_POST['new_name'])   ? stripslashes($_POST['new_name']) : '';
             }
         
             switch ($_POST['button']) 
             {
-                case 'Change password': status(login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
-                case 'Change email':    status($coach->setMail($_POST['new_email'])); break;
-                case 'Change name':     status($coach->setName($_POST['new_name'])); break;
-                case 'Change theme':    status($coach->setSetting('theme', (int) $_POST['new_theme'])); break;
+                case 'Change password':     status(login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
+                case 'Change phone number': status($coach->setPhone($_POST['new_phone'])); break;
+                case 'Change email':        status($coach->setMail($_POST['new_email'])); break;
+                case 'Change name':         status($coach->setName($_POST['new_name'])); break;
+                case 'Change theme':        status($coach->setSetting('theme', (int) $_POST['new_theme'])); break;
             }
         }
         
@@ -2050,6 +2052,12 @@ function sec_coachcorner() {
                     <td>Old:<input type='password' name='old_passwd' size="20" maxlength="50"></td>
                     <td>New:<input type='password' name='new_passwd' size="20" maxlength="50"></td>
                     <td><input type="submit" name="button" value="Change password"></td>
+                </tr>
+                <tr>
+                    <td>Change phone number:</td>
+                    <td>Old:<input type='text' name='old_phone' readonly value="<?php echo $coach->phone; ?>" size="20" maxlength="129"></td>
+                    <td>New:<input type='text' name='new_phone' size="20" maxlength="25"></td>
+                    <td><input type="submit" name="button" value="Change phone number"></td>
                 </tr>
                 <tr>
                     <td>Change email:</td>

@@ -32,6 +32,7 @@ class Coach
     public $name        = '';
     public $passwd      = '';
     public $mail        = '';
+    public $phone       = '';
     public $ring        = 0; // Privilege ring (ie. coach access level).
     public $retired     = false;
     public $settings    = array();
@@ -91,6 +92,7 @@ class Coach
             
         $this->admin = ($this->ring == RING_SYS);
         if (empty($this->mail)) $this->mail = ''; # Re-define as empty string, and not numeric zero.
+        if (empty($this->phone)) $this->phone = ''; # Re-define as empty string, and not numeric zero.
         
         $this->setStats(false);
         
@@ -267,6 +269,11 @@ class Coach
         return (mysql_query($query) && ($this->mail = $mail));
     }
 
+    public function setPhone($phnr) {
+        $query = "UPDATE coaches SET phone = '".mysql_real_escape_string($phnr)."' WHERE coach_id = $this->coach_id";
+        return (mysql_query($query) && ($this->phone = $phnr));
+    }
+
     public function isInMatch($match_id) {
     
         /**
@@ -329,16 +336,17 @@ class Coach
         /**
          * Creates a new coach.
          *
-         * Input: name, passwd, mail, ring
+         * Input: name, passwd, mail, phone, ring
          **/
 
         if (empty($input['name']) || empty($input['passwd']) || get_alt_col('coaches', 'name', $input['name'], 'coach_id')) # Name exists already?
             return false;
 
-        $query = "INSERT INTO coaches (name, passwd, mail, ring) 
+        $query = "INSERT INTO coaches (name, passwd, mail, phone, ring) 
                     VALUES ('" . mysql_real_escape_string($input['name']) . "',
                             '" . md5($input['passwd']) . "', 
                             '" . mysql_real_escape_string($input['mail']) . "', 
+                            '" . mysql_real_escape_string($input['phone']) . "', 
                             '" . $input['ring']."')";
                             
         return mysql_query($query);
