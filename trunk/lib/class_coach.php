@@ -30,6 +30,7 @@ class Coach
     // MySQL stored information
     public $coach_id    = 0;
     public $name        = '';
+    public $realname    = '';
     public $passwd      = '';
     public $mail        = '';
     public $phone       = '';
@@ -91,8 +92,9 @@ class Coach
             $this->$col = $val ? $val : 0;
             
         $this->admin = ($this->ring == RING_SYS);
-        if (empty($this->mail)) $this->mail = ''; # Re-define as empty string, and not numeric zero.
-        if (empty($this->phone)) $this->phone = ''; # Re-define as empty string, and not numeric zero.
+        if (empty($this->mail)) $this->mail = '';           # Re-define as empty string, and not numeric zero.
+        if (empty($this->phone)) $this->phone = '';         # Re-define as empty string, and not numeric zero.
+        if (empty($this->realname)) $this->realname = '';   # Re-define as empty string, and not numeric zero.
         
         $this->setStats(false);
         
@@ -274,6 +276,11 @@ class Coach
         return (mysql_query($query) && ($this->phone = $phnr));
     }
 
+    public function setRealName($rname) {
+        $query = "UPDATE coaches SET realname = '".mysql_real_escape_string($rname)."' WHERE coach_id = $this->coach_id";
+        return (mysql_query($query) && ($this->realname = $rname));
+    }
+
     public function isInMatch($match_id) {
     
         /**
@@ -336,14 +343,15 @@ class Coach
         /**
          * Creates a new coach.
          *
-         * Input: name, passwd, mail, phone, ring
+         * Input: name, realname, passwd, mail, phone, ring
          **/
 
         if (empty($input['name']) || empty($input['passwd']) || get_alt_col('coaches', 'name', $input['name'], 'coach_id')) # Name exists already?
             return false;
 
-        $query = "INSERT INTO coaches (name, passwd, mail, phone, ring) 
+        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring) 
                     VALUES ('" . mysql_real_escape_string($input['name']) . "',
+                            '" . mysql_real_escape_string($input['realname']) . "', 
                             '" . md5($input['passwd']) . "', 
                             '" . mysql_real_escape_string($input['mail']) . "', 
                             '" . mysql_real_escape_string($input['phone']) . "', 

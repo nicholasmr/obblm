@@ -90,6 +90,7 @@ function setup_tables() {
                 (
                 coach_id        MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 name            VARCHAR(50),
+                realname        VARCHAR(50),
                 passwd          VARCHAR(32),
                 mail            VARCHAR(129),
                 phone           VARCHAR(25) NOT NULL,

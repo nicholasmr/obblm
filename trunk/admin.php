@@ -73,16 +73,18 @@ function sec_admin() {
                 case 'Create coach':
                     if (get_magic_quotes_gpc()) {
                         $_POST['new_name'] = stripslashes($_POST['new_name']);
+                        $_POST['new_realname'] = stripslashes($_POST['new_realname']);
                         $_POST['new_mail'] = stripslashes($_POST['new_mail']);
                         $_POST['new_phone'] = stripslashes($_POST['new_phone']);
                         $_POST['new_passwd'] = stripslashes($_POST['new_passwd']);
                     }
                     status(Coach::create(array(
-                        'name'   => $_POST['new_name'], 
-                        'passwd' => $_POST['new_passwd'], 
-                        'mail'   => $_POST['new_mail'], 
-                        'phone'  => $_POST['new_phone'], 
-                        'ring'   => $_POST['new_ring'],
+                        'name'     => $_POST['new_name'], 
+                        'realname' => $_POST['new_realname'], 
+                        'passwd'   => $_POST['new_passwd'], 
+                        'mail'     => $_POST['new_mail'], 
+                        'phone'    => $_POST['new_phone'], 
+                        'ring'     => $_POST['new_ring'],
                     )));
                     break;
                     
@@ -138,7 +140,8 @@ function sec_admin() {
                     Create new coach
                 </div>
                 <div class="boxBody">
-                    Coach name:<br> <input type="text" name="new_name" size="20" maxlength="50"><br><br>
+                    Coach name (login):<br> <input type="text" name="new_name" size="20" maxlength="50"><br><br>
+                    Full name:<br> <input type="text" name="new_realname" size="20" maxlength="50"><br><br>
                     Mail (optional):<br> <input type="text" name="new_mail" size="20" maxlength="129"><br><br>
                     Phone (optional):<br> <input type="text" name="new_phone" size="20" maxlength="129"><br><br>
                     Password:<br> <input type="password" name="new_passwd" size="20" maxlength="50"><br><br>
@@ -212,6 +215,7 @@ function sec_admin() {
                         <table class="boxTable">
                             <tr>
                                 <td><b>Name</b></td>
+                                <td><b>Nickname</b></td>
                                 <td><b>Phone</b></td>
                                 <td><b>Mail</b></td>
                                 <td><b>Coach ID</b></td>
@@ -220,6 +224,7 @@ function sec_admin() {
                         <?php
                         foreach ($coaches as $coach) {
                             echo "<tr>\n";
+                            echo "<td>$coach->realname</td>\n";
                             echo "<td>$coach->name</td>\n";
                             echo "<td>".((empty($coach->phone)) ? '<i>None</i>' : $coach->phone)."</td>\n";
                             echo "<td>".((empty($coach->mail)) ? '<i>None</i>' : "<a href='mailto:$coach->mail'>$coach->mail</a>")."</td>\n";
