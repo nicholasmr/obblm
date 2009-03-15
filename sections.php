@@ -1944,10 +1944,11 @@ function sec_coachcorner() {
         if (isset($_POST['button'])) {
         
             if (get_magic_quotes_gpc()) {
-                $_POST['new_passwd'] = isset($_POST['new_passwd']) ? stripslashes($_POST['new_passwd']) : '';
-                $_POST['new_phone']  = isset($_POST['new_phone'])  ? stripslashes($_POST['new_phone']) : '';
-                $_POST['new_email']  = isset($_POST['new_email'])  ? stripslashes($_POST['new_email']) : '';
-                $_POST['new_name']   = isset($_POST['new_name'])   ? stripslashes($_POST['new_name']) : '';
+                $_POST['new_passwd']   = isset($_POST['new_passwd'])     ? stripslashes($_POST['new_passwd']) : '';
+                $_POST['new_phone']    = isset($_POST['new_phone'])      ? stripslashes($_POST['new_phone']) : '';
+                $_POST['new_email']    = isset($_POST['new_email'])      ? stripslashes($_POST['new_email']) : '';
+                $_POST['new_name']     = isset($_POST['new_name'])       ? stripslashes($_POST['new_name']) : '';
+                $_POST['new_realname'] = isset($_POST['new_realname'])   ? stripslashes($_POST['new_realname']) : '';
             }
         
             switch ($_POST['button']) 
@@ -1956,6 +1957,7 @@ function sec_coachcorner() {
                 case 'Change phone number': status($coach->setPhone($_POST['new_phone'])); break;
                 case 'Change email':        status($coach->setMail($_POST['new_email'])); break;
                 case 'Change name':         status($coach->setName($_POST['new_name'])); break;
+                case 'Change full name':    status($coach->setRealName($_POST['new_realname'])); break;
                 case 'Change theme':        status($coach->setSetting('theme', (int) $_POST['new_theme'])); break;
             }
         }
@@ -2066,10 +2068,16 @@ function sec_coachcorner() {
                     <td><input type="submit" name="button" value="Change email"></td>
                 </tr>
                 <tr>
-                    <td>Change name:</td>
+                    <td>Change name (login):</td>
                     <td>Old:<input type='text' name='old_name' readonly value="<?php echo $coach->name; ?>" size="20" maxlength="50"></td>
                     <td>New:<input type='text' name='new_name' size="20" maxlength="50"></td>
                     <td><input type="submit" name="button" value="Change name"></td>
+                </tr>
+                <tr>
+                    <td>Change full name:</td>
+                    <td>Old:<input type='text' name='old_realname' readonly value="<?php echo $coach->realname; ?>" size="20" maxlength="50"></td>
+                    <td>New:<input type='text' name='new_realname' size="20" maxlength="50"></td>
+                    <td><input type="submit" name="button" value="Change full name"></td>
                 </tr>
                 <tr>
                     <td>Change OBBLM theme:</td>

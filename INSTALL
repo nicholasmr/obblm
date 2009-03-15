@@ -72,6 +72,7 @@ NOTE: When upgrading please save your old settings file as a reference for when 
         );
         
         ALTER TABLE coaches ADD COLUMN phone VARCHAR(25) NOT NULL AFTER mail;
+        ALTER TABLE coaches ADD COLUMN realname VARCHAR(50) NOT NULL AFTER name;
 
 0.36 -> 0.37
 
