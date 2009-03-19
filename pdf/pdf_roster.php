@@ -39,6 +39,47 @@ define("MARGINY", 20);
 define("DEFLINECOLOR", '#000000');
 define("HEADLINEBGCOLOR", '#999999');
 
+// For inducements. Should be moved to header.php and game_data.php
+
+define('MAX_STARS', 2);
+define('MERC_EXTRA_COST', 30000);
+define('MERC_EXTRA_SKILL_COST', 50000);
+
+$inducements = array (
+    'Bloodweiser Babes' => array (
+        'cost' => 50000,
+        'max'  => 2
+    ),
+    'Bribes' => array (
+        'cost' => 100000,
+        'max'  => 3
+    ),
+    'Extra Training' => array (
+        'cost' => 100000,
+        'max'  => 4
+    ),
+    'Halfling Master Chef' => array (
+        'cost' => 300000,
+        'max'  => 1
+    ),
+    'Wandering Apothecaries' => array (
+        'cost' => 100000,
+        'max'  => 2
+    ),
+    'Igor' => array (
+        'cost' => 100000,
+        'max'  => 1
+    ),
+    'Wizard' => array (
+        'cost' => 150000,
+        'max'  => 1
+    )
+);
+
+// END global inducements vars ---------------------------------
+
+$ind_cost=0;
+
 //
 // Most of team and player data is copy/pasted from teams.php
 //
@@ -246,19 +287,110 @@ $pdf->SetXY($currentx, $currenty+=2);
 $h=14;
 $pdf->SetFont('Tahoma', 'B', 8);
 $pdf->Cell(97+75, $h, 'Induced Stars and Mercenaries', 0, 0, 'L', true, '');
-$pdf->Cell(23, $h, 'MA', 0, 0, 'C', true, '');
-$pdf->Cell(23, $h, 'ST', 0, 0, 'C', true, '');
-$pdf->Cell(23, $h, 'AG', 0, 0, 'C', true, '');
-$pdf->Cell(23, $h, 'AV', 0, 0, 'C', true, '');
-$pdf->Cell(250, $h, 'Skills', 0, 0, 'L', true, '');
+$pdf->Cell(18, $h, 'MA', 0, 0, 'C', true, '');
+$pdf->Cell(18, $h, 'ST', 0, 0, 'C', true, '');
+$pdf->Cell(18, $h, 'AG', 0, 0, 'C', true, '');
+$pdf->Cell(18, $h, 'AV', 0, 0, 'C', true, '');
+$pdf->Cell(329, $h, 'Skills', 0, 0, 'L', true, '');
+//$pdf->Cell(23, $h, 'MNG', 1, 0, 'C', true, ''); // No MNG stars/mercs. They heal. ;-)
+$pdf->Cell(21, $h, 'CP', 0, 0, 'C', true, '');
+$pdf->Cell(21, $h, 'TD', 0, 0, 'C', true, '');
+$pdf->Cell(21, $h, 'Int', 0, 0, 'C', true, '');
+$pdf->Cell(21, $h, 'Cas', 0, 0, 'C', true, '');
+$pdf->Cell(23, $h, 'MVP', 0, 0, 'C', true, '');
+$pdf->Cell(25, $h, 'SPP', 0, 0, 'C', true, '');
+$pdf->Cell(41, $h, 'Value', 0, 0, 'R', true, '');
 $currenty+=14;
 $pdf->SetXY($currentx, $currenty);
 $h=13;
 
-// *******************************************************
-// To be added in later version of OBBLM:
-// Here goes the code for printing chosen stars and mercs 
-// *******************************************************
+// Printing chosen stars and mercs 
+$pdf->SetFont('Tahoma', '', 8);
+$merc = array(0=>'No Merc');
+$i=0;
+if ($_POST) {
+  foreach ($DEA[$team->race]["players"] as $p => $m) {
+    $i++;
+    array_push($merc, $m);
+    $pos[$i] = $p;
+  }
+  foreach ($_POST as $postkey => $postvalue) {
+    if ($postkey == "Submit") continue;
+    if ($postvalue == "0") continue;
+    if ($postvalue == "0k") continue;
+    if ($postvalue == "-No Extra Skill-") continue;
+    $postvars[str_replace('_', ' ',$postkey)] = $postvalue;
+  }
+  
+  $star_array_tmp[0]=0;
+  $merc_array_tmp[0]=0;
+  while (list($key, $val) = each($postvars)) {
+    if (strpos($key,'Star') !== false) { // if POST key is StarX
+        array_push($star_array_tmp,$val);
+      continue;
+    }
+    elseif (strpos($key,'Merc') !== false) {
+      $merc_nr = preg_replace("/[^0-9]/","", $key);
+      $merc_array_tmp[$merc_nr] = $pos[$val];
+      if (isset($postvars["Extra$merc_nr"])) $extra_array_tmp[$merc_nr] = $postvars["Extra$merc_nr"];
+      else $extra_array_tmp[$merc_nr] = '';
+      continue;
+    }
+    elseif ($key == 'Bloodweiser Babes') { $ind_babes = (int) $val; continue; }
+    elseif ($key == 'Bribes') { $ind_bribes = (int) $val; continue; }
+    elseif ($key == 'Card') { $ind_card = (int) str_replace('k','000',$val); continue; }
+    elseif ($key == 'Extra Training') { $ind_rr = (int) $val; continue; }
+    elseif ($key == 'Halfling Master Chef') { $ind_chef = (int) $val; continue; }
+    elseif ($key == 'Igor') { $ind_igor = (int) $val; continue; }
+    elseif ($key == 'Wandering Apothecaries') { $ind_apo = (int) $val; continue; }
+    elseif ($key == 'Wizard') { $ind_wiz = (int) $val; continue; }
+  }
+  
+  // Printing stars first
+  if (isset($star_array_tmp[1])) {
+    unset($star_array_tmp[0]);
+    foreach ($star_array_tmp as $sid) {
+      $s = new Star($sid);
+      $s->setStats(false, false, false);
+      
+      $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>implode(', ',$s->skills),
+            'cp'=>$s->cp, 'td'=>$s->td, 'int'=>$s->intcpt, 'cas'=>$s->cas, 'mvp'=>$s->mvp, 'spp'=>$s->spp, 'value'=>$pdf->Mf($s->cost));
+      $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
+      $ind_cost += $s->cost;
+    }
+  }
+
+  // Then Mercs
+  if (is_array($merc_array_tmp)) {
+    unset($merc[0]);
+    $r=$team->race;
+    $i=0;
+    unset($merc_array_tmp[0]);
+    foreach ($merc_array_tmp as $mpos) {
+      $i++;
+      $m['name'] = 'Mercenary '.$mpos;
+      $m['ma'] = $DEA[$r]['players'][$mpos]['ma'];
+      $m['st'] = $DEA[$r]['players'][$mpos]['st'];
+      $m['ag'] = $DEA[$r]['players'][$mpos]['ag'];
+      $m['av'] = $DEA[$r]['players'][$mpos]['av'];
+      $m['skillarr'] = $DEA[$r]['players']["$mpos"]['Def skills'];
+      $m['skills'] = implode(', ',$m['skillarr']);
+      $m['cost'] = $DEA[$r]['players'][$mpos]['cost'] + MERC_EXTRA_COST;
+      if (isset($postvars["Extra$i"])) {
+        $m['cost'] += MERC_EXTRA_SKILL_COST;
+        $m['extra'] = $postvars["Extra$i"];
+        
+        if ($m['skills'] == '') $m['skills'] = $m['extra']; 
+        else $m['skills'] = $m['skills'] . ', ' . $m['extra'];
+      }
+      $ss = array('name'=>utf8_decode($m['name']), 'ma'=>$m['ma'], 'st'=>$m['st'], 'ag'=>$m['ag'], 'av'=>$m['av'], 'skills'=>$m['skills'],
+            'cp'=>' ', 'td'=>' ', 'int'=>' ', 'cas'=>' ', 'mvp'=>' ', 'spp'=>' ', 'value'=>$pdf->Mf($m['cost']));
+      $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
+      $ind_cost += $m['cost'];
+    }
+  }
+}
+$h = 13;
 
 // Printing lower part of roster
 $currentx = MARGINX;
@@ -272,24 +404,56 @@ $pdf->print_box(($currentx = 630), $currenty, 40, $h, COLOR_ROSTER_NORMAL, DEFLI
 
 // Checking if Wandering Apothecary should be replaced with Igor
 $r=$team->race;
-if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Undead')) $apo_igor = 'Igor (0-1):';
-else $apo_igor = 'Wandering Apothecaries (0-2):';
+if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Undead')) {
+  $apo_igor = 'Igor (0-1):';
+  unset($inducements['Wandering Apothecaries']);
+  if ($ind_igor) { 
+    $ind_apo_igor_cost = $ind_igor*$inducements['Igor']['cost'];
+    $ind_cost += $ind_igor*$ind_apo_igor_cost; 
+    $ind_apo_igor = $ind_igor;
+  }
+  else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Igor']['cost']; }
+}
+else {
+  $apo_igor = 'Wandering Apothecaries (0-2):';
+  unset($inducements['Igor']);
+  if (isset($ind_apo)) { 
+    $ind_apo_igor_cost = $inducements['Wandering Apothecaries']['cost'];
+    $ind_cost += $ind_apo*$ind_apo_igor_cost; 
+    $ind_apo_igor = $ind_apo;
+  }
+  else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Wandering Apothecaries']['cost']; }
+}
 // Checking LRB6 cheaper Chef for Halfling
-if (($r == 'Halfling') && ($rules['enable_lrb6x'])) $chef_cost = '50 000';
-else $chef_cost = '300 000';
+if (($r == 'Halfling') && ($rules['enable_lrb6x'])) $inducements['Halfling Master Chef']['cost'] = 50000;
+$chef_cost = $inducements['Halfling Master Chef']['cost'];
 // Checking LRB6 cheaper bribes for Goblin
-if (($r == 'Goblin') && ($rules['enable_lrb6x'])) $bribe_cost = '50 000';
-else $bribe_cost = '100 000';
+if (($r == 'Goblin') && ($rules['enable_lrb6x'])) $inducements['Bribes']['cost'] = 50000;
+$bribe_cost = $inducements['Bribes']['cost'];
+
+if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; }
+else $ind_babes = '__';
+if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$inducements['Bribes']['cost']; }
+else $ind_bribes = '__';
+if (isset($ind_card)) { $ind_cost += $ind_card; }
+else $ind_card = '__';
+if (isset($ind_rr)) { $ind_cost += $ind_rr*$inducements['Extra Training']['cost']; }
+else $ind_rr = '__';
+if (isset($ind_chef)) { $ind_cost += $ind_chef*$inducements['Halfling Master Chef']['cost']; }
+else $ind_chef = '__';
+if (isset($ind_wiz)) { $ind_cost += $ind_wiz*$inducements['Wizard']['cost']; }
+else $ind_wiz = '__';
 
 // print_inducements($x, $y, $h, $bgcol, $linecol, $fontsize, $ind_name, $ind_amount, $ind_value)
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bloodweiser Babes (0-2):', '__', '50 000');
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bribes (0-3):', '__', $bribe_cost);
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Extra Training (0-4):', '__', '100 000');
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Halfling Master Chef (0-1):', '__', $chef_cost);
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, $apo_igor, '__', '100 000');
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Wizard (0-1):', '__', '150 000');
-$pdf->print_inducements(MARGINX, ($currenty+=$h+2), $h+4, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Gate:', null, '');
-$pdf->print_inducements(MARGINX, ($currenty+=$h+4), $h+4, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'FAME:', null, '');
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bloodweiser Babes (0-2):', $ind_babes, $pdf->Mf($inducements['Bloodweiser Babes']['cost']));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bribes (0-3):', $ind_bribes, $pdf->Mf($bribe_cost));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Extra Training (0-4):', $ind_rr, $pdf->Mf($inducements['Extra Training']['cost']));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Halfling Master Chef (0-1):', $ind_chef, $pdf->Mf($chef_cost));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, $apo_igor, $ind_apo_igor, $pdf->Mf($ind_apo_igor_cost));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Wizard (0-1):', $ind_wiz, $pdf->Mf($inducements['Wizard']['cost']));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Card budget:', ' ', $pdf->Mf($ind_card));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Gate:', null, '');
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'FAME:', null, '');
 
 $currenty=435;
 $currentx=630;
@@ -312,9 +476,9 @@ $h=13;
 $pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Team Value (incl MNGs value):');
 $pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $pdf->Mf($team->value+$sum_p_missing_value));
 $pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Induced Value:');
-$pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', '');
+$pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $pdf->Mf($ind_cost));
 $pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Match Value (TV for match):');
-$pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $pdf->Mf($team->value));
+$pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $pdf->Mf($team->value + $ind_cost));
 
 // Drawing a rectangle around inducements
 $pdf->SetLineWidth(0.6);

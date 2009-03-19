@@ -166,6 +166,48 @@ function print_prow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', 
   return $h; // To know y pos for next player row
 }
 
+// Print stars and mercs row
+function print_srow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth=1, $fontsize) {
+  $this->SetFillColorBB($this->hex2cmyk($bgcolor));
+  $this->SetDrawColorBB($this->hex2cmyk($bordercolor));
+  $this->SetFontSize($fontsize);
+  $this->SetLineWidth($linewidth);
+  $this->SetXY($x,$y);
+  $newheight = $h;
+  $newfontsize=$fontsize;
+  
+  // Needs to correct fontsize and height for skills, if text doesn't fit
+  list($newheight, $newfontsize) = $this->FitTextInCell($h, 329, $fontsize, $p['skills']);
+  if ($newheight<$h)
+    $h=$newheight*2;
+  $this->SetFontSize($fontsize);
+  
+  //Print cells in order
+  $this->Cell(97+75, $h, $p['name'], 0, 0, 'L', true, '');
+  $this->Cell(18, $h, $p['ma'], 0, 0, 'C', true, '');
+  $this->Cell(18, $h, $p['st'], 0, 0, 'C', true, '');
+  $this->Cell(18, $h, $p['ag'], 0, 0, 'C', true, '');
+  $this->Cell(18, $h, $p['av'], 0, 0, 'C', true, '');
+  $this->SetXY(($x+97+75+18+18+18+18),$y);
+  // Need to change to MultiCell to fit Skills and Injuries text if too long
+  if ($newfontsize<$fontsize) {
+    $this->SetFontSize($newfontsize);
+    $this->MultiCell(329, $newheight, $p['skills'], 0, 'L', true);
+    $this->SetFontSize($fontsize);
+  }
+  else 
+    $this->MultiCell(329, $h, $p['skills'], 0, 'L', true);
+  $this->SetXY($x+97+75+18+18+18+18+329,$y);
+  $this->Cell(21, $h, $p['cp'], 0, 0, 'C', true, '');
+  $this->Cell(21, $h, $p['td'], 0, 0, 'C', true, '');
+  $this->Cell(21, $h, $p['int'], 0, 0, 'C', true, '');
+  $this->Cell(21, $h, $p['cas'], 0, 0, 'C', true, '');
+  $this->Cell(23, $h, $p['mvp'], 0, 0, 'C', true, '');
+  $this->Cell(25, $h, $p['spp'], 0, 0, 'C', true, '');
+  $this->Cell(41, $h, $p['value'], 0, 1, 'R', true, '');
+  return $h; // To know y pos for next row
+}
+
 function print_box($x, $y, $w, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth, $borderstyle, $fontsize, $font, $bold=false, $align, $text) {
   $this->SetFillColorBB($this->hex2cmyk($bgcolor));
   $this->SetDrawColorBB($this->hex2cmyk($bordercolor));
