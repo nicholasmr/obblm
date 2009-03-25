@@ -348,12 +348,14 @@ function team_roaster($team_id) {
             echo "&nbsp;|&nbsp;<a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=" . ($DETAILED ? '1' : '0') . "'><b>PDF roster</b></a>\n";
             if ($rules['enable_stars_mercs']) {
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"shh=document.getElementById('SHH'); if (shh.style.display != 'none'){shh.style.display='none'}else{shh.style.display='block'};\" title='Show/hide star hire history'><b>Star HH</b></a>\n";
-                echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"mhh=document.getElementById('MHH'); if (mhh.style.display != 'none'){mhh.style.display='none'}else{mhh.style.display='block'};\" title='Show/hide mercenary hire history'><b>Mercenary HH</b></a>\n";
+                echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"mhh=document.getElementById('MHH'); if (mhh.style.display != 'none'){mhh.style.display='none'}else{mhh.style.display='block'};\" title='Show/hide mercenary hire history'><b>Merc. HH</b></a>\n";
             }
-            echo "&nbsp;|&nbsp;<a href='#anc_about'><b>About</b></a>\n";
+//            echo "&nbsp;|&nbsp;<a href='#anc_about'><b>About</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='#anc_news'><b>News</b></a>\n";
-            echo "&nbsp;|&nbsp;<a href='#gp'><b>Matches</b></a>\n";
-            echo "&nbsp;|&nbsp;<a href='#tr'><b>Rankings</b></a>\n";
+            echo "&nbsp;|&nbsp;<a href='handler.php?type=inducements&amp;team_id=$team->team_id'><b>Inducements try-out</b></a>\n";
+            echo "&nbsp;|&nbsp;<a href='handler.php?type=graph&amp;menu=team&amp;id=$team->team_id''><b>Vis. stats</b></a>\n";
+//            echo "&nbsp;|&nbsp;<a href='#gp'><b>Matches</b></a>\n";
+//            echo "&nbsp;|&nbsp;<a href='#tr'><b>Rankings</b></a>\n";
             echo "</td>\n";
             if ($DETAILED) {
                 ?>
@@ -492,7 +494,7 @@ function team_roaster($team_id) {
             <table width="100%">
                 <tr>
                     <td>Coach</td>
-                    <td><?php echo $team->coach_name; ?></td>
+                    <td><a href="index.php?section=coaches&amp;coach_id=<?php echo $team->owned_by_coach_id;?>"><?php echo $team->coach_name; ?></a></td>
                 </tr>
                 <tr>
                     <td>Race</td>

@@ -1870,4 +1870,35 @@ $skillarray	= array (
 	),
 );
 
+$inducements = array (
+    'Bloodweiser Babes' => array (
+        'cost' => 50000,
+        'max'  => 2
+    ),
+    'Bribes' => array (
+        'cost' => 100000,
+        'max'  => 3
+    ),
+    'Extra Training' => array (
+        'cost' => 100000,
+        'max'  => 4
+    ),
+    'Halfling Master Chef' => array (
+        'cost' => 300000,
+        'max'  => 1
+    ),
+    'Wandering Apothecaries' => array (
+        'cost' => 100000,
+        'max'  => 2
+    ),
+    'Igor' => array (
+        'cost' => 100000,
+        'max'  => 1
+    ),
+    'Wizard' => array (
+        'cost' => 150000,
+        'max'  => 1
+    )
+);
+
 ?>

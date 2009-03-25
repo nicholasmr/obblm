@@ -25,7 +25,7 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.38h');
+define('OBBLM_VERSION', '0.38i');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
@@ -216,6 +216,7 @@ require_once('lib/class_coach.php');
 require_once('lib/class_stats.php');
 require_once('lib/class_text.php');
 require_once('lib/class_prize.php');
+//require_once('lib/class_statsgraph.php'); // Should not be included here due to unnecessary load. Is included in handler.php.
 require_once('lib/class_rrobin.php');
 require_once('lib/class_knockout.php');
 

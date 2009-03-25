@@ -25,7 +25,7 @@
  *  Generic class for handling the "texts" table.
  */
 
-class Text
+class _Text
 {
     /***************
      * Properties 
@@ -95,7 +95,7 @@ class Text
  *  Handles messages for the messages board.
  */
 
-class Message extends Text
+class Message extends _Text
 {
     /***************
      * Properties 
@@ -158,7 +158,7 @@ class Message extends Text
  *  Handles entries in the hall of fame.
  */
 
-class HOF extends Text
+class HOF extends _Text
 {
     /***************
      * Properties 
@@ -216,10 +216,10 @@ class HOF extends Text
 }
 
 /* 
- *  Handles Text Descriptions for players (T_TEXT_PLAYER), teams (T_TEXT_TEAM) and coaches (T_TEXT_COACH).
+ *  Handles text Descriptions for players (T_TEXT_PLAYER), teams (T_TEXT_TEAM) and coaches (T_TEXT_COACH).
  */
 
-class TDesc extends Text
+class TDesc extends _Text
 {
     /***************
      * Properties 
@@ -260,7 +260,7 @@ class TDesc extends Text
  *  Handles wanted players.
  */
 
-class Wanted extends Text
+class Wanted extends _Text
 {
     /***************
      * Properties 
@@ -321,7 +321,7 @@ class Wanted extends Text
  *  Handles match summaries.
  */
 
-class MSMR extends Text
+class MSMR extends _Text
 {
     /*
         Please note: 
@@ -365,7 +365,7 @@ class MSMR extends Text
  *  Handles tournament descriptions.
  */
 
-class TourDesc extends Text
+class TourDesc extends _Text
 {
     /***************
      * Properties 
@@ -399,7 +399,7 @@ class TourDesc extends Text
  *  Handles guest book entries.
  */
 
-class GuestBook extends Text
+class GuestBook extends _Text
 {
     /***************
      * Properties 
@@ -446,7 +446,7 @@ class GuestBook extends Text
  *  Handles the logging of actions made on the site by coaches.
  */
 
-class SiteLog extends Text
+class SiteLog extends _Text
 {
     /***************
      * Properties 
@@ -499,7 +499,7 @@ class SiteLog extends Text
  *  Match summary comments
  */
 
-class MSMRC extends Text
+class MSMRC extends _Text
 {
     /***************
      * Properties 
@@ -561,7 +561,7 @@ class MSMRC extends Text
  *  Team news board.
  */
 
-class TNews extends Text
+class TNews extends _Text
 {
     /***************
      * Properties 

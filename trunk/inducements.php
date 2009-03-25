@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Daniel Straalman <email protected> 2009. All Rights Reserved.
  *     
  *
  *  This file is part of OBBLM.
@@ -19,61 +19,34 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Author: Daniel Straalman
- *
  */
 
-// Known bug: Chose a star 1. Chose star 2. Change star 1 to same as star 2 and both will be the same.
+/* 
 
-require('header.php'); // Includes and constants.
-$conn = mysql_up(false);
+    Known bug: Chose a star 1. Chose star 2. Change star 1 to same as star 2 and both will be the same.
+    
+ */
+
+#require('header.php'); // Includes and constants.
+#$conn = mysql_up(false);
 
 // Check if teamid is provided, else show error mess
 $team_id = $_GET['team_id'];
 if (!get_alt_col('teams', 'team_id', $team_id, 'team_id'))
     fatal("Invalid team ID.");
 
-global $stars, $DEA, $rules, $skillarray; // And $inducements array, when moved to game_data.php
+global $stars, $DEA, $rules, $skillarray, $inducements;
+
 define('MAX_STARS', 2);
 define('MERC_EXTRA_COST', 30000);
 define('MERC_EXTRA_SKILL_COST', 50000);
+
 $ind_cost=0;
 
-$inducements = array (
-    'Bloodweiser Babes' => array (
-        'cost' => 50000,
-        'max'  => 2
-    ),
-    'Bribes' => array (
-        'cost' => 100000,
-        'max'  => 3
-    ),
-    'Extra Training' => array (
-        'cost' => 100000,
-        'max'  => 4
-    ),
-    'Halfling Master Chef' => array (
-        'cost' => 300000,
-        'max'  => 1
-    ),
-    'Wandering Apothecaries' => array (
-        'cost' => 100000,
-        'max'  => 2
-    ),
-    'Igor' => array (
-        'cost' => 100000,
-        'max'  => 1
-    ),
-    'Wizard' => array (
-        'cost' => 150000,
-        'max'  => 1
-    )
-);
-
 // Better way of doing this? Sending POST vars to pdf_roster.php
-$self = str_replace('inducements.php','',$_SERVER['SCRIPT_NAME']);
-$redirectlink = 'http://'.$_SERVER['SERVER_NAME'].$self.'handler.php?type=roster&detailed=0&team_id='.$team_id;
+#$self = str_replace('inducements.php','',$_SERVER['SCRIPT_NAME']);
+#$redirectlink = 'http://'.$_SERVER['SERVER_NAME'].$self.'handler.php?type=roster&detailed=0&team_id='.$team_id;
+$redirectlink = 'handler.php?type=roster&detailed=0&team_id='.$team_id;
 
 $t = new Team($team_id);
 
@@ -123,10 +96,11 @@ function SendToPDF()
         <td class="indtitle">Skills</td> <!-- <td>Cp</td><td>Td</td><td>Int</td><td>Cas</td><td>BH</td><td>Si</td><td>Ki</td><td>MVP</td><td>SPP</td> -->
     </tr>
 <?php
+$brick_n_grotty = false;
 $i=1;
 while ($i <= MAX_STARS) {
   print "  <tr>\n";
-  if ($_POST["Star$i"]) {
+  if (array_key_exists("Star$i", $_POST)) {
     $sid=$_POST["Star$i"];
     if ($sid != 0) {
       $s = new Star($sid);
@@ -209,10 +183,10 @@ foreach ($DEA[$t->race]["players"] as $p => $m) {
   $pos[$i] = $p;
 }
 $i=1; $k=0;
-while ($_POST["Merc$i"] || $i > $k) {
+while (array_key_exists("Merc$i", $_POST) || $i > $k) {
   print "  <tr>\n";
-  if ($_POST["Merc$i"]) {
-    $mid=$_POST["Merc$i"];
+  if (array_key_exists("Merc$i", $_POST)) {
+    $mid = isset($_POST["Merc$i"]) ? $_POST["Merc$i"] : 0;
     if ($mid != 0) {
       if ($_POST["Extra$i"]) {
         $extra_skill_cost = ($_POST["Extra$i"] == '-No Extra Skill-') ? 0 : MERC_EXTRA_SKILL_COST;
@@ -313,6 +287,8 @@ echo '<td><SELECT name="Card" onChange="this.form.submit()">';
 for ($i=0;$i<=1000;$i+=50) {
   $card_list .= '<option>'.$i."k</option>\n";
 }
+
+$cardb = '';
 if ($_POST["Card"]) {
   $cardb = $_POST["Card"];
   if ($cardb != 0) {

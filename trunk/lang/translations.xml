@@ -204,6 +204,7 @@
             <!-- Subsection: specific coach -->
             <pic>Picture of</pic>
             <about>About</about>
+            <contact>Contact information</contact>
             <teams>Teams</teams>
             <played>Matches played</played>
             <nowrite>Nothing has yet been written about</nowrite>

@@ -25,6 +25,8 @@ session_start();
 error_reporting(E_ALL);
 
 require('header.php'); // Includes and constants.
+require('lib/class_statsgraph.php');
+
 $conn = mysql_up(false);
 
 if (!isset($_GET['type'])) {
@@ -215,6 +217,36 @@ switch ($_GET['type'])
         echo "<br><br>\n";
         echo "<img src='".$pics[$curPic]."'>\n";
                 
+        break;
+
+    /***************
+     *  Match gallery
+     ***************/
+    case 'graph':
+        if (isset($_GET['menu'])) {
+            global $sg_types;
+            $offset = 0;
+            switch ($_GET['menu']) 
+            {
+                case 'team':    $offset = SG_OFFSET_TEAM; break;
+                case 'coach':   $offset = SG_OFFSET_COACH; break;
+                case 'player':  $offset = SG_OFFSET_PLAYER; break;
+            }
+            foreach ($sg_types as $sgt => $sgt_desc) {
+                $gtype = $offset + $sgt;
+                echo "<a href='handler.php?type=graph&amp;gtype=$gtype&amp;id=$_GET[id]'>$sgt_desc</a><br>\n";
+            }
+        }
+        else {
+            SGraph::make($_GET['gtype'], $_GET['id']);
+        }
+                
+        break;
+
+    case 'inducements':
+        {
+        include('inducements.php'); // Daniel's try-out page.
+        }
         break;
 
     default:
