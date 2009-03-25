@@ -84,20 +84,17 @@ a.menuSpecial:visited  {color: #eeeeee;}
 a.menuSpecial:hover    {color: orange;}
 a.menuSpecial:active   {color: #eeeeee;}
 
-/* Title for sections */
-
-.title
+/* Header for sections */
+h2
 {
     clear: both;
     text-align: center;
     padding-top: 20px;
     padding-bottom: 20px;
     width: inherit;
-    border: none;
     font-size: 18px;
     font-weight: bold;
-    margin-left: auto;
-    margin-right: auto;
+	margin:0 auto;
 }
 
 /* Sort table(s) style */
