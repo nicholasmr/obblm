@@ -459,7 +459,7 @@ function logTeamAction($str, $tid) {
 
 // Prints page title for main section pages.
 function title($title) {
-    echo "<div class='title'>$title</div>\n";
+	echo "<h2>$title</h2>\n";
 }
 
 // Privileges error. Stop PHP interpreter and warn the user!

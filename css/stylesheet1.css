@@ -67,19 +67,16 @@ a.menu {color: #eeeeee;}
 a.menuSpecial {color: orange;}
 
 /* Title for sections */
-
-.title
+h2
 {
     clear: both;
     text-align: center;
     padding-top: 20px;
     padding-bottom: 20px;
     width: inherit;
-    border: none;
     font-size: 18px;
     font-weight: bold;
-    margin-left: auto;
-    margin-right: auto;
+	margin:0 auto;
 }
 
 /* Sort table(s) style */
