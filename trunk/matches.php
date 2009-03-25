@@ -255,8 +255,11 @@ function match_form($match_id) {
                     <b><?php echo $lng->getTrn('secs/fixtures/report/stad');?></b>&nbsp;
                     <select name="stadium" <?php echo $DIS;?>>
                         <?php
-                        echo "<option value='$team1->team_id' " . ($m->stadium == $team1->team_id ? 'SELECTED' : '' ) . ">$team1->name</option>\n";
-                        echo "<option value='$team2->team_id' " . ($m->stadium == $team2->team_id ? 'SELECTED' : '' ) . ">$team2->name</option>\n";
+                        $teams = Team::getTeams();
+                        objsort($teams, array('+name'));
+                        foreach ($teams as $_t) {
+                            echo "<option value='$_t->team_id' " . ($m->stadium == $_t->team_id ? 'SELECTED' : '' ) . ">$_t->name</option>\n";
+                        }
                         ?>
                     </select>
                 </td>
