@@ -1012,7 +1012,7 @@ function sec_players() {
 
 function sec_coaches() {
 
-    global $lng;
+    global $lng, $coach;
 
     /* 
         Specific coach page requested? 
@@ -1028,6 +1028,11 @@ function sec_coaches() {
             <tr>
                 <td class='light'><b><?php echo $lng->getTrn('secs/coaches/pic');?> <?php echo $c->name; ?></b></td>
                 <td class='light'><b><?php echo $lng->getTrn('secs/coaches/about');?></b></td>
+                <?php
+                if (is_object($coach)) {
+                    ?><td class='light'><b><?php echo $lng->getTrn('secs/coaches/contact');?></b></td><?php
+                }
+                ?>
             </tr>
             <tr>
                 <td>
@@ -1044,6 +1049,28 @@ function sec_coaches() {
                     echo '<p>'.$txt."</p>\n";
                     ?>
                 </td>
+                <?php
+                if (is_object($coach)) {
+                    ?>
+                    <td valign='top'>
+                        <table>
+                            <tr>
+                                <td><b>Name</b></td>
+                                <td><?php echo $c->realname?></td>
+                            </tr>
+                            <tr>
+                                <td><b>Phone</b></td>
+                                <td><?php echo $c->phone?></td>
+                            </tr>
+                            <tr>
+                                <td><b>Mail</b></td>
+                                <td><?php echo $c->mail?></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <?php
+                }
+                ?>
             </tr>
         </table>
         <?php
