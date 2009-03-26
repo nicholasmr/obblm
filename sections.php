@@ -44,22 +44,33 @@
  
 function sec_login() {
 
-    global $lng;
+    global $lng, $settings;
 
     ?>
     <div style='padding-top:40px; text-align: center;'>
     <form method="POST" action="index.php">
         <b><?php echo $lng->getTrn('secs/login/coach');?></b>
-        <select name='coach'>
         <?php
-        $coaches = Coach::getCoaches();
-        objsort($coaches, array('+name'));
-        foreach ($coaches as $c) {
-            if (!$c->retired)
-                echo "<option value='$c->coach_id'>$c->name</option>";
+        if ($settings['login_list']) {
+            ?>
+            <select name='coach'>
+            <?php
+            $coaches = Coach::getCoaches();
+            objsort($coaches, array('+name'));
+            foreach ($coaches as $c) {
+                if (!$c->retired)
+                    echo "<option value='$c->coach_id'>$c->name</option>";
+            }
+            ?>
+            </select>
+            <?php
+        }
+        else {
+            ?>
+            <input type="text" name="coach" size="20" maxlength="50">
+            <?php
         }
         ?>
-        </select>
         &nbsp;&nbsp;
         <b><?php echo $lng->getTrn('secs/login/passwd');?></b>
         <input type="password" name="passwd" size="20" maxlength="50"> 

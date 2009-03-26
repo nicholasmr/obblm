@@ -855,6 +855,8 @@ function team_roaster($team_id) {
                         <?php
                         $DISABLE = true;
                         foreach ($team->getGoods() as $name => $details) {
+                            if ($name == 'fan_factor' && !$rules['post_game_ff'] && $team->played > 0)
+                                continue;
                             if ($team->$name > 0) {
                                 echo "<option value='$name'>$details[item]</option>\n";
                                 $DISABLE = false;

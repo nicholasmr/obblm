@@ -53,10 +53,10 @@ class SGraph
         if ($type < SG_OFFSET_TEAM+SG_OFFSET_SIZE) {
             $t = new Team($_GET['id']);
         }
-        if ($type < SG_OFFSET_COACH+SG_OFFSET_SIZE) {
+        elseif ($type < SG_OFFSET_COACH+SG_OFFSET_SIZE) {
             $c = new Coach($_GET['id']);
         }
-        if ($type < SG_OFFSET_PLAYER+SG_OFFSET_SIZE) {
+        elseif ($type < SG_OFFSET_PLAYER+SG_OFFSET_SIZE) {
             $p = new Player($_GET['id']);
         }
 
@@ -147,7 +147,7 @@ class SGraph
                 
                 $Graph->add(
                     Image_Graph::vertical(
-                        Image_Graph::factory('title', array("Won, lost and draw history", 12)),        
+                        Image_Graph::factory('title', array("Won, lost and draw history of $o->name", 12)),        
                         Image_Graph::vertical(
                             $Plotarea = Image_Graph::factory('plotarea'),
                             $Legend = Image_Graph::factory('legend'),

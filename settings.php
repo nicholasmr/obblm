@@ -16,6 +16,7 @@ $db_host   = 'localhost';
 $settings['site_url'] = 'http://localhost'; // URL to where OBBLM can be accessed.
 $settings['forum_url'] = 'http://localhost';// URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
 $settings['lang'] = 'en-GB';                // Language. Existing: en-GB.
+$settings['login_list'] = true;             // Show a list of available coaches on logins. If false coaches must type in their username on logins.
 $settings['league_name'] = 'UNNAMED BBL';   // League name.
 $settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
 $settings['show_sort_rule'] = true;         // Default is true. Print in table footers what tables are sorted against?
@@ -47,7 +48,7 @@ $rules['max_team_players']      = 16;       // Default is 16.
 $rules['static_rerolls_prices'] = false;    // Default is "false". "true" = Re-roll prices remain the same throughout the whole tournament.
 $rules['player_refund']         = 0;        // Player sell value percentage. Default is 0 = 0%, 0.5 = 50%, and so on.
 $rules['journeymen_limit']      = 11;       // Until a team can field this number of players, it may fill team positions with journeymen.
-$rules['post_game_ff']          = false;    // Default is false. Allows teams to buy fan factor even though their first game has been played.
+$rules['post_game_ff']          = false;    // Default is false. Allows teams to buy and drop fan factor even though their first game has been played.
 
 $rules['initial_rerolls']       = 0;        // Default is 0.
 $rules['initial_fan_factor']    = 0;        // Default is 0.
