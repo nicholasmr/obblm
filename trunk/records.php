@@ -466,7 +466,7 @@ function prizes($ALLOW_EDIT)
     
     /* A new entry was sent. Add it to system */
     
-    if (isset($_POST['tid']) && $ALLOW_EDIT) {
+    if ($ALLOW_EDIT && isset($_POST['tid']) && isset($_POST['trid'])) {
         if (get_magic_quotes_gpc()) {
             $_POST['title'] = stripslashes($_POST['title']);
             $_POST['txt'] = stripslashes($_POST['txt']);
@@ -541,7 +541,7 @@ function prizes($ALLOW_EDIT)
                 <b><?php echo $lng->getTrn('secs/records/prizes/pic');?>:</b><br>
                 <input name="pic" type="file">
                 <br><br><br>
-                <input type="submit" value="<?php echo $lng->getTrn('secs/records/submit');?>" name="Submit">
+                <input type="submit" value="<?php echo $lng->getTrn('secs/records/submit');?>" name="Submit" <?php echo (empty($tours) | empty($teams)) ? 'DISABLED' : '';?>>
                 </form>
                 <br>
                 <?php

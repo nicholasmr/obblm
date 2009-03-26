@@ -513,8 +513,13 @@ class Team
          * Let go of team stuff (coaching staff/re-rolls/fan factor) WITHOUT refund.
          **/
         
+        global $rules;
         $goods = $this->getGoods();
         $price = null;
+        
+        // May drop post FF?
+        if ($thing == 'fan_factor' && !$rules['post_game_ff'] && $this->played > 0)
+            return false;
         
         if (array_key_exists($thing, $goods))
             $price = $goods[$thing]['cost'];
