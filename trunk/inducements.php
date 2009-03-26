@@ -27,8 +27,6 @@
     
  */
 
-#require('header.php'); // Includes and constants.
-#$conn = mysql_up(false);
 
 // Check if teamid is provided, else show error mess
 $team_id = $_GET['team_id'];
@@ -37,15 +35,12 @@ if (!get_alt_col('teams', 'team_id', $team_id, 'team_id'))
 
 global $stars, $DEA, $rules, $skillarray, $inducements;
 
+// Move these constants to header.php?
 define('MAX_STARS', 2);
 define('MERC_EXTRA_COST', 30000);
 define('MERC_EXTRA_SKILL_COST', 50000);
 
 $ind_cost=0;
-
-// Better way of doing this? Sending POST vars to pdf_roster.php
-#$self = str_replace('inducements.php','',$_SERVER['SCRIPT_NAME']);
-#$redirectlink = 'http://'.$_SERVER['SERVER_NAME'].$self.'handler.php?type=roster&detailed=0&team_id='.$team_id;
 $redirectlink = 'handler.php?type=roster&detailed=0&team_id='.$team_id;
 
 $t = new Team($team_id);
@@ -172,7 +167,7 @@ if ($brick_n_grotty) { // Print Grotty and add hidden input field
 
     </tr>
 <?php
-// Validate to not exceed maximum number of positionals?
+// Validate to not exceed maximum number of positionals? Leaving it open for now.
 $merc_list[0] = '      <option value="0">-No Induced Mercs-</option>' . "\n";
 $merc = array(0=>'No Merc');
 $i=0;
@@ -182,54 +177,60 @@ foreach ($DEA[$t->race]["players"] as $p => $m) {
   array_push($merc, $m);
   $pos[$i] = $p;
 }
-$i=1; $k=0;
-while (array_key_exists("Merc$i", $_POST) || $i > $k) {
-  print "  <tr>\n";
-  if (array_key_exists("Merc$i", $_POST)) {
-    $mid = isset($_POST["Merc$i"]) ? $_POST["Merc$i"] : 0;
-    if ($mid != 0) {
-      if ($_POST["Extra$i"]) {
-        $extra_skill_cost = ($_POST["Extra$i"] == '-No Extra Skill-') ? 0 : MERC_EXTRA_SKILL_COST;
-      }
-      else $extra_skill_cost = 0;
-      echo "<tr>";
-      // Fill skill list from what normal skills positional has to chose from
-      $n_skills = $DEA[$t->race]['players'][str_replace('Merc ','',$pos[$mid])]['N skills'];
-      $extra_list[$i] = "<option>-No Extra Skill-</option>\n";
-      foreach ($n_skills as $category) {
-        foreach ($skillarray[$category] as $skill) {
-          if (!in_array($skill, $merc[$mid]["Def skills"])) {
-            $extra_list[$i] .= '<option>'.$skill.'</option>'."\n";
-          }
+$i=1;
+while (isset($_POST["Merc$i"])) {
+  echo '  <tr>';
+  if ($_POST["Merc$i"] != '0') {
+    $mid=$_POST["Merc$i"];
+    if (isset($_POST["Extra$i"])) {
+      $extra_skill_cost = ($_POST["Extra$i"] == '-No Extra Skill-') ? 0 : MERC_EXTRA_SKILL_COST;
+      $extra[$i] = $_POST["Extra$i"];
+    }
+    else {
+      $extra_skill_cost = 0;
+      $extra[$i] = false;
+    }
+    echo "<tr>";
+    // Fill skill list from what normal skills positional has to chose from
+    $n_skills = $DEA[$t->race]['players'][str_replace('Merc ','',$pos[$mid])]['N skills'];
+    $extra_list[$i] = "<option>-No Extra Skill-</option>\n";
+    foreach ($n_skills as $category) {
+      foreach ($skillarray[$category] as $skill) {
+        if (!in_array($skill, $merc[$mid]["Def skills"])) {
+          $extra_list[$i] .= '<option>'.$skill.'</option>'."\n";
         }
       }
-      $merc_list[$i] = str_replace('<option value="'.$mid.'"','<option selected value="'.$mid.'"', $merc_list[0]);
-      print '    <td><SELECT name="Merc' . $i . '" onChange="this.form.submit()">' . "\n";
-      print $merc_list[$i];
-      $cost[$i] = (int) $merc[$mid]["cost"] + MERC_EXTRA_COST + $extra_skill_cost;
-      echo '    </SELECT></td>';
-      $def_skills = implode(', ', $merc[$mid]["Def skills"]);
-      if ($def_skills == '') $def_skills = '&nbsp;';
-      print "<td>$pos[$mid]</td><td>".str_replace('000','',$cost[$i])."k</td><td class=\"cent\">".$merc[$mid]["ma"]."</td><td class=\"cent\">".$merc[$mid]["st"]."</td>";
-      print "<td class=\"cent\">".$merc[$mid]["ag"]."</td><td class=\"cent\">".$merc[$mid]["av"]."</td><td><small>".$def_skills."</small></td>\n";
-      if ($_POST["Extra$i"] != '-No Extra Skill-') {
-        $skill_chosen = $_POST["Extra$i"];
-        $extra_list[$i] = str_replace('<option>'.$skill_chosen.'</option>', '<option selected>'.$skill_chosen.'</option>', $extra_list[$i]);
-      }
-      echo '    <td><SELECT name="Extra'.$i.'" onChange="this.form.submit()">';
-      print $extra_list[$i];
-      echo '    </SELECT></td>';
-      echo '</tr>';
-      $ind_cost+=$cost[$i];
-      $i++; $k++;
-      continue;
     }
+    $merc_list[$i] = str_replace('<option value="'.$mid.'"','<option selected value="'.$mid.'"', $merc_list[0]);
+    print '    <td><SELECT name="Merc' . $i . '" onChange="this.form.submit()">' . "\n";
+    print $merc_list[$i];
+    $cost[$i] = (int) $merc[$mid]["cost"] + MERC_EXTRA_COST + $extra_skill_cost;
+    echo '    </SELECT></td>';
+    $def_skills = implode(', ', $merc[$mid]["Def skills"]);
+    if ($def_skills == '') $def_skills = '&nbsp;';
+    print "<td>$pos[$mid]</td><td>".str_replace('000','',$cost[$i])."k</td><td class=\"cent\">".$merc[$mid]["ma"]."</td><td class=\"cent\">".$merc[$mid]["st"]."</td>";
+    print "<td class=\"cent\">".$merc[$mid]["ag"]."</td><td class=\"cent\">".$merc[$mid]["av"]."</td><td><small>".$def_skills."</small></td>\n";
+    if ($extra[$i] != false)
+      $extra_list[$i] = str_replace('<option>'.$extra[$i].'</option>', '<option selected>'.$extra[$i].'</option>', $extra_list[$i]);
+    echo '    <td><SELECT name="Extra'.$i.'" onChange="this.form.submit()">';
+    print $extra_list[$i];
+    echo '    </SELECT></td>';
+    echo '</tr>';
+    $ind_cost+=$cost[$i];
+    $i++;
+    continue;
+  } 
+  else {
+    $merc_list[$i] = $merc_list[0];
+    break;
   }
-  echo '    <td><SELECT name="Merc' . $i . '" onChange="this.form.submit()">';
-  print $merc_list[0];
-  echo '    </SELECT></td>';
-  $k++;
 }
+echo "  <tr>";
+echo '    <td><SELECT name="Merc' . $i . '" onChange="this.form.submit()">';
+print $merc_list[0];
+echo '    </SELECT></td>';
+echo "  </tr>";
+
 ?>
 
 </table>
@@ -302,7 +303,9 @@ echo '</SELECT></td>';
 echo '<td class="cent2">=</td><td class="cent">'.$cardb.'</td>';
 echo '</tr>';
 ?>
-<tr><td class="right" colspan="6"><br><input type="submit" name="Submit" value="Create PDF roster" onclick="return SendToPDF();"></td></tr>
+<tr>
+<td class="right" colspan="6"><br><input type="submit" name="Submit" value="Create PDF roster" onclick="return SendToPDF();"></td></tr>
+<tr><td><a href="<?php echo 'index.php?section=coachcorner&team_id=' . $team_id ?>"> <- Back to team page</a></td></tr>
 </table>
 </td><td class="cent2">
 <table>
