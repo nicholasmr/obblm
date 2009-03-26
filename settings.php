@@ -33,6 +33,7 @@ $settings['show_sold_journeymen'] = true;  // Default is true. Show sold journey
 $settings['show_stars_mercs']     = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.
 $settings['enable_guest_book']    = false; // Default is false. Enable the guest book?
 $settings['show_active_tours']    = true;  // Default is true. Show not only the overall team standings table on the front page, but show also standings tables for active tournaments?
+$settings['fp_team_news']         = true;  // Default is true. Show team news on front page.
 
 /*****************
  * OBBLM rule set

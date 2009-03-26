@@ -77,7 +77,8 @@ function SendToPDF()
 </head>
 <body>
 <div class="everything">
-
+<div class="section">
+<?php title('Inducements try-out');?>
 <form action="" method="post" name="InduceForm">
 
 <table>
@@ -326,6 +327,7 @@ echo '<tr><td class="indtitle">Match Value:</td><td class="indtitle">'.kilo($ind
 
 </table>
 </form>
+</div>
 </div>
 </body>
 </html>

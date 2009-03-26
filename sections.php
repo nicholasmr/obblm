@@ -99,9 +99,10 @@ function sec_main() {
         To generate this table we create a general array holding the content of both.
     */
 
-    $msgs = Message::getMessages($n);
-    $reports = Match::getReports($n);    
-    $board = array();
+    $msgs    = Message::getMessages($n);
+    $reports = Match::getReports($n);
+    $tnews   = TNews::getNews(false, $n);
+    $board   = array();
     
     // First we add all commissioner messages to the board structure.
     foreach ($msgs as $m) {
@@ -135,6 +136,22 @@ function sec_main() {
         $o->message   = $r->comment;
         $o->date      = $r->date_played;
         array_push($board, $o);
+    }
+    
+    // And finally team news.
+    if ($settings['fp_team_news']) {
+        foreach ($tnews as $t) {
+            $o = (object) array();
+            // Specific fields:
+                # none
+            // General fields:
+            $o->type      = 'tnews';
+            $o->author    = get_alt_col('teams', 'team_id', $t->f_id, 'name');
+            $o->title     = "Team news: $o->author";
+            $o->message   = $t->txt;
+            $o->date      = $t->date;
+            array_push($board, $o);
+        }
     }
     
     // Last touch on the board.
@@ -218,8 +235,16 @@ function sec_main() {
         $j = 1;
         foreach ($board as $e) {
             echo "<div class='main_lcolBox'>\n";
-                if     ($e->type == 'match') $i = 2;
-                elseif ($e->type == 'msg')   $i = 3;
+                switch ($e->type)
+                {
+                    case 'tnews':
+                        $i = 1; break;
+                    case 'msg':
+                        $i = 3; break;
+                    case 'match':
+                        $i = 2; break;
+                }
+
                 echo "<div class='boxTitle$i'>$e->title</div>\n";
                 
                 echo "<div class='boxBody'>\n";
@@ -259,6 +284,9 @@ function sec_main() {
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=edit&amp;msg_id=$e->msg_id', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=delete&amp;msg_id=$e->msg_id', 'handler_msg', 'width=250,height=250');\">".$lng->getTrn('secs/home/del')."</a></td>\n";
                                 }
+                            }
+                            elseif ($e->type == 'tnews') {
+                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date</td>\n";
                             }
                         ?>
                         </tr>
