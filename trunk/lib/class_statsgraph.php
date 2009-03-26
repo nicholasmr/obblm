@@ -21,7 +21,9 @@
  *
  */
  
-include('Image/Graph.php');
+include("jpgraph/jpgraph.php");
+include("jpgraph/jpgraph_bar.php");
+include("jpgraph/jpgraph_pie.php");
 
 // SG stands for Stats Graphs.
 define('SG_OFFSET_SIZE',   100);
@@ -38,9 +40,9 @@ define('SG_WLD',        3); // Multi bar won, lost and draw history.
 define('SG_MULTIBAR_HIST_LENGTH', 6); // Number of months to show history from.
  
 $sg_types = array(
-#    SG_CAS      => 'Current CAS distribution',
-#    SG_BHSIKI   => 'Last '.SG_MULTIBAR_HIST_LENGTH.' months casualty distribution',
-#    SG_CPTDINT  => 'Last '.SG_MULTIBAR_HIST_LENGTH.' months Cp, Td and Int distribution',
+    SG_CAS      => 'Current CAS distribution',
+    SG_BHSIKI   => 'Last '.SG_MULTIBAR_HIST_LENGTH.' months casualty distribution',
+    SG_CPTDINT  => 'Last '.SG_MULTIBAR_HIST_LENGTH.' months Cp, Td and Int distribution',
     SG_WLD      => 'Last '.SG_MULTIBAR_HIST_LENGTH.' months won, lost and draw distribution',
 );
  
@@ -48,84 +50,137 @@ class SGraph
 {
     public static function make($type, $id)
     {
-        $o = null;
+        $o = $where = $graph = null;
         
-        if ($type < SG_OFFSET_TEAM+SG_OFFSET_SIZE) {
-            $t = new Team($_GET['id']);
-        }
-        elseif ($type < SG_OFFSET_COACH+SG_OFFSET_SIZE) {
-            $c = new Coach($_GET['id']);
-        }
-        elseif ($type < SG_OFFSET_PLAYER+SG_OFFSET_SIZE) {
-            $p = new Player($_GET['id']);
-        }
+        if     ($type < SG_OFFSET_TEAM+SG_OFFSET_SIZE)   {$t = new Team($_GET['id']);}
+        elseif ($type < SG_OFFSET_COACH+SG_OFFSET_SIZE)  {$c = new Coach($_GET['id']);}
+        elseif ($type < SG_OFFSET_PLAYER+SG_OFFSET_SIZE) {$p = new Player($_GET['id']);}
 
-        // Create the graph
-        $Graph =& Image_Graph::factory('graph', array(800, 500));
-        $Font =& $Graph->addNew('font', 'Verdana');
-        $Font->setSize(8);
-        $Graph->setFont($Font);
-        
         switch ($_GET['gtype']) 
         {
             
-            // Casulties:
-            case SG_OFFSET_PLAYER+SG_CAS:
-                if (!is_object($o)) {$o = $p;}
-            case SG_OFFSET_COACH+SG_CAS:
-                if (!is_object($o)) {$o = $c;}
-            case SG_OFFSET_TEAM+SG_CAS:
-                if (!is_object($o)) {$o = $t;}
+            /********************
+             *  Casualties
+             ********************/
+             
+            case SG_OFFSET_PLAYER+SG_CAS: if (!is_object($o)) {$o = $p;}
+            case SG_OFFSET_COACH+SG_CAS:  if (!is_object($o)) {$o = $c;}
+            case SG_OFFSET_TEAM+SG_CAS:   if (!is_object($o)) {$o = $t;}
                 
-                // create the plotarea
-                $Graph->add(
-                    Image_Graph::vertical(
-                        Image_Graph::factory('title', array('Casualties by '.$o->name, 12)),
-                        Image_Graph::horizontal(
-                            $Plotarea = Image_Graph::factory('plotarea'),
-                            $Legend = Image_Graph::factory('legend'),
-                            70
-                        ),
-                        5
-                    )
-                );
-
-                $Legend->setPlotarea($Plotarea);
-                        
-                // create the 1st dataset
-                $Dataset1 =& Image_Graph::factory('dataset');
-                $Dataset1->addPoint("BH ($o->bh)", $o->bh);
-                $Dataset1->addPoint("SI ($o->si)", $o->si);
-                $Dataset1->addPoint("Ki ($o->ki)", $o->ki);
-                $Plot =& $Plotarea->addNew('pie', array(&$Dataset1));
-                $Plotarea->hideAxis();
-
-                $Marker =& $Plot->addNew('Image_Graph_Marker_Value', IMAGE_GRAPH_PCT_Y_TOTAL);
-                $PointingMarker =& $Plot->addNew('Image_Graph_Marker_Pointing_Angular', array(20, &$Marker));
-                $Plot->setMarker($PointingMarker);    
-                $Marker->setDataPreprocessor(Image_Graph::factory('Image_Graph_DataPreprocessor_Formatted', '%0.1f%%'));
-
-                $Plot->Radius = 2;
-
-                // set a standard fill style
-                $FillArray =& Image_Graph::factory('Image_Graph_Fill_Array');
-                $Plot->setFillStyle($FillArray);
-                $FillArray->addColor('green@1');
-                $FillArray->addColor('blue@1');
-                $FillArray->addColor('red@1');
-
-                $Plot->explode(5);
-                $Plot->setStartingAngle(90);
+                $data = array("BH ($o->bh)" => $o->bh, "SI ($o->si)" => $o->si, "Ki ($o->ki)" => $o->ki);
+                $graph = new PieGraph(500,400,"auto");
+                $graph->SetShadow();
+                $graph->title->Set('Casualties by '.$o->name);
+                $graph->title->SetFont(FF_FONT1,FS_BOLD);
+                $p1 = new PiePlot(array_values($data));
+                $p1->SetLegends(array_keys($data));
+                $p1->SetCenter(0.4);
+                $graph->Add($p1);
+                $graph->Stroke();
                 
                 break;
             
-            case SG_OFFSET_PLAYER+SG_WLD:
-#                if (!is_object($o)) {$o = $t;}
-            case SG_OFFSET_COACH+SG_WLD:
-#                if (!is_object($o)) {$o = $t;}
-            case SG_OFFSET_TEAM+SG_WLD:
-                if (!is_object($o)) {$o = $t;}
+            /********************
+             *  BH, SI and Ki
+             ********************/
+            
+            case SG_OFFSET_PLAYER+SG_BHSIKI: if (!isset($where)) {$o = $p; $where = "f_player_id = $o->player_id";}
+            case SG_OFFSET_COACH+SG_BHSIKI:  if (!isset($where)) {$o = $c; $where = "f_coach_id = $o->coach_id";}
+            case SG_OFFSET_TEAM+SG_BHSIKI:   if (!isset($where)) {$o = $t; $where = "f_team_id = $o->team_id";}
                 
+                $queries = array();
+                foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+                    $range = "(
+                        (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH))) 
+                        AND 
+                        (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)))
+                    )";
+                    # m$i = minus/negative $i months from present month.
+                    array_push($queries, "SUM(IF($range, bh, 0)) AS 'bh_m$i'"); 
+                    array_push($queries, "SUM(IF($range, si, 0)) AS 'si_m$i'"); 
+                    array_push($queries, "SUM(IF($range, ki, 0)) AS 'ki_m$i'"); 
+                    array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
+                    array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
+                }
+
+                $query  = "SELECT ".implode(', ', $queries)." FROM matches, match_data WHERE f_match_id = match_id AND $where";
+                $result = mysql_query($query);
+                $row    = mysql_fetch_assoc($result);
+                
+                $lengends = array('bh' => 'green', 'si' => 'red', 'ki' => 'blue');
+                $datasets = array();
+                $labels   = array();
+                
+                foreach (array_keys($lengends) as $key) {
+                    $ds = array();
+                    foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+                        $ds[] = $row["${key}_m$i"];
+                    }
+                    $datasets[$key] = $ds;
+                }
+                foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+                    $labels[] = $row["yr_m$i"].'/'.$row["mn_m$i"];
+                }
+               
+                SGraph::mbars($datasets, $labels, $lengends, "BH, SI and Ki history of $o->name", "Months", "Amount");
+                
+                break;
+
+            /********************
+             *  CP, TD and Int
+             ********************/
+            
+            case SG_OFFSET_PLAYER+SG_CPTDINT: if (!isset($where)) {$o = $p; $where = "f_player_id = $o->player_id";}
+            case SG_OFFSET_COACH+SG_CPTDINT:  if (!isset($where)) {$o = $c; $where = "f_coach_id = $o->coach_id";}
+            case SG_OFFSET_TEAM+SG_CPTDINT:   if (!isset($where)) {$o = $t; $where = "f_team_id = $o->team_id";}
+                
+                $queries = array();
+                foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+                    $range = "(
+                        (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH))) 
+                        AND 
+                        (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)))
+                    )";
+                    # m$i = minus/negative $i months from present month.
+                    array_push($queries, "SUM(IF($range, cp, 0))     AS 'cp_m$i'"); 
+                    array_push($queries, "SUM(IF($range, td, 0))     AS 'td_m$i'"); 
+                    array_push($queries, "SUM(IF($range, intcpt, 0)) AS 'int_m$i'"); 
+                    array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
+                    array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
+                }
+
+                $query  = "SELECT ".implode(', ', $queries)." FROM matches, match_data WHERE f_match_id = match_id AND $where";
+                $result = mysql_query($query);
+                $row    = mysql_fetch_assoc($result);
+                
+                $lengends = array('cp' => 'green', 'td' => 'red', 'int' => 'blue');
+                $datasets = array();
+                $labels   = array();
+                
+                foreach (array_keys($lengends) as $key) {
+                    $ds = array();
+                    foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+                        $ds[] = $row["${key}_m$i"];
+                    }
+                    $datasets[$key] = $ds;
+                }
+                foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+                    $labels[] = $row["yr_m$i"].'/'.$row["mn_m$i"];
+                }
+               
+                SGraph::mbars($datasets, $labels, $lengends, "CP, TD and Int history of $o->name", "Months", "Amount");
+                
+                break;
+
+            /********************
+             *  Won, lost and draw
+             ********************/
+            
+            case SG_OFFSET_PLAYER+SG_WLD:   if (!isset($where)) {$o = $p; $where = "f_player_id = $o->team_id";}
+            case SG_OFFSET_COACH+SG_WLD:    if (!isset($where)) {$o = $c; $where = "f_coach_id = $o->team_id";}
+            case SG_OFFSET_TEAM+SG_WLD:     if (!isset($where)) {$o = $t; $where = "f_team_id = $o->team_id";}
+                
+                                
                 $queries = array();
                 foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
                     $range = "(
@@ -145,46 +200,93 @@ class SGraph
                 $result = mysql_query($query);
                 $row    = mysql_fetch_assoc($result);
                 
-                $Graph->add(
-                    Image_Graph::vertical(
-                        Image_Graph::factory('title', array("Won, lost and draw history of $o->name", 12)),        
-                        Image_Graph::vertical(
-                            $Plotarea = Image_Graph::factory('plotarea'),
-                            $Legend = Image_Graph::factory('legend'),
-                            90
-                        ),
-                        5
-                    )
-                );
-                $Legend->setPlotarea($Plotarea);
-                    
-                $Datasets = array();
-                foreach (array('w' => 'won', 'l' => 'lost', 'd' => 'draw') as $idx => $desc) {
-                    $ds =& Image_Graph::factory('dataset');
-                    $ds->setName($desc);
+                /*
+                    Plotting
+                */
+                
+                $graph = new Graph(800,600,"auto");    
+                $graph->SetScale("textint");
+                $graph->SetShadow();
+                $graph->img->SetMargin(40,30,20,40);
+                
+                // Load data
+                $indicies = array('w' => 'Won', 'l' => 'Lost', 'd' => 'Draw', 'xlabels' => 'UNUSED');
+                $dsets = array();
+                foreach (array_keys($indicies) as $idx) {
+                    $ds = array();
                     foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
-                        $ds->addPoint($row["yr_m$i"].'/'.$row["mn_m$i"],  $row["${idx}_m$i"]);
+                        $ds[] = ($idx == 'xlabels') ? ($row["yr_m$i"].'/'.$row["mn_m$i"])  : $row["${idx}_m$i"];
                     }
-                    array_push($Datasets, $ds);
+                    $dsets[$idx] = $ds;
                 }
-                $Plot =& $Plotarea->addNew('bar', array($Datasets));
-
-                $Plot->setLineColor('gray');
-                $FillArray =& Image_Graph::factory('Image_Graph_Fill_Array');
-                $FillArray->addColor('blue@1');
-                $FillArray->addColor('red@1');
-                $FillArray->addColor('green@1');
-                $Plot->setFillStyle($FillArray);
-                $Marker =& $Plot->addNew('Image_Graph_Marker_Value', IMAGE_GRAPH_VALUE_Y);
-                $PointingMarker =& $Plot->addNew('Image_Graph_Marker_Pointing_Angular', array(20, &$Marker));
-                $Plot->setMarker($PointingMarker);     
     
+                $graph->xaxis->SetTickLabels($dsets['xlabels']);
+
+                // Create the bar plots
+                $bplots = array();
+                foreach (array('w' => 'green', 'l' => 'red', 'd' => 'blue') as $idx => $color) {
+                    $bplot = new BarPlot($dsets[$idx]);
+                    $bplot->SetFillColor($color);
+                    $bplot->value->Show();
+                    $bplot->value->SetFormat('%d');
+                    $bplot->SetValuePos('center');
+                    $bplot->value->SetFont(FF_FONT1,FS_BOLD);
+                    $bplot->value->SetColor('white');
+                    $bplot->SetLegend($indicies[$idx]);
+                    $bplots[] = $bplot;
+                }
+
+                // Create the grouped bar plot
+                $gbplot = new GroupBarPlot($bplots);
+                $graph->Add($gbplot);
+                $graph->title->Set("Won, lost and draw history of $o->name");
+                $graph->xaxis->title->Set("Months");
+                $graph->yaxis->title->Set("Matches");
+                $graph->Stroke();
+                
                 break;
         }
 
-        $Graph->done(); 
-        
         return;
+    }
+    
+    private static function mbars($datasets, $labels, $lengends, $title, $xlabel, $ylabel) 
+    {
+        /*
+            Types:
+                datasets: array('KEY1' => array(1,2,3,4),   'KEY2' => array(1,2,3,4),   ...)
+                lengends: array('KEY1' => 'color1',         'KEY2' => 'color2',         ...)
+                labels:   array('Jan', '02', 'whatever', ...)
+        */
+        
+        // Ready graph object.
+        $graph = new Graph(800,600,"auto");    
+        $graph->SetScale("textint");
+        $graph->SetShadow();
+        $graph->img->SetMargin(40,30,20,40);
+        $graph->xaxis->SetTickLabels($labels);
+
+        // Create the bar plots
+        $bplots = array();
+        foreach ($lengends as $key => $color) {
+            $bplot = new BarPlot($datasets[$key]);
+            $bplot->SetFillColor($color);
+            $bplot->value->Show();
+            $bplot->value->SetFormat('%d');
+            $bplot->value->SetFont(FF_FONT1,FS_BOLD);
+            $bplot->value->SetColor('white');
+            $bplot->SetValuePos('center');
+            $bplot->SetLegend($key);
+            $bplots[] = $bplot;
+        }
+
+        // Create the grouped bar plot
+        $plot = new GroupBarPlot($bplots);
+        $graph->Add($plot);
+        $graph->title->Set($title);
+        $graph->xaxis->title->Set($xlabel);
+        $graph->yaxis->title->Set($ylabel);
+        return $graph->Stroke();
     }
 }
  
