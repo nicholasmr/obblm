@@ -114,6 +114,7 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
             ?>
             <a class="menu" href="index.php?section=records">      <b><?php echo $lng->getTrn('global/secLinks/records');?></b></a>      &nbsp;
             <a class="menu" href="index.php?section=rules">        <b><?php echo $lng->getTrn('global/secLinks/rules');?></b></a>        &nbsp;
+            <a class="menu" href="index.php?section=gallery">      <b><?php echo $lng->getTrn('global/secLinks/gallery');?></b></a>      &nbsp;
             <a class="menu" href="index.php?section=about">        <b>OBBLM</b></a> &nbsp;
             <?php 
             if ($settings['enable_guest_book']) {
@@ -143,6 +144,7 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
             case 'stars':        sec_stars();        break;
             case 'records':      sec_records();      break;
             case 'rules':        sec_rules();        break;
+            case 'gallery':      sec_gallery();      break;
             case 'about':        sec_about();        break;
             case 'guest':        if($settings['enable_guest_book']){sec_guest(); break;} 
             default:             sec_main();
