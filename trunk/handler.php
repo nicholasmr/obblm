@@ -220,7 +220,7 @@ switch ($_GET['type'])
         break;
 
     /***************
-     *  Match gallery
+     *  Visual stats
      ***************/
     case 'graph':
         if (isset($_GET['menu'])) {
@@ -242,7 +242,10 @@ switch ($_GET['type'])
         }
                 
         break;
-
+        
+    /***************
+     *  Inducements
+     ***************/
     case 'inducements':
         {
         include('inducements.php'); // Daniel's try-out page.

@@ -269,7 +269,7 @@ function sec_main() {
                     echo "<table class='boxTable'>\n";
                         echo "<tr>\n";
                             if ($e->type == 'match') {
-                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date " . (isset($e->date_mod) ? "(".$lng->getTrn('secs/home/lastedit')." $e->date_mod) " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
+                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." " . (isset($e->date_mod) ? "(".$lng->getTrn('secs/home/lastedit')." ".textdate($e->date_mod).") " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>".$lng->getTrn('secs/home/show')."</a></td>\n";
                                 if (!empty($e->comments)) {
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"obj=document.getElementById('comment$e->match_id'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
@@ -279,14 +279,14 @@ function sec_main() {
                                 }
                             }
                             elseif ($e->type == 'msg') {
-                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
+                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 if (is_object($coach) && ($coach->admin || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=edit&amp;msg_id=$e->msg_id', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=delete&amp;msg_id=$e->msg_id', 'handler_msg', 'width=250,height=250');\">".$lng->getTrn('secs/home/del')."</a></td>\n";
                                 }
                             }
                             elseif ($e->type == 'tnews') {
-                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." $e->date</td>\n";
+                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)."</td>\n";
                             }
                         ?>
                         </tr>
@@ -296,7 +296,7 @@ function sec_main() {
                         echo "<div id='comment$e->match_id'>\n";
                         echo "<hr>\n";
                         foreach ($e->comments as $c) {
-                            echo "<br>Posted $c->date by $c->sname:<br>\n";
+                            echo "<br>Posted ".textdate($c->date)." by $c->sname:<br>\n";
                             echo $c->txt."<br>\n";
                         }
                         echo "</div>";
@@ -1754,6 +1754,114 @@ function sec_rules() {
         </tr>                    
     </table>
 
+    <?php
+}
+
+/*************************
+ *
+ *  GALLERY
+ *
+ *************************/
+
+function sec_gallery() {
+
+    global $lng;
+
+    title('Gallery');
+    
+    if (isset($_POST['type'])) {
+        echo "<center><a href='index.php?section=gallery'>[".$lng->getTrn('global/misc/back')."]</a></center>\n";
+        switch ($_POST['type'])
+        {
+            case 'team':
+                $t = new Team((int) $_POST['tid']);
+                echo "<b>Players of $t->name</b><br><hr><br>\n";
+                $players = $t->getPlayers();
+                foreach ($players as $p) {
+                    $pic = $p->getPic();
+                    echo "<div style='float:left; padding:10px;'>$p->name (#$p->nr)<br><a href='index.php?section=coachcorner&amp;player_id=$p->player_id'><img HEIGHT=150 src='$pic' alt='pic'></a></div>";
+                }
+                break;
+                
+            case 'tour':
+                $tr = new Tour((int) $_POST['trid']);
+                echo "<b>Matches of tournament $tr->name</b><br><hr><br>\n";
+                $matches = $tr->getMatches();
+                objsort($matches, array('-date_played'));
+                foreach ($matches as $m) {
+                    $round = $m->round;
+                    if     ($round == RT_FINAL)         $round = $lng->getTrn('secs/fixtures/mtypes/final');
+                    elseif ($round == RT_3RD_PLAYOFF)   $round = $lng->getTrn('secs/fixtures/mtypes/thirdPlayoff');
+                    elseif ($round == RT_SEMI)          $round = $lng->getTrn('secs/fixtures/mtypes/semi');
+                    elseif ($round == RT_QUARTER)       $round = $lng->getTrn('secs/fixtures/mtypes/quarter');
+                    elseif ($round == RT_ROUND16)       $round = $lng->getTrn('secs/fixtures/mtypes/rnd16');
+                    elseif ($round == RT_PLAYIN)        $round = $lng->getTrn('secs/fixtures/mtypes/playin');
+                    elseif ($round == RT_FIRST && $tr->type == TT_KNOCKOUT) $round = $lng->getTrn('secs/fixtures/mtypes/firstrnd');
+                    else                                $round = $lng->getTrn('secs/fixtures/mtypes/rnd').": $round";
+        
+                    echo "<div style='clear: both;'><i>$m->team1_name</i> vs <i>$m->team2_name</i>, ".((isset($m->date_played) && $m->date_played != 0) ? textdate($m->date_played, true) : 'Not played').", $round, <a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[view]</a><br><hr style='width: 400px; float: left;'></div><br>\n";
+                    
+                    foreach ($m->getPics() as $pic) {
+                        echo "<div style='float:left; padding:10px;'><img HEIGHT=150 src='$pic' alt='pic'></div>";
+                    }
+                    echo "<br><br>\n";
+                }
+                break;
+                
+            case 'stad':
+                echo "<b>Team stadiums</b><br><hr><br>\n";
+                $teams = Team::getTeams();
+                foreach ($teams as $t) {
+                    $pic = $t->getStadiumPic();
+                    echo "<div style='float:left; padding:10px;'>$t->name<br><a href='$pic'><img HEIGHT=150 src='$pic' alt='pic'></a></div>";
+                }
+                break;
+                
+            case 'coach':
+                echo "<b>Coaches</b><br><hr><br>\n";
+                $coaches = Coach::getCoaches();
+                foreach ($coaches as $c) {
+                    $pic = $c->getPic();
+                    echo "<div style='float:left; padding:10px;'>$c->name<br><a href='$pic'><img HEIGHT=150 src='$pic' alt='pic'></a></div>";
+                }
+                break;
+        }
+        
+        return;
+    }
+    
+    $team_list = "
+        <form method='POST' style='display:inline; margin:0px;'><select name='tid' onChange='this.form.submit();'>
+        <option value='0'>-None selected-</option>".
+        implode("\n", array_map(create_function('$o', 'return "<option value=\'$o->team_id\'>$o->name</option>";'), Team::getTeams()))
+        ."</select><input type='hidden' name='type' value='team'></form>
+    ";
+    $tour_list = "
+        <form method='POST' style='display:inline; margin:0px;'><select name='trid' onChange='this.form.submit();'>
+        <option value='0'>-None selected-</option>".
+        implode("\n", array_map(create_function('$o', 'return "<option value=\'$o->tour_id\'>$o->name</option>";'), Tour::getTours()))
+        ."</select><input type='hidden' name='type' value='tour'></form>
+    ";
+    $stad = "
+        <form method='POST' name='stadForm' style='display:inline; margin:0px;'>
+        <input type='hidden' name='type' value='stad'>
+        <a href='javascript:void(0);' onClick='document.stadForm.submit();'>Team stadiums</a>
+        </form>
+    ";
+    $coaches = "
+        <form method='POST' name='coachesForm' style='display:inline; margin:0px;'>
+        <input type='hidden' name='type' value='coach'>
+        <a href='javascript:void(0);' onClick='document.coachesForm.submit();'>Coaches</a>
+        </form>
+    ";
+    ?>
+    Please select one of the below options.
+    <ul>
+    <li>Players from team <?php echo $team_list?></li>
+    <li>Matches from tournament <?php echo $tour_list?></li>
+    <li><?php echo $stad?></li>
+    <li><?php echo $coaches?></li>
+    </ul>
     <?php
 }
 
