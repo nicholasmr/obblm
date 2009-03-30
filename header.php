@@ -25,7 +25,7 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.38i');
+define('OBBLM_VERSION', '0.38j');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
@@ -194,6 +194,25 @@ define('MATCH_ID_IMPORT', -1);
 define('RING_SYS',   0); // Admins
 define('RING_COM',   1); // Commissioners.
 define('RING_COACH', 2); // Coach/ordinary user
+
+/******************** 
+ *   For graphical statistics
+ ********************/
+
+// SG stands for Stats Graphs.
+
+// Types
+define('SG_T_PLAYER', 1); 
+define('SG_T_TEAM',   2); 
+define('SG_T_COACH',  3); 
+define('SG_T_LEAGUE', 4); 
+ 
+// Module setup
+define('SG_MULTIBAR_HIST_LENGTH', 6); // Number of months to show history from.
+define('SG_CNT_HORIZ', 3); // Number of graphs to place hirozontally next to each other.
+# Graph dimensions
+define('SG_DIM_X', 600);
+define('SG_DIM_Y', 400);
 
 /********************
  *  Dependencies
