@@ -1060,7 +1060,8 @@ function sec_coaches() {
         is_object($c = new Coach($_GET['coach_id'])) && $c->setExtraStats()) {
         
         title("Coach $c->name");
-        echo "<center><a href='index.php?section=coaches'>[".$lng->getTrn('global/misc/back')."]</a></center><br>\n";
+        echo "<center><a href='index.php?section=coaches'>[".$lng->getTrn('global/misc/back')."]</a>&nbsp; |
+            &nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$c->coach_id''>[Vis. stats]</a></center><br>\n";
         
         ?>
         <table class='picAndText'>
@@ -1627,6 +1628,8 @@ function sec_records() {
     foreach ($subsecs as $a => $b) {
         echo "<a href='index.php?section=records&amp;subsec=$a'><b>$b</b></a><br>\n";
     }
+    // Add graphical stats link.
+    echo "<a href='handler.php?type=graph&amp;gtype=".(SG_T_LEAGUE)."&amp;id=none'><b>League graphical statistics</b></a><br>\n";
 }
 
 /*************************
