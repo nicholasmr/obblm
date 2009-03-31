@@ -353,7 +353,7 @@ function team_roaster($team_id) {
 //            echo "&nbsp;|&nbsp;<a href='#anc_about'><b>About</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='#anc_news'><b>News</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='handler.php?type=inducements&amp;team_id=$team->team_id'><b>Inducements try-out</b></a>\n";
-            echo "&nbsp;|&nbsp;<a href='handler.php?type=graph&amp;menu=team&amp;id=$team->team_id''><b>Vis. stats</b></a>\n";
+            echo "&nbsp;|&nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''><b>Vis. stats</b></a>\n";
 //            echo "&nbsp;|&nbsp;<a href='#gp'><b>Matches</b></a>\n";
 //            echo "&nbsp;|&nbsp;<a href='#tr'><b>Rankings</b></a>\n";
             echo "</td>\n";
@@ -1540,6 +1540,10 @@ function player_roaster($player_id) {
                         <td><?php echo "$p->draw ($p->row_draw streaks)"; ?></td>
                     </tr>
                     <tr>
+                        <td><b>Vis. stats</b></td>
+                        <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''><b>View</b></a>\n";; ?></td>
+                    </tr>                    
+                    <tr>
                         <td colspan="2"><hr></td>
                     </tr> 
                     <tr>
@@ -1800,23 +1804,24 @@ function disp_teams($coach_id = null) {
     objsort($teams, array('+name'));
     
     foreach ($teams as $t) {
+        $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');
+        $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that sort_table does not create the team link on coach name too.
         $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='" . $t->getLogo() . "'>";
         $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
         $lt = $t->getLatestTour();
         $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
         $prizes = $t->getPrizes(true);
-        $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;;
+        $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;
     }
 
     $fields = array(
         'logo'      => array('desc' => 'Logo', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id'), 'nosort' => true), 
         'name'      => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
         'race'      => array('desc' => 'Race'), 
-        'coach_name' => array('desc' => 'Coach'), 
-        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),  
-        'retired'   => array('desc' => 'Retired?', 'nosort' => true), 
         'latest_tour' => array('desc' => 'Latest tour'), 
         'prizes'      => array('desc' => 'Prizes', 'nosort' => true), 
+        'played'    => array('desc' => 'Games'), 
+        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),  
     );
 
     sort_table(
