@@ -79,8 +79,9 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
     <title><?php echo $settings['league_name']; ?> Blood Bowl League</title>
     <link type="text/css" href="css/stylesheet<?php echo (isset($_SESSION['logged_in'])) ? $coach->settings['theme'] : $settings['stylesheet']; ?>.css" rel="stylesheet">
     <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js" type="text/javascript"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7/jquery-ui.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="lib/misc_functions.js"></script>
-    
 </head>
 <body>
     <div class="everything">
