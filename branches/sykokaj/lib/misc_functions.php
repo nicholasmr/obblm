@@ -484,4 +484,8 @@ function status($status, $msg = '') {
     <?php
 }
 
+function textdate($mysqldate, $noTime = false) {
+    return date("D M j Y".(($noTime) ? '' : ' G:i:s'), strtotime($mysqldate));
+}
+
 ?>
