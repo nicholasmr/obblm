@@ -75,6 +75,7 @@ function team_roaster($team_id) {
             case 'rename_team':     status($team->rename($_POST['name'])); break;
             case 'buy_goods':       status($team->buy($_POST['thing'])); break;
             case 'drop_goods':      status($team->drop($_POST['thing'])); break;
+            case 'ready_state':     status($team->setReady(isset($_POST['bool']))); break;
             
             case 'skill':        
                 $type = null;
@@ -501,6 +502,10 @@ function team_roaster($team_id) {
                     <td><a href='index.php?section=races&amp;race=<?php echo $team->race; ?>'><?php echo $team->race; ?></a></td>
                 </tr>
                 <tr>
+                    <td>Ready</td>
+                    <td><?php echo ($team->rdy) ? 'Yes' : 'No'; ?></td>
+                </tr>                
+                <tr>
                     <td>TV</td>
                     <td><?php echo $team->value/1000 . 'k'; ?></td>
                 </tr>
@@ -598,6 +603,7 @@ function team_roaster($team_id) {
                     'rename_team'       => 'Rename team',
                     'buy_goods'         => 'Buy team goods',
                     'drop_goods'        => 'Let go of team goods',
+                    'ready_state'       => 'Set ready state',
                 );
 
                 // Set default choice.
@@ -866,7 +872,21 @@ function team_roaster($team_id) {
                         </select>
                         <input type="hidden" name="type" value="drop_goods">
                         <?php
-                        break;                            
+                        break;
+                        
+                    /**************
+                     * Set ready state
+                     **************/
+                        
+                    case 'ready_state':
+                        ?>
+                        This team attribute allows coaches to signal other coaches/teams whether or not this team is interested in playing any matches.
+                        <hr><br>
+                        Team ready? 
+                        <input type="checkbox" name="bool" value="1" <?php echo ($team->rdy) ? 'CHECKED' : '';?>>
+                        <input type="hidden" name="type" value="ready_state">
+                        <?php
+                        break;
                     }
                     ?>
                     <br><br>
@@ -1812,11 +1832,13 @@ function disp_teams($coach_id = null) {
         $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
         $prizes = $t->getPrizes(true);
         $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;
+        $t->rdy = ($t->rdy) ? '<font color="green">Yes</font>' : '<font color="red">No</font>';
     }
 
     $fields = array(
         'logo'      => array('desc' => 'Logo', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id'), 'nosort' => true), 
         'name'      => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
+        'rdy'       => array('desc' => 'Ready', 'nosort' => true), 
         'race'      => array('desc' => 'Race'), 
         'latest_tour' => array('desc' => 'Latest tour'), 
         'prizes'      => array('desc' => 'Prizes', 'nosort' => true), 

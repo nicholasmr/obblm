@@ -25,8 +25,8 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.38j');
-$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried');
+define('OBBLM_VERSION', '0.38k');
+$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
@@ -213,6 +213,13 @@ define('SG_CNT_HORIZ', 3); // Number of graphs to place hirozontally next to eac
 # Graph dimensions
 define('SG_DIM_X', 600);
 define('SG_DIM_Y', 400);
+
+/******************** 
+ *   RSS related.
+ ********************/
+
+define('RSS_SIZE', 20); // Number of entries in feed.
+define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, T_TEXT_HOF, T_TEXT_WANTED, T_TEXT_MSMR, T_TEXT_TNEWS))); // Create feeds from the text types.
 
 /********************
  *  Dependencies

@@ -13,7 +13,6 @@ $db_host   = 'localhost';
  * OBBLM display settings 
  *************************/
 
-$settings['site_url'] = 'http://localhost'; // URL to where OBBLM can be accessed.
 $settings['forum_url'] = 'http://localhost';// URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
 $settings['lang'] = 'en-GB';                // Language. Existing: en-GB.
 $settings['login_list'] = true;             // Show a list of available coaches on logins. If false coaches must type in their username on logins.
@@ -66,6 +65,13 @@ $rules['cost_apothecary']       = 50000;    // Default is 50000.
 $rules['cost_fan_factor']       = 10000;    // Default is 10000.
 $rules['cost_ass_coaches']      = 10000;    // Default is 10000.
 $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
+
+// Player values are decreased by the below multipliers for each type of injury sustained.
+// Example: If you wish player values to go down by 15.000 for each MA, you would set the "val_reduc_ma" variable equal to 15000.
+$rules['val_reduc_ma'] = 0; // Default is 0 (disabled).
+$rules['val_reduc_st'] = 0; // Default is 0 (disabled).
+$rules['val_reduc_av'] = 0; // Default is 0 (disabled).
+$rules['val_reduc_ag'] = 0; // Default is 0 (disabled).
 
 $rules['enable_stars_mercs'] = true; // Default is true. Enable star players and mercenaries.
 

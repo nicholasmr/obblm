@@ -217,14 +217,14 @@ function sec_main() {
             echo "</div>\n";
             // New message link
             if (is_object($coach) && $coach->ring <= RING_COM)
-                echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>\n";
+                echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
 
             // View mode
             if (!empty($board)) { # Only show when messages exist.
                 if (isset($_GET['view']) && $_GET['view'] == 'all')
-                    echo "<a href='index.php?section=main&amp;view=normal'>".$lng->getTrn('secs/home/normal')."</a>\n";
+                    echo "<a href='index.php?section=main&amp;view=normal'>".$lng->getTrn('secs/home/normal')."</a>&nbsp;\n";
                 else
-                    echo "<a href='index.php?section=main&amp;view=all'>".$lng->getTrn('secs/home/showall')."</a>\n";
+                    echo "<a href='index.php?section=main&amp;view=all'>".$lng->getTrn('secs/home/showall')."</a>&nbsp;\n";
             }
             // RSS
             echo "<a href='handler.php?type=rss'>RSS</a>\n";

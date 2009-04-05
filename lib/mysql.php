@@ -112,6 +112,7 @@ function setup_tables() {
                 fan_factor          MEDIUMINT UNSIGNED,
                 ass_coaches         MEDIUMINT UNSIGNED,
                 cheerleaders        MEDIUMINT UNSIGNED,
+                rdy                 BOOLEAN NOT NULL DEFAULT 1,
                 imported            BOOLEAN NOT NULL DEFAULT 0,
                 retired             BOOLEAN NOT NULL DEFAULT 0,
                 won_0               SMALLINT UNSIGNED NOT NULL DEFAULT 0,
