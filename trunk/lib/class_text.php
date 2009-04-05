@@ -53,6 +53,8 @@ class _Text
                 }
             }
         }
+        
+#        $this->txt = preg_replace('/\r/', '<br>', $this->txt);
     }
     
     public function delete()

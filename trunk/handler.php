@@ -183,12 +183,16 @@ switch ($_GET['type'])
      ***************/        
     case 'rss':
         global $settings;
+        $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : ""; 
+        $matches = array();
+        preg_match('/(\w*)/', strtolower($_SERVER["SERVER_PROTOCOL"]), $matches); 
+        $protocol = $matches[0].$s;
         $rss = new OBBLMRssWriter(
             $settings['league_name'].' feed', 
-            $settings['site_url'], 
+            $protocol."://".$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI']), 
             'Blood bowl league RSS feed',
             'en-EN', 
-            array(T_TEXT_MSG)
+            explode(',', RSS_FEEDS)
         );
         echo $rss->generateNewsRssFeed();
         break;

@@ -1,6 +1,6 @@
 <?php
 /**
- *  Copyright (c) Juergen Unfried <juergen.unfried@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Juergen Unfried <juergen.unfried@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -116,20 +116,52 @@ class OBBLMRssWriter {
         $el_channel->appendChild($dom->createElement('lastBuildDate', date(DATE_RSS)));
         $el_channel->appendChild($dom->createElement('generator', 'OBBLM ' . OBBLM_VERSION));
         
-        if (is_array($this->type)) {
-        	$this->type = implode(',', $this->type);
+        $entries = array();
+        foreach ($this->type as $t) {
+            $obj = (object) null;
+            switch ($t)
+            {
+                case T_TEXT_MSG:
+                    foreach (Message::getMessages(RSS_SIZE) as $item) {
+                        $entries[] = (object) array('title' => "Announcement by ".get_alt_col('coaches', 'coach_id', $item->f_coach_id, 'name').": $item->title", 'desc' => $item->message, 'date' => $item->date);
+                    }
+                    break;
+                    
+                case T_TEXT_HOF:
+                    foreach (HOF::getHOF(RSS_SIZE) as $item) {
+                        $item = $item['hof'];
+                        $entries[] = (object) array('title' => "HOF entry for ".get_alt_col('players', 'player_id', $item->player_id, 'name').": $item->title", 'desc' => $item->about, 'date' => $item->date);
+                    }
+                    break;
+                
+                case T_TEXT_WANTED:
+                    foreach (Wanted::getWanted(RSS_SIZE) as $item) {
+                        $item = $item['wanted'];
+                        $entries[] = (object) array('title' => "Wanted entry for ".get_alt_col('players', 'player_id', $item->player_id, 'name').": $item->bounty", 'desc' => $item->why, 'date' => $item->date);
+                    }
+                    break;
+                
+                case T_TEXT_MSMR:
+                    foreach (Match::getReports(RSS_SIZE) as $item) {
+                        $m = new Match($item->match_id);
+                        $entries[] = (object) array('title' => "Match: $m->team1_name ($m->team1_score) vs. $m->team2_name ($m->team2_score)", 'desc' => $m->comment, 'date' => $m->date_played);
+                    }
+                    break;
+                
+                case T_TEXT_TNEWS:
+                    foreach (TNews::getNews(false, RSS_SIZE) as $item) {
+                        $entries[] = (object) array('title' => "Team news by ".get_alt_col('teams', 'team_id', $item->f_id, 'name'), 'desc' => $item->txt, 'date' => $item->date);
+                    }
+                    break;
+            }
         }
-        
-        $sql = "SELECT UNIX_TIMESTAMP(date) as timestamp,txt,txt2 FROM texts WHERE type in ($this->type) ORDER BY timestamp desc LIMIT 20";
-        	$result = mysql_query($sql);
-        
-        while ($row = mysql_fetch_assoc($result)) {
+        objsort($entries, array('-date'));
+        foreach (array_slice($entries, 0, RSS_SIZE) as $item) {
             $el_item = $dom->createElement('item');
-            $el_item->appendChild($dom->createElement('title', $row['txt2']));
-            $el_item->appendChild($dom->createElement('description', $row['txt']));
+            $el_item->appendChild($dom->createElement('title', $item->title));
+            $el_item->appendChild($dom->createElement('description', $item->desc));
             $el_item->appendChild($dom->createElement('link', $this->link));
-            $el_item->appendChild($dom->createElement('pubDate', date(DATE_RSS, $row['timestamp'])));
-            
+            $el_item->appendChild($dom->createElement('pubDate', $item->date));
             $el_channel->appendChild($el_item);
         }
         

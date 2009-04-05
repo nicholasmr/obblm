@@ -126,7 +126,7 @@ class Player
 
     function __construct($player_id) {
 
-        global $DEA;
+        global $DEA, $rules;
 
         // MySQL stored player data
         $result = mysql_query("SELECT * FROM players WHERE player_id = $player_id");
@@ -204,6 +204,13 @@ class Player
                        + $this->ach_st                      * 50000
                        + count($this->ach_nor_skills)       * 20000
                        + count($this->ach_dob_skills)       * 30000;
+                       
+        // Custom value reduction.
+        $this->value -= 
+            $this->inj_ma*$rules['val_reduc_ma'] + 
+            $this->inj_st*$rules['val_reduc_st'] + 
+            $this->inj_ag*$rules['val_reduc_ag'] + 
+            $this->inj_av*$rules['val_reduc_av'];
                        
         // Misc
         $this->icon = PLAYER_ICONS.'/' . $DEA[$this->race]['players'][$this->pos]['icon'] . '.gif';

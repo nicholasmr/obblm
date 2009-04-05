@@ -37,6 +37,7 @@ class Team
     public $rerolls           = 0;
     public $ass_coaches       = 0;
     public $cheerleaders      = 0;
+    public $rdy               = 1; // Ready bool.
     public $imported          = false;
     public $is_retired        = 0;
 
@@ -551,6 +552,13 @@ class Team
         else {
             return false;
         }
+    }
+    
+    public function setReady($bool) {
+    
+        mysql_query("UPDATE teams SET rdy = ".(($bool) ? 1 : 0)." WHERE team_id = $this->team_id");
+        $t->rdy = $bool;
+        return true;
     }
 
     public function isDeletable() {
