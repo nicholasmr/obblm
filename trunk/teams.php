@@ -1089,12 +1089,14 @@ function team_roaster($team_id) {
                                 <select name="player">
                                 <?php
                                 $DISABLE = true;
+                                objsort($players, array('+is_dead', '+name'));
                                 foreach ($players as $p) {
-                                    if (!$p->is_sold && !$p->is_dead) {
-                                        echo "<option value='$p->player_id'>$p->name</option>";
+                                    if (!$p->is_sold) {
+                                        echo "<option value='$p->player_id'".(($p->is_dead) ? ' style="background-color:'.COLOR_HTML_DEAD.';"' : '').">$p->name</option>";
                                         $DISABLE = false;
                                     }
                                 }
+                                objsort($players, array('+nr'));
                                 ?>
                                 </select>
                                 <br><br>
