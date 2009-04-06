@@ -74,7 +74,7 @@ if (!defined('MBTTF_DIR')) {
 	    die($msg);
         }
 	else {
-	  define('TTF_DIR', $sroot.'/fonts/');
+	  define('MBTTF_DIR', $sroot.'/fonts/');
         }
     } else {
 	define('MBTTF_DIR','/usr/share/fonts/ja/TrueType/');

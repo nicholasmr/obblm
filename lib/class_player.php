@@ -304,7 +304,8 @@ class Player
             }
         }
 
-        return (($skill_count < $allowable_skills) && !$this->is_sold && !$this->is_dead); # If fewer skills than able to have for current SPP-level -> allow new skill.
+//        return (($skill_count < $allowable_skills) && !$this->is_sold && !$this->is_dead); # If fewer skills than able to have for current SPP-level -> allow new skill.
+        return (($skill_count < $allowable_skills) && !$this->is_sold); # If fewer skills than able to have for current SPP-level -> allow new skill.
     }
 
     public function sell() {
