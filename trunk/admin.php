@@ -404,6 +404,7 @@ function sec_admin() {
             var NONE    = <?php echo NONE; ?>;
             var MNG     = <?php echo MNG; ?>;
             var DEAD    = <?php echo DEAD; ?>;
+            var SOLD    = <?php echo SOLD; ?>;
         </script>
         <?php
 
@@ -436,6 +437,7 @@ function sec_admin() {
                         case 'ready': $a = NONE; break;
                         case 'mng':   $a = MNG; break;
                         case 'dead':  $a = DEAD; break;
+                        case 'sold':  $a = SOLD; break;
                         default: $a = -1; // Unknown.
                     }
                     $_POST[$i.'status'] = $a;
@@ -487,7 +489,7 @@ function sec_admin() {
             // If received input was valid, then create the team.
             if (!$err && Team::create(
                 array('coach_id' => $_POST['coach'], 'name' => $_POST['name'], 'race' => $_POST['race']),
-                array('won' => $_POST['won_0'], 'lost' => $_POST['lost_0'], 'draw' => $_POST['draw_0'], 'sw' => $_POST['sw_0'], 'sl' => $_POST['sl_0'], 'sd' => $_POST['sd_0'], 'wt' => $_POST['wt_0'], 'gf' => $_POST['gf_0'], 'ga' => $_POST['ga_0'], 'tcas' => $_POST['tcas_0'], 'elo' => $_POST['elo_0'])
+                array('won' => $_POST['won_0'], 'lost' => $_POST['lost_0'], 'draw' => $_POST['draw_0'], 'sw' => $_POST['sw_0'], 'sl' => $_POST['sl_0'], 'sd' => $_POST['sd_0'], 'wt' => $_POST['wt_0'], 'gf' => $_POST['gf_0'], 'ga' => $_POST['ga_0'], 'tcas' => $_POST['tcas_0'], 'elo' => $_POST['elo_0']-ELO_DEF_RANK) # ELO_DEF_RANK + true_elo_0 = $_POST['elo_0'] 
                 )) {
                 status(true, 'Team created.');
                 
@@ -509,8 +511,6 @@ function sec_admin() {
                     }
                 }
 
-                $t->dtreasury($_POST['treasury']*1000 - $t->treasury); // $t->treasury + $delta = $_POST['treasury']
-
                 // Now we create the players.
                 for ($i = 1; $i <= $_POST['players']; $i++) { // Note $i is the player number.
                     
@@ -529,7 +529,7 @@ function sec_admin() {
                         status(false, "The player position of player #$i is invalid.");
                         continue;
                     }
-                    if (!in_array($_POST[$i.'status'], array(NONE, MNG, DEAD))) {
+                    if (!in_array($_POST[$i.'status'], array(NONE, MNG, DEAD, SOLD))) {
                         status(false, "The status of player $i is invalid.");
                         continue;
                     }
@@ -550,9 +550,16 @@ function sec_admin() {
 
                     // Create the player.
                     $t->dtreasury(Player::price(array('race' => $t->race, 'position' => $_POST[$i.'position']))); // Make sure we have enough money to buy player.
-                    $ret = Player::create(array('nr' => $i, 'position' => $_POST[$i.'position'], 'name' => $_POST[$i.'name'], 'team_id' => $t->team_id));
+                    $ret = Player::create(array('nr' => $i, 'position' => $_POST[$i.'position'], 'name' => $_POST[$i.'name'], 'team_id' => $t->team_id, 'forceCreate' => true));
                     
                     if ($ret[0]) {
+                    
+                        if ($_POST[$i.'status'] == SOLD) {
+                            $p = new Player($ret[1]);
+                            $p->sell();
+                            $_POST[$i.'status'] = NONE;
+                        }
+                    
                         status(true, "Created player #$i.");
 
                         /* 
@@ -602,6 +609,10 @@ function sec_admin() {
                         status(false, "Could not create player #$i. " . $ret[1]);
                     }
                 }
+                
+                // Set correct treasury.
+                $t = new Team($t->team_id); # Update team object to get current treasury.
+                $t->dtreasury($_POST['treasury']*1000 - $t->treasury); // $t->treasury + $delta = $_POST['treasury']
             }
             else {
                 status(false, 'Unable to create team. Halting.');

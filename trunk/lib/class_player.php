@@ -183,7 +183,7 @@ class Player
         if ($result && mysql_num_rows($result) > 0) {
             $row = mysql_fetch_assoc($result);
             foreach ($row as $k => $v) {
-                $this->$k = $v;
+                $this->$k = ($v) ? $v : 0;
             }
         }
         
@@ -883,7 +883,7 @@ class Player
         /**
          * Creates a new player.
          *
-         * Input: nr, position, name, team_id
+         * Input: nr, position, name, team_id, (optional) forceCreate
          * Output: Returns array. First element: True/false, if false second element holds string containing error explanation.
          **/
 
@@ -893,31 +893,35 @@ class Player
         $team    = new Team($input['team_id']);
         $players = $team->getPlayers();
         $price   = $journeyman ? 0 : Player::price(array('race' => $team->race, 'position' => $input['position']));
+        
+        // Ignore errors and force creation (used when importing teams)?
+        if (!array_key_exists('forceCreate', $input) || !$input['forceCreate']) {
+        
+            if ($journeyman) {
+                // Journeymen limit reached?
+                if (count(array_filter($players, create_function('$p', "return (\$p->is_sold || \$p->is_dead || \$p->is_mng) ? false : true;"))) >= $rules['journeymen_limit'])
+                    return array(false, "Journeymen limit is reached. Your team is able to fill $rules[journeymen_limit] positions.");
 
-        if ($journeyman) {
-            // Journeymen limit reached?
-            if (count(array_filter($players, create_function('$p', "return (\$p->is_sold || \$p->is_dead || \$p->is_mng) ? false : true;"))) >= $rules['journeymen_limit'])
-                return array(false, "Journeymen limit is reached. Your team is able to fill $rules[journeymen_limit] positions.");
+                // Is position valid to make a journeyman? 
+                // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
+                if ($DEA[$team->race]['players'][$input['position']]['qty'] != 16)
+                    return array(false, 'May not make a journeyman from that player position.');       
+            }
+            else {
+                // Team full?
+                if ($team->isFull())
+                    return array(false, "Team is full. You have filled all $rules[max_team_players] available positions.");
 
-            // Is position valid to make a journeyman? 
-            // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
-            if ($DEA[$team->race]['players'][$input['position']]['qty'] != 16)
-                return array(false, 'May not make a journeyman from that player position.');       
+                // Enough money?
+                if ($team->treasury - $price < 0)
+                    return array(false, 'Not enough money.');
+
+                // Reached max quantity of player position?
+                if (!$team->isPlayerBuyable($input['position']))
+                    return array(false, 'Maximum quantity of player position is reached.');        
+            }
         }
-        else {
-            // Team full?
-            if ($team->isFull())
-                return array(false, "Team is full. You have filled all $rules[max_team_players] available positions.");
-
-            // Enough money?
-            if ($team->treasury - $price < 0)
-                return array(false, 'Not enough money.');
-
-            // Reached max quantity of player position?
-            if (!$team->isPlayerBuyable($input['position']))
-                return array(false, 'Maximum quantity of player position is reached.');        
-        }
-
+        
         // Player number to large?
         if ($input['nr'] > MAX_PLAYER_NR)
             return array(false, 'Player number too large.');
