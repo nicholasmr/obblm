@@ -25,7 +25,7 @@
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.38k');
+define('OBBLM_VERSION', '0.38l');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
@@ -169,6 +169,7 @@ define('AV',    5);
 define('AG',    6);
 define('ST',    7);
 define('DEAD',  8);
+define('SOLD',  9);
 
 // Round types
 define('RT_FINAL', 255);

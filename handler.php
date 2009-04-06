@@ -240,6 +240,14 @@ switch ($_GET['type'])
         }
         break;
 
+    /***************
+     *  Team XML export
+     ***************/
+    case 'xmlexport':
+        $t = new Team($_GET['tid']);
+        echo $t->xmlExport();
+        break;
+
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
 }

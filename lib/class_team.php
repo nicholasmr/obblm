@@ -456,8 +456,8 @@ class Team
         if (!array_key_exists($thing, $team_goods))
             return false;
 
-        // Is post game FF purchaseable?
-        if ($thing == 'fan_factor' && !$rules['post_game_ff'] && $this->played > 0)
+        // Is post game FF purchaseable? Note: Only counts for when teams are not newly imported ie. $this->played = $this-> "played_0".
+        if ($thing == 'fan_factor' && !$rules['post_game_ff'] && $this->played > 0 && $this->played != $this->won_0 + $this->lost_0 + $this->draw_0)
             return false;
 
         // Enough money?
@@ -735,6 +735,60 @@ class Team
         else {
             return $prizes;
         }
+    }
+
+    public function xmlExport()
+    {
+        /* 
+            Exports a team by the using the same fields as the import XML schema uses.
+        */
+        
+        $this->setStreaks();
+        $this->setExtraStats();
+        $ELORanks = ELO::getRanks(false);
+        $this->elo = $ELORanks[$this->team_id];
+        
+        $dom = new DOMDocument();
+        $dom->formatOutput = true;
+
+        $el_root = $dom->appendChild($dom->createElement('xmlimport'));
+        
+        $el_root->appendChild($dom->createElement('coach', $this->coach_name));
+        $el_root->appendChild($dom->createElement('name', $this->name));
+        $el_root->appendChild($dom->createElement('race', $this->race));
+        $el_root->appendChild($dom->createElement('treasury', $this->treasury));
+        $el_root->appendChild($dom->createElement('apothecary', $this->apothecary));
+        $el_root->appendChild($dom->createElement('rerolls', $this->rerolls));
+        $el_root->appendChild($dom->createElement('fan_factor', $this->fan_factor));
+        $el_root->appendChild($dom->createElement('ass_coaches', $this->ass_coaches));
+        $el_root->appendChild($dom->createElement('cheerleaders', $this->cheerleaders));
+        
+        $el_root->appendChild($dom->createElement('won_0', $this->won));
+        $el_root->appendChild($dom->createElement('lost_0', $this->lost));
+        $el_root->appendChild($dom->createElement('draw_0', $this->draw));
+        $el_root->appendChild($dom->createElement('sw_0', $this->row_won));
+        $el_root->appendChild($dom->createElement('sl_0', $this->row_lost));
+        $el_root->appendChild($dom->createElement('sd_0', $this->row_draw));
+        $el_root->appendChild($dom->createElement('wt_0', $this->won_tours));
+        $el_root->appendChild($dom->createElement('gf_0', $this->score_team));
+        $el_root->appendChild($dom->createElement('ga_0', $this->score_opponent));
+        $el_root->appendChild($dom->createElement('tcas_0', $this->tcas));
+        $el_root->appendChild($dom->createElement('elo_0', $this->elo));
+
+        foreach ($this->getPlayers() as $p) {
+            $status = strtolower($p->getStatus(-1));
+            if ($status == 'none') {$status = 'ready';}
+            if ($p->is_sold) {$status = 'sold';}
+
+            $ply = $el_root->appendChild($dom->createElement('player'));
+            $ply->appendChild($dom->createElement('name', $p->name));
+            $ply->appendChild($dom->createElement('position', $p->position));
+            $ply->appendChild($dom->createElement('status', $status));
+            $ply->appendChild($dom->createElement('stats', "$p->cp/$p->td/$p->intcpt/$p->bh/$p->si/$p->ki/$p->mvp"));
+            $ply->appendChild($dom->createElement('injs', "$p->inj_ma/$p->inj_st/$p->inj_ag/$p->inj_av/$p->inj_ni"));
+        }
+        
+        return $dom->saveXML();
     }
 
     /***************
