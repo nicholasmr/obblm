@@ -387,6 +387,7 @@ function mem_matches()
                 <table class="recBoxTable">
                 <?php
                 if (!empty($matches)) {
+                $i = count($matches);
                 foreach ($matches as $m) {
                     $t1 = new Team($m->team1_id);
                     $t2 = new Team($m->team2_id);
@@ -442,10 +443,10 @@ function mem_matches()
                         </small>
                         </td>
                     </tr>
-                    <tr>
-                        <td colspan="3"><hr></td>
-                    </tr>
                     <?php
+                    if (--$i > 0) {
+                        echo '<tr><td colspan="3"><hr></td></tr>';
+                    }
                 }
                 }
                 else {

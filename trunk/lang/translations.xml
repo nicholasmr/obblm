@@ -34,7 +34,8 @@
             <login>Login</login>
             <logout>Logout</logout>
             <admin>Admin</admin>
-            <cc>CC</cc> <!-- Leave this untouched -->
+            <coachcorner>Coach corner</coachcorner>
+            <cc>CC</cc> <!-- Leave this untouched. Is abbrev of above. -->
             <home>Home</home>
             <fixtures>Fixtures</fixtures>
             <standings>Standings</standings>
@@ -187,7 +188,33 @@
         </standings>
         
         <teams>
-            <!-- nothing! -->
+
+            <!-- General -->
+            <d_view>Detailed view</d_view>
+            <n_view>Normal view</n_view>
+            <roster>roster</roster>
+            <news>News</news>
+            <desc>Description</desc>
+            <player>Player</player>
+            
+            <box_info>
+                <title>Team info and statistics</title>
+            </box_info>
+            
+            <box_tm>
+                <title>Team management</title>
+
+                <desc>
+                </desc>
+            </box_tm>
+            
+            <box_admin>
+                <title>Admin tools</title>
+
+                <desc>
+                </desc>
+            </box_admin>
+        
         </teams>
         
         <players>
@@ -469,9 +496,119 @@
         </login>
         
         <cc>
+            <main>
+                <cstats>Coach stats</cstats>
+                    <games_played>Games played</games_played>
+                    <win_ptc>Win percentage</win_ptc>
+                    <tours_won>Tournaments won</tours_won>
+                
+                <start_new>Start a new team</start_new>
+                
+                <your_info>Your account information</your_info>
+                    <new>New</new>
+                    <old>Old</old>
+                    <current>Current</current>
+                    <chpasswd>Change password</chpasswd>
+                    <chphone>Change phone number</chphone>
+                    <chmail>Change email</chmail>
+                    <chlogin>Change name (login)</chlogin>
+                    <chname>Change full name</chname>
+                    <chtheme>Change OBBLM theme</chtheme>
+                    
+                <photo>Photo of you</photo>
+
+                <about>About you</about>
+                    <nowrite>Nothing has yet been written about you.</nowrite>
+                    <save>Save</save>
+            </main>
+            
+            <new_team>
+                <title>Create new team</title>
+                <race>Race</race>
+                <name>Team name</name>
+                <button>Create team</button>
+            </new_team>
         </cc>
         
         <admin>
+            <!-- 
+            PLEASE NOTE TRANSLATORS:
+                - The administration section supports only translations of the most essential text strings.'
+                - You may skip translating this section (leaving it as it is), if you don't care about translating the part(s) of OBBLM, which regular coaches don't have access to.
+            -->
+            
+            <administration>Administration</administration>
+            <um>User management</um>
+            <import>Import team</import>
+            <th>Tournament handling</th>
+            <delete>Delete/retire coaches or teams</delete>
+            <schedule>Schedule matches</schedule>
+            <log>Log</log>
+            <pick>Please pick one of the above links.</pick>
+            
+            <prefixes>the prefixes + and - specify least of and most of</prefixes>
+            
+            <!-- Subsec: Schedule matches -->
+            <multiple_schedule><![CDATA[<i>Note:</i> You are free to schedule multiple tournaments running concurrently.]]></multiple_schedule>
+            <tour_name>Tournament name</tour_name>
+            <rank_sys>Ranking system</rank_sys>
+            <tour_type>Tournament type</tour_type>
+            <rrobin_rnds><![CDATA[<b>Number of times each team plays all others:</b> (Round-Robin only)]]></rrobin_rnds>
+            <participants>Participating teams</participants>
+            <create>Create</create>
+            <add_match>Add the single match to...</add_match>
+                <new_tour>A new FFA tour (fill out left fields too!)</new_tour>
+            <as_type>A new FFA tour (fill out left fields too!)</as_type>
+            
+            <!-- Subsec: User management -->
+            <access>
+                <r2>Ring 2: Ordinary coaches: May manage own teams and submit match reports in which own teams play.</r2>
+                <r1>Ring 1: League commissioners: Same as ring 2, but may also schedule matches, view the site log and post messages on the front page board.</r1>
+                <r0>Ring 0: Site administrators: Same as ring 1, but has access to the whole administrators section, and may also manage other teams + submit their match reports.</r0>
+            </access>
+            
+            <!-- Subsec: Import -->
+            <import_notice1>
+            <![CDATA[
+            This page allows you to create a customized team for an existing coach.<br> 
+            This is useful if you and your league wish to avoid starting from scratch in order to use OBBLM.<br>
+            <u>Note</u>: If you discover errors after having imported your team, you can either repair the errors<br> via the admin tools in the coach corner, or simply delete the team and import a new.<br<name />
+            ]]>
+            </import_notice1>
+            <method1><![CDATA[<i>Method 1:</i> Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right click on link --> save as) and uploading it.]]></method1>
+            <method2><![CDATA[<i>Method 2:</i> Import a team by filling in the below formular.]]></method2>
+            <import_notice2>
+                <note>Please note:</note>
+                <e1>Player entries are ignored if player name is empty.</e1>
+                <e2>Player skills and characteristics are chosen via coach corner.</e2>
+                <e3>Empty cells are equal to zero.</e3>
+            </import_notice2>
+
+            <!-- Subsec: Tournament handling -->
+            <conv_warn>Warning: Use this feature with caution. Please don't use it to convert K.O. tours.</conv_warn>
+            <advise>
+                <have_read>I have read the below advisement</have_read>
+                <pre>
+                <![CDATA[
+                This feature is only meant to be used for non-played tournaments and test-tournaments.<br>
+                If you decide to delete a proper tournament you should know that this will
+                ]]>
+                </pre>
+                <e1>delete the tournament associated data forever (this includes team and player gained stats in the tournament).</e1>
+                <e2>generate incorrect player statuses for those matches following (date-wise) the matches deleted. Re-saving/changing old matches may therefore be problematic.</e2>
+            </advise>
+
+            <!-- Subsec: Log -->
+                <!-- Nothing! -->
+                
+            <!-- Subsec: Coach/team admin management -->
+            <retire>
+                <note>Please note:</note>
+                <e1>For the sake of keeping league statistics intact you are not allowed to delete teams or coaches which have played matches.</e1>
+                <e2>Once retired a coach cannot login and teams are no longer manageable/editable from their team pages.</e2>
+                <unretire>Un-retire (ie. regret retiring) instead of retiring?</unretire>
+            </retire>
+
         </admin>
     </secs>        
 

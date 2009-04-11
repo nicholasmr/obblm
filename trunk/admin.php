@@ -29,22 +29,22 @@
 
 function sec_admin() {
 
-    global $rules, $DEA, $coach;
+    global $rules, $DEA, $coach, $lng;
 
     // Quit if coach does not has administrator privileges.
 
     if (!is_object($coach) || $coach->ring > RING_COM)
         fatal("Sorry. Only site administrators and commissioners are allowed to access this section.");
 
-    $ring_sys_access = array('usrman' => 'User management', 'import' => 'Import team', 'chtr' => 'Tournament handling', 'ctman' => 'Delete/retire coaches or teams');
-    $ring_com_access = array('tournament' => 'Schedule matches', 'log' => 'Log');
+    $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'import' => $lng->getTrn('secs/admin/import'), 'chtr' => $lng->getTrn('secs/admin/th'), 'ctman' => $lng->getTrn('secs/admin/delete'));
+    $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('secs/admin/log'));
     
     if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
         fatal("Sorry. Your access level does not allow you opening the requested page.");
 
     // Permissions OK => Continue...
 
-    title("Administration");
+    title($lng->getTrn('secs/admin/administration'));
     
     ?>
     <div class="admin_menu">
@@ -117,7 +117,7 @@ function sec_admin() {
                 $c->mail = substr($c->mail, 0, 24) . '...';
         }
 
-        title('User management');
+        title($lng->getTrn('secs/admin/um'));
         objsort($coaches, array('+name'));
         $rings = array(
             RING_SYS    => 'Ring '.RING_SYS.': Site admin', 
@@ -130,9 +130,9 @@ function sec_admin() {
         
             <b>OBBLM access levels:</b>
             <ul>
-                <li>Ring 2: Ordinary coaches: May manage own teams and submit match reports in which own teams play.</li>
-                <li>Ring 1: League commissioners: Same as ring 2, but may also schedule matches, view the site log and post messages on the front page board.</li>
-                <li>Ring 0: Site administrators: Same as ring 1, but has access to the whole administrators section, and may also manage other teams + submit their match reports.</li>
+                <li><?php echo $lng->getTrn('secs/admin/access/r2');?></li>
+                <li><?php echo $lng->getTrn('secs/admin/access/r1');?></li>
+                <li><?php echo $lng->getTrn('secs/admin/access/r0');?></li>
             </ul>
         
             <div class="adminBox">
@@ -298,7 +298,7 @@ function sec_admin() {
             }
         }
 
-        title('Schedule matches');
+        title($lng->getTrn('secs/admin/schedule'));
         ?>
         <script language="JavaScript" type="text/javascript">
             // Global JavaScript Variables.
@@ -309,15 +309,15 @@ function sec_admin() {
             var TT_SINGLE   = <?php echo TT_SINGLE; ?>;
         </script>
         
-        <i>Note:</i> You are free to schedule multiple tournaments running concurrently.<br><br>
+        <?php echo $lng->getTrn('secs/admin/multiple_schedule');?><br><br>
         
         <form method="POST" name="tourForm" action="index.php?section=admin&amp;subsec=tournament">
             <table><tr>
                 <td>
-                    <b>Tournament name:</b><br>
+                    <b><?php echo $lng->getTrn('secs/admin/tour_name');?>:</b><br>
                     <input type="text" name="name" size="30" maxlength="50">
                     <br><br>
-                    <b>Ranking system:</b> (the prefixes + and - specify least of and most of)<br>
+                    <b><?php echo $lng->getTrn('secs/admin/rank_sys');?>:</b> (<?php echo $lng->getTrn('secs/admin/prefixes');?>)<br>
                     <select name='rs'>
                     <?php
                     foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
@@ -331,10 +331,10 @@ function sec_admin() {
                 </td>
                 <td>
                     <div id="existTour" style="display:none;">
-                        <b><font color="blue">Add the single match to...</font></b><br>
+                        <b><font color="blue"><?php echo $lng->getTrn('secs/admin/add_match');?></font></b><br>
                         <select name="existTour">
                             <optgroup label="New FFA">
-                                <option value='-1'>A new FFA tour (fill out left fields too!)</option>
+                                <option value='-1'><?php echo $lng->getTrn('secs/admin/new_tour');?></option>
                             </optgroup>
                             <optgroup label="Existing FFA">
                             <?php
@@ -345,7 +345,7 @@ function sec_admin() {
                             </optgroup>
                         </select>
                         <br><br>
-                        <b><font color="blue">As type...</font></b><br>
+                        <b><font color="blue"><?php echo $lng->getTrn('secs/admin/as_type');?></font></b><br>
                         <select name="round">
                         <?php
                             foreach (array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') as $r => $d) {
@@ -362,21 +362,21 @@ function sec_admin() {
                 </td>
             </tr></table>
             <br>
-            <b>Tournament type:</b><br>
+            <b><?php echo $lng->getTrn('secs/admin/tour_type');?>:</b><br>
             <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
             <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
             <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
             <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
             <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
             <br>
-            <b>Number of times each team plays all others:</b> (Round-Robin only)<br>
+            <?php echo $lng->getTrn('secs/admin/rrobin_rnds');?><br>
             <select name="rounds">
             <?php
             foreach (range(1, MAX_ALLOWED_ROUNDS) as $i) echo "<option value='$i'>$i</option>\n";
             ?>
             </select>
             <br><br>
-            <b>Participating teams:</b><br>
+            <b><?php echo $lng->getTrn('secs/admin/participants');?>:</b><br>
             <?php
             $teams = Team::getTeams();
             objsort($teams, array('+coach_name'));
@@ -385,7 +385,7 @@ function sec_admin() {
             ?>
             <br>
             <hr align="left" width="200px">
-            <input type="submit" name="button" value="Create">
+            <input type="submit" name="button" value="<?php echo $lng->getTrn('secs/admin/create');?>">
         </form>
         <?php
     }
@@ -631,15 +631,12 @@ function sec_admin() {
         if ($err && $inputType == XML)
             $err = false;
             
-        title('Import team');
+        title($lng->getTrn('secs/admin/import'));
+        echo $lng->getTrn('secs/admin/import_notice1');
         ?>
-        
-        This page allows you to create a customized team for an existing coach.<br> 
-        This is useful if you and your league wish to avoid starting from scratch in order to use OBBLM.<br>
-        <u>Note</u>: If you discover errors after having imported your team, you can either repair the errors<br> via the admin tools in the coach corner, or simply delete the team and import a new.<br>
         <hr align="left" width="200px">
         <br>
-        <i>Method 1:</i> Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right click on link --> save as) and uploading it.<br>
+        <?php echo $lng->getTrn('secs/admin/method1');?><br>
         <br>
         <form enctype="multipart/form-data" action="index.php?section=admin&amp;subsec=import" method="POST">
             <b>XML file:</b><br>
@@ -650,7 +647,7 @@ function sec_admin() {
         <br>
         <hr align="left" width="200px">
         <br>
-        <i>Method 2:</i> Import a team by filling in the below formular.<br>
+        <?php echo $lng->getTrn('secs/admin/method2');?><br>
         <br>
         <form method="POST" action="index.php?section=admin&amp;subsec=import" name="importForm">
         
@@ -765,11 +762,11 @@ function sec_admin() {
             <br>
             <b>Players:</b>
             <br><br>
-            <u>Please note:</u> 
+            <u><?php echo $lng->getTrn('secs/admin/import_notice2/note');?></u> 
             <ul>
-                <li>Player entries are ignored if player name is empty.</li>
-                <li>Player skills and characteristics are chosen via coach corner.</li>
-                <li>Empty cells are equal to zero.</li>
+                <li><?php echo $lng->getTrn('secs/admin/import_notice2/e1');?></li>
+                <li><?php echo $lng->getTrn('secs/admin/import_notice2/e2');?></li>
+                <li><?php echo $lng->getTrn('secs/admin/import_notice2/e3');?></li>
             </ul>
 
             <table>
@@ -829,7 +826,7 @@ function sec_admin() {
             }
         }
 
-        title('Tournament handling');
+        title($lng->getTrn('secs/admin/th'));
         $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value = e['trid'].options[e['trid'].selectedIndex].text;";
         
         ?>
@@ -852,7 +849,7 @@ function sec_admin() {
             </script>
 
             <br><br>
-            <b>Ranking system:</b> (the prefixes + and - specify least of and most of)<br>
+            <b>Ranking system:</b> (<?php echo $lng->getTrn('secs/admin/prefixes');?>)<br>
             <select name='rs'>
             <?php
             foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
@@ -862,7 +859,7 @@ function sec_admin() {
             </select>
            
             <br><br>
-            <b>Tournament type:</b> Warning: Use this feature with caution (!!!). Please don't use it to convert K.O. tours!<br>
+            <b>Tournament type:</b> <?php echo $lng->getTrn('secs/admin/conv_warn');?><br>
             <input type="radio" name="ttype" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
             <input type="radio" name="ttype" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
             <input type="radio" name="ttype" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
@@ -886,25 +883,24 @@ function sec_admin() {
                 ?>
             </select>
             <br><br>
-            <b>I have read the below advisement:</b> 
+            <b><?php echo $lng->getTrn('secs/admin/advise/have_read');?>:</b> 
             <input type="checkbox" name="delete" value="1">
             <br><br>
-            <b><u>Advisement/warning (!!!):</u></b><br>
-            This feature is only meant to be used for non-played tournaments and test-tournaments.<br>
-            If you decide to delete a proper tournament you should know that this will<br>
+            <b><u>Advisement/warning:</u></b><br>
+            <?php echo $lng->getTrn('secs/admin/advise/pre');?>
+            <br>
             <ul>
-                <li>delete the tournament associated data forever (this includes team and player gained stats in the tournament).</li>
-                <li>generate incorrect player statuses for those matches following (date-wise) the matches deleted. Re-saving/changing old matches may therefore be problematic.</li>
+                <li><?php echo $lng->getTrn('secs/admin/advise/e1');?></li>
+                <li><?php echo $lng->getTrn('secs/admin/advise/e2');?></li>
             </ul>
-            <br><br>
-           
+            <br>           
             <input type="hidden" name="type" value="delete">
             <input type="submit" value="Delete" onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
         </form>
         <?php
     }
     elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'log') {
-        title('Log');
+        title($lng->getTrn('secs/admin/log'));
         echo "<table style='width:100%;'>\n";
         echo "<tr><td><i>Date</i></td><td><i>Message</i></td></tr>\n";
         echo "<tr><td colspan='2'><br></td></tr>";
@@ -915,7 +911,7 @@ function sec_admin() {
     }
     elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'ctman') {
         
-        title('Delete or retire coaches or teams');
+        title($lng->getTrn('secs/admin/delete'));
         
         if (isset($_POST['type'])) {
             switch ($_POST['type']) 
@@ -952,18 +948,19 @@ function sec_admin() {
 
             <tr>
                 <td colspan='2'>
-                    <font color='red'><b>Please note: </b></font>
+                    <b><?php echo $lng->getTrn('secs/admin/retire/note');?></b>
                     <ul>
-                        <li>For the sake of keeping league statistics intact you are not allowed to delete teams or coaches which have played matches.</li>
-                        <li>Once retired a coach cannot login and teams are no longer manageable/editable from their team pages.</li>
+                        <li><?php echo $lng->getTrn('secs/admin/retire/e1');?></li>
+                        <li><?php echo $lng->getTrn('secs/admin/retire/e2');?></li>
                     </ul>
-                    <hr><br>
                 </td>
             </tr>
 
             <tr>
                 <td>
-                    <b>Retire team</b><br><br>
+                <div class="adminBox">
+                    <div class="boxTitle3">Retire team</div>
+                    <div class="boxBody">
                     <form method="POST">
                     <select name='id'>
                         <?php
@@ -972,13 +969,17 @@ function sec_admin() {
                         }
                         ?>
                     </select><br><br>
-                    Un-retire (ie. regret retiring) instead of retiring? <input type='checkbox' name='unretire' value='1'><br><br>
-                    <input type='submit' value='Retire team'>
+                    <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
+                    <input type='submit' value='Retire/unretire'>
                     <input type='hidden' name='type' value='rt'>
                     </form>
+                    </div>
+                </div>
                 </td>
                 <td>
-                    <b>Retire coach</b><br><br>
+                <div class="adminBox">
+                    <div class="boxTitle3">Retire coach</div>
+                    <div class="boxBody">
                     <form method="POST">
                     <select name='id'>
                         <?php
@@ -987,20 +988,19 @@ function sec_admin() {
                         }
                         ?>
                     </select><br><br>
-                    Un-retire (ie. regret retiring) instead of retiring? <input type='checkbox' name='unretire' value='1'><br><br>
-                    <input type='submit' value='Retire coach'>
+                    <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
+                    <input type='submit' value='Retire/unretire'>
                     <input type='hidden' name='type' value='rc'>
                     </form>
-                </td>
-            </tr>
-            <tr>
-                <td colspan='2'>
-                    <br><hr><br>
+                    </div>
+                </div>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <b>Delete team</b><br><br>
+                <div class="adminBox">
+                    <div class="boxTitle3">Delete team</div>
+                    <div class="boxBody">
                     <form method="POST">
                     <select name='id'>
                         <?php
@@ -1010,12 +1010,17 @@ function sec_admin() {
                         }
                         ?>
                     </select>
-                    <input type='submit' value='Delete team' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
+                    <br><br>
+                    <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
                     <input type='hidden' name='type' value='dt'>
                     </form>
+                    </div>
+                </div>
                 </td>
                 <td>
-                    <b>Delete coach</b><br><br>
+                <div class="adminBox">
+                    <div class="boxTitle3">Delete coach</div>
+                    <div class="boxBody">
                     <form method="POST">
                     <select name='id'>
                         <?php
@@ -1025,9 +1030,12 @@ function sec_admin() {
                         }
                         ?>
                     </select>
-                    <input type='submit' value='Delete coach' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
+                    <br><br>
+                    <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
                     <input type='hidden' name='type' value='dc'>
                     </form>
+                    </div>
+                </div>
                 </td>
             </tr>
         </table>
@@ -1036,7 +1044,7 @@ function sec_admin() {
     else {
         ?>
         <div style="height: 400px;" id="admin_everything">
-        Please pick one of the above links.
+        <?php echo $lng->getTrn('secs/admin/pick'); ?>
         </div>
         <?php
     }
