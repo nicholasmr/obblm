@@ -27,6 +27,7 @@ function team_roaster($team_id) {
     global $skillarray;
     global $rules;
     global $settings;
+    global $lng;
     
     // Is team id valid?
     if (!get_alt_col('teams', 'team_id', $team_id, 'team_id'))

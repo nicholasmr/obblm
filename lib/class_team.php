@@ -782,7 +782,7 @@ class Team
 
             $ply = $el_root->appendChild($dom->createElement('player'));
             $ply->appendChild($dom->createElement('name', $p->name));
-            $ply->appendChild($dom->createElement('position', $p->position));
+            $ply->appendChild($dom->createElement('position', $p->pos));
             $ply->appendChild($dom->createElement('status', $status));
             $ply->appendChild($dom->createElement('stats', "$p->cp/$p->td/$p->intcpt/$p->bh/$p->si/$p->ki/$p->mvp"));
             $ply->appendChild($dom->createElement('injs', "$p->inj_ma/$p->inj_st/$p->inj_ag/$p->inj_av/$p->inj_ni"));
