@@ -1595,7 +1595,7 @@ function sec_records() {
         'hof'           => $lng->getTrn('secs/records/d_hof'), 
         'wanted'        => $lng->getTrn('secs/records/d_wanted'), 
         'memm'          => $lng->getTrn('secs/records/d_memma'),
-        'prize'         => 'Prizes',
+        'prize'         => $lng->getTrn('secs/records/d_prizes'),
     );
 
     // This section's routines are placed in the records.php file.
@@ -1629,7 +1629,7 @@ function sec_records() {
         echo "<a href='index.php?section=records&amp;subsec=$a'><b>$b</b></a><br>\n";
     }
     // Add graphical stats link.
-    echo "<a href='handler.php?type=graph&amp;gtype=".(SG_T_LEAGUE)."&amp;id=none'><b>League graphical statistics</b></a><br>\n";
+    echo "<a href='handler.php?type=graph&amp;gtype=".(SG_T_LEAGUE)."&amp;id=none'><b>".$lng->getTrn('secs/records/d_lgstats')."</b></a><br>\n";
 }
 
 /*************************
@@ -1778,7 +1778,7 @@ function sec_gallery() {
         {
             case 'team':
                 $t = new Team((int) $_POST['tid']);
-                echo "<b>Players of $t->name</b><br><hr><br>\n";
+                echo "<b>".$lng->getTrn('secs/gallery/playersof')." $t->name</b><br><hr><br>\n";
                 $players = $t->getPlayers();
                 foreach ($players as $p) {
                     $pic = $p->getPic();
@@ -1788,7 +1788,7 @@ function sec_gallery() {
                 
             case 'tour':
                 $tr = new Tour((int) $_POST['trid']);
-                echo "<b>Matches of tournament $tr->name</b><br><hr><br>\n";
+                echo "<b>".$lng->getTrn('secs/gallery/matchesof')." $tr->name</b><br><hr><br>\n";
                 $matches = $tr->getMatches();
                 objsort($matches, array('-date_played'));
                 foreach ($matches as $m) {
@@ -1812,7 +1812,7 @@ function sec_gallery() {
                 break;
                 
             case 'stad':
-                echo "<b>Team stadiums</b><br><hr><br>\n";
+                echo "<b>".$lng->getTrn('secs/gallery/stads')."</b><br><hr><br>\n";
                 $teams = Team::getTeams();
                 foreach ($teams as $t) {
                     $pic = $t->getStadiumPic();
@@ -1821,7 +1821,7 @@ function sec_gallery() {
                 break;
                 
             case 'coach':
-                echo "<b>Coaches</b><br><hr><br>\n";
+                echo "<b>".$lng->getTrn('secs/gallery/coaches')."</b><br><hr><br>\n";
                 $coaches = Coach::getCoaches();
                 foreach ($coaches as $c) {
                     $pic = $c->getPic();
@@ -1835,33 +1835,33 @@ function sec_gallery() {
     
     $team_list = "
         <form method='POST' style='display:inline; margin:0px;'><select name='tid' onChange='this.form.submit();'>
-        <option value='0'>-None selected-</option>".
+        <option value='0'>-".$lng->getTrn('secs/gallery/none')."-</option>".
         implode("\n", array_map(create_function('$o', 'return "<option value=\'$o->team_id\'>$o->name</option>";'), Team::getTeams()))
         ."</select><input type='hidden' name='type' value='team'></form>
     ";
     $tour_list = "
         <form method='POST' style='display:inline; margin:0px;'><select name='trid' onChange='this.form.submit();'>
-        <option value='0'>-None selected-</option>".
+        <option value='0'>-".$lng->getTrn('secs/gallery/none')."-</option>".
         implode("\n", array_map(create_function('$o', 'return "<option value=\'$o->tour_id\'>$o->name</option>";'), Tour::getTours()))
         ."</select><input type='hidden' name='type' value='tour'></form>
     ";
     $stad = "
         <form method='POST' name='stadForm' style='display:inline; margin:0px;'>
         <input type='hidden' name='type' value='stad'>
-        <a href='javascript:void(0);' onClick='document.stadForm.submit();'>Team stadiums</a>
+        <a href='javascript:void(0);' onClick='document.stadForm.submit();'>".$lng->getTrn('secs/gallery/stads')."</a>
         </form>
     ";
     $coaches = "
         <form method='POST' name='coachesForm' style='display:inline; margin:0px;'>
         <input type='hidden' name='type' value='coach'>
-        <a href='javascript:void(0);' onClick='document.coachesForm.submit();'>Coaches</a>
+        <a href='javascript:void(0);' onClick='document.coachesForm.submit();'>".$lng->getTrn('secs/gallery/coaches')."</a>
         </form>
     ";
+    echo $lng->getTrn('secs/gallery/note');
     ?>
-    Please select one of the below options.
     <ul>
-    <li>Players from team <?php echo $team_list?></li>
-    <li>Matches from tournament <?php echo $tour_list?></li>
+    <li><?php echo $lng->getTrn('secs/gallery/players').$team_list?></li>
+    <li><?php echo $lng->getTrn('secs/gallery/matches').$tour_list?></li>
     <li><?php echo $stad?></li>
     <li><?php echo $coaches?></li>
     </ul>

@@ -144,6 +144,43 @@
             <report>
                 
                 <!-- General -->
+                <click>Click here</click>
+                <forhelp>for help on filling out a match report.</forhelp>
+                <help>
+                <![CDATA[
+                <b>Preliminary info</b><br>
+                First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
+                Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
+                <br>
+                <b>Game information fields</b><br>
+                The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
+                <br>
+                <b>Sportsmanship points</b><br>
+                Yelling, screaming, cursing at the dice, disturbing the opponent in his turn and not turning up on gaming night may be punished by giving negative sportsmanship points. Acting like a gentleman and taking a defeat with a smile may be embraced by giving positive sportsmanship points.
+                If your league on the other hand makes the needle on the evil-o-meter jump into the red area constantly, it may be more natural applying the sportsmanship points system the other way around - embracing bad manners with positive sportsmanship points.<br>
+                <br>
+                <b>Casualties in general</b><br>
+                OBBLM can keep track of <i>team casualties</i>, which is the sum of the individual player casualties, opponent self-inflicted injuries, die on a fumble in sprints and crowd killings (and possibly other things of your leagues' choice).
+                Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
+                <br>
+                <b>Player skills</b><br>
+                Once the match report has been submitted OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
+                <br>
+                <b>Incomes</b><br>
+                A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
+                If you spended more than you made in a match then simply prefix - (minus).
+                <br><br>
+                Remember these factors when you calculate:<br>
+                <ul>
+                    <li>Spiraling expenses</i>
+                    <li>Treasury spend on inducements</li>
+                    <li>Hiring costs of star players and mercenaries</li>
+                    <li>Team winnings</li>
+                    <li>Tournament winnings, if the game was a final</li>
+                    <li>Sponsorship deal from Bloodweiser</li>
+                </ul>
+                ]]>
+                </help>
                 <report>report</report>
                 <add>Add</add>
                 <save>Save match</save>
@@ -190,15 +227,58 @@
         <teams>
 
             <!-- General -->
+            <playersof>Players of</playersof>
+            
             <d_view>Detailed view</d_view>
             <n_view>Normal view</n_view>
             <roster>roster</roster>
+            <indctry>Inducements try-out</indctry>
+            <visstats>Vis. stats</visstats>
+            
+            <about>About</about>
+                <logo>Team's logo</logo>
+                <stad>Team's stadium</stad>
+                <nowrite>Nothing has yet been written about</nowrite>
+                <save>Save</save>
+                
             <news>News</news>
+                <tnews>Team news</tnews>
+                <wnews>Write news</wnews>
+                <nonews>No entries exist.</nonews>
+                <submitnews>Submit news</submitnews>
+                <delete>Delete</delete>
+            
+            <gamesplayed>Games played</gamesplayed>
+                <showagainst>Show matches against</showagainst>
+                <fromtour>from tournament</fromtour>
+                <showmatches>Show matches</showmatches>
+                <all>All</all>
+            
+            <tourranks>Tournament rankings</tourranks>
+
+            <!-- For the three team page boxes -->
+            
             <desc>Description</desc>
             <player>Player</player>
-            
+            <none>None</none>
+            <yes>Yes</yes>
+            <no>No</no>
+
             <box_info>
                 <title>Team info and statistics</title>
+                <coach>Coach</coach>
+                <race>Race</race>
+                <ready>Ready</ready>
+                
+                <gp><![CDATA[Games&nbsp;played]]></gp>
+                <pct_won><![CDATA[PCT&nbsp;won]]></pct_won>
+                <tours_won><![CDATA[Tours&nbsp;won]]></tours_won>
+                <ws><![CDATA[Win&nbsp;streak]]></ws>
+                <ls><![CDATA[Lose&nbsp;streak]]></ls>
+                <ds><![CDATA[Draw&nbsp;streak]]></ds>
+                <ltour><![CDATA[Latest&nbsp;tour]]></ltour>
+                <toursplayed><![CDATA[Tours&nbsp;played]]></toursplayed>
+                <prizes>Prizes</prizes>
             </box_info>
             
             <box_tm>
@@ -214,7 +294,6 @@
                 <desc>
                 </desc>
             </box_admin>
-        
         </teams>
         
         <players>
@@ -267,6 +346,8 @@
             <d_hof>Hall of fame</d_hof>
             <d_wanted>Wanted players</d_wanted>
             <d_memma>Memorable matches</d_memma>
+            <d_prizes>Prizes</d_prizes>
+            <d_lgstats>League graphical statistics</d_lgstats>
             <new>New entry</new>
             <edit>Edit</edit>
             <del>Delete</del>
@@ -372,6 +453,18 @@
             
         </rules>
         
+        <gallery>
+            <note>Please select one of the below options.</note>
+            <none>None selected</none>
+            <players>Players from team</players>
+            <matches>Matches from tournament</matches>
+            <stads>Team stadiums</stads>
+            <coaches>Coaches</coaches>
+            
+            <playersof>Players of</playersof>
+            <matchesof>Matches of tournament</matchesof>
+        </gallery>
+        
         <obblm>
             
             <intro>Introduction</intro>
@@ -473,6 +566,12 @@
             How do I heal all of a team's MNGs?<br>
             <i>A:</i>
             Simply open the match report from the team's latest played match, and reassign the injuries sustained as ageing injuries - these do not result in MNGs.
+            <br><br>
+
+            <i>Q:</i>
+            How do I schedule a league season of two or more divisions?<br>
+            <i>A:</i>
+            OBBLM does not support seasons or divisions, and so you will have to schedule a tournament for each division and subsequently a FFA tournament consisting of the individual division finalists.
             ]]>
             </faq_txt>
             
