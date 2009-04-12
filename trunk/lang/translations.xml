@@ -233,7 +233,6 @@
             <n_view>Normal view</n_view>
             <roster>roster</roster>
             <indctry>Inducements try-out</indctry>
-            <visstats>Vis. stats</visstats>
             
             <about>About</about>
                 <logo>Team's logo</logo>
@@ -284,17 +283,158 @@
             <box_tm>
                 <title>Team management</title>
 
+                <hire_player>Hire player</hire_player>
+                <hire_journeyman>Hire journeymen</hire_journeyman>
+                <fire_player>Fire player</fire_player>
+                <rename_player>Rename player</rename_player>
+                <renumber_player>Renumber player</renumber_player>
+                <rename_team>Rename team</rename_team>
+                <buy_goods>Buy team goods</buy_goods>
+                <drop_goods>Let go of team goods</drop_goods>
+                <ready_state>Set ready state</ready_state>
+
                 <desc>
+                    <hire_player>
+                    <![CDATA[
+                    Hire a new player.<br>
+                    Hiring a player as a journeyman is free, but only players from a 0-16 allowed position on your team's roster are hire-able as journeymen.
+                    ]]>
+                    </hire_player>
+                    <hire_journeyman>
+                    <![CDATA[
+                    Hire one of your journeymen to permanently play on your team.
+                    ]]>
+                    </hire_journeyman>
+                    <fire_player>
+                    <![CDATA[
+                    Fire a player. Refund rate:
+                    ]]>
+                    </fire_player>
+                    <rename_player>
+                    <![CDATA[
+                    Rename a player.
+                    ]]>
+                    </rename_player>
+                    <renumber_player>
+                    <![CDATA[
+                    Renumber a player.
+                    ]]>
+                    </renumber_player>
+                    <rename_team>
+                    <![CDATA[
+                    Rename your team.
+                    ]]>
+                    </rename_team>
+                    <buy_goods>
+                    <![CDATA[
+                    Buy team goods.
+                    ]]>
+                    </buy_goods>
+                    <buy_goods_warn>
+                    <![CDATA[
+                    <br><br>Please note that re-roll prices are <font color='red'><b>doubled</b></font> because a tournament is currently being played.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert the overcharged amount.
+                    ]]>
+                    </buy_goods_warn>
+                    <drop_goods>
+                    <![CDATA[
+                    Let go/drop of team goods for no refund.
+                    ]]>
+                    </drop_goods>
+                    <ready_state>
+                    <![CDATA[
+                    This team attribute allows coaches to signal other coaches/teams whether or not this team is interested in playing any matches.
+                    ]]>
+                    </ready_state>
                 </desc>
             </box_tm>
             
             <box_admin>
                 <title>Admin tools</title>
 
+                <unbuy_player>Un-hire player</unbuy_player>
+                <unhire_journeyman>Un-hire journeymen</unhire_journeyman>
+                <unsell_player>Un-fire player</unsell_player>
+                <unbuy_goods>Un-buy team goods</unbuy_goods>
+                <bank>Gold bank</bank>
+                <chown>Change ownership</chown>
+                <spp>Manage player extra SPP</spp>
+                <extra_skills>Manage player extra skills</extra_skills>
+                <ach_skills>Remove ach. player skills</ach_skills>
+
                 <desc>
+                    <unbuy_player>
+                    <![CDATA[
+                    Regret hiring a player. 100% refund.<br>
+                    This is only possible for players which have not participated in any matches.
+                    ]]>
+                    </unbuy_player>
+                    <unhire_journeyman>
+                    <![CDATA[
+                    Regret permanently hiring a journeyman.<br>
+                    This only works on players from a 0-16 allowed position on your team's roster.
+                    ]]>
+                    </unhire_journeyman>
+                    <unsell_player>
+                    <![CDATA[
+                    Regret firing a player.
+                    ]]>
+                    </unsell_player>
+                    <unbuy_goods>
+                    <![CDATA[
+                    Regret buying team goods.
+                    ]]>
+                    </unbuy_goods>
+                    <bank>
+                    <![CDATA[
+                    Make changes to team's treasury.
+                    ]]>
+                    </bank>
+                    <chown>
+                    <![CDATA[
+                    Change this team's ownership.
+                    ]]>
+                    </chown>
+                    <spp>
+                    <![CDATA[
+                    Manage a player's extra SPP.
+                    ]]>
+                    </spp>
+                    <extra_skills>
+                    <![CDATA[
+                    Manage a player's extra skills.
+                    ]]>
+                    </extra_skills>
+                    <ach_skills>
+                    <![CDATA[
+                    Remove a players achieved skills. This makes the player able to rechoose a skill.
+                    ]]>
+                    </ach_skills>
                 </desc>
             </box_admin>
         </teams>
+        
+        <playerprofile>
+        
+            <prev>Previous player</prev>
+            <next>Next player</next>
+        
+            <about>About player</about>
+                <name>Name</name>
+                <pos>Position</pos>
+                <team>Team</team>
+                <bought>Bought</bought>
+                <status>Status</status>
+            
+            <profile>Player profile</profile>
+                <pic>Profile picture</pic>
+                <text>Profile text</text>
+                <nowrite>Nothing has yet been written about</nowrite>
+                <save>Save</save>
+            
+            <ach>Achievements</ach>
+            <best>Match best</best>
+            <playedmatches>Played matches</playedmatches>
+        </playerprofile>
         
         <players>
             
