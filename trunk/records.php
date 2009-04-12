@@ -81,17 +81,33 @@ function hof($ALLOW_EDIT) {
                 // Fall-through to "new" !!!
 
             case 'new':
+                $teams = Team::getTeams();
+                $jsteams = array();
+                foreach ($teams as $t) {
+                    $players = $t->getPlayers();
+                    objsort($players, array('+name'));
+                    foreach ($players as $p) {
+                        $jsteams[$t->team_id][] = array('pid' => $p->player_id, 'name' => $p->name);
+                    }
+                }
+                $easyconvert = new array_to_js();
+                @$easyconvert->add_array($jsteams, 'jsteams'); // Load Game Data array into JavaScript array.
+                echo $easyconvert->output_all();
                 ?>
                 <form method="POST">
-                <b><?php echo $lng->getTrn('secs/records/player');?>:</b><br>
-                <select name="player_id">
+                <b><?php echo $lng->getTrn('secs/records/team');?>:</b><br>
+                <select name="player_id" id="teams" onChange="updateTeamPlayers(this.options[this.selectedIndex].value, document.getElementById('players'));">
                     <?php
-                    $players = Player::getPlayers();
-                    objsort($players, array('+team_name', '+name', '+nr'));
-                    foreach ($players as $p) {
-                        echo "<option ".(($player_id && $player_id == $p->player_id) ? 'SELECTED' : '')." value='$p->player_id'>$p->team_name: $p->name</option>\n";
+                    objsort($teams, array('+name'));
+                    foreach ($teams as $t) {
+                        echo "<option value='$t->team_id'>$t->name</option>\n";
                     }
                     ?>
+                </select>                
+                <br><br>
+                <b><?php echo $lng->getTrn('secs/records/player');?>:</b><br>
+                <select name="player_id" id="players">
+                    <option value='0'>-Empty-</option>
                 </select>
                 <br><br>
                 <?php echo $lng->getTrn('secs/records/hof/title');?><br>
@@ -104,6 +120,12 @@ function hof($ALLOW_EDIT) {
                 <br><br>
                 <input type="submit" value="<?php echo $lng->getTrn('secs/records/submit');?>" name="Submit">
                 </form>
+                
+                <!-- Set player list to be the players from the default selected team. -->
+                <script language='JavaScript' type='text/javascript'>
+                    tsel = document.getElementById('teams');
+                    updateTeamPlayers(tsel.options[tsel.selectedIndex].value, document.getElementById('players'));
+                </script>
                 <?php                
         
                 return;
@@ -225,20 +247,33 @@ function wanted($ALLOW_EDIT)
                 // Fall-through to "new" !!!
 
             case 'new':
+                $teams = Team::getTeams();
+                $jsteams = array();
+                foreach ($teams as $t) {
+                    $players = $t->getPlayers();
+                    objsort($players, array('+name'));
+                    foreach ($players as $p) {
+                        $jsteams[$t->team_id][] = array('pid' => $p->player_id, 'name' => $p->name);
+                    }
+                }
+                $easyconvert = new array_to_js();
+                @$easyconvert->add_array($jsteams, 'jsteams'); // Load Game Data array into JavaScript array.
+                echo $easyconvert->output_all();
                 ?>
                 <form method="POST">
-                <b><?php echo $lng->getTrn('secs/records/player');?>:</b><br>
-                <select name="player_id">
+                <b><?php echo $lng->getTrn('secs/records/team');?>:</b><br>
+                <select name="player_id" id="teams" onChange="updateTeamPlayers(this.options[this.selectedIndex].value, document.getElementById('players'));">
                     <?php
-                    $players = Player::getPlayers();
-                    objsort($players, array('+team_name', '+name', '+nr'));
-                    foreach ($players as $p) {
-                        if ($p->is_dead || $p->is_sold) {
-                            continue;
-                        }
-                        echo "<option ".(($player_id && $player_id == $p->player_id) ? 'SELECTED' : '')." value='$p->player_id'>$p->team_name: $p->name</option>\n";
+                    objsort($teams, array('+name'));
+                    foreach ($teams as $t) {
+                        echo "<option value='$t->team_id'>$t->name</option>\n";
                     }
                     ?>
+                </select>                
+                <br><br>
+                <b><?php echo $lng->getTrn('secs/records/player');?>:</b><br>
+                <select name="player_id" id="players">
+                    <option value='0'>-Empty-</option>
                 </select>
                 <br><br>
                 <?php echo $lng->getTrn('secs/records/wanted/title');?><br>
@@ -251,6 +286,13 @@ function wanted($ALLOW_EDIT)
                 <br><br>
                 <input type="submit" value="<?php echo $lng->getTrn('secs/records/submit');?>" name="Submit">
                 </form>
+
+                <!-- Set player list to be the players from the default selected team. -->
+                <script language='JavaScript' type='text/javascript'>
+                    tsel = document.getElementById('teams');
+                    updateTeamPlayers(tsel.options[tsel.selectedIndex].value, document.getElementById('players'));
+                </script>
+
                 <br>
                 <?php
                 echo $lng->getTrn('secs/records/wanted/note');
