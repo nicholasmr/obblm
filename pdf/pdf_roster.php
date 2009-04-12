@@ -33,6 +33,7 @@ global $pdf;
 global $DEA;
 global $skillarray;
 global $rules;
+global $inducements;
 
 define("MARGINX", 20);
 define("MARGINY", 20);
@@ -45,40 +46,10 @@ define('MAX_STARS', 2);
 define('MERC_EXTRA_COST', 30000);
 define('MERC_EXTRA_SKILL_COST', 50000);
 
-$inducements = array (
-    'Bloodweiser Babes' => array (
-        'cost' => 50000,
-        'max'  => 2
-    ),
-    'Bribes' => array (
-        'cost' => 100000,
-        'max'  => 3
-    ),
-    'Extra Training' => array (
-        'cost' => 100000,
-        'max'  => 4
-    ),
-    'Halfling Master Chef' => array (
-        'cost' => 300000,
-        'max'  => 1
-    ),
-    'Wandering Apothecaries' => array (
-        'cost' => 100000,
-        'max'  => 2
-    ),
-    'Igor' => array (
-        'cost' => 100000,
-        'max'  => 1
-    ),
-    'Wizard' => array (
-        'cost' => 150000,
-        'max'  => 1
-    )
-);
-
 // END global inducements vars ---------------------------------
 
 $ind_cost=0;
+foreach (array('babes', 'bribes', 'card', 'rr', 'chef', 'igor', 'apo', 'wiz') as $suffix) {${'ind_'.$suffix} = 0;}
 
 //
 // Most of team and player data is copy/pasted from teams.php
