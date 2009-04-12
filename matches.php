@@ -207,41 +207,11 @@ function match_form($match_id) {
 
     ?>
     <div>
-        <a href='javascript:void(0);' onClick="document.getElementById('helpbox').style.display = 'block';">Click here</a> for help on filling out a match report.
+        <a href='javascript:void(0);' onClick="document.getElementById('helpbox').style.display = 'block';"><?php echo $lng->getTrn('secs/fixtures/report/click');?></a> <?php echo $lng->getTrn('secs/fixtures/report/forhelp');?>
     </div>
     <div id='helpbox' style='display: none;'>
         <br>
-        <b>Preliminary info</b><br>
-        First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
-        Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
-        <br>
-        <b>Game information fields</b><br>
-        The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
-        <br>
-        <b>Sportsmanship points</b><br>
-        Yelling, screaming, cursing at the dice, disturbing the opponent in his turn and not turning up on gaming night may be punished by giving negative sportsmanship points. Acting like a gentleman and taking a defeat with a smile may be embraced by giving positive sportsmanship points.
-        If your league on the other hand makes the needle on the evil-o-meter jump into the red area constantly, it may be more natural applying the sportsmanship points system the other way around - embracing bad manners with positive sportsmanship points.<br>
-        <br>
-        <b>Casualties in general</b><br>
-        OBBLM can keep track of <i>team casualties</i>, which is the sum of the individual player casualties, opponent self-inflicted injuries, die on a fumble in sprints and crowd killings (and possibly other things of your leagues' choice).
-        Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
-        <br>
-        <b>Player skills</b><br>
-        Once the match report has been submitted OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
-        <br>
-        <b>Incomes</b><br>
-        A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
-        If you spended more than you made in a match then simply prefix - (minus).
-        <br><br>
-        Remember these factors when you calculate:<br>
-        <ul>
-            <li>Spiraling expenses</i>
-            <li>Treasury spend on inducements</li>
-            <li>Hiring costs of star players and mercenaries</li>
-            <li>Team winnings</li>
-            <li>Tournament winnings, if the game was a final</li>
-            <li>Sponsorship deal from Bloodweiser</li>
-        </ul>
+        <?php echo $lng->getTrn('secs/fixtures/report/help');?>
     </div>
     <br>
     <form method="POST" enctype="multipart/form-data">
