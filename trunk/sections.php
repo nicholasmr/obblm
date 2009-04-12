@@ -76,8 +76,6 @@ function sec_login() {
         <input type="password" name="passwd" size="20" maxlength="50"> 
         <br><br>
         <input type="submit" name="login" value="Login">
-        <br><br>
-        <?php echo $lng->getTrn('secs/login/note');?>
     </form>
     </div>
     <?php

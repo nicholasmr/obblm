@@ -492,7 +492,6 @@
         <login>
             <coach>Coach</coach>
             <passwd>Password</passwd>
-            <note>Please use your mouse to press the login button!</note>
         </login>
         
         <cc>
