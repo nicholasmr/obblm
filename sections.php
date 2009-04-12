@@ -245,7 +245,7 @@ function sec_main() {
                         $i = 2; break;
                 }
 
-                echo "<div class='boxTitle$i'>$e->title</div>\n";
+                echo "<h3 class='boxTitle$i'>$e->title</h3>\n";
                 
                 echo "<div class='boxBody'>\n";
                 
@@ -321,7 +321,7 @@ function sec_main() {
             foreach ($standings as $sta) {
                 ?>            
                 <div class='main_rcolBox'>
-                    <div class='boxTitle1'><?php echo $sta['name'];?> <?php echo $lng->getTrn('global/misc/stn');?></div>
+                    <h3 class='boxTitle1'><?php echo $sta['name'];?> <?php echo $lng->getTrn('global/misc/stn');?></h3>
                     <div class='boxBody'>
                         <table class="boxTable" style='width:100%;'>
                             <tr>
@@ -377,7 +377,7 @@ function sec_main() {
         if ($settings['entries_latest'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/recent');?></div>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/recent');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -418,7 +418,7 @@ function sec_main() {
         if ($settings['entries_casualties'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/cas');?></div>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/cas');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -443,7 +443,7 @@ function sec_main() {
         if ($settings['entries_touchdown'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/td');?></div>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/td');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -468,7 +468,7 @@ function sec_main() {
         if ($settings['entries_completions'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/cp');?></div>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/cp');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>

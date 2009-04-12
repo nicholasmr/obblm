@@ -20,6 +20,8 @@ body
     font: 12px Tahoma;
 }
 
+h3{margin:0} /*reset browser default margin*/
+
 /* td/tr definitions */
 tr.dark      {background-color: #BBBBBB;}
 tr.light     {background-color: #CCCCCC;}
