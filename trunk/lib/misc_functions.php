@@ -469,18 +469,24 @@ function fatal($err_msg) {
 
 // Print a status message.
 function status($status, $msg = '') {
-    ?>
-    <table><tr><td>
-        <b>Request: </b>
-        <?php
-        if ($status) # Status == success
-            echo "<font color='green'><b>Succeeded</b></font>\n";
-        else # Status == failure
-            echo "<font color='red'><b>Failed</b></font>\n";
 
-        echo " $msg\n";
+        if ($status) {	# Status == success
+            echo "<div class=\"messageContainer green\">";
+				echo "Request succeeded";
+				if ($msg != ''){
+					echo " : $msg\n";
+				}
+			echo "</div>";
+		} else {	# Status == failure
+             echo "<div class=\"messageContainer red\">";
+			 	echo "Request failed";
+				if ($msg != ''){
+					echo " : $msg\n";
+				}
+			echo "</div>";
+		}
         ?>
-    </td></tr></table>
+    </div>	
     <?php
 }
 
