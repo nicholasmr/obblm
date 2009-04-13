@@ -227,8 +227,9 @@ function match_form($match_id) {
                         <?php
                         $teams = Team::getTeams();
                         objsort($teams, array('+name'));
+                        $stad = ($m->stadium) ? $m->stadium : $m->team1_id;
                         foreach ($teams as $_t) {
-                            echo "<option value='$_t->team_id' " . ($m->stadium == $_t->team_id ? 'SELECTED' : '' ) . ">$_t->name</option>\n";
+                            echo "<option value='$_t->team_id' " . (($stad == $_t->team_id) ? 'SELECTED' : '' ) . " ".(($_t->team_id == $m->team1_id || $_t->team_id == $m->team2_id) ? "style='background-color: ".COLOR_HTML_READY.";'" : '').">$_t->name</option>\n";
                         }
                         ?>
                     </select>
