@@ -282,6 +282,73 @@ class SGraph
             $lengends = array('avg_stars' => 'red', 'avg_mercs' => 'green');
             list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);            
             array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Avg. stars and mercs per match", "Months", "Average hirings", array_merge($opts, array('scale' => 'textlin'))));
+            
+            /*
+                Injuries
+            */
+            $queries = array();
+            foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+                $range = "(
+                    (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH))) 
+                    AND 
+                    (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)))
+                )";
+                # m$i = minus/negative $i months from present month.
+                array_push($queries, "SUM(IF($range, IF(inj = ".MNG.",  1, 0)+IF(agn1 = ".MNG.",  1, 0)+IF(agn2 = ".MNG.",  1, 0), 0)) AS 'mng_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".NI.",   1, 0)+IF(agn1 = ".NI.",   1, 0)+IF(agn2 = ".NI.",   1, 0), 0)) AS 'ni_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".MA.",   1, 0)+IF(agn1 = ".MA.",   1, 0)+IF(agn2 = ".MA.",   1, 0), 0)) AS 'ma_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".AV.",   1, 0)+IF(agn1 = ".AV.",   1, 0)+IF(agn2 = ".AV.",   1, 0), 0)) AS 'av_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".AG.",   1, 0)+IF(agn1 = ".AG.",   1, 0)+IF(agn2 = ".AG.",   1, 0), 0)) AS 'ag_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".ST.",   1, 0)+IF(agn1 = ".ST.",   1, 0)+IF(agn2 = ".ST.",   1, 0), 0)) AS 'st_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".DEAD.", 1, 0)+IF(agn1 = ".DEAD.", 1, 0)+IF(agn2 = ".DEAD.", 1, 0), 0)) AS 'dead_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".SOLD.", 1, 0)+IF(agn1 = ".SOLD.", 1, 0)+IF(agn2 = ".SOLD.", 1, 0), 0)) AS 'sold_m$i'"); 
+                array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
+                array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
+            }
+
+            $query  = "SELECT ".implode(', ', $queries)." FROM matches, match_data WHERE f_match_id = match_id";
+            $result = mysql_query($query);
+            $row    = mysql_fetch_assoc($result);
+            
+            $lengends = array('mng' => 'green', 'ni' => 'red', 'ma' => 'blue', 'av' => 'aqua', 'ag' => 'brown', 'st' => 'purple', 'dead' => 'slategray', 'sold' => 'yellow');
+            list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
+            array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Types of sustained player injuries/statuses", "Months", "Amount", $opts));
+            
+            /*
+                Race distribution
+            */
+            $query  = "SELECT DISTINCT(race) AS 'race', COUNT(race) 'cnt' FROM teams GROUP BY race";
+            $result = mysql_query($query);
+            $data = array();
+            while ($row = mysql_fetch_assoc($result)) {
+                $data["$row[race] ($row[cnt])"] = $row['cnt'];
+            }
+            $graph = new PieGraph($opts['xdim'],$opts['ydim'],"auto");
+            $graph->SetShadow();
+            $graph->title->Set('Current race distribution');
+            $graph->title->SetFont(FF_FONT1,FS_BOLD);
+            $p1 = new PiePlot(array_values($data));
+            $p1->SetLegends(array_keys($data));
+            $p1->SetCenter(0.4);
+            $graph->Add($p1);
+            array_push($graphs, $graph);
+            
+            /*
+                CAS distribution
+            */
+            $query  = "SELECT SUM(bh) AS 'bh', SUM(si) AS 'si', SUM(ki) AS 'ki' FROM match_data";
+            $result = mysql_query($query);
+            $o = (object) mysql_fetch_assoc($result);
+            $data = array("BH ($o->bh)" => $o->bh, "SI ($o->si)" => $o->si, "Ki ($o->ki)" => $o->ki);
+            $graph = new PieGraph($opts['xdim'],$opts['ydim'],"auto");
+            $graph->SetShadow();
+            $graph->title->Set('Current CAS distribution');
+            $graph->title->SetFont(FF_FONT1,FS_BOLD);
+            $p1 = new PiePlot(array_values($data));
+            $p1->SetLegends(array_keys($data));
+            $p1->SetCenter(0.4);
+            $graph->Add($p1);
+            array_push($graphs, $graph);
         }
         else {
         
@@ -289,7 +356,7 @@ class SGraph
              *  Current CAS
              ********************/
             
-            if (!$cmp_id) {
+            if (!$cmp_id && $o->bh+$o->si+$o->ki != 0) {
                 $data = array("BH ($o->bh)" => $o->bh, "SI ($o->si)" => $o->si, "Ki ($o->ki)" => $o->ki);
                 $graph = new PieGraph($opts['xdim'],$opts['ydim'],"auto");
                 $graph->SetShadow();
@@ -356,6 +423,38 @@ class SGraph
             $lengends = array('cp' => 'green', 'td' => 'red', 'int' => 'blue');
             list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
             array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "CP, TD and Int distribution history", "Months", "Amount", $opts));
+
+            /********************
+             *  Injuries
+             ********************/
+                
+            $queries = array();
+            foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+                $range = "(
+                    (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH))) 
+                    AND 
+                    (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)))
+                )";
+                # m$i = minus/negative $i months from present month.
+                array_push($queries, "SUM(IF($range, IF(inj = ".MNG.",  1, 0)+IF(agn1 = ".MNG.",  1, 0)+IF(agn2 = ".MNG.",  1, 0), 0)) AS 'mng_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".NI.",   1, 0)+IF(agn1 = ".NI.",   1, 0)+IF(agn2 = ".NI.",   1, 0), 0)) AS 'ni_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".MA.",   1, 0)+IF(agn1 = ".MA.",   1, 0)+IF(agn2 = ".MA.",   1, 0), 0)) AS 'ma_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".AV.",   1, 0)+IF(agn1 = ".AV.",   1, 0)+IF(agn2 = ".AV.",   1, 0), 0)) AS 'av_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".AG.",   1, 0)+IF(agn1 = ".AG.",   1, 0)+IF(agn2 = ".AG.",   1, 0), 0)) AS 'ag_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".ST.",   1, 0)+IF(agn1 = ".ST.",   1, 0)+IF(agn2 = ".ST.",   1, 0), 0)) AS 'st_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".DEAD.", 1, 0)+IF(agn1 = ".DEAD.", 1, 0)+IF(agn2 = ".DEAD.", 1, 0), 0)) AS 'dead_m$i'"); 
+                array_push($queries, "SUM(IF($range, IF(inj = ".SOLD.", 1, 0)+IF(agn1 = ".SOLD.", 1, 0)+IF(agn2 = ".SOLD.", 1, 0), 0)) AS 'sold_m$i'"); 
+                array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
+                array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
+            }
+
+            $query  = "SELECT ".implode(', ', $queries)." FROM matches, match_data WHERE f_match_id = match_id AND $where";
+            $result = mysql_query($query);
+            $row    = mysql_fetch_assoc($result);
+            
+            $lengends = array('mng' => 'green', 'ni' => 'red', 'ma' => 'blue', 'av' => 'aqua', 'ag' => 'brown', 'st' => 'purple', 'dead' => 'slategray', 'sold' => 'yellow');
+            list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
+            array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Types of sustained player injuries/statuses", "Months", "Amount", $opts));
             
             // Only if type = team.
 
