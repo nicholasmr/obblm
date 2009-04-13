@@ -135,7 +135,7 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
             case 'login':        sec_login();        break;
             case 'admin':        sec_admin();        break;
             case 'coachcorner':  sec_coachcorner();  break;
-            case 'fixturelist':  sec_fixturelist();  break;
+            case 'fixturelist':  sec_fixturelist();  break; // Tournaments
             case 'standings':    sec_standings();    break;
             case 'teams':        sec_teams();        break;
             case 'players':      sec_players();      break;

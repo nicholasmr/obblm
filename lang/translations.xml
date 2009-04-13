@@ -37,7 +37,7 @@
             <coachcorner>Coach corner</coachcorner>
             <cc>CC</cc> <!-- Leave this untouched. Is abbrev of above. -->
             <home>Home</home>
-            <fixtures>Fixtures</fixtures>
+            <fixtures>Tournaments</fixtures>
             <standings>Standings</standings>
             <teams>Teams</teams>
             <players>Players</players>
@@ -101,11 +101,11 @@
         <fixtures>
         
             <!-- General -->
-            <links>
-            <![CDATA[<i>Note</i>: Tournament specific standings are available through the <i>[S]</i> links, tournament descriptions through the <i>[D]</i> links and tournament brackets for knockout type tournaments through the <i>[B]</i> links.]]>
-            </links>
             <mdel><![CDATA[Are you sure you want to delete the match?\n\nPLEASE NOTE:\nUnless the match has not yet been played this action is not reversible and will affect the contents of the subsequent match reports for both teams.\nIt is advised against deleting non-test matches unless you know what you are doing.]]></mdel>
             
+            <standings>Standings</standings>
+            <desc>Description</desc>
+            <bracket>Bracket</bracket>
             <fin>finished</fin>
             <undecided>Undecided</undecided>
             <winner>Winner</winner>

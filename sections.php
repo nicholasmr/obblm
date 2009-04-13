@@ -685,9 +685,6 @@ function sec_fixturelist() {
     
     title($lng->getTrn('global/secLinks/fixtures'));
     
-    echo $lng->getTrn('secs/fixtures/links')."<br><br>\n";
-
-    
     $flist = array( # The fixture list
 // $flist MODEL:
 #            'tour1' => array(
@@ -728,17 +725,17 @@ function sec_fixturelist() {
         ?>
         <table class='fixtures' style='width:100%;'>
             <tr class='dark'>
-                <td style='width:15%;'>
-                    <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>
-                    <a title='Standings' href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b>[S]</b></a>
-                    <a title='Description' href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b>[D]</b></a>
+                <td style='width:30%;'>
+                    <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
+                    <a href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/standings');?></b></a>&nbsp;
+                    <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
                     <?php
                     if ($t->type == TT_KNOCKOUT) {
-                        echo "<a title='Tournament bracket' href='javascript:void(0)' onclick=\"window.open('handler.php?type=gdbracket&amp;tour_id=" . $t->tour_id . "', 'handler_tour', 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=400'); return false;\"><b>[B]</b></a>\n";
+                        echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=gdbracket&amp;tour_id=" . $t->tour_id . "', 'handler_tour', 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=400'); return false;\"><b>".$lng->getTrn('secs/fixtures/bracket')."</b></a>\n";
                     }
                     ?>
                 </td>
-                <td style='width:85%;'>
+                <td>
                     &nbsp;&nbsp;&nbsp;<?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>' : '');?>
                 </td>
             </tr>
