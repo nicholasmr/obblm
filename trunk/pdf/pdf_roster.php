@@ -40,16 +40,13 @@ define("MARGINY", 20);
 define("DEFLINECOLOR", '#000000');
 define("HEADLINEBGCOLOR", '#999999');
 
-// For inducements. Should be moved to header.php and game_data.php
+// Custom settings for inducements. Should be moved to header.php or settings.php?
 
 define('MAX_STARS', 2);
 define('MERC_EXTRA_COST', 30000);
 define('MERC_EXTRA_SKILL_COST', 50000);
 
-// END global inducements vars ---------------------------------
-
 $ind_cost=0;
-foreach (array('babes', 'bribes', 'card', 'rr', 'chef', 'igor', 'apo', 'wiz') as $suffix) {${'ind_'.$suffix} = 0;}
 
 //
 // Most of team and player data is copy/pasted from teams.php
@@ -378,7 +375,7 @@ $r=$team->race;
 if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Undead')) {
   $apo_igor = 'Igor (0-1):';
   unset($inducements['Wandering Apothecaries']);
-  if ($ind_igor) { 
+  if (isset($ind_igor)) { 
     $ind_apo_igor_cost = $ind_igor*$inducements['Igor']['cost'];
     $ind_cost += $ind_igor*$ind_apo_igor_cost; 
     $ind_apo_igor = $ind_igor;
