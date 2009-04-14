@@ -21,6 +21,7 @@
  *   
  */
 
+error_reporting(E_ALL);
 require('header.php'); // Includes and constants.
 
 function mk_tables() {
