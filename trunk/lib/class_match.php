@@ -529,7 +529,7 @@ class Match
      * Statics
      ***************/
      
-    public static function getMatches($n = false) {
+    public static function getMatches($n = false, $trid = false) {
     
         /**
          * Returns an array of match objects for the latest $n matches, or all if $n = false.
@@ -538,7 +538,7 @@ class Match
         $m = array();
          
         $query = "SELECT match_id FROM matches 
-            WHERE date_played IS NOT NULL AND match_id > 0 
+            WHERE date_played IS NOT NULL AND match_id > 0 ".(($trid) ? " AND f_tour_id = $trid " : '')."
             ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
         $result = mysql_query($query);
         
