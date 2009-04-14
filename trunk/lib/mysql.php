@@ -268,7 +268,7 @@ function setup_tables() {
 
     /* Create root user and leave welcome message on messageboard*/
 
-    if (Coach::create(array('name' => 'root', 'passwd' => 'root', 'admin' => true, 'mail' => 'None')))
+    if (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => RING_SYS, 'mail' => 'None', 'phone' => '')))
         echo "<font color=green>Created root user successfully.</font><br>\n";
     else
         echo "<font color=red>Failed to create root user.</font><br>\n";
