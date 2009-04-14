@@ -375,7 +375,7 @@ function sec_main() {
         if ($settings['entries_latest'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/recent');?></h3>
+                <h3 class='boxTitle1'><a href='index.php?section=recent'><?php echo $lng->getTrn('secs/home/recent');?></a></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -2311,6 +2311,55 @@ function sec_coachcorner() {
         <?php
     }
     
+}
+
+/*************************
+ *
+ *  RECENT MATCHES *
+ *************************/
+
+function sec_recentmatches() {
+
+    global $lng;
+    title($lng->getTrn('global/secLinks/recent'));
+    $tours = Tour::getTours();
+    $matches = Match::getMatches(MAX_RECENT_GAMES, isset($_POST['trid']) ? (int) $_POST['trid'] : false);
+    
+    ?>
+    <form method="POST">
+    <b><?php echo $lng->getTrn('secs/recent/from_tours');?></b><br>
+    <select name="trid" onChange='this.form.submit();'>
+        <option value="0">-All-</option>
+        <?php
+        foreach ($tours as $tr) {
+            echo "<option value='$tr->tour_id' ".((isset($_POST['trid']) && $_POST['trid'] == $tr->tour_id) ? 'SELECTED' : '').">$tr->name</option>\n";
+        }
+        ?>
+    </select>
+    </form>
+    <br>    
+    <?php
+
+    foreach ($matches as $m) {
+         $m->result = "$m->team1_score - $m->team2_score";
+         $m->mlink = "<a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[".$lng->getTrn('secs/recent/view')."]</a>";
+    }
+    $fields = array(
+        'date_played'       => array('desc' => 'Date played'), 
+        'team1_name'        => array('desc' => 'Home'),
+        'team2_name'        => array('desc' => 'Away'),
+        'result'            => array('desc' => 'Result', 'nosort' => true), 
+        'mlink'             => array('desc' => 'Match', 'nosort' => true), 
+    );
+    sort_table(
+        $lng->getTrn('secs/recent/tbltitle'), 
+        'index.php?section=recent', 
+        $matches, 
+        $fields, 
+        sort_rule('match'), 
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+        array('doNr' => false, 'noHelp' => true)
+    );
 }
 
 ?>

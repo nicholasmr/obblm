@@ -49,6 +49,7 @@
             <gallery>Gallery</gallery>
             <gb>Guest book</gb>
             <forum>Forum</forum>
+            <recent>Recent matches</recent> <!-- Not shown amongst menu links -->
         </secLinks>
         
         <!-- Notifications for sortable tables -->
@@ -848,6 +849,12 @@
             </retire>
 
         </admin>
+        
+        <recent>
+            <from_tours>From tournament</from_tours>
+            <tbltitle>Recent matches</tbltitle>
+            <view>view</view>
+        </recent>
     </secs>        
 
 </en-GB>
