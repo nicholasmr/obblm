@@ -278,6 +278,11 @@ function sec_admin() {
                 $STATUS = false;
             }
             
+            // Reverse pair-up for FFA match?
+            if ($_POST['type'] == TT_SINGLE && isset($_POST['reverse']) && $_POST['reverse']) {
+                $team_ids = array_reverse($team_ids);
+            }
+            
             // Only create tour if all went well.
             if ($STATUS) {
                 if (get_magic_quotes_gpc())
@@ -358,6 +363,9 @@ function sec_admin() {
                             }
                         ?>
                         </select>
+                        <br><br>
+                        <b><font color="blue"><?php echo $lng->getTrn('secs/admin/as_reverse');?></font></b><br>
+                        <input type="checkbox" name="reverse" value="1">
                     </div>
                 </td>
             </tr></table>
