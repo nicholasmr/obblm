@@ -509,7 +509,7 @@ function sec_main() {
 
 function sec_fixturelist() {
 
-    global $rules, $coach, $lng;
+    global $rules, $settings, $coach, $lng;
     $KEEP_TOUR_OPEN = false;
 
     // Admin actions made?
@@ -833,7 +833,7 @@ function sec_fixturelist() {
             </tr>
         </table>
         <?php
-        if (count($flist) > 1 && !($KEEP_TOUR_OPEN == $t->tour_id)) {
+        if (!$settings['force_tour_foldout'] && count($flist) > 1 && !($KEEP_TOUR_OPEN == $t->tour_id)) {
             ?>
             <script language="JavaScript" type="text/javascript">
                 document.getElementById('trid_'+<?php echo $t->tour_id;?>).style.display = 'none';
