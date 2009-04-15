@@ -21,6 +21,7 @@ body
     */
     font: 12px Tahoma;
 }
+h3,h4{margin:0} /*reset browser default margin*/
 
 /* td/tr definitions */
 tr.dark      {background-color: #BBBBBB;}
@@ -178,11 +179,55 @@ div.recBox        {clear: both; width: 800px; border: 1px solid #545454; margin:
 /* Match form */
 table.match_form {width: 100%; padding:10px;}
 
-/* Player roaster */
-.pboxLong  {width: 900px; border: 1px solid #545454; margin: 10px; margin-left: 30px; float: left;}
-.pboxShort {width: 425px; border: 1px solid #545454; margin: 10px; margin-left: 30px; float: left;}
-table.pbox {font: inherit; width: 100%;}
-
 /* Guest book */
 div.gb {clear: both; width: 450px; border: 1px solid #545454; margin-left: auto; margin-right: auto; margin-bottom: 5px;}
+
+/* Player profile */
+#player		{float:left;}
+#player h4	{font-size:12px;font-weight:bold;}
+#player ul	{margin:0;padding:0;}
+#player li	{list-style:none;float:left;}
+#player .pboxLong	{width:955px;border:1px solid #999;margin:10px 20px 0 16px;float:left;}
+#player .pboxShort 	{width: 425px; border: 1px solid #545454; margin: 10px; margin-left: 30px; float: left;}
+table.pbox 			{font:inherit;width:100%;}
+
+.playerProfile		{border:1px solid #999;margin:0 20px 0 16px;width:935px;float:left;padding:10px;background:transparent url(/images/playerprofile_bg.gif) repeat-y top right;}
+.playerProfile h3	{font-size:16px;}
+.playerProfile p	{margin:4px 0 6px;}
+
+.playerProfileColumn{float:left;}
+
+.playerImg		{float:left;margin-bottom:10px;margin-right:15px;width:152px;}
+.playerImg img 	{border:1px solid #999;width:150px;height:150px;background-color:#fff;}
+
+.playerInfo							{width:230px;float:left;margin-bottom:10px;margin-right:15px;}
+#player .playerInfo ul.playerStats	{margin-bottom:6px;float:left;}
+.playerInfo ul.playerStats li		{margin-right:4px;font-size:15px;font-weight:bold;text-align:center;}
+.playerInfo ul.playerStats div		{width:29px;height:29px;border:1px solid #999;background-color:#fff;}
+.playerInfo ul.playerStats div span	{margin-top:4px;display:block;}
+.playerInfo li.skillup div			{background-color:#0c0;}
+.playerInfo li.skilldown div		{background-color:#f00;}
+
+.playerSkills		{clear:left;margin-top:3px;}
+.playerSkills h4	{border-bottom:1px solid #000;}
+
+.playerAchievements			{float:left;clear:left;}
+.playerAchievements li		{margin-right:2px;list-style:none;font-size:11px;font-weight:bold;text-align:center;background-color:#c0c0c0;}
+.playerAchievements div		{width:29px;height:29px;border:1px solid #999;background-color:#fff;}
+.playerAchievements div span{margin-top:5px;display:block;font-size:14px;}
+.playerAchievements .comp	{font-size:10px;padding-top:1px;}
+.playerAchievements .first	{margin-left:7px;}
+.playerAchievements .item	{background-color:#ddd;}
+
+.playerDescription			{width:420px;float:left;}
+.playerDescription .body	{background-color:#fff;border:1px solid #999;padding:4px;margin:4px 0;}
+.playerDescription textarea	{background-color:#fff;border:1px solid #999;padding:4px;height:130px;width:410px;overflow-x:hidden;overflow-y:scroll;margin: 4px 0;}
+
+.playerRightBar				{float:right;width:80px;text-align:center;}
+.playerRightBar a			{font-weight:bold;}
+#player .playerRightBar h4	{background:transparent url(/images/playerprofile_number_bg.jpg) no-repeat 0 0;height:50px;width:50px;margin:0 auto;line-height:56px;color:#fff;font-size:22px;}
+.ready						{color:green;font-weight:bold;}
+.dead						{color:red;font-weight:bold;text-transform:uppercase;}
+.sold						{color:orange;font-weight:bold;}
+.injured					{color:blue;font-weight:bold;}
 
