@@ -238,7 +238,6 @@ function rule_dict(array $rule) {
     return $rule;
 }
 
-
 function pic_box($cur_img, $up_perm = false, $suffix = false) {
     
     ?>
@@ -486,6 +485,16 @@ function status($status, $msg = '') {
 
 function textdate($mysqldate, $noTime = false) {
     return date("D M j Y".(($noTime) ? '' : ' G:i:s'), strtotime($mysqldate));
+}
+
+/* Turns two or more consecutive newlines (separated by possible white space) into a <p>...</p>.
+ * Function found in comments here: http://de.php.net/manual/en/function.nl2br.php 
+ */
+function nls2p($str)
+{
+  return str_replace('<p></p>', '', '<p>'
+        . preg_replace('#([\r\n]\s*?[\r\n]){2,}#', '</p>$0<p>', $str)
+        . '</p>');
 }
 
 ?>

@@ -1448,7 +1448,7 @@ function player_roaster($player_id) {
 
     /* Print player profile... */
 
-    title($p->name);
+    title("Player details");
     $players = $team->getPlayers();
     $i = $next = $prev = 0;
     $end = end(array_keys($players));
@@ -1469,308 +1469,300 @@ function player_roaster($player_id) {
         }
         $i++;
     }
-    if (count($players) > 1) {
-        echo "<center><a href='index.php?section=coachcorner&amp;player_id=".$players[$prev]->player_id."'>[Prev]</a> &nbsp;|&nbsp; <a href='index.php?section=coachcorner&amp;player_id=".$players[$next]->player_id."'>[Next]</a></center><br>";
-    }
-    ?>
-    <div class="row">
-        <div class="pboxShort">
-            <div class="boxTitle2">About player</div>
-            <div class="boxBody">
-                <table class="pbox">
-                    <tr>
-                        <td><b>Name</b></td>
-                        <td><?php echo "$p->name (#$p->nr)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Position</b></td>
-                        <td><?php echo $p->position; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Team</b></td>
-                        <td><a href="index.php?section=coachcorner&amp;team_id=<?php echo $p->owned_by_team_id; ?>"><?php echo $p->team_name; ?></a></td>
-                    </tr>
-                    <tr>
-                        <td><b>Bought</b></td>
-                        <td><?php echo $p->date_bought; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Status</b></td>
-                        <td>
-                        <?php 
-                            if ($p->is_dead) {
-                                $p->getDateDied();
-                                echo "<b><font color='red'>DEAD</font></b> ($p->date_died)";
-                            }
-                            elseif ($p->is_sold) {
-                                echo "<b>SOLD</b> ($p->date_sold)";
-                            }
-                            else {
-                                echo (($status = strtolower($p->getStatus(-1))) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
-                            }
-                        ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><b>Value</b></td>
-                        <td><?php echo $p->value/1000 .'k' ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>SPP/extra</b></td>
-                        <td><?php echo "$p->spp/$p->extra_spp" ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Wanted</b></td>
-                        <td><?php echo ($p->isWanted()) ? '<b><font color="red">Yes</font></b>' : 'No';?></td>
-                    </tr>
-                    <tr>
-                        <td><b>In HoF</b></td>
-                        <td><?php echo ($p->isInHOF()) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Won</b></td>
-                        <td><?php echo "$p->won ($p->row_won streaks)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Lost</b></td>
-                        <td><?php echo "$p->lost ($p->row_lost streaks)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Draw</b></td>
-                        <td><?php echo "$p->draw ($p->row_draw streaks)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Vis. stats</b></td>
-                        <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''><b>View</b></a>\n";; ?></td>
-                    </tr>                    
-                    <tr>
-                        <td colspan="2"><hr></td>
-                    </tr> 
-                    <tr>
-                        <td><b>Ma</b></td>
-                        <td><?php echo $p->ma; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>St</b></td>
-                        <td><?php echo $p->st; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Ag</b></td>
-                        <td><?php echo $p->ag; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Av</b></td>
-                        <td><?php echo $p->av; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Skills</b></td>
-                        <td><?php echo (empty($p->skills)) ? '<i>None</i>' : $p->skills; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Injuries</b></td>
-                        <td><?php echo (empty($p->injs)) ? '<i>None</i>' : $p->injs; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Cp</b></td>
-                        <td><?php echo $p->cp; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Td</b></td>
-                        <td><?php echo $p->td; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Int</b></td>
-                        <td><?php echo $p->intcpt; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>BH/SI/Ki</b></td>
-                        <td><?php echo "$p->bh/$p->si/$p->ki"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Cas</b></td>
-                        <td><?php echo $p->cas; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>MVP</b></td>
-                        <td><?php echo $p->mvp; ?></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <div class="pboxShort">
-            <div class="boxTitle2">Player profile</div>
-            <div class="boxBody">
-                <i>Profile picture</i><hr>
-                <?php
-                pic_box($p->getPic(), $ALLOW_EDIT);
-                ?>
-                <br><br>
-                <i>Profile text</i><hr>
-                <?php
-                $txt = $p->getText(); 
-                if (empty($txt)) {
-                    $txt = "Nothing has yet been written about $p->name."; 
-                }
-                if ($ALLOW_EDIT) {
-                    ?>
-                    <form method="POST" enctype="multipart/form-data">
-                        <textarea name='playertext' rows='8' cols='45'><?php echo $txt;?></textarea>
-                        <br><br>
-                        <input type="hidden" name="type" value="playertext">
-                        <input type="submit" name='Save' value='Save'>
-                    </form>
-                    <?php
-                }
-                else {
-                    echo "<p>$txt</p>";
-                }
-                ?>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('ach'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Achievements</div>
-            <div class="boxBody" id="ach">
-                <table class="pbox">
-                    <tr>
-                        <td><b>Type</b></td>
-                        <td><b>Tournament</b></td>
-                        <td><b>Opponent</b></td>
-                        <td><b>MVP</b></td>
-                        <td><b>Cp</b></td>
-                        <td><b>Td</b></td>
-                        <td><b>Int</b></td>
-                        <td><b>Cas</b></td>
-                        <td><b>Score</b></td>
-                        <td><b>Result</b></td>
-                        <td><b>Match</b></td>
-                    </tr>
-                    <?php
-                    foreach (array('intcpt' => 'Interceptions', 'cp' => 'Completions', 'td' => 'Touchdowns', 'mvp' => 'MVP awards', 'bh+ki+si' => 'Cas') as $s => $desc) {
-                        $been_there = false;
-                        foreach ($p->getAchEntries($s) as $entry) {
-                            if (!$been_there)
-                                echo "<tr><td colspan='11'><hr></td></tr>";
-                            ?>
-                            <tr>
-                                <?php
-                                $m = $entry['match_obj'];
-                                if ($been_there) {
-                                    echo '<td></td>'; 
-                                }
-                                else {
-                                    echo "<td><i>$desc: " . (($desc == 'Cas') ? $p->cas : $p->$s) . "</i></td>";
-                                    $been_there = true;
-                                }
-                                ?>
-                                <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
-                                <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
-                                <td><?php echo $entry['mvp']; ?></td>
-                                <td><?php echo $entry['cp']; ?></td>
-                                <td><?php echo $entry['td']; ?></td>
-                                <td><?php echo $entry['intcpt']; ?></td>
-                                <td><?php echo $entry['bh']+$entry['si']+$entry['ki']; ?></td>
-                                <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                                <td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
-                                <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
-                            </tr>
-                            <?php
-                        }
-                    }
-                    ?>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('mbest'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Match best</div>
-            <div class="boxBody" id="mbest">
-                <table class="pbox">
-                    <tr>
-                        <td><b>Type</b></td>
-                        <td><b>Tournament</b></td>
-                        <td><b>Opponent</b></td>
-                        <td><b>Td</b></td>
-                        <td><b>Ki</b></td>
-                        <td><b>Score</b></td>
-                        <td><b>Result</b></td>
-                        <td><b>Match</b></td>
-                    </tr>
-                    <?php
-                    foreach (array('td' => 'scorer', 'ki' => 'killer') as $s => $desc) {
-                        $been_there = false;
-                        $matches = $p->getMatchMost($s);
-                        foreach ($matches as $entry) {
-                            if (!$been_there)
-                                echo "<tr><td colspan='8'><hr></td></tr>";
-                            ?>
-                            <tr>
-                                <?php
-                                $m = $entry['match_obj'];
-                                if ($been_there) {
-                                    echo '<td></td>'; 
-                                }
-                                else {
-                                    echo "<td><i>Top $desc: " . count($matches) . " times</i></td>";
-                                    $been_there = true;
-                                }
-                                ?>
-                                <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
-                                <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
-                                <td><?php echo $entry['td']; ?></td>
-                                <td><?php echo $entry['ki']; ?></td>
-                                <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                                <td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
-                                <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
-                            </tr>
-                            <?php
-                        }
-                    }
-                    ?>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('played'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Played matches</div>
-            <div class="boxBody" id="played">
-                <table class="pbox">
-                    <tr>
-                        <td><b>Date played</b></td>
-                        <td><b>Tournament</b></td>
-                        <td><b>Opponent</b></td>
-                        <td><b>Score</b></td>
-                        <td><b>Result</b></td>                        
-                        <td><b>Match</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan="6"><hr></td>
-                    </tr>
-                    <?php
-                    foreach (Stats::getPlayedMatches(STATS_PLAYER, $p->player_id, MAX_RECENT_GAMES, true) as $m) {
-                        ?>
-                        <tr>
-                            <td><?php echo $m->date_played; ?></td>
-                            <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
-                            <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
-                            <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                            <td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
-                            <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
-                        </tr>
-                        <?php
-                    }
-                    ?>
-                </table>
-            </div>
-        </div>
-    </div>
-
+	?>
+	<div id="player">
+		<?php
+		if (count($players) > 1) {
+			echo "<center><a href='index.php?section=coachcorner&amp;player_id=".$players[$prev]->player_id."'>Previous player</a> &nbsp;|&nbsp; <a href='index.php?section=coachcorner&amp;player_id=".$players[$next]->player_id."'>Next player</a></center><br>";
+		}
+		?>
+		<div class="playerProfile">		
+	
+			<div class="playerProfileColumn">		
+	
+				<div class="playerImg">
+					<img width="150" height="150" src="<?php echo $p->getPic() ?>" alt="<?php echo $p->name ?>">
+					<?php if ($ALLOW_EDIT){
+						$postSrc = urlencode($p->getPic());						
+						echo "<p><a href=\"javascript:void(0);\" onclick=\"alert('DEVELOPER NOTE:Popup with image upload');\">Upload new image</a></p>";				
+					}
+				?>
+				</div>
+				<div class="playerInfo">
+					<h3><?php echo $p->name ?></h3>
+					<p>
+					<?php echo $p->race ." ". $p->position ?>
+					</p>
+					
+					<p><a href="index.php?section=coachcorner&amp;team_id=<?php echo $p->owned_by_team_id; ?>"><?php echo $p->team_name; ?></a></p>
+				
+					<ul class="playerStats">
+					
+						<li <?php if ($p->ma > $p->def_ma){echo "class='skillup'";} else if ($p->ma < $p->def_ma){echo "class='skilldown'";}?>>
+							MA
+							<div><span><?php echo $p->ma; ?></span></div>
+						</li>
+						<li <?php if ($p->st > $p->def_st){echo "class='skillup'";} else if ($p->st < $p->def_st){echo "class='skilldown'";}?>>
+							ST
+							<div><span><?php echo $p->st; ?></span></div>
+						</li>
+						<li <?php if ($p->ag > $p->def_ag){echo "class='skillup'";} else if ($p->ag < $p->def_ag){echo "class='skilldown'";}?>>
+							AG
+							<div><span><?php echo $p->ag; ?></span></div>
+						</li>
+						<li <?php if ($p->av > $p->def_av){echo "class='skillup'";} else if ($p->av < $p->def_av){echo "class='skilldown'";}?>>
+							AV
+							<div><span><?php echo $p->av; ?></span></div>
+						</li>	
+					</ul>
+					
+					<div class="playerSkills">
+						<h4>Skills</h4>
+						<p><?php echo (empty($p->skills)) ? '<i>None</i>' : $p->skills; ?></p>
+					</div>
+				</div>
+		
+		
+			
+				<div class="playerAchievements">
+				
+					<ul>
+						<li>
+							INT
+							<div><span><?php echo $p->intcpt; ?></span></div>
+						</li>
+						<li class="comp">
+							Comp
+							<div><span><?php echo $p->cp; ?></span></div>
+						</li>
+						<li>
+							TD
+							<div><span><?php echo $p->td; ?></span></div>
+						</li>	
+						<li class="first item">
+							BH
+							<div><span><?php echo $p->bh; ?></span></div>
+						</li>
+						<li class="item">
+							SI
+							<div><span><?php echo $p->si; ?></span></div>
+						</li>
+						<li class="item">
+							KI
+							<div><span><?php echo $p->ki; ?></span></div>
+						</li>
+						<li>
+							Total
+							<div><span><?php echo $p->cas; ?></span></div>
+						</li>
+						<li class="first">
+							MVP
+							<div><span><?php echo $p->mvp; ?></span></div>
+						</li>
+						<li class="first item">
+							SPP
+							<div><span><?php echo $p->spp ?></span></div>
+						</li>
+						<li class="item">
+							Extra
+							<div><span><?php echo $p->extra_spp ?></span></div>
+						</li>
+						<li>
+							Total
+							<div><span><?php echo $p->spp+$p->extra_spp ?></span></div>
+						</li>
+					</ul>
+				</div>
+			
+			</div>
+		
+			<div class="playerProfileColumn playerDescription">		
+				<h4>Description <?php if ($ALLOW_EDIT){ echo "<span id=\"descEdit\">(<a href=\"#\">Edit</a>)</span>"; } ?></h4> 
+				<div class="body">
+					<?php
+						$txt = $p->getText(); 
+					   
+						if (empty($txt)) {
+							$txt = "Nothing has yet been written about $p->name."; 
+						}
+									
+						echo nls2p($txt);
+		
+						?>					
+					</div>
+			</div>
+	
+			<div class="playerProfileColumn playerRightBar">
+				<h4><?php echo $p->nr ?></h4>
+				<p>Status 			
+					<?php 
+					if ($p->is_dead) {
+						$p->getDateDied();
+						echo "<span class=\"dead\">Dead ($p->date_died)</span>";
+					}
+					elseif ($p->is_sold) {
+						echo "<span class=\"sold\">SOLD ($p->date_sold)</span>";
+					}
+					else {
+						echo (($status = strtolower($p->getStatus(-1))) == 'none') ? "<span class=\"ready\">Ready</span>" : "<span class=\"injured\">$status</span>"; 
+					}
+					?>
+				</p>
+				<p>Value <span><?php echo $p->value/1000 .'k' ?></span></p>
+				<p>Injuries <span><?php echo (empty($p->injs)) ? '<i>None</i>' : $p->injs; ?></span></p>
+				<p><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''>View stats</a>\n";; ?></p>
+				<?php if ($p->isInHOF()){
+					echo "<p><a href=\"#\" alt=\"Hall of Fame\">Hall of Fame</a></p>";
+				}
+				if ($p->isWanted()){
+					echo "<p><a href=\"#\" alt=\"Wanted\">Wanted</a></p>";
+				}
+				?>
+			</div>
+		</div>
+	
+		<div class="row">
+			<div class="pboxLong">
+				<div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('ach'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Achievements</div>
+				<div class="boxBody" id="ach">
+					<table class="pbox">
+						<tr>
+							<td><b>Type</b></td>
+							<td><b>Tournament</b></td>
+							<td><b>Opponent</b></td>
+							<td><b>MVP</b></td>
+							<td><b>Cp</b></td>
+							<td><b>Td</b></td>
+							<td><b>Int</b></td>
+							<td><b>Cas</b></td>
+							<td><b>Score</b></td>
+							<td><b>Result</b></td>
+							<td><b>Match</b></td>
+						</tr>
+						<?php
+						foreach (array('intcpt' => 'Interceptions', 'cp' => 'Completions', 'td' => 'Touchdowns', 'mvp' => 'MVP awards', 'bh+ki+si' => 'Cas') as $s => $desc) {
+							$been_there = false;
+							foreach ($p->getAchEntries($s) as $entry) {
+								if (!$been_there)
+									echo "<tr><td colspan='11'><hr></td></tr>";
+								?>
+								<tr>
+									<?php
+									$m = $entry['match_obj'];
+									if ($been_there) {
+										echo '<td></td>'; 
+									}
+									else {
+										echo "<td><i>$desc: " . (($desc == 'Cas') ? $p->cas : $p->$s) . "</i></td>";
+										$been_there = true;
+									}
+									?>
+									<td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
+									<td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
+									<td><?php echo $entry['mvp']; ?></td>
+									<td><?php echo $entry['cp']; ?></td>
+									<td><?php echo $entry['td']; ?></td>
+									<td><?php echo $entry['intcpt']; ?></td>
+									<td><?php echo $entry['bh']+$entry['si']+$entry['ki']; ?></td>
+									<td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
+									<td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
+									<td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
+								</tr>
+								<?php
+							}
+						}
+						?>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="pboxLong">
+				<div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('mbest'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Match best</div>
+				<div class="boxBody" id="mbest">
+					<table class="pbox">
+						<tr>
+							<td><b>Type</b></td>
+							<td><b>Tournament</b></td>
+							<td><b>Opponent</b></td>
+							<td><b>Td</b></td>
+							<td><b>Ki</b></td>
+							<td><b>Score</b></td>
+							<td><b>Result</b></td>
+							<td><b>Match</b></td>
+						</tr>
+						<?php
+						foreach (array('td' => 'scorer', 'ki' => 'killer') as $s => $desc) {
+							$been_there = false;
+							$matches = $p->getMatchMost($s);
+							foreach ($matches as $entry) {
+								if (!$been_there)
+									echo "<tr><td colspan='8'><hr></td></tr>";
+								?>
+								<tr>
+									<?php
+									$m = $entry['match_obj'];
+									if ($been_there) {
+										echo '<td></td>'; 
+									}
+									else {
+										echo "<td><i>Top $desc: " . count($matches) . " times</i></td>";
+										$been_there = true;
+									}
+									?>
+									<td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
+									<td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
+									<td><?php echo $entry['td']; ?></td>
+									<td><?php echo $entry['ki']; ?></td>
+									<td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
+									<td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
+									<td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
+								</tr>
+								<?php
+							}
+						}
+						?>
+					</table>
+				</div>
+			</div>
+		</div>
+	
+		<div class="row">
+			<div class="pboxLong">
+				<div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('played'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Played matches</div>
+				<div class="boxBody" id="played">
+					<table class="pbox">
+						<tr>
+							<td><b>Date played</b></td>
+							<td><b>Tournament</b></td>
+							<td><b>Opponent</b></td>
+							<td><b>Score</b></td>
+							<td><b>Result</b></td>                        
+							<td><b>Match</b></td>
+						</tr>
+						<tr>
+							<td colspan="6"><hr></td>
+						</tr>
+						<?php
+						foreach (Stats::getPlayedMatches(STATS_PLAYER, $p->player_id, MAX_RECENT_GAMES, true) as $m) {
+							?>
+							<tr>
+								<td><?php echo $m->date_played; ?></td>
+								<td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
+								<td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
+								<td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
+								<td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
+								<td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
+							</tr>
+							<?php
+						}
+						?>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
     <!-- Default open/close values for boxes -->
     <script language="JavaScript" type="text/javascript">
         document.getElementById('ach').style.display    = 'none';
