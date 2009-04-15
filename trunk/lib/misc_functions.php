@@ -485,8 +485,7 @@ function status($status, $msg = '') {
 				}
 			echo "</div>";
 		}
-        ?>
-    </div>	
+        ?>	
     <?php
 }
 
