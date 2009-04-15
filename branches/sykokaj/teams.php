@@ -1612,10 +1612,10 @@ function player_roaster($player_id) {
 				<p>Injuries <span><?php echo (empty($p->injs)) ? '<i>None</i>' : $p->injs; ?></span></p>
 				<p><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''>View stats</a>\n";; ?></p>
 				<?php if ($p->isInHOF()){
-					echo "<p><a href=\"#\" alt=\"Hall of Fame\">Hall of Fame</a></p>";
+					echo "<p><a href=\"index.php?section=records&subsec=hof\" alt=\"Hall of Fame\">Hall of Fame</a></p>";
 				}
 				if ($p->isWanted()){
-					echo "<p><a href=\"#\" alt=\"Wanted\">Wanted</a></p>";
+					echo "<p><a href=\"http://obblmbranch.suneradich.dk/index.php?section=records&subsec=wanted\" alt=\"Wanted\">Wanted</a></p>";
 				}
 				?>
 			</div>
