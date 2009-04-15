@@ -516,12 +516,18 @@ function sec_fixturelist() {
     if (is_object($coach) && $coach->admin) {
         if (isset($_GET['tlock']) && !preg_match('/[^0-9]$/', $_GET['tlock'])) {
             $match = new Match($_GET['tlock']);
+            $KEEP_TOUR_OPEN = $match->f_tour_id;
             status($match->toggleLock());
         }
         elseif (isset($_GET['mdel']) && !preg_match('/[^0-9]$/', $_GET['mdel'])) {
             $match = new Match($_GET['mdel']);
             $KEEP_TOUR_OPEN = $match->f_tour_id;
             status($match->delete());
+        }
+        elseif (isset($_GET['reset']) && !preg_match('/[^0-9]$/', $_GET['reset'])) {
+            $match = new Match($_GET['reset']);
+            $KEEP_TOUR_OPEN = $match->f_tour_id;
+            status($match->reset());
         }
     }
 
@@ -764,13 +770,13 @@ function sec_fixturelist() {
             ?>
             <tr><td colspan='7' class="seperator"></td></tr>
             <tr>
-                <td width="180"></td>
+                <td width="100"></td>
                 <td class="light" width="250"><?php echo $round; ?></td>
                 <td class="white" width="25"></td>
                 <td class="white" width="50"></td>
                 <td class="white" width="25"></td>
                 <td class="white" width="250"></td>
-                <td width="180"></td>
+                <td width="260"></td>
             </tr>
             <?php
             
@@ -792,12 +798,13 @@ function sec_fixturelist() {
                     <a href="?section=fixturelist&amp;match_id=<?php echo $match->match_id; ?>">
                     <?php 
                     if (is_object($coach)) {
-                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;&nbsp;\n";
+                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;\n";
                         if ($coach->admin) {
+                            echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/reset_notice')."')){return false;}\" href='?section=fixturelist&amp;reset=$match->match_id'>".$lng->getTrn('secs/fixtures/reset')."</a>&nbsp;\n";
                             if ($t->type != TT_KNOCKOUT) {
-                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;&nbsp;\n";
+                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;\n";
                             }
-                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;&nbsp;\n";
+                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;\n";
                         }
                     }
                     else {

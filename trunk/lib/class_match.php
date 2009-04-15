@@ -147,6 +147,32 @@ class Match
         return $status;
     }
 
+    public function reset() {
+
+        /**
+         * Clears all match data resetting the match to its initial not-yet-played-state.
+         **/
+        
+        $q = array();
+        $q[] = "DELETE FROM match_data WHERE f_match_id = $this->match_id";
+        $q[] = "UPDATE matches SET 
+            date_played = NULL, date_modified = NULL, 
+            team1_score = NULL, team2_score = NULL,
+            smp1 = NULL, smp2 = NULL, 
+            tcas1 = NULL, tcas2 = NULL, 
+            income1 = NULL, income2 = NULL,
+            ffactor1 = NULL, ffactor2 = NULL, 
+            fans = NULL, gate = NULL, stadium = NULL, submitter_id = NULL, locked = NULL
+            WHERE match_id = $this->match_id";
+            
+        $status = true;
+        foreach ($q as $qry) {
+            $status &= mysql_query($qry);
+        }
+        
+        return $status;
+    }
+
     public function chTeamId($nr, $new_tid) {
 
         /**
