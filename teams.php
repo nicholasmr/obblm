@@ -1417,6 +1417,8 @@ function team_roaster($team_id) {
 
 function player_roaster($player_id) {
 
+	global $lng;
+	
     // Is player id valid?
     if (!get_alt_col('players', 'player_id', $player_id, 'player_id') || !is_object($p = new Player($_GET['player_id'])))
         fatal("Invalid player ID.");
@@ -1447,8 +1449,7 @@ function player_roaster($player_id) {
     }
 
     /* Print player profile... */
-
-    title("Player details");
+	title($lng->getTrn('secs/players/details/title'));
     $players = $team->getPlayers();
     $i = $next = $prev = 0;
     $end = end(array_keys($players));
@@ -1473,7 +1474,7 @@ function player_roaster($player_id) {
 	<div id="player">
 		<?php
 		if (count($players) > 1) {
-			echo "<center><a href='index.php?section=coachcorner&amp;player_id=".$players[$prev]->player_id."'>Previous player</a> &nbsp;|&nbsp; <a href='index.php?section=coachcorner&amp;player_id=".$players[$next]->player_id."'>Next player</a></center><br>";
+			echo "<center><a href='index.php?section=coachcorner&amp;player_id=".$players[$prev]->player_id."'>". $lng->getTrn('secs/players/details/prev') ."</a> &nbsp;|&nbsp; <a href='index.php?section=coachcorner&amp;player_id=".$players[$next]->player_id."'>". $lng->getTrn('secs/players/details/next') ."</a></center><br>";
 		}
 		?>
 		<div class="playerProfile">		
@@ -1484,7 +1485,7 @@ function player_roaster($player_id) {
 					<img width="150" height="150" src="<?php echo $p->getPic() ?>" alt="<?php echo $p->name ?>">
 					<?php if ($ALLOW_EDIT){
 						$postSrc = urlencode($p->getPic());						
-						echo "<p><a href=\"javascript:void(0);\" onclick=\"alert('DEVELOPER NOTE:Popup with image upload');\">Upload new image</a></p>";				
+						echo "<p><a href=\"javascript:void(0);\" onclick=\"alert('DEVELOPER NOTE:Popup with image upload');\">". $lng->getTrn('secs/players/details/uploadimage') ."</a></p>";				
 					}
 				?>
 				</div>
@@ -1517,8 +1518,8 @@ function player_roaster($player_id) {
 					</ul>
 					
 					<div class="playerSkills">
-						<h4>Skills</h4>
-						<p><?php echo (empty($p->skills)) ? '<i>None</i>' : $p->skills; ?></p>
+						<h4><?php echo $lng->getTrn('secs/players/details/skills/title'); ?></h4>
+						<p><?php echo (empty($p->skills)) ? $lng->getTrn('secs/players/details/skills/noskill') : $p->skills; ?></p>
 					</div>
 				</div>
 		
@@ -1577,13 +1578,15 @@ function player_roaster($player_id) {
 			</div>
 		
 			<div class="playerProfileColumn playerDescription">		
-				<h4>Description <?php if ($ALLOW_EDIT){ echo "<span id=\"descEdit\">(<a href=\"#\">Edit</a>)</span>"; } ?></h4> 
+				<h4>
+				<?php echo $lng->getTrn('secs/players/details/desc/title');
+				if ($ALLOW_EDIT){ echo "<span id=\"descEdit\"> (<a href=\"#\">". $lng->getTrn('secs/players/details/desc/edit') ."</a>)</span>"; } ?></h4> 
 				<div class="body">
 					<?php
 						$txt = $p->getText(); 
 					   
 						if (empty($txt)) {
-							$txt = "Nothing has yet been written about $p->name."; 
+							$txt = $lng->getTrn('secs/players/details/desc/empty') . $p->name; 
 						}
 									
 						echo nls2p($txt);
@@ -1598,24 +1601,29 @@ function player_roaster($player_id) {
 					<?php 
 					if ($p->is_dead) {
 						$p->getDateDied();
-						echo "<span class=\"dead\">Dead ($p->date_died)</span>";
+						echo "<span class=\"dead\">". $lng->getTrn('secs/players/details/status/dead') ." ($p->date_died)</span>";
 					}
 					elseif ($p->is_sold) {
-						echo "<span class=\"sold\">SOLD ($p->date_sold)</span>";
+						echo "<span class=\"sold\">". $lng->getTrn('secs/players/details/status/sold') ." ($p->date_sold)</span>";
 					}
 					else {
-						echo (($status = strtolower($p->getStatus(-1))) == 'none') ? "<span class=\"ready\">Ready</span>" : "<span class=\"injured\">$status</span>"; 
+						echo (($status = strtolower($p->getStatus(-1))) == 'none') ? "<span class=\"ready\">". $lng->getTrn('secs/players/details/status/ready') ."</span>" : "<span class=\"injured\">$status</span>"; 
 					}
 					?>
 				</p>
-				<p>Value <span><?php echo $p->value/1000 .'k' ?></span></p>
-				<p>Injuries <span><?php echo (empty($p->injs)) ? '<i>None</i>' : $p->injs; ?></span></p>
-				<p><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''>View stats</a>\n";; ?></p>
+				<p><?php echo $lng->getTrn('secs/players/details/value') . " <span>" . $p->value/1000 .'k</span>' ?></p>
+				<?php
+				if (!empty($p->injs)){
+					echo "<p>$p->injs</p>";
+				}
+				?>
+				
+				<p><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''>". $lng->getTrn('secs/players/details/stats') ."</a>\n"; ?></p>
 				<?php if ($p->isInHOF()){
-					echo "<p><a href=\"index.php?section=records&subsec=hof\" alt=\"Hall of Fame\">Hall of Fame</a></p>";
+					echo "<p><a href=\"index.php?section=records&subsec=hof\" alt=\"". $lng->getTrn('secs/players/details/hof') ."\">". $lng->getTrn('secs/players/details/hof') ."</a></p>";
 				}
 				if ($p->isWanted()){
-					echo "<p><a href=\"http://obblmbranch.suneradich.dk/index.php?section=records&subsec=wanted\" alt=\"Wanted\">Wanted</a></p>";
+					echo "<p><a href=\"index.php?section=records&subsec=wanted\" alt=\"". $lng->getTrn('secs/players/details/wanted') ."\">". $lng->getTrn('secs/players/details/wanted') ."</a></p>";
 				}
 				?>
 			</div>
