@@ -493,4 +493,31 @@ function textdate($mysqldate, $noTime = false) {
     return date("D M j Y".(($noTime) ? '' : ' G:i:s'), strtotime($mysqldate));
 }
 
+// Returns HTML to show an icon with the result of a game
+function matchresult_icon($result) {
+
+	global $lng;
+	
+	$class = "";
+	
+	switch ($result){		
+		case "W":
+			$class = "won";
+			$title = $lng->getTrn('global/misc/gamewon');
+			break;
+		case "L":
+			$class = "lost";
+			$title = $lng->getTrn('global/misc/gamelost');
+			break;
+		case "D":
+			$class = "draw";
+			$title = $lng->getTrn('global/misc/gamedraw');
+			break;
+		default:
+			$class = "";
+			$title = $lng->getTrn('global/misc/gameunknown');
+	}	
+	return "<div class='match_icon ". $class ."' title='". $title ."'></div>";	
+}
+
 ?>
