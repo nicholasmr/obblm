@@ -27,6 +27,7 @@ function team_roaster($team_id) {
     global $skillarray;
     global $rules;
     global $settings;
+    global $lng;
     
     // Is team id valid?
     if (!get_alt_col('teams', 'team_id', $team_id, 'team_id'))
@@ -75,6 +76,7 @@ function team_roaster($team_id) {
             case 'rename_team':     status($team->rename($_POST['name'])); break;
             case 'buy_goods':       status($team->buy($_POST['thing'])); break;
             case 'drop_goods':      status($team->drop($_POST['thing'])); break;
+            case 'ready_state':     status($team->setReady(isset($_POST['bool']))); break;
             
             case 'skill':        
                 $type = null;
@@ -323,7 +325,7 @@ function team_roaster($team_id) {
     );
 
     sort_table(
-        "$team->name's players", 
+        $lng->getTrn('secs/teams/playersof').' '.$team->name, 
         "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
         $players, 
         $fields, 
@@ -344,15 +346,15 @@ function team_roaster($team_id) {
         <tr>
             <td width="100%">
             <?php
-            echo "<a href='index.php?section=coachcorner&amp;team_id=$_GET[team_id]&amp;detailed=".(($DETAILED) ? 0 : 1)."'><b>".(($DETAILED) ? 'Normal' : 'Detailed')." view</b></a>\n";
-            echo "&nbsp;|&nbsp;<a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=" . ($DETAILED ? '1' : '0') . "'><b>PDF roster</b></a>\n";
+            echo "<a href='index.php?section=coachcorner&amp;team_id=$_GET[team_id]&amp;detailed=".(($DETAILED) ? 0 : 1)."'><b>".(($DETAILED) ? $lng->getTrn('secs/teams/n_view') : $lng->getTrn('secs/teams/d_view'))."</b></a>\n";
+            echo "&nbsp;|&nbsp;<b><a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=" . ($DETAILED ? '1' : '0') . "'>PDF</a> <a href='handler.php?type=xmlexport&amp;tid=$_GET[team_id]'>XML</a> ".$lng->getTrn('secs/teams/roster')."</b>\n";
             if ($rules['enable_stars_mercs']) {
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"shh=document.getElementById('SHH'); if (shh.style.display != 'none'){shh.style.display='none'}else{shh.style.display='block'};\" title='Show/hide star hire history'><b>Star HH</b></a>\n";
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"mhh=document.getElementById('MHH'); if (mhh.style.display != 'none'){mhh.style.display='none'}else{mhh.style.display='block'};\" title='Show/hide mercenary hire history'><b>Merc. HH</b></a>\n";
             }
 //            echo "&nbsp;|&nbsp;<a href='#anc_about'><b>About</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='#anc_news'><b>News</b></a>\n";
-            echo "&nbsp;|&nbsp;<a href='handler.php?type=inducements&amp;team_id=$team->team_id'><b>Inducements try-out</b></a>\n";
+            echo "&nbsp;|&nbsp;<a href='handler.php?type=inducements&amp;team_id=$team->team_id'><b>".$lng->getTrn('secs/teams/indctry')."</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''><b>Vis. stats</b></a>\n";
 //            echo "&nbsp;|&nbsp;<a href='#gp'><b>Matches</b></a>\n";
 //            echo "&nbsp;|&nbsp;<a href='#tr'><b>Rankings</b></a>\n";
@@ -489,17 +491,21 @@ function team_roaster($team_id) {
      ******************************/
     ?>
     <div class="tpageBox">
-        <div class="boxTitle1"><a name='aanc'>Team info and statistics</a></div>
+        <div class="boxTitle1"><a name='aanc'><?php echo $lng->getTrn('secs/teams/box_info/title');?></a></div>
         <div class="boxBody">
             <table width="100%">
                 <tr>
-                    <td>Coach</td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/coach');?></td>
                     <td><a href="index.php?section=coaches&amp;coach_id=<?php echo $team->owned_by_coach_id;?>"><?php echo $team->coach_name; ?></a></td>
                 </tr>
                 <tr>
-                    <td>Race</td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/race');?></td>
                     <td><a href='index.php?section=races&amp;race=<?php echo $team->race; ?>'><?php echo $team->race; ?></a></td>
                 </tr>
+                <tr>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/ready');?></td>
+                    <td><?php echo ($team->rdy) ? $lng->getTrn('secs/teams/yes') : $lng->getTrn('secs/teams/no'); ?></td>
+                </tr>                
                 <tr>
                     <td>TV</td>
                     <td><?php echo $team->value/1000 . 'k'; ?></td>
@@ -518,7 +524,7 @@ function team_roaster($team_id) {
                 }
                 elseif ($team->race != 'Khemri' && $team->race != 'Nurgle') {
                     echo "<td>Apothecary</td>\n";
-                    echo "<td>" . ($team->apothecary ? 'Yes' : 'No') . "</td>\n";
+                    echo "<td>" . ($team->apothecary ? $lng->getTrn('secs/teams/yes') : $lng->getTrn('secs/teams/no')) . "</td>\n";
                 }
                 ?>
                 </tr>
@@ -542,40 +548,40 @@ function team_roaster($team_id) {
                     <td colspan=2><hr></td>
                 </tr>
                 <tr>
-                    <td>Games&nbsp;played</td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/gp');?></td>
                     <td><?php echo $team->played; ?></td>
                 </tr>
                 <tr>
-                    <td>PCT&nbsp;won</td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/pct_won');?></td>
                     <td><?php echo sprintf("%1.1f", $team->win_percentage).'%'; ?></td>
                 </tr>
                 <tr>
-                    <td>Tours&nbsp;won</td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/tours_won');?></td>
                     <td><?php echo $team->won_tours; ?></td>
                 </tr>
                 <tr>
-                    <td>Win&nbsp;streak</td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/ws');?></td>
                     <td><?php echo $team->row_won; ?></td>
                 </tr>
                 <tr>
-                    <td>Lose&nbsp;streak</td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/ls');?></td>
                     <td><?php echo $team->row_lost; ?></td>
                 </tr>
                 <tr>
-                    <td>Draw&nbsp;streak</td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/ds');?></td>
                     <td><?php echo $team->row_draw; ?></td>
                 </tr>
                 <tr>
-                    <td>Latest&nbsp;tour</td>
-                    <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>None</i>'; ?></td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/ltour');?></td>
+                    <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>'.$lng->getTrn('secs/teams/none').'</i>'; ?></td>
                 </tr>
                 <tr valign="top">
-                    <td>Tours&nbsp;played</td>
-                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>None</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/toursplayed');?></td>
+                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>'.$lng->getTrn('secs/teams/none').'</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
                 </tr>
                 <tr valign="top">
-                    <td>Prizes</td>
-                    <td><small><?php $prizes = $team->getPrizes(true); echo (empty($prizes)) ? '<i>None</i>' : $prizes; ?></small></td>
+                    <td><?php echo $lng->getTrn('secs/teams/box_info/prizes');?></td>
+                    <td><small><?php $prizes = $team->getPrizes(true); echo (empty($prizes)) ? '<i>'.$lng->getTrn('secs/teams/none').'</i>' : $prizes; ?></small></td>
                 </tr>
             </table>
         </div>
@@ -585,19 +591,20 @@ function team_roaster($team_id) {
     if ($ALLOW_EDIT) {
         ?>
         <div class="tpageBox">
-            <div class="boxTitle2">Team management</div>
+            <div class="boxTitle2"><?php echo $lng->getTrn('secs/teams/box_tm/title');?></div>
             <div class="boxBody">
                 <?php
                 
                 $tmanage = array(
-                    'hire_player'       => 'Hire player',
-                    'hire_journeyman'   => 'Hire journeymen',
-                    'fire_player'       => 'Fire player',
-                    'rename_player'     => 'Rename player',
-                    'renumber_player'   => 'Renumber player',
-                    'rename_team'       => 'Rename team',
-                    'buy_goods'         => 'Buy team goods',
-                    'drop_goods'        => 'Let go of team goods',
+                    'hire_player'       => $lng->getTrn('secs/teams/box_tm/hire_player'),
+                    'hire_journeyman'   => $lng->getTrn('secs/teams/box_tm/hire_journeyman'),
+                    'fire_player'       => $lng->getTrn('secs/teams/box_tm/fire_player'),
+                    'rename_player'     => $lng->getTrn('secs/teams/box_tm/rename_player'),
+                    'renumber_player'   => $lng->getTrn('secs/teams/box_tm/renumber_player'),
+                    'rename_team'       => $lng->getTrn('secs/teams/box_tm/rename_team'),
+                    'buy_goods'         => $lng->getTrn('secs/teams/box_tm/buy_goods'),
+                    'drop_goods'        => $lng->getTrn('secs/teams/box_tm/drop_goods'),
+                    'ready_state'       => $lng->getTrn('secs/teams/box_tm/ready_state'),
                 );
 
                 // Set default choice.
@@ -622,7 +629,7 @@ function team_roaster($team_id) {
                     <input type="submit" name="tmanage" value="OK">
                 </form>
 
-                <br><i>Description:</i><br><br>
+                <br><i><?php echo $lng->getTrn('secs/teams/desc');?>:</i><br><br>
                 <form name="form_tmanage" method="POST" enctype="multipart/form-data">
                 <?php
                 $DISABLE = false;
@@ -634,9 +641,8 @@ function team_roaster($team_id) {
                      **************/
                         
                     case 'hire_player':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/hire_player');
                         ?>
-                        Hire a new player.<br>
-                        Hiring a player as a journeyman is free, but only players from a 0-16 allowed position on your team's roster are hire-able as journeymen.
                         <hr><br>
                         Player:<br>
                         <select name='player'>
@@ -681,9 +687,9 @@ function team_roaster($team_id) {
                      **************/
                     
                     case 'hire_journeyman':
-                        echo "Hire one of your journeymen to permanently play on your team.\n";
-                        echo "<hr><br>\n";
+                        echo $lng->getTrn('secs/teams/box_tm/desc/hire_journeyman');
                         ?>
+                        <hr><br>
                         Player:<br>
                         <select name="player">
                         <?php
@@ -709,7 +715,7 @@ function team_roaster($team_id) {
                      **************/
                         
                     case 'fire_player':
-                        echo "Fire a player. " . $rules['player_refund']*100 . "% refund.\n";
+                        echo $lng->getTrn('secs/teams/box_tm/desc/fire_player').' '.$rules['player_refund']*100 . "%.\n";
                         ?>
                         <hr><br>
                         Player:<br>
@@ -734,8 +740,8 @@ function team_roaster($team_id) {
                      **************/
                         
                     case 'rename_player':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/rename_player');
                         ?>
-                        Rename a player.
                         <hr><br>
                         Player:<br>
                         <select name="player">
@@ -765,8 +771,8 @@ function team_roaster($team_id) {
                      **************/
                         
                     case 'renumber_player':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/renumber_player');
                         ?>
-                        Renumber a player.
                         <hr><br>
                         Player:<br>
                         <select name="player">
@@ -802,8 +808,8 @@ function team_roaster($team_id) {
                      **************/
                         
                     case 'rename_team':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/rename_team');
                         ?>
-                        Rename your team.
                         <hr><br>
                         New name:<br>
                         <input type='text' name='name' maxlength='50' size='20'>
@@ -816,11 +822,10 @@ function team_roaster($team_id) {
                      **************/
                         
                     case 'buy_goods':
-
-                        echo "Buy team goods.";
+                        echo $lng->getTrn('secs/teams/box_tm/desc/buy_goods');
                         $goods_temp = $team->getGoods();
                         if ($DEA[$team->race]['other']['RerollCost'] != $goods_temp['rerolls']['cost']) {
-                            echo "<br><br>Please note that re-roll prices are <font color='red'><b>doubled</b></font> because a tournament is currently being played.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert to overcharged amount.";
+                            echo $lng->getTrn('secs/teams/box_tm/desc/buy_goods_warn');
                         }
                         ?>
                         <hr><br>
@@ -847,8 +852,8 @@ function team_roaster($team_id) {
                      **************/
                         
                     case 'drop_goods':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/drop_goods');
                         ?>
-                        Let go/drop of team goods for no refund.
                         <hr><br>
                         Thing:<br>
                         <select name="thing">
@@ -866,7 +871,21 @@ function team_roaster($team_id) {
                         </select>
                         <input type="hidden" name="type" value="drop_goods">
                         <?php
-                        break;                            
+                        break;
+                        
+                    /**************
+                     * Set ready state
+                     **************/
+                        
+                    case 'ready_state':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/ready_state');
+                        ?>
+                        <hr><br>
+                        Team ready? 
+                        <input type="checkbox" name="bool" value="1" <?php echo ($team->rdy) ? 'CHECKED' : '';?>>
+                        <input type="hidden" name="type" value="ready_state">
+                        <?php
+                        break;
                     }
                     ?>
                     <br><br>
@@ -878,20 +897,20 @@ function team_roaster($team_id) {
         if ($coach->admin) {
             ?>
             <div class="tpageBox">
-                <div class="boxTitle3">Admin tools</div>
+                <div class="boxTitle3"><?php echo $lng->getTrn('secs/teams/box_admin/title');?></div>
                 <div class="boxBody">
                     <?php
 
                     $admin_tools = array(
-                        'unbuy_player'      => 'Un-hire player',
-                        'unhire_journeyman' => 'Un-hire journeymen',
-                        'unsell_player'     => 'Un-fire player',
-                        'unbuy_goods'       => 'Un-buy team goods',
-                        'bank'              => 'Gold bank',
-                        'chown'             => 'Change ownership',
-                        'spp'               => 'Manage player extra SPP',
-                        'extra_skills'      => 'Manage player extra skills',
-                        'ach_skills'        => 'Remove ach. player skills'
+                        'unbuy_player'      => $lng->getTrn('secs/teams/box_admin/unbuy_player'),
+                        'unhire_journeyman' => $lng->getTrn('secs/teams/box_admin/unhire_journeyman'),
+                        'unsell_player'     => $lng->getTrn('secs/teams/box_admin/unsell_player'),
+                        'unbuy_goods'       => $lng->getTrn('secs/teams/box_admin/unbuy_goods'),
+                        'bank'              => $lng->getTrn('secs/teams/box_admin/bank'),
+                        'chown'             => $lng->getTrn('secs/teams/box_admin/chown'),
+                        'spp'               => $lng->getTrn('secs/teams/box_admin/spp'),
+                        'extra_skills'      => $lng->getTrn('secs/teams/box_admin/extra_skills'),
+                        'ach_skills'        => $lng->getTrn('secs/teams/box_admin/ach_skills'),
                     );
 
                     // Set default choice.
@@ -916,7 +935,7 @@ function team_roaster($team_id) {
                         <input type="submit" name="admintools" value="OK">
                     </form>
 
-                    <br><i>Description:</i><br><br>
+                    <br><i><?php echo $lng->getTrn('secs/teams/desc');?>:</i><br><br>
                     <form name='form_admintools' method='POST'>
                         <?php
                         $DISABLE = false;
@@ -924,13 +943,12 @@ function team_roaster($team_id) {
                         switch ($_POST['menu_admintools']) {
 
                             /***************
-                                * Un-buy player
-                                **************/
+                             * Un-buy player
+                             **************/
                                 
                             case 'unbuy_player':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/unbuy_player');
                                 ?>
-                                Regret hiring a player. 100% refund.<br>
-                                This is only possible for players which have not participated in any matches.
                                 <hr><br>
                                 Player:<br>
                                 <select name="player">
@@ -949,13 +967,12 @@ function team_roaster($team_id) {
                                 break;
                             
                             /***************
-                                * Un-hire journeymen
-                                **************/
+                             * Un-hire journeymen
+                             **************/
 
                             case 'unhire_journeyman':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/unhire_journeyman');
                                 ?>
-                                Regret permanently hiring a journeyman. 
-                                This only works on players from a 0-16 allowed position on your team's roster.
                                 <hr><br>
                                 Player:<br>
                                 <select name="player">
@@ -975,12 +992,12 @@ function team_roaster($team_id) {
                                 break;
 
                             /***************
-                                * Un-sell player
-                                **************/
+                             * Un-sell player
+                             **************/
                                 
                             case 'unsell_player':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/unsell_player');
                                 ?>
-                                Regret firing a player.
                                 <hr><br>
                                 Player:<br>
                                 <select name="player">
@@ -999,12 +1016,12 @@ function team_roaster($team_id) {
                                 break;
                                 
                             /***************
-                                * Un-buy team goods
-                                **************/
+                             * Un-buy team goods
+                             **************/
                                 
                             case 'unbuy_goods':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/unbuy_goods');
                                 ?>
-                                Regret buying team goods.
                                 <hr><br>
                                 <select name="thing">
                                 <?php
@@ -1022,12 +1039,12 @@ function team_roaster($team_id) {
                                 break;
                                 
                             /***************
-                                * Gold bank
-                                **************/
+                             * Gold bank
+                             **************/
                                 
                             case 'bank':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/bank');
                                 ?>
-                                Make changes to team's treasury.
                                 <hr><br>
                                 &Delta; team treasury:<br>
                                 <input type="radio" CHECKED name="sign" value="+">+
@@ -1042,8 +1059,8 @@ function team_roaster($team_id) {
                              **************/
                                 
                             case 'chown':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/chown');
                                 ?>
-                                Change this team's ownership.
                                 <hr><br>
                                 New owner:<br>
                                 <select name="cid">
@@ -1058,23 +1075,25 @@ function team_roaster($team_id) {
                                 break;
                                 
                             /***************
-                                * Manage extra SPP
-                                **************/
+                             * Manage extra SPP
+                             **************/
                                 
                             case 'spp':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/spp');
                                 ?>
-                                Manage a player's extra SPP.
                                 <hr><br>
                                 Player:<br>
                                 <select name="player">
                                 <?php
                                 $DISABLE = true;
+                                objsort($players, array('+is_dead', '+name'));
                                 foreach ($players as $p) {
-                                    if (!$p->is_sold && !$p->is_dead) {
-                                        echo "<option value='$p->player_id'>$p->name</option>";
+                                    if (!$p->is_sold) {
+                                        echo "<option value='$p->player_id'".(($p->is_dead) ? ' style="background-color:'.COLOR_HTML_DEAD.';"' : '').">$p->name</option>";
                                         $DISABLE = false;
                                     }
                                 }
+                                objsort($players, array('+nr'));
                                 ?>
                                 </select>
                                 <br><br>
@@ -1086,12 +1105,12 @@ function team_roaster($team_id) {
                                 break;
 
                             /***************
-                                * Manage extra skills
-                                **************/
+                             * Manage extra skills
+                             **************/
                                 
                             case 'extra_skills':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/extra_skills');
                                 ?>
-                                Manage a player's extra skills.
                                 <hr><br>
                                 Player:<br>
                                 <select name="player">
@@ -1130,12 +1149,12 @@ function team_roaster($team_id) {
                                 break;
 
                             /***************
-                                * Remove achived skills
-                                **************/
+                             * Remove achived skills
+                             **************/
                                 
                             case 'ach_skills':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/ach_skills');
                                 ?>
-                                Remove a players achieved skills. This makes the player able to rechoose a skill.
                                 <hr><br>
                                 Player:<br>
                                 <select name="player">
@@ -1184,13 +1203,13 @@ function team_roaster($team_id) {
         }
     }
 
-    title("<a name='anc_about'>About $team->name</a>");
+    title("<a name='anc_about'>".$lng->getTrn('secs/teams/about')." $team->name</a>");
     ?>
     <table class='picAndText'>
         <tr>
-            <td class='light'><b>Team's logo</b></td>
-            <td class='light'><b>Team's stadium</b></td>
-            <td class='light'><b>About</b></td>
+            <td class='light'><b><?php echo $lng->getTrn('secs/teams/logo');?></b></td>
+            <td class='light'><b><?php echo $lng->getTrn('secs/teams/stad');?></b></td>
+            <td class='light'><b><?php echo $lng->getTrn('secs/teams/about');?></b></td>
         </tr>
         <tr>
             <td>
@@ -1207,7 +1226,7 @@ function team_roaster($team_id) {
                 <?php
                 $txt = $team->getText();
                 if (empty($txt)) {
-                    $txt = "Nothing has yet been written about $team->name."; 
+                    $txt = $lng->getTrn('secs/teams/nowrite')." $team->name."; 
                 }
                 
                 if ($ALLOW_EDIT) {
@@ -1217,7 +1236,7 @@ function team_roaster($team_id) {
                         <br><br>
                         <input type="hidden" name="type" value="teamtext">
                         <center>
-                        <input type="submit" name='Save' value='Save'>
+                        <input type="submit" name='Save' value='<?php echo $lng->getTrn('secs/teams/save');?>'>
                         </center>
                     </form>
                     <?php
@@ -1231,29 +1250,29 @@ function team_roaster($team_id) {
     </table>
     <?php
   
-    title("<a name='anc_news'>News</a>");
+    title("<a name='anc_news'>".$lng->getTrn('secs/teams/news')."</a>");
     $news = $team->getNews(MAX_TNEWS);
     ?>
     <div class="row">
         <div class="tnewsBox">
-            <div class="boxTitle1">Team news</div>
+            <div class="boxTitle1"><?php echo $lng->getTrn('secs/teams/tnews');?></div>
             <div class="boxBody">
             <?php
             $news_2 = array();
             foreach ($news as $n) {
-                $news_2[] = '<p>'.$n->txt.'<div style="text-align: right;"><p style="display: inline;">'.$n->date.
+                $news_2[] = '<p>'.$n->txt.'<div style="text-align: right;"><p style="display: inline;">'.textdate($n->date, true).
                 (($ALLOW_EDIT) 
                     ? " | <form method='POST' name='newsForm$n->news_id' style='display:inline; margin:0px;'>
                         <input type='hidden' name='type' value='newsdel'>
                         <input type='hidden' name='news_id' value='$n->news_id'>
-                        <a href='javascript:void(0);' onClick='document.newsForm$n->news_id.submit();'>[Delete]</a>
+                        <a href='javascript:void(0);' onClick='document.newsForm$n->news_id.submit();'>[".$lng->getTrn('secs/teams/delete')."]</a>
                         </form>"
                     : '')
                 .'</p></div><br></p>';
             }
             echo implode("<hr>\n", $news_2);
             if (empty($news)) {
-                echo '<i>No entries exist.</i>';
+                echo '<i>'.$lng->getTrn('secs/teams/nonews').'</i>';
             }
             ?>
             </div>    
@@ -1262,13 +1281,13 @@ function team_roaster($team_id) {
         if ($ALLOW_EDIT) {
             ?>
             <div class="tnewsBoxNew">
-                <div class="boxTitle1">Write news</div>
+                <div class="boxTitle1"><?php echo $lng->getTrn('secs/teams/wnews');?></div>
                 <div class="boxBody">
                     <form method="POST">
                         <textarea name='txt' cols='30' rows='7'></textarea>
                         <br><br>
                         <input type="hidden" name="type" value="news">
-                        <input type='submit' value="Submit news">
+                        <input type='submit' value="<?php echo $lng->getTrn('secs/teams/submitnews');?>">
                     </form>
                 </div>    
             </div>
@@ -1279,7 +1298,7 @@ function team_roaster($team_id) {
     <?php
 
   
-    title("<a name='gp'>Games played</a>");
+    title("<a name='gp'>".$lng->getTrn('secs/teams/gamesplayed')."</a>");
     
     if (isset($_POST['opid']) || isset($_POST['trid'])) {
         $_SESSION['opid'] = (int) $_POST['opid'];
@@ -1290,9 +1309,9 @@ function team_roaster($team_id) {
     
     ?>
     <form method="POST">
-        <b>Show matches against</b>
+        <b><?php echo $lng->getTrn('secs/teams/showagainst');?></b>
         <select name="opid">
-            <option value='-1'>All</option>
+            <option value='-1'><?php echo $lng->getTrn('secs/teams/all');?></option>
             <?php
             $teams = Team::getTeams();
             objsort($teams, array('+name'));
@@ -1304,9 +1323,9 @@ function team_roaster($team_id) {
             }
             ?>
         </select>
-        &nbsp;&nbsp;<b>from tournament</b>
+        &nbsp;&nbsp;<b><?php echo $lng->getTrn('secs/teams/fromtour');?></b>
         <select name="trid">
-            <option value='-1'>All</option>
+            <option value='-1'><?php echo $lng->getTrn('secs/teams/all');?></option>
             <?php
             foreach (Tour::getTours() as $tr) {
                 echo "<option value='$tr->tour_id' ".(($trid && $tr->tour_id == $trid) ? ' SELECTED ' : '').">$tr->name</option>\n";
@@ -1315,7 +1334,7 @@ function team_roaster($team_id) {
         </select>
         <input type="hidden" name="gamesSort" value="1">
         &nbsp;&nbsp;&nbsp;
-        <input type="submit" value="Show matches">
+        <input type="submit" value="<?php echo $lng->getTrn('secs/teams/showmatches');?>">
         <br><br>
     </form>
     <?php
@@ -1359,7 +1378,7 @@ function team_roaster($team_id) {
     );
     
     sort_table(
-        'Games played', 
+        $lng->getTrn('secs/teams/gamesplayed'), 
         "index.php?section=coachcorner&amp;team_id=$team->team_id", 
         $matches, 
         $fields, 
@@ -1368,7 +1387,7 @@ function team_roaster($team_id) {
         array('GETsuffix' => 'rg', 'anchor' => 'gp', 'doNr' => false) // recent games.
     );
     
-    title("<a name='tr'>Tournament ranking(s)</a>");
+    title("<a name='tr'>".$lng->getTrn('secs/teams/tourranks')."</a>");
 
     $tours = $team->getTourRankings();
     foreach ($tours as $t) {
@@ -1394,7 +1413,7 @@ function team_roaster($team_id) {
     );
     
     sort_table(
-        'Rankings', 
+        $lng->getTrn('secs/teams/tourranks'), 
         "index.php?section=coachcorner&amp;team_id=$team->team_id", 
         $tours, 
         $fields, 
@@ -1449,7 +1468,7 @@ function player_roaster($player_id) {
     }
 
     /* Print player profile... */
-	title($lng->getTrn('secs/players/details/title'));
+	title($lng->getTrn('secs/playerprofile/title'));
     $players = $team->getPlayers();
     $i = $next = $prev = 0;
     $end = end(array_keys($players));
@@ -1474,7 +1493,7 @@ function player_roaster($player_id) {
 	<div id="player">
 		<?php
 		if (count($players) > 1) {
-			echo "<center><a href='index.php?section=coachcorner&amp;player_id=".$players[$prev]->player_id."'>". $lng->getTrn('secs/players/details/prev') ."</a> &nbsp;|&nbsp; <a href='index.php?section=coachcorner&amp;player_id=".$players[$next]->player_id."'>". $lng->getTrn('secs/players/details/next') ."</a></center><br>";
+			echo "<center><a href='index.php?section=coachcorner&amp;player_id=".$players[$prev]->player_id."'>". $lng->getTrn('secs/playerprofile/prev') ."</a> &nbsp;|&nbsp; <a href='index.php?section=coachcorner&amp;player_id=".$players[$next]->player_id."'>". $lng->getTrn('secs/playerprofile/next') ."</a></center><br>";
 		}
 		?>
 		<div class="playerProfile">		
@@ -1485,7 +1504,7 @@ function player_roaster($player_id) {
 					<img width="150" height="150" src="<?php echo $p->getPic() ?>" alt="<?php echo $p->name ?>">
 					<?php if ($ALLOW_EDIT){
 						$postSrc = urlencode($p->getPic());						
-						echo "<p><a href=\"javascript:void(0);\" onclick=\"alert('DEVELOPER NOTE:Popup with image upload');\">". $lng->getTrn('secs/players/details/uploadimage') ."</a></p>";				
+						echo "<p><a href=\"javascript:void(0);\" onclick=\"alert('DEVELOPER NOTE:Popup with image upload');\">". $lng->getTrn('secs/playerprofile/uploadimage') ."</a></p>";				
 					}
 				?>
 				</div>
@@ -1518,8 +1537,8 @@ function player_roaster($player_id) {
 					</ul>
 					
 					<div class="playerSkills">
-						<h4><?php echo $lng->getTrn('secs/players/details/skills/title'); ?></h4>
-						<p><?php echo (empty($p->skills)) ? $lng->getTrn('secs/players/details/skills/noskill') : $p->skills; ?></p>
+						<h4><?php echo $lng->getTrn('secs/playerprofile/skills/title'); ?></h4>
+						<p><?php echo (empty($p->skills)) ? $lng->getTrn('secs/playerprofile/skills/noskill') : $p->skills; ?></p>
 					</div>
 				</div>
 		
@@ -1579,18 +1598,15 @@ function player_roaster($player_id) {
 		
 			<div class="playerProfileColumn playerDescription">		
 				<h4>
-				<?php echo $lng->getTrn('secs/players/details/desc/title');
-				if ($ALLOW_EDIT){ echo "<span id=\"descEdit\"> (<a href=\"#\">". $lng->getTrn('secs/players/details/desc/edit') ."</a>)</span>"; } ?></h4> 
+				<?php echo $lng->getTrn('secs/playerprofile/desc/title');
+				if ($ALLOW_EDIT){ echo "<span id=\"descEdit\"> (<a href=\"#\">". $lng->getTrn('secs/playerprofile/desc/edit') ."</a>)</span>"; } ?></h4> 
 				<div class="body">
 					<?php
-						$txt = $p->getText(); 
-					   
+						$txt = $p->getText();					   
 						if (empty($txt)) {
-							$txt = $lng->getTrn('secs/players/details/desc/empty') . $p->name; 
-						}
-									
-						echo nls2p($txt);
-		
+							$txt = $lng->getTrn('secs/playerprofile/desc/empty') . $p->name; 
+						}									
+						echo nls2p($txt);		
 						?>					
 					</div>
 			</div>
@@ -1601,37 +1617,37 @@ function player_roaster($player_id) {
 					<?php 
 					if ($p->is_dead) {
 						$p->getDateDied();
-						echo "<span class=\"dead\">". $lng->getTrn('secs/players/details/status/dead') ." ($p->date_died)</span>";
+						echo "<span class=\"dead\">". $lng->getTrn('secs/playerprofile/status/dead') ." ($p->date_died)</span>";
 					}
 					elseif ($p->is_sold) {
-						echo "<span class=\"sold\">". $lng->getTrn('secs/players/details/status/sold') ." ($p->date_sold)</span>";
+						echo "<span class=\"sold\">". $lng->getTrn('secs/playerprofile/status/sold') ." ($p->date_sold)</span>";
 					}
 					else {
-						echo (($status = strtolower($p->getStatus(-1))) == 'none') ? "<span class=\"ready\">". $lng->getTrn('secs/players/details/status/ready') ."</span>" : "<span class=\"injured\">$status</span>"; 
+						echo (($status = strtolower($p->getStatus(-1))) == 'none') ? "<span class=\"ready\">". $lng->getTrn('secs/playerprofile/status/ready') ."</span>" : "<span class=\"injured\">$status</span>"; 
 					}
 					?>
 				</p>
-				<p><?php echo $lng->getTrn('secs/players/details/value') . " <span>" . $p->value/1000 .'k</span>' ?></p>
+				<p><?php echo $lng->getTrn('secs/playerprofile/value') . " <span>" . $p->value/1000 .'k</span>' ?></p>
 				<?php
 				if (!empty($p->injs)){
 					echo "<p>$p->injs</p>";
 				}
 				?>
 				
-				<p><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''>". $lng->getTrn('secs/players/details/stats') ."</a>\n"; ?></p>
+				<p><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id'>". $lng->getTrn('secs/playerprofile/stats') ."</a>\n"; ?></p>
 				<?php if ($p->isInHOF()){
-					echo "<p><a href=\"index.php?section=records&subsec=hof\" alt=\"". $lng->getTrn('secs/players/details/hof') ."\">". $lng->getTrn('secs/players/details/hof') ."</a></p>";
+					echo "<p><a href=\"index.php?section=records&subsec=hof\" alt=\"". $lng->getTrn('secs/playerprofile/hof') ."\">". $lng->getTrn('secs/playerprofile/hof') ."</a></p>";
 				}
 				if ($p->isWanted()){
-					echo "<p><a href=\"index.php?section=records&subsec=wanted\" alt=\"". $lng->getTrn('secs/players/details/wanted') ."\">". $lng->getTrn('secs/players/details/wanted') ."</a></p>";
+					echo "<p><a href=\"index.php?section=records&subsec=wanted\" alt=\"". $lng->getTrn('secs/playerprofile/wanted') ."\">". $lng->getTrn('secs/playerprofile/wanted') ."</a></p>";
 				}
 				?>
 			</div>
 		</div>
-	
+		
 		<div class="row">
 			<div class="pboxLong">
-				<div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('ach'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Achievements</div>
+				<h3 class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('ach'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/ach');?></h3>
 				<div class="boxBody" id="ach">
 					<table class="pbox">
 						<tr>
@@ -1687,7 +1703,7 @@ function player_roaster($player_id) {
 		
 		<div class="row">
 			<div class="pboxLong">
-				<div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('mbest'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Match best</div>
+				<h3 class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('mbest'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/best');?></h3>
 				<div class="boxBody" id="mbest">
 					<table class="pbox">
 						<tr>
@@ -1735,10 +1751,10 @@ function player_roaster($player_id) {
 				</div>
 			</div>
 		</div>
-	
+
 		<div class="row">
 			<div class="pboxLong">
-				<div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('played'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;Played matches</div>
+				<h3 class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('played'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/playedmatches');?></h3>
 				<div class="boxBody" id="played">
 					<table class="pbox">
 						<tr>
@@ -1771,6 +1787,7 @@ function player_roaster($player_id) {
 			</div>
 		</div>
 	</div>
+
     <!-- Default open/close values for boxes -->
     <script language="JavaScript" type="text/javascript">
         document.getElementById('ach').style.display    = 'none';
@@ -1812,11 +1829,13 @@ function disp_teams($coach_id = null) {
         $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
         $prizes = $t->getPrizes(true);
         $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;
+        $t->rdy = ($t->rdy) ? '<font color="green">Yes</font>' : '<font color="red">No</font>';
     }
 
     $fields = array(
         'logo'      => array('desc' => 'Logo', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id'), 'nosort' => true), 
         'name'      => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
+        'rdy'       => array('desc' => 'Ready', 'nosort' => true), 
         'race'      => array('desc' => 'Race'), 
         'latest_tour' => array('desc' => 'Latest tour'), 
         'prizes'      => array('desc' => 'Prizes', 'nosort' => true), 

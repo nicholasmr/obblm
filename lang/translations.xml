@@ -34,9 +34,10 @@
             <login>Login</login>
             <logout>Logout</logout>
             <admin>Admin</admin>
-            <cc>CC</cc> <!-- Leave this untouched -->
+            <coachcorner>Coach corner</coachcorner>
+            <cc>CC</cc> <!-- Leave this untouched. Is abbrev of above. -->
             <home>Home</home>
-            <fixtures>Fixtures</fixtures>
+            <fixtures>Tournaments</fixtures>
             <standings>Standings</standings>
             <teams>Teams</teams>
             <players>Players</players>
@@ -48,6 +49,7 @@
             <gallery>Gallery</gallery>
             <gb>Guest book</gb>
             <forum>Forum</forum>
+            <recent>Recent matches</recent> <!-- Not shown amongst menu links -->
         </secLinks>
         
         <!-- Notifications for sortable tables -->
@@ -66,6 +68,10 @@
             <specific>Specific</specific>
             <pms>Set per match stats</pms>
             <oas>Set over all stats</oas>
+			<gamewon>Won</gamewon>
+			<gamelost>Lost</gamelost>
+			<gamedraw>Draw</gamedraw>
+			<gameunknown>Unknown</gameunknown>
         </misc>
     </global>
 
@@ -100,11 +106,12 @@
         <fixtures>
         
             <!-- General -->
-            <links>
-            <![CDATA[<i>Note</i>: Tournament specific standings are available through the <i>[S]</i> links, tournament descriptions through the <i>[D]</i> links and tournament brackets for knockout type tournaments through the <i>[B]</i> links.]]>
-            </links>
             <mdel><![CDATA[Are you sure you want to delete the match?\n\nPLEASE NOTE:\nUnless the match has not yet been played this action is not reversible and will affect the contents of the subsequent match reports for both teams.\nIt is advised against deleting non-test matches unless you know what you are doing.]]></mdel>
+            <reset_notice><![CDATA[Are you sure you want to reset the match?\n\nPLEASE NOTE:\nResetting a match clears all match data.\nResetting a match in which one, or both, of the competing teams have played subsequent matches may result in incorrect player states in the match reports of the subsequent matches.]]></reset_notice>
             
+            <standings>Standings</standings>
+            <desc>Description</desc>
+            <bracket>Bracket</bracket>
             <fin>finished</fin>
             <undecided>Undecided</undecided>
             <winner>Winner</winner>
@@ -114,6 +121,7 @@
             <lock>Lock</lock>
             <unlock>Unlock</unlock>
             <del>Delete</del>
+            <reset>Reset</reset>
             
             <!-- Match's round types -->
             <mtypes>
@@ -143,6 +151,43 @@
             <report>
                 
                 <!-- General -->
+                <click>Click here</click>
+                <forhelp>for help on filling out a match report.</forhelp>
+                <help>
+                <![CDATA[
+                <b>Preliminary info</b><br>
+                First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
+                Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
+                <br>
+                <b>Game information fields</b><br>
+                The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
+                <br>
+                <b>Sportsmanship points</b><br>
+                Yelling, screaming, cursing at the dice, disturbing the opponent in his turn and not turning up on gaming night may be punished by giving negative sportsmanship points. Acting like a gentleman and taking a defeat with a smile may be embraced by giving positive sportsmanship points.
+                If your league on the other hand makes the needle on the evil-o-meter jump into the red area constantly, it may be more natural applying the sportsmanship points system the other way around - embracing bad manners with positive sportsmanship points.<br>
+                <br>
+                <b>Casualties in general</b><br>
+                OBBLM can keep track of <i>team casualties</i>, which is the sum of the individual player casualties, opponent self-inflicted injuries, die on a fumble in sprints and crowd killings (and possibly other things of your leagues' choice).
+                Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
+                <br>
+                <b>Player skills</b><br>
+                Once the match report has been submitted OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
+                <br>
+                <b>Incomes</b><br>
+                A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
+                If you spended more than you made in a match then simply prefix - (minus).
+                <br><br>
+                Remember these factors when you calculate:<br>
+                <ul>
+                    <li>Spiraling expenses</i>
+                    <li>Treasury spend on inducements</li>
+                    <li>Hiring costs of star players and mercenaries</li>
+                    <li>Team winnings</li>
+                    <li>Tournament winnings, if the game was a final</li>
+                    <li>Sponsorship deal from Bloodweiser</li>
+                </ul>
+                ]]>
+                </help>
                 <report>report</report>
                 <add>Add</add>
                 <save>Save match</save>
@@ -187,42 +232,232 @@
         </standings>
         
         <teams>
-            <!-- nothing! -->
+
+            <!-- General -->
+            <playersof>Players of</playersof>
+            
+            <d_view>Detailed view</d_view>
+            <n_view>Normal view</n_view>
+            <roster>roster</roster>
+            <indctry>Inducements try-out</indctry>
+            
+            <about>About</about>
+                <logo>Team's logo</logo>
+                <stad>Team's stadium</stad>
+                <nowrite>Nothing has yet been written about</nowrite>
+                <save>Save</save>
+                
+            <news>News</news>
+                <tnews>Team news</tnews>
+                <wnews>Write news</wnews>
+                <nonews>No entries exist.</nonews>
+                <submitnews>Submit news</submitnews>
+                <delete>Delete</delete>
+            
+            <gamesplayed>Games played</gamesplayed>
+                <showagainst>Show matches against</showagainst>
+                <fromtour>from tournament</fromtour>
+                <showmatches>Show matches</showmatches>
+                <all>All</all>
+            
+            <tourranks>Tournament rankings</tourranks>
+
+            <!-- For the three team page boxes -->
+            
+            <desc>Description</desc>
+            <player>Player</player>
+            <none>None</none>
+            <yes>Yes</yes>
+            <no>No</no>
+
+            <box_info>
+                <title>Team info and statistics</title>
+                <coach>Coach</coach>
+                <race>Race</race>
+                <ready>Ready</ready>
+                
+                <gp><![CDATA[Games&nbsp;played]]></gp>
+                <pct_won><![CDATA[PCT&nbsp;won]]></pct_won>
+                <tours_won><![CDATA[Tours&nbsp;won]]></tours_won>
+                <ws><![CDATA[Win&nbsp;streak]]></ws>
+                <ls><![CDATA[Lose&nbsp;streak]]></ls>
+                <ds><![CDATA[Draw&nbsp;streak]]></ds>
+                <ltour><![CDATA[Latest&nbsp;tour]]></ltour>
+                <toursplayed><![CDATA[Tours&nbsp;played]]></toursplayed>
+                <prizes>Prizes</prizes>
+            </box_info>
+            
+            <box_tm>
+                <title>Team management</title>
+
+                <hire_player>Hire player</hire_player>
+                <hire_journeyman>Hire journeymen</hire_journeyman>
+                <fire_player>Fire player</fire_player>
+                <rename_player>Rename player</rename_player>
+                <renumber_player>Renumber player</renumber_player>
+                <rename_team>Rename team</rename_team>
+                <buy_goods>Buy team goods</buy_goods>
+                <drop_goods>Let go of team goods</drop_goods>
+                <ready_state>Set ready state</ready_state>
+
+                <desc>
+                    <hire_player>
+                    <![CDATA[
+                    Hire a new player.<br>
+                    Hiring a player as a journeyman is free, but only players from a 0-16 allowed position on your team's roster are hire-able as journeymen.
+                    ]]>
+                    </hire_player>
+                    <hire_journeyman>
+                    <![CDATA[
+                    Hire one of your journeymen to permanently play on your team.
+                    ]]>
+                    </hire_journeyman>
+                    <fire_player>
+                    <![CDATA[
+                    Fire a player. Refund rate:
+                    ]]>
+                    </fire_player>
+                    <rename_player>
+                    <![CDATA[
+                    Rename a player.
+                    ]]>
+                    </rename_player>
+                    <renumber_player>
+                    <![CDATA[
+                    Renumber a player.
+                    ]]>
+                    </renumber_player>
+                    <rename_team>
+                    <![CDATA[
+                    Rename your team.
+                    ]]>
+                    </rename_team>
+                    <buy_goods>
+                    <![CDATA[
+                    Buy team goods.
+                    ]]>
+                    </buy_goods>
+                    <buy_goods_warn>
+                    <![CDATA[
+                    <br><br>Please note that re-roll prices are <font color='red'><b>doubled</b></font> because a tournament is currently being played.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert the overcharged amount.
+                    ]]>
+                    </buy_goods_warn>
+                    <drop_goods>
+                    <![CDATA[
+                    Let go/drop of team goods for no refund.
+                    ]]>
+                    </drop_goods>
+                    <ready_state>
+                    <![CDATA[
+                    This team attribute allows coaches to signal other coaches/teams whether or not this team is interested in playing any matches.
+                    ]]>
+                    </ready_state>
+                </desc>
+            </box_tm>
+            
+            <box_admin>
+                <title>Admin tools</title>
+
+                <unbuy_player>Un-hire player</unbuy_player>
+                <unhire_journeyman>Un-hire journeymen</unhire_journeyman>
+                <unsell_player>Un-fire player</unsell_player>
+                <unbuy_goods>Un-buy team goods</unbuy_goods>
+                <bank>Gold bank</bank>
+                <chown>Change ownership</chown>
+                <spp>Manage player extra SPP</spp>
+                <extra_skills>Manage player extra skills</extra_skills>
+                <ach_skills>Remove ach. player skills</ach_skills>
+
+                <desc>
+                    <unbuy_player>
+                    <![CDATA[
+                    Regret hiring a player. 100% refund.<br>
+                    This is only possible for players which have not participated in any matches.
+                    ]]>
+                    </unbuy_player>
+                    <unhire_journeyman>
+                    <![CDATA[
+                    Regret permanently hiring a journeyman.<br>
+                    This only works on players from a 0-16 allowed position on your team's roster.
+                    ]]>
+                    </unhire_journeyman>
+                    <unsell_player>
+                    <![CDATA[
+                    Regret firing a player.
+                    ]]>
+                    </unsell_player>
+                    <unbuy_goods>
+                    <![CDATA[
+                    Regret buying team goods.
+                    ]]>
+                    </unbuy_goods>
+                    <bank>
+                    <![CDATA[
+                    Make changes to team's treasury.
+                    ]]>
+                    </bank>
+                    <chown>
+                    <![CDATA[
+                    Change this team's ownership.
+                    ]]>
+                    </chown>
+                    <spp>
+                    <![CDATA[
+                    Manage a player's extra SPP.
+                    ]]>
+                    </spp>
+                    <extra_skills>
+                    <![CDATA[
+                    Manage a player's extra skills.
+                    ]]>
+                    </extra_skills>
+                    <ach_skills>
+                    <![CDATA[
+                    Remove a players achieved skills. This makes the player able to rechoose a skill.
+                    ]]>
+                    </ach_skills>
+                </desc>
+            </box_admin>
         </teams>
+        
+        <playerprofile>
+		
+			<title>Player details</title>
+			<prev>Previous player</prev>
+			<next>Next player</next>
+			<uploadimage>Upload new image</uploadimage>
+			<value>Value</value>
+			<noinjuries>None</noinjuries>
+			<stats>View stats</stats>
+			<wanted>Wanted</wanted>
+			<hof>Hall of Fame</hof>								
+							
+			<status>
+				<dead>Dead</dead>
+				<sold>Sold</sold>
+				<ready>Ready</ready>
+			</status>
+			
+			<skills>
+				<title>Skills</title>
+				<noskill>None</noskill>
+			</skills>
+		
+			<desc>
+				<title>Description</title>
+				<edit>Edit</edit>
+				<empty>Nothing has been written about</empty>
+			</desc>				
+    
+            <ach>Achievements</ach>
+            <best>Match best</best>
+            <playedmatches>Played matches</playedmatches>	
+			
+        </playerprofile>
         
         <players>
             
-            <!-- General -->
-			<details>
-				<title>Player details</title>
-				<prev>Previous player</prev>
-				<next>Next player</next>
-				<uploadimage>Upload new image</uploadimage>
-				<value>Value</value>
-				<noinjuries>None</noinjuries>
-				<stats>View stats</stats>
-				<wanted>Wanted</wanted>
-				<hof>Hall of Fame</hof>								
-								
-				<status>
-					<dead>Dead</dead>
-					<sold>Sold</sold>
-					<ready>Ready</ready>
-				</status>
-				
-				<skills>
-					<title>Skills</title>
-					<noskill>None</noskill>
-				</skills>
-		
-				<desc>
-					<title>Description</title>
-					<edit>Edit</edit>
-					<empty>Nothing has been written about</empty>
-				</desc>				
-					
-			</details>
-			
+            <!-- General -->			
             <tblTitle>Player standings</tblTitle>
             <colors>Color descriptions</colors>
         </players>
@@ -270,6 +505,8 @@
             <d_hof>Hall of fame</d_hof>
             <d_wanted>Wanted players</d_wanted>
             <d_memma>Memorable matches</d_memma>
+            <d_prizes>Prizes</d_prizes>
+            <d_lgstats>League graphical statistics</d_lgstats>
             <new>New entry</new>
             <edit>Edit</edit>
             <del>Delete</del>
@@ -375,6 +612,18 @@
             
         </rules>
         
+        <gallery>
+            <note>Please select one of the below options.</note>
+            <none>None selected</none>
+            <players>Players from team</players>
+            <matches>Matches from tournament</matches>
+            <stads>Team stadiums</stads>
+            <coaches>Coaches</coaches>
+            
+            <playersof>Players of</playersof>
+            <matchesof>Matches of tournament</matchesof>
+        </gallery>
+        
         <obblm>
             
             <intro>Introduction</intro>
@@ -476,6 +725,12 @@
             How do I heal all of a team's MNGs?<br>
             <i>A:</i>
             Simply open the match report from the team's latest played match, and reassign the injuries sustained as ageing injuries - these do not result in MNGs.
+            <br><br>
+
+            <i>Q:</i>
+            How do I schedule a league season of two or more divisions?<br>
+            <i>A:</i>
+            OBBLM does not support seasons or divisions, and so you will have to schedule a tournament for each division and subsequently a FFA tournament consisting of the individual division finalists.
             ]]>
             </faq_txt>
             
@@ -495,14 +750,130 @@
         <login>
             <coach>Coach</coach>
             <passwd>Password</passwd>
-            <note>Please use your mouse to press the login button!</note>
         </login>
         
         <cc>
+            <main>
+                <cstats>Coach stats</cstats>
+                    <games_played>Games played</games_played>
+                    <win_ptc>Win percentage</win_ptc>
+                    <tours_won>Tournaments won</tours_won>
+                
+                <start_new>Start a new team</start_new>
+                
+                <your_info>Your account information</your_info>
+                    <new>New</new>
+                    <old>Old</old>
+                    <current>Current</current>
+                    <chpasswd>Change password</chpasswd>
+                    <chphone>Change phone number</chphone>
+                    <chmail>Change email</chmail>
+                    <chlogin>Change name (login)</chlogin>
+                    <chname>Change full name</chname>
+                    <chtheme>Change OBBLM theme</chtheme>
+                    
+                <photo>Photo of you</photo>
+
+                <about>About you</about>
+                    <nowrite>Nothing has yet been written about you.</nowrite>
+                    <save>Save</save>
+            </main>
+            
+            <new_team>
+                <title>Create new team</title>
+                <race>Race</race>
+                <name>Team name</name>
+                <button>Create team</button>
+            </new_team>
         </cc>
         
         <admin>
+            <!-- 
+            PLEASE NOTE TRANSLATORS:
+                - The administration section supports only translations of the most essential text strings.'
+                - You may skip translating this section (leaving it as it is), if you don't care about translating the part(s) of OBBLM, which regular coaches don't have access to.
+            -->
+            
+            <administration>Administration</administration>
+            <um>User management</um>
+            <import>Import team</import>
+            <th>Tournament handling</th>
+            <delete>Delete/retire coaches or teams</delete>
+            <schedule>Schedule matches</schedule>
+            <log>Log</log>
+            <pick>Please pick one of the above links.</pick>
+            
+            <prefixes>the prefixes + and - specify least of and most of</prefixes>
+            
+            <!-- Subsec: Schedule matches -->
+            <multiple_schedule><![CDATA[<i>Note:</i> You are free to schedule multiple tournaments running concurrently.]]></multiple_schedule>
+            <tour_name>Tournament name</tour_name>
+            <rank_sys>Ranking system</rank_sys>
+            <tour_type>Tournament type</tour_type>
+            <rrobin_rnds><![CDATA[<b>Number of times each team plays all others:</b> (Round-Robin only)]]></rrobin_rnds>
+            <participants>Participating teams</participants>
+            <create>Create</create>
+            <add_match>Add the single match to...</add_match>
+                <new_tour>A new FFA tour (fill out left fields too!)</new_tour>
+            <as_type>A new FFA tour (fill out left fields too!)</as_type>
+            <as_reverse>Reverse home/away pair-up?</as_reverse>
+            
+            <!-- Subsec: User management -->
+            <access>
+                <r2>Ring 2: Ordinary coaches: May manage own teams and submit match reports in which own teams play.</r2>
+                <r1>Ring 1: League commissioners: Same as ring 2, but may also schedule matches, view the site log and post messages on the front page board.</r1>
+                <r0>Ring 0: Site administrators: Same as ring 1, but has access to the whole administrators section, and may also manage other teams + submit their match reports.</r0>
+            </access>
+            
+            <!-- Subsec: Import -->
+            <import_notice1>
+            <![CDATA[
+            This page allows you to create a customized team for an existing coach.<br> 
+            This is useful if you and your league wish to avoid starting from scratch in order to use OBBLM.<br>
+            <u>Note</u>: If you discover errors after having imported your team, you can either repair the errors<br> via the admin tools in the coach corner, or simply delete the team and import a new.<br<name />
+            ]]>
+            </import_notice1>
+            <method1><![CDATA[<i>Method 1:</i> Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right click on link --> save as) and uploading it.]]></method1>
+            <method2><![CDATA[<i>Method 2:</i> Import a team by filling in the below formular.]]></method2>
+            <import_notice2>
+                <note>Please note:</note>
+                <e1>Player entries are ignored if player name is empty.</e1>
+                <e2>Player skills and characteristics are chosen via coach corner.</e2>
+                <e3>Empty cells are equal to zero.</e3>
+            </import_notice2>
+
+            <!-- Subsec: Tournament handling -->
+            <conv_warn>Warning: Use this feature with caution. Please don't use it to convert K.O. tours.</conv_warn>
+            <advise>
+                <have_read>I have read the below advisement</have_read>
+                <pre>
+                <![CDATA[
+                This feature is only meant to be used for non-played tournaments and test-tournaments.<br>
+                If you decide to delete a proper tournament you should know that this will
+                ]]>
+                </pre>
+                <e1>delete the tournament associated data forever (this includes team and player gained stats in the tournament).</e1>
+                <e2>generate incorrect player statuses for those matches following (date-wise) the matches deleted. Re-saving/changing old matches may therefore be problematic.</e2>
+            </advise>
+
+            <!-- Subsec: Log -->
+                <!-- Nothing! -->
+                
+            <!-- Subsec: Coach/team admin management -->
+            <retire>
+                <note>Please note:</note>
+                <e1>For the sake of keeping league statistics intact you are not allowed to delete teams or coaches which have played matches.</e1>
+                <e2>Once retired a coach cannot login and teams are no longer manageable/editable from their team pages.</e2>
+                <unretire>Un-retire (ie. regret retiring) instead of retiring?</unretire>
+            </retire>
+
         </admin>
+        
+        <recent>
+            <from_tours>From tournament</from_tours>
+            <tbltitle>Recent matches</tbltitle>
+            <view>view</view>
+        </recent>
     </secs>        
 
 </en-GB>
