@@ -163,6 +163,10 @@ div.main_lcolBox    {margin: 20px; border: 1px solid #545454;}
 div.main_rcolBox    {margin: 10px; border: 1px solid #545454;}
 div.main_cpy        {clear: both; font-size: 10px; padding: 30px; padding-top: 20px; background-color: inherit;}
 
+div.messageContainer {width:971px;padding:8px;color:#fff;font-weight:bold;}
+div.green{background-color:#390;border:1px solid #298000;}
+div.red{background-color:#F20000;border:1px solid #c00;}
+
 /* Team's page */
 div.tpageBox    {float: left; width: 270px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
 div.tnewsBox    {float: left; width: 600px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
@@ -182,6 +186,11 @@ table.match_form {width: 100%; padding:10px;}
 /* Guest book */
 div.gb {clear: both; width: 450px; border: 1px solid #545454; margin-left: auto; margin-right: auto; margin-bottom: 5px;}
 
+/* Game result icon*/
+.match_icon	{background:transparent url(/images/result_icon.gif) no-repeat 0 0;width:12px;height:12px}
+.won		{background-position:-14px 0}
+.lost		{background-position:-28px 0}
+.draw		{background-position:-42px 0}
 /* Player profile */
 #player		{float:left;}
 #player h4	{font-size:12px;font-weight:bold;}

@@ -76,8 +76,6 @@ function sec_login() {
         <input type="password" name="passwd" size="20" maxlength="50"> 
         <br><br>
         <input type="submit" name="login" value="Login">
-        <br><br>
-        <?php echo $lng->getTrn('secs/login/note');?>
     </form>
     </div>
     <?php
@@ -217,14 +215,14 @@ function sec_main() {
             echo "</div>\n";
             // New message link
             if (is_object($coach) && $coach->ring <= RING_COM)
-                echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>\n";
+                echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
 
             // View mode
             if (!empty($board)) { # Only show when messages exist.
                 if (isset($_GET['view']) && $_GET['view'] == 'all')
-                    echo "<a href='index.php?section=main&amp;view=normal'>".$lng->getTrn('secs/home/normal')."</a>\n";
+                    echo "<a href='index.php?section=main&amp;view=normal'>".$lng->getTrn('secs/home/normal')."</a>&nbsp;\n";
                 else
-                    echo "<a href='index.php?section=main&amp;view=all'>".$lng->getTrn('secs/home/showall')."</a>\n";
+                    echo "<a href='index.php?section=main&amp;view=all'>".$lng->getTrn('secs/home/showall')."</a>&nbsp;\n";
             }
             // RSS
             echo "<a href='handler.php?type=rss'>RSS</a>\n";
@@ -245,7 +243,7 @@ function sec_main() {
                         $i = 2; break;
                 }
 
-                echo "<div class='boxTitle$i'>$e->title</div>\n";
+                echo "<h3 class='boxTitle$i'>$e->title</h3>\n";
                 
                 echo "<div class='boxBody'>\n";
                 
@@ -321,7 +319,7 @@ function sec_main() {
             foreach ($standings as $sta) {
                 ?>            
                 <div class='main_rcolBox'>
-                    <div class='boxTitle1'><?php echo $sta['name'];?> <?php echo $lng->getTrn('global/misc/stn');?></div>
+                    <h3 class='boxTitle1'><?php echo $sta['name'];?> <?php echo $lng->getTrn('global/misc/stn');?></h3>
                     <div class='boxBody'>
                         <table class="boxTable" style='width:100%;'>
                             <tr>
@@ -348,7 +346,7 @@ function sec_main() {
                             <?php
                             foreach ($sta['teams'] as $t) {
                                 echo "<tr>\n";
-                                echo "<td>$t->name</td>\n";
+                                echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;team_id=$t->team_id'>$t->name</a>" : $t->name)."</td>\n";
                                 echo "<td>$t->won</td>\n";
                                 echo "<td>$t->lost</td>\n";
                                 echo "<td>$t->draw</td>\n";
@@ -377,7 +375,7 @@ function sec_main() {
         if ($settings['entries_latest'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/recent');?></div>
+                <h3 class='boxTitle1'><a href='index.php?section=recent'><?php echo $lng->getTrn('secs/home/recent');?></a></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -386,6 +384,7 @@ function sec_main() {
                             <td><b>-</b></td>
                             <td> </td>
                             <td style="text-align: left;" width="50%"><b>Guest</b></td>
+                            <td> </td>
 
                         </tr>
                         <?php
@@ -405,6 +404,7 @@ function sec_main() {
                             echo "<td>-</td>\n";
                             echo "<td>" . $m->$guest_score . "</td>\n";
                             echo "<td style='text-align: left;'>" . $m->$guest_name . "</td>\n";
+                            echo "<td><a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>Show</a></td>";
                             echo "</tr>";
                         }
                         ?>
@@ -416,7 +416,7 @@ function sec_main() {
         if ($settings['entries_casualties'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/cas');?></div>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/cas');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -427,7 +427,7 @@ function sec_main() {
                         <?php
                         foreach ($casualties as $p) {
                             echo "<tr>\n";
-                            echo "<td>$p->name</td>\n";
+                            echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>" : $p->name)."</td>\n";
                             echo "<td>$p->cas</td>\n";
                             echo "<td>" . $p->value/1000 . "k</td>\n";
                             echo "</tr>";
@@ -441,7 +441,7 @@ function sec_main() {
         if ($settings['entries_touchdown'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/td');?></div>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/td');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -452,7 +452,7 @@ function sec_main() {
                         <?php
                         foreach ($touchdowns as $p) {
                             echo "<tr>\n";
-                            echo "<td>$p->name</td>\n";
+                            echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>" : $p->name)."</td>\n";
                             echo "<td>$p->td</td>\n";
                             echo "<td>" . $p->value/1000 . "k</td>\n";
                             echo "</tr>";
@@ -466,7 +466,7 @@ function sec_main() {
         if ($settings['entries_completions'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <div class='boxTitle1'><?php echo $lng->getTrn('secs/home/cp');?></div>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/cp');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -477,7 +477,7 @@ function sec_main() {
                         <?php
                         foreach ($completions as $p) {
                             echo "<tr>\n";
-                            echo "<td>$p->name</td>\n";
+                            echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>" : $p->name)."</td>\n";
                             echo "<td>$p->cp</td>\n";
                             echo "<td>" . $p->value/1000 . "k</td>\n";
                             echo "</tr>";
@@ -509,19 +509,25 @@ function sec_main() {
 
 function sec_fixturelist() {
 
-    global $rules, $coach, $lng;
+    global $rules, $settings, $coach, $lng;
     $KEEP_TOUR_OPEN = false;
 
     // Admin actions made?
     if (is_object($coach) && $coach->admin) {
         if (isset($_GET['tlock']) && !preg_match('/[^0-9]$/', $_GET['tlock'])) {
             $match = new Match($_GET['tlock']);
+            $KEEP_TOUR_OPEN = $match->f_tour_id;
             status($match->toggleLock());
         }
         elseif (isset($_GET['mdel']) && !preg_match('/[^0-9]$/', $_GET['mdel'])) {
             $match = new Match($_GET['mdel']);
             $KEEP_TOUR_OPEN = $match->f_tour_id;
             status($match->delete());
+        }
+        elseif (isset($_GET['reset']) && !preg_match('/[^0-9]$/', $_GET['reset'])) {
+            $match = new Match($_GET['reset']);
+            $KEEP_TOUR_OPEN = $match->f_tour_id;
+            status($match->reset());
         }
     }
 
@@ -685,9 +691,6 @@ function sec_fixturelist() {
     
     title($lng->getTrn('global/secLinks/fixtures'));
     
-    echo $lng->getTrn('secs/fixtures/links')."<br><br>\n";
-
-    
     $flist = array( # The fixture list
 // $flist MODEL:
 #            'tour1' => array(
@@ -728,17 +731,17 @@ function sec_fixturelist() {
         ?>
         <table class='fixtures' style='width:100%;'>
             <tr class='dark'>
-                <td style='width:15%;'>
-                    <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>
-                    <a title='Standings' href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b>[S]</b></a>
-                    <a title='Description' href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b>[D]</b></a>
+                <td style='width:30%;'>
+                    <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
+                    <a href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/standings');?></b></a>&nbsp;
+                    <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
                     <?php
                     if ($t->type == TT_KNOCKOUT) {
-                        echo "<a title='Tournament bracket' href='javascript:void(0)' onclick=\"window.open('handler.php?type=gdbracket&amp;tour_id=" . $t->tour_id . "', 'handler_tour', 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=400'); return false;\"><b>[B]</b></a>\n";
+                        echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=gdbracket&amp;tour_id=" . $t->tour_id . "', 'handler_tour', 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=400'); return false;\"><b>".$lng->getTrn('secs/fixtures/bracket')."</b></a>\n";
                     }
                     ?>
                 </td>
-                <td style='width:85%;'>
+                <td>
                     &nbsp;&nbsp;&nbsp;<?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>' : '');?>
                 </td>
             </tr>
@@ -767,13 +770,13 @@ function sec_fixturelist() {
             ?>
             <tr><td colspan='7' class="seperator"></td></tr>
             <tr>
-                <td width="180"></td>
+                <td width="100"></td>
                 <td class="light" width="250"><?php echo $round; ?></td>
                 <td class="white" width="25"></td>
                 <td class="white" width="50"></td>
                 <td class="white" width="25"></td>
                 <td class="white" width="250"></td>
-                <td width="180"></td>
+                <td width="260"></td>
             </tr>
             <?php
             
@@ -795,12 +798,13 @@ function sec_fixturelist() {
                     <a href="?section=fixturelist&amp;match_id=<?php echo $match->match_id; ?>">
                     <?php 
                     if (is_object($coach)) {
-                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;&nbsp;\n";
+                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;\n";
                         if ($coach->admin) {
+                            echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/reset_notice')."')){return false;}\" href='?section=fixturelist&amp;reset=$match->match_id'>".$lng->getTrn('secs/fixtures/reset')."</a>&nbsp;\n";
                             if ($t->type != TT_KNOCKOUT) {
-                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;&nbsp;\n";
+                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;\n";
                             }
-                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;&nbsp;\n";
+                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;\n";
                         }
                     }
                     else {
@@ -829,7 +833,7 @@ function sec_fixturelist() {
             </tr>
         </table>
         <?php
-        if (count($flist) > 1 && !($KEEP_TOUR_OPEN == $t->tour_id)) {
+        if (!$settings['force_tour_foldout'] && count($flist) > 1 && !($KEEP_TOUR_OPEN == $t->tour_id)) {
             ?>
             <script language="JavaScript" type="text/javascript">
                 document.getElementById('trid_'+<?php echo $t->tour_id;?>).style.display = 'none';
@@ -1595,7 +1599,7 @@ function sec_records() {
         'hof'           => $lng->getTrn('secs/records/d_hof'), 
         'wanted'        => $lng->getTrn('secs/records/d_wanted'), 
         'memm'          => $lng->getTrn('secs/records/d_memma'),
-        'prize'         => 'Prizes',
+        'prize'         => $lng->getTrn('secs/records/d_prizes'),
     );
 
     // This section's routines are placed in the records.php file.
@@ -1629,7 +1633,7 @@ function sec_records() {
         echo "<a href='index.php?section=records&amp;subsec=$a'><b>$b</b></a><br>\n";
     }
     // Add graphical stats link.
-    echo "<a href='handler.php?type=graph&amp;gtype=".(SG_T_LEAGUE)."&amp;id=none'><b>League graphical statistics</b></a><br>\n";
+    echo "<a href='handler.php?type=graph&amp;gtype=".(SG_T_LEAGUE)."&amp;id=none'><b>".$lng->getTrn('secs/records/d_lgstats')."</b></a><br>\n";
 }
 
 /*************************
@@ -1778,7 +1782,7 @@ function sec_gallery() {
         {
             case 'team':
                 $t = new Team((int) $_POST['tid']);
-                echo "<b>Players of $t->name</b><br><hr><br>\n";
+                echo "<b>".$lng->getTrn('secs/gallery/playersof')." $t->name</b><br><hr><br>\n";
                 $players = $t->getPlayers();
                 foreach ($players as $p) {
                     $pic = $p->getPic();
@@ -1788,7 +1792,7 @@ function sec_gallery() {
                 
             case 'tour':
                 $tr = new Tour((int) $_POST['trid']);
-                echo "<b>Matches of tournament $tr->name</b><br><hr><br>\n";
+                echo "<b>".$lng->getTrn('secs/gallery/matchesof')." $tr->name</b><br><hr><br>\n";
                 $matches = $tr->getMatches();
                 objsort($matches, array('-date_played'));
                 foreach ($matches as $m) {
@@ -1812,7 +1816,7 @@ function sec_gallery() {
                 break;
                 
             case 'stad':
-                echo "<b>Team stadiums</b><br><hr><br>\n";
+                echo "<b>".$lng->getTrn('secs/gallery/stads')."</b><br><hr><br>\n";
                 $teams = Team::getTeams();
                 foreach ($teams as $t) {
                     $pic = $t->getStadiumPic();
@@ -1821,7 +1825,7 @@ function sec_gallery() {
                 break;
                 
             case 'coach':
-                echo "<b>Coaches</b><br><hr><br>\n";
+                echo "<b>".$lng->getTrn('secs/gallery/coaches')."</b><br><hr><br>\n";
                 $coaches = Coach::getCoaches();
                 foreach ($coaches as $c) {
                     $pic = $c->getPic();
@@ -1835,33 +1839,33 @@ function sec_gallery() {
     
     $team_list = "
         <form method='POST' style='display:inline; margin:0px;'><select name='tid' onChange='this.form.submit();'>
-        <option value='0'>-None selected-</option>".
+        <option value='0'>-".$lng->getTrn('secs/gallery/none')."-</option>".
         implode("\n", array_map(create_function('$o', 'return "<option value=\'$o->team_id\'>$o->name</option>";'), Team::getTeams()))
         ."</select><input type='hidden' name='type' value='team'></form>
     ";
     $tour_list = "
         <form method='POST' style='display:inline; margin:0px;'><select name='trid' onChange='this.form.submit();'>
-        <option value='0'>-None selected-</option>".
+        <option value='0'>-".$lng->getTrn('secs/gallery/none')."-</option>".
         implode("\n", array_map(create_function('$o', 'return "<option value=\'$o->tour_id\'>$o->name</option>";'), Tour::getTours()))
         ."</select><input type='hidden' name='type' value='tour'></form>
     ";
     $stad = "
         <form method='POST' name='stadForm' style='display:inline; margin:0px;'>
         <input type='hidden' name='type' value='stad'>
-        <a href='javascript:void(0);' onClick='document.stadForm.submit();'>Team stadiums</a>
+        <a href='javascript:void(0);' onClick='document.stadForm.submit();'>".$lng->getTrn('secs/gallery/stads')."</a>
         </form>
     ";
     $coaches = "
         <form method='POST' name='coachesForm' style='display:inline; margin:0px;'>
         <input type='hidden' name='type' value='coach'>
-        <a href='javascript:void(0);' onClick='document.coachesForm.submit();'>Coaches</a>
+        <a href='javascript:void(0);' onClick='document.coachesForm.submit();'>".$lng->getTrn('secs/gallery/coaches')."</a>
         </form>
     ";
+    echo $lng->getTrn('secs/gallery/note');
     ?>
-    Please select one of the below options.
     <ul>
-    <li>Players from team <?php echo $team_list?></li>
-    <li>Matches from tournament <?php echo $tour_list?></li>
+    <li><?php echo $lng->getTrn('secs/gallery/players').$team_list?></li>
+    <li><?php echo $lng->getTrn('secs/gallery/matches').$tour_list?></li>
     <li><?php echo $stad?></li>
     <li><?php echo $coaches?></li>
     </ul>
@@ -2031,6 +2035,8 @@ function sec_guest() {
 
 function sec_coachcorner() {
 
+    global $lng;
+
     /* 
         Before displaying coach corner we check if visitor wants a specific team's page or a player page.
     */
@@ -2088,16 +2094,16 @@ function sec_coachcorner() {
         }
         
         // Show new team form.
-        title("Create new team");
+        title($lng->getTrn('secs/cc/new_team/title'));
         ?>
         <form method="POST">
         <table class="text">
             <tr>
             <td valign="top">
-                <b>Team name:</b> <br>
+                <b><?php echo $lng->getTrn('secs/cc/new_team/name');?>:</b> <br>
                 <input type="text" name="name" size="20" maxlength="50">
                 <br><br>
-                <b>Race:</b> <br>
+                <b><?php echo $lng->getTrn('secs/cc/new_team/race');?>:</b> <br>
                 <select name="race">
                     <?php
                     foreach (get_races() as $race => $icon_file)
@@ -2105,7 +2111,7 @@ function sec_coachcorner() {
                     ?>
                 </select>
                 <br><br>
-                <input type="submit" name="new_team" value="Create team">
+                <input type="submit" name="new_team" value="<?php echo $lng->getTrn('secs/cc/new_team/button');?>">
             </td>
             </tr>
         </table>
@@ -2118,7 +2124,7 @@ function sec_coachcorner() {
     else {
     
         // Was new password/email request made?
-        if (isset($_POST['button'])) {
+        if (isset($_POST['type'])) {
         
             if (get_magic_quotes_gpc()) {
                 $_POST['new_passwd']   = isset($_POST['new_passwd'])     ? stripslashes($_POST['new_passwd']) : '';
@@ -2128,24 +2134,16 @@ function sec_coachcorner() {
                 $_POST['new_realname'] = isset($_POST['new_realname'])   ? stripslashes($_POST['new_realname']) : '';
             }
         
-            switch ($_POST['button']) 
+            switch ($_POST['type']) 
             {
-                case 'Change password':     status(login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
-                case 'Change phone number': status($coach->setPhone($_POST['new_phone'])); break;
-                case 'Change email':        status($coach->setMail($_POST['new_email'])); break;
-                case 'Change name':         status($coach->setName($_POST['new_name'])); break;
-                case 'Change full name':    status($coach->setRealName($_POST['new_realname'])); break;
-                case 'Change theme':        status($coach->setSetting('theme', (int) $_POST['new_theme'])); break;
-            }
-        }
-        
-        if (isset($_POST['type'])) {
-            switch ($_POST['type'])
-            {
-                case 'pic':
-                    status(!$coach->savePic('pic'));                    
-                    break;
-                    
+                case 'chpasswd':    status(login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
+                case 'chphone':     status($coach->setPhone($_POST['new_phone'])); break;
+                case 'chmail':      status($coach->setMail($_POST['new_email'])); break;
+                case 'chlogin':     status($coach->setName($_POST['new_name'])); break;
+                case 'chname':      status($coach->setRealName($_POST['new_realname'])); break;
+                case 'chtheme':     status($coach->setSetting('theme', (int) $_POST['new_theme'])); break;
+
+                case 'pic':         status(!$coach->savePic('pic')); break;
                 case 'coachtext':
                     if (get_magic_quotes_gpc()) {
                         $_POST['coachtext'] = stripslashes($_POST['coachtext']);
@@ -2155,14 +2153,14 @@ function sec_coachcorner() {
             }
         }
         
-        title("Coach corner");
+        title($lng->getTrn('global/secLinks/coachcorner'));
         
         // Coach stats.
         ?>
         <table class="text">
             <tr>
                 <td class="light">
-                    <b>Coach stats</b>
+                    <b><?php echo $lng->getTrn('secs/cc/main/cstats');?></b>
                 </td>
             </tr>
         </table>
@@ -2173,15 +2171,15 @@ function sec_coachcorner() {
                 <td></td>
             </tr>
             <tr>
-                <td>Games played:</td>
+                <td><?php echo $lng->getTrn('secs/cc/main/games_played');?>:</td>
                 <td><?php echo $coach->played; ?></td>
             </tr>
             <tr>
-                <td>Win percentage:</td>
+                <td><?php echo $lng->getTrn('secs/cc/main/win_ptc');?>:</td>
                 <td><?php echo sprintf("%1.1f", $coach->played == 0 ? 0 : $coach->won/$coach->played * 100) . '%'; ?></td>
             </tr>
             <tr>
-                <td>Tournaments won:</td>
+                <td><?php echo $lng->getTrn('secs/cc/main/tours_won');?>:</td>
                 <td>
                 <?php 
                 $won_tours = array();
@@ -2211,7 +2209,7 @@ function sec_coachcorner() {
             </tr>
             <tr>
                 <td class="light" style="text-align:center;">
-                    Start a new team
+                    <?php echo $lng->getTrn('secs/cc/main/start_new');?>
                 </td>
             </tr>
         </table>       
@@ -2219,48 +2217,63 @@ function sec_coachcorner() {
         <table class="text">
             <tr>
                 <td class="light">
-                    <b>Your account information</b>
+                    <b><?php echo $lng->getTrn('secs/cc/main/your_info');?></b>
                 </td>
             </tr>
         </table>
 
-        <form method="POST">
         <table class="text" style="border-spacing:5px; padding:20px;">
                 <tr>
-                    <td>Change password:</td>
-                    <td>Old:<input type='password' name='old_passwd' size="20" maxlength="50"></td>
-                    <td>New:<input type='password' name='new_passwd' size="20" maxlength="50"></td>
-                    <td><input type="submit" name="button" value="Change password"></td>
+                    <form method="POST">
+                    <td><?php echo $lng->getTrn('secs/cc/main/chpasswd');?>:</td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/old');?>:<input type='password' name='old_passwd' size="20" maxlength="50"></td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/new');?>:<input type='password' name='new_passwd' size="20" maxlength="50"></td>
+                    <td><input type="submit" name="button" value="<?php echo $lng->getTrn('secs/cc/main/chpasswd');?>"></td>
+                    <input type='hidden' name='type' value='chpasswd'>
+                    </form>
                 </tr>
                 <tr>
-                    <td>Change phone number:</td>
-                    <td>Old:<input type='text' name='old_phone' readonly value="<?php echo $coach->phone; ?>" size="20" maxlength="129"></td>
-                    <td>New:<input type='text' name='new_phone' size="20" maxlength="25"></td>
-                    <td><input type="submit" name="button" value="Change phone number"></td>
+                    <form method="POST">
+                    <td><?php echo $lng->getTrn('secs/cc/main/chphone');?>:</td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/old');?>:<input type='text' name='old_phone' readonly value="<?php echo $coach->phone; ?>" size="20" maxlength="129"></td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/new');?>:<input type='text' name='new_phone' size="20" maxlength="25"></td>
+                    <td><input type="submit" name="button" value="<?php echo $lng->getTrn('secs/cc/main/chphone');?>"></td>
+                    <input type='hidden' name='type' value='chphone'>
+                    </form>
                 </tr>
                 <tr>
-                    <td>Change email:</td>
-                    <td>Old:<input type='text' name='old_email' readonly value="<?php echo $coach->mail; ?>" size="20" maxlength="129"></td>
-                    <td>New:<input type='text' name='new_email' size="20" maxlength="129"></td>
-                    <td><input type="submit" name="button" value="Change email"></td>
+                    <form method="POST">
+                    <td><?php echo $lng->getTrn('secs/cc/main/chmail');?>:</td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/old');?>:<input type='text' name='old_email' readonly value="<?php echo $coach->mail; ?>" size="20" maxlength="129"></td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/new');?>:<input type='text' name='new_email' size="20" maxlength="129"></td>
+                    <td><input type="submit" name="button" value="<?php echo $lng->getTrn('secs/cc/main/chmail');?>"></td>
+                    <input type='hidden' name='type' value='chmail'>
+                    </form>
                 </tr>
                 <tr>
-                    <td>Change name (login):</td>
-                    <td>Old:<input type='text' name='old_name' readonly value="<?php echo $coach->name; ?>" size="20" maxlength="50"></td>
-                    <td>New:<input type='text' name='new_name' size="20" maxlength="50"></td>
-                    <td><input type="submit" name="button" value="Change name"></td>
+                    <form method="POST">
+                    <td><?php echo $lng->getTrn('secs/cc/main/chlogin');?>:</td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/old');?>:<input type='text' name='old_name' readonly value="<?php echo $coach->name; ?>" size="20" maxlength="50"></td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/new');?>:<input type='text' name='new_name' size="20" maxlength="50"></td>
+                    <td><input type="submit" name="button" value="<?php echo $lng->getTrn('secs/cc/main/chlogin');?>"></td>
+                    <input type='hidden' name='type' value='chlogin'>
+                    </form>
                 </tr>
                 <tr>
-                    <td>Change full name:</td>
-                    <td>Old:<input type='text' name='old_realname' readonly value="<?php echo $coach->realname; ?>" size="20" maxlength="50"></td>
-                    <td>New:<input type='text' name='new_realname' size="20" maxlength="50"></td>
-                    <td><input type="submit" name="button" value="Change full name"></td>
+                    <form method="POST">
+                    <td><?php echo $lng->getTrn('secs/cc/main/chname');?>:</td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/old');?>:<input type='text' name='old_realname' readonly value="<?php echo $coach->realname; ?>" size="20" maxlength="50"></td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/new');?>:<input type='text' name='new_realname' size="20" maxlength="50"></td>
+                    <td><input type="submit" name="button" value="<?php echo $lng->getTrn('secs/cc/main/chname');?>"></td>
+                    <input type='hidden' name='type' value='chname'>
+                    </form>
                 </tr>
                 <tr>
-                    <td>Change OBBLM theme:</td>
-                    <td>Current: <?php echo $coach->settings['theme'];?></td>
+                    <form method="POST">
+                    <td><?php echo $lng->getTrn('secs/cc/main/chtheme');?>:</td>
+                    <td><?php echo $lng->getTrn('secs/cc/main/current');?>: <?php echo $coach->settings['theme'];?></td>
                     <td>
-                        New:
+                        <?php echo $lng->getTrn('secs/cc/main/new');?>:
                         <select name='new_theme'>
                             <?php
                             foreach (array(1 => 'Classic', 2 => 'Clean') as $theme => $desc) {
@@ -2269,15 +2282,16 @@ function sec_coachcorner() {
                             ?>
                         </select>
                     </td>
-                    <td><input type="submit" name="button" value="Change theme"></td>
+                    <td><input type="submit" name="button" value="<?php echo $lng->getTrn('secs/cc/main/chtheme');?>"></td>
+                    <input type='hidden' name='type' value='chtheme'>
+                    </form>
                 </tr>
         </table>
-        </form>
         
         <table class='picAndText'>
             <tr>
-                <td class='light'><b>Photo of you</b></td>
-                <td class='light'><b>About you</b></td>
+                <td class='light'><b><?php echo $lng->getTrn('secs/cc/main/photo');?></b></td>
+                <td class='light'><b><?php echo $lng->getTrn('secs/cc/main/about');?></b></td>
             </tr>
             <tr>
                 <td>
@@ -2289,14 +2303,14 @@ function sec_coachcorner() {
                     <?php
                     $txt = $coach->getText(); 
                     if (empty($txt)) {
-                        $txt = "Nothing has yet been written about you."; 
+                        $txt = $lng->getTrn('secs/cc/main/nowrite'); 
                     }
                     ?>
                     <form method='POST'>
                         <textarea name='coachtext' rows='15' cols='70'><?php echo $txt;?></textarea>
                         <br><br>
                         <input type="hidden" name="type" value="coachtext">
-                        <input type="submit" name='Save' value='Save'>
+                        <input type="submit" name='Save' value="<?php echo $lng->getTrn('secs/cc/main/save');?>">
                     </form>
                 </td>
             </tr>
@@ -2304,6 +2318,55 @@ function sec_coachcorner() {
         <?php
     }
     
+}
+
+/*************************
+ *
+ *  RECENT MATCHES *
+ *************************/
+
+function sec_recentmatches() {
+
+    global $lng;
+    title($lng->getTrn('global/secLinks/recent'));
+    $tours = Tour::getTours();
+    $matches = Match::getMatches(MAX_RECENT_GAMES, isset($_POST['trid']) ? (int) $_POST['trid'] : false);
+    
+    ?>
+    <form method="POST">
+    <b><?php echo $lng->getTrn('secs/recent/from_tours');?></b><br>
+    <select name="trid" onChange='this.form.submit();'>
+        <option value="0">-All-</option>
+        <?php
+        foreach ($tours as $tr) {
+            echo "<option value='$tr->tour_id' ".((isset($_POST['trid']) && $_POST['trid'] == $tr->tour_id) ? 'SELECTED' : '').">$tr->name</option>\n";
+        }
+        ?>
+    </select>
+    </form>
+    <br>    
+    <?php
+
+    foreach ($matches as $m) {
+         $m->result = "$m->team1_score - $m->team2_score";
+         $m->mlink = "<a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[".$lng->getTrn('secs/recent/view')."]</a>";
+    }
+    $fields = array(
+        'date_played'       => array('desc' => 'Date played'), 
+        'team1_name'        => array('desc' => 'Home'),
+        'team2_name'        => array('desc' => 'Away'),
+        'result'            => array('desc' => 'Result', 'nosort' => true), 
+        'mlink'             => array('desc' => 'Match', 'nosort' => true), 
+    );
+    sort_table(
+        $lng->getTrn('secs/recent/tbltitle'), 
+        'index.php?section=recent', 
+        $matches, 
+        $fields, 
+        sort_rule('match'), 
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+        array('doNr' => false, 'noHelp' => true)
+    );
 }
 
 ?>
