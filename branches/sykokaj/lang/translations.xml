@@ -193,6 +193,36 @@
         <players>
             
             <!-- General -->
+			<details>
+				<title>Player details</title>
+				<prev>Previous player</prev>
+				<next>Next player</next>
+				<uploadimage>Upload new image</uploadimage>
+				<value>Value</value>
+				<noinjuries>None</noinjuries>
+				<stats>View stats</stats>
+				<wanted>Wanted</wanted>
+				<hof>Hall of Fame</hof>								
+								
+				<status>
+					<dead>Dead</dead>
+					<sold>Sold</sold>
+					<ready>Ready</ready>
+				</status>
+				
+				<skills>
+					<title>Skills</title>
+					<noskill>None</noskill>
+				</skills>
+		
+				<desc>
+					<title>Description</title>
+					<edit>Edit</edit>
+					<empty>Nothing has been written about</empty>
+				</desc>				
+					
+			</details>
+			
             <tblTitle>Player standings</tblTitle>
             <colors>Color descriptions</colors>
         </players>
