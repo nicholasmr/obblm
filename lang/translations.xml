@@ -68,6 +68,10 @@
             <specific>Specific</specific>
             <pms>Set per match stats</pms>
             <oas>Set over all stats</oas>
+			<gamewon>Won</gamewon>
+			<gamelost>Lost</gamelost>
+			<gamedraw>Draw</gamedraw>
+			<gameunknown>Unknown</gameunknown>
         </misc>
     </global>
 
