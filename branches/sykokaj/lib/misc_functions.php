@@ -468,18 +468,23 @@ function fatal($err_msg) {
 
 // Print a status message.
 function status($status, $msg = '') {
-    ?>
-    <table><tr><td>
-        <b>Request: </b>
-        <?php
-        if ($status) # Status == success
-            echo "<font color='green'><b>Succeeded</b></font>\n";
-        else # Status == failure
-            echo "<font color='red'><b>Failed</b></font>\n";
 
-        echo " $msg\n";
-        ?>
-    </td></tr></table>
+        if ($status) {	# Status == success
+            echo "<div class=\"messageContainer green\">";
+				echo "Request succeeded";
+				if ($msg != ''){
+					echo " : $msg\n";
+				}
+			echo "</div>";
+		} else {	# Status == failure
+             echo "<div class=\"messageContainer red\">";
+			 	echo "Request failed";
+				if ($msg != ''){
+					echo " : $msg\n";
+				}
+			echo "</div>";
+		}
+        ?>	
     <?php
 }
 
@@ -495,6 +500,33 @@ function nls2p($str)
   return str_replace('<p></p>', '', '<p>'
         . preg_replace('#([\r\n]\s*?[\r\n]){2,}#', '</p>$0<p>', $str)
         . '</p>');
+}
+
+// Returns HTML to show an icon with the result of a game
+function matchresult_icon($result) {
+
+	global $lng;
+	
+	$class = "";
+	
+	switch ($result){		
+		case "W":
+			$class = "won";
+			$title = $lng->getTrn('global/misc/gamewon');
+			break;
+		case "L":
+			$class = "lost";
+			$title = $lng->getTrn('global/misc/gamelost');
+			break;
+		case "D":
+			$class = "draw";
+			$title = $lng->getTrn('global/misc/gamedraw');
+			break;
+		default:
+			$class = "";
+			$title = $lng->getTrn('global/misc/gameunknown');
+	}	
+	return "<div class='match_icon ". $class ."' title='". $title ."'></div>";	
 }
 
 ?>
