@@ -53,6 +53,7 @@ function team_roaster($team_id) {
             $_POST['skill']    = stripslashes(isset($_POST['skill']) ? $_POST['skill'] : '');
             $_POST['thing']    = stripslashes(isset($_POST['thing']) ? $_POST['thing'] : '');
             $_POST['teamtext'] = stripslashes(isset($_POST['teamtext']) ? $_POST['teamtext'] : '');
+            $_POST['txt']      = stripslashes(isset($_POST['txt']) ? $_POST['txt'] : '');
         }
         
         $p = (isset($_POST['player']) && $_POST['type'] != 'hire_player') ? new Player($_POST['player']) : null;
@@ -1361,7 +1362,7 @@ function team_roaster($team_id) {
         $m->opponent = $m->{"team${op}_name"};
         $m->stadium = get_alt_col('teams', 'team_id', $m->stadium, 'name');
         $m->score = $m->team1_score. ' - ' . $m->team2_score;
-        $m->result = (($m->is_draw) ? 'D' : (($m->winner == $team->team_id) ? 'W' : 'L'));
+        $m->result = matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $team->team_id) ? 'W' : 'L')));
         $m->match = '[view]';
         $m->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
     }
@@ -1694,7 +1695,7 @@ function player_roaster($player_id) {
                                 <td><?php echo $entry['intcpt']; ?></td>
                                 <td><?php echo $entry['bh']+$entry['si']+$entry['ki']; ?></td>
                                 <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                                <td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
+                                <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
                                 <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
                             </tr>
                             <?php
@@ -1745,7 +1746,7 @@ function player_roaster($player_id) {
                                 <td><?php echo $entry['td']; ?></td>
                                 <td><?php echo $entry['ki']; ?></td>
                                 <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                                <td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
+                                <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
                                 <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
                             </tr>
                             <?php
@@ -1781,7 +1782,7 @@ function player_roaster($player_id) {
                             <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
                             <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
                             <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                            <td><?php echo (($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L')); ?></td>
+                            <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
                             <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
                         </tr>
                         <?php

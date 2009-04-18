@@ -149,7 +149,7 @@ function sec_admin() {
                     <select name="new_ring">
                         <?php
                         foreach ($rings as $r => $desc) {
-                            echo "<option value='$r'>$desc</option>\n";
+                            echo "<option value='$r' ".(($r == RING_COACH) ? 'SELECTED' : '').">$desc</option>\n";
                         }
                         ?>
                     </select>

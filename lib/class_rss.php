@@ -158,8 +158,8 @@ class OBBLMRssWriter {
         objsort($entries, array('-date'));
         foreach (array_slice($entries, 0, RSS_SIZE) as $item) {
             $el_item = $dom->createElement('item');
-            $el_item->appendChild($dom->createElement('title', htmlentities($item->title)));
-            $el_item->appendChild($dom->createElement('description', htmlentities($item->desc)));
+            $el_item->appendChild($dom->createElement('title', mb_convert_encoding($item->title, 'UTF-8', 'HTML-ENTITIES')));
+            $el_item->appendChild($dom->createElement('description', mb_convert_encoding($item->desc, 'UTF-8', 'HTML-ENTITIES')));
             $el_item->appendChild($dom->createElement('link', $this->link));
             $el_item->appendChild($dom->createElement('pubDate', $item->date));
             $el_channel->appendChild($el_item);
