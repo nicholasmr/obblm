@@ -189,6 +189,8 @@ class Team
     
     private function setValue() {
     
+        global $rules;
+    
         /*
             Sets team value without creating all team's player objects to get each player's value.
             
@@ -274,15 +276,40 @@ class Team
                     AND owned_by_team_id = $this->team_id
             ) AS valueParts
         ";
-        
+
+        // If player injury value reduction is used, then compile an extra needed table.
+        $valReducInjs = false;
+        if ($rules['val_reduc_ma'] || $rules['val_reduc_st'] || $rules['val_reduc_av'] || $rules['val_reduc_ag']) {
+            $NI = NI; $MA = MA; $AV = AV; $AG = AG; $ST = ST;
+            $valReducInjs = "
+                (
+                    SELECT 
+                        f_player_id as 'pid',
+                        SUM(IF(inj = $MA, 1, 0) + IF(agn1 = $MA, 1, 0) + IF(agn2 = $MA, 1, 0)) AS 'inj_ma', 
+                        SUM(IF(inj = $AV, 1, 0) + IF(agn1 = $AV, 1, 0) + IF(agn2 = $AV, 1, 0)) AS 'inj_av', 
+                        SUM(IF(inj = $AG, 1, 0) + IF(agn1 = $AG, 1, 0) + IF(agn2 = $AG, 1, 0)) AS 'inj_ag', 
+                        SUM(IF(inj = $ST, 1, 0) + IF(agn1 = $ST, 1, 0) + IF(agn2 = $ST, 1, 0)) AS 'inj_st' 
+                    FROM match_data
+                    WHERE f_team_id = $this->team_id AND f_player_id > 0
+                    GROUP BY f_player_id
+                ) AS valReducInjs
+            ";
+            $subtract = "(
+                IF(inj_ma IS NULL, 0, inj_ma*$rules[val_reduc_ma]) + 
+                IF(inj_av IS NULL, 0, inj_av*$rules[val_reduc_av]) + 
+                IF(inj_ag IS NULL, 0, inj_ag*$rules[val_reduc_ag]) + 
+                IF(inj_st IS NULL, 0, inj_st*$rules[val_reduc_st]))";
+        }
+
         // Final master query.
         $query = "
             SELECT
-                SUM(cost + (ach_ma + ach_av)*30000 + ach_ag*40000 + ach_st*50000 + nor*20000 + dob*30000) AS 'playerValueSum'
+                SUM(cost + (ach_ma + ach_av)*30000 + ach_ag*40000 + ach_st*50000 + nor*20000 + dob*30000 ".(($valReducInjs) ? " - $subtract" : '').") AS 'playerValueSum'
             FROM
                 $valueParts
+                ".(($valReducInjs) ? " LEFT JOIN $valReducInjs ON valueParts.pid = valReducInjs.pid" : '')."
         ";
-        
+
         /* 
             Compile finished! Phew! 
             Lets get that player value sum. 
