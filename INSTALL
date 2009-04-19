@@ -76,6 +76,36 @@ NOTE: When upgrading please save your old settings file as a reference for when 
         ALTER TABLE teams ADD COLUMN rdy BOOLEAN NOT NULL DEFAULT 1 AFTER cheerleaders;
         ALTER TABLE teams MODIFY elo_0 FLOAT SIGNED NOT NULL DEFAULT 0;
 
+        CREATE TABLE IF NOT EXISTS leagues
+        (
+            lid         MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            name        VARCHAR(50),
+            location    VARCHAR(50),
+            date        DATETIME
+        );
+        CREATE TABLE IF NOT EXISTS divisions
+        (
+            did   MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            f_lid MEDIUMINT UNSIGNED,
+            name  VARCHAR(50)
+        );
+        ALTER TABLE tours ADD COLUMN f_did MEDIUMINT UNSIGNED AFTER tour_id;
+        ALTER TABLE match_data ADD COLUMN f_did MEDIUMINT UNSIGNED AFTER f_tour_id;
+        ALTER TABLE match_data ADD COLUMN f_lid MEDIUMINT UNSIGNED AFTER f_did;
+
+    -- ---------------------------------------------------------    
+    -- NOTICE !!! The below code SHOULD NOT be executed twice!!!
+    -- ---------------------------------------------------------
+        
+        INSERT INTO leagues   (name, location, date) VALUES ('My league', 'My location', NOW());
+        INSERT INTO divisions (name, f_lid)          VALUES ('My division', 1);
+        UPDATE tours SET f_did = 1;
+        UPDATE match_data SET f_did = 1, f_lid = 1;
+
+    -- ---------------------------------------------------------
+    -- END OF NOTICE.
+    -- ---------------------------------------------------------
+
 0.36 -> 0.37
 
     Replace all OBBLM files.

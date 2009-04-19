@@ -183,9 +183,27 @@ function setup_tables() {
                 )';
     mk_table($query, 'matches');
 
+    $query = 'CREATE TABLE IF NOT EXISTS leagues
+                (
+                lid         MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                name        VARCHAR(50),
+                location    VARCHAR(50),
+                date        DATETIME
+                )';
+    mk_table($query, 'leagues');
+    
+    $query = 'CREATE TABLE IF NOT EXISTS divisions
+                (
+                did   MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                f_lid MEDIUMINT UNSIGNED,
+                name  VARCHAR(50)
+                )';
+    mk_table($query, 'divisions');
+    
     $query = 'CREATE TABLE IF NOT EXISTS tours
                 (
                 tour_id         MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                f_did           MEDIUMINT UNSIGNED,
                 name            VARCHAR(50),
                 type            TINYINT UNSIGNED,
                 date_created    DATETIME,
@@ -202,6 +220,8 @@ function setup_tables() {
                 f_player_id         MEDIUMINT SIGNED,
                 f_match_id          MEDIUMINT SIGNED,
                 f_tour_id           MEDIUMINT UNSIGNED,
+                f_did               MEDIUMINT UNSIGNED,
+                f_lid               MEDIUMINT UNSIGNED,
                 mvp                 TINYINT UNSIGNED,
                 cp                  TINYINT UNSIGNED,
                 td                  TINYINT UNSIGNED,

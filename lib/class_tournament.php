@@ -36,6 +36,7 @@ class Tour
 
     // MySQL stored information
     public $tour_id         = 0;
+    public $f_did           = 0; // From division ID.
     public $name            = '';
     public $type            = 0;
     public $date_created    = '';
@@ -268,6 +269,12 @@ class Tour
     
         $query = "UPDATE tours SET rs = $rs WHERE tour_id = $this->tour_id";
         return mysql_query($query);
+    }
+
+    public function ch_did($did) {
+        $query1 = "UPDATE tours SET f_did = $did WHERE tour_id = $this->tour_id";
+        $query2 = "UPDATE match_data SET f_did = $did WHERE f_tour_id = $this->tour_id";
+        return (mysql_query($query1) && mysql_query($query2));
     }
 
     public function update() {
@@ -685,7 +692,7 @@ class Tour
         
        
         // Quit if can't make tournament entry.
-        $query = "INSERT INTO tours (name, type, rs, date_created) VALUES ('" . mysql_real_escape_string($input['name']) . "', $input[type], $input[rs], NOW())";
+        $query = "INSERT INTO tours (name, f_did, type, rs, date_created) VALUES ('" . mysql_real_escape_string($input['name']) . "', $input[did], $input[type], $input[rs], NOW())";
         if (!mysql_query($query)) {
             return false;
         }

@@ -26,9 +26,13 @@ h3{margin:0} /*reset browser default margin*/
 tr.dark      {background-color: #BBBBBB;}
 tr.light     {background-color: #CCCCCC;}
 tr.lightest  {background-color: #DDDDDD;}
+tr.leauges   {background-color: #659EC7;}
+tr.divisions {background-color: #8BB381;}
 td.dark      {background-color: #BBBBBB;}
 td.light     {background-color: #CCCCCC;}
 td.lightest  {background-color: #DDDDDD;}
+td.leauges   {background-color: #659EC7;}
+td.divisions {background-color: #8BB381;}
 td.seperator {height:15px;}
 
 /* Boxes */
@@ -124,7 +128,7 @@ table.teams /* "border-spacing" property (cellspacing) is defined as HTML tags. 
 
 /* Fixtures table */
 
-table.fixtues
+table.fixtures
 {
     border: none; 
     width: 100%; 
@@ -132,7 +136,7 @@ table.fixtues
     
     margin-left: auto; 
     margin-right: auto; 
-    padding: 10px;
+    padding: 5px;
 }
 
 /* Main */

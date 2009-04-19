@@ -693,34 +693,67 @@ function sec_fixturelist() {
     
     $flist = array( # The fixture list
 // $flist MODEL:
-#            'tour1' => array(
-#                'tour_obj' => $tour_obj,
-#                'round1' => array('match1_id' => $match1_obj, 'match2_id' => $match2_obj),
-#                'round2' => array('match3_id' => $match3_obj, 'match4_id' => $match4_obj) 
+#        'league1' => array(
+#            'l_obj' => $league_obj
+#            'division1' => array(
+#                'd_obj' => $division_obj
+#                'tour1' => array(
+#                    'tour_obj' => $tour_obj,
+#                    'round1' => array('match1_id' => $match1_obj, 'match2_id' => $match2_obj),
+#                    'round2' => array('match3_id' => $match3_obj, 'match4_id' => $match4_obj) 
+#                )
 #            )
+#        )
     );
     
     // Generate fixture list.
-    foreach (Tour::getTours() as $t) {
-        foreach ($t->getMatches() as $m) {
-            $flist[$t->name][$m->round][$m->match_id] = $m; # Copy match object.
-        }
-        $flist[$t->name]['tour_obj'] = $t; # Copy tour object.
-    }
-
-    // Sort fixture list data structure.
-    foreach ($flist as $tour => $rounds) {
-        ksort($flist[$tour]); # Sort rounds.
-        foreach ($rounds as $round => $matches) {
-            if (is_object($flist[$tour][$round]))
-                continue;
-            else
-                ksort($flist[$tour][$round]); # Sort matches in round by match_id.
+    $leagues = League::getLeagues();
+    objsort($leagues, array('+date'));
+    foreach ($leagues as $l) {
+        $divisions = $l->getDivisions();
+        objsort($divisions, array('+did'));
+        foreach ($divisions as $d) {
+            $tours = $d->getTours();
+            objsort($tours, array('+date_created'));
+            foreach ($tours as $t) {
+                foreach ($t->getMatches() as $m) {
+                    $flist[$l->name][$d->name][$t->name][$m->round][$m->match_id] = $m; # Copy match object.
+                }
+                // Sort rounds
+                ksort($flist[$l->name][$d->name][$t->name]); # Sort rounds.
+                foreach ($flist[$l->name][$d->name][$t->name] as $round => $matches) {
+                    if (is_object($flist[$l->name][$d->name][$t->name][$round]))
+                        continue;
+                    else
+                        ksort($flist[$l->name][$d->name][$t->name][$round]); # Sort matches in round by match_id.
+                }
+                // Objects.
+                $flist[$l->name][$d->name][$t->name]['tour_obj'] = $t; # Copy tour object.
+                $flist[$l->name][$d->name]['d_obj'] = $d; # Copy tour object.
+                $flist[$l->name]['l_obj'] = $l; # Copy tour object.
+            }
         }
     }
 
     // Print fixture list.
+    echo "<table style='width:100%;'>\n";
+    foreach ($flist as $l => $divs) {
+        echo "<tr class='leauges'><td><b>
+        <a href='javascript:void(0);' onClick=\"obj=document.getElementById('lid_".$divs['l_obj']->lid."'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\"><b>[+/-]</b></a>&nbsp;
+        $l
+        </b></td></tr>";
+        echo "<tr><td><div id='lid_".$divs['l_obj']->lid."'>";
+    foreach ($divs as $d => $flist) {
+        if (is_object($flist)) continue;
+        echo "<table class='fixtures' style='width:100%;'>\n";
+        echo "<tr class='divisions'><td><b>
+        <a href='javascript:void(0);' onClick=\"obj=document.getElementById('did_".$flist['d_obj']->did."'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\"><b>[+/-]</b></a>&nbsp;
+        $d
+        </b></td></tr>";
+        echo "<tr><td><div id='did_".$flist['d_obj']->did."'>";
     foreach ($flist as $tour => $rounds) {
+
+        if (is_object($rounds)) continue;
 
         // Skip tournaments which have no rounds/matches
         if ($flist[$tour]['tour_obj']->empty)
@@ -729,7 +762,7 @@ function sec_fixturelist() {
         $t = $flist[$tour]['tour_obj'];
 
         ?>
-        <table class='fixtures' style='width:100%;'>
+        <table style='width:100%;'>
             <tr class='dark'>
                 <td style='width:30%;'>
                     <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
@@ -841,6 +874,11 @@ function sec_fixturelist() {
             <?php
         }
     }
+    echo "</div></td></tr></table>\n";
+    }
+    echo "</div></td></tr><tr><td class='seperator'></td></tr>\n";
+    }
+    echo "</table>\n";
 }
 
 /*************************

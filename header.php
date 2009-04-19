@@ -236,6 +236,8 @@ require_once('lib/misc_functions.php');
 // OBBLM libraries.
 require_once('lib/class_match.php');
 require_once('lib/class_tournament.php');
+require_once('lib/class_division.php');
+require_once('lib/class_league.php');
 require_once('lib/class_player.php');
 require_once('lib/class_starmerc.php');
 require_once('lib/class_team.php');

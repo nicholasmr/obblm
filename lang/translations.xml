@@ -784,6 +784,7 @@
             
             <administration>Administration</administration>
             <um>User management</um>
+            <ldm>League and division management</ldm>
             <import>Import team</import>
             <th>Tournament handling</th>
             <delete>Delete/retire coaches or teams</delete>
@@ -795,6 +796,7 @@
             
             <!-- Subsec: Schedule matches -->
             <multiple_schedule><![CDATA[<i>Note:</i> You are free to schedule multiple tournaments running concurrently.]]></multiple_schedule>
+            <div_name>Division</div_name>            
             <tour_name>Tournament name</tour_name>
             <rank_sys>Ranking system</rank_sys>
             <tour_type>Tournament type</tour_type>
@@ -843,6 +845,8 @@
                 <e1>delete the tournament associated data forever (this includes team and player gained stats in the tournament).</e1>
                 <e2>generate incorrect player statuses for those matches following (date-wise) the matches deleted. Re-saving/changing old matches may therefore be problematic.</e2>
             </advise>
+            <tour_del>Tournament deletion</tour_del>
+            <move_div>Move tour to other division</move_div>
 
             <!-- Subsec: Log -->
                 <!-- Nothing! -->
