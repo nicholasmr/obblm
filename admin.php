@@ -1118,24 +1118,9 @@ function sec_admin() {
         $divisions = Division::getDivisions();
         
         ?>
-        <table style='width:100%; : 10px;'>
+        <table>
             <tr>
-                <td>
-                <div class="adminBox">
-                    <div class="boxTitle3">Create league</div>
-                    <div class="boxBody">
-                    <form method="POST">
-                    Name:<br>
-                    <input type="text" name="name"><br><br>
-                    Location:<br>
-                    <input type="text" name="location"><br><br>
-                    <input type='submit' value='Create'>
-                    <input type='hidden' name='type' value='new_league'>
-                    </form>
-                    </div>
-                </div>
-                </td>
-                <td>
+                <td valign='top'>
                 <div class="adminBox">
                     <div class="boxTitle3">Create division</div>
                     <div class="boxBody">
@@ -1156,32 +1141,7 @@ function sec_admin() {
                     </div>
                 </div>
                 </td>
-            </tr>
-            <tr>
-                <td>
-                <div class="adminBox">
-                    <div class="boxTitle3">Modify league</div>
-                    <div class="boxBody">
-                    <form method="POST">
-                    League:<br>
-                    <select name='lid'>
-                        <?php
-                        foreach ($leagues as $l) {
-                            echo "<option value='$l->lid'>$l->name</option>\n";
-                        }
-                        ?>
-                    </select><br><br>
-                    Name:<br>
-                    <input type="text" name="name"><br><br>
-                    Location:<br>
-                    <input type="text" name="location"><br><br>
-                    <input type='submit' value='Modify' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
-                    <input type='hidden' name='type' value='mod_league'>
-                    </form>
-                    </div>
-                </div>
-                </td>
-                <td>
+                <td valign='top'>
                 <div class="adminBox">
                     <div class="boxTitle3">Modify division</div>
                     <div class="boxBody">
@@ -1210,28 +1170,7 @@ function sec_admin() {
                     </div>
                 </div>
                 </td>
-            </tr>
-            <tr>
-                <td>
-                <div class="adminBox">
-                    <div class="boxTitle3">Delete league</div>
-                    <div class="boxBody">
-                    <form method="POST">
-                    League:<br>
-                    <select name='lid'>
-                        <?php
-                        foreach ($leagues as $l) {
-                            echo "<option value='$l->lid'>$l->name</option>\n";
-                        }
-                        ?>
-                    </select><br><br>
-                    <input type='submit' value='Delete' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
-                    <input type='hidden' name='type' value='del_league'>
-                    </form>
-                    </div>
-                </div>
-                </td>
-                <td>
+                <td valign='top'>
                 <div class="adminBox">
                     <div class="boxTitle3">Delete division</div>
                     <div class="boxBody">
@@ -1244,8 +1183,68 @@ function sec_admin() {
                         }
                         ?>
                     </select><br><br>
-                    <input type='submit' value='Delete' <?php echo empty($divisions) ? ' DISABLED ' : '';?>>
+                    <input type='submit' value='Delete' <?php echo empty($divisions) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You shuould only delete devisions when no matches are assigned to it.')){return false;}">
                     <input type='hidden' name='type' value='del_division'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+            </tr>
+            <tr><td colspan="3"><hr></td></tr>
+            <tr>
+                <td valign='top'>
+                <div class="adminBox">
+                    <div class="boxTitle3">Create league</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    Name:<br>
+                    <input type="text" name="name"><br><br>
+                    Location:<br>
+                    <input type="text" name="location"><br><br>
+                    <input type='submit' value='Create'>
+                    <input type='hidden' name='type' value='new_league'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+                <td valign='top'>
+                <div class="adminBox">
+                    <div class="boxTitle3">Modify league</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    League:<br>
+                    <select name='lid'>
+                        <?php
+                        foreach ($leagues as $l) {
+                            echo "<option value='$l->lid'>$l->name</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    Name:<br>
+                    <input type="text" name="name"><br><br>
+                    Location:<br>
+                    <input type="text" name="location"><br><br>
+                    <input type='submit' value='Modify' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
+                    <input type='hidden' name='type' value='mod_league'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+                <td valign='top'>
+                <div class="adminBox">
+                    <div class="boxTitle3">Delete league</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    League:<br>
+                    <select name='lid'>
+                        <?php
+                        foreach ($leagues as $l) {
+                            echo "<option value='$l->lid'>$l->name</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    <input type='submit' value='Delete' <?php echo empty($leagues) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete leagues if empty, ie. no divisions/matches assigned to them.')){return false;}">
+                    <input type='hidden' name='type' value='del_league'>
                     </form>
                     </div>
                 </div>

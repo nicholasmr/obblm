@@ -160,7 +160,7 @@ switch ($_GET['type'])
         $t->koObj->renameCompets($dictionary);
 
         // Draw image.
-        $im = $t->koObj->getImage($settings['league_name'] . ' Blood Bowl League');
+        $im = $t->koObj->getImage($settings['site_name']);
         header('Content-type: image/png');
         imagepng($im);
         imagedestroy($im);
@@ -188,7 +188,7 @@ switch ($_GET['type'])
         preg_match('/(\w*)/', strtolower($_SERVER["SERVER_PROTOCOL"]), $matches); 
         $protocol = $matches[0].$s;
         $rss = new OBBLMRssWriter(
-            $settings['league_name'].' feed', 
+            $settings['site_name'].' feed', 
             $protocol."://".$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI']), 
             'Blood bowl league RSS feed',
             'en-EN', 
