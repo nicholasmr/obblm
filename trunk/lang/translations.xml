@@ -494,7 +494,7 @@
             <d_wanted>Wanted players</d_wanted>
             <d_memma>Memorable matches</d_memma>
             <d_prizes>Prizes</d_prizes>
-            <d_lgstats>League graphical statistics</d_lgstats>
+            <d_gstats>Overall graphical statistics</d_gstats>
             <new>New entry</new>
             <edit>Edit</edit>
             <del>Delete</del>

@@ -74,6 +74,7 @@ function sec_login() {
         &nbsp;&nbsp;
         <b><?php echo $lng->getTrn('secs/login/passwd');?></b>
         <input type="password" name="passwd" size="20" maxlength="50"> 
+        <input type=text name='hackForHittingEnterToLogin' size='1' style='display: none;'>
         <br><br>
         <input type="submit" name="login" value="Login">
     </form>
@@ -206,7 +207,7 @@ function sec_main() {
      *****/
 
     ?>
-    <div class="main_title"><?php echo $settings['league_name']; ?></div>
+    <div class="main_title"><?php echo $settings['site_name']; ?></div>
     <div class='main_lcol'>
         <div class="main_lcolLinks">
             <?php
@@ -1671,7 +1672,7 @@ function sec_records() {
         echo "<a href='index.php?section=records&amp;subsec=$a'><b>$b</b></a><br>\n";
     }
     // Add graphical stats link.
-    echo "<a href='handler.php?type=graph&amp;gtype=".(SG_T_LEAGUE)."&amp;id=none'><b>".$lng->getTrn('secs/records/d_lgstats')."</b></a><br>\n";
+    echo "<a href='handler.php?type=graph&amp;gtype=".(SG_T_LEAGUE)."&amp;id=none'><b>".$lng->getTrn('secs/records/d_gstats')."</b></a><br>\n";
 }
 
 /*************************
