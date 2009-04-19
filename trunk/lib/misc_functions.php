@@ -71,7 +71,7 @@ function mysql_up($do_table_check = false) {
 
     // Test if all tables exist.
     if ($do_table_check) {
-        $tables_expected = array('coaches', 'teams', 'players', 'tours', 'matches', 'match_data', 'texts');
+        $tables_expected = array('coaches', 'teams', 'players', 'tours', 'matches', 'match_data', 'texts', 'prizes', 'leagues', 'divisions');
         $tables_found = array();
         $query = "SHOW TABLES";
         $result = mysql_query($query);

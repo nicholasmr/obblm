@@ -36,7 +36,7 @@ function sec_admin() {
     if (!is_object($coach) || $coach->ring > RING_COM)
         fatal("Sorry. Only site administrators and commissioners are allowed to access this section.");
 
-    $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'import' => $lng->getTrn('secs/admin/import'), 'chtr' => $lng->getTrn('secs/admin/th'), 'ctman' => $lng->getTrn('secs/admin/delete'));
+    $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'ldm' => $lng->getTrn('secs/admin/ldm'), 'import' => $lng->getTrn('secs/admin/import'), 'chtr' => $lng->getTrn('secs/admin/th'), 'ctman' => $lng->getTrn('secs/admin/delete'));
     $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('secs/admin/log'));
     
     if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
@@ -298,7 +298,7 @@ function sec_admin() {
                     if ($_POST['type'] == TT_SINGLE) {
                         $_POST['rounds'] = $_POST['round'];
                     }
-                    status(Tour::create(array('name' => $_POST['name'], 'type' => (int) $_POST['type'], 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
+                    status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => (int) $_POST['type'], 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
                 }
             }
         }
@@ -314,11 +314,27 @@ function sec_admin() {
             var TT_SINGLE   = <?php echo TT_SINGLE; ?>;
         </script>
         
-        <?php echo $lng->getTrn('secs/admin/multiple_schedule');?><br><br>
-        
+        <?php 
+        echo $lng->getTrn('secs/admin/multiple_schedule');
+        $divisions = Division::getDivisions();
+        foreach ($divisions as $d) {
+            $d->dispName = "$d->league_name: $d->name";
+        }
+        objsort($divisions, array('+dispName'));
+        ?><br><br>
+      
         <form method="POST" name="tourForm" action="index.php?section=admin&amp;subsec=tournament">
             <table><tr>
                 <td>
+                    <b><?php echo $lng->getTrn('secs/admin/div_name');?>:</b><br>
+                    <select name='did'>
+                        <?php
+                        foreach ($divisions as $d) {
+                            echo "<option value='$d->did'>$d->dispName</option>\n";
+                        }
+                        ?>
+                    </select>
+                    <br><br>
                     <b><?php echo $lng->getTrn('secs/admin/tour_name');?>:</b><br>
                     <input type="text" name="name" size="30" maxlength="50">
                     <br><br>
@@ -393,7 +409,7 @@ function sec_admin() {
             ?>
             <br>
             <hr align="left" width="200px">
-            <input type="submit" name="button" value="<?php echo $lng->getTrn('secs/admin/create');?>">
+            <input type="submit" name="button" value="<?php echo $lng->getTrn('secs/admin/create');?>" <?php echo (empty($divisions) ? 'DISABLED' : '');?>>
         </form>
         <?php
     }
@@ -831,6 +847,11 @@ function sec_admin() {
                         status(false, 'Please mark the agreement box before trying to delete a tournament.');
                     }
                     break;
+                    
+                case 'move':
+                    $t = new Tour($_POST['trid']);
+                    status($t->ch_did($_POST['did']));
+                    break;
             }
         }
 
@@ -879,9 +900,9 @@ function sec_admin() {
             <input type="submit" value="Submit changes">
             <br><br>
         </form>
+        <hr>
         <form method="POST">
-            <hr>
-            <?php title('Tournament deletion');?>
+            <?php title($lng->getTrn('secs/admin/tour_del'));?>
             <b>I wish to delete the following tournament</b><br>
             <select name="trid">
                 <?php
@@ -904,6 +925,28 @@ function sec_admin() {
             <br>           
             <input type="hidden" name="type" value="delete">
             <input type="submit" value="Delete" onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
+        </form>
+        <hr>
+        <form method="POST">
+            <?php title($lng->getTrn('secs/admin/move_div'));?>
+            <b>Move tournament</b><br>
+            <select name="trid">
+                <?php
+                foreach (Tour::getTours() as $t) {
+                    echo "<option value='$t->tour_id'>$t->name</option>\n";
+                }
+                ?>
+            </select><br><br>
+            <b>...to the division</b><br>
+            <select name="did">
+                <?php
+                foreach (Division::getDivisions() as $d) {
+                    echo "<option value='$d->did'>$d->name</option>\n";
+                }
+                ?>
+            </select><br><br>
+            <input type="hidden" name="type" value="move">
+            <input type="submit" value="Move">
         </form>
         <?php
     }
@@ -1041,6 +1084,168 @@ function sec_admin() {
                     <br><br>
                     <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
                     <input type='hidden' name='type' value='dc'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+            </tr>
+        </table>
+        <?php
+    }
+    elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'ldm') {
+        
+        if (isset($_POST['type'])) {
+            if (get_magic_quotes_gpc()) {
+                foreach (array('name', 'location',) as $i) {
+                    $_POST[$i] = isset($_POST[$i]) ? stripslashes($_POST[$i]) : '';
+                }
+            }
+            $l = (isset($_POST['lid'])) ? new League($_POST['lid']) : null;
+            $d = (isset($_POST['did'])) ? new Division($_POST['did']) : null;
+            switch ($_POST['type'])
+            {
+                case 'new_league':      status(League::create($_POST['name'], $_POST['location'])); break;
+                case 'new_division':    status(Division::create($_POST['lid'], $_POST['name'])); break;
+                case 'mod_league':      status($l->setName($_POST['name']) && $l->setLocation($_POST['location'])); break;
+                case 'mod_division':    status($d->setName($_POST['name']) && $d->set_f_lid($_POST['lid'])); break;
+                case 'del_league':      status($l->delete()); break;
+                case 'del_division':    status($d->delete()); break;
+            }
+        }
+        
+        title($lng->getTrn('secs/admin/ldm'));
+        $leagues = League::getLeagues();
+        $divisions = Division::getDivisions();
+        
+        ?>
+        <table style='width:100%; : 10px;'>
+            <tr>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Create league</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    Name:<br>
+                    <input type="text" name="name"><br><br>
+                    Location:<br>
+                    <input type="text" name="location"><br><br>
+                    <input type='submit' value='Create'>
+                    <input type='hidden' name='type' value='new_league'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Create division</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    League:<br>
+                    <select name='lid'>
+                        <?php
+                        foreach ($leagues as $l) {
+                            echo "<option value='$l->lid'>$l->name</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    Name:<br>
+                    <input type="text" name="name"><br><br>
+                    <input type='submit' value='Create' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
+                    <input type='hidden' name='type' value='new_division'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Modify league</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    League:<br>
+                    <select name='lid'>
+                        <?php
+                        foreach ($leagues as $l) {
+                            echo "<option value='$l->lid'>$l->name</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    Name:<br>
+                    <input type="text" name="name"><br><br>
+                    Location:<br>
+                    <input type="text" name="location"><br><br>
+                    <input type='submit' value='Modify' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
+                    <input type='hidden' name='type' value='mod_league'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Modify division</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    Division:<br>
+                    <select name='did'>
+                        <?php
+                        foreach ($divisions as $d) {
+                            echo "<option value='$d->did'>$d->name ($d->league_name)</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    Assigned to league:<br>
+                    <select name='lid'>
+                        <?php
+                        foreach ($leagues as $l) {
+                            echo "<option value='$l->lid'>$l->name</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    Name:<br>
+                    <input type="text" name="name"><br><br>
+                    <input type='submit' value='Modify' <?php echo empty($divisions) ? ' DISABLED ' : '';?>>
+                    <input type='hidden' name='type' value='mod_division'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Delete league</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    League:<br>
+                    <select name='lid'>
+                        <?php
+                        foreach ($leagues as $l) {
+                            echo "<option value='$l->lid'>$l->name</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    <input type='submit' value='Delete' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
+                    <input type='hidden' name='type' value='del_league'>
+                    </form>
+                    </div>
+                </div>
+                </td>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Delete division</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    Division:<br>
+                    <select name='did'>
+                        <?php
+                        foreach ($divisions as $d) {
+                            echo "<option value='$d->did'>$d->name ($d->league_name)</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    <input type='submit' value='Delete' <?php echo empty($divisions) ? ' DISABLED ' : '';?>>
+                    <input type='hidden' name='type' value='del_division'>
                     </form>
                     </div>
                 </div>

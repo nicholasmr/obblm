@@ -302,6 +302,8 @@ class Match
         $pid    = $p->player_id;
         $tid    = $p->owned_by_team_id;
         $cid    = $p->coach_id;
+        $did    = get_alt_col('tours', 'tour_id', $this->f_tour_id, 'f_did');
+        $lid    = get_alt_col('divisions', 'did', $did, 'f_lid');
     
         $mvp    = $input['mvp']    ? $input['mvp']     : 0;
         $cp     = $input['cp']     ? $input['cp']      : 0;
@@ -439,6 +441,8 @@ class Match
                 f_team_id,
                 f_match_id,
                 f_tour_id,
+                f_did,
+                f_lid,
                 f_player_id,
 
                 mvp,
@@ -458,6 +462,8 @@ class Match
                 $tid,
                 $mid,
                 $this->f_tour_id,
+                $did,
+                $lid,
                 $pid,
 
                 $mvp,
@@ -648,6 +654,8 @@ class Match
             f_team_id,
             f_match_id,
             f_tour_id,
+            f_did,
+            f_lid,
             f_player_id,
 
             mvp,
@@ -666,6 +674,8 @@ class Match
             $cid,
             $tid,
             $mid,
+            0,
+            0,
             0,
             $pid,
 
