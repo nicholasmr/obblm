@@ -74,7 +74,7 @@ function sec_login() {
         &nbsp;&nbsp;
         <b><?php echo $lng->getTrn('secs/login/passwd');?></b>
         <input type="password" name="passwd" size="20" maxlength="50"> 
-        <input type=text name='hackForHittingEnterToLogin' size='1' style='display: none;'>
+        <div style='display: none;'><input type='text' name='hackForHittingEnterToLogin' size='1'></div>
         <br><br>
         <input type="submit" name="login" value="Login">
     </form>
