@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Daniel Straalman <email is protected> 2008-2009. All Rights Reserved.
+ *
  *
  *
  *  This file is part of OBBLM.
@@ -285,9 +285,10 @@ function parse_results($index, $vals) {
 function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $homewinnings, $homeff, $awayteam, $awayscore, $awaywinnings, $awayff, $hash ) {
 
 	Print "<br>Connecting to the database.<br>";
-	require('settings.php');
-	mysql_connect($db_host, $db_user, $db_passwd) or die(mysql_error()); 
-	mysql_select_db($db_name) or die(mysql_error());
+#	require('settings.php');
+#	mysql_connect($db_host, $db_user, $db_passwd) or die(mysql_error()); 
+#	mysql_select_db($db_name) or die(mysql_error());
+	mysql_up();
 	
 	### BEGIN REPORT MATCHES TABLE
 
@@ -664,7 +665,7 @@ function addMatch ( $hash, $hometeam, $awayteam, $gate, $homeff, $awayff, $homew
 		exit(-1);
 	}
 	$match_id = mysql_fetch_array($match_id);
-	$match_id = $hometeam_id['match_id'];
+	$match_id = $match_id['match_id'];
 
 	$matchfields = array( "tour_id" => $tour_id, "hometeam_id" => $hometeam_id, "awayteam_id" => $awayteam_id, "match_id" => $match_id ); # homecoach_id awaycoach_id
 	return $matchfields;
