@@ -285,14 +285,12 @@ function parse_results($index, $vals) {
 function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $homewinnings, $homeff, $awayteam, $awayscore, $awaywinnings, $awayff, $hash ) {
 
 	Print "<br>Connecting to the database.<br>";
-#	require('settings.php');
-#	mysql_connect($db_host, $db_user, $db_passwd) or die(mysql_error()); 
-#	mysql_select_db($db_name) or die(mysql_error());
 	mysql_up();
 	
 	### BEGIN REPORT MATCHES TABLE
 
 	$matchfields = addMatch ( $hash, $hometeam, $awayteam, $gate, $homeff, $awayff, $homewinnings, $awaywinnings, $homescore, $awayscore );
+
 	
 	###END REPORT MATCHES TABLE
 
@@ -402,7 +400,7 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 
 	##$%BEGIN WINNINGS UPDATE
 
-	updateWinnings ( $matchfields[hometeam_id], $homewinnings );
+	#updateWinnings ( $matchfields[hometeam_id], $homewinnings );
 
 
 	##$%END WINNINGS UPDATE
@@ -514,7 +512,7 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 
 	#BEGIN AWAY WINNINGS
 
-	updateWinnings ( $matchfields[awayteam_id], $awaywinnings );
+	#updateWinnings ( $matchfields[awayteam_id], $awaywinnings );
 	#END AWAY WINNINGS
 
 	
@@ -644,19 +642,12 @@ function addMatch ( $hash, $hometeam, $awayteam, $gate, $homeff, $awayff, $homew
 	date_default_timezone_set('EST');
 	$c_date = date ( "Y\-m\-d H\:i\:s" );
 
-	$query="INSERT INTO matches ( round, f_tour_id, locked, submitter_id, stadium, gate, ffactor1, ffactor2, income1, income2, team1_id, team2_id, date_created, date_played, date_modified, team1_score, team2_score, hash)
-		VALUES ( 255, $tour_id, 1, 1, $hometeam_id, $gate, $homeff, $awayff, $homewinnings, $awaywinnings, $hometeam_id, $awayteam_id, '$c_date', '$c_date', '$c_date', $homescore, $awayscore, '$hash' )";
-	$result = mysql_query($query);
-	if (!$result) {
-		Print "<br>The match could not be added to the database.<br>";
-		die('Query failed for line 315: ' . mysql_error());
-		exit(-1);
-	}
-	else
-	{
-		Print "<br>The match was successfully added to the database.";
-	}
-	
+#######	#Begin using Match class to create match.
+	$match = new Match();
+	$match->create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 255, "f_tour_id" => 1, "hash" => $hash) );
+	unset( $input );
+#######	#End using Match class to create match.
+
 	$query = "SELECT match_id FROM matches WHERE hash = \"".$hash."\"";
 	$match_id = mysql_query($query);
 	if (!$match_id) {
@@ -666,6 +657,11 @@ function addMatch ( $hash, $hometeam, $awayteam, $gate, $homeff, $awayff, $homew
 	}
 	$match_id = mysql_fetch_array($match_id);
 	$match_id = $match_id['match_id'];
+
+#######	#Begin using Match class to update match.
+	$match = new Match($match_id);
+	$match->update( $input = array("submitter_id" => 1, "stadium" => $hometeam_id, "gate" => $gate, "fans" => 0, "ffactor1" => $homeff, "ffactor2" => $awayff, "income1" => $homewinnings, "income2" => $awaywinnings, "team1_score" => $homescore, "team2_score" => $awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0) );
+#######	#End using Match class to update match.
 
 	$matchfields = array( "tour_id" => $tour_id, "hometeam_id" => $hometeam_id, "awayteam_id" => $awayteam_id, "match_id" => $match_id ); # homecoach_id awaycoach_id
 	return $matchfields;

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Daniel Straalman <email is protected> 2008-2009. All Rights Reserved.
+ *
  *
  *
  *  This file is part of OBBLM.
@@ -30,7 +30,7 @@
 require_once('../lib/game_data.php');
 require_once('../settings.php');
 
-mysql_connect($db_host, $db_user, $db_passwd) or die(mysql_error()); 
+mysql_connect($db_host, $db_user, $db_passwd) or die(mysql_error());
 mysql_select_db($db_name) or die(mysql_error());
 
 $team_id = $_GET["teamid"];
