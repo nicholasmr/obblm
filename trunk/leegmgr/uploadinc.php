@@ -308,6 +308,10 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 	$f_coach_id = $result['owned_by_coach_id'];
 	
 	$i = 0;
+#######	
+	$match = new Match( $matchfields[match_id] );
+#######
+
 	while ( $i < count( $homeplayers ) ) {
 		$homeplayer_nr = $homeplayers[$i][number];
 		$query = "SELECT player_id FROM `players` WHERE date_sold is NULL and owned_by_team_id = ".$matchfields[hometeam_id]." AND nr = " .$homeplayer_nr;
@@ -361,15 +365,9 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 		
 		$inj = $injeffect;
 		
-		$query = "INSERT INTO match_data ( f_coach_id, f_team_id, f_player_id, f_match_id, f_tour_id, mvp, cp, td, intcpt, bh, si, ki, inj, agn1, agn2 )
-			VALUES ( $f_coach_id, $matchfields[hometeam_id], $f_player_id, $matchfields[match_id], $matchfields[tour_id], $mvp, $cp, $td, $intcpt, $bh, 0, 0, $inj, 1, 1 )";
-		$result = NULL;
-		$result = mysql_query($query);  #, $mysql_link
-		if (!$result) {
-			Print "<br>Unable to add match data for the home team.<br>";
-			die('BEGIN REPORT MATCH_DATA TABLE Query 4 failed: ' . mysql_error());
-			exit(-1);
-		}
+#######		#Begin using match class to enter player data
+		$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0 ) );
+#######		#End using match class to enter player data
 		$i=$i+1;
 	}
 	##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
@@ -387,24 +385,11 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 		$inj = 1;
 		if ( !mysql_fetch_array(mysql_query("SELECT f_match_id  FROM `match_data` WHERE f_player_id  = ".$f_player_id." and f_match_id = ".$matchfields[match_id])) )
 		{
-			$query = "INSERT INTO match_data ( f_coach_id, f_team_id, f_player_id, f_match_id, f_tour_id, mvp, cp, td, intcpt, bh, si, ki, inj, agn1, agn2 )
-				VALUES ( $f_coach_id, $matchfields[hometeam_id], $f_player_id, $matchfields[match_id], $matchfields[tour_id], $mvp, $cp, $td, $intcpt, $bh, 0, 0, $inj, 1, 1 )";
-			$insresult = mysql_query($query);
-			if (!$insresult) {
-				die('Query ln 433 failed: ' . mysql_error());
-				exit(-1);
-			}
+			$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp,"td" => $td,"intcpt" => $intcpt,"bh" => $bh,"si" => 0,"ki" => 0 ) );
 		}
 	}
 	##END ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 
-	##$%BEGIN WINNINGS UPDATE
-
-	#updateWinnings ( $matchfields[hometeam_id], $homewinnings );
-
-
-	##$%END WINNINGS UPDATE
-	
 	####BEGIN AWAY PLAYER REPORT
 
 	$query = "SELECT owned_by_coach_id FROM `teams` WHERE team_id= \"".$matchfields[awayteam_id]."\"";
@@ -471,14 +456,7 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 		
 		$inj = $injeffect;
 		
-		$query = "INSERT INTO match_data ( f_coach_id, f_team_id, f_player_id, f_match_id, f_tour_id, mvp, cp, td, intcpt, bh, si, ki, inj, agn1, agn2 )
-			VALUES ( $f_coach_id, $matchfields[awayteam_id], $f_player_id, $matchfields[match_id], $matchfields[tour_id], $mvp, $cp, $td, $intcpt, $bh, 0, 0, $inj, 1, 1 )";
-		$result = NULL;
-		$result = mysql_query($query);  #, $mysql_link
-		if (!$result) {
-			die('BEGIN REPORT MATCH_DATA TABLE AWAY Query 4 failed: ' . mysql_error());
-			exit(-1);
-		}
+		$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp,"td" => $td,"intcpt" => $intcpt,"bh" => $bh,"si" => 0,"ki" => 0 ) );
 		$i=$i+1;
 	}
 
@@ -499,24 +477,13 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 		$inj = 1;
 		if ( !mysql_fetch_array(mysql_query("SELECT f_match_id  FROM `match_data` WHERE f_player_id  = ".$f_player_id." and f_match_id = ".$matchfields[match_id])) )
 		{
-			$query = "INSERT INTO match_data ( f_coach_id, f_team_id, f_player_id, f_match_id, f_tour_id, mvp, cp, td, intcpt, bh, si, ki, inj, agn1, agn2 )
-				VALUES ( $f_coach_id, $matchfields[awayteam_id], $f_player_id, $matchfields[match_id], $matchfields[tour_id], $mvp, $cp, $td, $intcpt, $bh, 0, 0, $inj, 1, 1 )";
-			$insresult = mysql_query($query);
-			if (!$insresult) {
-				die('Query ln 433 failed: ' . mysql_error());
-				exit(-1);
-			}
+			$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp,"td" => $td,"intcpt" => $intcpt,"bh" => $bh,"si" => 0,"ki" => 0 ) );
 		}
 	}
 	##END ADD EMPTY RESULTS FOR AWAY PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 
-	#BEGIN AWAY WINNINGS
-
-	#updateWinnings ( $matchfields[awayteam_id], $awaywinnings );
-	#END AWAY WINNINGS
-
-	
 	###END REPORT MATCH_DATA TABLE
+	$match->toggleLock();
 	Print "<br>Successfully uploaded entire report<br>";
 
 
