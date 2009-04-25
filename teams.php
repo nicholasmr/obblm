@@ -345,7 +345,23 @@ function team_roaster($team_id) {
     ?>
     <table class="text">
         <tr>
-            <td width="100%">
+            <td style="width: 100%;"> </td>
+            <?php
+            if ($DETAILED) {
+                ?>
+                <td style="background-color: <?php echo COLOR_HTML_READY;   ?>;"><font color='black'>Ready</font></td>
+                <td style="background-color: <?php echo COLOR_HTML_MNG;     ?>;"><font color='black'>MNG</font></td>
+                <td style="background-color: <?php echo COLOR_HTML_JOURNEY; ?>;"><font color='black'>Journey</font></td>
+                <td style="background-color: <?php echo COLOR_HTML_DEAD;    ?>;"><font color='black'>Dead</font></td>
+                <td style="background-color: <?php echo COLOR_HTML_SOLD;    ?>;"><font color='black'>Sold</font></td>
+                <td style="background-color: <?php echo COLOR_HTML_STARMERC;?>;"><font color='black'>Star/merc</font></td>
+                <td style="background-color: <?php echo COLOR_HTML_NEWSKILL;?>;"><font color='black'>New&nbsp;skill</font></td>
+                <?php
+            }
+            ?>
+        </tr>
+        <tr>
+            <td colspan="8">
             <?php
             echo "<a href='index.php?section=coachcorner&amp;team_id=$_GET[team_id]&amp;detailed=".(($DETAILED) ? 0 : 1)."'><b>".(($DETAILED) ? $lng->getTrn('secs/teams/n_view') : $lng->getTrn('secs/teams/d_view'))."</b></a>\n";
             echo "&nbsp;|&nbsp;<b><a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=" . ($DETAILED ? '1' : '0') . "'>PDF</a> <a href='handler.php?type=xmlexport&amp;tid=$_GET[team_id]'>XML</a> ".$lng->getTrn('secs/teams/roster')."</b>\n";
@@ -359,19 +375,8 @@ function team_roaster($team_id) {
             echo "&nbsp;|&nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''><b>Vis. stats</b></a>\n";
 //            echo "&nbsp;|&nbsp;<a href='#gp'><b>Matches</b></a>\n";
 //            echo "&nbsp;|&nbsp;<a href='#tr'><b>Rankings</b></a>\n";
-            echo "</td>\n";
-            if ($DETAILED) {
-                ?>
-                <td style="background-color: <?php echo COLOR_HTML_READY;   ?>;"><font color='black'>Ready</font></td>
-                <td style="background-color: <?php echo COLOR_HTML_MNG;     ?>;"><font color='black'>MNG</font></td>
-                <td style="background-color: <?php echo COLOR_HTML_JOURNEY; ?>;"><font color='black'>Journey</font></td>
-                <td style="background-color: <?php echo COLOR_HTML_DEAD;    ?>;"><font color='black'>Dead</font></td>
-                <td style="background-color: <?php echo COLOR_HTML_SOLD;    ?>;"><font color='black'>Sold</font></td>
-                <td style="background-color: <?php echo COLOR_HTML_STARMERC;?>;"><font color='black'>Star/merc</font></td>
-                <td style="background-color: <?php echo COLOR_HTML_NEWSKILL;?>;"><font color='black'>New&nbsp;skill</font></td>
-                <?php
-            }
             ?>
+            </td>
         </tr>
         <tr><td class='seperator' colspan='8'></td></tr>
         <tr>
