@@ -654,7 +654,7 @@ function team_roaster($team_id) {
                         
                             // Show players on the select list if buyable, or if player is a potential journeyman AND team has not reached journeymen limit.
                             if (($team->isPlayerBuyable($pos) && $team->treasury >= $details['cost']) || 
-                                ($details['qty'] == 16 && count($active_players) < $rules['journeymen_limit'])) {
+                                (($details['qty'] == 16 || (($rules['enable_lrb6x']) ? ($details['qty'] == 12) : false)) && count($active_players) < $rules['journeymen_limit'])) {
                                 echo "<option value='$pos'>" . $details['cost']/1000 . "k | $pos</option>\n";
                                 $DISABLE = false;
                             }
