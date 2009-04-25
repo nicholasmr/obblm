@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Daniel Straalman <email is protected> 2008-2009. All Rights Reserved.
+ *
  *
  *
  *  This file is part of OBBLM.
