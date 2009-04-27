@@ -339,7 +339,7 @@
                     </buy_goods>
                     <buy_goods_warn>
                     <![CDATA[
-                    <br><br>Please note that re-roll prices are <font color='red'><b>doubled</b></font> because a tournament is currently being played.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert the overcharged amount.
+                    <br><br>Please note that re-roll prices are currently <font color='red'><b>doubled</b></font>.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert the overcharged amount.
                     ]]>
                     </buy_goods_warn>
                     <drop_goods>
