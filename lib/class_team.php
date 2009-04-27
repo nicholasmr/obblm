@@ -401,13 +401,8 @@ class Team
 
         $rerollcost = 0;
         if (!empty($this->race)) {
-            // Double the re-roll prices if first match in tournament has been played.
-            $tour = Tour::getLatestTour();
-            if (is_object($tour) && $tour->is_finished) {
-                $tour = null;
-            }
-            $rerollcost = $DEA[$this->race]['other']['RerollCost'] * 
-                            (($double_price && !$rules['static_rerolls_prices'] && is_object($tour) && $tour->begun && $this->played > 0) ? 2 : 1);
+            $rerollcost = $DEA[$this->race]['other']['RerollCost'];
+            $rerollcost *= (($double_price && !$rules['static_rerolls_prices'] && $this->played > 0) ? 2 : 1);
         }
 
         $apothecary = true;

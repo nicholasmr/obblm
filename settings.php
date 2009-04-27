@@ -47,7 +47,7 @@ $settings['force_tour_foldout']   = false; // Default is false. Force each tourn
 
 $rules['initial_treasury']      = 1000000;  // Default is 1000000.
 $rules['max_team_players']      = 16;       // Default is 16.
-$rules['static_rerolls_prices'] = false;    // Default is "false". "true" = Re-roll prices remain the same throughout the whole tournament.
+$rules['static_rerolls_prices'] = false;    // Default is "false". "true" forces re-roll prices to their un-doubled values.
 $rules['player_refund']         = 0;        // Player sell value percentage. Default is 0 = 0%, 0.5 = 50%, and so on.
 $rules['journeymen_limit']      = 11;       // Until a team can field this number of players, it may fill team positions with journeymen.
 $rules['post_game_ff']          = false;    // Default is false. Allows teams to buy and drop fan factor even though their first game has been played.
