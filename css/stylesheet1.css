@@ -181,5 +181,5 @@ div.gb {clear: both; width: 450px; border: 1px solid #545454; margin-left: auto;
 /* Game result icon*/
 .match_icon	{background:transparent url(../images/result_icon.gif) no-repeat 0 0;width:12px;height:12px}
 .won		{background-position:-14px 0}
-.lost		{background-position:-28px 0}
-.draw		{background-position:-42px 0}
+.draw		{background-position:-28px 0}
+.lost		{background-position:-42px 0}
