@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    OBBLM team import XML schema 
+    Please DO NOT change or delete any XML tag identifiers!
+-->
+<xmlimport>
+
+    <!-- General team fields -->
+    <coach>Coach name</coach>
+    <name>Team name</name>
+    <race>Amazon</race>
+    <treasury>0</treasury>
+    <apothecary>0</apothecary>
+    <rerolls>0</rerolls>
+    <fan_factor>0</fan_factor>
+    <ass_coaches>0</ass_coaches>
+    <cheerleaders>0</cheerleaders>
+    
+    <!-- Statistics -->
+    <won_0>0</won_0>   <!-- Won matches -->
+    <lost_0>0</lost_0> <!-- Lost matches -->
+    <draw_0>0</draw_0> <!-- Draw matches -->
+    <sw_0>0</sw_0>     <!-- Largest win streak -->
+    <sl_0>0</sl_0>     <!-- Largest lose streak -->
+    <sd_0>0</sd_0>     <!-- Largest draw streak -->
+    <wt_0>0</wt_0>     <!-- Won tournaments -->
+    <gf_0>0</gf_0>     <!-- Goals by team -->
+    <ga_0>0</ga_0>     <!-- Goals against team -->
+    <tcas_0>0</tcas_0> <!-- Total team CAS -->
+    <elo_0>0</elo_0>   <!-- Team's current ELO -->
+
+    <!-- Players -->
+    <!-- To add more players simply add more player tags in the same way as done below -->
+
+        <player>
+            <name>Player #1 name</name>
+            <position>Linewoman</position>
+            <!-- Status may be one of the following: "ready", "mng" or "dead" -->
+            <status>ready</status>
+            <!-- Stats: cp/td/int/bh/si/ki/mvp -->
+            <stats>0/0/0/0/0/0/0</stats>
+            <!-- Injuries: ma/st/ag/av/ni -->
+            <injs>0/0/0/0/0</injs>
+        </player>
+        
+        <player>
+            <name>Player #2 name</name>
+            <position>Linewoman</position>
+            <status>ready</status>
+            <stats>0/0/0/0/0/0/0</stats>
+            <injs>0/0/0/0/0</injs>
+        </player>
+        
+</xmlimport>
