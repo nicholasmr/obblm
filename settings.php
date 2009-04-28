@@ -4,9 +4,9 @@
  * MySQL database settings 
  **************************/
 
-$db_name   = 'test';
-$db_user   = 'root';
-$db_passwd = '';
+$db_name   = 'obblmdb';
+$db_user   = 'obblm';
+$db_passwd = 'obblm';
 $db_host   = 'localhost';
 
 /*************************
