@@ -296,33 +296,35 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 
 	###BEGIN REPORT MATCH_DATA TABLE
 
-	$query = "SELECT owned_by_coach_id FROM `teams` WHERE team_id= \"".$matchfields[hometeam_id]."\"";
-	$result = NULL;
-	$result = mysql_query($query);
-	if (!$result) {
-		Print "<br>Unable to find the home team and coach combination<br>";
-		die('BEGIN REPORT MATCH_DATA TABLE Query 2 failed: ' . mysql_error());
-		exit(-1);
-	}
-	$result = mysql_fetch_array($result);
-	$f_coach_id = $result['owned_by_coach_id'];
+#	$query = "SELECT owned_by_coach_id FROM `teams` WHERE team_id= \"".$matchfields[hometeam_id]."\"";
+#	$result = NULL;
+#	$result = mysql_query($query);
+#	if (!$result) {
+#		Print "<br>Unable to find the home team and coach combination<br>";
+#		die('BEGIN REPORT MATCH_DATA TABLE Query 2 failed: ' . mysql_error());
+#		exit(-1);
+#	}
+#	$result = mysql_fetch_array($result);
+#	$f_coach_id = $result['owned_by_coach_id'];
 	
 	$i = 0;
 #######	
 	$match = new Match( $matchfields[match_id] );
 #######
 
+	$team = new Team( $matchfields[hometeam_id] );
+	$players = $team->getPlayers();
+
 	while ( $i < count( $homeplayers ) ) {
 		$homeplayer_nr = $homeplayers[$i][number];
-		$query = "SELECT player_id FROM `players` WHERE date_sold is NULL and owned_by_team_id = ".$matchfields[hometeam_id]." AND nr = " .$homeplayer_nr;
-		$result = NULL;
-		$result = mysql_query($query);
-		if (!$result) {
-			die('BEGIN REPORT MATCH_DATA TABLE Query 3 failed: ' . mysql_error());
-			exit(-1);
+		
+		foreach ( $players as $p  )
+		{
+			if ( $p->nr == $homeplayer_nr && !$p->is_dead && !$p->is_sold ) {
+				$f_player_id = $p->player_id;
+				break;
+			}
 		}
-		$result = mysql_fetch_array($result);
-		$f_player_id = $result['player_id'];
 		
 		$mvp = $homeplayers[$i][mvps];
 		if ($mvp == NULL) $mvp = 0;
@@ -366,7 +368,7 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 		$inj = $injeffect;
 		
 #######		#Begin using match class to enter player data
-		$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0 ) );
+		$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj ) );
 #######		#End using match class to enter player data
 		$i=$i+1;
 	}
@@ -392,28 +394,31 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 
 	####BEGIN AWAY PLAYER REPORT
 
-	$query = "SELECT owned_by_coach_id FROM `teams` WHERE team_id= \"".$matchfields[awayteam_id]."\"";
-	$result = NULL;
-	$result = mysql_query($query);
-	if (!$result) {
-		die('BEGIN REPORT MATCH_DATA TABLE Query AWAY failed: ' . mysql_error());
-		exit(-1);
-	}
-	$result = mysql_fetch_array($result);
-	$f_coach_id = $result['owned_by_coach_id'];
+#	$query = "SELECT owned_by_coach_id FROM `teams` WHERE team_id= \"".$matchfields[awayteam_id]."\"";
+#	$result = NULL;
+#	$result = mysql_query($query);
+#	if (!$result) {
+#		die('BEGIN REPORT MATCH_DATA TABLE Query AWAY failed: ' . mysql_error());
+#		exit(-1);
+#	}
+#	$result = mysql_fetch_array($result);
+#	$f_coach_id = $result['owned_by_coach_id'];
 	
 	$i = 0;
+
+	$team = new Team( $matchfields[awayteam_id] );
+	$players = $team->getPlayers();
+
 	while ( $i < count( $awayplayers ) ) {
 		$awayplayer_nr = $awayplayers[$i][number];
-		$query = "SELECT player_id FROM `players` WHERE date_sold is NULL and owned_by_team_id = ".$matchfields[awayteam_id]." AND nr = " .$awayplayer_nr;
-		$result = NULL;
-		$result = mysql_query($query);
-		if (!$result) {
-			die('BEGIN REPORT MATCH_DATA TABLE AWAY 2 failed: ' . mysql_error());
-			exit(-1);
+
+		foreach ( $players as $p  )
+		{
+			if ( $p->nr == $awayplayer_nr && !$p->is_dead && !$p->is_sold ) {
+				$f_player_id = $p->player_id;
+				break;
+			}
 		}
-		$result = mysql_fetch_array($result);
-		$f_player_id = $result['player_id'];
 		
 		$mvp = $awayplayers[$i][mvps];
 		if ($mvp == NULL) $mvp = 0;
@@ -456,7 +461,7 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 		
 		$inj = $injeffect;
 		
-		$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp,"td" => $td,"intcpt" => $intcpt,"bh" => $bh,"si" => 0,"ki" => 0 ) );
+		$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp,"td" => $td,"intcpt" => $intcpt,"bh" => $bh,"si" => 0,"ki" => 0, "inj" => $inj ) );
 		$i=$i+1;
 	}
 
@@ -537,27 +542,27 @@ function checkCoach ( $hometeam ) {
 
 }
 
-function updateWinnings ( $team_id, $winnings ) {
-
-	$query = "SELECT treasury FROM `teams` WHERE team_id= \"".$team_id."\"";
-	$result = mysql_query($query);
-	if (!$result) {
-		die('Winnings update failed while querying team id: ' . mysql_error());
-		exit(-1);
-	}
-	$result = mysql_fetch_array($result);
-	$c_treasury = $result['treasury'];
-	$u_treasury = $c_treasury + $winnings;
-
-	$query = "UPDATE teams SET treasury = ".$u_treasury." WHERE team_id = ".$team_id;
-	$result = NULL;
-	$result = mysql_query($query);
-	if (!$result) {
-		die('Winnings update failed to update winnings.: ' . mysql_error());
-		exit(-1);
-	}
-
-}
+#function updateWinnings ( $team_id, $winnings ) {
+#
+#	$query = "SELECT treasury FROM `teams` WHERE team_id= \"".$team_id."\"";
+#	$result = mysql_query($query);
+#	if (!$result) {
+#		die('Winnings update failed while querying team id: ' . mysql_error());
+#		exit(-1);
+#	}
+#	$result = mysql_fetch_array($result);
+#	$c_treasury = $result['treasury'];
+#	$u_treasury = $c_treasury + $winnings;
+#
+#	$query = "UPDATE teams SET treasury = ".$u_treasury." WHERE team_id = ".$team_id;
+#	$result = NULL;
+#	$result = mysql_query($query);
+#	if (!$result) {
+#		die('Winnings update failed to update winnings.: ' . mysql_error());
+#		exit(-1);
+#	}
+#
+#}
 
 function addMatch ( $hash, $hometeam, $awayteam, $gate, $homeff, $awayff, $homewinnings, $awaywinnings, $homescore, $awayscore ) {
 
