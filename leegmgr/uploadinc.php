@@ -296,17 +296,6 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 
 	###BEGIN REPORT MATCH_DATA TABLE
 
-#	$query = "SELECT owned_by_coach_id FROM `teams` WHERE team_id= \"".$matchfields[hometeam_id]."\"";
-#	$result = NULL;
-#	$result = mysql_query($query);
-#	if (!$result) {
-#		Print "<br>Unable to find the home team and coach combination<br>";
-#		die('BEGIN REPORT MATCH_DATA TABLE Query 2 failed: ' . mysql_error());
-#		exit(-1);
-#	}
-#	$result = mysql_fetch_array($result);
-#	$f_coach_id = $result['owned_by_coach_id'];
-	
 	$i = 0;
 #######	
 	$match = new Match( $matchfields[match_id] );
@@ -317,7 +306,7 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 
 	while ( $i < count( $homeplayers ) ) {
 		$homeplayer_nr = $homeplayers[$i][number];
-		
+		$t = 0;
 		foreach ( $players as $p  )
 		{
 			if ( $p->nr == $homeplayer_nr && !$p->is_dead && !$p->is_sold ) {
@@ -345,7 +334,7 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 			case "m":
 				$injeffect = 2;
 				break;
-			case "n":
+			case "m, n":
 				$injeffect = 3;
 				break;
 			case "m, -ma":
@@ -373,37 +362,21 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 		$i=$i+1;
 	}
 	##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
-	$query = "SELECT player_id FROM `players` WHERE date_sold is NULL and owned_by_team_id = ".$matchfields[hometeam_id];
-	$result = NULL;
-	$result = mysql_query($query);
-	if (!$result) {
-		die('****Query ln 421 failed: ' . mysql_error());
-		exit(-1);
-	}
-	while ( $row = mysql_fetch_array($result) )
+	foreach ( $players as $p  )
 	{
-		$f_player_id = $row['player_id'];
-		$mvp = $cp = $td = $intcpt = $bh = 0;
-		$inj = 1;
-		if ( !mysql_fetch_array(mysql_query("SELECT f_match_id  FROM `match_data` WHERE f_player_id  = ".$f_player_id." and f_match_id = ".$matchfields[match_id])) )
-		{
-			$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp,"td" => $td,"intcpt" => $intcpt,"bh" => $bh,"si" => 0,"ki" => 0 ) );
+		if (  !$p->is_dead && !$p->is_sold ) {
+			$player = new Player ( $p->player_id );
+			$p_matchdata = $player->getMatchData( $matchfields[match_id] );
+			if ( !$p_matchdata[inj] ) {
+				$match->entry( $input = array ( "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1 ) );
+			}
 		}
-	}
+	}	
+
 	##END ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 
 	####BEGIN AWAY PLAYER REPORT
 
-#	$query = "SELECT owned_by_coach_id FROM `teams` WHERE team_id= \"".$matchfields[awayteam_id]."\"";
-#	$result = NULL;
-#	$result = mysql_query($query);
-#	if (!$result) {
-#		die('BEGIN REPORT MATCH_DATA TABLE Query AWAY failed: ' . mysql_error());
-#		exit(-1);
-#	}
-#	$result = mysql_fetch_array($result);
-#	$f_coach_id = $result['owned_by_coach_id'];
-	
 	$i = 0;
 
 	$team = new Team( $matchfields[awayteam_id] );
@@ -439,7 +412,7 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 			case "m":
 				$injeffect = 2;
 				break;
-			case "n":
+			case "m, n":
 				$injeffect = 3;
 				break;
 			case "m, -ma":
@@ -468,23 +441,18 @@ function report ( $homeplayers, $awayplayers, $gate, $hometeam, $homescore, $hom
 	####END AWAY PLAYER REPORT
 
 	##ADD EMPTY RESULTS FOR AWAY PLAYERS WITHOUT RESULTS MAINLY FOR MNG
-	$query = "SELECT player_id FROM `players` WHERE date_sold is NULL and owned_by_team_id = ".$matchfields[awayteam_id];
-	$result = NULL;
-	$result = mysql_query($query);
-	if (!$result) {
-		die('****Query ln 421 failed: ' . mysql_error());
-		exit(-1);
-	}
-	while ( $row = mysql_fetch_array($result) )
+
+	foreach ( $players as $p  )
 	{
-		$f_player_id = $row['player_id'];
-		$mvp = $cp = $td = $intcpt = $bh = 0;
-		$inj = 1;
-		if ( !mysql_fetch_array(mysql_query("SELECT f_match_id  FROM `match_data` WHERE f_player_id  = ".$f_player_id." and f_match_id = ".$matchfields[match_id])) )
-		{
-			$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp,"td" => $td,"intcpt" => $intcpt,"bh" => $bh,"si" => 0,"ki" => 0 ) );
+		if (  !$p->is_dead && !$p->is_sold ) {
+			$player = new Player ( $p->player_id );
+			$p_matchdata = $player->getMatchData( $matchfields[match_id] );
+			if ( !$p_matchdata[inj] ) {
+				$match->entry( $input = array ( "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1 ) );
+			}
 		}
-	}
+	}	
+
 	##END ADD EMPTY RESULTS FOR AWAY PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 
 	###END REPORT MATCH_DATA TABLE
@@ -542,28 +510,6 @@ function checkCoach ( $hometeam ) {
 
 }
 
-#function updateWinnings ( $team_id, $winnings ) {
-#
-#	$query = "SELECT treasury FROM `teams` WHERE team_id= \"".$team_id."\"";
-#	$result = mysql_query($query);
-#	if (!$result) {
-#		die('Winnings update failed while querying team id: ' . mysql_error());
-#		exit(-1);
-#	}
-#	$result = mysql_fetch_array($result);
-#	$c_treasury = $result['treasury'];
-#	$u_treasury = $c_treasury + $winnings;
-#
-#	$query = "UPDATE teams SET treasury = ".$u_treasury." WHERE team_id = ".$team_id;
-#	$result = NULL;
-#	$result = mysql_query($query);
-#	if (!$result) {
-#		die('Winnings update failed to update winnings.: ' . mysql_error());
-#		exit(-1);
-#	}
-#
-#}
-
 function addMatch ( $hash, $hometeam, $awayteam, $gate, $homeff, $awayff, $homewinnings, $awaywinnings, $homescore, $awayscore ) {
 
 	$tour_id = 1; #get from settings later or find from scheduled matches.
@@ -609,10 +555,6 @@ function addMatch ( $hash, $hometeam, $awayteam, $gate, $homeff, $awayff, $homew
 	}
 	$awayteam_id = mysql_fetch_array($awayteam_id);
 	$awayteam_id = $awayteam_id['team_id'];
-
-	#DATE FORMAT  2009-02-24 22:11:17
-	date_default_timezone_set('EST');
-	$c_date = date ( "Y\-m\-d H\:i\:s" );
 
 #######	#Begin using Match class to create match.
 	$match = new Match();
