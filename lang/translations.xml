@@ -805,7 +805,7 @@
             <create>Create</create>
             <add_match>Add the single match to...</add_match>
                 <new_tour>A new FFA tour (fill out left fields too!)</new_tour>
-            <as_type>A new FFA tour (fill out left fields too!)</as_type>
+            <as_type>As type...</as_type>
             <as_reverse>Reverse home/away pair-up?</as_reverse>
             
             <!-- Subsec: User management -->
