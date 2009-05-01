@@ -28,7 +28,7 @@ UPGRADING
 
 NOTE: When upgrading please save your old settings file as a reference for when filling out the new settings file.
 
-0.37 -> 0.38
+0.37 -> 0.7
 
     Replace all OBBLM files.
     Execute the following MySQL queries:
