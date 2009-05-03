@@ -80,7 +80,4 @@ Print "<TR><TD colspan=\"16\">&nbsp;</TD></TR>
 <TR align=\"center\"><TD align=\"right\" bgcolor=\"#c6c6ff\" colspan=\"2\">&nbsp;</TD><TD colspan=\"5\">&nbsp;</TD><TD align=\"right\" bgcolor=\"c6c6ff\" colspan=\"2\">Team Wizard:</TD><TD colspan=\"7\">No</TD></TR>
 </table>
 </body></html>\n";
-
-Print_r ($p);
-
 ?>
