@@ -36,61 +36,47 @@ $team = new Team ( $_GET["teamid"] );
 $apothecary = $team->apothecary;
 
 	if ( $apothecary == "1" ) {
-		$apothecary = "true";
+		$apothecary = "Yes";
 	}
 	if ( $apothecary == "0" ) {
-		$apothecary = "false";
+		$apothecary = "No";
 	}
 
-Print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-Print "<?xml-stylesheet type=\"text/xsl\" href=\"http://ate.stuntyleeg.com/leegmgr/team.xsl\"?>\n";
-Print "<team>\n";
-Print "<name>".$team->name."</name>\n";
-Print "<race>".$team->race."</race>\n";
-Print "<coach>".$team->coach_name."</coach>\n";
-Print "<rerolls>".$team->rerolls."</rerolls>\n";
-Print "<fanfactor>".$team->fan_factor."</fanfactor>\n";
-Print "<assistants>".$team->ass_coaches."</assistants>\n";
-Print "<cheerleaders>".$team->cheerleaders."</cheerleaders>\n";
-Print "<apothecary>".$apothecary."</apothecary>\n";
-Print "<treasury>".$team->treasury."</treasury>\n";
-Print "<players>\n";
+Print "<!-- JavaBBowl Options: +LRB -semi -final +EXPOFAB +ot  -->
+<html><head><title>{$team->name}</title></head>
+<body bgcolor=\"#ffffff\" text=\"#000000\" link=\"#000000\" vlink=\"#000000\">
+<div style=\"text-align: center;\">
+<span style=\"font-family: arial, sans-serif; text-align: center; font-size: x-large; font-weight: bold;\">{$team->name}</span><br />
+Race: {$team->race}<br />
+Coached By: {$team->coach_name}<br />
+<TABLE align=\"center\" border=\"1\" bgcolor=\"#d7d7ff\" bordercolorlight=\"#f7f7ff\" bordercolordark=\"#9797bf\">
+<TR bgcolor=\"#c6c6ff\"><TH>#</TH><TH>Player Name</TH><TH>Position</TH><TH>Ma</TH><TH>St</TH><TH>Ag</TH><TH>Av</TH><TH>Player Skills</TH><TH>Inj</TH><TH>Cp</TH><TH>TD</TH><TH>Int</TH><TH>Cas</TH><TH>Mvp</TH><TH>SPP</TH><TH>Cost</TH></TR>";
+
 
 $players = $team->getPlayers();
-
+$loop = 0;
 foreach ( $players as $p )
 {
-
 	$player = new Player( $p->player_id );
-	$skills = $player->getSkillsStr();
-	$a_skills = explode(', ', $skills);
-	
-		Print "<player number=\"".$player->nr."\">\n";
-		Print "<name>".$player->name."</name>\n";
-		Print "<position>".$player->position."</position>\n";
-		Print "<ma>".$ma = $player->ma."</ma>\n";
-		Print "<st>".$player->st."</st>\n";
-		Print "<ag>".$player->ag."</ag>\n";
-		Print "<av>".$player->av."</av>\n";
-			Print "<skills>\n";
+Print "<TR align=\"center\"><TD ALIGN=LEFT>{$player->nr}</TD><TD ALIGN=LEFT>{$player->name}</TD><TD ALIGN=LEFT>{$player->position}</TD><TD>{$player->ma}</TD><TD>{$player->st}</TD><TD>{$player->ag}</TD><TD>{$player->av}</TD><TD ALIGN=LEFT>{$player->getSkillsStr()}</TD><TD ALIGN=LEFT>&nbsp</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD ALIGN=RIGHT>{$player->value}</TD></TR>";
 
-				$i = 0;
 
-				while ( $i < count( $a_skills ) )
-				{
-
-					Print "<skill>".$a_skills[$i]."</skill>\n";
-					$i++;
-
-				}
-
-			Print "</skills>\n";
-		Print "<value>".$player->value."</value>\n";
-		Print "</player>\n";
+	$loop ++;
 
 }
+while($loop < 16){
+$loop ++;
+Print "<TR align='center'><TD ALIGN=LEFT> </TD><TD ALIGN=LEFT> </TD><TD ALIGN=LEFT> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD ALIGN=LEFT> </TD><TD ALIGN=LEFT> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD ALIGN=RIGHT> </TD></TR>\n";
+}
 
-Print "</players>\n";
-Print "</team>\n";
+Print "<TR><TD colspan=\"16\">&nbsp;</TD></TR>
+<TR align=\"center\"><TD align=\"right\" bgcolor=\"#c6c6ff\" colspan=\"2\">Team Name:</TD><TD colspan=\"5\">{$team->name}</TD><TD align=\"right\" bgcolor=\"c6c6ff\" colspan=\"2\">Re-Rolls:</TD><TD colspan=\"7\">{$team->rerolls}</TD></TR>
+<TR align=\"center\"><TD align=\"right\" bgcolor=\"#c6c6ff\" colspan=\"2\">Race:</TD><TD colspan=\"5\">{$team->race}</TD><TD align=\"right\" bgcolor=\"c6c6ff\" colspan=\"2\">Fan Factor:</TD><TD colspan=\"7\">{$team->fan_factor}</TD></TR>
+<TR align=\"center\"><TD align=\"right\" bgcolor=\"#c6c6ff\" colspan=\"2\">Team Rating:</TD><TD colspan=\"5\">100</TD><TD align=\"right\" bgcolor=\"c6c6ff\" colspan=\"2\">Assistant Coaches:</TD><TD colspan=\"7\">{$team->ass_coaches}</TD></TR>
+<TR align=\"center\"><TD align=\"right\" bgcolor=\"#c6c6ff\" colspan=\"2\">Treasury:</TD><TD colspan=\"5\">{$team->treasury}</TD><TD align=\"right\" bgcolor=\"c6c6ff\" colspan=\"2\">Cheerleaders:</TD><TD colspan=\"7\">{$team->cheerleaders}</TD></TR>
+<TR align=\"center\"><TD align=\"right\" bgcolor=\"#c6c6ff\" colspan=\"2\">Coach:</TD><TD colspan=\"5\">{$team->coach_name}</TD><TD align=\"right\" bgcolor=\"c6c6ff\" colspan=\"2\">Apothecary:</TD><TD colspan=\"7\">{$apothecary}</TD></TR>
+<TR align=\"center\"><TD align=\"right\" bgcolor=\"#c6c6ff\" colspan=\"2\">&nbsp;</TD><TD colspan=\"5\">&nbsp;</TD><TD align=\"right\" bgcolor=\"c6c6ff\" colspan=\"2\">Team Wizard:</TD><TD colspan=\"7\">No</TD></TR>
+</table>
+</body></html>\n";
 
 ?>
