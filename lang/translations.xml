@@ -196,7 +196,7 @@
                 <info>Game information</info>
                     <stad>Stadium</stad>
                     <gate>Gate</gate>
-                    <fans>Fans</fans>
+                    <fans>Fans (RL spectators)</fans>
                     
                 <results>Game results</results>
                     <teams>Teams</teams>
@@ -790,6 +790,7 @@
             
             <!-- Subsec: Schedule matches -->
             <multiple_schedule><![CDATA[<i>Note:</i> You are free to schedule multiple tournaments running concurrently.]]></multiple_schedule>
+            <create_leag_div><![CDATA[<i>Note:</i> You must first create a league with one or more divisions before being able to create matches.]]></create_leag_div>
             <div_name>Division</div_name>            
             <tour_name>Tournament name</tour_name>
             <rank_sys>Ranking system</rank_sys>

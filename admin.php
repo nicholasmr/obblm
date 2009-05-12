@@ -315,6 +315,7 @@ function sec_admin() {
         </script>
         
         <?php 
+        echo $lng->getTrn('secs/admin/create_leag_div').'<br>';
         echo $lng->getTrn('secs/admin/multiple_schedule');
         $divisions = Division::getDivisions();
         foreach ($divisions as $d) {
@@ -1183,7 +1184,7 @@ function sec_admin() {
                         }
                         ?>
                     </select><br><br>
-                    <input type='submit' value='Delete' <?php echo empty($divisions) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You shuould only delete devisions when no matches are assigned to it.')){return false;}">
+                    <input type='submit' value='Delete' <?php echo empty($divisions) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete devisions when no matches are assigned to it.')){return false;}">
                     <input type='hidden' name='type' value='del_division'>
                     </form>
                     </div>

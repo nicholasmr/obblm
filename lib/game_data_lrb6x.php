@@ -25,7 +25,7 @@
  * Game data replacement for LRB6 experimental rules (LRB5b).
  */
 
-require_once('lib/game_data.php');
+//require_once('lib/game_data.php');
 
 //
 // Changes to present teams/positionals in LRB5b.
