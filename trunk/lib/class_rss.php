@@ -144,7 +144,13 @@ class OBBLMRssWriter {
                 case T_TEXT_MSMR:
                     foreach (Match::getReports(RSS_SIZE) as $item) {
                         $m = new Match($item->match_id);
-                        $entries[] = (object) array('title' => "Match: $m->team1_name ($m->team1_score) vs. $m->team2_name ($m->team2_score)", 'desc' => $m->comment, 'date' => $m->date_played);
+                        $entries[] = (object) array(
+                            'title' => "Match: $m->team1_name ($m->team1_score) vs. $m->team2_name ($m->team2_score)", 
+                            'desc' => $m->comment.(($m->hasComments()) 
+                                ? "\n\nComments:\n---------\n\n".implode("\n\n", array_map(create_function('$c', 'return "$c->sname:\n$c->txt";'), $m->getComments()))
+                                : ''), 
+                            'date' => $m->date_played
+                        );
                     }
                     break;
                 
