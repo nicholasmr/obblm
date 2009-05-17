@@ -173,8 +173,7 @@ div.red{background-color:#F20000;border:1px solid #c00;}
 
 /* Team's page */
 div.tpageBox    {float: left; width: 270px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
-div.tnewsBox    {float: left; width: 600px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
-div.tnewsBoxNew {float: left; width: 300px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
+div.tnewsBox    {float: left; width: 800px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
 
 /* Administration */
 div.admin_menu {clear: both; width: inherit; text-align: center;}

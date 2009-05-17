@@ -527,6 +527,11 @@ class Match
         return MSMRC::create($this->match_id, $sid, $txt);
     }
     
+    public function deleteComment($cid) {
+        $cmt = new MSMRC($cid);
+        return $cmt->delete();
+    }
+    
     public function savePics() {
     
         $i = 1;

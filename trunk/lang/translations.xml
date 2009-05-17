@@ -220,6 +220,7 @@
                     <writeNewCmt>Write your new comment here</writeNewCmt>
                     <postCmt>Post comment</postCmt>
                     <none>None</none>
+                    <delete>Delete</delete>
             </report>
             
         </fixtures>
@@ -253,6 +254,7 @@
                 <nonews>No entries exist.</nonews>
                 <submitnews>Submit news</submitnews>
                 <delete>Delete</delete>
+                <edit>Edit</edit>
             
             <gamesplayed>Games played</gamesplayed>
                 <showagainst>Show matches against</showagainst>

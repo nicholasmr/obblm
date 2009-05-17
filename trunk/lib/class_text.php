@@ -583,6 +583,11 @@ class TNews extends _Text
         parent::__construct($nid);
     }
 
+    public function edit($txt)
+    {
+        return parent::edit($txt, '', false, false);    
+    }
+
     /* 
         Parent has delete() implemented.
     */
