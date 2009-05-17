@@ -740,6 +740,10 @@ class Team
         $news = new TNews($news_id);
         return $news->delete();
     }
+    public function editNews($news_id, $new_txt) {
+        $news = new TNews($news_id);
+        return $news->edit($new_txt);
+    }
     
     public function getPrizes($mkStr = false) {
     

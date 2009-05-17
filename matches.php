@@ -195,6 +195,11 @@ function match_form($match_id) {
     if (isset($_POST['msmrc']) && is_object($coach)) {
         status($m->newComment($coach->coach_id, $_POST['msmrc']));
     }
+    
+    // Match comment delete?
+    if (isset($_POST['type']) && $_POST['type'] == 'cmtdel' && is_object($coach)) {
+        status($m->deleteComment($_POST['cid']));
+    }
 
     /****************
      *
@@ -479,36 +484,42 @@ function match_form($match_id) {
     <?php
     $CDIS = (!is_object($coach)) ? 'DISABLED' : '';
     ?>
-    <form method="POST">
-        <table class="match_form">
-            <tr>
-                <td colspan='13' class='dark'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('secs/fixtures/report/msmrc');?></b></td>
-            </tr>
-            <tr>
-                <td class='seperator'></td>
-            </tr>
-            <tr>
-                <td>
-                    <div id="msmrc">
-                        <?php echo $lng->getTrn('secs/fixtures/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('secs/fixtures/report/none').'</i>';?><br><br>
-                        <?php
-                        foreach ($m->getComments() as $c) {
-                            echo "Posted $c->date by <b>$c->sname</b>:<br>".$c->txt."<br><br>\n";
-                        }
-                        ?>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php echo $lng->getTrn('secs/fixtures/report/newCmt');?>:<br>
-                    <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
-                    <br>
-                    <input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php echo $CDIS;?>>
-                </td>
-            </tr>
-        </table>
-    </form>
+    <table class="match_form">
+        <tr>
+            <td colspan='13' class='dark'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('secs/fixtures/report/msmrc');?></b></td>
+        </tr>
+        <tr>
+            <td class='seperator'></td>
+        </tr>
+        <tr>
+            <td>
+                <div id="msmrc">
+                    <?php echo $lng->getTrn('secs/fixtures/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('secs/fixtures/report/none').'</i>';?><br><br>
+                    <?php
+                    foreach ($m->getComments() as $c) {
+                        echo "Posted $c->date by <b>$c->sname</b> 
+                            <form method='POST' name='cmt$c->cid' style='display:inline; margin:0px;'>
+                            <input type='hidden' name='type' value='cmtdel'>
+                            <input type='hidden' name='cid' value='$c->cid'>
+                            <a href='javascript:void(0);' onClick='document.cmt$c->cid.submit();'>[".$lng->getTrn('secs/fixtures/report/delete')."]</a>
+                            </form>
+                            :<br>".$c->txt."<br><br>\n";
+                    }
+                    ?>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <form method="POST">
+                <?php echo $lng->getTrn('secs/fixtures/report/newCmt');?>:<br>
+                <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
+                <br>
+                <input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php echo $CDIS;?>>
+                </form>
+            </td>
+        </tr>
+    </table>
     <script language='JavaScript' type='text/javascript'>
         document.getElementById('msmrc').style.display = 'none';
     </script>

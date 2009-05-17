@@ -91,6 +91,7 @@ function team_roaster($team_id) {
             case 'teamtext': status($team->saveText($_POST['teamtext'])); break;
             case 'news':     status($team->writeNews($_POST['txt'])); break;
             case 'newsdel':  status($team->deleteNews($_POST['news_id'])); break;
+            case 'newsedit': status($team->editNews($_POST['news_id'], $_POST['txt'])); break;
 
             case 'pic': 
                 if (isset($_FILES['pic_stad'])) 
@@ -1266,13 +1267,22 @@ function team_roaster($team_id) {
             <?php
             $news_2 = array();
             foreach ($news as $n) {
-                $news_2[] = '<p>'.$n->txt.'<div style="text-align: right;"><p style="display: inline;">'.textdate($n->date, true).
+                $news_2[] = '<p>'.$n->txt.
+                '<div id="newsedit'.$n->news_id.'" style="display:none; clear:both;"><form method="POST">
+                    <textarea name="txt" cols="60" rows="4">'.$n->txt.'</textarea>
+                    <input type="hidden" name="type" value="newsedit">
+                    <input type="hidden" name="news_id" value="'.$n->news_id.'">
+                    <br><br>
+                    <input type="submit" value="'.$lng->getTrn('secs/teams/submitnews').'">
+                </form></div>
+                <div style="text-align: right;"><p style="display: inline;">'.textdate($n->date, true).
                 (($ALLOW_EDIT) 
                     ? " | <form method='POST' name='newsForm$n->news_id' style='display:inline; margin:0px;'>
                         <input type='hidden' name='type' value='newsdel'>
                         <input type='hidden' name='news_id' value='$n->news_id'>
                         <a href='javascript:void(0);' onClick='document.newsForm$n->news_id.submit();'>[".$lng->getTrn('secs/teams/delete')."]</a>
-                        </form>"
+                        </form>".
+                        "| <a href='javascript:void(0);' onClick=\"document.getElementById('newsedit".$n->news_id."').style.display='block';\">[".$lng->getTrn('secs/teams/edit')."]</a>"
                     : '')
                 .'</p></div><br></p>';
             }
@@ -1280,26 +1290,23 @@ function team_roaster($team_id) {
             if (empty($news)) {
                 echo '<i>'.$lng->getTrn('secs/teams/nonews').'</i>';
             }
+
+            if ($ALLOW_EDIT) {
+                ?>
+                <hr>
+                <br>
+                <b><?php echo $lng->getTrn('secs/teams/wnews');?></b>
+                <form method="POST">
+                    <textarea name='txt' cols='60' rows='4'></textarea>
+                    <br><br>
+                    <input type="hidden" name="type" value="news">
+                    <input type='submit' value="<?php echo $lng->getTrn('secs/teams/submitnews');?>">
+                </form>
+                <?php
+            }
             ?>
             </div>    
         </div>
-        <?php
-        if ($ALLOW_EDIT) {
-            ?>
-            <div class="tnewsBoxNew">
-                <div class="boxTitle1"><?php echo $lng->getTrn('secs/teams/wnews');?></div>
-                <div class="boxBody">
-                    <form method="POST">
-                        <textarea name='txt' cols='30' rows='7'></textarea>
-                        <br><br>
-                        <input type="hidden" name="type" value="news">
-                        <input type='submit' value="<?php echo $lng->getTrn('secs/teams/submitnews');?>">
-                    </form>
-                </div>    
-            </div>
-            <?php
-        }
-        ?>
     </div>
     <?php
 
