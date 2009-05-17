@@ -129,7 +129,7 @@ class Star
             $this->played++;
             if ($m->is_draw)
                 $this->draw++;
-            elseif ($m->winner == $team_id)
+            elseif ($m->winner == $m->hiredBy)
                 $this->won++;
             else
                 $this->lost++;
