@@ -38,7 +38,7 @@
             <cc>CC</cc> <!-- Leave this untouched. Is abbrev of above. -->
             <home>Home</home>
             <fixtures>Tournaments</fixtures>
-            <standings>Standings</standings>
+            <standings>All-time standings</standings>
             <teams>Teams</teams>
             <players>Players</players>
             <coaches>Coaches</coaches>
@@ -49,7 +49,10 @@
             <gallery>Gallery</gallery>
             <gb>Guest book</gb>
             <forum>Forum</forum>
-            <recent>Recent matches</recent> <!-- Not shown amongst menu links -->
+            <!-- Not shown amongst menu links -->
+            <recent>Recent matches</recent> 
+            <statistics>Statistics</statistics>
+            <specstandings>Tournament standings</specstandings>
         </secLinks>
         
         <!-- Notifications for sortable tables -->

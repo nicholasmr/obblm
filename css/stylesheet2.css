@@ -58,21 +58,14 @@ font.white  {color: #eeeeee;}
 div.everything {width: 100%; margin: auto; background-color: #eeeeee;}
 div.section {margin: 5px; padding-bottom: 40px; background-color: inherit;}
 
-/* Menu/banner table */
-table.menu
+/* Banner */
+div.banner
 {
-    width: 100%;
-    background-color: #4D6483; 
-    padding: 6px; 
-    font-size: 13px; 
-    font-weight: bold; 
-    color: #eeeeee;
-   
-    /*background-image: url(../images/banner_lowres.jpg);*/ /* 177x1000px */
-    /*
+    width: 1000px;
+    height: 150px;
+    background-image: url(../images/banner_lowres.jpg); /* 150x1000px */
     background-repeat: no-repeat;
     background-position: top left;
-    */
 }
 
 td.menu {vertical-align: bottom;}
