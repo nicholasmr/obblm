@@ -146,7 +146,8 @@ function setup_tables() {
                 ach_nor_skills      VARCHAR(320),
                 ach_dob_skills      VARCHAR(320),
                 extra_skills        VARCHAR(320),
-                extra_spp           MEDIUMINT SIGNED
+                extra_spp           MEDIUMINT SIGNED,
+                extra_val           MEDIUMINT SIGNED NOT NULL DEFAULT 0 
                 )';
     /*
         Note: 320 chars comes from:
@@ -179,7 +180,11 @@ function setup_tables() {
                 smp1                TINYINT SIGNED NOT NULL DEFAULT 0,
                 smp2                TINYINT SIGNED NOT NULL DEFAULT 0,
                 tcas1               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                tcas2               TINYINT UNSIGNED NOT NULL DEFAULT 0
+                tcas2               TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                fame1               TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                fame2               TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                tv1                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
+                tv2                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0
                 )';
     mk_table($query, 'matches');
 

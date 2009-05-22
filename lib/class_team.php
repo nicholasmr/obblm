@@ -259,7 +259,8 @@ class Team
                     ach_st,
                     LENGTH(ach_nor_skills) - LENGTH(REPLACE(ach_nor_skills, ',', '')) + IF(LENGTH(ach_nor_skills) = 0, 0, 1) AS 'nor', 
                     LENGTH(ach_dob_skills) - LENGTH(REPLACE(ach_dob_skills, ',', '')) + IF(LENGTH(ach_dob_skills) = 0, 0, 1) AS 'dob',
-                    cost
+                    cost,
+                    extra_val
                 FROM 
                     $prices,
                     (
@@ -304,7 +305,7 @@ class Team
         // Final master query.
         $query = "
             SELECT
-                SUM(cost + (ach_ma + ach_av)*30000 + ach_ag*40000 + ach_st*50000 + nor*20000 + dob*30000 ".(($valReducInjs) ? " - $subtract" : '').") AS 'playerValueSum'
+                SUM(cost + extra_val + (ach_ma + ach_av)*30000 + ach_ag*40000 + ach_st*50000 + nor*20000 + dob*30000 ".(($valReducInjs) ? " - $subtract" : '').") AS 'playerValueSum'
             FROM
                 $valueParts
                 ".(($valReducInjs) ? " LEFT JOIN $valReducInjs ON valueParts.pid = valReducInjs.pid" : '')."

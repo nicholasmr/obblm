@@ -420,6 +420,10 @@ function mem_matches()
                     $title = $lng->getTrn('secs/records/memma/mfans');
                     break;
                     
+                case 'tvdiff':
+                    $title = $lng->getTrn('secs/records/memma/tvdiff');
+                    break;
+                    
                 default:
                     $matches = array(); // Make it an empty array.
             } 
@@ -468,6 +472,10 @@ function mem_matches()
                                 
                             case 'mfans':
                                 echo '<h2>'.$m->fans.'</h2>';
+                                break;
+
+                            case 'tvdiff':
+                                echo "<h2>".($m->tv1/1000)."k - ".($m->tv2/1000)."k</h2>";
                                 break;
                         } 
                         ?>

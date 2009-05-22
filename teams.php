@@ -113,6 +113,7 @@ function team_roaster($team_id) {
                 case 'bank':              status($team->dtreasury(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000)); break;
                 case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
                 case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
+                case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
                 
                 case 'extra_skills':    
                     $func = $_POST['sign'] == '+' ? 'addSkill' : 'rmSkill';
@@ -916,6 +917,7 @@ function team_roaster($team_id) {
                         'bank'              => $lng->getTrn('secs/teams/box_admin/bank'),
                         'chown'             => $lng->getTrn('secs/teams/box_admin/chown'),
                         'spp'               => $lng->getTrn('secs/teams/box_admin/spp'),
+                        'dval'              => $lng->getTrn('secs/teams/box_admin/dval'),
                         'extra_skills'      => $lng->getTrn('secs/teams/box_admin/extra_skills'),
                         'ach_skills'        => $lng->getTrn('secs/teams/box_admin/ach_skills'),
                     );
@@ -1106,8 +1108,39 @@ function team_roaster($team_id) {
                                 <br><br>
                                 <input type="radio" CHECKED name="sign" value="+">+
                                 <input type="radio" name="sign" value="-">-
-                                <input type='text' name='amount' maxlength=5 size=5> &Delta; SPP
+                                <input type='text' name='amount' maxlength="5" size="5"> &Delta; SPP
                                 <input type="hidden" name="type" value="spp">
+                                <?php
+                                break;
+
+                            /***************
+                             * Manage extra player value
+                             **************/
+                                
+                            case 'dval':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/dval');
+                                ?>
+                                <hr><br>
+                                Player:<br>
+                                <select name="player">
+                                <?php
+                                $DISABLE = true;
+                                objsort($players, array('+is_dead', '+name'));
+                                foreach ($players as $p) {
+                                    if (!$p->is_sold) {
+                                        echo "<option value='$p->player_id'".(($p->is_dead) ? ' style="background-color:'.COLOR_HTML_DEAD.';"' : '').">$p->name (current extra = ".($p->extra_val/1000)."k)</option>";
+                                        $DISABLE = false;
+                                    }
+                                }
+                                objsort($players, array('+nr'));
+                                ?>
+                                </select>
+                                <br><br>
+                                Set extra value to<br>
+                                <input type="radio" CHECKED name="sign" value="+">+
+                                <input type="radio" name="sign" value="-">-
+                                <input type='text' name='amount' maxlength="10" size="6">k
+                                <input type="hidden" name="type" value="dval">
                                 <?php
                                 break;
 
