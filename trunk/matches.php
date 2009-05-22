@@ -82,6 +82,10 @@ function match_form($match_id) {
             'smp2'          => (int) $_POST['smp2'],
             'tcas1'         => (int) $_POST['tcas1'],
             'tcas2'         => (int) $_POST['tcas2'],
+            'fame1'         => (int) $_POST['fame1'],
+            'fame2'         => (int) $_POST['fame2'],
+            'tv1'           => (int) $_POST['tv1']*1000,
+            'tv2'           => (int) $_POST['tv2']*1000,
             'comment'       => $_POST['summary'] ? $_POST['summary'] : '',
         )));
 
@@ -208,7 +212,7 @@ function match_form($match_id) {
      ****************/
 
     title((($m->team1_id) ? $m->team1_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>') . " - " . (($m->team2_id) ? $m->team2_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>'));
-    $CP = 6; // Colspan.
+    $CP = 8; // Colspan.
 
     ?>
     <div>
@@ -262,6 +266,8 @@ function match_form($match_id) {
                 <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/ff');?></b></td>
                 <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/smp');?></b></td>
                 <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/tcas');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/fame');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/tv');?></b></td>
             </tr>
             
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
@@ -285,6 +291,12 @@ function match_form($match_id) {
                 <td>
                     <input type="text" name="tcas1" value="<?php echo $m->tcas1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
                 </td>
+                <td>
+                    <input type="text" name="fame1" value="<?php echo $m->fame1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
+                </td>
+                <td>
+                    <input type="text" name="tv1" value="<?php echo ($m->is_played) ? $m->tv1/1000 : $team1->value/1000;?>" size="4" maxlength="10" <?php echo $DIS;?>>k
+                </td>
             </tr>
             <tr>
                 <td><?php echo $m->team2_name;?></td>
@@ -304,6 +316,12 @@ function match_form($match_id) {
                 </td>
                 <td>
                     <input type="text" name="tcas2" value="<?php echo $m->tcas2;?>" size="1" maxlength="2" <?php echo $DIS;?>>
+                </td>
+                <td>
+                    <input type="text" name="fame2" value="<?php echo $m->fame2;?>" size="1" maxlength="2" <?php echo $DIS;?>>
+                </td>
+                <td>
+                    <input type="text" name="tv2" value="<?php echo ($m->is_played) ? $m->tv2/1000 : $team2->value/1000;?>" size="4" maxlength="10" <?php echo $DIS;?>>k
                 </td>
             </tr>
             

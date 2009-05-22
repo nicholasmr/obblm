@@ -44,6 +44,7 @@ class Player
     public $ach_dob_skills = array();
     public $extra_skills   = array();
     public $extra_spp = 0;
+    public $extra_val = 0;
 
     // General (total) calcualted fields
     public $mvp         = 0;
@@ -203,7 +204,8 @@ class Player
                        + $this->ach_ag                      * 40000
                        + $this->ach_st                      * 50000
                        + count($this->ach_nor_skills)       * 20000
-                       + count($this->ach_dob_skills)       * 30000;
+                       + count($this->ach_dob_skills)       * 30000
+                       + $this->extra_val;
                        
         // Custom value reduction.
         $this->value -= 
@@ -442,10 +444,7 @@ class Player
          * Rename player.
          **/
     
-        if (mysql_query("UPDATE players SET name = '" . mysql_real_escape_string($new_name) . "' WHERE player_id = $this->player_id"))
-            return true;
-        else
-            return false;
+        return mysql_query("UPDATE players SET name = '" . mysql_real_escape_string($new_name) . "' WHERE player_id = $this->player_id");
     }
     
     public function renumber($number) {
@@ -454,10 +453,7 @@ class Player
          * Renumber player.
          **/
     
-        if ($number <= MAX_PLAYER_NR && mysql_query("UPDATE players SET nr = $number WHERE player_id = $this->player_id"))
-            return true;
-        else
-            return false;
+        return ($number <= MAX_PLAYER_NR && mysql_query("UPDATE players SET nr = $number WHERE player_id = $this->player_id"));
     }
 
     public function dspp($delta) {
@@ -467,10 +463,17 @@ class Player
          **/
         
         $query = "UPDATE players SET extra_spp = IF(extra_spp IS NULL, $delta, extra_spp + ($delta)) WHERE player_id = $this->player_id";
-        if (mysql_query($query))
-            return true;
-        else
-            return false;
+        return mysql_query($query);
+    }
+
+    public function dval($val = 0) {
+    
+        /**
+         * Add a delta to player's value.
+         **/
+        
+        $query = "UPDATE players SET extra_val = $val WHERE player_id = $this->player_id";
+        return mysql_query($query);
     }
 
     public function addSkill($type, $skill) {

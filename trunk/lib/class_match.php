@@ -50,6 +50,10 @@ class Match
     public $smp2            = 0;
     public $tcas1           = 0; // Team cas 1
     public $tcas2           = 0; // Team cas 2
+    public $fame1           = 0;
+    public $fame2           = 0;
+    public $tv1             = 0;
+    public $tv2             = 0;
     public $comment         = ''; // Summary, not match comment.
     
     // Other
@@ -160,6 +164,8 @@ class Match
             team1_score = NULL, team2_score = NULL,
             smp1 = NULL, smp2 = NULL, 
             tcas1 = NULL, tcas2 = NULL, 
+            fame1 = NULL, fame2 = NULL, 
+            tv1 = NULL, tv2 = NULL, 
             income1 = NULL, income2 = NULL,
             ffactor1 = NULL, ffactor2 = NULL, 
             fans = NULL, gate = NULL, stadium = NULL, submitter_id = NULL, locked = NULL
@@ -236,7 +242,11 @@ class Match
                     smp1            = $input[smp1],
                     smp2            = $input[smp2],
                     tcas1           = $input[tcas1],
-                    tcas2           = $input[tcas2]
+                    tcas2           = $input[tcas2],
+                    fame1           = $input[fame1],
+                    fame2           = $input[fame2],
+                    tv1             = $input[tv1],
+                    tv2             = $input[tv2]
         WHERE match_id = $this->match_id";
 
         if (!mysql_query($query))
