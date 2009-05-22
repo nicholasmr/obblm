@@ -81,52 +81,80 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
     <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
     <script type="text/javascript" src="lib/misc_functions.js"></script>
     
+    <!-- CSS MENU -->
+    <link href="cssmenu/css/dropdown/dropdown.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="cssmenu/css/dropdown/themes/default/default.ultimate.css" media="all" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 7]>
+    <script type="text/javascript" src="cssmenu/js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="cssmenu/js/jquery/jquery.dropdown.js"></script>
+    <![endif]-->
 </head>
 <body>
     <div class="everything">
-        <table class="menu"> <!-- Banner and menu -->
-        <tr>
-        <td class="menu">
-            <?php 
-            if (isset($_SESSION['logged_in'])) { ?><a class='menuSpecial' href="index.php?logout=1">       <b><?php echo $lng->getTrn('global/secLinks/logout');?></b></a>&nbsp;<?php }
-            else                               { ?><a class='menuSpecial' href="index.php?section=login">  <b><?php echo $lng->getTrn('global/secLinks/login');?></b></a>&nbsp;<?php }
-            ?>
-            <?php
-            if (isset($_SESSION['logged_in'])) {
-                if (is_object($coach) && $coach->ring <= RING_COM) {
-                    echo "<a class='menuSpecial' href='index.php?section=admin'><b>".$lng->getTrn('global/secLinks/admin')."</b></a> &nbsp;\n";
+        <div class="banner"></div>
+        <div style="width:100%; float:left;">
+            <ul id="nav" class="dropdown dropdown-horizontal">
+                <?php 
+                if (isset($_SESSION['logged_in'])) { ?><li><a href="index.php?logout=1">     <?php echo $lng->getTrn('global/secLinks/logout');?></a></li><?php }
+                else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('global/secLinks/login');?></a></li><?php }
+                ?>
+                <?php
+                if (isset($_SESSION['logged_in'])) {
+                    if (is_object($coach) && $coach->ring <= RING_COM) {
+                        echo "<li><a href='index.php?section=admin'>".$lng->getTrn('global/secLinks/admin')."</a></li>";
+                    }
+                    echo "<li><a href='index.php?section=coachcorner'>".$lng->getTrn('global/secLinks/cc')."</a></li>";
                 }
-                echo "<a class='menu' href='index.php?section=coachcorner'><b>".$lng->getTrn('global/secLinks/cc')."</b></a> &nbsp;\n";
-            }
-            ?>
-            <font class="white"><b>|</b></font>&nbsp;
-            <a class="menu" href="index.php?section=main">         <b><?php echo $lng->getTrn('global/secLinks/home');?></b></a>         &nbsp;
-            <a class="menu" href="index.php?section=fixturelist">  <b><?php echo $lng->getTrn('global/secLinks/fixtures');?></b></a>     &nbsp;
-            <a class="menu" href="index.php?section=standings">    <b><?php echo $lng->getTrn('global/secLinks/standings');?></b></a>    &nbsp;
-            <a class="menu" href="index.php?section=teams">        <b><?php echo $lng->getTrn('global/secLinks/teams');?></b></a>        &nbsp;
-            <a class="menu" href="index.php?section=players">      <b><?php echo $lng->getTrn('global/secLinks/players');?></b></a>      &nbsp;
-            <a class="menu" href="index.php?section=coaches">      <b><?php echo $lng->getTrn('global/secLinks/coaches');?></b></a>      &nbsp;                
-            <a class="menu" href="index.php?section=races">        <b><?php echo $lng->getTrn('global/secLinks/races');?></b></a>        &nbsp;
-            <?php
-            if ($rules['enable_stars_mercs']) {
-                ?><a class="menu" href="index.php?section=stars">  <b><?php echo $lng->getTrn('global/secLinks/stars');?></b></a>        &nbsp;<?php
-            }
-            ?>
-            <a class="menu" href="index.php?section=records">      <b><?php echo $lng->getTrn('global/secLinks/records');?></b></a>      &nbsp;
-            <a class="menu" href="index.php?section=rules">        <b><?php echo $lng->getTrn('global/secLinks/rules');?></b></a>        &nbsp;
-            <a class="menu" href="index.php?section=gallery">      <b><?php echo $lng->getTrn('global/secLinks/gallery');?></b></a>      &nbsp;
-            <a class="menu" href="index.php?section=about">        <b>OBBLM</b></a> &nbsp;
-            <?php 
-            if ($settings['enable_guest_book']) {
-                ?><a class="menu" href="index.php?section=guest"><b><?php echo $lng->getTrn('global/secLinks/gb');?></b></a> &nbsp;<?php
-            }
-            if (!empty($settings['forum_url'])) {
-                ?><a class="menu" href="<?php echo $settings['forum_url'];?>"><b><?php echo $lng->getTrn('global/secLinks/forum');?></b></a> &nbsp;<?php
-            }
-            ?>
-        </td>
-        </tr>
-        </table>
+                ?>
+                <li><a href="index.php?section=main"><?php echo $lng->getTrn('global/secLinks/home');?></a></li>
+                <li><a href="index.php?section=teams"><?php echo $lng->getTrn('global/secLinks/teams');?></a></li>
+                <li><a href="index.php?section=fixturelist"><?php echo $lng->getTrn('global/secLinks/fixtures');?></a></li>
+                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/statistics');?></span>
+                    <ul>
+                        <li><a href="index.php?section=standings"><?php echo $lng->getTrn('global/secLinks/standings');?></a></li>
+                        <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/specstandings');?></span>
+                            <ul>
+                                <?php
+                                foreach (Tour::getTours() as $t) {
+                                    echo "<li><a href='index.php?section=fixturelist&amp;tour_id=$t->tour_id'>$t->name</a></li>\n";
+                                }
+                                ?>
+                            </ul>
+                        </li>
+                        <li><a href="index.php?section=recent"><?php echo $lng->getTrn('global/secLinks/recent');?></a></li>
+                        <li><a href="index.php?section=players"><?php echo $lng->getTrn('global/secLinks/players');?></a></li>
+                        <li><a href="index.php?section=coaches"><?php echo $lng->getTrn('global/secLinks/coaches');?></a></li>
+                        <li><a href="index.php?section=races"><?php echo $lng->getTrn('global/secLinks/races');?></a></li>
+                        <?php
+                        if ($rules['enable_stars_mercs']) {
+                            ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/records');?></span>
+                    <ul>
+                        <li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li>
+                        <li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li>
+                        <li><a href="index.php?section=records&amp;subsec=memm"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li>
+                        <li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li>
+                        <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
+                    </ul>
+                </li>
+                
+                <li><a href="index.php?section=rules"><?php echo $lng->getTrn('global/secLinks/rules');?></a></li>
+                <li><a href="index.php?section=gallery"><?php echo $lng->getTrn('global/secLinks/gallery');?></a></li>
+                <li><a href="index.php?section=about">OBBLM</a></li>
+                <?php 
+                if ($settings['enable_guest_book']) {
+                    ?><li><a href="index.php?section=guest"><?php echo $lng->getTrn('global/secLinks/gb');?></a></li><?php
+                }
+                if (!empty($settings['forum_url'])) {
+                    ?><li><a href="<?php echo $settings['forum_url'];?>"><?php echo $lng->getTrn('global/secLinks/forum');?></a></li><?php
+                }
+                ?>
+            </ul>
+        </div>
         <div class="section"> <!-- This container holds the section specific content -->
         <?php
         // Check if a menu-link was picked, and execute section code from sections.php accordingly.
