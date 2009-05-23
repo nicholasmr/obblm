@@ -181,7 +181,7 @@ div.adminBox   {float: left; margin: 20px; border: 1px solid #545454;}
 
 /* Records */
 table.recBoxTable {width: 100%; border-spacing: 2px;}
-div.recBox        {clear: both; width: 800px; border: 1px solid #545454; margin: 30px auto 30px auto;}
+div.recBox        {clear: both; width: 800px; border: 1px solid #545454; margin: 20px auto 20px auto;}
 
 /* Match form */
 table.match_form {width: 100%; padding:10px;}
