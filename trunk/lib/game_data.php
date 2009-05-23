@@ -293,7 +293,7 @@ $DEA = array (
  				'Def skills'	=> array ('Break Tackle', 'Dirty Player', 'Juggernaut', 'Mighty Blow', 'No Hands', 'Secret Weapon', 'Stand Firm'),
  				'N skills'		=> array ('General', 'Strength'),
  				'D skills'		=> array ('Agility', 'Passing'),
- 				'qty'			=> 2,
+ 				'qty'			=> 1,
 				'cost'			=> 160000,
 				'icon'			=> 'ddeathroller1an'
 			)
