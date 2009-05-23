@@ -214,7 +214,15 @@ function match_form($match_id) {
     title((($m->team1_id) ? $m->team1_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>') . " - " . (($m->team2_id) ? $m->team2_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>'));
     $CP = 8; // Colspan.
 
+    $did = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'f_did'); // For below match relations (league, division etc.) table.
     ?>
+    <table>
+    <tr><td><b>League</b>:</td><td><?php echo get_alt_col('leagues', 'lid', get_alt_col('divisions', 'did', $did, 'f_lid'), 'name');?></td></tr>
+    <tr><td><b>Division</b>:</td><td><?php echo get_alt_col('divisions', 'did', $did, 'name');?></td></tr>
+    <tr><td><b>Tournament</b>:</td><td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?></td></tr>
+    <tr><td><b>Date played</b>:</td><td><?php echo ($m->is_played) ? textdate($m->date_played) : '<i>Not yet played</i>';?></td></tr>
+    </table>
+    <br>
     <div>
         <a href='javascript:void(0);' onClick="document.getElementById('helpbox').style.display = 'block';"><?php echo $lng->getTrn('secs/fixtures/report/click');?></a> <?php echo $lng->getTrn('secs/fixtures/report/forhelp');?>
     </div>

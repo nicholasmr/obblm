@@ -529,7 +529,26 @@ function make_menu() {
         <?php 
         if (isset($_SESSION['logged_in'])) { ?><li><a href="index.php?logout=1">     <?php echo $lng->getTrn('global/secLinks/logout');?></a></li><?php }
         else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('global/secLinks/login');?></a></li><?php }
-        if (isset($_SESSION['logged_in'])) { echo "<li><a href='index.php?section=coachcorner'>".$lng->getTrn('global/secLinks/cc')."</a></li>\n"; }
+        if (isset($_SESSION['logged_in'])) { 
+            ?>
+            <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/cc');?></span>
+                <ul>
+                    <li><a href='index.php?section=coachcorner'><?php echo $lng->getTrn('global/secLinks/coachcorner');?></a></li>
+                    <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/myteams');?></span>
+                        <ul>
+                            <?php
+                            foreach ($coach->getTeams() as $t) {
+                                echo "<li><a href='index.php?section=coachcorner&amp;team_id=$t->team_id'>$t->name</a></li>\n";
+                            }
+                            echo "<li><a style='font-style: italic;' href='index.php?section=coachcorner&amp;team_id=new'>".$lng->getTrn('secs/cc/main/start_new')."</a></li>\n";
+                            ?>
+                        </ul>
+                    </li>
+                    <li><a href='index.php?section=coaches&amp;coach_id=<?php echo $coach->coach_id;?>'><?php echo $lng->getTrn('global/secLinks/myprofile');?></a></li>
+                </ul>
+            </li>
+            <?php
+        }
         if (isset($_SESSION['logged_in'])) {
             $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'ldm' => $lng->getTrn('secs/admin/ldm'), 'chtr' => $lng->getTrn('secs/admin/th'), 'import' => $lng->getTrn('secs/admin/import'), 'ctman' => $lng->getTrn('secs/admin/delete'));
             $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('secs/admin/log'));

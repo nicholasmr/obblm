@@ -53,6 +53,8 @@
             <recent>Recent matches</recent> 
             <statistics>Statistics</statistics>
             <specstandings>Tournament standings</specstandings>
+            <myteams>My teams</myteams>
+            <myprofile>My profile</myprofile>
         </secLinks>
         
         <!-- Notifications for sortable tables -->

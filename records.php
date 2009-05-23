@@ -379,7 +379,7 @@ function mem_matches()
 
     foreach ($memmatches as $d => $matches) {
         ?>
-        <div class="recBox" style="width:70%;">
+        <div class="recBox" style="width:60%;">
             <?php
             $title = 'Error: No field.';
             switch ($d)
@@ -453,29 +453,29 @@ function mem_matches()
                             case 'ki':
                             case 'bh+ki+si':
                                 $s = $m->getSummedAch($d);
-                                echo "<h2>$s[1] &nbsp;-&nbsp; $s[2]</h2>";
+                                echo "<b>$s[1] &nbsp;-&nbsp; $s[2]</b>";
                                 break;
                                 
                             case 'svic':
-                                echo "<h2>$m->team1_score &nbsp;-&nbsp; $m->team2_score</h2>";
+                                echo "<b>$m->team1_score &nbsp;-&nbsp; $m->team2_score</b>";
                                 break;
                                 
                             case 'inc':
                                 $a = $m->income1/1000;
                                 $b = $m->income2/1000;
-                                echo '<h2>'.(($a > $b) ? "${a}k" : "${b}k").'</h2>';
+                                echo "<b> ${a}k - ${b}k</b>";
                                 break;
                                 
                             case 'gate':
-                                echo '<h2>'.($m->gate/1000).'k</h2>';
+                                echo '<b>'.($m->gate/1000).'k</b>';
                                 break;
                                 
                             case 'mfans':
-                                echo '<h2>'.$m->fans.'</h2>';
+                                echo '<b>'.$m->fans.'</b>';
                                 break;
 
                             case 'tvdiff':
-                                echo "<h2>".($m->tv1/1000)."k - ".($m->tv2/1000)."k</h2>";
+                                echo "<b>".($m->tv1/1000)."k - ".($m->tv2/1000)."k</b>";
                                 break;
                         } 
                         ?>
@@ -488,7 +488,7 @@ function mem_matches()
                     <tr>
                         <td align="right" colspan="3">
                         <small>
-                        <i><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?>, <?php echo $m->date_played;?></i>, 
+                        <i><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?>, <?php echo textdate($m->date_played, true);?></i>, 
                         <a href="index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('secs/records/memma/view');?></a> 
                         </small>
                         </td>
