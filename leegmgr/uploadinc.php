@@ -565,7 +565,7 @@ function addMatch ( $hash, $hometeam, $awayteam, $gate, $homeff, $awayff, $homew
 	$query = "SELECT match_id FROM matches WHERE hash = \"".$hash."\"";
 	$match_id = mysql_query($query);
 	if (!$match_id) {
-		Print "<br>Failed to retrive match_id.<br>";
+		Print "<br>Failed to retreive match_id.<br>";
 		die('Query failed: ' . mysql_error());
 		exit(-1);
 	}

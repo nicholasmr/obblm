@@ -50,7 +50,7 @@ Print "<!-- JavaBBowl Options: +LRB -semi -final +EXPOFAB +ot  -->
 Race: {$team->race}<br />
 Coached By: {$team->coach_name}<br />
 <TABLE align=\"center\" border=\"1\" bgcolor=\"#d7d7ff\" bordercolorlight=\"#f7f7ff\" bordercolordark=\"#9797bf\">
-<TR bgcolor=\"#c6c6ff\"><TH>#</TH><TH>Player Name</TH><TH>Position</TH><TH>Ma</TH><TH>St</TH><TH>Ag</TH><TH>Av</TH><TH>Player Skills</TH><TH>Inj</TH><TH>Cp</TH><TH>TD</TH><TH>Int</TH><TH>Cas</TH><TH>Mvp</TH><TH>SPP</TH><TH>Cost</TH></TR>";
+<TR bgcolor=\"#c6c6ff\"><TH>#</TH><TH>Player Name</TH><TH>Position</TH><TH>Ma</TH><TH>St</TH><TH>Ag</TH><TH>Av</TH><TH>Player Skills</TH><TH>Inj</TH><TH>Cp</TH><TH>TD</TH><TH>Int</TH><TH>Cas</TH><TH>Mvp</TH><TH>SPP</TH><TH>Cost</TH></TR>\n";
 
 
 $players = $team->getPlayers();
@@ -61,7 +61,7 @@ foreach ( $players as $p )
 	if ( !$p->is_dead && !$p->is_sold )
 	{
 		#$player = new Player( $p->player_id );
-		Print "<TR align=\"center\"><TD ALIGN=LEFT>{$p->nr}</TD><TD ALIGN=LEFT>{$p->name}</TD><TD ALIGN=LEFT>{$p->position}</TD><TD>{$p->ma}</TD><TD>{$p->st}</TD><TD>{$p->ag}</TD><TD>{$p->av}</TD><TD ALIGN=LEFT>{$p->getSkillsStr()}</TD><TD ALIGN=LEFT>{$p->getInjsStr()}</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD ALIGN=RIGHT>{$p->value}</TD></TR>";
+		Print "<TR align=\"center\"><TD ALIGN=LEFT>{$p->nr}</TD><TD ALIGN=LEFT>{$p->name}</TD><TD ALIGN=LEFT>{$p->position}</TD><TD>{$p->ma}</TD><TD>{$p->st}</TD><TD>{$p->ag}</TD><TD>{$p->av}</TD><TD ALIGN=LEFT>{$p->getSkillsStr()}</TD><TD ALIGN=LEFT>{$p->getInjsStr()}</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD>0</TD><TD ALIGN=RIGHT>{$p->value}</TD></TR>\n";
 		$loop ++;
 	}
 
