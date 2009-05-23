@@ -470,22 +470,22 @@ function fatal($err_msg) {
 // Print a status message.
 function status($status, $msg = '') {
 
-        if ($status) {	# Status == success
+        if ($status) { # Status == success
             echo "<div class=\"messageContainer green\">";
-				echo "Request succeeded";
-				if ($msg != ''){
-					echo " : $msg\n";
-				}
-			echo "</div>";
-		} else {	# Status == failure
-             echo "<div class=\"messageContainer red\">";
-			 	echo "Request failed";
-				if ($msg != ''){
-					echo " : $msg\n";
-				}
-			echo "</div>";
-		}
-        ?>	
+                echo "Request succeeded";
+                if ($msg != ''){
+                    echo " : $msg\n";
+                }
+            echo "</div>";
+        } else { # Status == failure
+                echo "<div class=\"messageContainer red\">";
+                    echo "Request failed";
+                if ($msg != ''){
+                    echo " : $msg\n";
+                }
+            echo "</div>";
+        }
+        ?>
     <?php
 }
 
@@ -496,28 +496,112 @@ function textdate($mysqldate, $noTime = false) {
 // Returns HTML to show an icon with the result of a game
 function matchresult_icon($result) {
 
-	global $lng;
-	
-	$class = "";
-	
-	switch ($result){		
-		case "W":
-			$class = "won";
-			$title = $lng->getTrn('global/misc/gamewon');
-			break;
-		case "L":
-			$class = "lost";
-			$title = $lng->getTrn('global/misc/gamelost');
-			break;
-		case "D":
-			$class = "draw";
-			$title = $lng->getTrn('global/misc/gamedraw');
-			break;
-		default:
-			$class = "";
-			$title = $lng->getTrn('global/misc/gameunknown');
-	}	
-	return "<div class='match_icon ". $class ."' title='". $title ."'></div>";	
+    global $lng;
+
+    $class = "";
+
+    switch ($result){
+        case "W":
+            $class = "won";
+            $title = $lng->getTrn('global/misc/gamewon');
+            break;
+        case "L":
+            $class = "lost";
+            $title = $lng->getTrn('global/misc/gamelost');
+            break;
+        case "D":
+            $class = "draw";
+            $title = $lng->getTrn('global/misc/gamedraw');
+            break;
+        default:
+            $class = "";
+            $title = $lng->getTrn('global/misc/gameunknown');
+    }
+    return "<div class='match_icon ". $class ."' title='". $title ."'></div>";
+}
+
+function make_menu() {
+
+    global $lng, $coach, $settings, $rules;
+    
+    ?>
+    <ul id="nav" class="dropdown dropdown-horizontal">
+        <?php 
+        if (isset($_SESSION['logged_in'])) { ?><li><a href="index.php?logout=1">     <?php echo $lng->getTrn('global/secLinks/logout');?></a></li><?php }
+        else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('global/secLinks/login');?></a></li><?php }
+        if (isset($_SESSION['logged_in'])) { echo "<li><a href='index.php?section=coachcorner'>".$lng->getTrn('global/secLinks/cc')."</a></li>\n"; }
+        if (isset($_SESSION['logged_in'])) {
+            $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'ldm' => $lng->getTrn('secs/admin/ldm'), 'chtr' => $lng->getTrn('secs/admin/th'), 'import' => $lng->getTrn('secs/admin/import'), 'ctman' => $lng->getTrn('secs/admin/delete'));
+            $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('secs/admin/log'));
+            if (is_object($coach) && $coach->ring <= RING_COM) {
+                ?>
+                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/admin');?></span>
+                    <ul>
+                        <?php
+                        foreach ($ring_com_access as $lnk => $desc) {
+                            echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
+                        }
+                        if ($coach->ring == RING_SYS) {
+                            foreach ($ring_sys_access as $lnk => $desc) {
+                                echo "<li><a style='font-style: italic;' href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
+                            }            
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <?php
+            }
+        }
+        ?>
+        <li><a href="index.php?section=main"><?php echo $lng->getTrn('global/secLinks/home');?></a></li>
+        <li><a href="index.php?section=teams"><?php echo $lng->getTrn('global/secLinks/teams');?></a></li>
+        <li><a href="index.php?section=fixturelist"><?php echo $lng->getTrn('global/secLinks/fixtures');?></a></li>
+        <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/statistics');?></span>
+            <ul>
+                <li><a href="index.php?section=standings"><?php echo $lng->getTrn('global/secLinks/standings');?></a></li>
+                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/specstandings');?></span>
+                    <ul>
+                        <?php
+                        foreach (Tour::getTours() as $t) {
+                            echo "<li><a href='index.php?section=fixturelist&amp;tour_id=$t->tour_id'>$t->name</a></li>\n";
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <li><a href="index.php?section=recent"><?php echo $lng->getTrn('global/secLinks/recent');?></a></li>
+                <li><a href="index.php?section=players"><?php echo $lng->getTrn('global/secLinks/players');?></a></li>
+                <li><a href="index.php?section=coaches"><?php echo $lng->getTrn('global/secLinks/coaches');?></a></li>
+                <li><a href="index.php?section=races"><?php echo $lng->getTrn('global/secLinks/races');?></a></li>
+                <?php
+                if ($rules['enable_stars_mercs']) {
+                    ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
+                }
+                ?>
+                <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
+            </ul>
+        </li>
+        <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/records');?></span>
+            <ul>
+                <li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li>
+                <li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li>
+                <li><a href="index.php?section=records&amp;subsec=memm"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li>
+                <li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li>
+            </ul>
+        </li>
+        
+        <li><a href="index.php?section=rules"><?php echo $lng->getTrn('global/secLinks/rules');?></a></li>
+        <li><a href="index.php?section=gallery"><?php echo $lng->getTrn('global/secLinks/gallery');?></a></li>
+        <li><a href="index.php?section=about">OBBLM</a></li>
+        <?php 
+        if ($settings['enable_guest_book']) {
+            ?><li><a href="index.php?section=guest"><?php echo $lng->getTrn('global/secLinks/gb');?></a></li><?php
+        }
+        if (!empty($settings['forum_url'])) {
+            ?><li><a href="<?php echo $settings['forum_url'];?>"><?php echo $lng->getTrn('global/secLinks/forum');?></a></li><?php
+        }
+        ?>
+    </ul>
+    <?php
 }
 
 ?>
