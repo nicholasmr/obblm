@@ -43,9 +43,9 @@ function sec_admin() {
         fatal("Sorry. Your access level does not allow you opening the requested page.");
 
     // Permissions OK => Continue...
-
+    /*
     title($lng->getTrn('secs/admin/administration'));
-    
+
     ?>
     <div class="admin_menu">
         <?php
@@ -61,7 +61,7 @@ function sec_admin() {
         <hr>
     </div>
     <?php
-    
+    */
     $coaches = Coach::getCoaches(); // Used by multiple sub-sections.
     
     // If an admin section was requested then call it, else show admin main page.
@@ -996,8 +996,7 @@ function sec_admin() {
         objsort($coaches, array('+name'));
         
         ?>
-        <table style='width:100%; : 10px;'>
-
+        <table>
             <tr>
                 <td colspan='2'>
                     <b><?php echo $lng->getTrn('secs/admin/retire/note');?></b>
@@ -1007,87 +1006,87 @@ function sec_admin() {
                     </ul>
                 </td>
             </tr>
-
             <tr>
-                <td>
-                <div class="adminBox">
-                    <div class="boxTitle3">Retire team</div>
-                    <div class="boxBody">
-                    <form method="POST">
-                    <select name='id'>
-                        <?php
-                        foreach ($teams as $t) {
-                            echo "<option value='$t->team_id' ".(($t->is_retired) ? 'style="background-color: orange;"' : '').">$t->name</option>\n";
-                        }
-                        ?>
-                    </select><br><br>
-                    <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
-                    <input type='submit' value='Retire/unretire'>
-                    <input type='hidden' name='type' value='rt'>
-                    </form>
+                <td valign='top'>
+                    <div class="adminBox">
+                        <div class="boxTitle3">Retire team</div>
+                        <div class="boxBody">
+                        <form method="POST">
+                        <select name='id'>
+                            <?php
+                            foreach ($teams as $t) {
+                                echo "<option value='$t->team_id' ".(($t->is_retired) ? 'style="background-color: orange;"' : '').">$t->name</option>\n";
+                            }
+                            ?>
+                        </select><br><br>
+                        <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
+                        <input type='submit' value='Retire/unretire'>
+                        <input type='hidden' name='type' value='rt'>
+                        </form>
+                        </div>
                     </div>
-                </div>
                 </td>
-                <td>
-                <div class="adminBox">
-                    <div class="boxTitle3">Retire coach</div>
-                    <div class="boxBody">
-                    <form method="POST">
-                    <select name='id'>
-                        <?php
-                        foreach ($coaches as $c) {
-                            echo "<option value='$c->coach_id' ".(($c->retired) ? 'style="background-color: orange;"' : '').">$c->name</option>\n";
-                        }
-                        ?>
-                    </select><br><br>
-                    <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
-                    <input type='submit' value='Retire/unretire'>
-                    <input type='hidden' name='type' value='rc'>
-                    </form>
+                <td valign='top'>
+                    <div class="adminBox">
+                        <div class="boxTitle3">Delete team</div>
+                        <div class="boxBody">
+                        <form method="POST">
+                        <select name='id'>
+                            <?php
+                            foreach ($teams as $t) {
+                                if ($t->isDeletable())
+                                    echo "<option value='$t->team_id'>$t->name</option>\n";
+                            }
+                            ?>
+                        </select>
+                        <br><br>
+                        <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
+                        <input type='hidden' name='type' value='dt'>
+                        </form>
+                        </div>
                     </div>
-                </div>
                 </td>
             </tr>
+            <tr><td colspan="2"><hr></td></tr>
             <tr>
-                <td>
-                <div class="adminBox">
-                    <div class="boxTitle3">Delete team</div>
-                    <div class="boxBody">
-                    <form method="POST">
-                    <select name='id'>
-                        <?php
-                        foreach ($teams as $t) {
-                            if ($t->isDeletable())
-                                echo "<option value='$t->team_id'>$t->name</option>\n";
-                        }
-                        ?>
-                    </select>
-                    <br><br>
-                    <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
-                    <input type='hidden' name='type' value='dt'>
-                    </form>
+                <td valign='top'>
+                    <div class="adminBox">
+                        <div class="boxTitle3">Retire coach</div>
+                        <div class="boxBody">
+                        <form method="POST">
+                        <select name='id'>
+                            <?php
+                            foreach ($coaches as $c) {
+                                echo "<option value='$c->coach_id' ".(($c->retired) ? 'style="background-color: orange;"' : '').">$c->name</option>\n";
+                            }
+                            ?>
+                        </select><br><br>
+                        <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
+                        <input type='submit' value='Retire/unretire'>
+                        <input type='hidden' name='type' value='rc'>
+                        </form>
+                        </div>
                     </div>
-                </div>
                 </td>
-                <td>
-                <div class="adminBox">
-                    <div class="boxTitle3">Delete coach</div>
-                    <div class="boxBody">
-                    <form method="POST">
-                    <select name='id'>
-                        <?php
-                        foreach ($coaches as $c) {
-                            if ($c->isDeletable())
-                                echo "<option value='$c->coach_id'>$c->name</option>\n";
-                        }
-                        ?>
-                    </select>
-                    <br><br>
-                    <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
-                    <input type='hidden' name='type' value='dc'>
-                    </form>
+                <td valign='top'>
+                    <div class="adminBox">
+                        <div class="boxTitle3">Delete coach</div>
+                        <div class="boxBody">
+                        <form method="POST">
+                        <select name='id'>
+                            <?php
+                            foreach ($coaches as $c) {
+                                if ($c->isDeletable())
+                                    echo "<option value='$c->coach_id'>$c->name</option>\n";
+                            }
+                            ?>
+                        </select>
+                        <br><br>
+                        <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
+                        <input type='hidden' name='type' value='dc'>
+                        </form>
+                        </div>
                     </div>
-                </div>
                 </td>
             </tr>
         </table>

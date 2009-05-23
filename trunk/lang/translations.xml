@@ -791,13 +791,14 @@
             -->
             
             <administration>Administration</administration>
-            <um>User management</um>
-            <ldm>League and division management</ldm>
-            <import>Import team</import>
-            <th>Tournament handling</th>
-            <delete>Delete/retire coaches or teams</delete>
+            <um>Management: Coach</um> <!-- User management -->
+            <ldm>Management: League &amp; division</ldm> <!-- League and division management -->
+            <th>Management: Tournament</th> <!-- Tournament handling -->
+            <delete>Delete+retire coach or team</delete>
             <schedule>Schedule matches</schedule>
             <log>Log</log>
+            <import>Import team</import>
+
             <pick>Please pick one of the above links.</pick>
             
             <prefixes>the prefixes + and - specify least of and most of</prefixes>

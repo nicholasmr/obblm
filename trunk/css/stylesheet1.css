@@ -67,6 +67,13 @@ div.banner
     background-position: top left;
 }
 
+/* Menu */
+div.menu
+{
+    width: 100%;
+    float: left;
+}
+
 td.menu {vertical-align: bottom;}
 a.menu {color: #eeeeee;}
 a.menuSpecial {color: orange;}
@@ -149,9 +156,9 @@ div.main_lcolBox    {margin: 20px; border: 1px solid #545454;}
 div.main_rcolBox    {margin: 10px; border: 1px solid #545454;}
 div.main_cpy        {clear: both; font-size: 10px; padding: 30px; padding-top: 20px; background-color: inherit;}
 
-div.messageContainer {width:971px;padding:8px;color:#fff;font-weight:bold;}
-div.green{background-color:#390;border:1px solid #298000;}
-div.red{background-color:#F20000;border:1px solid #c00;}
+div.messageContainer    {width:100%;padding:6px 0px 6px 0px;color:#fff;font-weight:bold;}
+div.green               {clear:both;background-color:#390;border:1px solid #298000;}
+div.red                 {clear:both;background-color:#F20000;border:1px solid #c00;}
 
 /* Team's page */
 div.tpageBox    {float: left; width: 270px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}

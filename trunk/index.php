@@ -81,7 +81,7 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
     <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
     <script type="text/javascript" src="lib/misc_functions.js"></script>
     
-    <!-- CSS MENU -->
+    <!-- CSS MENU (./cssmenu extension) -->
     <link href="cssmenu/css/dropdown/dropdown.css" media="all" rel="stylesheet" type="text/css" />
     <link href="cssmenu/css/dropdown/themes/default/default.ultimate.css" media="all" rel="stylesheet" type="text/css" />
     <!--[if lt IE 7]>
@@ -92,95 +92,35 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
 <body>
     <div class="everything">
         <div class="banner"></div>
-        <div style="width:100%; float:left;">
-            <ul id="nav" class="dropdown dropdown-horizontal">
-                <?php 
-                if (isset($_SESSION['logged_in'])) { ?><li><a href="index.php?logout=1">     <?php echo $lng->getTrn('global/secLinks/logout');?></a></li><?php }
-                else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('global/secLinks/login');?></a></li><?php }
-                ?>
-                <?php
-                if (isset($_SESSION['logged_in'])) {
-                    if (is_object($coach) && $coach->ring <= RING_COM) {
-                        echo "<li><a href='index.php?section=admin'>".$lng->getTrn('global/secLinks/admin')."</a></li>";
-                    }
-                    echo "<li><a href='index.php?section=coachcorner'>".$lng->getTrn('global/secLinks/cc')."</a></li>";
-                }
-                ?>
-                <li><a href="index.php?section=main"><?php echo $lng->getTrn('global/secLinks/home');?></a></li>
-                <li><a href="index.php?section=teams"><?php echo $lng->getTrn('global/secLinks/teams');?></a></li>
-                <li><a href="index.php?section=fixturelist"><?php echo $lng->getTrn('global/secLinks/fixtures');?></a></li>
-                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/statistics');?></span>
-                    <ul>
-                        <li><a href="index.php?section=standings"><?php echo $lng->getTrn('global/secLinks/standings');?></a></li>
-                        <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/specstandings');?></span>
-                            <ul>
-                                <?php
-                                foreach (Tour::getTours() as $t) {
-                                    echo "<li><a href='index.php?section=fixturelist&amp;tour_id=$t->tour_id'>$t->name</a></li>\n";
-                                }
-                                ?>
-                            </ul>
-                        </li>
-                        <li><a href="index.php?section=recent"><?php echo $lng->getTrn('global/secLinks/recent');?></a></li>
-                        <li><a href="index.php?section=players"><?php echo $lng->getTrn('global/secLinks/players');?></a></li>
-                        <li><a href="index.php?section=coaches"><?php echo $lng->getTrn('global/secLinks/coaches');?></a></li>
-                        <li><a href="index.php?section=races"><?php echo $lng->getTrn('global/secLinks/races');?></a></li>
-                        <?php
-                        if ($rules['enable_stars_mercs']) {
-                            ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
-                        }
-                        ?>
-                    </ul>
-                </li>
-                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/records');?></span>
-                    <ul>
-                        <li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li>
-                        <li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li>
-                        <li><a href="index.php?section=records&amp;subsec=memm"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li>
-                        <li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li>
-                        <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
-                    </ul>
-                </li>
-                
-                <li><a href="index.php?section=rules"><?php echo $lng->getTrn('global/secLinks/rules');?></a></li>
-                <li><a href="index.php?section=gallery"><?php echo $lng->getTrn('global/secLinks/gallery');?></a></li>
-                <li><a href="index.php?section=about">OBBLM</a></li>
-                <?php 
-                if ($settings['enable_guest_book']) {
-                    ?><li><a href="index.php?section=guest"><?php echo $lng->getTrn('global/secLinks/gb');?></a></li><?php
-                }
-                if (!empty($settings['forum_url'])) {
-                    ?><li><a href="<?php echo $settings['forum_url'];?>"><?php echo $lng->getTrn('global/secLinks/forum');?></a></li><?php
-                }
-                ?>
-            </ul>
+        <div class="menu">
+            <?php make_menu(); // See lib/misc_functions.php ?>
         </div>
         <div class="section"> <!-- This container holds the section specific content -->
-        <?php
-        // Check if a menu-link was picked, and execute section code from sections.php accordingly.
-        switch ($_GET['section']) 
-        {
-            case 'login':        sec_login();        break;
-            case 'admin':        sec_admin();        break;
-            case 'coachcorner':  sec_coachcorner();  break;
-            case 'fixturelist':  sec_fixturelist();  break; // Tournaments
-            case 'standings':    sec_standings();    break;
-            case 'teams':        sec_teams();        break;
-            case 'players':      sec_players();      break;
-            case 'coaches':      sec_coaches();      break;
-            case 'races':        sec_races();        break;
-            case 'stars':        sec_stars();        break;
-            case 'records':      sec_records();      break;
-            case 'rules':        sec_rules();        break;
-            case 'gallery':      sec_gallery();      break;
-            case 'about':        sec_about();        break;
-            case 'guest':        if($settings['enable_guest_book']){sec_guest(); break;} 
-            case 'recent':       sec_recentmatches();break;
-            default:             sec_main();
-        }
-        ?>
-        <!-- Pseudo container to force parent container to have the correct height for (potential) floating children -->
-        <div style="clear: both;"></div> 
+            <?php
+            // Check if a menu-link was picked, and execute section code from sections.php accordingly.
+            switch ($_GET['section']) 
+            {
+                case 'login':        sec_login();        break;
+                case 'admin':        sec_admin();        break;
+                case 'coachcorner':  sec_coachcorner();  break;
+                case 'fixturelist':  sec_fixturelist();  break; // Tournaments
+                case 'standings':    sec_standings();    break;
+                case 'teams':        sec_teams();        break;
+                case 'players':      sec_players();      break;
+                case 'coaches':      sec_coaches();      break;
+                case 'races':        sec_races();        break;
+                case 'stars':        sec_stars();        break;
+                case 'records':      sec_records();      break;
+                case 'rules':        sec_rules();        break;
+                case 'gallery':      sec_gallery();      break;
+                case 'about':        sec_about();        break;
+                case 'guest':        if($settings['enable_guest_book']){sec_guest(); break;} 
+                case 'recent':       sec_recentmatches();break;
+                default:             sec_main();
+            }
+            ?>
+            <!-- Pseudo container to force parent container to have the correct height for (potential) floating children -->
+            <div style="clear: both;"></div> 
         </div>
     </div>
 </body>
