@@ -178,6 +178,10 @@
                 <b>Player skills</b><br>
                 Once the match report has been submitted OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
                 <br>
+                <b>Player injuries</b><br>
+                If a player sustains multiple injuries simply utilize the second and third injury columns "ageing 1" and "ageing 2". 
+                The <i>only</i> difference between the ordinary "inj" column and the ageing columns is that injuries recorded as ageing injuries do not imply a MNG.<br>
+                <br>
                 <b>Incomes</b><br>
                 A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
                 If you spended more than you made in a match then simply prefix - (minus).
