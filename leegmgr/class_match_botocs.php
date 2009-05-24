@@ -35,6 +35,18 @@ class Match_BOTOCS extends Match
     {
         return mysql_query("UPDATE matches SET hash_botocs = '".mysql_real_escape_string($hash)."' WHERE match_id = $this->match_id");
     }
+    
+    public static function create(array $input)
+    {
+        /* Like parent but returns match_id of created match */
+        
+        return (parent::create($input) 
+            && ($result = mysql_query("SELECT MAX(match_id) AS 'mid' FROM matches")) 
+            && mysql_num_rows($result) > 0 
+            && (list($mid) = array_values(mysql_fetch_assoc($result)))
+            && $mid
+            ) ? $mid : false;
+    }
 }
 
 ?>
