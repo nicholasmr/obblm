@@ -857,6 +857,7 @@
                 <e1>delete the tournament associated data forever (this includes team and player gained stats in the tournament).</e1>
                 <e2>generate incorrect player statuses for those matches following (date-wise) the matches deleted. Re-saving/changing old matches may therefore be problematic.</e2>
             </advise>
+            <edit_tour>Edit existing tournament</edit_tour>
             <tour_del>Tournament deletion</tour_del>
             <move_div>Move tour to other division</move_div>
 
