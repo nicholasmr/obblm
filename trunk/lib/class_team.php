@@ -139,7 +139,7 @@ class Team
         $this->fan_factor += $this->_bought_fan_factor;
         
         // Import fields
-        if ($this->imported) {
+        if ($this->imported && !$tour_id) {
             $this->won            += $this->won_0;
             $this->lost           += $this->lost_0;
             $this->draw           += $this->draw_0;
@@ -178,7 +178,7 @@ class Team
         }
 
         // Import fields
-        if ($this->imported) {
+        if ($this->imported && !$trid) {
             if ($this->row_won < $this->sw_0)  $this->row_won  = $this->sw_0;
             if ($this->row_lost < $this->sl_0) $this->row_lost = $this->sl_0;
             if ($this->row_draw < $this->sd_0) $this->row_draw = $this->sd_0;
@@ -391,35 +391,16 @@ class Team
         return false;
     }
     
-    public function getGoods($double_price = true) {
+    public function getGoods($allow_double_rr_price = true) {
 
         /**
          * Returns array containing buyable stuff for teams in their coach corner.
+         * 
+         *  Setting $allow_double_rr_price allows the RR price to double up if: (1) team has played any matches AND (2) static RR prices are NOT set in the $rules.
          **/
 
-        global $DEA;
-        global $rules;
-
-        $rerollcost = 0;
-        if (!empty($this->race)) {
-            $rerollcost = $DEA[$this->race]['other']['RerollCost'];
-            $rerollcost *= (($double_price && !$rules['static_rerolls_prices'] && $this->played > 0) ? 2 : 1);
-        }
-
-        $apothecary = true;
-        if ($this->race == 'Khemri' || $this->race == 'Necromantic' || $this->race == 'Nurgle' || $this->race == 'Undead')
-            $apothecary = false;
-        
-        $team_goods = array(
-                // MySQL names
-                'apothecary'    => array('cost' => $rules['cost_apothecary'],   'max' => ($apothecary ? 1 : 0),         'item' => 'Apothecary'),
-                'rerolls'       => array('cost' => $rerollcost,                 'max' => $rules['max_rerolls'],         'item' => 'Reroll'),
-                'fan_factor'    => array('cost' => $rules['cost_fan_factor'],   'max' => $rules['max_fan_factor'],      'item' => 'Fan Factor'),
-                'ass_coaches'   => array('cost' => $rules['cost_ass_coaches'],  'max' => $rules['max_ass_coaches'],     'item' => 'Assistant Coach'),
-                'cheerleaders'  => array('cost' => $rules['cost_cheerleaders'], 'max' => $rules['max_cheerleaders'],    'item' => 'Cheerleader'),
-        );
-
-        return $team_goods;
+        $race = new Race($this->race);
+        return $race->getGoods($allow_double_rr_price && $this->played > 0);
     }
 
     public function delete() {
