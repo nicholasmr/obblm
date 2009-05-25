@@ -239,8 +239,8 @@
         <standings>
         
             <!-- General -->
-            <tblTitle>Overall standings</tblTitle>
-            <tblTitle2>Overall standings continued (team details)</tblTitle2>
+            <tblTitle>All-time standings</tblTitle>
+            <tblTitle2>All-time standings continued (team details)</tblTitle2>
         </standings>
         
         <teams>
