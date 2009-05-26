@@ -342,6 +342,7 @@ if ($_POST) {
       $m['ag'] = $DEA[$r]['players'][$mpos]['ag'];
       $m['av'] = $DEA[$r]['players'][$mpos]['av'];
       $m['skillarr'] = $DEA[$r]['players']["$mpos"]['Def skills'];
+      if (!in_array('Loner', $m['skillarr'])) array_unshift($m['skillarr'], 'Loner');	// Adding Loner unless already in array
       $m['skills'] = implode(', ',$m['skillarr']);
       $m['cost'] = $DEA[$r]['players'][$mpos]['cost'] + MERC_EXTRA_COST;
       if (isset($postvars["Extra$i"])) {
