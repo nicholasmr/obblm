@@ -30,6 +30,7 @@
 error_reporting(E_ALL); 
 
 require_once('../header.php');
+require_once('class_match_botocs.php');
 
 uploadpage();
 
@@ -141,125 +142,96 @@ function parse_results($xmlresults) {
 
 	$matchparsed = array ( "homeplayers" => $homeplayers, "awayplayers" => $awayplayers, "gate" => $gate, "hometeam" => $hometeam, "homescore" => $homescore, "homewinnings" => $homewinnings, "homeff" => $homeff, "homefame" => $homefame, "awayteam" => $awayteam, "awayscore" => $awayscore, "awaywinnings" => $awaywinnings, "awayff" => $awayff, "awayfame" => $awayfame, "hash" => $hash );
 
-	Print "<br><br><textarea rows=\"50\" cols=\"100\">";
-
-	Print_r ($matchparsed);
-
-	Print "</textarea>";
-
-	Print "<br><b>".$matchparsed['hash']."</b>";
 	report ( $matchparsed );
 
 }
 
 function report ( $matchparsed ) {
 
-	Print "<br>Connecting to the database.<br>";
 	$conn = mysql_up();
-	
-	### BEGIN REPORT MATCHES TABLE
 
 	$matchfields = addMatch ( $matchparsed );
 
-	
-	###END REPORT MATCHES TABLE
+	matchEntry ( $matchfields['hometeam_id'], $matchfields['match_id'], $matchparsed['homeplayers'] );
 
-	###BEGIN REPORT MATCH_DATA TABLE
+	matchEntry ( $matchfields['awayteam_id'], $matchfields['match_id'], $matchparsed['awayplayers'] );
 
-	$i = 0;
-#######	
 	$match = new Match( $matchfields['match_id'] );
-#######
 
-	$team = new Team( $matchfields['hometeam_id'] );
+	$match->toggleLock();
 
+	Print "<br>Successfully uploaded report<br>";
+
+}
+
+function addMatch ( $matchparsed ) {
+
+	$tour_id = 1; #get from settings later or find from scheduled matches.
+
+	if ( !checkHash ( $matchparsed['hash'] ) )
+	{
+		Print "The unique match identifier already exists.";
+		exit(-1);
+	}
+
+	$hometeam_id=checkTeam ( $matchparsed['hometeam']);
+	if ( !$hometeam_id )
+	{
+		Print "<br>The team {$matchparsed['hometeam']} in the report does not exist on this site.<br>";
+		exit(-1);
+	}
+
+	$awayteam_id=checkTeam ( $matchparsed['awayteam']);
+	if ( !$awayteam_id )
+	{
+		Print "<br>The team {$matchparsed['hometeam']} in the report does not exist on this site.<br>";
+		exit(-1);
+	}
+
+	$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 255, "f_tour_id" => 1, "hash" => $matchparsed['hash'] ) );
+	unset( $input );
+
+	$match = new Match_BOTOCS($match_id);
+	$match->setBOTOCSHash($matchparsed['hash']);
+	$match->update( $input = array("submitter_id" => 1, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor1" => $matchparsed['homeff'], "ffactor2" => $matchparsed['awayff'], "fame1" => $matchparsed['homefame'], "fame2" => $matchparsed['awayfame'], "income1" => $matchparsed['homewinnings'], "income2" => $matchparsed['awaywinnings'], "team1_score" => $matchparsed['homescore'], "team2_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => 0, "tv2" => 0, "comment" => "" ) );
+	$matchfields = array( "tour_id" => $tour_id, "hometeam_id" => $hometeam_id, "awayteam_id" => $awayteam_id, "match_id" => $match_id ); # homecoach_id awaycoach_id
+	return $matchfields;
+
+}
+
+function matchEntry ( $team_id, $match_id, $teamPlayers ) {
+
+	$match = new Match( $match_id );
+
+	$team = new Team( $team_id );
 	$players = $team->getPlayers();
 
-	foreach ( $matchparsed['homeplayers'] as $homeplayer )
+	foreach ( $teamPlayers as $player )
 	{
 		foreach ( $players as $p  )
 		{
-			if ( $p->nr == $homeplayer['nr'] && !$p->is_dead && !$p->is_sold ) {
+			if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold ) {
 				$f_player_id = $p->player_id;
 				break;
 			}
 		}
 		
-		$mvp = $homeplayer['mvp'];
+		$mvp = $player['mvp'];
 		if ($mvp == NULL) $mvp = 0;
-		$cp = $homeplayer['cp'];
+		$cp = $player['cp'];
 		if ($cp == NULL) $cp = 0;
-		$td = $homeplayer['td'];
+		$td = $player['td'];
 		if ($td == NULL) $td = 0;
-		$intcpt = $homeplayer['intcpt'];
+		$intcpt = $player['intcpt'];
 		if ($intcpt == NULL) $intcpt = 0;
-		$bh = $homeplayer['bh'][0];
+		$bh = $player['bh'][0];
 		if ($bh == NULL) $bh = 0;
-		#$si = $homeplayers[$i]
-		#$ki = $homeplayers[$i]
-		switch ($homeplayer['inj']) {
-			case NULL:
-				$injeffect = 1;
-				break;
-			case "Miss Next Game":
-				$injeffect = 2;
-				break;
-			case "Niggling Injury":
-				$injeffect = 3;
-				break;
-			case "-1 MA":
-				$injeffect = 4;
-				break;
-			case "-1 AV":
-				$injeffect = 5;
-				break;
-			case "-1 AG":
-				$injeffect = 6;
-				break;
-			case "-1 ST":
-				$injeffect = 7;
-				break;
-			case "Dead":
-				$injeffect = 8;
-				break;
-			default:
-				$injeffect = 1;
-				break;
-		}
-		
-		$inj = $injeffect;
+		#$si = $players[$i]
+		#$ki = $players[$i]
 
-		switch ($homeplayer['agn1']) {
-			case NULL:
-				$injeffect = 1;
-				break;
-			case "Miss Next Game":
-				$injeffect = 2;
-				break;
-			case "Niggling Injury":
-				$injeffect = 3;
-				break;
-			case "-1 MA":
-				$injeffect = 4;
-				break;
-			case "-1 AV":
-				$injeffect = 5;
-				break;
-			case "-1 AG":
-				$injeffect = 6;
-				break;
-			case "-1 ST":
-				$injeffect = 7;
-				break;
-			case "Dead":
-				$injeffect = 8;
-				break;
-			default:
-				$injeffect = 1;
-				break;
-		}
-		
-		$agn1 = $injeffect;
+		$inj = switchInjury ( $player['inj'] );
+
+		$agn1 = switchInjury ( $player['agn1'] );
 		if ( $agn1 > $inj ) list($inj, $agn1) = array($agn1, $inj);
 		if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
 
@@ -272,135 +244,89 @@ function report ( $matchparsed ) {
 	{
 		if (  !$p->is_dead && !$p->is_sold ) {
 			$player = new Player ( $p->player_id );
-			$p_matchdata = $player->getMatchData( $matchfields['match_id'] );
+			$p_matchdata = $player->getMatchData( $match_id );
 			if ( !$p_matchdata['inj'] ) {
 				$match->entry( $input = array ( "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ) );
 			}
 		}
 	}	
 
-	##END ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
+}
 
-	####BEGIN AWAY PLAYER REPORT
+function checkCoach ( $hometeam ) {
 
-	$i = 0;
-
-	$team = new Team( $matchfields['awayteam_id'] );
-	$players = $team->getPlayers();
-
-	foreach ( $matchparsed['awayplayers'] as $awayplayer )
+	if ( !mysql_fetch_array( mysql_query( "SELECT `owned_by_coach_id` FROM `teams` WHERE `owned_by_coach_id` = ".$_SESSION['coach_id']." and `name` = \"".$hometeam."\"" ) ) )
 	{
-		foreach ( $players as $p  )
-		{
-			if ( $p->nr == $awayplayer['nr'] && !$p->is_dead && !$p->is_sold ) {
-				$f_player_id = $p->player_id;
-				break;
-			}
-		}
-		
-		$mvp = $awayplayer['mvp'];
-		if ($mvp == NULL) $mvp = 0;
-		$cp = $awayplayer['cp'];
-		if ($cp == NULL) $cp = 0;
-		$td = $awayplayer['td'];
-		if ($td == NULL) $td = 0;
-		$intcpt = $awayplayer['intcpt'];
-		if ($intcpt == NULL) $intcpt = 0;
-		$bh = $awayplayer['bh'];
-		if ($bh == NULL) $bh = 0;
-		#$si = $awayplayers[$i]
-		#$ki = $awayplayers[$i]
-		switch ($awayplayer['inj']) {
-			case NULL:
-				$injeffect = 1;
-				break;
-			case "Miss Next Game":
-				$injeffect = 2;
-				break;
-			case "Niggling Injury":
-				$injeffect = 3;
-				break;
-			case "-1 MA":
-				$injeffect = 4;
-				break;
-			case "-1 AV":
-				$injeffect = 5;
-				break;
-			case "-1 AG":
-				$injeffect = 6;
-				break;
-			case "-1 ST":
-				$injeffect = 7;
-				break;
-			case "Dead":
-				$injeffect = 8;
-				break;
-			default:
-				$injeffect = 1;
-				break;
-		}
-		
-		$inj = $injeffect;
-
-		switch ($awayplayer['agn1']) {
-			case NULL:
-				$injeffect = 1;
-				break;
-			case "Miss Next Game":
-				$injeffect = 2;
-				break;
-			case "Niggling Injury":
-				$injeffect = 3;
-				break;
-			case "-1 MA":
-				$injeffect = 4;
-				break;
-			case "-1 AV":
-				$injeffect = 5;
-				break;
-			case "-1 AG":
-				$injeffect = 6;
-				break;
-			case "-1 ST":
-				$injeffect = 7;
-				break;
-			case "Dead":
-				$injeffect = 8;
-				break;
-			default:
-				$injeffect = 1;
-				break;
-		}
-		
-		$agn1 = $injeffect;
-
-		if ( $agn1 > $inj ) list($inj, $agn1) = array($agn1, $inj);
-		if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
-		
-		$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp,"td" => $td,"intcpt" => $intcpt,"bh" => $bh,"si" => 0,"ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ) );
+		return 0;
 	}
 
-	####END AWAY PLAYER REPORT
+	return 1;
 
-	##ADD EMPTY RESULTS FOR AWAY PLAYERS WITHOUT RESULTS MAINLY FOR MNG
+}
 
-	foreach ( $players as $p  )
-	{
-		if (  !$p->is_dead && !$p->is_sold ) {
-			$player = new Player ( $p->player_id );
-			$p_matchdata = $player->getMatchData( $matchfields['match_id'] );
-			if ( !$p_matchdata['inj'] ) {
-				$match->entry( $input = array ( "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1 ) );
-			}
+function checkHash ( $hash ) {
+
+	$query = "SELECT hash_botocs FROM matches WHERE hash_botocs = \"".$hash."\"";
+	$hashresults = mysql_query($query);
+	$hashresults = mysql_fetch_array($hashresults);
+	$hashresults = $hashresults['hash_botocs'];
+
+
+	if ( $hashresults == $hash ) {
+		Print "<br>Unique match id already exists: <b>".$hash."<br>";
+		return false;
+	}
+
+	return true;
+
+}
+
+function checkTeam ( $teamname ) {
+
+	$query = "SELECT team_id FROM teams WHERE name = \"".$teamname."\"";
+	$team_id = mysql_query($query);
+	if (!$team_id) {
+		return false;
+	}
+	$team_id = mysql_fetch_array($team_id);
+	$team_id = $team_id['team_id'];
+	return $team_id;
+
+}
+
+function switchInjury ( $inj ) {
+
+	switch ( $inj ) {
+		case NULL:
+			$injeffect = 1;
+			break;
+		case "Miss Next Game":
+			$injeffect = 2;
+			break;
+		case "Niggling Injury":
+			$injeffect = 3;
+			break;
+		case "-1 MA":
+			$injeffect = 4;
+			break;
+		case "-1 AV":
+			$injeffect = 5;
+			break;
+		case "-1 AG":
+			$injeffect = 6;
+			break;
+		case "-1 ST":
+			$injeffect = 7;
+			break;
+		case "Dead":
+			$injeffect = 8;
+			break;
+		default:
+			$injeffect = 1;
+			break;
 		}
-	}	
 
-	##END ADD EMPTY RESULTS FOR AWAY PLAYERS WITHOUT RESULTS MAINLY FOR MNG
-
-	###END REPORT MATCH_DATA TABLE
-	$match->toggleLock();
-	Print "<br>Successfully uploaded entire report<br>";
-
+	return $injeffect;
 
 }
 
@@ -439,92 +365,6 @@ function XOREncrypt($InputString, $KeyPhrase){
 	$InputString = XOREncryption($InputString, $KeyPhrase);
 	$InputString = base64_encode($InputString);
 	return $InputString;
-}
-
-function checkCoach ( $hometeam ) {
-
-	if ( !mysql_fetch_array( mysql_query( "SELECT `owned_by_coach_id` FROM `teams` WHERE `owned_by_coach_id` = ".$_SESSION['coach_id']." and `name` = \"".$hometeam."\"" ) ) )
-	{
-		return 0;
-	}
-
-	return 1;
-
-}
-
-function addMatch ( $matchparsed ) {
-
-	$tour_id = 1; #get from settings later or find from scheduled matches.
-	$query = "SELECT hash FROM matches WHERE hash = \"".$matchparsed['hash']."\"";
-	$hashresults = mysql_query($query);
-	$hashresults = mysql_fetch_array($hashresults);
-	$hashresults = $hashresults['hash'];
-
-
-	if ( $hashresults == $matchparsed['hash'] ) {
-		Print "<br>Unique match id already exists: <b>".$matchparsed['hash']."<br>";
-		exit(-1);
-	}
-	else
-	{
-		Print "<br>Continue reporting, the unique match id does not alreadt exist.<br>";
-	}
-
-	$query = "SELECT team_id FROM teams WHERE name = \"".$matchparsed['hometeam']."\"";
-	$hometeam_id = mysql_query($query);
-	if (!$hometeam_id) {
-		Print "<br>The home team in the report does not exist on this site.<br>";
-		die('Query failed: ' . mysql_error());
-		exit(-1);
-	}
-	else
-	{
-		Print "<br>The home team in the report was found on the site.";
-	}
-	$hometeam_id = mysql_fetch_array($hometeam_id);
-	$hometeam_id = $hometeam_id['team_id'];
-	if ( !($hometeam_id >= 1) ) exit(-1);
-	
-	$query = "SELECT team_id FROM teams WHERE name = \"".$matchparsed['awayteam']."\"";
-	$awayteam_id = mysql_query($query);
-	if (!$awayteam_id) {
-		Print "<br>The away team in the report does not exist on this site.<br>";
-		die('Query failed: ' . mysql_error());
-		exit(-1);
-	}
-	else
-	{
-		Print "<br>The away team in the report was found on the site.";
-	}
-	$awayteam_id = mysql_fetch_array($awayteam_id);
-	$awayteam_id = $awayteam_id['team_id'];
-
-#######	#Begin using Match class to create match.
-	#$match = new Match();
-	Match::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 255, "f_tour_id" => 1, "hash" => $matchparsed['hash'] ) );
-	unset( $input );
-#######	#End using Match class to create match.
-
-	$query = "SELECT match_id FROM matches WHERE hash = \"".$matchparsed['hash']."\"";
-	$match_id = mysql_query($query);
-	if (!$match_id) {
-		Print "<br>Failed to retrive match_id.<br>";
-		die('Query failed: ' . mysql_error());
-		exit(-1);
-	}
-	$match_id = mysql_fetch_array($match_id);
-	$match_id = $match_id['match_id'];
-
-#######	#Begin using Match class to update match.
-
-	Print "<br><b>".$match_id."</b><br>";
-	$match = new Match($match_id);
-	$match->update( $input = array("submitter_id" => 1, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor1" => $matchparsed['homeff'], "ffactor2" => $matchparsed['awayff'], "fame1" => $matchparsed['homefame'], "fame2" => $matchparsed['awayfame'], "income1" => $matchparsed['homewinnings'], "income2" => $matchparsed['awaywinnings'], "team1_score" => $matchparsed['homescore'], "team2_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => 0, "tv2" => 0, "comment" => "" ) );
-#######	#End using Match class to update match.
-
-	$matchfields = array( "tour_id" => $tour_id, "hometeam_id" => $hometeam_id, "awayteam_id" => $awayteam_id, "match_id" => $match_id ); # homecoach_id awaycoach_id
-	return $matchfields;
-
 }
 
 ?>
