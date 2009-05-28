@@ -2361,7 +2361,8 @@ function sec_coachcorner() {
 
 /*************************
  *
- *  RECENT MATCHES *
+ *  RECENT MATCHES
+ *
  *************************/
 
 function sec_recentmatches() {
@@ -2406,6 +2407,12 @@ function sec_recentmatches() {
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
         array('doNr' => false, 'noHelp' => true)
     );
+}
+
+function sec_leegmgr() {
+
+    require_once ( 'leegmgr/uploadinc.php' );
+
 }
 
 ?>
