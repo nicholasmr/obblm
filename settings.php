@@ -36,6 +36,11 @@ $settings['fp_team_news']         = true;  // Default is true. Show team news on
 $settings['fp_links']             = false; // Default is false. Generate coach, team and player links on the front page?
 $settings['force_tour_foldout']   = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.
 
+$settings['leegmgr_enabled']       = false; // Enables upload of BOTOCS LRB5 application match reports.
+$settings['leegmgr_tour_id']       = 1;     // Creates the match using this tour id.
+$settings['leegmgr_schedule']      = false; // Uploads report to a scheduled match.
+$settings['leegmgr_sch_strict']    = false; // If leegmgr_schedule is set to tru and this is set to true, unscheduled matches are not permitted.
+
 /*****************
  * OBBLM rule set
  *****************/
