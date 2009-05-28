@@ -574,7 +574,15 @@ function make_menu() {
         ?>
         <li><a href="index.php?section=main"><?php echo $lng->getTrn('global/secLinks/home');?></a></li>
         <li><a href="index.php?section=teams"><?php echo $lng->getTrn('global/secLinks/teams');?></a></li>
-        <li><a href="index.php?section=fixturelist"><?php echo $lng->getTrn('global/secLinks/fixtures');?></a></li>
+        <li><a href="index.php?section=fixturelist"><?php echo $lng->getTrn('global/secLinks/fixtures');?></a>
+            <ul>
+                <?php
+                if ($settings['leegmgr_enabled']) {
+                    ?><li><a href="index.php?section=leegmgr">Report Match</a></li><?php
+                }
+                ?>
+            </ul>
+        </li>
         <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/statistics');?></span>
             <ul>
                 <li><a href="index.php?section=standings"><?php echo $lng->getTrn('global/secLinks/standings');?></a></li>
