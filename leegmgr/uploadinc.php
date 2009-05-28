@@ -30,8 +30,9 @@
 error_reporting(E_ALL); 
 
 require_once('class_match_botocs.php');
+require('settings.php');
 
-uploadpage();
+if ( $settings['leegmgr_enabled'] ) uploadpage();
 
 function uploadpage () {
 
