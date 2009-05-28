@@ -116,7 +116,6 @@ $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : nu
                 case 'about':        sec_about();        break;
                 case 'guest':        if($settings['enable_guest_book']){sec_guest(); break;} 
                 case 'recent':       sec_recentmatches();break;
-                case 'leegmgr':      sec_leegmgr();      break;
                 default:             sec_main();
             }
             ?>

@@ -45,9 +45,9 @@
 function sec_login() {
 
     global $lng, $settings;
-
+	title($lng->getTrn('global/secLinks/login'));
     ?>
-    <div style='padding-top:40px; text-align: center;'>
+    <div style='padding-top: 20px; text-align: center;'>
     <form method="POST" action="index.php">
         <b><?php echo $lng->getTrn('secs/login/coach');?></b>
         <?php
@@ -91,9 +91,31 @@ function sec_login() {
 function sec_main() {
 
     global $settings, $rules, $coach, $lng;
-    $n = (!isset($_GET['view']) || $_GET['view'] == 'normal') ? $settings['entries_messageboard'] : false; // false == show everything, else show $n board entries.
+    $n = $settings['entries_messageboard'];
+
+	/*
+		Was any main board actions made?
+	*/
+	
+	if (isset($_POST['type']) && is_object($coach)) {
+		switch ($_POST['type'])
+		{
+			case 'msgdel': $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
+			case 'msgnew': status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
+			case 'msgedit':	
+	            if (get_magic_quotes_gpc()) {
+                   $_POST['title'] = stripslashes($_POST['title']);
+  	     	       $_POST['txt'] = stripslashes($_POST['txt']);
+                }
+				$msg = new Message($_POST['msg_id']); 
+				status($msg->edit($_POST['title'], $_POST['txt']));
+				break;
+		} 	
+	}
 
     /*
+   		Generate main board.
+   		
         Left column is the message board, consisting of both commissioner messages and game summaries/results.
         To generate this table we create a general array holding the content of both.
     */
@@ -188,7 +210,7 @@ function sec_main() {
         // Now overall standings:
     $teams = Team::getTeams();
     objsort($teams, sort_rule('team'));
-    array_push($standings, array('name' => 'Overall', 'rs' => 0, 'wpoints' => false, 'teams' => array_slice($teams, 0, $settings['entries_standings'])));
+    array_push($standings, array('name' => $lng->getTrn('global/misc/alltime'), 'rs' => 0, 'wpoints' => false, 'teams' => array_slice($teams, 0, $settings['entries_standings'])));
 
     // Latest matches
     $matches = Match::getMatches($settings['entries_latest']);
@@ -216,20 +238,23 @@ function sec_main() {
             echo "</div>\n";
             // New message link
             if (is_object($coach) && $coach->ring <= RING_COM)
-                echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
+                echo "<a href='javascript:void(0);' onClick=\"document.getElementById('msgnew').style.display='block';\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
 
-            // View mode
-            if (!empty($board)) { # Only show when messages exist.
-                if (isset($_GET['view']) && $_GET['view'] == 'all')
-                    echo "<a href='index.php?section=main&amp;view=normal'>".$lng->getTrn('secs/home/normal')."</a>&nbsp;\n";
-                else
-                    echo "<a href='index.php?section=main&amp;view=all'>".$lng->getTrn('secs/home/showall')."</a>&nbsp;\n";
-            }
             // RSS
             echo "<a href='handler.php?type=rss'>RSS</a>\n";
             ?>
+
+	        <div style="display:none; clear:both;" id="msgnew">
+	        	<br><br>
+	        	<form method="POST">
+					<textarea name="title" rows="1" cols="50">Title</textarea><br><br>
+					<textarea name="txt" rows="15" cols="50">Message</textarea><br><br>
+					<input type="hidden" name="type" value="msgnew">
+					<input type="submit" value="Submit">
+	        	</form>
+	        </div>
         </div>
-    
+            
         <?php
         $j = 1;
         foreach ($board as $e) {
@@ -280,9 +305,15 @@ function sec_main() {
                             elseif ($e->type == 'msg') {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 if (is_object($coach) && ($coach->admin || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
-                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=edit&amp;msg_id=$e->msg_id', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
-                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=delete&amp;msg_id=$e->msg_id', 'handler_msg', 'width=250,height=250');\">".$lng->getTrn('secs/home/del')."</a></td>\n";
-                                }
+                                    echo "<td align='right'><a href='javascript:void(0);' onClick=\"document.getElementById('msgedit$e->msg_id').style.display='block';\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
+									echo "<td align='right'>
+										<form method='POST' name='msgdel$e->msg_id' style='display:inline; margin:0px;'>
+					                        <input type='hidden' name='type' value='msgdel'>
+					                        <input type='hidden' name='msg_id' value='$e->msg_id'>
+					                        <a href='javascript:void(0);' onClick='document.msgdel$e->msg_id.submit();'>".$lng->getTrn('secs/home/del')."</a>
+				                        </form>
+				                        </td>";
+	                            }
                             }
                             elseif ($e->type == 'tnews') {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)."</td>\n";
@@ -302,6 +333,18 @@ function sec_main() {
                         echo "<script language='JavaScript' type='text/javascript'>
                             document.getElementById('comment$e->match_id').style.display = 'none';
                         </script>\n";
+                    }
+                    elseif ($e->type == 'msg') {
+                        echo "<div style='display:none;' id='msgedit$e->msg_id'>\n";
+                        echo "<hr><br>\n";
+						echo '<form method="POST">
+							<textarea name="title" rows="1" cols="50">'.$e->title.'</textarea><br><br>
+		                    <textarea name="txt" rows="15" cols="50">'.$e->message.'</textarea><br><br>
+		                    <input type="hidden" name="type" value="msgedit">
+		                    <input type="hidden" name="msg_id" value="'.$e->msg_id.'">
+                            <input type="submit" value="Save">
+						</form>';
+                        echo "</div>";						
                     }
                     ?>
                 </div>
@@ -691,6 +734,16 @@ function sec_fixturelist() {
     */
     
     title($lng->getTrn('global/secLinks/fixtures'));
+    
+    if ($settings['leegmgr_enabled']) {
+		?>
+		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
+		<b>BOTOCS match report upload</b>: 
+		<a href='handler.php?type=leegmgr'>Click here</a>
+		</div>
+		<br>
+		<?php
+    }
     
     $flist = array( # The fixture list
 // $flist MODEL:
@@ -2407,12 +2460,6 @@ function sec_recentmatches() {
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
         array('doNr' => false, 'noHelp' => true)
     );
-}
-
-function sec_leegmgr() {
-
-    require_once ( 'leegmgr/uploadinc.php' );
-
 }
 
 ?>
