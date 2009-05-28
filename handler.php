@@ -34,106 +34,7 @@ if (!isset($_GET['type'])) {
 }
     
 switch ($_GET['type'])
-{
-    /***************
-     *  Message
-     ***************/
-    case 'msg':
-        ?>
-        <html>
-            <head>
-                <title>OBBLM message handler</title>
-            </head>
-            <script type="text/javascript">
-                function done() {
-                    top.opener.location.reload(true);
-                    top.close();
-                    return;
-                }
-            </script>
-            <body style="font: 12px Tahoma;">
-        <?php
-        // Is coach a commissioner or more privileged?
-        if (!isset($_SESSION['logged_in']) || !is_object($coach = new Coach($_SESSION['coach_id'])) || $coach->ring > RING_COM) {
-            fatal("Only commissioners may use this feature.");
-        }
-        // Action specified?
-        if (!isset($_GET['action'])) {
-            fatal("Sorry. Don't know what to do. Please specify 'action' via GET.");
-        }
-        // Commissioners may only edit their own messages. Admins may edit any message.
-        if ($_GET['action'] != 'new' && is_object($msg = new Message($_GET['msg_id'])) && !$coach->admin && $msg->f_coach_id != $coach->coach_id) { 
-            fatal("Sorry. You do not have write access on this message or the messages ID does not exist.");
-        }
-        
-        $title = '';
-        $body = '';
-        $msg = null;
-        $status = false;
-        
-        switch ($_GET['action'])
-        {
-            case 'edit':
-                $msg = new Message($_GET['msg_id']);
-                $title = $msg->title;
-                $body = $msg->message;
-                // Fall-through!
-
-            case 'new':
-                if (isset($_POST['message']) && isset($_POST['title']) && !empty($_POST['message']) && !empty($_POST['title'])) {
-                    if (get_magic_quotes_gpc()) {
-                        $_POST['title']   = stripslashes($_POST['title']);
-                        $_POST['message'] = stripslashes($_POST['message']);
-                    }
-                    if (is_object($msg)) {
-                        status($status = $msg->edit($_POST['title'], $_POST['message']));
-                    }
-                    else {
-                        status($status = Message::create(array('f_coach_id' => $_SESSION['coach_id'], 'title' => $_POST['title'], 'msg' => $_POST['message'])));
-                    }
-                    // When have been editing show the same text we submitted in the text fields again.
-                    $title = $_POST['title'];
-                    $body = $_POST['message'];
-                }
-                ?>
-                <form method="POST">
-                    Title:
-                    <br>
-                    <textarea rows="1" cols="60" name="title"><?php echo $title;?></textarea>
-                    <br><br>
-                    Message:
-                    <br>
-                    <textarea name="message" rows="13" cols="60"><?php echo $body;?></textarea>
-                    <br><br>
-                    <input type="submit" <?php echo ($status) ? 'value="Close window" OnClick="done(); return false;"' : 'value="Save"'?>>
-                </form>
-                <?php
-                break;
-
-            case 'delete':
-                echo "<b>Delete message</b><br><br>\n";
-                if (!isset($_GET['msg_id']) || !is_numeric($_GET['msg_id']) || !is_object($msg = new Message($_GET['msg_id']))) {
-                    fatal("Sorry. I need a proper 'msg_id' GET field.");
-                }
-                status($msg->delete());
-                ?>
-                <input type='button' value='Close window' OnClick='done();'>
-                <SCRIPT LANGUAGE="JavaScript">
-                    done();
-                    window.close();
-                </SCRIPT>
-                <?php
-                break;
-
-            default:
-                fatal("Sorry. I don't know what the action '$_GET[type]' means.\n");
-        }
-        ?>
-        </body>
-        </html>
-        <?php
-        break;
-        
+{        
     /***************
      *  GD-bracket
      ***************/
@@ -247,6 +148,15 @@ switch ($_GET['type'])
         $t = new Team($_GET['tid']);
         echo $t->xmlExport();
         break;
+
+    /***************
+     *	BOTOCS match import
+     ***************/
+	case 'leegmgr':
+		{
+	    require_once ('leegmgr/uploadinc.php');
+		}
+	    break;
 
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");

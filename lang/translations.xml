@@ -69,6 +69,7 @@
             <back>back</back>
             <change>change</change>
             <stn>standings</stn>
+            <alltime>All-time</alltime>
             <all>All</all>
             <specific>Specific</specific>
             <pms>Set per match stats</pms>
@@ -88,8 +89,6 @@
         <home>
         
             <!-- General -->
-            <showall>Show all</showall>
-            <normal>Normal view</normal>
             <new>New message</new>
             <del>Delete</del>
             <edit>Edit</edit>
