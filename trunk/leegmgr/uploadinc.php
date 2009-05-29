@@ -166,7 +166,8 @@ function report ( $matchparsed ) {
 
 function addMatch ( $matchparsed ) {
 
-	$tour_id = 1; #get from settings later or find from scheduled matches.
+	global $settings;
+	$tour_id = $settings['leegmgr_tour_id']; #get from settings later or find from scheduled matches.
 
 	if ( !checkHash ( $matchparsed['hash'] ) )
 	{
