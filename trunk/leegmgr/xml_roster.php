@@ -77,7 +77,7 @@ foreach ( $players as $p )
 
 				$i = 0;
 
-				while ( $i < count( $a_skills ) )
+				while ( $i < count( $a_skills ) && strlen( $a_skills[0] ) > 0 )
 				{
 
 					Print "                <skill>".$a_skills[$i]."</skill>\n";
