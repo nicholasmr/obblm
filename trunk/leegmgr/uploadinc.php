@@ -137,12 +137,23 @@ function parse_results($xmlresults) {
 
 	}
 
-
 	$hash = XOREncrypt ( $hometeam.$gate.$homescore.$homewinnings, $awayteam.$gate.$awayscore.$awaywinnings);
 
 	$matchparsed = array ( "homeplayers" => $homeplayers, "awayplayers" => $awayplayers, "gate" => $gate, "hometeam" => $hometeam, "homescore" => $homescore, "homewinnings" => $homewinnings, "homeff" => $homeff, "homefame" => $homefame, "awayteam" => $awayteam, "awayscore" => $awayscore, "awaywinnings" => $awaywinnings, "awayff" => $awayff, "awayfame" => $awayfame, "hash" => $hash );
 
-	report ( $matchparsed );
+	if ( checkCoach ( $hometeam ) || checkCoach ( $awayteam ) )
+	{
+
+		report ( $matchparsed );
+
+	}
+	else
+	{
+
+		Print "The currently logged in coach does not own either of the teams in the match report";
+		exit (-1);
+
+	}
 
 }
 
@@ -254,14 +265,16 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 
 }
 
-function checkCoach ( $hometeam ) {
+function checkCoach ( $team ) {
 
-	if ( !mysql_fetch_array( mysql_query( "SELECT `owned_by_coach_id` FROM `teams` WHERE `owned_by_coach_id` = ".$_SESSION['coach_id']." and `name` = \"".$hometeam."\"" ) ) )
+	if ( !isset( $_SESSION['coach_id'] ) ) return false;
+
+	if ( !mysql_fetch_array( mysql_query( "SELECT `owned_by_coach_id` FROM `teams` WHERE `owned_by_coach_id` = ".$_SESSION['coach_id']." and `name` = \"".$team."\"" ) ) )
 	{
-		return 0;
+		return false;
 	}
 
-	return 1;
+	return true;
 
 }
 
