@@ -36,6 +36,11 @@ if ( $settings['leegmgr_enabled'] ) uploadpage();
 
 function uploadpage () {
 
+	$tourlist = "";
+	foreach (Tour::getTours() as $t)
+	if ($t->type == TT_SINGLE)
+	$tourlist .= "<option value='$t->tour_id'>$t->name</option>\n";
+
 	Print "
 	<!-- The data encoding type, enctype, MUST be specified as below -->
 	<form enctype='multipart/form-data' action='handler.php?type=leegmgr' method='POST'>
@@ -43,6 +48,11 @@ function uploadpage () {
 	<input type='hidden' name='MAX_FILE_SIZE' value='30000' />
 	<!-- Name of input element determines name in $_FILES array -->
 	Send this file: <input name='userfile' type='file' />
+		<select name='ffatours'>
+		<optgroup label='Existing FFA'>
+		{$tourlist}
+		</optgroup>
+		</select>
 	<input type='submit' value='Send File' />
 	</form>";
 
@@ -177,8 +187,7 @@ function report ( $matchparsed ) {
 
 function addMatch ( $matchparsed ) {
 
-	global $settings;
-	$tour_id = $settings['leegmgr_tour_id']; #get from settings later or find from scheduled matches.
+	$tour_id = $_POST['ffatours'];
 
 	if ( !checkHash ( $matchparsed['hash'] ) )
 	{
@@ -200,7 +209,7 @@ function addMatch ( $matchparsed ) {
 		exit(-1);
 	}
 
-	$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 255, "f_tour_id" => 1, "hash" => $matchparsed['hash'] ) );
+	$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 255, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
 	unset( $input );
 
 	$match = new Match_BOTOCS($match_id);
