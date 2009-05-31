@@ -45,7 +45,7 @@
 function sec_login() {
 
     global $lng, $settings;
-	title($lng->getTrn('global/secLinks/login'));
+    title($lng->getTrn('global/secLinks/login'));
     ?>
     <div style='padding-top: 20px; text-align: center;'>
     <form method="POST" action="index.php">
@@ -93,29 +93,29 @@ function sec_main() {
     global $settings, $rules, $coach, $lng;
     $n = $settings['entries_messageboard'];
 
-	/*
-		Was any main board actions made?
-	*/
-	
-	if (isset($_POST['type']) && is_object($coach)) {
-		switch ($_POST['type'])
-		{
-			case 'msgdel': $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
-			case 'msgnew': status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
-			case 'msgedit':	
-	            if (get_magic_quotes_gpc()) {
-                   $_POST['title'] = stripslashes($_POST['title']);
-  	     	       $_POST['txt'] = stripslashes($_POST['txt']);
+    /*
+        Was any main board actions made?
+    */
+
+    if (isset($_POST['type']) && is_object($coach)) {
+        switch ($_POST['type'])
+        {
+            case 'msgdel': $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
+            case 'msgnew': status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
+            case 'msgedit':	
+                if (get_magic_quotes_gpc()) {
+                    $_POST['title'] = stripslashes($_POST['title']);
+                    $_POST['txt'] = stripslashes($_POST['txt']);
                 }
-				$msg = new Message($_POST['msg_id']); 
-				status($msg->edit($_POST['title'], $_POST['txt']));
-				break;
-		} 	
-	}
+                $msg = new Message($_POST['msg_id']); 
+                status($msg->edit($_POST['title'], $_POST['txt']));
+                break;
+        }
+    }
 
     /*
-   		Generate main board.
-   		
+        Generate main board.
+
         Left column is the message board, consisting of both commissioner messages and game summaries/results.
         To generate this table we create a general array holding the content of both.
     */
@@ -244,15 +244,15 @@ function sec_main() {
             echo "<a href='handler.php?type=rss'>RSS</a>\n";
             ?>
 
-	        <div style="display:none; clear:both;" id="msgnew">
-	        	<br><br>
-	        	<form method="POST">
-					<textarea name="title" rows="1" cols="50">Title</textarea><br><br>
-					<textarea name="txt" rows="15" cols="50">Message</textarea><br><br>
-					<input type="hidden" name="type" value="msgnew">
-					<input type="submit" value="Submit">
-	        	</form>
-	        </div>
+            <div style="display:none; clear:both;" id="msgnew">
+                <br><br>
+                <form method="POST">
+                    <textarea name="title" rows="1" cols="50"><?php echo $lng->getTrn('secs/home/title');?></textarea><br><br>
+                    <textarea name="txt" rows="15" cols="50"><?php echo $lng->getTrn('secs/home/msg');?></textarea><br><br>
+                    <input type="hidden" name="type" value="msgnew">
+                    <input type="submit" value="<?php echo $lng->getTrn('secs/home/submit');?>">
+                </form>
+            </div>
         </div>
             
         <?php
@@ -306,14 +306,14 @@ function sec_main() {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 if (is_object($coach) && ($coach->admin || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
                                     echo "<td align='right'><a href='javascript:void(0);' onClick=\"document.getElementById('msgedit$e->msg_id').style.display='block';\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
-									echo "<td align='right'>
-										<form method='POST' name='msgdel$e->msg_id' style='display:inline; margin:0px;'>
-					                        <input type='hidden' name='type' value='msgdel'>
-					                        <input type='hidden' name='msg_id' value='$e->msg_id'>
-					                        <a href='javascript:void(0);' onClick='document.msgdel$e->msg_id.submit();'>".$lng->getTrn('secs/home/del')."</a>
-				                        </form>
-				                        </td>";
-	                            }
+                                    echo "<td align='right'>
+                                        <form method='POST' name='msgdel$e->msg_id' style='display:inline; margin:0px;'>
+                                            <input type='hidden' name='type' value='msgdel'>
+                                            <input type='hidden' name='msg_id' value='$e->msg_id'>
+                                            <a href='javascript:void(0);' onClick='document.msgdel$e->msg_id.submit();'>".$lng->getTrn('secs/home/del')."</a>
+                                        </form>
+                                        </td>";
+                                }
                             }
                             elseif ($e->type == 'tnews') {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)."</td>\n";
@@ -337,14 +337,14 @@ function sec_main() {
                     elseif ($e->type == 'msg') {
                         echo "<div style='display:none;' id='msgedit$e->msg_id'>\n";
                         echo "<hr><br>\n";
-						echo '<form method="POST">
-							<textarea name="title" rows="1" cols="50">'.$e->title.'</textarea><br><br>
-		                    <textarea name="txt" rows="15" cols="50">'.$e->message.'</textarea><br><br>
-		                    <input type="hidden" name="type" value="msgedit">
-		                    <input type="hidden" name="msg_id" value="'.$e->msg_id.'">
-                            <input type="submit" value="Save">
-						</form>';
-                        echo "</div>";						
+                        echo '<form method="POST">
+                            <textarea name="title" rows="1" cols="50">'.$e->title.'</textarea><br><br>
+                            <textarea name="txt" rows="15" cols="50">'.$e->message.'</textarea><br><br>
+                            <input type="hidden" name="type" value="msgedit">
+                            <input type="hidden" name="msg_id" value="'.$e->msg_id.'">
+                            <input type="submit" value="'.$lng->getTrn('secs/home/submit').'">
+                        </form>';
+                        echo "</div>";
                     }
                     ?>
                 </div>
@@ -1384,7 +1384,7 @@ function sec_coaches() {
 
 function sec_races() {
 
-    global $DEA, $lng;
+    global $lng;
 
     /* 
         This function can do two things:
@@ -1392,33 +1392,24 @@ function sec_races() {
             Or, it can show team data from LRB5.
     */
 
-    // A specific race view was requested:
-    if (isset($_GET['race']) && array_key_exists($_GET['race'], $DEA)) {
-    
-        title($r = $_GET['race']);
-        
+    /*
+        Show specific race stats
+    */
+    if (isset($_GET['race']) && is_object($race = new Race($_GET['race'])) && ($roster = $race->getRoster())) { // Last eval makes sure $roster is not empty array.
+        title($race->race);
         ?>
-        <center>
-        <img src="<?php echo $DEA[$r]['other']['icon'];?>" alt="Race icon">
-        </center>
-        <ul>
-            <li>Re-roll cost: <?php echo $DEA[$r]['other']['RerollCost']/1000;?>k</li>
-        </ul>
-        <br>
-
+        <center><img src="<?php echo $roster['other']['icon'];?>" alt="Race icon"></center>
+        <ul><li>Re-roll cost: <?php echo $roster['other']['RerollCost']/1000;?>k</li></ul><br>
         <?php
-        /* Players from chosen race. */
-        
         $players = array();
-        foreach ($DEA[$r]['players'] as $p => $d) {
-            array_push($players, (object) array_merge(array('position' => $p), $d));
-        }
-        foreach ($players as $p) {
+        foreach ($roster['players'] as $player => $d) {
+            $p = (object) array_merge(array('position' => $player), $d);
             $p->skills = implode(', ', $p->{'Def skills'});
             foreach (array('N', 'D') as $s) {
                 array_walk($p->{"$s skills"}, create_function('&$val', '$val = substr($val,0,1);'));
                 $p->$s = implode('', $p->{"$s skills"});
             }
+            $players[] = $p;
         }
         $fields = array(
             'position'  => array('desc' => 'Position'), 
@@ -1433,8 +1424,8 @@ function sec_races() {
             'qty'       => array('desc' => 'Max.'), 
         );
         sort_table(
-            "$r ".$lng->getTrn('secs/races/players'), 
-            "index.php?section=races&amp;race=$r",
+            $race->race.' '.$lng->getTrn('secs/races/players'), 
+            "index.php?section=races&amp;race=$race->race",
             $players, 
             $fields, 
             sort_rule('race_page'), 
@@ -1442,13 +1433,12 @@ function sec_races() {
             array('GETsuffix' => 'pl')
         );
         
-        /* Teams of the chosen race. */
-        $teams = Team::getTeams($r);
+        // Teams of the chosen race.
+        $teams = Team::getTeams($race->race);
         foreach ($teams as $t) {
             $t->setExtraStats();
             $t->setStreaks(false);
         }
-        
         $fields = array(
             'name'              => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')), 
             'coach_name'        => array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'owned_by_coach_id')), 
@@ -1472,10 +1462,9 @@ function sec_races() {
             'ki'                => array('desc' => 'Ki'), 
             'value'             => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'), 
         );
-        
         sort_table(
-            "<a name='teams'>$r ".$lng->getTrn('secs/races/teams')."</a>", 
-            "index.php?section=races&amp;race=$r",
+            "<a name='teams'>$race->race ".$lng->getTrn('secs/races/teams')."</a>", 
+            "index.php?section=races&amp;race=$race->race",
             $teams, 
             $fields, 
             sort_rule('team'), 
@@ -1483,18 +1472,16 @@ function sec_races() {
             array('GETsuffix' => 't', 'anchor' => 'teams')
         );
         
-        // Return, since we don't wan't continue and print race stats too.
+        // Don't also print race stats.
         return; 
     }
 
-    // No specific race view was requested:
+    /*
+        Show all races' stats
+    */
     title($lng->getTrn('global/secLinks/races'));    
-
-    $races = array();
-    foreach ($DEA as $r => $desc) {
-        array_push($races, (object) Team::getRaceStats($r));
-    }
-    
+    $races = Race::getRaces(true);
+    foreach ($races as $r) $r->setStats(true);
     $fields = array(
         'race'              => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race')), 
         'teams'             => array('desc' => 'Teams'), 
@@ -1513,7 +1500,6 @@ function sec_races() {
         'ki'                => array('desc' => 'Ki*'), 
         'value'             => array('desc' => 'TV*', 'kilo' => true, 'suffix' => 'k'), 
     );
-    
     sort_table(
         $lng->getTrn('secs/races/tblTitle'), 
         'index.php?section=races', 

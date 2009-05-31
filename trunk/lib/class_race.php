@@ -45,6 +45,9 @@ public $won         = 0;
 public $lost        = 0;
 public $draw        = 0;
 public $win_percentage = 0;
+public $won_tours   = 0;
+public $value       = 0;
+public $teams       = 0;
 
 /***************
  * Methods 
@@ -52,9 +55,7 @@ public $win_percentage = 0;
 
 function __construct($race) 
 {
-
     $this->race = $race;
-//    $this->setStats(false);
 }
 
 public function setStats($setAvgs = false)
@@ -97,6 +98,12 @@ private function getStats($setAvgs = false)
     $d['win_percentage'] = ($d['played'] == 0) ? 0 : $d['won']/$d['played'] * 100;
         
     return $d;
+}
+
+public function getRoster()
+{
+    global $DEA;
+    return array_key_exists($this->race, $DEA) ? $DEA[$this->race] : array();
 }
 
 public function getGoods($double_rr_price = false)
