@@ -209,8 +209,26 @@ function addMatch ( $matchparsed ) {
 		exit(-1);
 	}
 
-	$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 255, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
+	global $settings;
+	$match_id = '';
+
+	if ( $settings['leegmgr_schedule'] == "true" || $settings['leegmgr_schedule'] == "strict" )
+		$match_id = getschMatch( $hometeam_id, $awayteam_id );
+
+	if ( $match_id == '' && $settings['leegmgr_schedule'] != "strict" ) {
+		Print "<br>Creating match.<br>";
+		$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 255, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
+	}
+
 	unset( $input );
+
+	if ( $match_id < 1 )
+	{
+
+		Print "There was an error uploading the report.  The site may be set to only allow scheduled matches.";
+		exit (-1);
+
+	}
 
 	$match = new Match_BOTOCS($match_id);
 	$match->setBOTOCSHash($matchparsed['hash']);
@@ -314,6 +332,21 @@ function checkTeam ( $teamname ) {
 	$team_id = mysql_fetch_array($team_id);
 	$team_id = $team_id['team_id'];
 	return $team_id;
+
+}
+
+function getschMatch( $team_id1, $team_id2 ) {
+
+	#submitter_id team1_id team2_id
+
+	$query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 || team1_id = $team_id2 ) AND  ( team2_id = $team_id1 || team2_id = $team_id2 )";
+	$match_id = mysql_query($query);
+	if (!$match_id) {
+		return false;
+	}
+	$match_id = mysql_fetch_array($match_id);
+	$match_id = $match_id['match_id'];
+	return $match_id;
 
 }
 
