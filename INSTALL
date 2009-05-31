@@ -28,6 +28,18 @@ UPGRADING
 
 NOTE: When upgrading please save your old settings file as a reference for when filling out the new settings file.
 
+0.7 -> 0.75
+
+    Replace all OBBLM files.
+    Execute the following MySQL queries:
+
+        ALTER TABLE players ADD COLUMN extra_val MEDIUMINT SIGNED NOT NULL DEFAULT 0 AFTER extra_spp;
+        ALTER TABLE matches ADD COLUMN fame1 TINYINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN fame2 TINYINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN tv1 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN tv2 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0;
+        ALTER TABLE matches ADD COLUMN hash_botocs VARCHAR(15);
+
 0.37 -> 0.7
 
     Replace all OBBLM files.
@@ -106,13 +118,6 @@ NOTE: When upgrading please save your old settings file as a reference for when 
     -- END OF NOTICE.
     -- ---------------------------------------------------------
     
-        ALTER TABLE players ADD COLUMN extra_val MEDIUMINT SIGNED NOT NULL DEFAULT 0 AFTER extra_spp;
-        ALTER TABLE matches ADD COLUMN fame1 TINYINT UNSIGNED NOT NULL DEFAULT 0;
-        ALTER TABLE matches ADD COLUMN fame2 TINYINT UNSIGNED NOT NULL DEFAULT 0;
-        ALTER TABLE matches ADD COLUMN tv1 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0;
-        ALTER TABLE matches ADD COLUMN tv2 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0;
-        ALTER TABLE matches ADD COLUMN hash_botocs VARCHAR(15);
-
 0.36 -> 0.37
 
     Replace all OBBLM files.
