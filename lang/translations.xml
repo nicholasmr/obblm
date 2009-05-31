@@ -74,10 +74,10 @@
             <specific>Specific</specific>
             <pms>Set per match stats</pms>
             <oas>Set over all stats</oas>
-			<gamewon>Won</gamewon>
-			<gamelost>Lost</gamelost>
-			<gamedraw>Draw</gamedraw>
-			<gameunknown>Unknown</gameunknown>
+            <gamewon>Won</gamewon>
+            <gamelost>Lost</gamelost>
+            <gamedraw>Draw</gamedraw>
+            <gameunknown>Unknown</gameunknown>
         </misc>
     </global>
 
@@ -99,6 +99,9 @@
             <by>by</by>
             <lastedit>last edited</lastedit>
             <more>more</more>
+            <title>Title</title>
+            <msg>Message</msg>
+            <submit>Submit</submit>
             
             <!-- Titles of right column stats boxes -->
             <recent>Recent matches</recent>

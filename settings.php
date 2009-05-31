@@ -37,7 +37,7 @@ $settings['fp_links']             = false; // Default is false. Generate coach, 
 $settings['force_tour_foldout']   = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.
 
 $settings['leegmgr_enabled']       = true; // Enables upload of BOTOCS LRB5 application match reports.
-$settings['leegmgr_tour_id']       = 1;     // Creates the match using this tour id.
+$settings['leegmgr_tour_id']       = 1;     // If uploaded match is not scheduled then it is created under this tournament ID.
 $settings['leegmgr_schedule']      = false; // Uploads report to a scheduled match.
 $settings['leegmgr_sch_strict']    = false; // If leegmgr_schedule is set to tru and this is set to true, unscheduled matches are not permitted.
 

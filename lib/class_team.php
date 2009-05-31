@@ -818,41 +818,8 @@ class Team
                 array_push($teams, new Team($row['team_id']));
             }
         }
-                    
+
         return $teams;
-    }
-
-    public static function getRaceStats($race) {
-        
-        /**
-         * Returns an array of race stats by looking at teams' (from that race) stats in MySQL.
-         **/        
-
-         // Initialize         
-         $d = array();
-         $teams = Team::getTeams($race);
-         $stats = array('won_tours', 'won', 'lost', 'draw', 'played', 'td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'value');
-         $avg_calc = array_slice($stats, 5);
-         
-         foreach ($stats as $s) $d[$s] = 0;
-         
-         // Fill variables.
-         foreach ($teams as $t) {
-            $t->setExtraStats();
-            foreach ($stats as $s) {
-                $d[$s] += $t->$s;
-            }
-         }
-         
-        $c = $d['teams'] = count($teams);
-        foreach ($avg_calc as $s) {
-            $d[$s] = ($c == 0) ? 0 : $d[$s]/$c;
-        }
-         
-        $d['race'] = $race;
-        $d['win_percentage'] = ($d['played'] == 0) ? 0 : $d['won']/$d['played'] * 100;
-         
-        return $d;
     }
 
     public static function create(array $input, $init = array()) {
