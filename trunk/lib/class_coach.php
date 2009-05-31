@@ -338,6 +338,36 @@ class Coach
         return $coaches;
     }
     
+    public static function login($name, $passwd, $set_session = true) {
+
+        /* Coach log in validation. If $set_session is true, the login will be recorded by server via a session. */
+
+        foreach (Coach::getCoaches() as $coach) {
+            if (($coach->name == $name || $coach->coach_id == $name) && $coach->passwd == md5($passwd)) {
+                if ($set_session) { # This login-function does not necessary actually log the coach in, but can verify the coach's login data.
+                    $_SESSION['logged_in'] = true;
+                    $_SESSION['coach']     = $coach->name;
+                    $_SESSION['coach_id']  = $coach->coach_id;
+                }
+                return true;
+            }
+        }
+
+        // We reach this point if login has failed.
+        if ($set_session) { # Make sure all session data is destroyed.
+            session_unset();
+            session_destroy();
+        }
+        
+        return false;
+    }
+    
+    public static function logout() {
+        session_unset();
+        session_destroy();
+        return true;
+    }
+    
     public static function create(array $input) {
         
         /**

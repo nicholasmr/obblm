@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -20,6 +20,52 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+/* THIS FILE is used for MySQL-helper routines */
+
+function mysql_up($do_table_check = false) {
+
+    // Brings up MySQL for use in PHP execution.
+
+    global $db_host, $db_user, $db_passwd, $db_name; // From settings.php
+    
+    $conn = mysql_connect($db_host, $db_user, $db_passwd);
+    
+    if (!$conn)
+        die("<font color='red'><b>Could not connect to the MySQL server. 
+            <ul>
+                <li>Is the MySQL server running?</li>
+                <li>Are the settings in settings.php correct?</li>
+                <li>Is PHP set up correctly?</li>
+            </ul></b></font>");
+
+    if (!mysql_select_db($db_name))
+        die("<font color='red'><b>Could not select the database '$db_name'. 
+            <ul>
+                <li>Does the database exist?</li>
+                <li>Does the specified user '$db_user' have the correct privileges?</li>
+            </ul>
+            Try running the install script again.</b></font>");
+
+    // Test if all tables exist.
+    if ($do_table_check) {
+        $tables_expected = array('coaches', 'teams', 'players', 'tours', 'matches', 'match_data', 'texts', 'prizes', 'leagues', 'divisions');
+        $tables_found = array();
+        $query = "SHOW TABLES";
+        $result = mysql_query($query);
+        while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+            array_push($tables_found, $row[0]);
+        }
+        $tables_diff = array_diff($tables_expected, $tables_found);
+        if (count($tables_diff) > 0) {
+            die("<font color='red'><b>Could not find all the expected tables in database. Try running the install script again.<br><br>
+                <i>Tables missing:</i><br> ". implode(', ', $tables_diff) ."
+                </b></font>");  
+        }
+    }
+
+    return $conn;
+}
 
 function get_alt_col($V, $X, $Y, $Z) {
 

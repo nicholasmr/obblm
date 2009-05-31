@@ -490,7 +490,7 @@ function sec_admin() {
                     status(false, "The team name must not be empty or identical to an existing team name.");
                     $err = true;
                 }
-                if (!in_array($_POST['race'], array_keys(get_races()))) {
+                if (!in_array($_POST['race'], Race::getRaces(false))) {
                     status(false, "Invalid race chosen.");
                     $err = true;            
                 }
@@ -692,8 +692,8 @@ function sec_admin() {
             <b>Race:</b><br>
             <select name="race" onchange="chRace(this.options[this.selectedIndex].value)">
                 <?php
-                foreach (get_races() as $race => $icon_file)
-                    echo "<option value='$race' ".(($err && $_POST['race'] == $race) ? 'SELECTED' : '').">$race</option>\n";
+                foreach (Race::getRaces() as $r)
+                    echo "<option value='$r' ".(($err && $_POST['race'] == $r) ? 'SELECTED' : '').">$r</option>\n";
                 ?>
             </select>
 
