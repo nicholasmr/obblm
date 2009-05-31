@@ -51,11 +51,12 @@ foreach ($stars as $s => $d) {
 }
 
 ?>
-
+<!--
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link type="text/css" href="css/stylesheet1.css" rel="stylesheet">
+-->
 <style type="text/css">
 td { background-color: #EEEEEE; color: #000000; font: 13px Tahoma; }
 td.indtitle { background-color: #EEEEEE; color: #000000; font: bold 12px Tahoma; }
@@ -74,10 +75,12 @@ function SendToPDF()
 }
 -->
 </script>
+<!--
 </head>
 <body>
 <div class="everything">
 <div class="section">
+-->
 <?php title('Inducements try-out');?>
 <form action="" method="post" name="InduceForm">
 
@@ -328,7 +331,8 @@ echo '<tr><td class="indtitle">Match Value:</td><td class="indtitle">'.kilo($ind
 
 </table>
 </form>
+<!--
 </div>
 </div>
 </body>
-</html>
+</html>-->

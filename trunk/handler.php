@@ -27,7 +27,10 @@ error_reporting(E_ALL);
 require('header.php'); // Includes and constants.
 require('lib/class_statsgraph.php');
 
+// Requirements for frame_begin and end routines.
 $conn = mysql_up(false);
+$lng = new Translations($settings['lang']); # Load language.
+$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
 
 if (!isset($_GET['type'])) {
     fatal("Sorry. Don't know what to do. Please specify 'type' via GET.");
@@ -136,9 +139,7 @@ switch ($_GET['type'])
      *  Inducements
      ***************/
     case 'inducements':
-        {
-        include('inducements.php'); // Daniel's try-out page.
-        }
+        frame_begin(); {include('inducements.php');} frame_end(); // Daniel's try-out page.
         break;
 
     /***************
@@ -150,13 +151,11 @@ switch ($_GET['type'])
         break;
 
     /***************
-     *	BOTOCS match import
+     *  BOTOCS match import
      ***************/
-	case 'leegmgr':
-		{
-	    require_once ('leegmgr/uploadinc.php');
-		}
-	    break;
+    case 'leegmgr':
+        frame_begin(); {include('leegmgr/uploadinc.php');} frame_end();
+        break;
 
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");

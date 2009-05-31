@@ -39,11 +39,8 @@ if (!is_writable(IMG))
  *   Main routine
  ********************/
 
-// MySQL connect.
-$conn = mysql_up(true);
-
-// Load language.
-$lng = new Translations($settings['lang']);
+$conn = mysql_up(true); # MySQL connect.
+$lng = new Translations($settings['lang']); # Load language.
 
 // Make 'main' the default section if no GET section request was sent.
 if (!isset($_GET['section'])) {
@@ -67,65 +64,32 @@ if (isset($_GET['logout'])) {
     Coach::logout();
 }
 
-// Create coach object.
-$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null;
+$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
+frame_begin(isset($_SESSION['logged_in']) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
 
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <title><?php echo $settings['site_name']; ?> Blood Bowl League</title>
-    <link type="text/css" href="css/stylesheet<?php echo (isset($_SESSION['logged_in'])) ? $coach->settings['theme'] : $settings['stylesheet']; ?>.css" rel="stylesheet">
-    <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
-    <script type="text/javascript" src="lib/misc_functions.js"></script>
-    
-    <!-- CSS MENU (./cssmenu extension) -->
-    <link href="cssmenu/css/dropdown/dropdown.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="cssmenu/css/dropdown/themes/default/default.ultimate.css" media="all" rel="stylesheet" type="text/css" />
-    <!--[if lt IE 7]>
-    <script type="text/javascript" src="cssmenu/js/jquery/jquery.js"></script>
-    <script type="text/javascript" src="cssmenu/js/jquery/jquery.dropdown.js"></script>
-    <![endif]-->
-</head>
-<body>
-    <div class="everything">
-        <div class="banner"></div>
-        <div class="menu">
-            <?php make_menu(); // See lib/misc_functions.php ?>
-        </div>
-        <div class="section"> <!-- This container holds the section specific content -->
-            <?php
-            // Check if a menu-link was picked, and execute section code from sections.php accordingly.
-            switch ($_GET['section']) 
-            {
-                case 'login':        sec_login();        break;
-                case 'admin':        sec_admin();        break;
-                case 'coachcorner':  sec_coachcorner();  break;
-                case 'fixturelist':  sec_fixturelist();  break; // Tournaments
-                case 'standings':    sec_standings();    break;
-                case 'teams':        sec_teams();        break;
-                case 'players':      sec_players();      break;
-                case 'coaches':      sec_coaches();      break;
-                case 'races':        sec_races();        break;
-                case 'stars':        sec_stars();        break;
-                case 'records':      sec_records();      break;
-                case 'rules':        sec_rules();        break;
-                case 'gallery':      sec_gallery();      break;
-                case 'about':        sec_about();        break;
-                case 'guest':        if($settings['enable_guest_book']){sec_guest(); break;} 
-                case 'recent':       sec_recentmatches();break;
-                default:             sec_main();
-            }
-            ?>
-            <!-- Pseudo container to force parent container to have the correct height for (potential) floating children -->
-            <div style="clear: both;"></div> 
-        </div>
-    </div>
-</body>
-</html>
-<?php
+// Check if a menu-link was picked, and execute section code from sections.php accordingly.
+switch ($_GET['section']) 
+{
+    case 'login':        sec_login();        break;
+    case 'admin':        sec_admin();        break;
+    case 'coachcorner':  sec_coachcorner();  break;
+    case 'fixturelist':  sec_fixturelist();  break; // Tournaments
+    case 'standings':    sec_standings();    break;
+    case 'teams':        sec_teams();        break;
+    case 'players':      sec_players();      break;
+    case 'coaches':      sec_coaches();      break;
+    case 'races':        sec_races();        break;
+    case 'stars':        sec_stars();        break;
+    case 'records':      sec_records();      break;
+    case 'rules':        sec_rules();        break;
+    case 'gallery':      sec_gallery();      break;
+    case 'about':        sec_about();        break;
+    case 'guest':        if($settings['enable_guest_book']){sec_guest(); break;} 
+    case 'recent':       sec_recentmatches();break;
+    default:             sec_main();
+}
 
+frame_end(); // Spit out all the end-tags.
 mysql_close($conn);
 
 ?>
