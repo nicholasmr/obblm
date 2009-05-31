@@ -359,7 +359,7 @@ function logTeamAction($str, $tid) {
 
 // Prints page title for main section pages.
 function title($title) {
-	echo "<h2>$title</h2>\n";
+    echo "<h2>$title</h2>\n";
 }
 
 // Privileges error. Stop PHP interpreter and warn the user!
@@ -418,6 +418,48 @@ function matchresult_icon($result) {
             $title = $lng->getTrn('global/misc/gameunknown');
     }
     return "<div class='match_icon ". $class ."' title='". $title ."'></div>";
+}
+
+function frame_begin($stylesheet = false) {
+    global $settings;
+    ?>
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+    <html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title><?php echo $settings['site_name']; ?> Blood Bowl League</title>
+        <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
+        <script type="text/javascript" src="lib/misc_functions.js"></script>
+        
+        <!-- CSS MENU (./cssmenu extension) -->
+        <link href="cssmenu/css/dropdown/dropdown.css" media="all" rel="stylesheet" type="text/css" />
+        <link href="cssmenu/css/dropdown/themes/default/default.ultimate.css" media="all" rel="stylesheet" type="text/css" />
+        <!--[if lt IE 7]>
+        <script type="text/javascript" src="cssmenu/js/jquery/jquery.js"></script>
+        <script type="text/javascript" src="cssmenu/js/jquery/jquery.dropdown.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="everything">
+            <div class="banner"></div>
+            <div class="menu">
+                <?php make_menu(); ?>
+            </div> <!-- Menu div end -->
+            <div class="section"> <!-- This container holds the section specific content -->
+    <?php
+}
+
+function frame_end() {
+    ?>
+                <!-- Pseudo container to force parent container to have the correct height for (potential) floating children -->
+                <div style="clear: both;"></div> 
+            </div> <!-- End of section div -->
+        </div> <!-- End of everything div -->
+    </body>
+    </html>
+    <?php
+    return true;
 }
 
 function make_menu() {
