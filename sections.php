@@ -2184,8 +2184,8 @@ function sec_coachcorner() {
                 <b><?php echo $lng->getTrn('secs/cc/new_team/race');?>:</b> <br>
                 <select name="race">
                     <?php
-                    foreach (get_races() as $race => $icon_file)
-                        echo "<option value='$race'>$race</option>\n";
+                    foreach (Race::getRaces(false) as $r)
+                        echo "<option value='$r'>$r</option>\n";
                     ?>
                 </select>
                 <br><br>
@@ -2214,7 +2214,7 @@ function sec_coachcorner() {
         
             switch ($_POST['type']) 
             {
-                case 'chpasswd':    status(login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
+                case 'chpasswd':    status(Coach::login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
                 case 'chphone':     status($coach->setPhone($_POST['new_phone'])); break;
                 case 'chmail':      status($coach->setMail($_POST['new_email'])); break;
                 case 'chlogin':     status($coach->setName($_POST['new_name'])); break;

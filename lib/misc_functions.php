@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2008. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,109 +21,9 @@
  *
  */
 
-function login($name, $passwd, $set_session = true) {
-
-    /* Coach log in validation. If $set_session is true, the login will be recorded by server via a session. */
-
-    foreach (Coach::getCoaches() as $coach) {
-        if (($coach->name == $name || $coach->coach_id == $name) && $coach->passwd == md5($passwd)) {
-            if ($set_session) { # This login-function does not necessary actually log the coach in, but can verify the coach's login data.
-                $_SESSION['logged_in'] = true;
-                $_SESSION['coach']     = $coach->name;
-                $_SESSION['coach_id']  = $coach->coach_id;
-            }
-            return true;
-        }
-    }
-
-    // We reach this point if login has failed.
-    if ($set_session) { # Make sure all session data is destroyed.
-        session_unset();
-        session_destroy();
-    }
-    
-    return false;
-}
-
-function mysql_up($do_table_check = false) {
-
-    // Brings up MySQL for use in PHP execution.
-
-    global $db_host, $db_user, $db_passwd, $db_name; // From settings.php
-    
-    $conn = mysql_connect($db_host, $db_user, $db_passwd);
-    
-    if (!$conn)
-        die("<font color='red'><b>Could not connect to the MySQL server. 
-            <ul>
-                <li>Is the MySQL server running?</li>
-                <li>Are the settings in settings.php correct?</li>
-                <li>Is PHP set up correctly?</li>
-            </ul></b></font>");
-
-    if (!mysql_select_db($db_name))
-        die("<font color='red'><b>Could not select the database '$db_name'. 
-            <ul>
-                <li>Does the database exist?</li>
-                <li>Does the specified user '$db_user' have the correct privileges?</li>
-            </ul>
-            Try running the install script again.</b></font>");
-
-    // Test if all tables exist.
-    if ($do_table_check) {
-        $tables_expected = array('coaches', 'teams', 'players', 'tours', 'matches', 'match_data', 'texts', 'prizes', 'leagues', 'divisions');
-        $tables_found = array();
-        $query = "SHOW TABLES";
-        $result = mysql_query($query);
-        while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-            array_push($tables_found, $row[0]);
-        }
-        $tables_diff = array_diff($tables_expected, $tables_found);
-        if (count($tables_diff) > 0) {
-            die("<font color='red'><b>Could not find all the expected tables in database. Try running the install script again.<br><br>
-                <i>Tables missing:</i><br> ". implode(', ', $tables_diff) ."
-                </b></font>");  
-        }
-    }
-
-    return $conn;
-}
-
-function the_doctor($code = false) {
-
-    /* The doctor translates PHP constants into their string equivalents. */
-
-    if ($code) {
-        switch($code)
-        {
-            case NONE:  return 'none';
-            case MNG:   return 'mng';
-            case NI:    return 'ni';
-            case MA:    return 'ma';
-            case AV:    return 'av';
-            case AG:    return 'ag';
-            case ST:    return 'st';
-            case DEAD:  return 'dead';
-        }
-    }
-    
-    return false;
-}
-
-function get_races() {
-
-    /* Cuts out race names and icon paths from game data structure. */
-
-    global $DEA;
-    
-    $races_new = array();
-
-    foreach ($DEA as $race_name => $attrs)
-        $races_new[$race_name] = $attrs['other']['icon'];
-
-    return $races_new;
-}
-
+/*
+    THIS FILE is mainly used for HTML-helper routines.
+*/
 
 function aasort(&$array, $args) {
 

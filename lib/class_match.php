@@ -335,7 +335,7 @@ class Match
                 if ($row[$col] == NONE || $row[$col] == NI || $row[$col] == MNG || $row[$col] == DEAD) 
                     continue;
                     
-                $prescription = the_doctor($row[$col]);
+                $prescription = Player::theDoctor($row[$col]);
                 $cur_injs[$prescription]++;
             }
         }
@@ -370,7 +370,7 @@ class Match
             array_push($fields, 'agn2');
 
         foreach ($fields as $field) {
-            $chr = the_doctor($input[$field]); # Characteristic
+            $chr = Player::theDoctor($input[$field]); # Characteristic
             if ($chr && $p->chrLimits('inj', $chr) + $cur_injs[$chr] > $cnt_injs[$chr]) { # Are injuries reported within injury limits?
                 $$field = $input[$field];
                 $cnt_injs[$chr]++;

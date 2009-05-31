@@ -56,7 +56,7 @@ if (isset($_POST['login'])) {
         $_POST['coach'] = stripslashes($_POST['coach']);
         $_POST['passwd'] = stripslashes($_POST['passwd']);
     }
-    if (!login($_POST['coach'], $_POST['passwd'], true)) {
+    if (!Coach::login($_POST['coach'], $_POST['passwd'], true)) {
         $_GET['section'] = 'login';
     }
 }
@@ -64,8 +64,7 @@ if (isset($_POST['login'])) {
 // Logout?
 if (isset($_GET['logout'])) {
     $_GET['section'] = 'main'; # Redirect logged out users to the main page.
-    session_unset();
-    session_destroy();
+    Coach::logout();
 }
 
 // Create coach object.

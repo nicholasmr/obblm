@@ -692,13 +692,14 @@ class Team
     }
     
     public function getLogo() {
-        $r = get_races();
         $p = get_pic(IMG_TEAMS, $this->team_id);
         if (!preg_match('/'.basename(NO_PIC).'/', $p)) {
             return $p;
         }
         else {
-            return $r[$this->race];
+            $r = new Race($this->race);
+            $roster = $r->getRoster();
+            return $roster['other']['icon'];
         }
     }
 
@@ -831,22 +832,13 @@ class Team
          **/
 
         global $rules;
-        
-        $IS_VALID_RACE = false;
 
-        foreach (get_races() as $race => $icon_path) {
-            if ($race == $input['race']) {
-                $IS_VALID_RACE = true;
-                break;
-            }
+        // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
+        if (!in_array($input['race'], Race::getRaces(false))
+        || !get_alt_col('coaches', 'coach_id', $input['coach_id'], 'coach_id') 
+        || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
+            return false;
         }
-
-        if (!$IS_VALID_RACE)
-            return false;
-
-        // Does coach exist? Does team exist already? We do not permit two teams with identical names.
-        if (!get_alt_col('coaches', 'coach_id', $input['coach_id'], 'coach_id') || get_alt_col('teams', 'name', $input['name'], 'team_id')) 
-            return false;
 
         $query = "INSERT INTO teams
                     (
