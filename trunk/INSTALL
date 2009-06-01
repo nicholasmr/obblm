@@ -40,6 +40,34 @@ NOTE: When upgrading please save your old settings file as a reference for when 
         ALTER TABLE matches ADD COLUMN tv2 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0;
         ALTER TABLE matches ADD COLUMN hash_botocs VARCHAR(15);
 
+        ALTER TABLE teams ADD COLUMN f_race_id TINYINT UNSIGNED NOT NULL DEFAULT 0 AFTER race;
+        UPDATE teams SET f_race_id = 0 WHERE race = 'Amazon';
+        UPDATE teams SET f_race_id = 1 WHERE race = 'Chaos';
+        UPDATE teams SET f_race_id = 2 WHERE race = 'Chaos Dwarf';
+        UPDATE teams SET f_race_id = 3 WHERE race = 'Dark Elf';
+        UPDATE teams SET f_race_id = 4 WHERE race = 'Dwarf';
+        UPDATE teams SET f_race_id = 5 WHERE race = 'Elf';
+        UPDATE teams SET f_race_id = 6 WHERE race = 'Goblin';
+        UPDATE teams SET f_race_id = 7 WHERE race = 'Halfling';
+        UPDATE teams SET f_race_id = 8 WHERE race = 'High Elf';
+        UPDATE teams SET f_race_id = 9 WHERE race = 'Human';
+        UPDATE teams SET f_race_id = 10 WHERE race = 'Khemri';
+        UPDATE teams SET f_race_id = 11 WHERE race = 'Lizardman';
+        UPDATE teams SET f_race_id = 12 WHERE race = 'Orc';
+        UPDATE teams SET f_race_id = 13 WHERE race = 'Necromantic';
+        UPDATE teams SET f_race_id = 14 WHERE race = 'Norse';
+        UPDATE teams SET f_race_id = 15 WHERE race = 'Nurgle';
+        UPDATE teams SET f_race_id = 16 WHERE race = 'Ogre';
+        UPDATE teams SET f_race_id = 17 WHERE race = 'Undead';
+        UPDATE teams SET f_race_id = 18 WHERE race = 'Vampire';
+        UPDATE teams SET f_race_id = 19 WHERE race = 'Skaven';
+        UPDATE teams SET f_race_id = 20 WHERE race = 'Wood Elf';
+        UPDATE teams SET f_race_id = 21 WHERE race = 'Chaos Pact';
+        UPDATE teams SET f_race_id = 22 WHERE race = 'Slann';
+        UPDATE teams SET f_race_id = 23 WHERE race = 'Underworld';
+        ALTER TABLE match_data ADD COLUMN f_race_id TINYINT UNSIGNED AFTER f_player_id;
+        UPDATE match_data, teams SET match_data.f_race_id = teams.f_race_id WHERE match_data.f_team_id = teams.team_id;
+
 0.37 -> 0.7
 
     Replace all OBBLM files.

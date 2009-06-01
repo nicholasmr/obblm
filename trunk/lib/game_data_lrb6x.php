@@ -69,6 +69,7 @@ $DEA['Chaos Pact'] = array (
     'other'	=> array (
         'RerollCost' => 70000,
         'icon' => RACE_ICONS.'/chaos.png',
+        'race_id' => 21, # (Chaos Pact)
     ),
     'players'	=> array (
   			'Marauder'	=> array (
@@ -162,6 +163,7 @@ $DEA['Slann'] = array (
     'other'	=> array (
         'RerollCost' => 50000,
         'icon' => RACE_ICONS.'/slann.png',
+        'race_id' => 22, # (Slann)
     ),
     'players'	=> array (
   			'Lineman'	=> array (
@@ -219,6 +221,7 @@ $DEA['Underworld'] = array (
     'other'	=> array (
         'RerollCost' => 70000,
         'icon' => RACE_ICONS.'/underworld.png',
+        'race_id' => 23, # (Underworld)
     ),
     'players'	=> array (
   			'Underworld Goblin'	=> array (
