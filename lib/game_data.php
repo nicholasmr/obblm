@@ -1291,6 +1291,12 @@ $DEA = array (
 	)
 );
 
+// Create race ID index (key:val = id:race_name).
+$raceididx = array();
+foreach (array_keys($DEA) as $race) {
+    $raceididx[$DEA[$race]['other']['race_id']] = $race;
+}
+
 $stars = array(
 
    /*

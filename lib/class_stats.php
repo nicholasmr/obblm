@@ -24,14 +24,20 @@
 class Stats
 {
 
-public static function getStats($pid = false, $tid = false, $cid = false, $mid = false, $trid = false)
+/***************
+ *   Wrapper for settings coach, team, race and player stats easy via Stats::get().
+ ***************/
+public static function getStats(array $filter)
 {
-    return array_shift(Stats::get($pid, $tid, $cid, $mid, $trid, false, false ,false));
+    return array_shift(Stats::get($filter, false, false ,false));
 }
 
+/***************
+ *   Wrapper for Stats::get() to pull out leaders of a specific stat (or multiple).
+ ***************/
 public static function getLeaders($grp = false, $n = false, $sortRule = array(), $mkObjs = false)
 {
-    $leaders = Stats::get(false, false, false, false, false, $grp, $n ,$sortRule);
+    $leaders = Stats::get(array(), $grp, $n ,$sortRule);
     $objs = array();
 
     if ($mkObjs) {
@@ -52,13 +58,30 @@ public static function getLeaders($grp = false, $n = false, $sortRule = array(),
     }
 }
 
-private static function get($pid = false, $tid = false, $cid = false, $mid = false, $trid = false, $grp = false, $n = false, $sortRule = array())
+/***************
+ *   Fetches summed data from match_data by applying the filter specifications in $filter and optionally groups data around the specified column $grp.
+ ***************/
+private static function get(array $filter, $grp = false, $n = false, $sortRule = array())
 {
+    // Translation between $filter entries and corresponding MySQL columns in match_data.
+    $filt_trans = array(
+        'pid' => 'f_player_id',
+        'tid' => 'f_team_id',
+        'cid' => 'f_coach_id',
+        'rid' => 'f_race_id',
+        
+        'mid'  => 'f_match_id',
+        'trid' => 'f_tour_id',
+        'did'  => 'f_did',
+        'lid'  => 'f_lid',
+    );
+    
     switch ($grp)
     {
         case STATS_PLAYER:  $grp = 'f_player_id'; break;
         case STATS_TEAM:    $grp = 'f_team_id'; break;
         case STATS_COACH:   $grp = 'f_coach_id'; break;
+        case STATS_RACE:    $grp = 'f_race_id'; break;
         default: $grp = false;
     }
     
@@ -79,20 +102,17 @@ private static function get($pid = false, $tid = false, $cid = false, $mid = fal
             SUM(si)     AS 'si', 
             SUM(ki)     AS 'ki'
             ".((!empty($grp)) 
-                ? ",f_player_id AS 'pid',
-                    f_team_id   AS 'tid',
-                    f_coach_id  AS 'cid',
-                    f_match_id  AS 'mid',
-                    f_tour_id   AS 'trid'"
+                ? ','.implode(',', array_map(create_function('$filt, $mysql', 'return "$mysql AS \'$filt\'";'), array_keys($filt_trans), array_values($filt_trans)))
                 : '')."
         FROM 
             match_data"; 
-    if ($pid || $tid || $cid || $mid || $trid) {
+
+    if (!empty($filter)) {
         $query .= " WHERE ";
         $and = false;
-        foreach (array('pid' => 'player', 'tid' => 'team', 'cid' => 'coach', 'mid' => 'match', 'trid' => 'tour', ) as $short => $long) {
-            if ($$short) {
-                $query .= (($and) ? ' AND' : '')." f_${long}_id = ".($$short).' ';
+        foreach ($filter as $filter_key => $id) {
+            if (is_numeric($id)) {
+                $query .= (($and) ? ' AND ' : ' ').$filt_trans[$filter_key]." = $id ";
                 $and = true;
             }
         }
@@ -107,14 +127,9 @@ private static function get($pid = false, $tid = false, $cid = false, $mid = fal
     $ret = array();
     if (is_resource($result) && mysql_num_rows($result) > 0) {
         while ($r = mysql_fetch_assoc($result)) {
-            $r['cas'] = $r['bh'] + $r['si'] + $r['ki'];
+            $r['cas']   = $r['bh'] + $r['si'] + $r['ki'];
             $r['tdcas'] = $r['td'] + $r['cas'];
-            $r['spp'] =   $r['cp']     * 1
-                        + $r['cas']    * 2
-                        + $r['intcpt'] * 2
-                        + $r['td']     * 3
-                        + $r['mvp']    * 5;
-                        
+            $r['spp']   = $r['cp']*1 + $r['cas']*2 + $r['intcpt']*2 + $r['td']*3 + $r['mvp']*5;
             array_push($ret, $r);
         }
     }
@@ -130,32 +145,48 @@ private static function get($pid = false, $tid = false, $cid = false, $mid = fal
     return $ret;
 }
 
-public static function getMatchStats($grp, $id, $trid = false)
+public static function getMatchStats($grp, $id, $node = false, $node_id = false)
 {
-    $s = array();
-    $query_suffix = ($trid) ? " AND matches.f_tour_id = $trid" : '';
+    $s = array(); // Stats array to be returned.
+    
+    $from = array('matches','tours','divisions');
+    $where = array("matches.f_tour_id = tours.tour_id", "tours.f_did = divisions.did");
+    if ($node && $node_id) {
+        switch ($node)
+        {
+            case STATS_TOUR:        $where[] = "matches.f_tour_id   = $node_id"; break;
+            case STATS_DIVISION:    $where[] = "tours.f_did         = $node_id"; break;
+            case STATS_LEAGUE:      $where[] = "divisions.f_lid     = $node_id"; break;
+        }
+    }
 
     switch ($grp)
     {
         case STATS_PLAYER:  
-            $from   = 'matches, teams, players'; 
-            $where  = " AND player_id = $id AND owned_by_team_id = team_id AND (team1_id = team_id OR team2_id = team_id) ";
-            $tid    = 'team_id';
+            $from[]     = 'teams,players';
+            $where[]    = "player_id = $id AND owned_by_team_id = team_id AND (team1_id = team_id OR team2_id = team_id)";
+            $tid        = 'team_id';
             // We must add the below, else above is equivalent to the player's team match stats. Ie. matches this player did not compete in will be counted as played!
-            $from .= ', match_data';
-            $where .= ' AND f_match_id = match_id AND f_player_id = player_id ';
+            $from[]     = "(SELECT DISTINCT(f_match_id) AS 'p_mid' FROM match_data WHERE f_player_id = $id) AS pmatches";
+            $where[]    = 'match_id = pmatches.p_mid';
             break;
             
         case STATS_TEAM:    
-            $from   = 'matches'; 
-            $where  = '';
+//            $from[]     = ''; 
+//            $where[]    = '';
             $tid    = $id;
             break;
             
+        case STATS_RACE:
+            $from[]     = 'teams'; 
+            $where[]    = "f_race_id = $id";
+            $tid        = 'team_id';
+            break;
+            
         case STATS_COACH:  
-            $from   = 'matches, teams, coaches'; 
-            $where  = " AND coach_id = $id AND owned_by_coach_id = coach_id AND (team1_id = team_id OR team2_id = team_id) ";
-            $tid    = 'team_id';
+            $from[]     = 'teams,coaches'; 
+            $where[]    = "coach_id = $id AND owned_by_coach_id = coach_id AND (team1_id = team_id OR team2_id = team_id)";
+            $tid        = 'team_id';
             break;
     }
     
@@ -179,7 +210,7 @@ public static function getMatchStats($grp, $id, $trid = false)
                 SUM(IF(team1_id = $tid, tcas1, IF(team2_id = $tid, tcas2, 0))) AS 'tcas', 
                 SUM(IF(team1_id = $tid, team1_score, IF(team2_id = $tid, team2_score, 0))) AS 'score_team', 
                 SUM(IF(team1_id = $tid, team2_score, IF(team2_id = $tid, team1_score, 0))) AS 'score_opponent' 
-                FROM $from WHERE date_played IS NOT NULL $query_suffix $where";
+                FROM ".implode(',', $from)." WHERE date_played IS NOT NULL AND ".implode(' AND ', $where);
 
     $result = mysql_query($query);
     $row    = mysql_fetch_assoc($result);
@@ -193,21 +224,26 @@ public static function getMatchStats($grp, $id, $trid = false)
      ********************/
      
     $s['points'] = 0;
-    if ($trid) {
+    if ($node == STATS_TOUR) {
 
         // First we need to investigate if the RS's points def. requires fields not yet loaded, and if so load them.
         
         global $hrs; // All house RSs
         $rs_all  = Tour::getRSSortRules(false, false); // All RSs.
         $hrs_nr  = 0; // Current HRS nr.
-        $rs_nr   = get_alt_col('tours', 'tour_id', $trid, 'rs'); // Current RS nr.
+        $rs_nr   = get_alt_col('tours', 'tour_id', $node_id, 'rs'); // Current RS nr.
         $fields  = array('mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki', 'cas', 'tdcas');
         $limit   = count($rs_all) - count($hrs); // If rs_nr is larger than this value, then the RS for this tournament is a house RS -> set extra fields.
         
         
         // Is the ranking system a house ranking system? If not then don't load extra fields since non-house RSs don't use the extra fields at all.
         if (($hrs_nr = $rs_nr - $limit) > 0 && preg_match('/'.implode('|', $fields).'/', $hrs[$hrs_nr]['points'])) {
-            $s = array_merge($s, Stats::getStats(($grp == STATS_PLAYER) ? $id : false, ($grp == STATS_TEAM) ? $id : false, ($grp == STATS_COACH) ? $id : false, false, $trid));
+            $s = array_merge($s, Stats::getStats(array(
+                    'pid' => ($grp == STATS_PLAYER) ? $id : false, 
+                    'tid' => ($grp == STATS_TEAM)   ? $id : false, 
+                    'cid' => ($grp == STATS_COACH)  ? $id : false, 
+                    'trid' => $node_id,
+                )));
         }
 
         switch ($rs_nr)
@@ -229,7 +265,7 @@ public static function getMatchStats($grp, $id, $trid = false)
                             f_match_id, 
                             IF(SUM(td) > 3, 3, SUM(td)) AS 'td', 
                             IF(SUM(bh+ki+si) > 3, 3, SUM(bh+ki+si)) AS 'cas'
-                        FROM match_data WHERE f_team_id = $id AND f_tour_id = $trid GROUP BY f_match_id
+                        FROM match_data WHERE f_team_id = $id AND f_tour_id = $node_id GROUP BY f_match_id
                         ) AS tmpTable
                         ";
                     $result = mysql_query($query);
@@ -360,7 +396,9 @@ public static function getStreaks($grp, $id, $trid = false)
     return array('row_won' => $ret['won'], 'row_lost' => $ret['lost'], 'row_draw' => $ret['draw']);
 }
 
-    
+/***************
+ *   Finds match records/mem. matches.
+ ***************/
 public static function getMemMatches() {
     
     /*

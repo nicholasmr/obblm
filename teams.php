@@ -510,7 +510,7 @@ function team_roaster($team_id) {
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('secs/teams/box_info/race');?></td>
-                    <td><a href='index.php?section=races&amp;race=<?php echo $team->race; ?>'><?php echo $team->race; ?></a></td>
+                    <td><a href='index.php?section=races&amp;race=<?php echo $team->f_race_id; ?>'><?php echo $team->race; ?></a></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('secs/teams/box_info/ready');?></td>

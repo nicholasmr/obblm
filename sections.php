@@ -1000,7 +1000,7 @@ function sec_standings() {
     
     $fields = array(
         'name'         => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')), 
-        'race'         => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race')), 
+        'race'         => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'f_race_id')), 
         'coach_name'   => array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'owned_by_coach_id')), 
         'fan_factor'   => array('desc' => 'FF'), 
         'rerolls'      => array('desc' => 'RR'), 
@@ -1219,7 +1219,7 @@ function sec_coaches() {
         
         $fields = array(
             'name'              => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
-            'race'              => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race')), 
+            'race'              => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'f_race_id')), 
             'won'               => array('desc' => 'W'), 
             'lost'              => array('desc' => 'L'), 
             'draw'              => array('desc' => 'D'), 
@@ -1434,7 +1434,7 @@ function sec_races() {
         );
         
         // Teams of the chosen race.
-        $teams = Team::getTeams($race->race);
+        $teams = $race->getTeams();
         foreach ($teams as $t) {
             $t->setExtraStats();
             $t->setStreaks(false);
@@ -1483,7 +1483,7 @@ function sec_races() {
     $races = Race::getRaces(true);
     foreach ($races as $r) $r->setStats(true);
     $fields = array(
-        'race'              => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race')), 
+        'race'              => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race_id')), 
         'teams'             => array('desc' => 'Teams'), 
         'won'               => array('desc' => 'W'), 
         'lost'              => array('desc' => 'L'), 

@@ -31,7 +31,7 @@ class Team
     public $team_id           = 0;
     public $name              = "";
     public $owned_by_coach_id = 0;
-    public $race              = "";
+    public $f_race_id         = 0;
     public $treasury          = 0;
     public $apothecary        = 0;
     public $rerolls           = 0;
@@ -41,6 +41,7 @@ class Team
     public $imported          = false;
     public $is_retired        = 0;
 
+    public $race              = "";
     public $coach_name        = '';
     private $_bought_fan_factor = 0;
     
@@ -105,6 +106,8 @@ class Team
 
     function __construct($team_id) {
     
+        global $raceididx;
+    
         // MySQL stored information
         $result = mysql_query("SELECT * FROM teams WHERE team_id = $team_id");
         
@@ -120,6 +123,7 @@ class Team
         $this->coach_name = get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'name');
         $this->_bought_fan_factor = $this->fan_factor;
         $this->imported = ($this->imported == 1); // Make boolean.
+        $this->race = $raceididx[$this->f_race_id];
         $this->setStats(false);
         $this->setValue();
         
@@ -132,7 +136,7 @@ class Team
          * Overwrites object's stats fields.
          **/
          
-        foreach (array_merge(Stats::getStats(false, $this->team_id, false, false, $tour_id), Stats::getMatchStats(STATS_TEAM, $this->team_id, $tour_id)) as $field => $val) {
+        foreach (array_merge(Stats::getStats(array('tid' => $this->team_id, 'trid' => $tour_id)), Stats::getMatchStats(STATS_TEAM, $this->team_id, STATS_TOUR, $tour_id)) as $field => $val) {
             $this->$field = $val;
         }
 
@@ -399,7 +403,7 @@ class Team
          *  Setting $allow_double_rr_price allows the RR price to double up if: (1) team has played any matches AND (2) static RR prices are NOT set in the $rules.
          **/
 
-        $race = new Race($this->race);
+        $race = new Race($this->f_race_id);
         return $race->getGoods($allow_double_rr_price && $this->played > 0);
     }
 
@@ -697,7 +701,7 @@ class Team
             return $p;
         }
         else {
-            $r = new Race($this->race);
+            $r = new Race($this->f_race_id);
             $roster = $r->getRoster();
             return $roster['other']['icon'];
         }
@@ -804,7 +808,7 @@ class Team
      * Statics
      ***************/
     
-    public static function getTeams($race = false) {
+    public static function getTeams($race_id = false) {
     
         /**
          * Returns an array of all team objects.
@@ -812,7 +816,7 @@ class Team
     
         $teams = array();
         
-        $query = "SELECT team_id FROM teams" . (($race) ? " WHERE race='$race'" : '');
+        $query = "SELECT team_id FROM teams" . (($race_id !== false) ? " WHERE f_race_id=$race_id" : '');
         $result = mysql_query($query);
         if (mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -828,10 +832,10 @@ class Team
         /**
          * Creates a new team.
          *
-         * Input: coach_id, name, race
+         * Input: coach_id, name, race (race name)
          **/
 
-        global $rules;
+        global $rules, $raceididx;
 
         // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
         if (!in_array($input['race'], Race::getRaces(false))
@@ -839,12 +843,14 @@ class Team
         || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
             return false;
         }
+        $flipped = array_flip($raceididx);
+        $input['race'] = $flipped[$input['race']];
 
         $query = "INSERT INTO teams
                     (
                         name,
                         owned_by_coach_id,
-                        race,
+                        f_race_id,
                         treasury,
                         apothecary,
                         rerolls,
@@ -872,7 +878,7 @@ class Team
                     (
                         '" . mysql_real_escape_string($input['name']) . "',
                         $input[coach_id],
-                        '$input[race]',
+                        $input[race],
                         $rules[initial_treasury],
                         0,
                         $rules[initial_rerolls],

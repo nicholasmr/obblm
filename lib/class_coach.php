@@ -119,7 +119,7 @@ class Coach
          * Overwrites object's stats fields.
          **/
          
-        foreach (array_merge(Stats::getStats(false, false, $this->coach_id, false, $tour_id), Stats::getMatchStats(STATS_COACH, $this->coach_id, $tour_id)) as $field => $val) {
+        foreach (array_merge(Stats::getStats(array('cid' => $this->coach_id, 'trid' => $tour_id)), Stats::getMatchStats(STATS_COACH, $this->coach_id, STATS_TOUR, $tour_id)) as $field => $val) {
             $this->$field = $val;
         }
 
