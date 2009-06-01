@@ -27,7 +27,7 @@ error_reporting(E_ALL);
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.75b');
+define('OBBLM_VERSION', '0.75c');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
@@ -40,6 +40,11 @@ define('MAX_TNEWS', 3); // This number of entries are shown on the team news boa
 define('STATS_PLAYER', 1);
 define('STATS_TEAM',   2);
 define('STATS_COACH',  3);
+define('STATS_RACE',   4);
+# Match groupings (nodes):
+define('STATS_TOUR',     1);
+define('STATS_DIVISION', 2);
+define('STATS_LEAGUE',   3);
 
 /********************* 
  *   Prize types. Used by Prize class.

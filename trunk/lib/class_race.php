@@ -29,6 +29,7 @@ class Race
  ***************/
 
 public $race = '';
+public $race_id = 0;
 
 public $mvp         = 0;
 public $cp          = 0;
@@ -53,9 +54,12 @@ public $teams       = 0;
  * Methods 
  ***************/
 
-function __construct($race) 
+function __construct($race_id) 
 {
-    $this->race = $race;
+    global $raceididx;
+    
+    $this->race_id = $race_id;
+    $this->race = $raceididx[$this->race_id];
 }
 
 public function setStats($setAvgs = false)
@@ -72,7 +76,9 @@ private function getStats($setAvgs = false)
     /**
      * Returns an array of race stats by looking at teams' (from that race) stats in MySQL.
      **/        
-
+/*
+    DEV NOTE: convert to Stats::getStats() and Stats::getMatchStats()
+*/
     // Initialize         
     $d = array();
     $teams = $this->getTeams();
@@ -129,16 +135,17 @@ public function getGoods($double_rr_price = false)
 
 public function getTeams()
 {
-    return Team::getTeams($this->race);
+    return Team::getTeams($this->race_id);
 }
 
 public static function getRaces($getRaceObjs = false)
 {
     /* Return race names (strings) or corresponding race objects */
     
-    global $DEA;
-    $races = array_keys($DEA);    
-    return ($getRaceObjs) ? array_map(create_function('$race', 'return (new Race($race));'), $races) : $races;
+    global $raceididx;
+    $races = array_values($raceididx);
+    $race_ids = array_keys($raceididx);
+    return ($getRaceObjs) ? array_map(create_function('$rid', 'return (new Race($rid));'), $race_ids) : $races;
 }
 
 }

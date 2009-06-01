@@ -101,6 +101,7 @@ class Player
 
     // Others
     public $value = 0;
+    public $f_race_id = 0;
     public $race = "";
     public $icon = "";
     public $qty = 0;
@@ -127,7 +128,7 @@ class Player
 
     function __construct($player_id) {
 
-        global $DEA, $rules;
+        global $DEA, $rules, $raceididx;
 
         // MySQL stored player data
         $result = mysql_query("SELECT * FROM players WHERE player_id = $player_id");
@@ -142,7 +143,8 @@ class Player
         $this->pos = $this->position;
             
         // Player relations
-        $this->race       = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'race');
+        $this->f_race_id  = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'f_race_id');
+        $this->race       = $raceididx[$this->f_race_id];
         $this->team_name  = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'name');
         $this->coach_id   = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'owned_by_coach_id');
         $this->coach_name = get_alt_col('coaches', 'coach_id', $this->coach_id, 'name');
@@ -227,7 +229,7 @@ class Player
          * Overwrites object's stats fields.
          **/
         
-        foreach (Stats::getStats($this->player_id, false, false, false, $tour_id) as $key => $val) {
+        foreach (Stats::getStats(array('pid' => $this->player_id, 'trid' => $tour_id)) as $key => $val) {
             $this->$key = $val;
         }
 
@@ -240,7 +242,7 @@ class Player
          * Overwrites object properties with stats from the specified tournament.
          **/
         
-        foreach (Stats::getMatchStats(STATS_PLAYER, $this->player_id, $tour_id) as $key => $val) {
+        foreach (Stats::getMatchStats(STATS_PLAYER, $this->player_id, STATS_TOUR, $tour_id) as $key => $val) {
             $this->$key = $val;
         }
 
