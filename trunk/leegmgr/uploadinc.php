@@ -212,7 +212,7 @@ function addMatch ( $matchparsed ) {
 	global $settings;
 	$match_id = '';
 
-	if ( $settings['leegmgr_schedule'] == "true" || $settings['leegmgr_schedule'] == "strict" )
+	if ( $settings['leegmgr_schedule'] )
 		$match_id = getschMatch( $hometeam_id, $awayteam_id );
 
 	if ( $match_id == '' && $settings['leegmgr_schedule'] != "strict" ) {
