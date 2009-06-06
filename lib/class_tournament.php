@@ -78,9 +78,9 @@ class Tour
         $this->begun = $row['count'] > 0 ? true : false;
 
         // Delete MySQL tournament entry if no matches are assigned to tournament.
-        if ($this->empty) {
-            $this->delete();
-        }
+//        if ($this->empty) {
+//            $this->delete();
+//        }
                 
         /* Determine tournament status and winner (if finished). */
 

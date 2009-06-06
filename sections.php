@@ -770,6 +770,7 @@ function sec_fixturelist() {
             $tours = $d->getTours();
             objsort($tours, array('+date_created'));
             foreach ($tours as $t) {
+                $flist[$l->name][$d->name][$t->name] = array(); # Prevent ksort() errors for empty tournaments.
                 foreach ($t->getMatches() as $m) {
                     $flist[$l->name][$d->name][$t->name][$m->round][$m->match_id] = $m; # Copy match object.
                 }
@@ -810,8 +811,8 @@ function sec_fixturelist() {
         if (is_object($rounds)) continue;
 
         // Skip tournaments which have no rounds/matches
-        if ($flist[$tour]['tour_obj']->empty)
-            continue;
+//        if ($flist[$tour]['tour_obj']->empty)
+//            continue;
 
         $t = $flist[$tour]['tour_obj'];
 

@@ -856,7 +856,7 @@
                 <have_read>I have read the below advisement</have_read>
                 <pre>
                 <![CDATA[
-                This feature is only meant to be used for non-played tournaments and test-tournaments.<br>
+                This feature is only meant to be used for non-played or empty tournaments and test-tournaments.<br>
                 If you decide to delete a proper tournament you should know that this will
                 ]]>
                 </pre>
