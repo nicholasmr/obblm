@@ -66,7 +66,7 @@ function uploadpage () {
 			Print "<br>Retrieved a file.<br>";
 		}
 
-		if ($zip  &&  $_FILES['userfile']['type'] == "application/x-zip-compressed") {
+		if ($zip  &&  ( $_FILES['userfile']['type'] == "application/x-zip-compressed" || $_FILES['userfile']['type'] == "application/octet-stream") ){
 			Print "<br>Retrieved a zip file.<br>";
 
 			while ($zip_entry = zip_read($zip)) {
