@@ -255,7 +255,7 @@ class Player
          * Counts most won, lost and draw matches in a row.
          **/
 
-        foreach (Stats::getStreaks(STATS_PLAYER, $this->player_id, $trid) as $key => $val) {
+        foreach (Stats::getStreaks(STATS_PLAYER, $this->player_id, STATS_TOUR, $trid) as $key => $val) {
             $this->$key = $val;
         }
 

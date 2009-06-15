@@ -1398,10 +1398,11 @@ function team_roaster($team_id) {
     $matches = Stats::getPlayedMatches(
         STATS_TEAM, 
         $team->team_id, 
+        STATS_TOUR,
+        (($trid && $trid != -1) ? $trid : false),
+        (($opid && $opid != -1) ? $opid : false),
         MAX_RECENT_GAMES, 
-        true,
-        (($trid && $trid != -1) ? $trid : false), 
-        (($opid && $opid != -1) ? $opid : false)
+        true
     );
     foreach ($matches as $m) {
         $me = ($team->team_id == $m->team1_id) ? 1 : 2;
@@ -1822,7 +1823,7 @@ function player_roaster($player_id) {
                         <td colspan="6"><hr></td>
                     </tr>
                     <?php
-                    foreach (Stats::getPlayedMatches(STATS_PLAYER, $p->player_id, MAX_RECENT_GAMES, true) as $m) {
+                    foreach (Stats::getPlayedMatches(STATS_PLAYER, $p->player_id, false, false, false, MAX_RECENT_GAMES, true) as $m) {
                         ?>
                         <tr>
                             <td><?php echo $m->date_played; ?></td>

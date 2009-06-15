@@ -148,47 +148,7 @@ private static function get(array $filter, $grp = false, $n = false, $sortRule =
 public static function getMatchStats($grp, $id, $node = false, $node_id = false)
 {
     $s = array(); // Stats array to be returned.
-    
-    $from = array('matches','tours','divisions');
-    $where = array("matches.f_tour_id = tours.tour_id", "tours.f_did = divisions.did");
-    if ($node && $node_id) {
-        switch ($node)
-        {
-            case STATS_TOUR:        $where[] = "matches.f_tour_id   = $node_id"; break;
-            case STATS_DIVISION:    $where[] = "tours.f_did         = $node_id"; break;
-            case STATS_LEAGUE:      $where[] = "divisions.f_lid     = $node_id"; break;
-        }
-    }
-
-    switch ($grp)
-    {
-        case STATS_PLAYER:  
-            $from[]     = 'teams,players';
-            $where[]    = "player_id = $id AND owned_by_team_id = team_id AND (team1_id = team_id OR team2_id = team_id)";
-            $tid        = 'team_id';
-            // We must add the below, else above is equivalent to the player's team match stats. Ie. matches this player did not compete in will be counted as played!
-            $from[]     = "(SELECT DISTINCT(f_match_id) AS 'p_mid' FROM match_data WHERE f_player_id = $id) AS pmatches";
-            $where[]    = 'match_id = pmatches.p_mid';
-            break;
-            
-        case STATS_TEAM:    
-//            $from[]     = ''; 
-//            $where[]    = '';
-            $tid    = $id;
-            break;
-            
-        case STATS_RACE:
-            $from[]     = 'teams'; 
-            $where[]    = "f_race_id = $id";
-            $tid        = 'team_id';
-            break;
-            
-        case STATS_COACH:  
-            $from[]     = 'teams,coaches'; 
-            $where[]    = "coach_id = $id AND owned_by_coach_id = coach_id AND (team1_id = team_id OR team2_id = team_id)";
-            $tid        = 'team_id';
-            break;
-    }
+    list($from,$where,$tid) = Stats::setupQueryComponents($grp, $id, $node, $node_id);
     
     // Match result stats
     $query  = "SELECT 
@@ -294,106 +254,149 @@ public static function getMatchStats($grp, $id, $node = false, $node_id = false)
     return $s;
 }
 
-public static function getPlayedMatches($grp, $id, $n = false, $mkObjs = false, $trid = false, $opid = false)
+public static function getPlayedMatches($grp, $id, $node = false, $node_id = false, $op_tid = false, $n = false, $mkObjs = false)
 {
-    $query = "SELECT DISTINCT match_id ";
-    switch ($grp)
-    {
-        case STATS_PLAYER:  
-            $query .= "FROM matches, match_data WHERE f_match_id = match_id AND f_player_id = $id";
-            break;
-            
-        case STATS_TEAM:    
-            $query .= "FROM matches WHERE (team1_id = $id OR team2_id = $id)";
-            break;
-            
-        case STATS_COACH:  
-            $query .= "FROM matches, teams WHERE owned_by_coach_id = $id AND (team1_id = team_id OR team2_id = team_id)";
-            break;
+    $matches = array(); // Return structure.
+    list($from,$where,$tid) = Stats::setupQueryComponents($grp, $id, $node, $node_id);
+    if ($op_tid) {
+        $where[] = "(team1_id = $op_tid OR team2_id = $op_tid)";
     }
-    $addOn = '';
-    $addOn .= ($opid) ? " AND (team1_id = $opid OR team2_id = $opid) " : '';
-    $addOn .= ($trid) ? " AND f_tour_id = $trid " : '';
-    $query .= " AND date_played IS NOT NULL AND match_id > 0 $addOn ORDER BY date_played DESC ".(($n) ? " LIMIT $n" : '');
-
+    $query = "
+        SELECT DISTINCT(match_id) AS 'match_id' 
+        FROM ".implode(', ', $from)." 
+        WHERE 
+                date_played IS NOT NULL 
+            AND match_id > 0 
+            AND (team1_id = $tid OR team2_id = $tid)
+            AND ".implode(' AND ', $where)." 
+        ORDER BY date_played DESC ".(($n) ? " LIMIT $n" : '');
     $result = mysql_query($query);
-    $ret = array();
     if (is_resource($result) && mysql_num_rows($result) > 0) {
         while ($r = mysql_fetch_assoc($result)) {
-            array_push($ret, new Match($r['match_id']));
+            $matches[] = ($mkObjs) ? new Match($r['match_id']) : $r['match_id'];
         }
     }
     
-    return $ret;
+    return $matches;
 }
 
-public static function getStreaks($grp, $id, $trid = false)
+public static function getStreaks($grp, $id, $node = false, $node_id = false)
 {
     /**
-    * Counts most won, lost and draw matches in a row.
-    **/
+     * Counts most won, lost and draw matches (streaks) in a row.
+     *
+     * http://www.sqlteam.com/article/detecting-runs-or-streaks-in-your-data
+     **/
     
+    list($from,$where,$tid) = Stats::setupQueryComponents($grp, $id, $node, $node_id);
+    
+    // Sample table.
+    $GD1 = "(
+            SELECT 
+                date_played, 
+                IF((team1_id = $tid AND team1_score > team2_score) OR (team2_id = $tid AND team1_score < team2_score), 'W', IF(team1_score = team2_score, 'D', 'L')) AS 'result'
+            FROM 
+                ".implode(', ', $from)." 
+            WHERE 
+                    date_played IS NOT NULL 
+                AND (team1_id = $tid OR team2_id = $tid) 
+                AND ".implode(' AND ', $where)." 
+            ORDER BY 
+                date_played
+        )";
+
+    // Game data with run-group column.
+    $GD2 = "(
+            SELECT 
+                *,
+                (
+                    SELECT COUNT(*) 
+                    FROM $GD1 AS G
+                    WHERE G.result <> GR.result 
+                    AND G.date_played <= GR.date_played
+                ) AS RunGroup 
+            FROM $GD1 AS GR
+        ) AS GD2";
+    
+    // Accumulated (grouped) RunGroup stats
+    $accum_rg = "(
+            SELECT 
+                result, 
+                MIN(date_played) as StartDate, 
+                MAX(date_played) as EndDate, 
+                COUNT(*) as games
+            FROM $GD2
+            GROUP BY result, RunGroup
+            ORDER BY date_played
+        ) AS RG";
+    
+#    $query = "SELECT 
+#            (SELECT MAX(games) FROM $accum_rg WHERE result = 'W') AS 'W', 
+#            (SELECT MAX(games) FROM $accum_rg WHERE result = 'L') AS 'L', 
+#            (SELECT MAX(games) FROM $accum_rg WHERE result = 'D') AS 'D', 
+#            (SELECT games FROM $accum_rg WHERE result = 'W' AND EndDate = (SELECT Max(EndDate) FROM $accum_rg)) AS 'C'
+#        ";
+    $query = "SELECT 
+            (SELECT MAX(games) FROM $accum_rg WHERE result = 'W') AS 'W', 
+            (SELECT MAX(games) FROM $accum_rg WHERE result = 'L') AS 'L', 
+            (SELECT MAX(games) FROM $accum_rg WHERE result = 'D') AS 'D'
+        ";
+
+    $result = mysql_query($query);
+    $row = mysql_fetch_assoc($result);
+        
+    return array(
+        'row_won' => ($row['W']) ? $row['W'] : 0, 
+        'row_lost' => ($row['L']) ? $row['L'] : 0, 
+        'row_draw' => ($row['D']) ? $row['D'] : 0, 
+#        'row_current_win' => ($row['C']) ? $row['C'] : 0
+    );
+}
+
+private static function setupQueryComponents($grp, $id, $node, $node_id)
+{
+    $from = array('matches','tours','divisions'); // We don't need to add the "leagues" table, since league IDs can be referenced via the "f_lid" key in the divisions table.
+    $where = array("matches.f_tour_id = tours.tour_id", "tours.f_did = divisions.did");
+    if ($node && $node_id) {
+        switch ($node)
+        {
+            case STATS_TOUR:        $where[] = "matches.f_tour_id   = $node_id"; break;
+            case STATS_DIVISION:    $where[] = "tours.f_did         = $node_id"; break;
+            case STATS_LEAGUE:      $where[] = "divisions.f_lid     = $node_id"; break;
+        }
+    }
+
     switch ($grp)
     {
         case STATS_PLAYER:  
-            $from   = 'matches, teams, players'; 
-            $where  = " AND player_id = $id AND owned_by_team_id = team_id AND (team1_id = team_id OR team2_id = team_id) ";
-            $tid    = 'team_id';
+            $from[]     = 'teams,players';
+            $where[]    = "player_id = $id AND owned_by_team_id = team_id AND (team1_id = team_id OR team2_id = team_id)";
+            $tid        = 'team_id';
             // We must add the below, else above is equivalent to the player's team match stats. Ie. matches this player did not compete in will be counted as played!
-            $from .= ', match_data';
-            $where .= ' AND f_match_id = match_id AND f_player_id = player_id ';
+            $from[]     = "(SELECT DISTINCT(f_match_id) AS 'p_mid' FROM match_data WHERE f_player_id = $id) AS pmatches";
+            $where[]    = 'match_id = pmatches.p_mid';
             break;
             
         case STATS_TEAM:    
-            $from   = 'matches'; 
-            $where  = '';
+//            $from[]     = ''; 
+//            $where[]    = '';
             $tid    = $id;
             break;
             
+        case STATS_RACE:
+            $from[]     = 'teams'; 
+            $where[]    = "f_race_id = $id";
+            $tid        = 'team_id';
+            break;
+            
         case STATS_COACH:  
-            $from   = 'matches, teams, coaches'; 
-            $where  = " AND coach_id = $id AND owned_by_coach_id = coach_id AND (team1_id = team_id OR team2_id = team_id) ";
-            $tid    = 'team_id';
+            $from[]     = 'teams,coaches'; 
+            $where[]    = "coach_id = $id AND owned_by_coach_id = coach_id AND (team1_id = team_id OR team2_id = team_id)";
+            $tid        = 'team_id';
             break;
     }
-    
-    $query = "SELECT 
-                IF(team1_score = team2_score, 3, 
-                    IF(team1_id = $tid AND team1_score > team2_score OR team2_id = $tid AND team2_score > team1_score, 1, 2
-                    )
-                ) AS 'result' 
-                FROM 
-                    $from 
-                WHERE 
-                    date_played IS NOT NULL 
-                    AND (team1_id = $tid OR team2_id = $tid) 
-                    ".(($trid) ? " AND matches.f_tour_id = $trid" : '')."
-                    $where 
-                ORDER BY date_played DESC";
 
-    $result = mysql_query($query);
-    $ret['won'] = $ret['lost'] = $ret['draw'] = 0;
-    if ($result && mysql_num_rows($result) > 0) {
-        $res = array();
-        while ($row = mysql_fetch_assoc($result)) {
-            array_push($res, $row['result']);
-        }
-        foreach (array('won' => 1, 'lost' => 2, 'draw' => 3) as $t => $v) {
-            $cnt = 0;
-            foreach ($res as $r) {
-                if ($r == $v) {
-                    $cnt++;
-                    if ($ret[$t] < $cnt)
-                        $ret[$t] = $cnt;
-                }
-                else {
-                    $cnt = 0;
-                }
-            }
-        }
-    }
-    
-    return array('row_won' => $ret['won'], 'row_lost' => $ret['lost'], 'row_draw' => $ret['draw']);
+    return array($from,$where,$tid);
 }
 
 /***************
