@@ -1253,7 +1253,7 @@ function sec_coaches() {
         
         /* Played games */
         
-        $matches = Stats::getPlayedMatches(STATS_COACH, $c->coach_id, MAX_RECENT_GAMES, true);
+        $matches = Stats::getPlayedMatches(STATS_COACH, $c->coach_id, false, false, false, MAX_RECENT_GAMES, true);
         foreach ($matches as $m) {
             $me = (get_alt_col('teams', 'team_id', $m->team1_id, 'owned_by_coach_id') == $c->coach_id) ? 1 : 2;
             $op = ($me == 1) ? 2 : 1;

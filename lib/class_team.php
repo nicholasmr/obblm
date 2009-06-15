@@ -177,7 +177,7 @@ class Team
          * Counts most won, lost and draw matches in a row.
          **/
 
-        foreach (Stats::getStreaks(STATS_TEAM, $this->team_id, $trid) as $key => $val) {
+        foreach (Stats::getStreaks(STATS_TEAM, $this->team_id, STATS_TOUR, $trid) as $key => $val) {
             $this->$key = $val;
         }
 

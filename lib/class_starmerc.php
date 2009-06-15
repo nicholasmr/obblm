@@ -140,7 +140,7 @@ class Star
     
     public function setStreaks($tour_id)
     {
-        foreach (Stats::getStreaks(STATS_PLAYER, $this->star_id, $tour_id) as $key => $val) {
+        foreach (Stats::getStreaks(STATS_PLAYER, $this->star_id, STATS_TOUR, $tour_id) as $key => $val) {
             $this->$key = $val;
         }
         
