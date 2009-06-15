@@ -41,7 +41,7 @@ class Match_BOTOCS extends Match
         /* Like parent but returns match_id of created match */
         
         return (parent::create($input) 
-            && ($result = mysql_query("SELECT MAX(match_id) AS 'mid' FROM matches")) 
+            && ($result = mysql_query("Select last_insert_id() from matches")) 
             && mysql_num_rows($result) > 0 
             && (list($mid) = array_values(mysql_fetch_assoc($result)))
             && $mid
