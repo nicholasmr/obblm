@@ -23,6 +23,9 @@
 
 if (version_compare(PHP_VERSION, '5.0.0') == -1)
     die('<font color="red"><b>Sorry. OBBLM requires PHP version 5, you are running version ' . PHP_VERSION . '.</b></font>');
+
+if (file_exists('install.php'))
+    die('Please remove <i>install.php</i> before using obblm.');
     
 $iniRG = ini_get('register_globals');
 if (strtolower($iniRG) == 'on' || $iniRG == 1)
