@@ -565,4 +565,95 @@ function make_menu() {
     <?php
 }
 
+function make_standings($grp, $node, $node_id, $opts) {
+
+    /*
+        Makes various kinds of standings tables.
+    
+        $grp and $node types are STATS_* types.
+    */
+
+    // Options.
+    list($url, $GET_SS) = $opts;
+    $extra = array();
+    
+    if (!$GET_SS) {$GET_SS = '';}
+    else {$extra['GETsuffix'] = $GET_SS;}
+    
+    // Objects to sort.
+    $objs = array();
+    // Common $grp type fields we want to print.
+    $fields = array(
+        'won'               => array('desc' => 'W'), 
+        'lost'              => array('desc' => 'L'), 
+        'draw'              => array('desc' => 'D'), 
+        'played'            => array('desc' => 'GP'), 
+        'win_percentage'    => array('desc' => 'WIN%'), 
+        'row_won'           => array('desc' => 'SW'), 
+        'row_lost'          => array('desc' => 'SL'), 
+        'row_draw'          => array('desc' => 'SD'), 
+        'score_team'        => array('desc' => 'GF'),
+        'score_opponent'    => array('desc' => 'GA'),
+        'won_tours'         => array('desc' => 'WT'), 
+        'td'                => array('desc' => 'Td'), 
+        'cp'                => array('desc' => 'Cp'), 
+        'intcpt'            => array('desc' => 'Int'), 
+        'cas'               => array('desc' => 'Cas'), 
+        'bh'                => array('desc' => 'BH'), 
+        'si'                => array('desc' => 'Si'), 
+        'ki'                => array('desc' => 'Ki'), 
+    );
+    
+    switch ($grp)
+    {
+        case STATS_PLAYER:
+            
+            break;
+            
+        case STATS_TEAM:
+        
+            break;
+            
+        case STATS_RACE:
+            array_merge(array(
+                'race'  => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race_id')), 
+                'teams' => array('desc' => 'Teams'),
+            ), $fields);
+            $extra['dashed'] = array('condField' => 'teams', 'fieldVal' => 0, 'noDashFields' => array('race'));
+            
+            $objs = Race::getRaces(true);
+            foreach ($objs as $o) {
+                $o->setStats(true);
+            }
+            
+            break;
+            
+        case STATS_COACH:
+            array_merge(array(
+                'name'      => array('desc' => 'Coach', 'href' => array('link' => '???????????', 'field' => 'coach_id', 'value' => 'coach_id')),
+                'teams_cnt' => array('desc' => 'Teams'), 
+            ), $fields);        
+            foreach ($c->teams as $t) {
+                $t->setExtraStats();
+                $t->setStreaks(false);
+            }
+            break;
+    }
+
+
+    sort_table(
+        'TITLE !!!!!!!!!!!', 
+        'index.php?section=races', 
+        $races, 
+        $fields, 
+        sort_rule('race'), 
+        (isset($_GET["sort$GET_SS"])) ? array((($_GET["dir$GET_SS"] == 'a') ? '+' : '-') . $_GET["sort$GET_SS"]) : array(),
+        $extra
+    );
+}
+
+function make_recentgames($grp, $id, $node, $node_id) {
+
+}
+
 ?>
