@@ -240,7 +240,7 @@ echo "    </tr>\n";
 
 </table>
 <table>
-<tr><td class="cent2">
+<tr><td>
 <table>
     <tr>
         <td class="indtitle">Inducement</td>
@@ -335,4 +335,5 @@ echo '<tr><td class="indtitle">Match Value:</td><td class="indtitle">'.kilo($ind
 </div>
 </div>
 </body>
-</html>-->
+</html>
+-->
