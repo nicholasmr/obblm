@@ -2414,15 +2414,50 @@ function sec_recentmatches() {
     
     ?>
     <form method="POST">
-    <b><?php echo $lng->getTrn('secs/recent/from_tours');?></b><br>
-    <select name="trid" onChange='this.form.submit();'>
-        <option value="0">-All-</option>
-        <?php
-        foreach ($tours as $tr) {
-            echo "<option value='$tr->tour_id' ".((isset($_POST['trid']) && $_POST['trid'] == $tr->tour_id) ? 'SELECTED' : '').">$tr->name</option>\n";
-        }
-        ?>
-    </select>
+        <b><font color="red">Selection out of order, will be fixed soon (only all-league recent matches are shown).</font></b><br>
+        <b>From</b>
+        <select name="type_in" onChange="
+            document.getElementById('tour_in').style.display = 'none';
+            document.getElementById('division_in').style.display = 'none';
+            document.getElementById('league_in').style.display = 'none';
+            selConst = Number(this.options[this.selectedIndex].value); 
+            switch(selConst) 
+            {
+                case <?php echo STATS_TOUR;?>:      document.getElementById('tour_in').style.display = 'inline'; break;
+                case <?php echo STATS_DIVISION;?>:  document.getElementById('division_in').style.display = 'inline'; break;
+                case <?php echo STATS_LEAGUE;?>:    document.getElementById('league_in').style.display = 'inline'; break;
+            }
+        ">
+            <?php
+            foreach (array(STATS_LEAGUE => 'League', STATS_DIVISION => 'Division', STATS_TOUR => 'Tournament') as $const => $name) {
+                echo "<option value='$const'>$name</option>\n";
+            }
+            ?>
+        </select>
+        <b> : </b>
+        <select style='display:none;' name="tour_in" id="tour_in" onChange="this.form.submit();">
+            <?php
+            foreach (Tour::getTours() as $t) {
+                echo "<option value='$t->tour_id'>$t->name</option>\n";
+            }
+            ?>
+        </select>
+        <select style='display:none;' name="division_in" id="division_in" onChange="this.form.submit();">
+            <?php
+            foreach (Division::getDivisions() as $d) {
+                echo "<option value='$d->did'>$d->name</option>\n";
+            }
+            ?>
+        </select>
+        <select style='display:inline;' name="league_in" id="league_in" onChange="this.form.submit();">
+            <?php
+            echo "<option value='0'>-All-</option>\n";
+            foreach (League::getLeagues() as $l) {
+                echo "<option value='$l->lid'>$l->name</option>\n";
+            }
+            ?>
+        </select>
+        <input type="hidden" name="submitted" value="1">
     </form>
     <br>    
     <?php
@@ -2449,4 +2484,320 @@ function sec_recentmatches() {
     );
 }
 
+/*************************
+ *
+ *  Comparence
+ *
+ *************************/
+
+function sec_comparence() {
+    
+    global $raceididx;
+    title('Comparence');
+    
+    /* Get all IDs and names for players, teams, coaches and races. */
+    $players = $teams = $coaches = array();
+    // Players
+    $query = "SELECT player_id, players.name AS 'name', teams.name AS 'team_name' FROM players, teams WHERE owned_by_team_id = team_id ORDER BY teams.name ASC, players.name ASC";
+    $result = mysql_query($query);
+    if (is_resource($result) && mysql_num_rows($result) > 0) {
+        while ($r = mysql_fetch_assoc($result)) {
+            $players[$r['player_id']] = array('name' => $r['name'], 'team_name' => $r['team_name']);
+        }
+    }
+    // Teams
+    $query = "SELECT team_id, name FROM teams ORDER BY name ASC";
+    $result = mysql_query($query);
+    if (is_resource($result) && mysql_num_rows($result) > 0) {
+        while ($r = mysql_fetch_assoc($result)) {
+            $teams[$r['team_id']] = $r['name'];
+        }
+    }
+    //Coaches
+    $query = "SELECT coach_id, name FROM coaches ORDER BY name ASC";
+    $result = mysql_query($query);
+    if (is_resource($result) && mysql_num_rows($result) > 0) {
+        while ($r = mysql_fetch_assoc($result)) {
+            $coaches[$r['coach_id']] = $r['name'];
+        }
+    }
+    
+    ?>
+    <form method="POST">    
+    <table width="100%">
+        <tr>
+            <td><b>Show stats by...</b></td>
+            <td><b>...for games against...</b></td>
+            <td><b>...in</b></td>
+        </tr>
+        <tr>
+            <td>
+                <select name="type_by" onChange="
+                    selConst = Number(this.options[this.selectedIndex].value); 
+                    comparence_disableall('by'); 
+                    switch(selConst) 
+                    {
+                        case <?php echo STATS_PLAYER;?>: document.getElementById('player_by').style.display = 'block'; break;
+                        case <?php echo STATS_TEAM;?>:   document.getElementById('team_by').style.display = 'block'; break;
+                        case <?php echo STATS_COACH;?>:  document.getElementById('coach_by').style.display = 'block'; break;
+                        case <?php echo STATS_RACE;?>:   document.getElementById('race_by').style.display = 'block'; break;
+                    }
+                ">
+                    <?php
+                    foreach (array(STATS_TEAM => 'Team', STATS_PLAYER => 'Player', STATS_COACH => 'Coach', STATS_RACE => 'Race') as $const => $name) {
+                        echo "<option value='$const'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+            </td>
+            <td>
+                <select name="type_ag" onChange="
+                    selConst = Number(this.options[this.selectedIndex].value); 
+                    comparence_disableall('ag'); 
+                    switch(selConst) 
+                    {
+                        case <?php echo STATS_PLAYER;?>: document.getElementById('player_ag').style.display = 'block'; break;
+                        case <?php echo STATS_TEAM;?>:   document.getElementById('team_ag').style.display = 'block'; break;
+                        case <?php echo STATS_COACH;?>:  document.getElementById('coach_ag').style.display = 'block'; break;
+                        case <?php echo STATS_RACE;?>:   document.getElementById('race_ag').style.display = 'block'; break;
+                    }
+                ">
+                    <?php
+                    foreach (array(STATS_TEAM => 'Team', STATS_PLAYER => 'Player', STATS_COACH => 'Coach', STATS_RACE => 'Race') as $const => $name) {
+                        echo "<option value='$const'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+            </td>
+            <td>
+                <select name="type_in" onChange="
+                    selConst = Number(this.options[this.selectedIndex].value); 
+                    comparence_disableall('in'); 
+                    switch(selConst) 
+                    {
+                        case <?php echo STATS_TOUR;?>:      document.getElementById('tour_in').style.display = 'block'; break;
+                        case <?php echo STATS_DIVISION;?>:  document.getElementById('division_in').style.display = 'block'; break;
+                        case <?php echo STATS_LEAGUE;?>:    document.getElementById('league_in').style.display = 'block'; break;
+                    }
+                ">
+                    <?php
+                    foreach (array(STATS_LEAGUE => 'League', STATS_DIVISION => 'Division', STATS_TOUR => 'Tournament') as $const => $name) {
+                        echo "<option value='$const'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select style='display:none;' name="player_by" id="player_by">
+                    <?php
+                    foreach ($players as $id => $arr) {
+                        if (strlen($arr['team_name']) > 20) {$arr['team_name']  = substr($arr['team_name'],0,17).'...'; }
+                        if (strlen($arr['name']) > 20)      {$arr['name']       = substr($arr['name'],0,17).'...';}
+                        echo "<option value='$id'>$arr[team_name]: $arr[name]</option>\n";
+                    }
+                    ?>
+                </select>
+                <select style='display:none;' name="team_by" id="team_by">
+                    <?php
+                    foreach ($teams as $id => $name) {
+                        echo "<option value='$id'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+                <select style='display:none;' name="coach_by" id="coach_by">
+                    <?php
+                    foreach ($coaches as $id => $name) {
+                        echo "<option value='$id'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+                <select style='display:none;' name="race_by" id="race_by">
+                    <?php
+                    foreach ($raceididx as $id => $name) {
+                        echo "<option value='$id'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+            </td>
+            <td>
+                <select style='display:none;' name="player_ag" id="player_ag">
+                    <?php
+                    foreach ($players as $id => $arr) {
+                        if (strlen($arr['team_name']) > 20) {$arr['team_name']  = substr($arr['team_name'],0,17).'...'; }
+                        if (strlen($arr['name']) > 20)      {$arr['name']       = substr($arr['name'],0,17).'...';}
+                        echo "<option value='$id'>$arr[team_name]: $arr[name]</option>\n";
+                    }
+                    ?>
+                </select>
+                <select style='display:none;' name="team_ag" id="team_ag">
+                    <?php
+                    foreach ($teams as $id => $name) {
+                        echo "<option value='$id'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+                <select style='display:none;' name="coach_ag" id="coach_ag">
+                    <?php
+                    foreach ($coaches as $id => $name) {
+                        echo "<option value='$id'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+                <select style='display:none;' name="race_ag" id="race_ag">
+                    <?php
+                    foreach ($raceididx as $id => $name) {
+                        echo "<option value='$id'>$name</option>\n";
+                    }
+                    ?>
+                </select>
+            </td>
+            <td>
+                <select style='display:none;' name="tour_in" id="tour_in">
+                    <?php
+                    foreach (Tour::getTours() as $t) {
+                        echo "<option value='$t->tour_id'>$t->name</option>\n";
+                    }
+                    ?>
+                </select>
+                <select style='display:none;' name="division_in" id="division_in">
+                    <?php
+                    foreach (Division::getDivisions() as $d) {
+                        echo "<option value='$d->did'>$d->name</option>\n";
+                    }
+                    ?>
+                </select>
+                <select style='display:none;' name="league_in" id="league_in">
+                    <?php
+                    echo "<option value='0'>-All-</option>\n";
+                    foreach (League::getLeagues() as $l) {
+                        echo "<option value='$l->lid'>$l->name</option>\n";
+                    }
+                    ?>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" name="submit" value="Show stats">
+    </form>
+    <!-- defaults -->
+    <script language="JavaScript" type="text/javascript">
+        document.getElementById('team_by').style.display = 'block';
+        document.getElementById('team_ag').style.display = 'block';
+        document.getElementById('league_in').style.display = 'block';
+        
+        function comparence_disableall(suffix)
+        {
+            if (suffix == 'in') {
+                document.getElementById('tour_in').style.display = 'none';
+                document.getElementById('division_in').style.display = 'none';
+                document.getElementById('league_in').style.display = 'none';
+            }
+            else {
+                document.getElementById('player_'+suffix).style.display = 'none';
+                document.getElementById('team_'+suffix).style.display = 'none';
+                document.getElementById('coach_'+suffix).style.display = 'none';
+                document.getElementById('race_'+suffix).style.display = 'none';
+            }
+            return true;
+        }
+    </script>
+    
+    <?php
+    
+    if (isset($_POST['submit'])) {
+        echo "<br><hr><br>";
+        
+        switch ($obj = $_POST['type_by'])
+        {
+            case STATS_PLAYER:  $o = new Player($obj_id = $_POST['player_by']); break;
+            case STATS_TEAM:    $o = new Team($obj_id = $_POST['team_by']); break;
+            case STATS_COACH:   $o = new Coach($obj_id = $_POST['coach_by']); break;
+            case STATS_RACE:    $o = new Race($obj_id = $_POST['race_by']); break;
+        }
+        switch ($opp_obj = $_POST['type_ag'])
+        {
+            case STATS_PLAYER:  $opp_o = new Player($opp_obj_id = $_POST['player_ag']); break;
+            case STATS_TEAM:    $opp_o = new Team($opp_obj_id = $_POST['team_ag']); break;
+            case STATS_COACH:   $opp_o = new Coach($opp_obj_id = $_POST['coach_ag']); break;
+            case STATS_RACE:    $opp_o = new Race($opp_obj_id = $_POST['race_ag']); break;
+        }
+        switch ($node = $_POST['type_in'])
+        {
+            case STATS_TOUR:        $node_id = $_POST['tour_in']; break;
+            case STATS_DIVISION:    $node_id = $_POST['division_in']; break;
+            case STATS_LEAGUE:      $node_id = $_POST['league_in']; break;
+            default:                $node_id = false; // All-time.
+        }        
+        
+        echo "Stats for <b>$o->name</b> in matches against <b>$opp_o->name</b><br><br>\n";
+        
+        $matches = Stats::getPlayedMatches( $obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, false, true);
+        $streaks = Stats::getstreaks(       $obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);
+        $mstats  = Stats::getMatchStats(    $obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);
+    
+        /* 
+            Do some printing...
+        */
+        
+        // General stats
+        
+        $fields = array(
+            'won'               => array('desc' => 'W', 'nosort' => true), 
+            'lost'              => array('desc' => 'L', 'nosort' => true), 
+            'draw'              => array('desc' => 'D', 'nosort' => true), 
+            'played'            => array('desc' => 'GP', 'nosort' => true), 
+            'row_won'           => array('desc' => 'SW', 'nosort' => true), 
+            'row_lost'          => array('desc' => 'SL', 'nosort' => true), 
+            'row_draw'          => array('desc' => 'SD', 'nosort' => true), 
+            'win_percentage'    => array('desc' => 'WIN%', 'nosort' => true), 
+            'score_team'        => array('desc' => 'GF', 'nosort' => true),
+            'score_opponent'    => array('desc' => 'GA', 'nosort' => true),
+        );
+        $mstats['row_won'] = $streaks['row_won'];
+        $mstats['row_lost'] = $streaks['row_lost'];
+        $mstats['row_draw'] = $streaks['row_draw'];
+        $objs = array((object) $mstats);
+        sort_table(
+            'Achievements', 
+            "index.php?section=comparence", 
+            $objs, 
+            $fields, 
+            array('+won'), 
+            array(),
+            array('doNr' => false)
+        );
+        echo "<br>";
+        
+        // Games played
+        
+        foreach ($matches as $m) {
+            $m->score = $m->team1_score. ' - ' . $m->team2_score;
+            $m->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+            $m->match = '[view]';
+            $m->result = matchresult_icon($m->result);
+        }
+        $fields = array(
+            'date_played'   => array('desc' => 'Date'),
+            'tour'          => array('desc' => 'Tournament'),
+            'team1_name'    => array('desc' => 'Home'), 
+            'team2_name'    => array('desc' => 'Away'), 
+            'gate'          => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false), 
+            'score'         => array('desc' => 'Score', 'nosort' => true), 
+            'result'        => array('desc' => 'Result', 'nosort' => true),
+            'match'         => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+        );
+        sort_table(
+            'Played games', 
+            "index.php?section=comparence", 
+            $matches, 
+            $fields, 
+            sort_rule('match'), 
+            (isset($_GET['sortrg'])) ? array((($_GET['dirrg'] == 'a') ? '+' : '-') . $_GET['sortrg']) : array(),
+            array('GETsuffix' => 'rg', 'anchor' => 'gp', 'doNr' => false) // rg = recent games.
+        );
+    }
+}
 ?>

@@ -29,8 +29,10 @@ class Race
  ***************/
 
 public $race = '';
+public $name = ''; // = $this->race
 public $race_id = 0;
 
+//---
 public $mvp         = 0;
 public $cp          = 0;
 public $td          = 0;
@@ -47,6 +49,8 @@ public $lost        = 0;
 public $draw        = 0;
 public $win_percentage = 0;
 public $won_tours   = 0;
+//---
+
 public $value       = 0;
 public $teams       = 0;
 
@@ -59,7 +63,7 @@ function __construct($race_id)
     global $raceididx;
     
     $this->race_id = $race_id;
-    $this->race = $raceididx[$this->race_id];
+    $this->race = $this->name = $raceididx[$this->race_id];
 }
 
 public function setStats($setAvgs = false)

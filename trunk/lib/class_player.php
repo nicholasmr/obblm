@@ -242,7 +242,7 @@ class Player
          * Overwrites object properties with stats from the specified tournament.
          **/
         
-        foreach (Stats::getMatchStats(STATS_PLAYER, $this->player_id, STATS_TOUR, $tour_id) as $key => $val) {
+        foreach (Stats::getMatchStats(STATS_PLAYER, $this->player_id, STATS_TOUR, $tour_id, false, false) as $key => $val) {
             $this->$key = $val;
         }
 
@@ -255,7 +255,7 @@ class Player
          * Counts most won, lost and draw matches in a row.
          **/
 
-        foreach (Stats::getStreaks(STATS_PLAYER, $this->player_id, STATS_TOUR, $trid) as $key => $val) {
+        foreach (Stats::getStreaks(STATS_PLAYER, $this->player_id, STATS_TOUR, $trid, false, false) as $key => $val) {
             $this->$key = $val;
         }
 

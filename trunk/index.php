@@ -89,6 +89,7 @@ switch ($_GET['section'])
     case 'about':        sec_about();        break;
     case 'guest':        if($settings['enable_guest_book']){sec_guest(); break;} 
     case 'recent':       sec_recentmatches();break;
+    case 'comparence':   sec_comparence();   break;
     default:             sec_main();
 }
 
