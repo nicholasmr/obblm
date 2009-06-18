@@ -168,7 +168,7 @@ class Match
             tv1 = NULL, tv2 = NULL, 
             income1 = NULL, income2 = NULL,
             ffactor1 = NULL, ffactor2 = NULL, 
-            fans = NULL, gate = NULL, stadium = NULL, submitter_id = NULL, locked = NULL, hash_botocs = NULL
+            fans = NULL, gate = NULL, stadium = NULL, submitter_id = NULL, locked = NULL
             WHERE match_id = $this->match_id";
             
         $status = true;
@@ -314,6 +314,7 @@ class Match
         $cid    = $p->coach_id;
         $did    = get_alt_col('tours', 'tour_id', $this->f_tour_id, 'f_did');
         $lid    = get_alt_col('divisions', 'did', $did, 'f_lid');
+        $rid    = get_alt_col('teams', 'team_id', $tid, 'f_race_id');
     
         $mvp    = $input['mvp']    ? $input['mvp']     : 0;
         $cp     = $input['cp']     ? $input['cp']      : 0;
@@ -454,6 +455,7 @@ class Match
                 f_did,
                 f_lid,
                 f_player_id,
+                f_race_id,
 
                 mvp,
                 cp,
@@ -475,6 +477,7 @@ class Match
                 $did,
                 $lid,
                 $pid,
+                $rid,
 
                 $mvp,
                 $cp,
@@ -489,10 +492,7 @@ class Match
             )";
         }
 
-        if (mysql_query($query))
-            return true;
-        else
-            return false;
+        return mysql_query($query);
     }
     
     public function getSummedAch($s) {

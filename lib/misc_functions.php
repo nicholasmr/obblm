@@ -539,6 +539,7 @@ function make_menu() {
                 }
                 ?>
                 <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
+                <li><a href="index.php?section=comparence"><?php echo 'Comparence';?></a></li>
             </ul>
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/records');?></span>
@@ -650,10 +651,6 @@ function make_standings($grp, $node, $node_id, $opts) {
         (isset($_GET["sort$GET_SS"])) ? array((($_GET["dir$GET_SS"] == 'a') ? '+' : '-') . $_GET["sort$GET_SS"]) : array(),
         $extra
     );
-}
-
-function make_recentgames($grp, $id, $node, $node_id) {
-
 }
 
 ?>

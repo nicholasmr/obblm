@@ -1394,14 +1394,24 @@ function team_roaster($team_id) {
         </script>
         <?php
     }
-    
+//public static function getPlayedMatches($obj, $obj_id, $node, $node_id, $opp_obj = false, $opp_obj_id = false, $n = false, $mkObjs = false)
+#    $matches = Stats::getPlayedMatches(
+#        STATS_TEAM, 
+#        $team->team_id, 
+#        STATS_TOUR,
+#        (($trid && $trid != -1) ? $trid : false),
+#        (($opid && $opid != -1) ? $opid : false),
+#        MAX_RECENT_GAMES, 
+#        true
+#    );
     $matches = Stats::getPlayedMatches(
         STATS_TEAM, 
         $team->team_id, 
         STATS_TOUR,
-        (($trid && $trid != -1) ? $trid : false),
-        (($opid && $opid != -1) ? $opid : false),
-        MAX_RECENT_GAMES, 
+        6,
+        STATS_RACE, 
+        1,
+        false, 
         true
     );
     foreach ($matches as $m) {

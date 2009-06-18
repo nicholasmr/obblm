@@ -136,7 +136,7 @@ class Team
          * Overwrites object's stats fields.
          **/
          
-        foreach (array_merge(Stats::getStats(array('tid' => $this->team_id, 'trid' => $tour_id)), Stats::getMatchStats(STATS_TEAM, $this->team_id, STATS_TOUR, $tour_id)) as $field => $val) {
+        foreach (array_merge(Stats::getStats(array('tid' => $this->team_id, 'trid' => $tour_id)), Stats::getMatchStats(STATS_TEAM, $this->team_id, STATS_TOUR, $tour_id, false, false)) as $field => $val) {
             $this->$field = $val;
         }
 
@@ -177,7 +177,7 @@ class Team
          * Counts most won, lost and draw matches in a row.
          **/
 
-        foreach (Stats::getStreaks(STATS_TEAM, $this->team_id, STATS_TOUR, $trid) as $key => $val) {
+        foreach (Stats::getStreaks(STATS_TEAM, $this->team_id, STATS_TOUR, $trid, false, false) as $key => $val) {
             $this->$key = $val;
         }
 

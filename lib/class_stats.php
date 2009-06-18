@@ -145,10 +145,12 @@ private static function get(array $filter, $grp = false, $n = false, $sortRule =
     return $ret;
 }
 
-public static function getMatchStats($grp, $id, $node = false, $node_id = false)
+public static function getMatchStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
 {
     $s = array(); // Stats array to be returned.
-    list($from,$where,$tid) = Stats::setupQueryComponents($grp, $id, $node, $node_id);
+
+    if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
+    else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
     
     // Match result stats
     $query  = "SELECT 
@@ -165,6 +167,7 @@ public static function getMatchStats($grp, $id, $node = false, $node_id = false)
                     IF(team2_id = $tid, 
                         IF(team2_score < team1_score, 1, 0), 0))
                 ) AS 'lost', 
+                SUM(IF(round = ".RT_FINAL." AND (team1_id = $tid AND team1_score > team2_score OR team2_id = $tid AND team1_score < team2_score), 1, 0)) AS 'won_tours',
                 SUM(IF(team1_id = $tid, ffactor1, IF(team2_id = $tid, ffactor2, 0))) AS 'fan_factor', 
                 SUM(IF(team1_id = $tid, smp1, IF(team2_id = $tid, smp2, 0))) AS 'smp', 
                 SUM(IF(team1_id = $tid, tcas1, IF(team2_id = $tid, tcas2, 0))) AS 'tcas', 
@@ -199,9 +202,9 @@ public static function getMatchStats($grp, $id, $node = false, $node_id = false)
         // Is the ranking system a house ranking system? If not then don't load extra fields since non-house RSs don't use the extra fields at all.
         if (($hrs_nr = $rs_nr - $limit) > 0 && preg_match('/'.implode('|', $fields).'/', $hrs[$hrs_nr]['points'])) {
             $s = array_merge($s, Stats::getStats(array(
-                    'pid' => ($grp == STATS_PLAYER) ? $id : false, 
-                    'tid' => ($grp == STATS_TEAM)   ? $id : false, 
-                    'cid' => ($grp == STATS_COACH)  ? $id : false, 
+                    'pid' => ($obj == STATS_PLAYER) ? $obj_id : false, 
+                    'tid' => ($obj == STATS_TEAM)   ? $obj_id : false, 
+                    'cid' => ($obj == STATS_COACH)  ? $obj_id : false, 
                     'trid' => $node_id,
                 )));
         }
@@ -212,12 +215,12 @@ public static function getMatchStats($grp, $id, $node = false, $node_id = false)
             case '3': $s['points'] = ($s['played'] == 0) ? 0 : $s['won']/$s['played'] + $s['draw']/(2*$s['played']); break;
             case '4':
                 /* 
-                    Although none of the points definitions make sense for other $grp types than = STATS_TEAM, it 
-                    is anyway necessary for this case to only be executed if $grp = team.
+                    Although none of the points definitions make sense for other $obj types than = STATS_TEAM, it 
+                    is anyway necessary for this case to only be executed if $obj = team.
                     
                     pts += Win 10p, Draw 5p, Loss 0p, 1p per TD up to 3p, 1p per (player, not team) CAS up to 3p.
                 */
-                if ($grp == STATS_TEAM) {
+                if ($obj == STATS_TEAM) {
                     $query = "
                         SELECT SUM(td) AS 'td', SUM(cas) AS 'cas' FROM 
                         (
@@ -225,7 +228,7 @@ public static function getMatchStats($grp, $id, $node = false, $node_id = false)
                             f_match_id, 
                             IF(SUM(td) > 3, 3, SUM(td)) AS 'td', 
                             IF(SUM(bh+ki+si) > 3, 3, SUM(bh+ki+si)) AS 'cas'
-                        FROM match_data WHERE f_team_id = $id AND f_tour_id = $node_id GROUP BY f_match_id
+                        FROM match_data WHERE f_team_id = $obj_id AND f_tour_id = $node_id GROUP BY f_match_id
                         ) AS tmpTable
                         ";
                     $result = mysql_query($query);
@@ -254,33 +257,42 @@ public static function getMatchStats($grp, $id, $node = false, $node_id = false)
     return $s;
 }
 
-public static function getPlayedMatches($grp, $id, $node = false, $node_id = false, $op_tid = false, $n = false, $mkObjs = false)
+//public static function getPlayedMatches($obj, $obj_id, $node = false, $node_id = false, $op_tid = false, $n = false, $mkObjs = false)
+public static function getPlayedMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $n = false, $mkObjs = false)
 {
     $matches = array(); // Return structure.
-    list($from,$where,$tid) = Stats::setupQueryComponents($grp, $id, $node, $node_id);
-    if ($op_tid) {
-        $where[] = "(team1_id = $op_tid OR team2_id = $op_tid)";
-    }
+    
+    if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
+    else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
+
     $query = "
-        SELECT DISTINCT(match_id) AS 'match_id' 
+        SELECT 
+            DISTINCT(match_id) AS 'match_id', 
+            IF((team1_id = $tid AND team1_score > team2_score) OR (team2_id = $tid AND team1_score < team2_score), 'W', IF(team1_score = team2_score, 'D', 'L')) AS 'result' 
         FROM ".implode(', ', $from)." 
         WHERE 
                 date_played IS NOT NULL 
             AND match_id > 0 
-            AND (team1_id = $tid OR team2_id = $tid)
             AND ".implode(' AND ', $where)." 
         ORDER BY date_played DESC ".(($n) ? " LIMIT $n" : '');
     $result = mysql_query($query);
     if (is_resource($result) && mysql_num_rows($result) > 0) {
         while ($r = mysql_fetch_assoc($result)) {
-            $matches[] = ($mkObjs) ? new Match($r['match_id']) : $r['match_id'];
+            if ($mkObjs) {
+                $m = new Match($r['match_id']);
+                $m->result = $r['result'];
+                $matches[] = $m;
+            }
+            else {
+                $matches[] = $r['match_id'];
+            }
         }
     }
-    
+
     return $matches;
 }
 
-public static function getStreaks($grp, $id, $node = false, $node_id = false)
+public static function getStreaks($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
 {
     /**
      * Counts most won, lost and draw matches (streaks) in a row.
@@ -288,7 +300,8 @@ public static function getStreaks($grp, $id, $node = false, $node_id = false)
      * http://www.sqlteam.com/article/detecting-runs-or-streaks-in-your-data
      **/
     
-    list($from,$where,$tid) = Stats::setupQueryComponents($grp, $id, $node, $node_id);
+    if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
+    else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
     
     // Sample table.
     $GD1 = "(
@@ -298,9 +311,7 @@ public static function getStreaks($grp, $id, $node = false, $node_id = false)
             FROM 
                 ".implode(', ', $from)." 
             WHERE 
-                    date_played IS NOT NULL 
-                AND (team1_id = $tid OR team2_id = $tid) 
-                AND ".implode(' AND ', $where)." 
+                    date_played IS NOT NULL AND ".implode(' AND ', $where)." 
             ORDER BY 
                 date_played
         )";
@@ -329,7 +340,7 @@ public static function getStreaks($grp, $id, $node = false, $node_id = false)
             GROUP BY result, RunGroup
             ORDER BY date_played
         ) AS RG";
-    
+// DEV NOTE: MySQL neasting limit reached with this addition:    
 #    $query = "SELECT 
 #            (SELECT MAX(games) FROM $accum_rg WHERE result = 'W') AS 'W', 
 #            (SELECT MAX(games) FROM $accum_rg WHERE result = 'L') AS 'L', 
@@ -353,8 +364,23 @@ public static function getStreaks($grp, $id, $node = false, $node_id = false)
     );
 }
 
-private static function setupQueryComponents($grp, $id, $node, $node_id)
+/***************
+ *   Below are query builder helper functions.
+ ***************/
+private static function buildQueryComponents($obj, $obj_id, $node, $node_id, $TTS = '') # TTS = Teams Table Suffix
 {
+    /*
+        Builds query components allowing you to address specific groups of matches in the "matches" table.
+        For example if wanted matches by team_id = 5 then set $obj = STATS_TEAM and $obj_id = 5, 
+            if further matches only from a specific node type are wanted, say division_id = 7, then set $node = STATS_DIVISION with $node_id = 7.
+
+        
+        $TTS (teams table suffix):
+        Because this function can be used to compile two query sets via buildCrossRefQueryComponents() and joined we need to be able to 
+            differentiate between two different "teams" tables, for example, which we can do by allowing custom suffixes for all tables.
+        The name "TEAMS table suffix" is a little misleading - just forget it says "teams", it's for all tables, not just "teams" tables.
+    */
+    
     $from = array('matches','tours','divisions'); // We don't need to add the "leagues" table, since league IDs can be referenced via the "f_lid" key in the divisions table.
     $where = array("matches.f_tour_id = tours.tour_id", "tours.f_did = divisions.did");
     if ($node && $node_id) {
@@ -366,37 +392,59 @@ private static function setupQueryComponents($grp, $id, $node, $node_id)
         }
     }
 
-    switch ($grp)
+    switch ($obj)
     {
         case STATS_PLAYER:  
-            $from[]     = 'teams,players';
-            $where[]    = "player_id = $id AND owned_by_team_id = team_id AND (team1_id = team_id OR team2_id = team_id)";
-            $tid        = 'team_id';
+            array_push($from, "teams AS teams$TTS", "players AS players$TTS"); # Also use $TTS for players table: If not included calling buildCrossRefQueryComponents() will accidentally create two tables with identical names (if comparing two players).
+            $tid = "teams$TTS.team_id";
+            array_push($where, "players$TTS.player_id = $obj_id", "players$TTS.owned_by_team_id = $tid");
+            
             // We must add the below, else above is equivalent to the player's team match stats. Ie. matches this player did not compete in will be counted as played!
-            $from[]     = "(SELECT DISTINCT(f_match_id) AS 'p_mid' FROM match_data WHERE f_player_id = $id) AS pmatches";
-            $where[]    = 'match_id = pmatches.p_mid';
+            $from[]    = "(SELECT DISTINCT(f_match_id) AS 'p_mid' FROM match_data WHERE f_player_id = $obj_id) AS pmatches$TTS"; # Also use $TTL here, same reason as above for players table.
+            $where[]   = "match_id = pmatches$TTS.p_mid";
             break;
             
-        case STATS_TEAM:    
-//            $from[]     = ''; 
-//            $where[]    = '';
-            $tid    = $id;
+        case STATS_TEAM:
+//            array_push($from, "");
+            $tid = $obj_id;
+//            array_push($where, "");
             break;
             
         case STATS_RACE:
-            $from[]     = 'teams'; 
-            $where[]    = "f_race_id = $id";
-            $tid        = 'team_id';
+            array_push($from, "teams AS teams$TTS");
+            $tid = "teams$TTS.team_id";
+            array_push($where, "teams$TTS.f_race_id = $obj_id");
             break;
             
         case STATS_COACH:  
-            $from[]     = 'teams,coaches'; 
-            $where[]    = "coach_id = $id AND owned_by_coach_id = coach_id AND (team1_id = team_id OR team2_id = team_id)";
-            $tid        = 'team_id';
+            array_push($from, "teams AS teams$TTS");
+            $tid = "teams$TTS.team_id";
+            array_push($where, "teams$TTS.owned_by_coach_id = $obj_id");
             break;
     }
+    
+    $where[] = "(team1_id = $tid OR team2_id = $tid)";
 
     return array($from,$where,$tid);
+}
+
+private static function buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
+{
+    /*
+        Like buildQueryComponents() but allows further filtering by selected only those matches which 
+            has a specific opponent of STATS_* type = $opp_obj with ID = $opp_obj_id.
+    */
+
+    // As ordinarally done, when not cross referencing:
+    list($from,$where,$tid) = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);
+    
+    // Now filter matches only showing those against a specific opponent:
+    list($from_opp,$where_opp,$tid_opp) = Stats::buildQueryComponents($opp_obj, $opp_obj_id, $node, $node_id, '2');
+    $where[] = "(team1_id = $tid_opp OR team2_id = $tid_opp)";
+    $from = array_merge($from, array_values(array_diff($from_opp, $from)));
+    $where = array_merge($where, array_values(array_diff($where_opp, $where)));
+
+    return array($from,$where,$tid,$tid_opp);
 }
 
 /***************
