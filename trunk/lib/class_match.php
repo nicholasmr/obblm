@@ -651,6 +651,7 @@ class Match
         $pid    = $p->player_id;
         $tid    = $p->owned_by_team_id;
         $cid    = $p->coach_id;
+        $rid    = get_alt_col('teams', 'team_id', $tid, 'f_race_id');
     
         $mvp    = $input['mvp']    ? $input['mvp']     : 0;
         $cp     = $input['cp']     ? $input['cp']      : 0;
@@ -672,6 +673,7 @@ class Match
             f_did,
             f_lid,
             f_player_id,
+            f_race_id,
 
             mvp,
             cp,
@@ -693,6 +695,7 @@ class Match
             0,
             0,
             $pid,
+            $rid,
 
             $mvp,
             $cp,

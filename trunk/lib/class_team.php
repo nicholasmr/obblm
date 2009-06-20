@@ -223,6 +223,11 @@ class Team
         ";
         
         // For each player_id on this team, this tables contains the current player injury (sustained in the most recent match played by player).
+        /* 
+            Note: Why "GROUP BY"? Because imported players with multiple injs take up +1 match_data rows thus 
+                making it falsly look like the one player is acutally X (the number of rows) players.
+                The effect is that team value contribution form that player will be X times the single player value instead of 1 times the value, as it should be.
+        */
         $currentInj = "
             (
                 SELECT 
@@ -237,6 +242,8 @@ class Team
                     AND match_data.f_player_id  = latestMatchDate.pid
                     AND matches.date_played     = latestMatchDate.date
                     AND f_team_id               = $this->team_id 
+                GROUP BY
+                    match_data.f_player_id
             ) AS currentInj
         ";
         
