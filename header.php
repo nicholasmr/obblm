@@ -268,6 +268,7 @@ require_once('lang/class_translations.php'); // Juergen Unfried
 require_once('lib/class_rss.php'); // Juergen Unfried
 
 // HTML interface routines.
+require_once('lib/class_htmlout.php');
 require_once('sections.php'); // Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('matches.php');
 require_once('teams.php');
