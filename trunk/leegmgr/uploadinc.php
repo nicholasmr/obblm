@@ -82,6 +82,8 @@ function uploadpage () {
 			zip_close($zip);
 
 			if ( isset($xmlresults) ) {
+				Print "<br>Validating the XML.<br>";
+				if ( !valXML($xmlresults) ) exit(-1);
 				Print "<br>Parsing the XML.<br>";
 				parse_results($xmlresults);
 			}
@@ -116,7 +118,7 @@ function parse_results($xmlresults) {
 	foreach ( $results->team[0]->players->player as $player )
 	{
 
-		$homeplayers[intval($player->attributes()->number)]['nr'] = intval($player->attributes()->number);
+		$homeplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
 		$homeplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
 		$homeplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
 		$homeplayers[intval($player->attributes()->number)]['td'] = $player->touchdown;
@@ -136,7 +138,7 @@ function parse_results($xmlresults) {
 	foreach ( $results->team[1]->players->player as $player )
 	{
 
-		$awayplayers[intval($player->attributes()->number)]['nr'] = intval($player->attributes()->number);
+		$awayplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
 		$awayplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
 		$awayplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
 		$awayplayers[intval($player->attributes()->number)]['td'] = $player->touchdown;
@@ -295,7 +297,9 @@ function checkCoach ( $team ) {
 
 	if ( !isset( $_SESSION['coach_id'] ) ) return false;
 
-	if ( !mysql_fetch_array( mysql_query( "SELECT `owned_by_coach_id` FROM `teams` WHERE `owned_by_coach_id` = ".$_SESSION['coach_id']." and `name` = \"".$team."\"" ) ) )
+	$query = sprintf("SELECT owned_by_coach_id FROM teams WHERE owned_by_coach_id = '%s' and name = '%s' ", mysql_real_escape_string($_SESSION['coach_id']), mysql_real_escape_string($team) );
+	#if ( !mysql_fetch_array( mysql_query( "SELECT `owned_by_coach_id` FROM `teams` WHERE `owned_by_coach_id` = ".$_SESSION['coach_id']." and `name` = \"".$team."\"" ) ) )
+	if ( !mysql_fetch_array( mysql_query( $query ) ) )
 	{
 		return false;
 	}
@@ -306,7 +310,8 @@ function checkCoach ( $team ) {
 
 function checkHash ( $hash ) {
 
-	$query = "SELECT hash_botocs FROM matches WHERE hash_botocs = \"".$hash."\"";
+	########$query = "SELECT hash_botocs FROM matches WHERE hash_botocs = \"".$hash."\"";
+	$query = sprintf("SELECT hash_botocs FROM matches WHERE hash_botocs = '%s' ", mysql_real_escape_string($hash) );
 	$hashresults = mysql_query($query);
 	$hashresults = mysql_fetch_array($hashresults);
 	$hashresults = $hashresults['hash_botocs'];
@@ -323,7 +328,8 @@ function checkHash ( $hash ) {
 
 function checkTeam ( $teamname ) {
 
-	$query = "SELECT team_id FROM teams WHERE name = \"".$teamname."\"";
+	########$query = "SELECT team_id FROM teams WHERE name = \"".$teamname."\"";
+	$query = sprintf("SELECT team_id FROM teams WHERE name = '%s' ", mysql_real_escape_string($teamname) );
 	$team_id = mysql_query($query);
 	if (!$team_id) {
 		return false;
@@ -420,6 +426,70 @@ function XOREncrypt($InputString, $KeyPhrase){
 	$InputString = XOREncryption($InputString, $KeyPhrase);
 	$InputString = base64_encode($InputString);
 	return $InputString;
+}
+
+#function checkInt($integer){
+#
+#	$integer = intval( $integer );
+#
+#	if ( !is_numeric( $integer ) ) $integer = 0;
+#
+#	return $integer;
+#
+#}
+function libxml_display_error($error)
+{
+    $return = "<br/>\n";
+    switch ($error->level) {
+        case LIBXML_ERR_WARNING:
+            $return .= "<b>Warning $error->code</b>: ";
+            break;
+        case LIBXML_ERR_ERROR:
+            $return .= "<b>Error $error->code</b>: ";
+            break;
+        case LIBXML_ERR_FATAL:
+            $return .= "<b>Fatal Error $error->code</b>: ";
+            break;
+    }
+    $return .= trim($error->message);
+    if ($error->file) {
+        $return .=    " in <b>$error->file</b>";
+    }
+    $return .= " on line <b>$error->line</b>\n";
+
+    return $return;
+}
+
+function libxml_display_errors() {
+    $errors = libxml_get_errors();
+    foreach ($errors as $error) {
+        print libxml_display_error($error);
+    }
+    libxml_clear_errors();
+}
+
+// Enable user error handling
+libxml_use_internal_errors(true);
+
+function valXML($xmlresults) {
+
+	$tmpfname = tempnam("/tmp", "XML");
+
+	$handle = fopen($tmpfname, "w");
+	fwrite($handle, $xmlresults);
+	fclose($handle);
+
+	$xml = new DOMDocument();
+	$xml->load($tmpfname); 
+
+	if (!$xml->schemaValidate('leegmgr/botocsreport.xsd')) {
+		unlink($tmpfname);
+		print '<b>DOMDocument::schemaValidate() Generated Errors!</b>';
+		libxml_display_errors();
+		return false;
+	}
+
+	return true;
 }
 
 ?>
