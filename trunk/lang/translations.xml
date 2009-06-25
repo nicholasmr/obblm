@@ -72,8 +72,8 @@
             <alltime>All-time</alltime>
             <all>All</all>
             <specific>Specific</specific>
-            <pms>Set per match stats</pms>
-            <oas>Set over all stats</oas>
+            <pms>Display match average stats</pms>
+            <oas>Display all-time stats </oas>
             <gamewon>Won</gamewon>
             <gamelost>Lost</gamelost>
             <gamedraw>Draw</gamedraw>
@@ -275,8 +275,6 @@
                 <showmatches>Show matches</showmatches>
                 <all>All</all>
             
-            <tourranks>Tournament rankings</tourranks>
-
             <!-- For the three team page boxes -->
             
             <desc>Description</desc>

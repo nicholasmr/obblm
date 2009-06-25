@@ -29,30 +29,8 @@ class Race
  ***************/
 
 public $race = '';
-public $name = ''; // = $this->race
+public $name = ''; // = $this->race, used for conventional reasons.
 public $race_id = 0;
-
-//---
-public $mvp         = 0;
-public $cp          = 0;
-public $td          = 0;
-public $intcpt      = 0;
-public $bh          = 0;
-public $si          = 0;
-public $ki          = 0;
-public $cas         = 0; // Sum of bh+ki+si.
-public $tdcas       = 0; // Is td+cas.
-
-public $played      = 0;
-public $won         = 0;
-public $lost        = 0;
-public $draw        = 0;
-public $win_percentage = 0;
-public $won_tours   = 0;
-//---
-
-public $value       = 0;
-public $teams       = 0;
 
 /***************
  * Methods 
@@ -64,50 +42,15 @@ function __construct($race_id)
     
     $this->race_id = $race_id;
     $this->race = $this->name = $raceididx[$this->race_id];
+    $this->setStats(false,false,false);
 }
 
-public function setStats($setAvgs = false)
+public function setStats($node, $node_id, $set_avg = false)
 {
-    foreach ($this->getStats($setAvgs) as $field => $val) {
-        $this->$field = $val;
+    foreach (Stats::getAllStats(STATS_RACE, $this->race_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
+        $this->$key = $val;
     }
-    
     return true;
-}
-
-private function getStats($setAvgs = false)
-{
-    /**
-     * Returns an array of race stats by looking at teams' (from that race) stats in MySQL.
-     **/        
-/*
-    DEV NOTE: convert to Stats::getStats() and Stats::getMatchStats()
-*/
-    // Initialize         
-    $d = array();
-    $teams = $this->getTeams();
-    $stats = array('won_tours', 'won', 'lost', 'draw', 'played', 'td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'value');
-    $avg_calc = array_slice($stats, 5);
-    
-    foreach ($stats as $s) $d[$s] = 0;
-         
-    // Fill variables.
-    foreach ($teams as $t) {
-        $t->setExtraStats();
-        foreach ($stats as $s) {
-            $d[$s] += $t->$s;
-        }
-    }
-         
-    $c = $d['teams'] = count($teams);
-    foreach ($avg_calc as $s) {
-        $d[$s] = ($c == 0) ? 0 : $d[$s]/$c;
-    }
-        
-    //$d['race'] = $this->race;
-    $d['win_percentage'] = ($d['played'] == 0) ? 0 : $d['won']/$d['played'] * 100;
-        
-    return $d;
 }
 
 public function getRoster()

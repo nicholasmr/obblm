@@ -576,16 +576,23 @@ class Match
      * Statics
      ***************/
      
-    public static function getMatches($n = false, $trid = false) {
+    public static function getMatches($n = false, $node = false, $node_id = false) {
     
         /**
          * Returns an array of match objects for the latest $n matches, or all if $n = false.
          **/
          
         $m = array();
-         
-        $query = "SELECT match_id FROM matches 
-            WHERE date_played IS NOT NULL AND match_id > 0 ".(($trid) ? " AND f_tour_id = $trid " : '')."
+        switch ($node) 
+        {
+            case STATS_TOUR:     $where = "f_tour_id = $node_id"; break;
+            case STATS_DIVISION: $where = "f_did = $node_id"; break;
+            case STATS_LEAGUE:   $where = "f_lid = $node_id"; break;
+            default: $where = false;
+        }
+        $query = "SELECT match_id FROM matches, tours, divisions 
+            WHERE date_played IS NOT NULL AND match_id > 0 AND f_tour_id = tour_id AND f_did = did
+            ".(($where) ? " AND $where " : '')."
             ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
         $result = mysql_query($query);
         

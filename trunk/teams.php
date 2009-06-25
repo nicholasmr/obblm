@@ -138,8 +138,6 @@ function team_roaster($team_id) {
     
     // Lets prepare the players for the roster.
     $team = new Team($team_id); # Update team object in case of changes to team were made.
-    $team->setExtraStats();
-    $team->setStreaks(false);
     $players_org = $team->getPlayers(); 
     // Make two copies: We will be overwriting $players later when the roster has been printed, so that the team actions boxes have the correct untempered player data to work with.
     $players = array();
@@ -1347,140 +1345,8 @@ function team_roaster($team_id) {
 
   
     title("<a name='gp'>".$lng->getTrn('secs/teams/gamesplayed')."</a>");
+    HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => "index.php?section=coachcorner&amp;team_id=$team->team_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
     
-    if (isset($_POST['opid']) || isset($_POST['trid'])) {
-        $_SESSION['opid'] = (int) $_POST['opid'];
-        $_SESSION['trid'] = (int) $_POST['trid'];
-    }
-    $trid = isset($_SESSION['trid']) ? $_SESSION['trid'] : false;
-    $opid = isset($_SESSION['opid']) ? $_SESSION['opid'] : false;
-    
-    ?>
-    <form method="POST">
-        <b><?php echo $lng->getTrn('secs/teams/showagainst');?></b>
-        <select name="opid">
-            <option value='-1'><?php echo $lng->getTrn('secs/teams/all');?></option>
-            <?php
-            $teams = Team::getTeams();
-            objsort($teams, array('+name'));
-            foreach ($teams as $t) {
-                if ($t->team_id == $team->team_id)
-                    continue;
-                    
-                echo "<option value='$t->team_id' ".(($opid && $t->team_id == $opid) ? ' SELECTED ' : '').">$t->name</option>\n";
-            }
-            ?>
-        </select>
-        &nbsp;&nbsp;<b><?php echo $lng->getTrn('secs/teams/fromtour');?></b>
-        <select name="trid">
-            <option value='-1'><?php echo $lng->getTrn('secs/teams/all');?></option>
-            <?php
-            foreach (Tour::getTours() as $tr) {
-                echo "<option value='$tr->tour_id' ".(($trid && $tr->tour_id == $trid) ? ' SELECTED ' : '').">$tr->name</option>\n";
-            }
-            ?>        
-        </select>
-        <input type="hidden" name="gamesSort" value="1">
-        &nbsp;&nbsp;&nbsp;
-        <input type="submit" value="<?php echo $lng->getTrn('secs/teams/showmatches');?>">
-        <br><br>
-    </form>
-    <?php
-    
-    if (isset($_POST['gamesSort'])) {
-        ?>
-        <script language="JavaScript" type="text/javascript">
-            window.location = "#gp";
-        </script>
-        <?php
-    }
-//public static function getPlayedMatches($obj, $obj_id, $node, $node_id, $opp_obj = false, $opp_obj_id = false, $n = false, $mkObjs = false)
-#    $matches = Stats::getPlayedMatches(
-#        STATS_TEAM, 
-#        $team->team_id, 
-#        STATS_TOUR,
-#        (($trid && $trid != -1) ? $trid : false),
-#        (($opid && $opid != -1) ? $opid : false),
-#        MAX_RECENT_GAMES, 
-#        true
-#    );
-    $matches = Stats::getPlayedMatches(
-        STATS_TEAM, 
-        $team->team_id, 
-        STATS_TOUR,
-        6,
-        STATS_RACE, 
-        1,
-        false, 
-        true
-    );
-    foreach ($matches as $m) {
-        $me = ($team->team_id == $m->team1_id) ? 1 : 2;
-        $op = ($me == 1) ? 2 : 1;
-        $m->opponent = $m->{"team${op}_name"};
-        $m->stadium = get_alt_col('teams', 'team_id', $m->stadium, 'name');
-        $m->score = $m->team1_score. ' - ' . $m->team2_score;
-        $m->result = matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $team->team_id) ? 'W' : 'L')));
-        $m->match = '[view]';
-        $m->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
-    }
-    
-    $fields = array(
-        'date_played' => array('desc' => 'Date'),
-        'tour'     => array('desc' => 'Tournament'),
-        'opponent' => array('desc' => 'Opponent'), 
-        'stadium'  => array('desc' => 'Stadium'), 
-        'gate'     => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false), 
-        'score'    => array('desc' => 'Score', 'nosort' => true), 
-        'result'   => array('desc' => 'Result', 'nosort' => true), 
-        'match'    => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
-    );
-    
-    sort_table(
-        $lng->getTrn('secs/teams/gamesplayed'), 
-        "index.php?section=coachcorner&amp;team_id=$team->team_id", 
-        $matches, 
-        $fields, 
-        sort_rule('match'), 
-        (isset($_GET['sortrg'])) ? array((($_GET['dirrg'] == 'a') ? '+' : '-') . $_GET['sortrg']) : array(),
-        array('GETsuffix' => 'rg', 'anchor' => 'gp', 'doNr' => false) // recent games.
-    );
-    
-    title("<a name='tr'>".$lng->getTrn('secs/teams/tourranks')."</a>");
-
-    $tours = $team->getTourRankings();
-    foreach ($tours as $t) {
-        $ELORanks = ELO::getRanks($t->tour_id);
-        $t->elo = $ELORanks[$team->team_id];
-        
-        $t->stnLink = '[View]';
-        $t->finished = ($t->is_finished) ? 'Y' : 'N';
-        if ($t->winner)
-            $t->winner = get_alt_col('teams', 'team_id', $t->winner, 'name');        
-        else
-            $t->winner = '?';
-    }
-
-    $fields = array(
-        'name'          => array('desc' => 'Tournament'),
-        'date_created'  => array('desc' => 'Date started'),
-        'finished'      => array('desc' => 'Finished (Y/N)?', 'nosort' => true),
-        'teamRank'      => array('desc' => 'Rank/placement'), 
-        'elo'           => array('desc' => 'ELO'), 
-        'winner'        => array('desc' => 'Winner'), 
-        'stnLink'       => array('desc' => 'Standings', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'tour_id', 'value' => 'tour_id'), 'nosort' => true), 
-    );
-    
-    sort_table(
-        $lng->getTrn('secs/teams/tourranks'), 
-        "index.php?section=coachcorner&amp;team_id=$team->team_id", 
-        $tours, 
-        $fields, 
-        array('-date_created'), 
-        (isset($_GET['sorttr'])) ? array((($_GET['dirtr'] == 'a') ? '+' : '-') . $_GET['sorttr']) : array(),
-        array('GETsuffix' => 'tr', 'anchor' => 'tr', 'doNr' => false)
-    );
-
     // If an team action was chosen, jump to actions HTML anchor.
     if ($JMP_ANC) {
         ?>
@@ -1504,8 +1370,6 @@ function player_roaster($player_id) {
     $team = new Team(get_alt_col('players', 'player_id', $player_id, 'owned_by_team_id'));
     $coach = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
     $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$team->is_retired);
-    $p->setExtraStats(false);
-    $p->setStreaks(false);
     $p->skills = $p->getSkillsStr(true);
     $p->injs = $p->getInjsStr(true);
 
@@ -1820,33 +1684,9 @@ function player_roaster($player_id) {
         <div class="pboxLong">
             <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('played'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/playedmatches');?></div>
             <div class="boxBody" id="played">
-                <table class="pbox">
-                    <tr>
-                        <td><b>Date played</b></td>
-                        <td><b>Tournament</b></td>
-                        <td><b>Opponent</b></td>
-                        <td><b>Score</b></td>
-                        <td><b>Result</b></td>                        
-                        <td><b>Match</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan="6"><hr></td>
-                    </tr>
-                    <?php
-                    foreach (Stats::getPlayedMatches(STATS_PLAYER, $p->player_id, false, false, false, MAX_RECENT_GAMES, true) as $m) {
-                        ?>
-                        <tr>
-                            <td><?php echo $m->date_played; ?></td>
-                            <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
-                            <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
-                            <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                            <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
-                            <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
-                        </tr>
-                        <?php
-                    }
-                    ?>
-                </table>
+                <?php
+                HTMLOUT::recentGames(STATS_PLAYER, $p->player_id, false, false, false, false, array('n' => MAX_RECENT_GAMES, 'url' => "index.php?section=coachcorner&player_id=$p->player_id"));
+                ?>
             </div>
         </div>
     </div>
