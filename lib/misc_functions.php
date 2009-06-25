@@ -77,7 +77,7 @@ function sort_rule($w) {
             break;
             
         case 'race': // "All races"-table
-            $rule = array('-win_percentage', '-teams', '+race');
+            $rule = array('-win_percentage', '+race');
             break;
             
         case 'match': // Games played tables.
@@ -222,6 +222,10 @@ function sort_table($title, $lnk, array $objs, array $fields, array $std_sort, $
                 'fieldVal'  => field value,
                 'noDashFields' => array('field 1', 'field 2') // ...unless the field name is one of those specified in the array 'noDashFields'.
             );
+            remove => array(
+                'condField' => field name,  // When an object has this field's (condField) = fieldVal, then the entry/row is not printed in the html table.
+                'fieldVal'  => field value,            
+            );
             GETsuffix => suffix to paste into "dir" and "sort" GET strings.
             
             color => true/false. Boolean telling wheter or not we should look into each object for the field "HTMLfcolor" and "HTMLbcolor", and use these color codes to color the obj's row. Note: the object must contain the two previously stated fields, or else black-on-white is used as default.
@@ -233,6 +237,9 @@ function sort_table($title, $lnk, array $objs, array $fields, array $std_sort, $
     */
     global $settings;
     
+    if (array_key_exists('remove', $extra)) {
+        $objs = array_filter($objs, create_function('$obj', 'return ($obj->'.$extra['remove']['condField'].' != '.$extra['remove']['fieldVal'].');'));
+    }
     $MASTER_SORT = array_merge($sort, $std_sort);
     objsort($objs, $MASTER_SORT);
     $no_print_fields = array();
@@ -564,93 +571,6 @@ function make_menu() {
         ?>
     </ul>
     <?php
-}
-
-function make_standings($grp, $node, $node_id, $opts) {
-
-    /*
-        Makes various kinds of standings tables.
-    
-        $grp and $node types are STATS_* types.
-    */
-
-    // Options.
-    list($url, $GET_SS) = $opts;
-    $extra = array();
-    
-    if (!$GET_SS) {$GET_SS = '';}
-    else {$extra['GETsuffix'] = $GET_SS;}
-    
-    // Objects to sort.
-    $objs = array();
-    // Common $grp type fields we want to print.
-    $fields = array(
-        'won'               => array('desc' => 'W'), 
-        'lost'              => array('desc' => 'L'), 
-        'draw'              => array('desc' => 'D'), 
-        'played'            => array('desc' => 'GP'), 
-        'win_percentage'    => array('desc' => 'WIN%'), 
-        'row_won'           => array('desc' => 'SW'), 
-        'row_lost'          => array('desc' => 'SL'), 
-        'row_draw'          => array('desc' => 'SD'), 
-        'score_team'        => array('desc' => 'GF'),
-        'score_opponent'    => array('desc' => 'GA'),
-        'won_tours'         => array('desc' => 'WT'), 
-        'td'                => array('desc' => 'Td'), 
-        'cp'                => array('desc' => 'Cp'), 
-        'intcpt'            => array('desc' => 'Int'), 
-        'cas'               => array('desc' => 'Cas'), 
-        'bh'                => array('desc' => 'BH'), 
-        'si'                => array('desc' => 'Si'), 
-        'ki'                => array('desc' => 'Ki'), 
-    );
-    
-    switch ($grp)
-    {
-        case STATS_PLAYER:
-            
-            break;
-            
-        case STATS_TEAM:
-        
-            break;
-            
-        case STATS_RACE:
-            array_merge(array(
-                'race'  => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race_id')), 
-                'teams' => array('desc' => 'Teams'),
-            ), $fields);
-            $extra['dashed'] = array('condField' => 'teams', 'fieldVal' => 0, 'noDashFields' => array('race'));
-            
-            $objs = Race::getRaces(true);
-            foreach ($objs as $o) {
-                $o->setStats(true);
-            }
-            
-            break;
-            
-        case STATS_COACH:
-            array_merge(array(
-                'name'      => array('desc' => 'Coach', 'href' => array('link' => '???????????', 'field' => 'coach_id', 'value' => 'coach_id')),
-                'teams_cnt' => array('desc' => 'Teams'), 
-            ), $fields);        
-            foreach ($c->teams as $t) {
-                $t->setExtraStats();
-                $t->setStreaks(false);
-            }
-            break;
-    }
-
-
-    sort_table(
-        'TITLE !!!!!!!!!!!', 
-        'index.php?section=races', 
-        $races, 
-        $fields, 
-        sort_rule('race'), 
-        (isset($_GET["sort$GET_SS"])) ? array((($_GET["dir$GET_SS"] == 'a') ? '+' : '-') . $_GET["sort$GET_SS"]) : array(),
-        $extra
-    );
 }
 
 ?>

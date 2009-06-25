@@ -46,32 +46,6 @@ class Player
     public $extra_spp = 0;
     public $extra_val = 0;
 
-    // General (total) calcualted fields
-    public $mvp         = 0;
-    public $cp          = 0;
-    public $td          = 0;
-    public $intcpt      = 0;
-    public $bh          = 0;
-    public $si          = 0;
-    public $ki          = 0;
-    public $cas         = 0; // bh+ki+si
-    public $tdcas       = 0; // Is td+cas. Used by some ranking systems. 
-    public $spp         = 0;
-    //-------------------
-    public $played      = 0;
-    public $won         = 0;
-    public $lost        = 0;
-    public $draw        = 0;
-    public $win_percentage = 0;
-#    public $score_team  = 0;    // Total score made by this team.
-#    public $score_opponent = 0; // Total score made against this team.
-#    public $score_diff  = 0;    // score_team - score_opponent
-#    public $fan_factor  = 0;
-#    public $points      = 0; // Total team points, if points ranking system is used.
-#    public $smp         = 0; // Sportsmanship points.
-#    public $tcas        = 0; // Team cas.
-    //-------------------  
-
     // Characteristics
     public $ma = 0;
     public $ag = 0;
@@ -110,11 +84,6 @@ class Player
     public $coach_id = 0;
 
     // Non-constructor filled fields.
-
-        // By setStreaks().
-        public $row_won  = 0; // Won in row.
-        public $row_lost = 0;
-        public $row_draw = 0;
 
         // By getDateDied().
         public $date_died = '';
@@ -170,7 +139,7 @@ class Player
             $this->is_unbuyable = true;
             
         // Set general stats.
-        $this->setStats(false);
+        $this->setStats(false,false,false);
         $this->spp += $this->extra_spp;
 
         // Injuries
@@ -223,45 +192,14 @@ class Player
         if ($this->is_journeyman)   {$this->position .= ' [J]';}
     }
     
-    public function setStats($tour_id = false) {
-        
-        /**
-         * Overwrites object's stats fields.
-         **/
-        
-        foreach (Stats::getStats(array('pid' => $this->player_id, 'trid' => $tour_id)) as $key => $val) {
+    public function setStats($node, $node_id, $set_avg = false)
+    {
+        foreach (Stats::getAllStats(STATS_PLAYER, $this->player_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
             $this->$key = $val;
         }
-
         return true;
     }
     
-    public function setExtraStats($tour_id = false) {
-        
-        /**
-         * Overwrites object properties with stats from the specified tournament.
-         **/
-        
-        foreach (Stats::getMatchStats(STATS_PLAYER, $this->player_id, STATS_TOUR, $tour_id, false, false) as $key => $val) {
-            $this->$key = $val;
-        }
-
-        return true;
-    }
-
-    public function setStreaks($trid = false) {
-
-        /**
-         * Counts most won, lost and draw matches in a row.
-         **/
-
-        foreach (Stats::getStreaks(STATS_PLAYER, $this->player_id, STATS_TOUR, $trid, false, false) as $key => $val) {
-            $this->$key = $val;
-        }
-
-        return true;
-    }
-
     public function setChoosableSkills() {
 
         global $DEA;

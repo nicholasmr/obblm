@@ -58,42 +58,8 @@ class Team
     public $elo_0  = 0;
     public $tcas_0 = 0;
     
-    // General (total) calcualted fields
-    public $mvp         = 0;
-    public $cp          = 0;
-    public $td          = 0;
-    public $intcpt      = 0;
-    public $bh          = 0;
-    public $si          = 0;
-    public $ki          = 0;
-    public $cas         = 0; // Sum of players' bh+ki+si.
-    public $tdcas       = 0; // Is td+cas. Used by some ranking systems.
-    public $spp         = 0; // Summed up SPPs.
-    //-------------------
-    public $played      = 0;
-    public $won         = 0;
-    public $lost        = 0;
-    public $draw        = 0;
-    public $win_percentage = 0;
-    public $score_team  = 0;    // Total score made by this team.
-    public $score_opponent = 0; // Total score made against this team.
-    public $score_diff  = 0;    // score_team - score_opponent
-    public $fan_factor  = 0;
-    public $points      = 0; // Total team points, if points ranking system is used.
-    public $smp         = 0; // Sportsmanship points.
-    public $tcas        = 0; // Team cas.
-    //-------------------    
-
     // Non-constructor filled fields.
 
-        // By setExtraStats().
-        public $won_tours = 0;
-
-        // By setStreaks().
-        public $row_won  = 0; // Won in row.
-        public $row_lost = 0;
-        public $row_draw = 0;
-        
         // By setValue().
         public $value  = 0;
 
@@ -124,26 +90,22 @@ class Team
         $this->_bought_fan_factor = $this->fan_factor;
         $this->imported = ($this->imported == 1); // Make boolean.
         $this->race = $raceididx[$this->f_race_id];
-        $this->setStats(false);
+        $this->setStats(false,false,false);
         $this->setValue();
         
         return true;
     }
 
-    public function setStats($tour_id = false) {
-        
-        /**
-         * Overwrites object's stats fields.
-         **/
-         
-        foreach (array_merge(Stats::getStats(array('tid' => $this->team_id, 'trid' => $tour_id)), Stats::getMatchStats(STATS_TEAM, $this->team_id, STATS_TOUR, $tour_id, false, false)) as $field => $val) {
-            $this->$field = $val;
+    public function setStats($node, $node_id, $set_avg = false)
+    {
+        foreach (Stats::getAllStats(STATS_TEAM, $this->team_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
+            $this->$key = $val;
         }
 
         $this->fan_factor += $this->_bought_fan_factor;
         
         // Import fields
-        if ($this->imported && !$tour_id) {
+        if ($this->imported && !$node) {
             $this->won            += $this->won_0;
             $this->lost           += $this->lost_0;
             $this->draw           += $this->draw_0;
@@ -151,6 +113,9 @@ class Team
             $this->score_team     += $this->gf_0;
             $this->score_opponent += $this->ga_0;
             $this->tcas           += $this->tcas_0;
+            if ($this->row_won < $this->sw_0)  $this->row_won  = $this->sw_0;
+            if ($this->row_lost < $this->sl_0) $this->row_lost = $this->sl_0;
+            if ($this->row_draw < $this->sd_0) $this->row_draw = $this->sd_0;
             # Corrections:
             $this->score_diff     = $this->score_team - $this->score_opponent;
             $this->win_percentage = ($this->played == 0) ? 0 : 100*$this->won/$this->played;
@@ -160,37 +125,6 @@ class Team
         return true;
     }
 
-    public function setExtraStats() {
-    
-        /**
-         * Set extra team stats.
-         **/
-    
-        $this->won_tours = (($this->imported) ? $this->wt_0 : 0) + count($this->getWonTours());
-        
-        return true;
-    }
-    
-    public function setStreaks($trid = false) {
-
-        /**
-         * Counts most won, lost and draw matches in a row.
-         **/
-
-        foreach (Stats::getStreaks(STATS_TEAM, $this->team_id, STATS_TOUR, $trid, false, false) as $key => $val) {
-            $this->$key = $val;
-        }
-
-        // Import fields
-        if ($this->imported && !$trid) {
-            if ($this->row_won < $this->sw_0)  $this->row_won  = $this->sw_0;
-            if ($this->row_lost < $this->sl_0) $this->row_lost = $this->sl_0;
-            if ($this->row_draw < $this->sd_0) $this->row_draw = $this->sd_0;
-        }
-
-        return true;
-    }
-    
     private function setValue() {
     
         global $rules;
@@ -638,35 +572,6 @@ class Team
         $row     = mysql_fetch_assoc($result);
 
         return (array_key_exists($position, $DEA[$this->race]['players']) && ($row['number'] - $DOS) < $DEA[$this->race]['players'][$position]['qty']);
-    }
-
-    public function getTourRankings($getFFA = true) {
-    
-        /**
-         * Get structure with tours this team has participated in, and the ranking this team has/had in those tours.
-         **/
-        $ret = array();
-    
-        $query = "SELECT DISTINCT f_tour_id FROM matches, tours 
-            WHERE f_tour_id = tour_id AND (team1_id = $this->team_id OR team2_id = $this->team_id) ".(($getFFA) ? '' : "AND type != ".TT_SINGLE);
-            
-        $result = mysql_query($query);
-        if (mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $t = new Tour($row['f_tour_id']);
-                $stn = $t->getStandings();
-                $t->teamRank = 'ERR';
-                for ($i = 0; $i < count($stn); $i++) {
-                    if ($stn[$i]->team_id == $this->team_id) {
-                        $t->teamRank = $i+1;
-                        break;
-                    }
-                }
-                array_push($ret, $t);
-            }
-        }
-        
-        return $ret;
     }
 
     public function getToursPlayedIn($ids_only = false)

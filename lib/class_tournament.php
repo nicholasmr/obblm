@@ -211,7 +211,7 @@ class Tour
         $teams = $this->getTeams();
         
         foreach ($teams as $t) {
-            $t->setStats($this->tour_id); # Calculate team stats for latest tournament.
+            $t->setStats(STATS_TOUR, $this->tour_id); # Calculate team stats for latest tournament.
         }
     
         objsort($teams, $this->getRSSortRule(false));

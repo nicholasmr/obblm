@@ -261,7 +261,7 @@ class Star
 
     public static function getStats($star_id, $team_id = false, $match_id = false, $tour_id = false) 
     {
-        return Stats::getStats(array('pid' => $star_id, 'tid' => $team_id, 'mid' => $match_id, 'trid' => $tour_id));
+        return array_shift(Stats::getStatsNaked(array('pid' => $star_id, 'tid' => $team_id, 'mid' => $match_id, 'trid' => $tour_id),false,false,false));
     }
     
     public static function getStars($team_id = false, $match_id = false, $tour_id = false)

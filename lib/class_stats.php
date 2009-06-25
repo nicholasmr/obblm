@@ -25,19 +25,11 @@ class Stats
 {
 
 /***************
- *   Wrapper for settings coach, team, race and player stats easy via Stats::get().
- ***************/
-public static function getStats(array $filter)
-{
-    return array_shift(Stats::get($filter, false, false ,false));
-}
-
-/***************
- *   Wrapper for Stats::get() to pull out leaders of a specific stat (or multiple).
+ *   Pull out leaders of a specific stat (or multiple).
  ***************/
 public static function getLeaders($grp = false, $n = false, $sortRule = array(), $mkObjs = false)
 {
-    $leaders = Stats::get(array(), $grp, $n ,$sortRule);
+    $leaders = Stats::getStatsNaked(array(), $grp, $n ,$sortRule);
     $objs = array();
 
     if ($mkObjs) {
@@ -61,7 +53,7 @@ public static function getLeaders($grp = false, $n = false, $sortRule = array(),
 /***************
  *   Fetches summed data from match_data by applying the filter specifications in $filter and optionally groups data around the specified column $grp.
  ***************/
-private static function get(array $filter, $grp = false, $n = false, $sortRule = array())
+public static function getStatsNaked(array $filter, $grp = false, $n = false, $sortRule = array())
 {
     // Translation between $filter entries and corresponding MySQL columns in match_data.
     $filt_trans = array(
@@ -92,16 +84,20 @@ private static function get(array $filter, $grp = false, $n = false, $sortRule =
         }
     }
     
-    $query = " 
+    $query = ' 
         SELECT 
-            SUM(mvp)    AS 'mvp', 
-            SUM(cp)     AS 'cp', 
-            SUM(td)     AS 'td', 
-            SUM(intcpt) AS 'intcpt', 
-            SUM(bh)     AS 'bh', 
-            SUM(si)     AS 'si', 
-            SUM(ki)     AS 'ki'
-            ".((!empty($grp)) 
+            IFNULL(SUM(mvp),0)    AS \'mvp\', 
+            IFNULL(SUM(cp),0)     AS \'cp\', 
+            IFNULL(SUM(td),0)     AS \'td\', 
+            IFNULL(SUM(intcpt),0) AS \'intcpt\', 
+            IFNULL(SUM(bh),0)     AS \'bh\', 
+            IFNULL(SUM(si),0)     AS \'si\', 
+            IFNULL(SUM(ki),0)     AS \'ki\',
+
+            IFNULL(SUM(bh+si+ki),0)    AS \'cas\',
+            IFNULL(SUM(bh+si+ki+td),0) AS \'tdcas\',
+            IFNULL(SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5),0) AS \'spp\'            
+            '.((!empty($grp)) 
                 ? ','.implode(',', array_map(create_function('$filt, $mysql', 'return "$mysql AS \'$filt\'";'), array_keys($filt_trans), array_values($filt_trans)))
                 : '')."
         FROM 
@@ -123,26 +119,75 @@ private static function get(array $filter, $grp = false, $n = false, $sortRule =
         ".((is_numeric($n))     ? " LIMIT $n" : '')." 
     ";
 
-    $result = mysql_query($query);
     $ret = array();
-    if (is_resource($result) && mysql_num_rows($result) > 0) {
+    if (($result = mysql_query($query)) && is_resource($result) && mysql_num_rows($result) > 0) {
         while ($r = mysql_fetch_assoc($result)) {
-            $r['cas']   = $r['bh'] + $r['si'] + $r['ki'];
-            $r['tdcas'] = $r['td'] + $r['cas'];
-            $r['spp']   = $r['cp']*1 + $r['cas']*2 + $r['intcpt']*2 + $r['td']*3 + $r['mvp']*5;
             array_push($ret, $r);
         }
     }
 
-    // Make zero if unset.
-    for ($i = 0; $i < count($ret); $i++) {
-        foreach ($ret[$i] as $k => $v) {
-            if (!$v)
-                $ret[$i][$k] = 0;
+    return $ret;
+}
+
+/*
+ *
+ *  The below methods use the by ($obj, $obj_id) against ($opp_obj, $opp_obj_id) in ($node, $node_id) format for fetching data.
+ *  $obj and $obj_id are required!
+ *
+ */
+
+/***************
+ *   Returns object (team, coach, player and race) stats in array form ready to be assigned as respective object properties/fields.
+ ***************/
+public static function getAllStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $set_avg = false)
+{
+    $stats = array_merge(
+        Stats::getStats(     $obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id),
+        Stats::getMatchStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id),
+        Stats::getStreaks(   $obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id),
+        ($obj == STATS_COACH || $obj == STATS_RACE) ? Stats::getTeamsCnt($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id) : array()
+    );
+    
+    if ($set_avg) {
+        foreach (array('td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'score_team', 'score_opponent') as $key) {
+            $stats[$key] = ($stats['played'] == 0) ? 0 : $stats[$key]/$stats['played'];
         }
     }
+    
+    return $stats;
+}
 
-    return $ret;
+/***************
+ *   Fetches summed data from match_data by applying the filter specifications.
+ ***************/
+public static function getStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
+{
+    if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
+    else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
+  
+    $query = '
+        SELECT 
+            IFNULL(SUM(mvp),0)    AS \'mvp\', 
+            IFNULL(SUM(cp),0)     AS \'cp\', 
+            IFNULL(SUM(td),0)     AS \'td\', 
+            IFNULL(SUM(intcpt),0) AS \'intcpt\', 
+            IFNULL(SUM(bh),0)     AS \'bh\', 
+            IFNULL(SUM(si),0)     AS \'si\', 
+            IFNULL(SUM(ki),0)     AS \'ki\',
+
+            IFNULL(SUM(bh+si+ki),0)    AS \'cas\',
+            IFNULL(SUM(bh+si+ki+td),0) AS \'tdcas\',
+            IFNULL(SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5),0) AS \'spp\'
+        FROM 
+            match_data AS md,'.implode(',', $from).'
+        WHERE
+            '.implode(' AND ', $where).' AND md.f_match_id = matches.match_id AND md.f_team_id = '.$tid.' '.(($obj == STATS_PLAYER) ? " AND md.f_player_id = $obj_id" : '').'
+    ';
+    # Note: If we do not add the above player exeption to the query, player stats will be the same as team stats from the point in time where the player in question was bought.
+    $result = mysql_query($query);
+    $r = mysql_fetch_assoc($result);
+
+    return $r;
 }
 
 public static function getMatchStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
@@ -201,12 +246,7 @@ public static function getMatchStats($obj, $obj_id, $node, $node_id, $opp_obj, $
         
         // Is the ranking system a house ranking system? If not then don't load extra fields since non-house RSs don't use the extra fields at all.
         if (($hrs_nr = $rs_nr - $limit) > 0 && preg_match('/'.implode('|', $fields).'/', $hrs[$hrs_nr]['points'])) {
-            $s = array_merge($s, Stats::getStats(array(
-                    'pid' => ($obj == STATS_PLAYER) ? $obj_id : false, 
-                    'tid' => ($obj == STATS_TEAM)   ? $obj_id : false, 
-                    'cid' => ($obj == STATS_COACH)  ? $obj_id : false, 
-                    'trid' => $node_id,
-                )));
+            $s = array_merge($s, Stats::getStats($obj, $obj_id, STATS_TOUR, $node_id));
         }
 
         switch ($rs_nr)
@@ -362,6 +402,16 @@ public static function getStreaks($obj, $obj_id, $node, $node_id, $opp_obj, $opp
         'row_draw' => ($row['D']) ? $row['D'] : 0, 
 #        'row_current_win' => ($row['C']) ? $row['C'] : 0
     );
+}
+
+public static function getTeamsCnt($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
+{
+    if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
+    else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
+    
+    $query = 'SELECT COUNT(DISTINCT(team_id)) AS \'teams_cnt\' FROM '.implode(',',$from).' WHERE '.implode(' AND ', $where);
+    $result = mysql_query($query);
+    return mysql_fetch_assoc($result);
 }
 
 /***************
