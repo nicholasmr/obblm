@@ -95,7 +95,7 @@
   </xs:simpleType>
   <xs:simpleType name="t_fanfactor">
     <xs:restriction base="xs:integer">
-      <xs:minInclusive value="0" />
+      <xs:minInclusive value="-1" />
       <xs:maxInclusive value="1" />
     </xs:restriction>
   </xs:simpleType>
