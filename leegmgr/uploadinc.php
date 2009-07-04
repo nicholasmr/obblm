@@ -119,6 +119,7 @@ function parse_results($xmlresults) {
 	{
 
 		$homeplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
+		$homeplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
 		$homeplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
 		$homeplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
 		$homeplayers[intval($player->attributes()->number)]['td'] = $player->touchdown;
@@ -139,6 +140,7 @@ function parse_results($xmlresults) {
 	{
 
 		$awayplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
+		$awayplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
 		$awayplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
 		$awayplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
 		$awayplayers[intval($player->attributes()->number)]['td'] = $player->touchdown;
@@ -248,6 +250,7 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 
 	foreach ( $teamPlayers as $player )
 	{
+		if ( $player['star'] == "true" ) break;
 		foreach ( $players as $p  )
 		{
 			if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold ) {
