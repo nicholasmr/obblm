@@ -84,8 +84,12 @@ foreach ( $players as $p )
 					$i++;
 
 				}
-
+	$injured = "false";
+	if ( $p->is_mng ) $injured = "true";
 			Print "            </skills>
+            <spp>{$p->spp}</spp>
+            <nigglings>{$p->inj_ni}</nigglings>
+            <injured>$injured</injured>
             <value>{$p->value}</value>
         </player>\n";
 	}
