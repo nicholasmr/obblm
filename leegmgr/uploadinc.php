@@ -66,7 +66,7 @@ function uploadpage () {
 			Print "<br>Retrieved a file.<br>";
 		}
 
-		if ($zip  &&  ( $_FILES['userfile']['type'] == "application/x-zip-compressed" || $_FILES['userfile']['type'] == "application/octet-stream") ){
+		if ($zip  &&  ( $_FILES['userfile']['type'] == "application/x-zip-compressed" || $_FILES['userfile']['type'] == "application/octet-stream" || $_FILES['userfile']['type'] == "application/zip") ){
 			Print "<br>Retrieved a zip file.<br>";
 
 			while ($zip_entry = zip_read($zip)) {
@@ -250,7 +250,7 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 
 	foreach ( $teamPlayers as $player )
 	{
-		if ( $player['star'] == "true" ) break;
+		if ( $player['star'] == "true" ) continue;
 		foreach ( $players as $p  )
 		{
 			if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold ) {
@@ -301,7 +301,7 @@ function checkCoach ( $team ) {
 	if ( !isset( $_SESSION['coach_id'] ) ) return false;
 
 	$query = sprintf("SELECT owned_by_coach_id FROM teams WHERE owned_by_coach_id = '%s' and name = '%s' ", mysql_real_escape_string($_SESSION['coach_id']), mysql_real_escape_string($team) );
-	#if ( !mysql_fetch_array( mysql_query( "SELECT `owned_by_coach_id` FROM `teams` WHERE `owned_by_coach_id` = ".$_SESSION['coach_id']." and `name` = \"".$team."\"" ) ) )
+
 	if ( !mysql_fetch_array( mysql_query( $query ) ) )
 	{
 		return false;
@@ -313,7 +313,6 @@ function checkCoach ( $team ) {
 
 function checkHash ( $hash ) {
 
-	########$query = "SELECT hash_botocs FROM matches WHERE hash_botocs = \"".$hash."\"";
 	$query = sprintf("SELECT hash_botocs FROM matches WHERE hash_botocs = '%s' ", mysql_real_escape_string($hash) );
 	$hashresults = mysql_query($query);
 	$hashresults = mysql_fetch_array($hashresults);
@@ -331,7 +330,6 @@ function checkHash ( $hash ) {
 
 function checkTeam ( $teamname ) {
 
-	########$query = "SELECT team_id FROM teams WHERE name = \"".$teamname."\"";
 	$query = sprintf("SELECT team_id FROM teams WHERE name = '%s' ", mysql_real_escape_string($teamname) );
 	$team_id = mysql_query($query);
 	if (!$team_id) {
@@ -431,15 +429,6 @@ function XOREncrypt($InputString, $KeyPhrase){
 	return $InputString;
 }
 
-#function checkInt($integer){
-#
-#	$integer = intval( $integer );
-#
-#	if ( !is_numeric( $integer ) ) $integer = 0;
-#
-#	return $integer;
-#
-#}
 function libxml_display_error($error)
 {
     $return = "<br/>\n";
