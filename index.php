@@ -68,32 +68,33 @@ if (isset($_GET['logout'])) {
 }
 
 $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
-frame_begin(isset($_SESSION['logged_in']) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
+HTMLOUT::frame_begin(isset($_SESSION['logged_in']) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
 
 // Check if a menu-link was picked, and execute section code from sections.php accordingly.
 switch ($_GET['section']) 
 {
-    case 'login':        sec_login();        break;
-    case 'admin':        sec_admin();        break;
-    case 'coachcorner':  sec_coachcorner();  break;
-    case 'fixturelist':  sec_fixturelist();  break; // Tournaments
-    case 'standings':    sec_standings();    break;
-    case 'teams':        sec_teams();        break;
-    case 'players':      sec_players();      break;
-    case 'coaches':      sec_coaches();      break;
-    case 'races':        sec_races();        break;
-    case 'stars':        sec_stars();        break;
-    case 'records':      sec_records();      break;
-    case 'rules':        sec_rules();        break;
-    case 'gallery':      sec_gallery();      break;
-    case 'about':        sec_about();        break;
+    case 'login':        sec_login();           break;
+    case 'admin':        sec_admin();           break;
+    case 'coachcorner':  sec_coachcorner();     break;
+    case 'fixturelist':  sec_fixturelist();     break; // Tournaments
+    case 'standings':    sec_standings();       break;
+    case 'teams':        sec_teams();           break;
+    case 'players':      sec_players();         break;
+    case 'coaches':      sec_coaches();         break;
+    case 'races':        sec_races();           break;
+    case 'stars':        sec_stars();           break;
+    case 'records':      sec_records();         break;
+    case 'rules':        sec_rules();           break;
+    case 'gallery':      sec_gallery();         break;
+    case 'about':        sec_about();           break;
     case 'guest':        if($settings['enable_guest_book']){sec_guest(); break;} 
-    case 'recent':       sec_recentmatches();break;
-    case 'comparence':   sec_comparence();   break;
+    case 'recent':       sec_recentmatches();   break;
+    case 'upcomming':    sec_upcommingmatches();break;
+    case 'comparence':   sec_comparence();      break;
     default:             sec_main();
 }
 
-frame_end(); // Spit out all the end-tags.
+HTMLOUT::frame_end(); // Spit out all the end-tags.
 mysql_close($conn);
 
 ?>

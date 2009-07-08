@@ -141,13 +141,8 @@ class Coach
     }
     
     public function delete() {
-        
-        /**
-         * Deletes coach if deletable.
-         **/
 
         $status = true;
-        
         if ($this->isDeletable()) {
             
             foreach ($this->getTeams() as $t) {
@@ -164,11 +159,6 @@ class Coach
     }
     
     public function setRetired($bool) {
-
-        /**
-         * Retires coach (disables coach login).
-         **/    
-
         return mysql_query("UPDATE coaches SET retired = ".(($bool) ? 1 : 0)." WHERE coach_id = $this->coach_id");
     }
 

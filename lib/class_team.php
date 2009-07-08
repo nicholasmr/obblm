@@ -668,8 +668,6 @@ class Team
             Exports a team by the using the same fields as the import XML schema uses.
         */
         
-        $this->setStreaks();
-        $this->setExtraStats();
         $ELORanks = ELO::getRanks(false);
         $this->elo = $ELORanks[$this->team_id];
         
@@ -815,7 +813,7 @@ class Team
                         )."
                     )";
 
-        return (mysql_query($query));
+        return mysql_query($query);
     }
 }
 ?>

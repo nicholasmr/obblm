@@ -9,6 +9,7 @@ cid:    Coach ID
 rid:    Race ID
 tid:    Team ID
 pid:    Player ID
+sid:    Star ID
 
 lid:    League ID
 did:    Division ID

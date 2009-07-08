@@ -36,9 +36,9 @@ public static function getLeaders($grp = false, $n = false, $sortRule = array(),
         foreach ($leaders as $l) {
             switch ($grp)
             {
-                case STATS_PLAYER:  array_push($objs, new Player($l['pid'])); break;
-                case STATS_TEAM:    array_push($objs, new Team($l['tid'])); break;
-                case STATS_COACH:   array_push($objs, new Coach($l['cid'])); break;
+                case STATS_PLAYER:  array_push($objs, new Player($l[STATS_PLAYER])); break;
+                case STATS_TEAM:    array_push($objs, new Team($l[STATS_TEAM])); break;
+                case STATS_COACH:   array_push($objs, new Coach($l[STATS_COACH])); break;
                 default: continue;
             }
         }
@@ -55,18 +55,7 @@ public static function getLeaders($grp = false, $n = false, $sortRule = array(),
  ***************/
 public static function getStatsNaked(array $filter, $grp = false, $n = false, $sortRule = array())
 {
-    // Translation between $filter entries and corresponding MySQL columns in match_data.
-    $filt_trans = array(
-        'pid' => 'f_player_id',
-        'tid' => 'f_team_id',
-        'cid' => 'f_coach_id',
-        'rid' => 'f_race_id',
-        
-        'mid'  => 'f_match_id',
-        'trid' => 'f_tour_id',
-        'did'  => 'f_did',
-        'lid'  => 'f_lid',
-    );
+    global $CONST_TRANS;
     
     switch ($grp)
     {
@@ -98,20 +87,24 @@ public static function getStatsNaked(array $filter, $grp = false, $n = false, $s
             IFNULL(SUM(bh+si+ki+td),0) AS \'tdcas\',
             IFNULL(SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5),0) AS \'spp\'            
             '.((!empty($grp)) 
-                ? ','.implode(',', array_map(create_function('$filt, $mysql', 'return "$mysql AS \'$filt\'";'), array_keys($filt_trans), array_values($filt_trans)))
+                ? ','.implode(',', array_map(create_function('$filt, $mysql', 'return "$mysql AS \'$filt\'";'), array_keys($CONST_TRANS), array_values($CONST_TRANS)))
                 : '')."
         FROM 
             match_data"; 
 
+    $and = false;
     if (!empty($filter)) {
         $query .= " WHERE ";
-        $and = false;
         foreach ($filter as $filter_key => $id) {
             if (is_numeric($id)) {
-                $query .= (($and) ? ' AND ' : ' ').$filt_trans[$filter_key]." = $id ";
+                $query .= (($and) ? ' AND ' : ' ').$CONST_TRANS[$filter_key]." = $id ";
                 $and = true;
             }
         }
+    }
+    // Don't allow stars when grouping.
+    if ($grp) {
+        $query .= (($and) ? ' AND ' : ' WHERE ').' f_player_id > 0';
     }
     $query .= " 
         ".((!empty($grp))       ? " GROUP BY $grp" : '')." 
@@ -186,6 +179,31 @@ public static function getStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_o
     # Note: If we do not add the above player exeption to the query, player stats will be the same as team stats from the point in time where the player in question was bought.
     $result = mysql_query($query);
     $r = mysql_fetch_assoc($result);
+
+    /* Add imported player stats if no $node or $opp_obj is specified. */
+    if (!$node && !$opp_obj) {
+        global $CONST_TRANS;
+        $query = '
+            SELECT 
+                IFNULL(SUM(mvp),0)    AS \'mvp\', 
+                IFNULL(SUM(cp),0)     AS \'cp\', 
+                IFNULL(SUM(td),0)     AS \'td\', 
+                IFNULL(SUM(intcpt),0) AS \'intcpt\', 
+                IFNULL(SUM(bh),0)     AS \'bh\', 
+                IFNULL(SUM(si),0)     AS \'si\', 
+                IFNULL(SUM(ki),0)     AS \'ki\',
+
+                IFNULL(SUM(bh+si+ki),0)    AS \'cas\',
+                IFNULL(SUM(bh+si+ki+td),0) AS \'tdcas\',
+                IFNULL(SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5),0) AS \'spp\'
+            FROM 
+                match_data
+            WHERE '.$CONST_TRANS[$obj]." = $obj_id AND f_match_id = ".MATCH_ID_IMPORT;
+        $result = mysql_query($query);
+        foreach (mysql_fetch_assoc($result) as $key => $val) {
+            $r[$key] += $val;
+        }
+    }
 
     return $r;
 }
@@ -297,8 +315,7 @@ public static function getMatchStats($obj, $obj_id, $node, $node_id, $opp_obj, $
     return $s;
 }
 
-//public static function getPlayedMatches($obj, $obj_id, $node = false, $node_id = false, $op_tid = false, $n = false, $mkObjs = false)
-public static function getPlayedMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $n = false, $mkObjs = false)
+public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $n = false, $mkObjs = false, $getUpcomming = false)
 {
     $matches = array(); // Return structure.
     
@@ -311,7 +328,7 @@ public static function getPlayedMatches($obj, $obj_id, $node, $node_id, $opp_obj
             IF((team1_id = $tid AND team1_score > team2_score) OR (team2_id = $tid AND team1_score < team2_score), 'W', IF(team1_score = team2_score, 'D', 'L')) AS 'result' 
         FROM ".implode(', ', $from)." 
         WHERE 
-                date_played IS NOT NULL 
+                date_played IS ".(($getUpcomming) ? '' : 'NOT')." NULL 
             AND match_id > 0 
             AND ".implode(' AND ', $where)." 
         ORDER BY date_played DESC ".(($n) ? " LIMIT $n" : '');

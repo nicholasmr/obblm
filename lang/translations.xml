@@ -51,6 +51,7 @@
             <forum>Forum</forum>
             <!-- Not shown amongst menu links -->
             <recent>Recent matches</recent> 
+            <upcomming>Upcomming matches</upcomming> 
             <statistics>Statistics</statistics>
             <specstandings>Tournament standings</specstandings>
             <myteams>My teams</myteams>
@@ -118,7 +119,6 @@
             
             <standings>Standings</standings>
             <desc>Description</desc>
-            <bracket>Bracket</bracket>
             <fin>finished</fin>
             <undecided>Undecided</undecided>
             <winner>Winner</winner>
@@ -138,8 +138,6 @@
                 <quarter>Quarter-finals</quarter>
                 <rnd16>Round of 16</rnd16>
                 <rnd>Round</rnd>
-                <firstrnd>First round</firstrnd>
-                <playin>Play-in games</playin>
             </mtypes>
 
             <!-- Subsection: Tournament standings -->
@@ -312,6 +310,7 @@
                 <buy_goods>Buy team goods</buy_goods>
                 <drop_goods>Let go of team goods</drop_goods>
                 <ready_state>Set ready state</ready_state>
+                <unbuy_player>Un-hire player</unbuy_player>
 
                 <desc>
                     <hire_player>
@@ -365,13 +364,18 @@
                     This team attribute allows coaches to signal other coaches/teams whether or not this team is interested in playing any matches.
                     ]]>
                     </ready_state>
+                    <unbuy_player>
+                    <![CDATA[
+                    Regret hiring a player. 100% refund.<br>
+                    This is only possible for players which have not participated in any matches.
+                    ]]>
+                    </unbuy_player>
                 </desc>
             </box_tm>
             
             <box_admin>
                 <title>Admin tools</title>
 
-                <unbuy_player>Un-hire player</unbuy_player>
                 <unhire_journeyman>Un-hire journeymen</unhire_journeyman>
                 <unsell_player>Un-fire player</unsell_player>
                 <unbuy_goods>Un-buy team goods</unbuy_goods>
@@ -383,12 +387,6 @@
                 <ach_skills>Remove ach. player skills</ach_skills>
 
                 <desc>
-                    <unbuy_player>
-                    <![CDATA[
-                    Regret hiring a player. 100% refund.<br>
-                    This is only possible for players which have not participated in any matches.
-                    ]]>
-                    </unbuy_player>
                     <unhire_journeyman>
                     <![CDATA[
                     Regret permanently hiring a journeyman.<br>

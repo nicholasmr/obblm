@@ -248,15 +248,18 @@ function sec_admin() {
             // Initialize needed HTML post values which due to tournament types are disabled by javascript.
             switch ($_POST['type']) 
             {
-                case TT_SINGLE:
-                    if (!isset($_POST['name']))
-                        $_POST['name'] = 'Single';
-                case TT_KNOCKOUT:
+                case TT_FFA:
                     $_POST['rounds'] = 1;
+                    if (!isset($_POST['name'])) {
+                        $_POST['name'] = 'Single';
+                    }
+                    break;
+                case TT_RROBIN:
+                    break;
             }
             
             // Check passed tournament name.
-            if ((!isset($_POST['name']) || empty($_POST['name'])) && !($_POST['type'] == TT_SINGLE && $_POST['existTour'] != -1)) {
+            if ((!isset($_POST['name']) || empty($_POST['name'])) && !($_POST['type'] == TT_FFA && $_POST['existTour'] != -1)) {
                 status(false, "Please fill out the tournament name.<br>\n");
                 $STATUS = false;
             }
@@ -270,16 +273,15 @@ function sec_admin() {
             
             $i = count($team_ids);
             if (
-                ($_POST['type'] == TT_SEMI   && $i < 4 && $cnt = 4) || 
-                ($_POST['type'] == TT_SINGLE && $i < 2 && $cnt = 2) || 
-                ($_POST['type'] != TT_SEMI && $_POST['type'] != TT_SINGLE && $i < MIN_TOUR_TEAMS && $cnt = MIN_TOUR_TEAMS) 
+                ($_POST['type'] == TT_FFA    && $i < 2              && ($cnt = 2)) || 
+                ($_POST['type'] == TT_RROBIN && $i < MIN_TOUR_TEAMS && ($cnt = MIN_TOUR_TEAMS)) 
             ) {
                 status(false, "Please select at least $cnt participants.<br>\n");
                 $STATUS = false;
             }
             
             // Reverse pair-up for FFA match?
-            if ($_POST['type'] == TT_SINGLE && isset($_POST['reverse']) && $_POST['reverse']) {
+            if ($_POST['type'] == TT_FFA && isset($_POST['reverse']) && $_POST['reverse']) {
                 $team_ids = array_reverse($team_ids);
             }
             
@@ -289,13 +291,13 @@ function sec_admin() {
                     $_POST['name'] = stripslashes($_POST['name']);
                     
                 // Is the whish to add a match to a FFA tour?
-                if ($_POST['type'] == TT_SINGLE && $_POST['existTour'] != -1) {
+                if ($_POST['type'] == TT_FFA && $_POST['existTour'] != -1) {
                     $rnd = (!isset($_POST['round'])) ? 1 : (int) $_POST['round'];
                     status(Match::create(array('team1_id' => $team_ids[0], 'team2_id' => $team_ids[1], 'round' => $rnd, 'f_tour_id' => (int) $_POST['existTour'])));
                 }
                 // Create new tour...
                 else {
-                    if ($_POST['type'] == TT_SINGLE) {
+                    if ($_POST['type'] == TT_FFA) {
                         $_POST['rounds'] = $_POST['round'];
                     }
                     status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => (int) $_POST['type'], 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
@@ -307,11 +309,8 @@ function sec_admin() {
         ?>
         <script language="JavaScript" type="text/javascript">
             // Global JavaScript Variables.
-            var TT_NOFINAL  = <?php echo TT_NOFINAL; ?>;
-            var TT_FINAL    = <?php echo TT_FINAL; ?>;
-            var TT_SEMI     = <?php echo TT_SEMI; ?>;
-            var TT_KNOCKOUT = <?php echo TT_KNOCKOUT; ?>;
-            var TT_SINGLE   = <?php echo TT_SINGLE; ?>;
+            var TT_FFA    = <?php echo TT_FFA; ?>;
+            var TT_RROBIN = <?php echo TT_RROBIN; ?>;
         </script>
         
         <?php 
@@ -361,7 +360,7 @@ function sec_admin() {
                             <optgroup label="Existing FFA">
                             <?php
                             foreach (Tour::getTours() as $t)
-                                if ($t->type == TT_SINGLE)
+                                if ($t->type == TT_FFA)
                                     echo "<option value='$t->tour_id'>$t->name</option>\n";
                             ?>
                             </optgroup>
@@ -388,16 +387,13 @@ function sec_admin() {
             </tr></table>
             <br>
             <b><?php echo $lng->getTrn('secs/admin/tour_type');?>:</b><br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA (free for all) single match<br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
             <br>
             <?php echo $lng->getTrn('secs/admin/rrobin_rnds');?><br>
             <select name="rounds">
             <?php
-            foreach (range(1, MAX_ALLOWED_ROUNDS) as $i) echo "<option value='$i'>$i</option>\n";
+            foreach (range(1, 10) as $i) echo "<option value='$i'>$i</option>\n";
             ?>
             </select>
             <br><br>
@@ -412,6 +408,9 @@ function sec_admin() {
             <hr align="left" width="200px">
             <input type="submit" name="button" value="<?php echo $lng->getTrn('secs/admin/create');?>" <?php echo (empty($divisions) ? 'DISABLED' : '');?>>
         </form>
+        <script language="JavaScript" type="text/javascript">
+            chTour(<?php echo TT_FFA;?>);
+        </script>
         <?php
     }
     elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'import') {
@@ -896,11 +895,8 @@ function sec_admin() {
                
                 <br><br>
                 <b>New tournament type:</b> <?php echo $lng->getTrn('secs/admin/conv_warn');?><br>
-                <input type="radio" name="ttype" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
-                <input type="radio" name="ttype" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
-                <input type="radio" name="ttype" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
-                <input type="radio" name="ttype" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
-                <input type="radio" name="ttype" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
+                <input type="radio" name="ttype" value="<?php echo TT_RROBIN;?>" > Round-Robin<br>
+                <input type="radio" name="ttype" value="<?php echo TT_FFA;?>" CHECKED> FFA (free for all) single match<br>
                 <br>
                 
                 <input type="hidden" name="type" value="change">

@@ -135,26 +135,26 @@ class SGraph
             /*
                 SMP. 
             */
-            $queries = array();
-            foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
-                $range = "(
-                    (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH))) 
-                    AND 
-                    (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)))
-                )";
-                # m$i = minus/negative $i months from present month.
-                array_push($queries, "SUM(IF($range, smp1+smp2, 0))     AS 'smp_m$i'"); 
-                array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
-                array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
-            }
+#            $queries = array();
+#            foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+#                $range = "(
+#                    (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH))) 
+#                    AND 
+#                    (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)))
+#                )";
+#                # m$i = minus/negative $i months from present month.
+#                array_push($queries, "SUM(IF($range, smp1+smp2, 0))     AS 'smp_m$i'"); 
+#                array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
+#                array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
+#            }
 
-            $query  = "SELECT ".implode(', ', $queries)." FROM matches";
-            $result = mysql_query($query);
-            $row    = mysql_fetch_assoc($result);
-            
-            $lengends = array('smp' => 'blue');
-            list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
-            array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Total given sportsmanship points (smp)", "Months", "Points", $opts));
+#            $query  = "SELECT ".implode(', ', $queries)." FROM matches";
+#            $result = mysql_query($query);
+#            $row    = mysql_fetch_assoc($result);
+#            
+#            $lengends = array('smp' => 'blue');
+#            list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
+#            array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Total given sportsmanship points (smp)", "Months", "Points", $opts));
             
             /* 
                 Avg. gate per match.
@@ -232,26 +232,26 @@ class SGraph
             /*
                 Average fans at match. 
             */
-            $queries = array();
-            foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
-                $range = "(
-                    (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH))) 
-                    AND 
-                    (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)))
-                )";
-                # m$i = minus/negative $i months from present month.
-                array_push($queries, "AVG(IF($range, fans, NULL))     AS 'fans_m$i'"); 
-                array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
-                array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
-            }
+#            $queries = array();
+#            foreach (range(0, SG_MULTIBAR_HIST_LENGTH) as $i) {
+#                $range = "(
+#                    (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH))) 
+#                    AND 
+#                    (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)))
+#                )";
+#                # m$i = minus/negative $i months from present month.
+#                array_push($queries, "AVG(IF($range, fans, NULL))     AS 'fans_m$i'"); 
+#                array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
+#                array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
+#            }
 
-            $query  = "SELECT ".implode(', ', $queries)." FROM matches";
-            $result = mysql_query($query);
-            $row    = mysql_fetch_assoc($result);
-            
-            $lengends = array('fans' => 'blue');
-            list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
-            array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Average fans per match", "Months", "Average fans", array_merge($opts, array('scale' => 'textlin'))));
+#            $query  = "SELECT ".implode(', ', $queries)." FROM matches";
+#            $result = mysql_query($query);
+#            $row    = mysql_fetch_assoc($result);
+#            
+#            $lengends = array('fans' => 'blue');
+#            list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
+#            array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Average fans per match", "Months", "Average fans", array_merge($opts, array('scale' => 'textlin'))));
 
             /*
                 Average stars and mercs hirings per match
@@ -317,11 +317,12 @@ class SGraph
             /*
                 Race distribution
             */
-            $query  = "SELECT DISTINCT(race) AS 'race', COUNT(race) 'cnt' FROM teams GROUP BY race";
+            global $raceididx;
+            $query  = "SELECT DISTINCT(f_race_id) AS 'race', COUNT(f_race_id) 'cnt' FROM teams GROUP BY f_race_id";
             $result = mysql_query($query);
             $data = array();
             while ($row = mysql_fetch_assoc($result)) {
-                $data["$row[race] ($row[cnt])"] = $row['cnt'];
+                $data[$raceididx[$row['race']]." ($row[cnt])"] = $row['cnt'];
             }
             $graph = new PieGraph($opts['xdim'],$opts['ydim'],"auto");
             $graph->SetShadow();
@@ -336,19 +337,19 @@ class SGraph
             /*
                 CAS distribution
             */
-            $query  = "SELECT SUM(bh) AS 'bh', SUM(si) AS 'si', SUM(ki) AS 'ki' FROM match_data";
-            $result = mysql_query($query);
-            $o = (object) mysql_fetch_assoc($result);
-            $data = array("BH ($o->bh)" => $o->bh, "SI ($o->si)" => $o->si, "Ki ($o->ki)" => $o->ki);
-            $graph = new PieGraph($opts['xdim'],$opts['ydim'],"auto");
-            $graph->SetShadow();
-            $graph->title->Set('Current CAS distribution');
-            $graph->title->SetFont(FF_FONT1,FS_BOLD);
-            $p1 = new PiePlot(array_values($data));
-            $p1->SetLegends(array_keys($data));
-            $p1->SetCenter(0.4);
-            $graph->Add($p1);
-            array_push($graphs, $graph);
+#            $query  = "SELECT SUM(bh) AS 'bh', SUM(si) AS 'si', SUM(ki) AS 'ki' FROM match_data";
+#            $result = mysql_query($query);
+#            $o = (object) mysql_fetch_assoc($result);
+#            $data = array("BH ($o->bh)" => $o->bh, "SI ($o->si)" => $o->si, "Ki ($o->ki)" => $o->ki);
+#            $graph = new PieGraph($opts['xdim'],$opts['ydim'],"auto");
+#            $graph->SetShadow();
+#            $graph->title->Set('Current CAS distribution');
+#            $graph->title->SetFont(FF_FONT1,FS_BOLD);
+#            $p1 = new PiePlot(array_values($data));
+#            $p1->SetLegends(array_keys($data));
+#            $p1->SetCenter(0.4);
+#            $graph->Add($p1);
+#            array_push($graphs, $graph);
         }
         else {
         
