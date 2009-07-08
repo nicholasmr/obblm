@@ -626,6 +626,19 @@ function sec_fixturelist() {
         return;
     }
     
+    // Division standings?
+    if (isset($_GET['did']) && !preg_match("/[^0-9]/", $_GET['did'])) {
+        title(get_alt_col('divisions', 'did', $_GET['did'], 'name'));
+        HTMLOUT::standings(STATS_TEAM, STATS_DIVISION, (int) $_GET['did'], array('url' => "index.php?section=fixturelist&amp;did=$_GET[did]", 'hidemenu' => true));
+        return;
+    }
+    // League standings?
+    if (isset($_GET['lid']) && !preg_match("/[^0-9]/", $_GET['lid'])) {
+        title(get_alt_col('leagues', 'lid', $_GET['lid'], 'name'));
+        HTMLOUT::standings(STATS_TEAM, STATS_LEAGUE, (int) $_GET['lid'], array('url' => "index.php?section=fixturelist&amp;lid=$_GET[lid]", 'hidemenu' => true));
+        return;
+    }
+    
     // Tournament description?
     if (isset($_GET['tour_id2']) && !preg_match("/[^0-9]/", $_GET['tour_id2'])) {
         if (!is_object($t = new Tour($_GET['tour_id2'])) || empty($t->date_created))
@@ -748,13 +761,13 @@ function sec_fixturelist() {
         ?>
         <table style='width:100%;'>
             <tr class='dark'>
-                <td style='width:30%;'>
-                    <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
-                    <a href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/standings');?></b></a>&nbsp;
-                    <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
-                </td>
                 <td>
-                    &nbsp;&nbsp;&nbsp;<?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>' : '');?>
+                    <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
+                    <?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>' : '');?>
+                </td>
+                <td style='width:25%; text-align:right;'>
+                    <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
+                    <a href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/standings');?></b></a>&nbsp;
                 </td>
             </tr>
             <tr>

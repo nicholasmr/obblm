@@ -532,7 +532,25 @@ private static function make_menu()
                     <ul>
                         <?php
                         foreach (Tour::getTours() as $t) {
-                            echo "<li><a href='index.php?section=fixturelist&amp;tour_id=$t->tour_id'>$t->name</a></li>\n";
+                            echo "<li><a href='index.php?section=fixturelist&amp;tour_id=$t->tour_id'>$t->name&nbsp;&nbsp;<i>(".get_alt_col('leagues', 'lid', get_alt_col('divisions', 'did', $t->f_did, 'f_lid'), 'name').")</i></a></li>\n";
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <li><span class="dir">Division standings</span>
+                    <ul>
+                        <?php
+                        foreach (Division::getDivisions() as $d) {
+                            echo "<li><a href='index.php?section=fixturelist&amp;did=$d->did'>$d->name&nbsp;&nbsp;<i>($d->league_name)</i></a></li>\n";
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <li><span class="dir">League standings</span>
+                    <ul>
+                        <?php
+                        foreach (League::getLeagues() as $l) {
+                            echo "<li><a href='index.php?section=fixturelist&amp;lid=$l->lid'>$l->name</a></li>\n";
                         }
                         ?>
                     </ul>
