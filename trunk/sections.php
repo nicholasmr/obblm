@@ -419,7 +419,7 @@ function sec_main() {
         if ($settings['entries_latest'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <h3 class='boxTitle1'><a href='index.php?section=recent'><?php echo $lng->getTrn('secs/home/recent');?></a></h3>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/recent');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -590,11 +590,8 @@ function sec_fixturelist() {
 
         switch ($tour->type)
         {
-            case TT_NOFINAL:  $type = 'Round-Robin without final'; break;
-            case TT_FINAL:    $type = 'Round-Robin with final'; break;
-            case TT_SEMI:     $type = 'Round-Robin with final and semi-finals'; break;
-            case TT_KNOCKOUT: $type = 'Knock-Out tournament'; break;
-            case TT_SINGLE:   $type = 'FFA tournament'; break;
+            case TT_RROBIN: $type = 'Round-Robin'; break;
+            case TT_FFA:    $type = 'FFA tournament'; break;
         }
 
         title($tour->name);
@@ -777,11 +774,6 @@ function sec_fixturelist() {
                     <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
                     <a href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/standings');?></b></a>&nbsp;
                     <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
-                    <?php
-                    if ($t->type == TT_KNOCKOUT) {
-                        echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=gdbracket&amp;tour_id=" . $t->tour_id . "', 'handler_tour', 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=400'); return false;\"><b>".$lng->getTrn('secs/fixtures/bracket')."</b></a>\n";
-                    }
-                    ?>
                 </td>
                 <td>
                     &nbsp;&nbsp;&nbsp;<?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>' : '');?>
@@ -805,8 +797,6 @@ function sec_fixturelist() {
             elseif ($round == RT_SEMI)          $round = $lng->getTrn('secs/fixtures/mtypes/semi');
             elseif ($round == RT_QUARTER)       $round = $lng->getTrn('secs/fixtures/mtypes/quarter');
             elseif ($round == RT_ROUND16)       $round = $lng->getTrn('secs/fixtures/mtypes/rnd16');
-            elseif ($round == RT_PLAYIN)        $round = $lng->getTrn('secs/fixtures/mtypes/playin');
-            elseif ($round == RT_FIRST && $t->type == TT_KNOCKOUT) $round = $lng->getTrn('secs/fixtures/mtypes/firstrnd');
             else                                $round = $lng->getTrn('secs/fixtures/mtypes/rnd').": $round";
                 
             ?>
@@ -843,9 +833,7 @@ function sec_fixturelist() {
                         echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;\n";
                         if ($coach->admin) {
                             echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/reset_notice')."')){return false;}\" href='?section=fixturelist&amp;reset=$match->match_id'>".$lng->getTrn('secs/fixtures/reset')."</a>&nbsp;\n";
-                            if ($t->type != TT_KNOCKOUT) {
-                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;\n";
-                            }
+                            echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;\n";
                             echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;\n";
                         }
                     }
@@ -917,7 +905,7 @@ function sec_standings() {
         'value'        => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'), 
     );
     
-    sort_table(
+    HTMLOUT::sort_table(
         $lng->getTrn('secs/standings/tblTitle2'), 
         'index.php?section=standings', 
         $teams, 
@@ -1025,7 +1013,7 @@ function sec_players() {
         'value'             => array('desc' => 'Value', 'nosort' => $TOUR, 'kilo' => !$TOUR, 'suffix' => (!$TOUR) ? 'k' : ''), 
     );
     
-    sort_table(
+    HTMLOUT::sort_table(
         $lng->getTrn('secs/players/tblTitle'), 
         'index.php?section=players'.(($PMS)? '&amp;pms=1' : ''), 
         $players, 
@@ -1097,15 +1085,15 @@ function sec_coaches() {
                         <table>
                             <tr>
                                 <td><b>Name</b></td>
-                                <td><?php echo $c->realname?></td>
+                                <td><?php echo empty($c->realname) ? '<i>None</i>' : $c->realname;?></td>
                             </tr>
                             <tr>
                                 <td><b>Phone</b></td>
-                                <td><?php echo $c->phone?></td>
+                                <td><?php echo empty($c->phone) ? '<i>None</i>' : $c->phone?></td>
                             </tr>
                             <tr>
                                 <td><b>Mail</b></td>
-                                <td><?php echo $c->mail?></td>
+                                <td><?php echo empty($c->mail) ? '<i>None</i>' : $c->mail?></td>
                             </tr>
                         </table>
                     </td>
@@ -1178,7 +1166,7 @@ function sec_races() {
             'cost'      => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'), 
             'qty'       => array('desc' => 'Max.'), 
         );
-        sort_table(
+        HTMLOUT::sort_table(
             $race->race.' '.$lng->getTrn('secs/races/players'), 
             "index.php?section=races&amp;race=$race->race",
             $players, 
@@ -1215,136 +1203,37 @@ function sec_stars() {
 
     global $stars, $lng;
 
+    // Specific star hire history
     if (isset($_GET['sid'])) {
-        $mdat = array();
         $s = new Star($_GET['sid']);
-        title($lng->getTrn('secs/stars/hh')." $s->name");
+        title($lng->getTrn('secs/stars/hh').' '.$s->name);
         echo '<center><a href="index.php?section=stars">['.$lng->getTrn('global/misc/back').']</a></center><br><br>';
-        foreach ($s->getHireHistory(false, false, false) as $m) {
-            $o = (object) array();
-            foreach (array('match_id', 'date_played', 'hiredByName', 'hiredAgainstName') as $k) {
-                $o->$k = $m->$k;
-            }
-            $s->setStats(false, $m->match_id, false);
-            foreach (array('td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'mvp', 'spp') as $k) {
-                $o->$k = $s->$k;
-            }
-            $o->match = '[view]';
-            $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
-            array_push($mdat, $o);
-        }
-        $fields = array(
-            'date_played'       => array('desc' => 'Hire date'), 
-            'tour'              => array('desc' => 'Tournament'),
-            'hiredByName'       => array('desc' => 'Hired by'), 
-            'hiredAgainstName'  => array('desc' => 'Opponent team'), 
-            'match'             => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
-            'cp'     => array('desc' => 'Cp'), 
-            'td'     => array('desc' => 'Td'), 
-            'intcpt' => array('desc' => 'Int'), 
-            'cas'    => array('desc' => 'Cas'), 
-            'bh'     => array('desc' => 'BH'), 
-            'si'     => array('desc' => 'Si'), 
-            'ki'     => array('desc' => 'Ki'), 
-            'mvp'    => array('desc' => 'MVP'), 
-            'spp'    => array('desc' => 'SPP'),
-        );
-        sort_table(
-            $lng->getTrn('secs/stars/hh')." $s->name", 
-            'index.php?section=stars&amp;sid='.$s->star_id, 
-            $mdat, 
-            $fields, 
-            sort_rule('star_HH'), 
-            (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-            array('doNr' => false,)
-        );
+        HTMLOUT::starHireHistory(false, false, false, false, $_GET['sid'], array('url' => "index.php?section=stars&amp;sid=$_GET[sid]"));
         return;
     }
 
-    // Generate tournament selection form
-    if (isset($_POST['tour_id'])) {
-        $_SESSION['trid_stars'] = $_POST['tour_id'];
-    }
-    $tour_id = isset($_SESSION['trid_stars']) ? $_SESSION['trid_stars'] : false;
-    $TOUR = (bool) $tour_id;
-
+    // All stars
     title($lng->getTrn('global/secLinks/stars'));
-    
     echo $lng->getTrn('global/sortTbl/simul')."<br>\n";
     echo $lng->getTrn('global/sortTbl/spp')."<br><br>\n";
-    ?>
-    
-    <form method="POST">
-    <select name="tour_id" onChange='this.form.submit();'>
-    <optgroup label="<?php echo $lng->getTrn('global/misc/all');?>">
-        <option value="0">All tournaments</option>
-    </optgroup>
-    <optgroup label="<?php echo $lng->getTrn('global/misc/specific');?>">
-        <?php
-        foreach (Tour::getTours() as $t) {
-            if (!$t->empty) # Only if tournament contains matches.
-                echo "<option value='$t->tour_id' " . ($tour_id && $tour_id == $t->tour_id ? 'SELECTED' : '') . " >$t->name</option>";
-        }
-        ?>
-    </optgroup>
-    </select>
-    </form>
-    <br>
-    <?php
-    
-    $stars = Star::getStars(false, false, false);
+    HTMLOUT::standings(STATS_STAR, false, false, array('url' => 'index.php?section=stars'));
+    $stars = Star::getStars(false,false,false,false);
     foreach ($stars as $s) {
-        $s->setStats(false, false, $tour_id);
-        $s->setMatchStats(false, false, $tour_id);
-        $s->setStreaks($tour_id);
         $s->skills = '<small>'.implode(', ', $s->skills).'</small>';
         $s->teams = '<small>'.implode(', ', $s->teams).'</small>';
         $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
     }
-    
-    $fields = array(
-        'name'              => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')), 
-        'cost'              => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'), 
-        'ma'                => array('desc' => 'Ma'), 
-        'st'                => array('desc' => 'St'), 
-        'ag'                => array('desc' => 'Ag'), 
-        'av'                => array('desc' => 'Av'), 
-        'won'               => array('desc' => 'W'), 
-        'lost'              => array('desc' => 'L'), 
-        'draw'              => array('desc' => 'D'), 
-        'played'            => array('desc' => 'GP'), 
-        'win_percentage'    => array('desc' => 'WIN%'), 
-        'row_won'           => array('desc' => 'SW'), 
-        'row_lost'          => array('desc' => 'SL'), 
-        'row_draw'          => array('desc' => 'SD'), 
-        'cp'                => array('desc' => 'Cp'), 
-        'td'                => array('desc' => 'Td'), 
-        'intcpt'            => array('desc' => 'Int'), 
-        'cas'               => array('desc' => 'Cas'), 
-        'bh'                => array('desc' => 'BH'), 
-        'si'                => array('desc' => 'Si'), 
-        'ki'                => array('desc' => 'Ki'), 
-        'mvp'               => array('desc' => 'MVP'), 
-        'spp'               => array('desc' => 'SPP'),
-    );
-    
-    sort_table(
-        $lng->getTrn('secs/stars/tblTitle'), 
-        'index.php?section=stars', 
-        $stars, 
-        $fields, 
-        sort_rule('star'), 
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-        array()
-    );
-    
     $fields = array(
         'name'   => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')), 
+        'cost'   => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'), 
+        'ma'     => array('desc' => 'Ma'), 
+        'st'     => array('desc' => 'St'), 
+        'ag'     => array('desc' => 'Ag'), 
+        'av'     => array('desc' => 'Av'),
         'teams'  => array('desc' => 'Teams', 'nosort' => true),
         'skills' => array('desc' => 'Skills', 'nosort' => true), 
     );
-    
-    sort_table(
+    HTMLOUT::sort_table(
         '<a name="s2">'.$lng->getTrn('secs/stars/tblTitle2').'</a>', 
         'index.php?section=stars', 
         $stars, 
@@ -1574,8 +1463,6 @@ function sec_gallery() {
                     elseif ($round == RT_SEMI)          $round = $lng->getTrn('secs/fixtures/mtypes/semi');
                     elseif ($round == RT_QUARTER)       $round = $lng->getTrn('secs/fixtures/mtypes/quarter');
                     elseif ($round == RT_ROUND16)       $round = $lng->getTrn('secs/fixtures/mtypes/rnd16');
-                    elseif ($round == RT_PLAYIN)        $round = $lng->getTrn('secs/fixtures/mtypes/playin');
-                    elseif ($round == RT_FIRST && $tr->type == TT_KNOCKOUT) $round = $lng->getTrn('secs/fixtures/mtypes/firstrnd');
                     else                                $round = $lng->getTrn('secs/fixtures/mtypes/rnd').": $round";
         
                     echo "<div style='clear: both;'><i>$m->team1_name</i> vs <i>$m->team2_name</i>, ".((isset($m->date_played) && $m->date_played != 0) ? textdate($m->date_played, true) : 'Not played').", $round, <a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[view]</a><br><hr style='width: 400px; float: left;'></div><br>\n";
@@ -2110,6 +1997,22 @@ function sec_recentmatches() {
 
 /*************************
  *
+ *  UPCOMMING MATCHES
+ *
+ *************************/
+
+function sec_upcommingmatches() {
+
+    global $lng;
+    title($lng->getTrn('global/secLinks/upcomming'));
+    list($node, $node_id) = HTMLOUT::nodeSelector(false,false,false,'');
+    echo '<br>';
+    $ALL = ($node == STATS_LEAGUE && $node_id == 0); // All leagues selected == $node = $node_id = false
+    HTMLOUT::upcommingGames(false,false,($ALL) ? false : $node, ($ALL) ? false : $node_id, false,false,array('url' => 'index.php?section=upcomming', 'n' => MAX_RECENT_GAMES));
+}
+
+/*************************
+ *
  *  Comparence
  *
  *************************/
@@ -2387,7 +2290,7 @@ function sec_comparence() {
             'ki'                => array('desc' => 'Ki'), 
         );
         $objs = array((object) $stats);
-        sort_table(
+        HTMLOUT::sort_table(
             'Achievements', 
             "index.php?section=comparence", 
             $objs, 

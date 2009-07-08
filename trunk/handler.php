@@ -39,38 +39,6 @@ if (!isset($_GET['type'])) {
 switch ($_GET['type'])
 {        
     /***************
-     *  GD-bracket
-     ***************/
-    case 'gdbracket':
-        if (!isset($_GET['tour_id']) || !is_numeric($_GET['tour_id']) || !is_object($t = new Tour($_GET['tour_id']))) {
-            fatal("Sorry, invalid tournament ID.");
-        }
-
-        // Make the K.O. bracket ready.
-        $t->update();
-
-        if (get_class($t->koObj) != 'KnockoutGD') {
-            fatal("Sorry. GD-lib support is required to draw tournament bracket.");
-        }
-
-        // Create team ID <--> Name translation
-        $dictionary = array();
-        $query = "SELECT team_id, name FROM teams";
-        $result = mysql_query($query);
-        while ($row = mysql_fetch_assoc($result))
-            $dictionary[$row['team_id']] = $row['name'];
-
-        // Install translation.
-        $t->koObj->renameCompets($dictionary);
-
-        // Draw image.
-        $im = $t->koObj->getImage($settings['site_name']);
-        header('Content-type: image/png');
-        imagepng($im);
-        imagedestroy($im);
-        break;
-
-    /***************
      *  PDF-roster
      ***************/
     case 'roster':
@@ -139,7 +107,7 @@ switch ($_GET['type'])
      *  Inducements
      ***************/
     case 'inducements':
-        frame_begin(); {include('inducements.php');} frame_end(); // Daniel's try-out page.
+        HTMLOUT::frame_begin(); {include('inducements.php');} HTMLOUT::frame_end(); // Daniel's try-out page.
         break;
 
     /***************
@@ -154,7 +122,7 @@ switch ($_GET['type'])
      *  BOTOCS match import
      ***************/
     case 'leegmgr':
-        frame_begin(); {include('leegmgr/uploadinc.php');} frame_end();
+        HTMLOUT::frame_begin(); {include('leegmgr/uploadinc.php');} HTMLOUT::frame_end();
         break;
 
     default:

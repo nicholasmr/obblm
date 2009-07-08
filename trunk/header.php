@@ -27,9 +27,9 @@ error_reporting(E_ALL);
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.75d');
-$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec');
-define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
+define('OBBLM_VERSION', '0.75f');
+$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard');
+define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 
@@ -41,10 +41,25 @@ define('STATS_PLAYER', 1);
 define('STATS_TEAM',   2);
 define('STATS_COACH',  3);
 define('STATS_RACE',   4);
+define('STATS_STAR',   5);
 # Match groupings (nodes):
-define('STATS_TOUR',     1);
-define('STATS_DIVISION', 2);
-define('STATS_LEAGUE',   3);
+define('STATS_MATCH',    10);
+define('STATS_TOUR',     11);
+define('STATS_DIVISION', 12);
+define('STATS_LEAGUE',   13);
+
+// Translation between MySQL column match data references in the match_data table to PHP STATS_* constants.
+$CONST_TRANS = array(
+    STATS_PLAYER    => 'match_data.f_player_id',
+    STATS_TEAM      => 'match_data.f_team_id',
+    STATS_COACH     => 'match_data.f_coach_id',
+    STATS_RACE      => 'match_data.f_race_id',
+    
+    STATS_MATCH     => 'match_data.f_match_id',
+    STATS_TOUR      => 'match_data.f_tour_id',
+    STATS_DIVISION  => 'match_data.f_did',
+    STATS_LEAGUE    => 'match_data.f_lid',
+);
 
 /********************* 
  *   Prize types. Used by Prize class.
@@ -145,23 +160,12 @@ define('PLAYER_TYPE_JOURNEY', 2);
  *   For tournaments 
  *********************/
 
-// Maximum and minimum allowed rounds in a Round-Robin tournament.
-define('MIN_ALLOWED_ROUNDS', 1);
-define('MAX_ALLOWED_ROUNDS', 10);
+// Tournament Types for MySQL tournament "type" column:
+define('TT_FFA', 1);    # Free For All/manual tournament scheduling.
+define('TT_RROBIN', 2); # Round-Robin
 
 // Minimum required teams to create tournament.
 define('MIN_TOUR_TEAMS', 3); # DO NOT change this value to less than 3!
-
-// Tournament Types for MySQL tournament "type" column:
-define('TT_NOFINAL',    1); # Round-Robin WITHOUT final
-define('TT_FINAL',      2); # Round-Robin w. final
-define('TT_SEMI',       3); # Round-Robin w. final + semi-final
-define('TT_KNOCKOUT',   4); # Knock-out
-define('TT_SINGLE',     5); # Umbrella for grouping free for all (FFA) matches.
-
-// Max and min type values:
-define('TT_MIN', TT_NOFINAL);
-define('TT_MAX', TT_SINGLE);
 
 /******************** 
  *   For matches
@@ -186,10 +190,6 @@ define('RT_QUARTER', 252); # Quarter-finals.
 define('RT_ROUND16', 251); # Round of 16.
 
 define('MAX_ROUNDNR', RT_ROUND16); # This should have the value of the smallest reserved round number.
-
-// NON-reserved round numbers, used only for knock-out tournaments:
-define('RT_PLAYIN', 0); # Play-in round.
-define('RT_FIRST', 1); # First round.
 
 // Reserved (non-real) matches:
 define('MATCH_ID_IMPORT', -1);
@@ -257,7 +257,7 @@ require_once('lib/class_text.php');
 require_once('lib/class_prize.php');
 //require_once('lib/class_statsgraph.php'); // Should not be included here due to unnecessary load. Is included in handler.php.
 require_once('lib/class_rrobin.php');
-require_once('lib/class_knockout.php');
+//require_once('lib/class_knockout.php'); # Deprecated
 
 // External libraries.
 require_once('lib/class_arraytojs.php');

@@ -261,36 +261,6 @@ class Match
                 return false;
         }
 
-        /* 
-            Now, if this match is from a K.O. tournament AND is already played, 
-            then if the match winner has changed we must make sure that all subsequent matches contain the new match winner, and not the old winner.
-        */
-        
-        $new_winner = ($input['team1_score'] == $input['team2_score'])
-                        ? 0
-                        : (($input['team1_score'] > $input['team2_score'])
-                            ? $this->team1_id
-                            : $this->team2_id);
-        
-        // Has the match winner changed?
-        if ($this->winner != $new_winner && $this->winner != 0) {
-        
-            $query = "SELECT type FROM matches, tours WHERE tour_id = f_tour_id AND f_tour_id = $this->f_tour_id LIMIT 1";
-            $result = mysql_query($query);
-            $row = mysql_fetch_assoc($result);
-            
-            if ($row['type'] == TT_KNOCKOUT) {
-                foreach (array(1,2) as $i) {
-                    $query = "SELECT match_id FROM matches WHERE f_tour_id = $this->f_tour_id AND round > $this->round AND team${i}_id = $this->winner";
-                    $result = mysql_query($query);
-                    while ($row = mysql_fetch_assoc($result)) {
-                        $m = new Match($row['match_id']);
-                        $m->chTeamId($i, $new_winner);
-                    }
-                }
-            }
-        }
-        
         // Save match summary.
         $this->saveText($input['comment']);
         
@@ -302,129 +272,152 @@ class Match
         /**
          * Updates player match data.
          **/
-    
-        if ($this->locked || empty($input['player_id']))
+         
+        if ($this->locked || empty($input['player_id'])) {
             return false;
-
-        // Input
-        $p = new Player($input['player_id']);
-        $mid    = $this->match_id;
-        $pid    = $p->player_id;
-        $tid    = $p->owned_by_team_id;
-        $cid    = $p->coach_id;
-        $did    = get_alt_col('tours', 'tour_id', $this->f_tour_id, 'f_did');
-        $lid    = get_alt_col('divisions', 'did', $did, 'f_lid');
-        $rid    = get_alt_col('teams', 'team_id', $tid, 'f_race_id');
-    
-        $mvp    = $input['mvp']    ? $input['mvp']     : 0;
-        $cp     = $input['cp']     ? $input['cp']      : 0;
-        $td     = $input['td']     ? $input['td']      : 0;
-        $intcpt = $input['intcpt'] ? $input['intcpt']  : 0;
-        $bh     = $input['bh']     ? $input['bh']      : 0;
-        $si     = $input['si']     ? $input['si']      : 0;
-        $ki     = $input['ki']     ? $input['ki']      : 0;
-    
-        $cur_injs = array('ma' => 0, 'av' => 0, 'ag' => 0, 'st' => 0); # Current player injuries for match, if player entry already exists for match, else 0.
-        
-        // Test if player entry for match exists. If so, we need to fill $cur_injs.
-        $query  = "SELECT inj, agn1, agn2 FROM match_data WHERE f_player_id = $input[player_id] AND f_match_id = $this->match_id";
-        $result = mysql_query($query);
-        if (mysql_num_rows($result) > 0) {
-            $row = mysql_fetch_assoc($result);
-            foreach (array('inj', 'agn1', 'agn2') as $col) {
-
-                if ($row[$col] == NONE || $row[$col] == NI || $row[$col] == MNG || $row[$col] == DEAD) 
-                    continue;
-                    
-                $prescription = Player::theDoctor($row[$col]);
-                $cur_injs[$prescription]++;
-            }
         }
 
-        /* 
-            We now need to determine if the inputted player injuries conflict with the injury limits for the specific player.
-            We can determine this by knowing what injuries the submitter inputted, and what (if any) was earlier submitted (determined above).
-            If an injury limit is reached, we simply chose to refuse saving the input to avoid overflowing the limits.
-            
-            Note that injury limits are only relevant for MA, AV, AG and ST.
-        */        
+        /********************
+         *   Input 
+         ********************/
 
-        $inj    = NONE;
-        $agn1   = NONE;
-        $agn2   = NONE;
-        $fields = array();
-        $cnt_injs = array('ma' => 0, 'av' => 0, 'ag' => 0, 'st' => 0); # Counted number of approved/accepted injuries submitted.
-        
-        if ($input['inj'] == NONE || $input['inj'] == NI || $input['inj'] == MNG || $input['inj'] == DEAD)
-            $inj = $input['inj'];
-        else
-            array_push($fields, 'inj');
-
-        if ($input['agn1'] == NONE || $input['agn1'] == NI)
-            $agn1 = $input['agn1'];
-        else
-            array_push($fields, 'agn1');
-            
-        if ($input['agn2'] == NONE || $input['agn2'] == NI)
-            $agn2 = $input['agn2'];
-        else
-            array_push($fields, 'agn2');
-
-        foreach ($fields as $field) {
-            $chr = Player::theDoctor($input[$field]); # Characteristic
-            if ($chr && $p->chrLimits('inj', $chr) + $cur_injs[$chr] > $cnt_injs[$chr]) { # Are injuries reported within injury limits?
-                $$field = $input[$field];
-                $cnt_injs[$chr]++;
-            }
+        // Ref. IDs
+        $pid = $input['player_id'];
+        $tid = $input['team_id'];
+        $cid = get_alt_col('teams', 'team_id', $tid, 'owned_by_coach_id');
+        $rid = get_alt_col('teams', 'team_id', $tid, 'f_race_id');
+        // Node IDs
+        $mid  = $this->match_id;
+        $trid = $this->f_tour_id;
+        $did  = get_alt_col('tours', 'tour_id', $trid, 'f_did');
+        $lid  = get_alt_col('divisions', 'did', $did, 'f_lid');
+        // Match data.
+        foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki') as $inj) {
+            ${$inj} = ($input[$inj]) ? $input[$inj] : 0;
         }
-    
-        /* 
-            Before we write player's match data, we need to check if player's status was...
-                - Set to DEAD? In which case we must delete all the player's match data from matches played after this match (if any played).
-                - Set to MNG? In which case we must zero set the player's match data from match played after this match (if this match is not the latest).
-        */
-    
-        if ($this->is_played) { # Must be played to have a date to compare with.
-            if ($input['inj'] == DEAD) {
+        // Injs
+        $inj = $agn1 = $agn2 = NONE;
+        
+        // Ordinary player?
+        if ($pid > 0) {
+        
+                $p = new Player($pid);
             
-                $result = mysql_query("SELECT match_id FROM matches WHERE date_played IS NOT NULL AND date_played > '$this->date_played' ORDER BY date_played ASC");
+                $cur_injs = array('ma' => 0, 'av' => 0, 'ag' => 0, 'st' => 0); # Current player injuries for match, if player entry already exists for match, else 0.
                 
-                if (mysql_num_rows($result) > 0) { # Skip if the current match is the newest.
-                    while ($row = mysql_fetch_assoc($result)) {
-                        mysql_query("DELETE FROM match_data WHERE f_match_id = $row[match_id] AND f_player_id = " . $p->player_id);
+                // Test if player entry for match exists. If so, we need to fill $cur_injs.
+                $query  = "SELECT inj, agn1, agn2 FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid";
+                $result = mysql_query($query);
+                if (mysql_num_rows($result) > 0) {
+                    $row = mysql_fetch_assoc($result);
+                    foreach (array('inj', 'agn1', 'agn2') as $col) {
+
+                        if ($row[$col] == NONE || $row[$col] == NI || $row[$col] == MNG || $row[$col] == DEAD) 
+                            continue;
+                            
+                        $prescription = Player::theDoctor($row[$col]);
+                        $cur_injs[$prescription]++;
                     }
                 }
-            }
-            elseif ($input['inj'] != NONE) { # Player has MNG status.
 
-                $result = mysql_query("SELECT match_id FROM matches WHERE 
-                            date_played IS NOT NULL AND 
-                            date_played > '$this->date_played' AND 
-                            (team1_id = $p->owned_by_team_id OR team2_id = $p->owned_by_team_id) 
-                            ORDER BY date_played ASC LIMIT 1");
-                            
-                if (mysql_num_rows($result) > 0) { # Skip if the current match is the newest.
-                    $row = mysql_fetch_assoc($result);
-                    mysql_query("UPDATE match_data SET 
-                        mvp     = 0, 
-                        cp      = 0,
-                        td      = 0,
-                        intcpt  = 0,
-                        bh      = 0,
-                        si      = 0,
-                        ki      = 0,
-                        inj     = " . NONE . ",
-                        agn1    = " . NONE . ",
-                        agn2    = " . NONE . "
+                /* 
+                    We now need to determine if the inputted player injuries conflict with the injury limits for the specific player.
+                    We can determine this by knowing what injuries the submitter inputted, and what (if any) was earlier submitted (determined above).
+                    If an injury limit is reached, we simply chose to refuse saving the input to avoid overflowing the limits.
                     
-                        WHERE f_match_id = $row[match_id] AND f_player_id = " . $p->player_id);
+                    Note that injury limits are only relevant for MA, AV, AG and ST.
+                */        
+
+                $inj    = NONE;
+                $agn1   = NONE;
+                $agn2   = NONE;
+                $fields = array();
+                $cnt_injs = array('ma' => 0, 'av' => 0, 'ag' => 0, 'st' => 0); # Counted number of approved/accepted injuries submitted.
+                
+                if ($input['inj'] == NONE || $input['inj'] == NI || $input['inj'] == MNG || $input['inj'] == DEAD)
+                    $inj = $input['inj'];
+                else
+                    array_push($fields, 'inj');
+
+                if ($input['agn1'] == NONE || $input['agn1'] == NI)
+                    $agn1 = $input['agn1'];
+                else
+                    array_push($fields, 'agn1');
+                    
+                if ($input['agn2'] == NONE || $input['agn2'] == NI)
+                    $agn2 = $input['agn2'];
+                else
+                    array_push($fields, 'agn2');
+
+                foreach ($fields as $field) {
+                    $chr = Player::theDoctor($input[$field]); # Characteristic
+                    if ($chr && $p->chrLimits('inj', $chr) + $cur_injs[$chr] > $cnt_injs[$chr]) { # Are injuries reported within injury limits?
+                        $$field = $input[$field];
+                        $cnt_injs[$chr]++;
+                    }
                 }
-            }
+            
+                /* 
+                    Before we write player's match data, we need to check if player's status was...
+                        - Set to DEAD? In which case we must delete all the player's match data from matches played after this match (if any played).
+                        - Set to MNG? In which case we must zero set the player's match data from match played after this match (if this match is not the latest).
+                */
+            
+                if ($this->is_played) { # Must be played to have a date to compare with.
+                    if ($input['inj'] == DEAD) {
+                    
+                        $result = mysql_query("SELECT match_id FROM matches WHERE date_played IS NOT NULL AND date_played > '$this->date_played' ORDER BY date_played ASC");
+                        
+                        if (mysql_num_rows($result) > 0) { # Skip if the current match is the newest.
+                            while ($row = mysql_fetch_assoc($result)) {
+                                mysql_query("DELETE FROM match_data WHERE f_match_id = $row[match_id] AND f_player_id = $pid");
+                            }
+                        }
+                    }
+                    elseif ($input['inj'] != NONE) { # Player has MNG status.
+
+                        $result = mysql_query("SELECT match_id FROM matches WHERE 
+                                    date_played IS NOT NULL AND 
+                                    date_played > '$this->date_played' AND 
+                                    (team1_id = $tid OR team2_id = $tid) 
+                                    ORDER BY date_played ASC LIMIT 1");
+                                    
+                        if (mysql_num_rows($result) > 0) { # Skip if the current match is the newest.
+                            $row = mysql_fetch_assoc($result);
+                            mysql_query("UPDATE match_data SET 
+                                mvp     = 0, 
+                                cp      = 0,
+                                td      = 0,
+                                intcpt  = 0,
+                                bh      = 0,
+                                si      = 0,
+                                ki      = 0,
+                                inj     = " . NONE . ",
+                                agn1    = " . NONE . ",
+                                agn2    = " . NONE . "
+                            
+                                WHERE f_match_id = $row[match_id] AND f_player_id = $pid");
+                        }
+                    }
+                }
+        }
+        // Star player?
+        elseif ($pid <= ID_STARS_BEGIN) {
+            $rid = 'NULL'; // Star stats/match_data should not be counted/considered as race stats when a team of a given race hires the star.
+        }
+        // Mercenary?
+        elseif ($pid == ID_MERCS) {
+            // Mercs use the injs/agn fields differently from ordinary players. 
+            // Nr:      #Merc hired by that team. 
+            // Skills:  Extra skill bought count for the merc.
+            $inj  = $input['nr'];
+            $agn1 = $input['skills'];
+            $agn2 = NONE;
         }
 
-        /* 
-            Insert data into MySQL 
-        */
+        /********************
+         *  Insert data into MySQL 
+         ********************/
 
         // Do we need to update or create entry?
         $result = mysql_query("SELECT f_player_id FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid");
@@ -448,14 +441,15 @@ class Match
                     
             $query = "INSERT INTO match_data
             (
-                f_coach_id,
+                f_player_id,
                 f_team_id,
+                f_coach_id,
+                f_race_id,
+                
                 f_match_id,
                 f_tour_id,
                 f_did,
                 f_lid,
-                f_player_id,
-                f_race_id,
 
                 mvp,
                 cp,
@@ -470,14 +464,15 @@ class Match
             )
             VALUES
             (
-                $cid,
+                $pid,
                 $tid,
+                $cid,
+                $rid,
+                
                 $mid,
-                $this->f_tour_id,
+                $trid,
                 $did,
                 $lid,
-                $pid,
-                $rid,
 
                 $mvp,
                 $cp,
@@ -576,7 +571,7 @@ class Match
      * Statics
      ***************/
      
-    public static function getMatches($n = false, $node = false, $node_id = false) {
+    public static function getMatches($n = false, $node = false, $node_id = false, $getUpcomming = false) {
     
         /**
          * Returns an array of match objects for the latest $n matches, or all if $n = false.
@@ -591,7 +586,7 @@ class Match
             default: $where = false;
         }
         $query = "SELECT match_id FROM matches, tours, divisions 
-            WHERE date_played IS NOT NULL AND match_id > 0 AND f_tour_id = tour_id AND f_did = did
+            WHERE date_played IS ".(($getUpcomming) ? '' : 'NOT')." NULL AND match_id > 0 AND f_tour_id = tour_id AND f_did = did
             ".(($where) ? " AND $where " : '')."
             ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
         $result = mysql_query($query);

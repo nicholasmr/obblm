@@ -118,6 +118,7 @@ function match_form($match_id) {
                 
                 $m->entry(array(
                     'player_id' => $p->player_id,
+                    'team_id'   => $t->team_id,
                     /* 
                         Regarding MVP: We must check for isset() since checkboxes are not sent at all when not checked! 
                         We must also test for truth since the MNG-status exception above defines the MNG status, and thereby passing isset() here!
@@ -137,8 +138,6 @@ function match_form($match_id) {
             
             /* 
                 Save stars entries. 
-                Note: These entries are not saved through the match class as above. 
-                It was simpler to implement the routine in the star class.
             */
 
             foreach ($stars as $star) {
@@ -146,7 +145,10 @@ function match_form($match_id) {
                 if (isset($_POST['team_'.$star['id']]) && $_POST['team_'.$star['id']] == $id) {
                     $sid = $s->star_id;
 
-                    $s->mkMatchEntry($m->match_id, $t->team_id, array(
+                    $m->entry(array(
+                        'player_id' => $sid,
+                        'team_id'   => $t->team_id,
+                        
                         'mvp'     => (isset($_POST["mvp_$sid"]) && $_POST["mvp_$sid"]) ? 1 : 0,
                         'cp'      => $_POST["cp_$sid"],
                         'td'      => $_POST["td_$sid"],
@@ -163,15 +165,18 @@ function match_form($match_id) {
             
             /* 
                 Save mercenary entries. 
-                Note: These entries are not saved through the match class as above. 
-                It was simpler to implement the routine in the mercenary class.
             */
             
             Mercenary::rmMatchEntries($m->match_id, $t->team_id); // Remove all previously saved mercs in this match.
             for ($i = 0; $i <= 50; $i++)  { # We don't expect over 50 mercs. This is just some large random number.
                 $idm = '_'.ID_MERCS.'_'.$i;
                 if (isset($_POST["team$idm"]) && $_POST["team$idm"] == $id) {
-                    Mercenary::mkMatchEntry($m->match_id, $i, $t->team_id, array(
+                    $m->entry(array(
+                        'player_id' => ID_MERCS,
+                        'team_id'   => $t->team_id,
+                        'nr'        => $i,
+                        'skills'    => $_POST["skills$idm"],                    
+                        
                         'mvp'     => (isset($_POST["mvp$idm"]) && $_POST["mvp$idm"]) ? 1 : 0,
                         'cp'      => $_POST["cp$idm"],
                         'td'      => $_POST["td$idm"],
@@ -179,16 +184,11 @@ function match_form($match_id) {
                         'bh'      => $_POST["bh$idm"],
                         'si'      => $_POST["si$idm"],
                         'ki'      => $_POST["ki$idm"],
-                        'skills'  => $_POST["skills$idm"],
                     ));
                 }
             }
         }
 
-        // Update tournament
-        $tour = new Tour($m->f_tour_id);
-        $tour->update();
-        
         // Refresh objects used to display form.
         $m = new Match($match_id);
         $team1 = new Team($m->team1_id);
@@ -557,8 +557,8 @@ function match_form($match_id) {
     
     $i = 0; // Counter. Used to pass PHP-data to Javascript.
     foreach (array(1 => $team1->team_id, 2 => $team2->team_id) as $id => $t) {
-        foreach (Star::getStars($t, $m->match_id, false) as $s) {
-            $s->setStats(false, $m->match_id, false); // Set the star's stats fields to the saved values in the database for this match.
+        foreach (Star::getStars(STATS_TEAM, $t, STATS_MATCH, $m->match_id) as $s) {
+            $s->setStats(false,false, STATS_MATCH, $m->match_id); // Set the star's stats fields to the saved values in the database for this match.
             echo "<script language='JavaScript' type='text/javascript'>\n";
             echo "var mdat$i = [];\n";
             foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {

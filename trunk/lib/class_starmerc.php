@@ -38,33 +38,7 @@ class Star
     public $icon    = '';
     public $cost    = 0;
     public $teams   = array(); // The teams that may hire this star.
-
-    // Achievements
-    public $mvp     = 0;
-    public $cp      = 0;
-    public $td      = 0;
-    public $intcpt  = 0;
-    public $bh      = 0;
-    public $ki      = 0;
-    public $si      = 0;
-    public $cas     = 0;
-    public $spp     = 0; // If the star could earn SPP, it would have this much.
     
-    // Match statistics
-    public $played  = 0;
-    public $won     = 0;
-    public $lost    = 0;
-    public $draw    = 0;
-    public $win_percentage = 0;
-    public $row_won  = 0; // Won in row.
-    public $row_lost = 0;
-    public $row_draw = 0;
-
-    // This star's achievement fields (fld) are summed up/calculated by only looking at achievements reflected by:
-    public $fld_match_id = false;
-    public $fld_team_id = false;
-    public $fld_tour_id = false;    
-
     /***************
      * Methods
      ***************/
@@ -94,60 +68,32 @@ class Star
         $this->ag     = $stars[$this->name]['ag'];
         $this->av     = $stars[$this->name]['av'];
         $this->icon   = PLAYER_ICONS.'/'.$stars[$this->name]['icon'].'.png';
-        
-        $this->setStats(false, false, false);
+        $this->setStats(false,false,false,false);
 
         return true;
     }
     
-    public function setStats($team_id = false, $match_id = false, $tour_id = false)
+    public function setStats($obj, $obj_id, $node, $node_id, $setAvg = false)
     {
-        /*
-            Overwrites object fields/stats.
-        */
-        
-        // Set achievements
-        foreach (Star::getStats($this->star_id, $team_id, $match_id, $tour_id) as $field => $val) {
-            $this->$field = (!empty($val)) ? $val : 0;
-        }
-        
-        // This star's ach. fields are now reflected by the star's ach. with respect to the passed arguments.
-        $this->fld_team_id  = $team_id;
-        $this->fld_match_id = $match_id; 
-        $this->fld_tour_id  = $tour_id;
-        
-        return true;
-    }
-    
-    public function setMatchStats($team_id = false, $match_id = false, $tour_id = false)
-    {
-        /* 
-            Sets match statistics.
-        */
-        
-        foreach ($this->getHireHistory($team_id, $match_id, $tour_id) as $m) {
+        // Match stats.
+        $this->played = $this->won = $this->lost = $this->draw = $this->win_percentage = 0;
+        foreach ($this->getHireHistory($obj, $obj_id, $node, $node_id) as $m) {
             $this->played++;
-            if ($m->is_draw)
-                $this->draw++;
-            elseif ($m->winner == $m->hiredBy)
-                $this->won++;
-            else
-                $this->lost++;
+            if ($m->is_draw)                    {$this->draw++;}
+            elseif ($m->winner == $m->hiredBy)  {$this->won++;}
+            else                                {$this->lost++;}
         }
-        
         $this->win_percentage = ($this->played == 0) ? 0 : 100*$this->won/$this->played;
-    }
-    
-    public function setStreaks($tour_id)
-    {
-        foreach (Stats::getStreaks(STATS_PLAYER, $this->star_id, STATS_TOUR, $tour_id, false, false) as $key => $val) {
-            $this->$key = $val;
+
+        // Set achievements
+        foreach (Star::getStats($this->star_id, $obj, $obj_id, $node, $node_id) as $field => $val) {
+            $this->$field = ($val) ? (($setAvg) ? $val/$this->played : $val) : 0;
         }
         
         return true;
     }
     
-    public function getHireHistory($team_id = false, $match_id = false, $tour_id = false)
+    public function getHireHistory($obj, $obj_id, $node, $node_id)
     {
         /* 
             Returns an array of match objects for those matches which this star has participated in.
@@ -158,18 +104,17 @@ class Star
                 - hiredAgainstName  (team name)
         */
         
+        global $CONST_TRANS;
         $matches = array();
         
         $query = "SELECT DISTINCT f_match_id, f_team_id FROM match_data, matches WHERE 
             f_match_id = match_id 
             AND f_player_id = $this->star_id 
-            " . (($team_id)  ? " AND f_team_id = $team_id "   : '') . " 
-            " . (($match_id) ? " AND f_match_id = $match_id " : '') . " 
-            " . (($tour_id)  ? " AND matches.f_tour_id = $tour_id "   : '') . " 
-            ORDER BY date_played DESC";
+                ".(($obj)  ? ' AND '.$CONST_TRANS[$obj]. " = $obj_id "  : '').'
+                '.(($node) ? ' AND '.$CONST_TRANS[$node]." = $node_id " : '').'
+            ORDER BY date_played DESC';
             
-        $result = mysql_query($query);
-        if (mysql_num_rows($result) > 0) {
+        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 $m = new Match($row['f_match_id']);
                 // Make fake match fields for this star's values.
@@ -194,101 +139,36 @@ class Star
         return mysql_query($query);
     }
     
-    public function mkMatchEntry($match_id, $team_id, $mdat)
-    {
-        /*
-            Creates an entry for this star in the specified match.
-            This routine is like the routine from the match class, which adds ordinary player entries to a match.
-        */
-    
-        if (!$this->rmMatchEntry($match_id, false)) {
-            return false;
-        }
-        
-        $mvp    = $mdat['mvp']    ? $mdat['mvp']     : 0;
-        $cp     = $mdat['cp']     ? $mdat['cp']      : 0;
-        $td     = $mdat['td']     ? $mdat['td']      : 0;
-        $intcpt = $mdat['intcpt'] ? $mdat['intcpt']  : 0;
-        $bh     = $mdat['bh']     ? $mdat['bh']      : 0;
-        $si     = $mdat['si']     ? $mdat['si']      : 0;
-        $ki     = $mdat['ki']     ? $mdat['ki']      : 0;
-        
-        $query = "INSERT INTO match_data
-        (
-            f_coach_id,
-            f_team_id,
-            f_match_id,
-            f_tour_id,
-            f_player_id,
-
-            mvp,
-            cp,
-            td,
-            intcpt,
-            bh,
-            si,
-            ki,
-            inj,
-            agn1,
-            agn2
-        )
-        VALUES
-        (
-            ".get_alt_col('teams', 'team_id', $team_id, 'owned_by_coach_id').",
-            $team_id,
-            $match_id,
-            ".get_alt_col('matches', 'match_id', $match_id, 'f_tour_id').",
-            $this->star_id,
-
-            $mvp,
-            $cp,
-            $td,
-            $intcpt,
-            $bh,
-            $si,
-            $ki,
-            0,
-            0,
-            0
-        )";
-        
-        return mysql_query($query);
-    }
-
     /***************
      * Statics
      ***************/
 
-    public static function getStats($star_id, $team_id = false, $match_id = false, $tour_id = false) 
-    {
-        return array_shift(Stats::getStatsNaked(array('pid' => $star_id, 'tid' => $team_id, 'mid' => $match_id, 'trid' => $tour_id),false,false,false));
+    public static function getStats($star_id, $obj, $obj_id, $node, $node_id)
+    {   
+        $filter = array(STATS_PLAYER => $star_id);
+        if ($obj)  {$filter[$obj]  = $obj_id;}
+        if ($node) {$filter[$node] = $node_id;}
+        return array_shift(Stats::getStatsNaked($filter,false,false,false));
     }
     
-    public static function getStars($team_id = false, $match_id = false, $tour_id = false)
+    public static function getStars($obj, $obj_id, $node, $node_id)
     {
         /*
             Returns an array of star objs for each (depending on arguments) star player.
         */
-    
+        
+        global $stars, $CONST_TRANS;
         $starObjs = array();
         
-        if (!($team_id || $match_id || $tour_id)) {
-
-            global $stars;
-           
-            foreach ($stars as $s) {
-                array_push($starObjs, new Star($s['id']));
-            }
+        if (!($obj || $node)) {
+            $starObjs = array_map(create_function('$s', 'return (new Star($s[\'id\']));'), $stars);
         }
         else {
             $query = "SELECT DISTINCT f_player_id FROM match_data, matches WHERE 
-                f_match_id = match_id 
-                AND f_player_id <= ".ID_STARS_BEGIN." 
-                " . (($team_id)  ? " AND f_team_id = $team_id "   : '') . " 
-                " . (($match_id) ? " AND f_match_id = $match_id " : '') . " 
-                " . (($tour_id)  ? " AND matches.f_tour_id = $tour_id "   : '');
-            $result = mysql_query($query);
-            if ($result && mysql_num_rows($result) > 0) {
+                f_match_id = match_id AND f_player_id <= ".ID_STARS_BEGIN." 
+                ".(($obj)  ? ' AND '.$CONST_TRANS[$obj]. " = $obj_id "  : '').'
+                '.(($node) ? ' AND '.$CONST_TRANS[$node]." = $node_id " : '');
+            if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
                 while ($row = mysql_fetch_assoc($result)) {
                     array_push($starObjs, new Star($row['f_player_id']));
                 }
@@ -358,6 +238,10 @@ class Mercenary
         return true;
     }
 
+    /***************
+     * Statics
+     ***************/
+
     public static function rmMatchEntries($match_id, $team_id = false)
     {
         /*
@@ -368,65 +252,6 @@ class Mercenary
         return mysql_query($query);
     }
     
-    public static function mkMatchEntry($match_id, $nr, $team_id, $mdat)
-    {
-        /*
-            Creates an entry for a merc in the specified match.
-            This routine is like the routine from the match class, which adds ordinary player entries to a match.
-        */
-        
-        $mvp    = $mdat['mvp']    ? $mdat['mvp']     : 0;
-        $cp     = $mdat['cp']     ? $mdat['cp']      : 0;
-        $td     = $mdat['td']     ? $mdat['td']      : 0;
-        $intcpt = $mdat['intcpt'] ? $mdat['intcpt']  : 0;
-        $bh     = $mdat['bh']     ? $mdat['bh']      : 0;
-        $si     = $mdat['si']     ? $mdat['si']      : 0;
-        $ki     = $mdat['ki']     ? $mdat['ki']      : 0;
-        $skills = $mdat['skills'] ? $mdat['skills'] : 0;
-        
-        $query = "INSERT INTO match_data
-        (
-            f_coach_id,
-            f_team_id,
-            f_match_id,
-            f_tour_id,
-            f_player_id,
-
-            mvp,
-            cp,
-            td,
-            intcpt,
-            bh,
-            si,
-            ki,
-            
-            inj,
-            agn1,
-            agn2
-        )
-        VALUES
-        (
-            ".get_alt_col('teams', 'team_id', $team_id, 'owned_by_coach_id').",
-            $team_id,
-            $match_id,
-            ".get_alt_col('matches', 'match_id', $match_id, 'f_tour_id').",
-            ".ID_MERCS.",
-
-            $mvp,
-            $cp,
-            $td,
-            $intcpt,
-            $bh,
-            $si,
-            $ki,
-            
-            $nr,
-            $skills,
-            0
-        )";
-        return mysql_query($query);
-    }
-
     public static function getMercsHiredByTeam($team_id, $f_match_id = false)
     {
         /*
