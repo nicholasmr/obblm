@@ -367,46 +367,24 @@ function sec_main() {
                     <div class='boxBody'>
                         <table class="boxTable" style='width:100%;'>
                             <tr>
-                                <td><b>Team</b></td>
+                                <td style='width:100%;'><b>Team</b></td>
+                                <?php if ($sta['wpoints']) {echo "<td><b>PTS</b></td>\n";}?>
+                                <td><b>Cas</b></td>
                                 <td><b>W</b></td>
                                 <td><b>L</b></td>
                                 <td><b>D</b></td>
-                                <?php
-                                if ($sta['wpoints']) {
-                                    echo "<td><b>Points</b></td>\n";
-                                    if ($sta['rs'] == 3) {
-                                        echo "<td><b>TD+Cas</b></td>\n";
-                                    }
-                                    else {
-                                        echo "<td><b>Cas</b></td>\n";                                            
-                                    }
-                                }
-                                else {
-                                    echo "<td><b>Cas</b></td>\n";
-                                    echo "<td><b>Score</b></td>\n";                                
-                                }
-                                ?>
+                                <td><b>Score</b></td>
                             </tr>
                             <?php
                             foreach ($sta['teams'] as $t) {
                                 echo "<tr>\n";
                                 echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;team_id=$t->team_id'>$t->name</a>" : $t->name)."</td>\n";
+                                if ($sta['wpoints']) {echo '<td>'.((is_float($t->points)) ? sprintf('%1.2f', $t->points) : $t->points)."</td>\n";} 
+                                echo "<td>$t->cas</td>\n";
                                 echo "<td>$t->won</td>\n";
                                 echo "<td>$t->lost</td>\n";
                                 echo "<td>$t->draw</td>\n";
-                                if ($sta['wpoints']) {
-                                    echo '<td>'.((is_float($t->points)) ? sprintf('%1.2f', $t->points) : $t->points)."</td>\n";
-                                    if ($sta['rs'] == 3) {
-                                        echo "<td>$t->tdcas</td>\n";
-                                    }
-                                    else {
-                                        echo "<td>$t->cas</td>\n";                                            
-                                    }
-                                }
-                                else {
-                                    echo "<td>$t->cas</td>\n";
-                                    echo "<td>$t->score_team - $t->score_opponent</td>\n";
-                                }
+                                echo "<td>$t->score_team&nbsp;-&nbsp;$t->score_opponent</td>\n";
                                 echo "</tr>\n";
                             }
                             ?>

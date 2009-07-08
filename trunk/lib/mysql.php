@@ -151,7 +151,6 @@ function setup_tables() {
                 team_id             MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 name                VARCHAR(50),
                 owned_by_coach_id   MEDIUMINT UNSIGNED,
-                race                VARCHAR(20),
                 f_race_id           TINYINT UNSIGNED NOT NULL DEFAULT 0,
                 treasury            BIGINT SIGNED,
                 apothecary          BOOLEAN,

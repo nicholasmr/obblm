@@ -229,6 +229,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             if ($USE_ELO = ($sel_node == STATS_TOUR || $ALL_TIME)) {
                 $fields_after['elo'] = array('desc' => 'ELO');
             }
+            // Show teams standings list only for teams owned by... ?
             switch ((array_key_exists('teams_from', $opts)) ? $opts['teams_from'] : false)
             {
                 case STATS_COACH:
