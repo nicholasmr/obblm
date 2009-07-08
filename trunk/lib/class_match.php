@@ -421,7 +421,7 @@ class Match
 
         // Do we need to update or create entry?
         $result = mysql_query("SELECT f_player_id FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid");
-        if (mysql_num_rows($result) > 0) {
+        if (mysql_num_rows($result) > 0 && $pid != ID_MERCS) { // Don't allow updating if merc - this will overwrite other merc entries (if +1 merc in match).
 
             $query = "UPDATE match_data SET
                         mvp     = $mvp,
