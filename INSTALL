@@ -67,6 +67,7 @@ NOTE: When upgrading please save your old settings file as a reference for when 
         UPDATE teams SET f_race_id = 23 WHERE race = 'Underworld';
         ALTER TABLE match_data ADD COLUMN f_race_id TINYINT UNSIGNED AFTER f_player_id;
         UPDATE match_data, teams SET match_data.f_race_id = teams.f_race_id WHERE match_data.f_team_id = teams.team_id;
+        ALTER TABLE teams DROP race;
         
         UPDATE tours SET type = IF(type = 1, 2, 1);
         UPDATE match_data, tours, divisions SET 
