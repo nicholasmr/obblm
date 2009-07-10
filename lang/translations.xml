@@ -38,7 +38,7 @@
             <cc>CC</cc> <!-- Leave this untouched. Is abbrev of above. -->
             <home>Home</home>
             <fixtures>Tournaments</fixtures>
-            <standings>All-time standings</standings>
+            <standings>Standings</standings>
             <teams>Teams</teams>
             <players>Players</players>
             <coaches>Coaches</coaches>
@@ -49,14 +49,8 @@
             <gallery>Gallery</gallery>
             <gb>Guest book</gb>
             <forum>Forum</forum>
-            <!-- Not shown amongst menu links -->
-            <recent>Recent matches</recent> 
-            <upcomming>Upcomming matches</upcomming> 
-            <statistics>Statistics</statistics>
-            <specstandings>Tournament standings</specstandings>
-            <myteams>My teams</myteams>
-            <myprofile>My profile</myprofile>
-        </secLinks>
+            <recent>Recent matches</recent> <!-- Not shown amongst menu links -->
+            <register>Register</register></secLinks>
         
         <!-- Notifications for sortable tables -->
         <sortTbl>
@@ -70,15 +64,14 @@
             <back>back</back>
             <change>change</change>
             <stn>standings</stn>
-            <alltime>All-time</alltime>
             <all>All</all>
             <specific>Specific</specific>
-            <pms>Display match average stats</pms>
-            <oas>Display all-time stats </oas>
-            <gamewon>Won</gamewon>
-            <gamelost>Lost</gamelost>
-            <gamedraw>Draw</gamedraw>
-            <gameunknown>Unknown</gameunknown>
+            <pms>Set per match stats</pms>
+            <oas>Set over all stats</oas>
+			<gamewon>Won</gamewon>
+			<gamelost>Lost</gamelost>
+			<gamedraw>Draw</gamedraw>
+			<gameunknown>Unknown</gameunknown>
         </misc>
     </global>
 
@@ -90,6 +83,8 @@
         <home>
         
             <!-- General -->
+            <showall>Show all</showall>
+            <normal>Normal view</normal>
             <new>New message</new>
             <del>Delete</del>
             <edit>Edit</edit>
@@ -100,9 +95,6 @@
             <by>by</by>
             <lastedit>last edited</lastedit>
             <more>more</more>
-            <title>Title</title>
-            <msg>Message</msg>
-            <submit>Submit</submit>
             
             <!-- Titles of right column stats boxes -->
             <recent>Recent matches</recent>
@@ -119,6 +111,7 @@
             
             <standings>Standings</standings>
             <desc>Description</desc>
+            <bracket>Bracket</bracket>
             <fin>finished</fin>
             <undecided>Undecided</undecided>
             <winner>Winner</winner>
@@ -138,7 +131,9 @@
                 <quarter>Quarter-finals</quarter>
                 <rnd16>Round of 16</rnd16>
                 <rnd>Round</rnd>
-            </mtypes>
+                <firstrnd>First round</firstrnd>
+                <playin>Play-in games</playin>
+                <standalone>Standalone</standalone></mtypes>
 
             <!-- Subsection: Tournament standings -->
             <stn>
@@ -178,10 +173,6 @@
                 <b>Player skills</b><br>
                 Once the match report has been submitted OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
                 <br>
-                <b>Player injuries</b><br>
-                If a player sustains multiple injuries simply utilize the second and third injury columns "ageing 1" and "ageing 2". 
-                The <i>only</i> difference between the ordinary "inj" column and the ageing columns is that injuries recorded as ageing injuries do not imply a MNG.<br>
-                <br>
                 <b>Incomes</b><br>
                 A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
                 If you spended more than you made in a match then simply prefix - (minus).
@@ -205,7 +196,7 @@
                 <info>Game information</info>
                     <stad>Stadium</stad>
                     <gate>Gate</gate>
-                    <fans>Fans (RL spectators)</fans>
+                    <fans>Fans</fans>
                     
                 <results>Game results</results>
                     <teams>Teams</teams>
@@ -215,8 +206,6 @@
                     <smp>Sportsmanship points</smp>
                         <pts>points</pts>
                     <tcas>Total team CAS</tcas>
-                    <fame>FAME</fame>
-                    <tv>TVs</tv>
                     
                 <summary>Game summary</summary>
                 <photos>Match photos</photos>
@@ -231,16 +220,15 @@
                     <writeNewCmt>Write your new comment here</writeNewCmt>
                     <postCmt>Post comment</postCmt>
                     <none>None</none>
-                    <delete>Delete</delete>
-            </report>
-            
-        </fixtures>
+                    <wrong_teams>Wrong teams in the match report</wrong_teams></report>
+
+            <forbidden>Forbidden</forbidden></fixtures>
         
         <standings>
         
             <!-- General -->
-            <tblTitle>All-time standings</tblTitle>
-            <tblTitle2>All-time standings continued (team details)</tblTitle2>
+            <tblTitle>Overall standings</tblTitle>
+            <tblTitle2>Overall standings continued (team details)</tblTitle2>
         </standings>
         
         <teams>
@@ -265,7 +253,6 @@
                 <nonews>No entries exist.</nonews>
                 <submitnews>Submit news</submitnews>
                 <delete>Delete</delete>
-                <edit>Edit</edit>
             
             <gamesplayed>Games played</gamesplayed>
                 <showagainst>Show matches against</showagainst>
@@ -273,6 +260,8 @@
                 <showmatches>Show matches</showmatches>
                 <all>All</all>
             
+            <tourranks>Tournament rankings</tourranks>
+
             <!-- For the three team page boxes -->
             
             <desc>Description</desc>
@@ -310,7 +299,6 @@
                 <buy_goods>Buy team goods</buy_goods>
                 <drop_goods>Let go of team goods</drop_goods>
                 <ready_state>Set ready state</ready_state>
-                <unbuy_player>Un-hire player</unbuy_player>
 
                 <desc>
                     <hire_player>
@@ -364,29 +352,29 @@
                     This team attribute allows coaches to signal other coaches/teams whether or not this team is interested in playing any matches.
                     ]]>
                     </ready_state>
-                    <unbuy_player>
-                    <![CDATA[
-                    Regret hiring a player. 100% refund.<br>
-                    This is only possible for players which have not participated in any matches.
-                    ]]>
-                    </unbuy_player>
                 </desc>
             </box_tm>
             
             <box_admin>
                 <title>Admin tools</title>
 
+                <unbuy_player>Un-hire player</unbuy_player>
                 <unhire_journeyman>Un-hire journeymen</unhire_journeyman>
                 <unsell_player>Un-fire player</unsell_player>
                 <unbuy_goods>Un-buy team goods</unbuy_goods>
                 <bank>Gold bank</bank>
                 <chown>Change ownership</chown>
-                <spp>Manage extra player SPP</spp>
-                <dval>Manage extra player value</dval>
-                <extra_skills>Manage extra player skills</extra_skills>
+                <spp>Manage player extra SPP</spp>
+                <extra_skills>Manage player extra skills</extra_skills>
                 <ach_skills>Remove ach. player skills</ach_skills>
 
                 <desc>
+                    <unbuy_player>
+                    <![CDATA[
+                    Regret hiring a player. 100% refund.<br>
+                    This is only possible for players which have not participated in any matches.
+                    ]]>
+                    </unbuy_player>
                     <unhire_journeyman>
                     <![CDATA[
                     Regret permanently hiring a journeyman.<br>
@@ -418,11 +406,6 @@
                     Manage a player's extra SPP.
                     ]]>
                     </spp>
-                    <dval>
-                    <![CDATA[
-                    Change a player's value by a certain amount.
-                    ]]>
-                    </dval>
                     <extra_skills>
                     <![CDATA[
                     Manage a player's extra skills.
@@ -561,8 +544,7 @@
                 <svic>Largest score-difference</svic>
                 <inc>Largest team income</inc>
                 <gate>Largest gate</gate>
-                <mfans>Most RL fans/spectators</mfans>
-                <tvdiff>Largest TV difference in which underdog won</tvdiff>
+                <mfans>Most fans/spectators</mfans>
             </memma>
             
             <!-- Subsection: Prizes -->
@@ -731,6 +713,12 @@
             How do I heal all of a team's MNGs?<br>
             <i>A:</i>
             Simply open the match report from the team's latest played match, and reassign the injuries sustained as ageing injuries - these do not result in MNGs.
+            <br><br>
+
+            <i>Q:</i>
+            How do I schedule a league season of two or more divisions?<br>
+            <i>A:</i>
+            OBBLM does not support seasons or divisions, and so you will have to schedule a tournament for each division and subsequently a FFA tournament consisting of the individual division finalists.
             ]]>
             </faq_txt>
             
@@ -777,7 +765,9 @@
                 <about>About you</about>
                     <nowrite>Nothing has yet been written about you.</nowrite>
                     <save>Save</save>
-            </main>
+                    <scheduled_matches>Scheduled matches</scheduled_matches>
+                    <upload_match_report>Upload</upload_match_report>
+                    <new_unscheduled_match>New unscheduled match</new_unscheduled_match></main>
             
             <new_team>
                 <title>Create new team</title>
@@ -795,21 +785,19 @@
             -->
             
             <administration>Administration</administration>
-            <um>Management: Coach</um> <!-- User management -->
-            <ldm>Management: League &amp; division</ldm> <!-- League and division management -->
-            <th>Management: Tournament</th> <!-- Tournament handling -->
-            <delete>Delete+retire coach or team</delete>
-            <schedule>Schedule matches</schedule>
-            <log>Log</log>
+            <um>User management</um>
+            <ldm>League and division management</ldm>
             <import>Import team</import>
-
+            <th>Tournament handling</th>
+            <delete>Delete/retire coaches or teams</delete>
+            <schedule>Schedule tournaments / matches</schedule>
+            <log>Log</log>
             <pick>Please pick one of the above links.</pick>
             
             <prefixes>the prefixes + and - specify least of and most of</prefixes>
             
             <!-- Subsec: Schedule matches -->
             <multiple_schedule><![CDATA[<i>Note:</i> You are free to schedule multiple tournaments running concurrently.]]></multiple_schedule>
-            <create_leag_div><![CDATA[<i>Note:</i> You must first create a league with one or more divisions before being able to create matches.]]></create_leag_div>
             <div_name>Division</div_name>            
             <tour_name>Tournament name</tour_name>
             <rank_sys>Ranking system</rank_sys>
@@ -819,7 +807,7 @@
             <create>Create</create>
             <add_match>Add the single match to...</add_match>
                 <new_tour>A new FFA tour (fill out left fields too!)</new_tour>
-            <as_type>As type...</as_type>
+            <as_type>A new FFA tour (fill out left fields too!)</as_type>
             <as_reverse>Reverse home/away pair-up?</as_reverse>
             
             <!-- Subsec: User management -->
@@ -852,14 +840,13 @@
                 <have_read>I have read the below advisement</have_read>
                 <pre>
                 <![CDATA[
-                This feature is only meant to be used for non-played or empty tournaments and test-tournaments.<br>
+                This feature is only meant to be used for non-played tournaments and test-tournaments.<br>
                 If you decide to delete a proper tournament you should know that this will
                 ]]>
                 </pre>
                 <e1>delete the tournament associated data forever (this includes team and player gained stats in the tournament).</e1>
                 <e2>generate incorrect player statuses for those matches following (date-wise) the matches deleted. Re-saving/changing old matches may therefore be problematic.</e2>
             </advise>
-            <edit_tour>Edit existing tournament</edit_tour>
             <tour_del>Tournament deletion</tour_del>
             <move_div>Move tour to other division</move_div>
 
@@ -872,9 +859,7 @@
                 <e1>For the sake of keeping league statistics intact you are not allowed to delete teams or coaches which have played matches.</e1>
                 <e2>Once retired a coach cannot login and teams are no longer manageable/editable from their team pages.</e2>
                 <unretire>Un-retire (ie. regret retiring) instead of retiring?</unretire>
-            </retire>
-
-        </admin>
+            </retire></admin>
         
         <recent>
             <from_tours>From tournament</from_tours>

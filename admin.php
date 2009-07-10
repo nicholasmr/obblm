@@ -43,9 +43,9 @@ function sec_admin() {
         fatal("Sorry. Your access level does not allow you opening the requested page.");
 
     // Permissions OK => Continue...
-    /*
-    title($lng->getTrn('secs/admin/administration'));
 
+    title($lng->getTrn('secs/admin/administration'));
+    
     ?>
     <div class="admin_menu">
         <?php
@@ -61,7 +61,7 @@ function sec_admin() {
         <hr>
     </div>
     <?php
-    */
+    
     $coaches = Coach::getCoaches(); // Used by multiple sub-sections.
     
     // If an admin section was requested then call it, else show admin main page.
@@ -248,18 +248,15 @@ function sec_admin() {
             // Initialize needed HTML post values which due to tournament types are disabled by javascript.
             switch ($_POST['type']) 
             {
-                case TT_FFA:
-                    $_POST['rounds'] = 1;
-                    if (!isset($_POST['name'])) {
+                case TT_SINGLE:
+                    if (!isset($_POST['name']))
                         $_POST['name'] = 'Single';
-                    }
-                    break;
-                case TT_RROBIN:
-                    break;
+                case TT_KNOCKOUT:
+                    $_POST['rounds'] = 1;
             }
             
             // Check passed tournament name.
-            if ((!isset($_POST['name']) || empty($_POST['name'])) && !($_POST['type'] == TT_FFA && $_POST['existTour'] != -1)) {
+            if ((!isset($_POST['name']) || empty($_POST['name'])) && !($_POST['type'] == TT_SINGLE && $_POST['existTour'] != -1)) {
                 status(false, "Please fill out the tournament name.<br>\n");
                 $STATUS = false;
             }
@@ -273,15 +270,16 @@ function sec_admin() {
             
             $i = count($team_ids);
             if (
-                ($_POST['type'] == TT_FFA    && $i < 2              && ($cnt = 2)) || 
-                ($_POST['type'] == TT_RROBIN && $i < MIN_TOUR_TEAMS && ($cnt = MIN_TOUR_TEAMS)) 
+                ($_POST['type'] == TT_SEMI   && $i < 4 && $cnt = 4) || 
+                // ($_POST['type'] == TT_SINGLE && $i < 2 && $cnt = 2) || 
+                ($_POST['type'] != TT_SEMI && $_POST['type'] != TT_SINGLE && $i < MIN_TOUR_TEAMS && $cnt = MIN_TOUR_TEAMS) 
             ) {
                 status(false, "Please select at least $cnt participants.<br>\n");
                 $STATUS = false;
             }
             
             // Reverse pair-up for FFA match?
-            if ($_POST['type'] == TT_FFA && isset($_POST['reverse']) && $_POST['reverse']) {
+            if ($_POST['type'] == TT_SINGLE && isset($_POST['reverse']) && $_POST['reverse']) {
                 $team_ids = array_reverse($team_ids);
             }
             
@@ -291,13 +289,13 @@ function sec_admin() {
                     $_POST['name'] = stripslashes($_POST['name']);
                     
                 // Is the whish to add a match to a FFA tour?
-                if ($_POST['type'] == TT_FFA && $_POST['existTour'] != -1) {
+                if ($_POST['type'] == TT_SINGLE && $_POST['existTour'] != -1) {
                     $rnd = (!isset($_POST['round'])) ? 1 : (int) $_POST['round'];
                     status(Match::create(array('team1_id' => $team_ids[0], 'team2_id' => $team_ids[1], 'round' => $rnd, 'f_tour_id' => (int) $_POST['existTour'])));
                 }
                 // Create new tour...
                 else {
-                    if ($_POST['type'] == TT_FFA) {
+                    if ($_POST['type'] == TT_SINGLE) {
                         $_POST['rounds'] = $_POST['round'];
                     }
                     status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => (int) $_POST['type'], 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
@@ -309,12 +307,14 @@ function sec_admin() {
         ?>
         <script language="JavaScript" type="text/javascript">
             // Global JavaScript Variables.
-            var TT_FFA    = <?php echo TT_FFA; ?>;
-            var TT_RROBIN = <?php echo TT_RROBIN; ?>;
+            var TT_NOFINAL  = <?php echo TT_NOFINAL; ?>;
+            var TT_FINAL    = <?php echo TT_FINAL; ?>;
+            var TT_SEMI     = <?php echo TT_SEMI; ?>;
+            var TT_KNOCKOUT = <?php echo TT_KNOCKOUT; ?>;
+            var TT_SINGLE   = <?php echo TT_SINGLE; ?>;
         </script>
         
         <?php 
-        echo $lng->getTrn('secs/admin/create_leag_div').'<br>';
         echo $lng->getTrn('secs/admin/multiple_schedule');
         $divisions = Division::getDivisions();
         foreach ($divisions as $d) {
@@ -360,7 +360,7 @@ function sec_admin() {
                             <optgroup label="Existing FFA">
                             <?php
                             foreach (Tour::getTours() as $t)
-                                if ($t->type == TT_FFA)
+                                if ($t->type == TT_SINGLE)
                                     echo "<option value='$t->tour_id'>$t->name</option>\n";
                             ?>
                             </optgroup>
@@ -369,7 +369,7 @@ function sec_admin() {
                         <b><font color="blue"><?php echo $lng->getTrn('secs/admin/as_type');?></font></b><br>
                         <select name="round">
                         <?php
-                            foreach (array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') as $r => $d) {
+                            foreach (array(RT_STANDALONE => 'Standalone', RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') as $r => $d) {
                                 echo "<option value='$r'>$d</option>\n";
                             }
                             $pure_rounds = array(); 
@@ -387,13 +387,16 @@ function sec_admin() {
             </tr></table>
             <br>
             <b><?php echo $lng->getTrn('secs/admin/tour_type');?>:</b><br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA (free for all) single match<br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
             <br>
             <?php echo $lng->getTrn('secs/admin/rrobin_rnds');?><br>
             <select name="rounds">
             <?php
-            foreach (range(1, 10) as $i) echo "<option value='$i'>$i</option>\n";
+            foreach (range(1, MAX_ALLOWED_ROUNDS) as $i) echo "<option value='$i'>$i</option>\n";
             ?>
             </select>
             <br><br>
@@ -408,9 +411,6 @@ function sec_admin() {
             <hr align="left" width="200px">
             <input type="submit" name="button" value="<?php echo $lng->getTrn('secs/admin/create');?>" <?php echo (empty($divisions) ? 'DISABLED' : '');?>>
         </form>
-        <script language="JavaScript" type="text/javascript">
-            chTour(<?php echo TT_FFA;?>);
-        </script>
         <?php
     }
     elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'import') {
@@ -489,7 +489,7 @@ function sec_admin() {
                     status(false, "The team name must not be empty or identical to an existing team name.");
                     $err = true;
                 }
-                if (!in_array($_POST['race'], Race::getRaces(false))) {
+                if (!in_array($_POST['race'], array_keys(get_races()))) {
                     status(false, "Invalid race chosen.");
                     $err = true;            
                 }
@@ -691,8 +691,8 @@ function sec_admin() {
             <b>Race:</b><br>
             <select name="race" onchange="chRace(this.options[this.selectedIndex].value)">
                 <?php
-                foreach (Race::getRaces() as $r)
-                    echo "<option value='$r' ".(($err && $_POST['race'] == $r) ? 'SELECTED' : '').">$r</option>\n";
+                foreach (get_races() as $race => $icon_file)
+                    echo "<option value='$race' ".(($err && $_POST['race'] == $race) ? 'SELECTED' : '').">$race</option>\n";
                 ?>
             </select>
 
@@ -856,111 +856,98 @@ function sec_admin() {
         }
 
         title($lng->getTrn('secs/admin/th'));
-        $tours = Tour::getTours();
         $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value = e['trid'].options[e['trid'].selectedIndex].text;";
         
         ?>
-        <div class="adminBox">
-            <div class="boxTitle3"><?php echo $lng->getTrn('secs/admin/edit_tour');?></div>
-            <div class="boxBody">
-            <form id='tourForm' method="POST">
-                <br>
-                <b>Edit tournament:</b><br>
-                <select name="trid" onChange="<?php echo $nameChangeJScode;?>">
-                    <?php
-                    foreach ($tours as $t) {
-                        echo "<option value='$t->tour_id'>$t->name</option>\n";
-                    }
-                    ?>
-                </select>
-                <br><br>
-                <hr>
-                <br>
-                <b>New name:</b><br>
-                <input type='text' name='tname' length='20' value=''>
-
-                <script language="JavaScript" type="text/javascript">
-                    <?php echo $nameChangeJScode;?>
-                </script>
-
-                <br><br>
-                <b>New ranking system:</b> (<?php echo $lng->getTrn('secs/admin/prefixes');?>)<br>
-                <select name='rs'>
+        <form id='tourForm' method="POST">
+            <b>Tournament:</b><br>
+            <select name="trid" onChange="<?php echo $nameChangeJScode;?>">
                 <?php
-                foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
-                    echo "<option value='$idx'>RS #$idx | $r</option>\n";
+                foreach (Tour::getTours() as $t) {
+                    echo "<option value='$t->tour_id'>$t->name</option>\n";
                 }
                 ?>
-                </select>
-               
-                <br><br>
-                <b>New tournament type:</b> <?php echo $lng->getTrn('secs/admin/conv_warn');?><br>
-                <input type="radio" name="ttype" value="<?php echo TT_RROBIN;?>" > Round-Robin<br>
-                <input type="radio" name="ttype" value="<?php echo TT_FFA;?>" CHECKED> FFA (free for all) single match<br>
-                <br>
-                
-                <input type="hidden" name="type" value="change">
-                <input type="submit" value="Submit changes" <?php echo (empty($tours)) ? 'DISABLED' : ''?>>
-                <br>
-            </form>
-            </div>
-        </div>
+            </select>
 
-        <div class="adminBox">
-            <div class="boxTitle3"><?php echo $lng->getTrn('secs/admin/tour_del');?></div>
-            <div class="boxBody">
-            <form method="POST">
-                <b>I wish to delete the following tournament</b><br>
-                <select name="trid">
-                    <?php
-                    foreach ($tours as $t) {
-                        echo "<option value='$t->tour_id'>$t->name</option>\n";
-                    }
-                    ?>
-                </select>
-                <br><br>
-                <b><?php echo $lng->getTrn('secs/admin/advise/have_read');?>:</b> 
-                <input type="checkbox" name="delete" value="1">
-                <br><br>
-                <b><u>Advisement/warning:</u></b><br>
-                <?php echo $lng->getTrn('secs/admin/advise/pre');?>
-                <br>
-                <ul>
-                    <li><?php echo $lng->getTrn('secs/admin/advise/e1');?></li>
-                    <li><?php echo $lng->getTrn('secs/admin/advise/e2');?></li>
-                </ul>
-                <br>           
-                <input type="hidden" name="type" value="delete">
-                <input type="submit" value="Delete" onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
-            </form>
-            </div>
-        </div>
+            <br><br>
+            <b>Name:</b><br>
+            <input type='text' name='tname' length='20' value=''>
 
-        <div class="adminBox">
-            <div class="boxTitle3"><?php echo $lng->getTrn('secs/admin/move_div');?></div>
-            <div class="boxBody">
-            <form method="POST">
-                <b>Move tournament</b><br>
-                <select name="trid">
-                    <?php
-                    foreach ($tours as $t) {
-                        echo "<option value='$t->tour_id'>$t->name</option>\n";
-                    }
-                    ?>
-                </select><br><br>
-                <b>...to the division</b><br>
-                <select name="did">
-                    <?php
-                    foreach (Division::getDivisions() as $d) {
-                        echo "<option value='$d->did'>$d->name</option>\n";
-                    }
-                    ?>
-                </select><br><br>
-                <input type="hidden" name="type" value="move">
-                <input type="submit" value="Move">
-            </form>
-            </div>
-        </div>
+            <script language="JavaScript" type="text/javascript">
+                <?php echo $nameChangeJScode;?>
+            </script>
+
+            <br><br>
+            <b>Ranking system:</b> (<?php echo $lng->getTrn('secs/admin/prefixes');?>)<br>
+            <select name='rs'>
+            <?php
+            foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
+                echo "<option value='$idx'>RS #$idx | $r</option>\n";
+            }
+            ?>
+            </select>
+           
+            <br><br>
+            <b>Tournament type:</b> <?php echo $lng->getTrn('secs/admin/conv_warn');?><br>
+            <input type="radio" name="ttype" value="<?php echo TT_NOFINAL;?>" > Round-Robin without final<br>
+            <input type="radio" name="ttype" value="<?php echo TT_FINAL;?>" CHECKED> Round-Robin with final<br>
+            <input type="radio" name="ttype" value="<?php echo TT_SEMI;?>" > Round-Robin with final and semi-finals<br>
+            <input type="radio" name="ttype" value="<?php echo TT_KNOCKOUT;?>" > Knock-out (AKA. single-elimination, cup, sudden death)<br>
+            <input type="radio" name="ttype" value="<?php echo TT_SINGLE;?>" > FFA (free for all) single match<br>
+            <br><br>
+            
+            <input type="hidden" name="type" value="change">
+            <input type="submit" value="Submit changes">
+            <br><br>
+        </form>
+        <hr>
+        <form method="POST">
+            <?php title($lng->getTrn('secs/admin/tour_del'));?>
+            <b>I wish to delete the following tournament</b><br>
+            <select name="trid">
+                <?php
+                foreach (Tour::getTours() as $t) {
+                    echo "<option value='$t->tour_id'>$t->name</option>\n";
+                }
+                ?>
+            </select>
+            <br><br>
+            <b><?php echo $lng->getTrn('secs/admin/advise/have_read');?>:</b> 
+            <input type="checkbox" name="delete" value="1">
+            <br><br>
+            <b><u>Advisement/warning:</u></b><br>
+            <?php echo $lng->getTrn('secs/admin/advise/pre');?>
+            <br>
+            <ul>
+                <li><?php echo $lng->getTrn('secs/admin/advise/e1');?></li>
+                <li><?php echo $lng->getTrn('secs/admin/advise/e2');?></li>
+            </ul>
+            <br>           
+            <input type="hidden" name="type" value="delete">
+            <input type="submit" value="Delete" onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
+        </form>
+        <hr>
+        <form method="POST">
+            <?php title($lng->getTrn('secs/admin/move_div'));?>
+            <b>Move tournament</b><br>
+            <select name="trid">
+                <?php
+                foreach (Tour::getTours() as $t) {
+                    echo "<option value='$t->tour_id'>$t->name</option>\n";
+                }
+                ?>
+            </select><br><br>
+            <b>...to the division</b><br>
+            <select name="did">
+                <?php
+                foreach (Division::getDivisions() as $d) {
+                    echo "<option value='$d->did'>$d->name</option>\n";
+                }
+                ?>
+            </select><br><br>
+            <input type="hidden" name="type" value="move">
+            <input type="submit" value="Move">
+        </form>
         <?php
     }
     elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'log') {
@@ -1008,7 +995,8 @@ function sec_admin() {
         objsort($coaches, array('+name'));
         
         ?>
-        <table>
+        <table style='width:100%; : 10px;'>
+
             <tr>
                 <td colspan='2'>
                     <b><?php echo $lng->getTrn('secs/admin/retire/note');?></b>
@@ -1018,87 +1006,87 @@ function sec_admin() {
                     </ul>
                 </td>
             </tr>
+
             <tr>
-                <td valign='top'>
-                    <div class="adminBox">
-                        <div class="boxTitle3">Retire team</div>
-                        <div class="boxBody">
-                        <form method="POST">
-                        <select name='id'>
-                            <?php
-                            foreach ($teams as $t) {
-                                echo "<option value='$t->team_id' ".(($t->is_retired) ? 'style="background-color: orange;"' : '').">$t->name</option>\n";
-                            }
-                            ?>
-                        </select><br><br>
-                        <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
-                        <input type='submit' value='Retire/unretire'>
-                        <input type='hidden' name='type' value='rt'>
-                        </form>
-                        </div>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Retire team</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    <select name='id'>
+                        <?php
+                        foreach ($teams as $t) {
+                            echo "<option value='$t->team_id' ".(($t->is_retired) ? 'style="background-color: orange;"' : '').">$t->name</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
+                    <input type='submit' value='Retire/unretire'>
+                    <input type='hidden' name='type' value='rt'>
+                    </form>
                     </div>
+                </div>
                 </td>
-                <td valign='top'>
-                    <div class="adminBox">
-                        <div class="boxTitle3">Delete team</div>
-                        <div class="boxBody">
-                        <form method="POST">
-                        <select name='id'>
-                            <?php
-                            foreach ($teams as $t) {
-                                if ($t->isDeletable())
-                                    echo "<option value='$t->team_id'>$t->name</option>\n";
-                            }
-                            ?>
-                        </select>
-                        <br><br>
-                        <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
-                        <input type='hidden' name='type' value='dt'>
-                        </form>
-                        </div>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Retire coach</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    <select name='id'>
+                        <?php
+                        foreach ($coaches as $c) {
+                            echo "<option value='$c->coach_id' ".(($c->retired) ? 'style="background-color: orange;"' : '').">$c->name</option>\n";
+                        }
+                        ?>
+                    </select><br><br>
+                    <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
+                    <input type='submit' value='Retire/unretire'>
+                    <input type='hidden' name='type' value='rc'>
+                    </form>
                     </div>
+                </div>
                 </td>
             </tr>
-            <tr><td colspan="2"><hr></td></tr>
             <tr>
-                <td valign='top'>
-                    <div class="adminBox">
-                        <div class="boxTitle3">Retire coach</div>
-                        <div class="boxBody">
-                        <form method="POST">
-                        <select name='id'>
-                            <?php
-                            foreach ($coaches as $c) {
-                                echo "<option value='$c->coach_id' ".(($c->retired) ? 'style="background-color: orange;"' : '').">$c->name</option>\n";
-                            }
-                            ?>
-                        </select><br><br>
-                        <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
-                        <input type='submit' value='Retire/unretire'>
-                        <input type='hidden' name='type' value='rc'>
-                        </form>
-                        </div>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Delete team</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    <select name='id'>
+                        <?php
+                        foreach ($teams as $t) {
+                            if ($t->isDeletable())
+                                echo "<option value='$t->team_id'>$t->name</option>\n";
+                        }
+                        ?>
+                    </select>
+                    <br><br>
+                    <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
+                    <input type='hidden' name='type' value='dt'>
+                    </form>
                     </div>
+                </div>
                 </td>
-                <td valign='top'>
-                    <div class="adminBox">
-                        <div class="boxTitle3">Delete coach</div>
-                        <div class="boxBody">
-                        <form method="POST">
-                        <select name='id'>
-                            <?php
-                            foreach ($coaches as $c) {
-                                if ($c->isDeletable())
-                                    echo "<option value='$c->coach_id'>$c->name</option>\n";
-                            }
-                            ?>
-                        </select>
-                        <br><br>
-                        <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
-                        <input type='hidden' name='type' value='dc'>
-                        </form>
-                        </div>
+                <td>
+                <div class="adminBox">
+                    <div class="boxTitle3">Delete coach</div>
+                    <div class="boxBody">
+                    <form method="POST">
+                    <select name='id'>
+                        <?php
+                        foreach ($coaches as $c) {
+                            if ($c->isDeletable())
+                                echo "<option value='$c->coach_id'>$c->name</option>\n";
+                        }
+                        ?>
+                    </select>
+                    <br><br>
+                    <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
+                    <input type='hidden' name='type' value='dc'>
+                    </form>
                     </div>
+                </div>
                 </td>
             </tr>
         </table>
@@ -1195,7 +1183,7 @@ function sec_admin() {
                         }
                         ?>
                     </select><br><br>
-                    <input type='submit' value='Delete' <?php echo empty($divisions) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete devisions when no matches are assigned to it.')){return false;}">
+                    <input type='submit' value='Delete' <?php echo empty($divisions) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You shuould only delete devisions when no matches are assigned to it.')){return false;}">
                     <input type='hidden' name='type' value='del_division'>
                     </form>
                     </div>

@@ -31,7 +31,7 @@ class Team
     public $team_id           = 0;
     public $name              = "";
     public $owned_by_coach_id = 0;
-    public $f_race_id         = 0;
+    public $race              = "";
     public $treasury          = 0;
     public $apothecary        = 0;
     public $rerolls           = 0;
@@ -41,7 +41,6 @@ class Team
     public $imported          = false;
     public $is_retired        = 0;
 
-    public $race              = "";
     public $coach_name        = '';
     private $_bought_fan_factor = 0;
     
@@ -58,8 +57,42 @@ class Team
     public $elo_0  = 0;
     public $tcas_0 = 0;
     
+    // General (total) calcualted fields
+    public $mvp         = 0;
+    public $cp          = 0;
+    public $td          = 0;
+    public $intcpt      = 0;
+    public $bh          = 0;
+    public $si          = 0;
+    public $ki          = 0;
+    public $cas         = 0; // Sum of players' bh+ki+si.
+    public $tdcas       = 0; // Is td+cas. Used by some ranking systems.
+    public $spp         = 0; // Summed up SPPs.
+    //-------------------
+    public $played      = 0;
+    public $won         = 0;
+    public $lost        = 0;
+    public $draw        = 0;
+    public $win_percentage = 0;
+    public $score_team  = 0;    // Total score made by this team.
+    public $score_opponent = 0; // Total score made against this team.
+    public $score_diff  = 0;    // score_team - score_opponent
+    public $fan_factor  = 0;
+    public $points      = 0; // Total team points, if points ranking system is used.
+    public $smp         = 0; // Sportsmanship points.
+    public $tcas        = 0; // Team cas.
+    //-------------------    
+
     // Non-constructor filled fields.
 
+        // By setExtraStats().
+        public $won_tours = 0;
+
+        // By setStreaks().
+        public $row_won  = 0; // Won in row.
+        public $row_lost = 0;
+        public $row_draw = 0;
+        
         // By setValue().
         public $value  = 0;
 
@@ -71,8 +104,6 @@ class Team
      ***************/
 
     function __construct($team_id) {
-    
-        global $raceididx;
     
         // MySQL stored information
         $result = mysql_query("SELECT * FROM teams WHERE team_id = $team_id");
@@ -89,23 +120,26 @@ class Team
         $this->coach_name = get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'name');
         $this->_bought_fan_factor = $this->fan_factor;
         $this->imported = ($this->imported == 1); // Make boolean.
-        $this->race = $raceididx[$this->f_race_id];
-        $this->setStats(false,false,false);
+        $this->setStats(false);
         $this->setValue();
         
         return true;
     }
 
-    public function setStats($node, $node_id, $set_avg = false)
-    {
-        foreach (Stats::getAllStats(STATS_TEAM, $this->team_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
-            $this->$key = $val;
+    public function setStats($tour_id = false) {
+        
+        /**
+         * Overwrites object's stats fields.
+         **/
+         
+        foreach (array_merge(Stats::getStats(false, $this->team_id, false, false, $tour_id), Stats::getMatchStats(STATS_TEAM, $this->team_id, $tour_id)) as $field => $val) {
+            $this->$field = $val;
         }
 
         $this->fan_factor += $this->_bought_fan_factor;
         
         // Import fields
-        if ($this->imported && !$node) {
+        if ($this->imported) {
             $this->won            += $this->won_0;
             $this->lost           += $this->lost_0;
             $this->draw           += $this->draw_0;
@@ -113,9 +147,6 @@ class Team
             $this->score_team     += $this->gf_0;
             $this->score_opponent += $this->ga_0;
             $this->tcas           += $this->tcas_0;
-            if ($this->row_won < $this->sw_0)  $this->row_won  = $this->sw_0;
-            if ($this->row_lost < $this->sl_0) $this->row_lost = $this->sl_0;
-            if ($this->row_draw < $this->sd_0) $this->row_draw = $this->sd_0;
             # Corrections:
             $this->score_diff     = $this->score_team - $this->score_opponent;
             $this->win_percentage = ($this->played == 0) ? 0 : 100*$this->won/$this->played;
@@ -125,6 +156,37 @@ class Team
         return true;
     }
 
+    public function setExtraStats() {
+    
+        /**
+         * Set extra team stats.
+         **/
+    
+        $this->won_tours = (($this->imported) ? $this->wt_0 : 0) + count($this->getWonTours());
+        
+        return true;
+    }
+    
+    public function setStreaks($trid = false) {
+
+        /**
+         * Counts most won, lost and draw matches in a row.
+         **/
+
+        foreach (Stats::getStreaks(STATS_TEAM, $this->team_id, $trid) as $key => $val) {
+            $this->$key = $val;
+        }
+
+        // Import fields
+        if ($this->imported) {
+            if ($this->row_won < $this->sw_0)  $this->row_won  = $this->sw_0;
+            if ($this->row_lost < $this->sl_0) $this->row_lost = $this->sl_0;
+            if ($this->row_draw < $this->sd_0) $this->row_draw = $this->sd_0;
+        }
+
+        return true;
+    }
+    
     private function setValue() {
     
         global $rules;
@@ -157,11 +219,6 @@ class Team
         ";
         
         // For each player_id on this team, this tables contains the current player injury (sustained in the most recent match played by player).
-        /* 
-            Note: Why "GROUP BY"? Because imported players with multiple injs take up +1 match_data rows thus 
-                making it falsly look like the one player is acutally X (the number of rows) players.
-                The effect is that team value contribution form that player will be X times the single player value instead of 1 times the value, as it should be.
-        */
         $currentInj = "
             (
                 SELECT 
@@ -176,8 +233,6 @@ class Team
                     AND match_data.f_player_id  = latestMatchDate.pid
                     AND matches.date_played     = latestMatchDate.date
                     AND f_team_id               = $this->team_id 
-                GROUP BY
-                    match_data.f_player_id
             ) AS currentInj
         ";
         
@@ -204,8 +259,7 @@ class Team
                     ach_st,
                     LENGTH(ach_nor_skills) - LENGTH(REPLACE(ach_nor_skills, ',', '')) + IF(LENGTH(ach_nor_skills) = 0, 0, 1) AS 'nor', 
                     LENGTH(ach_dob_skills) - LENGTH(REPLACE(ach_dob_skills, ',', '')) + IF(LENGTH(ach_dob_skills) = 0, 0, 1) AS 'dob',
-                    cost,
-                    extra_val
+                    cost
                 FROM 
                     $prices,
                     (
@@ -250,7 +304,7 @@ class Team
         // Final master query.
         $query = "
             SELECT
-                SUM(cost + extra_val + (ach_ma + ach_av)*30000 + ach_ag*40000 + ach_st*50000 + nor*20000 + dob*30000 ".(($valReducInjs) ? " - $subtract" : '').") AS 'playerValueSum'
+                SUM(cost + (ach_ma + ach_av)*30000 + ach_ag*40000 + ach_st*50000 + nor*20000 + dob*30000 ".(($valReducInjs) ? " - $subtract" : '').") AS 'playerValueSum'
             FROM
                 $valueParts
                 ".(($valReducInjs) ? " LEFT JOIN $valReducInjs ON valueParts.pid = valReducInjs.pid" : '')."
@@ -336,16 +390,35 @@ class Team
         return false;
     }
     
-    public function getGoods($allow_double_rr_price = true) {
+    public function getGoods($double_price = true) {
 
         /**
          * Returns array containing buyable stuff for teams in their coach corner.
-         * 
-         *  Setting $allow_double_rr_price allows the RR price to double up if: (1) team has played any matches AND (2) static RR prices are NOT set in the $rules.
          **/
 
-        $race = new Race($this->f_race_id);
-        return $race->getGoods($allow_double_rr_price && $this->played > 0);
+        global $DEA;
+        global $rules;
+
+        $rerollcost = 0;
+        if (!empty($this->race)) {
+            $rerollcost = $DEA[$this->race]['other']['RerollCost'];
+            $rerollcost *= (($double_price && !$rules['static_rerolls_prices'] && $this->played > 0) ? 2 : 1);
+        }
+
+        $apothecary = true;
+        if ($this->race == 'Khemri' || $this->race == 'Necromantic' || $this->race == 'Nurgle' || $this->race == 'Undead')
+            $apothecary = false;
+        
+        $team_goods = array(
+                // MySQL names
+                'apothecary'    => array('cost' => $rules['cost_apothecary'],   'max' => ($apothecary ? 1 : 0),         'item' => 'Apothecary'),
+                'rerolls'       => array('cost' => $rerollcost,                 'max' => $rules['max_rerolls'],         'item' => 'Reroll'),
+                'fan_factor'    => array('cost' => $rules['cost_fan_factor'],   'max' => $rules['max_fan_factor'],      'item' => 'Fan Factor'),
+                'ass_coaches'   => array('cost' => $rules['cost_ass_coaches'],  'max' => $rules['max_ass_coaches'],     'item' => 'Assistant Coach'),
+                'cheerleaders'  => array('cost' => $rules['cost_cheerleaders'], 'max' => $rules['max_cheerleaders'],    'item' => 'Cheerleader'),
+        );
+
+        return $team_goods;
     }
 
     public function delete() {
@@ -574,6 +647,35 @@ class Team
         return (array_key_exists($position, $DEA[$this->race]['players']) && ($row['number'] - $DOS) < $DEA[$this->race]['players'][$position]['qty']);
     }
 
+    public function getTourRankings($getFFA = true) {
+    
+        /**
+         * Get structure with tours this team has participated in, and the ranking this team has/had in those tours.
+         **/
+        $ret = array();
+    
+        $query = "SELECT DISTINCT f_tour_id FROM matches, tours 
+            WHERE f_tour_id = tour_id AND (team1_id = $this->team_id OR team2_id = $this->team_id) ".(($getFFA) ? '' : "AND type != ".TT_SINGLE);
+            
+        $result = mysql_query($query);
+        if (mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                $t = new Tour($row['f_tour_id']);
+                $stn = $t->getStandings();
+                $t->teamRank = 'ERR';
+                for ($i = 0; $i < count($stn); $i++) {
+                    if ($stn[$i]->team_id == $this->team_id) {
+                        $t->teamRank = $i+1;
+                        break;
+                    }
+                }
+                array_push($ret, $t);
+            }
+        }
+        
+        return $ret;
+    }
+
     public function getToursPlayedIn($ids_only = false)
     {
         $tours = array();
@@ -608,14 +710,13 @@ class Team
     }
     
     public function getLogo() {
+        $r = get_races();
         $p = get_pic(IMG_TEAMS, $this->team_id);
         if (!preg_match('/'.basename(NO_PIC).'/', $p)) {
             return $p;
         }
         else {
-            $r = new Race($this->f_race_id);
-            $roster = $r->getRoster();
-            return $roster['other']['icon'];
+            return $r[$this->race];
         }
     }
 
@@ -638,10 +739,6 @@ class Team
     public function deleteNews($news_id) {
         $news = new TNews($news_id);
         return $news->delete();
-    }
-    public function editNews($news_id, $new_txt) {
-        $news = new TNews($news_id);
-        return $news->edit($new_txt);
     }
     
     public function getPrizes($mkStr = false) {
@@ -668,6 +765,8 @@ class Team
             Exports a team by the using the same fields as the import XML schema uses.
         */
         
+        $this->setStreaks();
+        $this->setExtraStats();
         $ELORanks = ELO::getRanks(false);
         $this->elo = $ELORanks[$this->team_id];
         
@@ -718,7 +817,7 @@ class Team
      * Statics
      ***************/
     
-    public static function getTeams($race_id = false) {
+    public static function getTeams($race = false) {
     
         /**
          * Returns an array of all team objects.
@@ -726,15 +825,48 @@ class Team
     
         $teams = array();
         
-        $query = "SELECT team_id FROM teams" . (($race_id !== false) ? " WHERE f_race_id=$race_id" : '');
+        $query = "SELECT team_id FROM teams" . (($race) ? " WHERE race='$race'" : '');
         $result = mysql_query($query);
         if (mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($teams, new Team($row['team_id']));
             }
         }
-
+                    
         return $teams;
+    }
+
+    public static function getRaceStats($race) {
+        
+        /**
+         * Returns an array of race stats by looking at teams' (from that race) stats in MySQL.
+         **/        
+
+         // Initialize         
+         $d = array();
+         $teams = Team::getTeams($race);
+         $stats = array('won_tours', 'won', 'lost', 'draw', 'played', 'td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'value');
+         $avg_calc = array_slice($stats, 5);
+         
+         foreach ($stats as $s) $d[$s] = 0;
+         
+         // Fill variables.
+         foreach ($teams as $t) {
+            $t->setExtraStats();
+            foreach ($stats as $s) {
+                $d[$s] += $t->$s;
+            }
+         }
+         
+        $c = $d['teams'] = count($teams);
+        foreach ($avg_calc as $s) {
+            $d[$s] = ($c == 0) ? 0 : $d[$s]/$c;
+        }
+         
+        $d['race'] = $race;
+        $d['win_percentage'] = ($d['played'] == 0) ? 0 : $d['won']/$d['played'] * 100;
+         
+        return $d;
     }
 
     public static function create(array $input, $init = array()) {
@@ -742,25 +874,32 @@ class Team
         /**
          * Creates a new team.
          *
-         * Input: coach_id, name, race (race name)
+         * Input: coach_id, name, race
          **/
 
-        global $rules, $raceididx;
+        global $rules;
+        
+        $IS_VALID_RACE = false;
 
-        // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
-        if (!in_array($input['race'], Race::getRaces(false))
-        || !get_alt_col('coaches', 'coach_id', $input['coach_id'], 'coach_id') 
-        || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
-            return false;
+        foreach (get_races() as $race => $icon_path) {
+            if ($race == $input['race']) {
+                $IS_VALID_RACE = true;
+                break;
+            }
         }
-        $flipped = array_flip($raceididx);
-        $input['race'] = $flipped[$input['race']];
+
+        if (!$IS_VALID_RACE)
+            return false;
+
+        // Does coach exist? Does team exist already? We do not permit two teams with identical names.
+        if (!get_alt_col('coaches', 'coach_id', $input['coach_id'], 'coach_id') || get_alt_col('teams', 'name', $input['name'], 'team_id')) 
+            return false;
 
         $query = "INSERT INTO teams
                     (
                         name,
                         owned_by_coach_id,
-                        f_race_id,
+                        race,
                         treasury,
                         apothecary,
                         rerolls,
@@ -788,7 +927,7 @@ class Team
                     (
                         '" . mysql_real_escape_string($input['name']) . "',
                         $input[coach_id],
-                        $input[race],
+                        '$input[race]',
                         $rules[initial_treasury],
                         0,
                         $rules[initial_rerolls],
@@ -813,7 +952,341 @@ class Team
                         )."
                     )";
 
-        return mysql_query($query);
+        return (mysql_query($query));
+    }
+    
+	public static function getTeam ($team_name) {
+    
+        /**
+         * Returns the team with the right name
+         **/
+        
+        $query = "SELECT team_id FROM teams WHERE name='" .$team_name. "';";
+        $result = mysql_query($query);
+        if ($result && mysql_num_rows($result) == 1 ) {
+            $row = mysql_fetch_assoc($result);
+            return $row['team_id'];
+        }
+                    
+        return ;
+    }
+    
+    /*
+     * Creates the SQLite file with Cyanide format
+     * File path : TEAM_TEMPLATE_DIR/team_id.dn
+     */
+    public function cyanideSQLiteExport ()
+    {
+    	$template_file_path = TEAM_TEMPLATE_DIR ."/". $this->race .".db"; // template file
+    	$sqlite_file_path = TEAM_TEMPLATE_DIR . "/". $this->team_id . ".db"; // copy
+    	
+    	/*
+    	 * First, copy the template file
+    	 */
+    	copy($template_file_path, $sqlite_file_path);
+    	
+    	/*
+    	 * Open the SQLite 3 db
+    	 */
+    	$match_report_db = new PDO("sqlite:" . $sqlite_file_path);
+    	
+    	/*
+    	 * Get the IDs of the players already in the table (which will be copied)
+    	 */
+    	$query = "SELECT ID FROM PLAYER_LISTING";
+    	if (!($result = $match_report_db->query($query)) || !($array = $result->fetchAll()))
+				return false;
+		
+		$used_player_ids = array();
+		foreach ($array as $row) {
+			$model_id = $row['ID'];
+			array_push($used_player_ids, $model_id);
+		}
+		
+		/*
+		 * Cash, Reroll, Apoth, Cheerleaders, FF, name and value
+		 */
+		$query = "UPDATE 'Team_Listing' SET 'iPopularity' = '" .$this->fan_factor. "', 'iCash' = '0', 'iCheerleaders' = '" .$this->cheerleaders. "', 'bApothecary' = '" .$this->apothecary. "', 'iRerolls' = '" .$this->rerolls. "', 'iValue' = '" .($this->value/1000). "', 'strName' = '" .$this->name. "'";
+		if (!($result = $match_report_db->query($query)))
+				return false;
+    	
+    	foreach ($this->getPlayers() as $player) {
+    		
+    		/*
+    		 * Skip sold players
+    		 */
+    		if ($player->is_sold || $player->is_dead) {
+    			continue;
+    		}
+    		
+    		/*
+			 * Get the next free id
+			 */
+			$query = "SELECT ID FROM PLAYER_LISTING ORDER BY ID DESC";
+			
+			if (!($result = $match_report_db->query($query)) || !($array = $result->fetchAll()))
+				return false;
+			
+			$player_id = $array[0]['ID'] + 1;
+    		
+    		/*
+    		 * Get the data for the right player type (Lineman, ...)
+    		 */
+			$pos = $player->position;
+			$pos = ereg_replace("[J]", "", $pos);
+			$pos = ereg_replace("[^a-zA-Z]", "", $pos);
+			if ($pos == "Linerat")
+				$pos = "Lineman";
+			else if ($pos == "BlackOrcBlocker")
+				$pos = "Orc_BlackBlocker";
+			else if ($pos == "ChaosWarrior")
+				$pos = "Chaos_Warrior";
+			else if ($this->race == "Goblin" && $pos == "Goblin")
+				$pos = "Gob";
+			
+    		$query = "SELECT PL.* FROM Player_Listing PL JOIN Player_Types PT ON PL.idPlayer_Types=PT.ID WHERE PT.DATA_CONSTANT LIKE '%$pos'";
+    		
+    		if (!($result = $match_report_db->query($query)) || !($array = $result->fetchAll()))
+				return false;
+			
+			$row = $array[0];
+			
+			/*
+			 * Modify the record
+			 */
+			
+			// ID, name, number, experience, level and value
+			$row['ID'] = $player_id;
+			$row['strName'] = $player->name;
+			$row['iNumber'] = $player->nr;
+			$row['iExperience'] = $player->spp;
+			$row['idPlayer_Levels'] = $player->getLevel();
+			$row['iValue'] = ($player->value/1000);
+			
+			// Status (NONE, MNG)
+			if ($player->getStatus(-1)=="MNG") {
+				$row['iMatchSuspended'] = 1;
+			}
+			
+			// Injuries (Ma, St, Ag, Av, Ni)
+			if ($player->inj_ma >0) {
+				$row['Characteristics_fMovementAllowance'] -= CYANIDE_SQLITE_UNIT_MA * $player->inj_ma;
+				$query = "INSERT INTO 'Player_Casualties' ('idPlayer_Listing','idPlayer_Casualty_Types') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_MA_CAS_ID. "')";
+				for ($i=0; $i<$player->inj_ma;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+    		if ($player->inj_st >0) {
+				$row['Characteristics_fStrength'] -= CYANIDE_SQLITE_UNIT_ST * $player->inj_st;
+				$query = "INSERT INTO 'Player_Casualties' ('idPlayer_Listing','idPlayer_Casualty_Types') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_ST_CAS_ID. "')";
+				for ($i=0; $i<$player->inj_st;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+    		if ($player->inj_ag >0) {
+				$row['Characteristics_fAgility'] -= CYANIDE_SQLITE_UNIT_AG * $player->inj_ag;
+				$query = "INSERT INTO 'Player_Casualties' ('idPlayer_Listing','idPlayer_Casualty_Types') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_AG_CAS_ID. "')";
+				for ($i=0; $i<$player->inj_ag;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+    		if ($player->inj_av >0) {
+    			// Characteristics_fArmourValue is not linear
+				switch (round($row['Characteristics_fArmourValue'])) {
+					case (round(CYANIDE_SQLITE_UNIT_AV6)) :
+						// av 6 always become av 5
+						$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV5;
+						break;
+						
+					case (round(CYANIDE_SQLITE_UNIT_AV7)) :
+						// av 7 becomes av 6 or av 5
+						if ($player->inj_av == 1)
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV6;
+						else
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV5;
+							
+						break;
+						
+					case (round(CYANIDE_SQLITE_UNIT_AV8)) :
+						// av 8 becomes av 7 or av 6
+						if ($player->inj_av == 1)
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV7;
+						else
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV6;
+							
+						break;
+						
+					case (round(CYANIDE_SQLITE_UNIT_AV9)) :
+						// av 9 becomes av 8 or av 7
+						if ($player->inj_av == 1)
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV8;
+						else
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV7;
+							
+						break;
+						
+					case (round(CYANIDE_SQLITE_UNIT_AV10)) :
+						// av 10 becomes av 9 or av 8
+						if ($player->inj_av == 1)
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV9;
+						else
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV8;
+							
+						break;
+				}
+				
+				$query = "INSERT INTO 'Player_Casualties' ('idPlayer_Listing','idPlayer_Casualty_Types') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_AV_CAS_ID. "')";
+				for ($i=0; $i<$player->inj_av;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+    		if ($player->inj_ni >0) {
+				$query = "INSERT INTO 'Player_Casualties' ('idPlayer_Listing','idPlayer_Casualty_Types') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_NI_CAS_ID. "')";
+				for ($i=0; $i<$player->inj_ni;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+			
+			// Stat increases (ma, st, ag, av)
+			if ($player->ach_ma >0) {
+				$row['Characteristics_fMovementAllowance'] += CYANIDE_SQLITE_UNIT_MA * $player->ach_ma;
+				$query = "INSERT INTO 'Player_Skills' ('idPlayer_Listing','idSkill_Listing') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_MA_SKILL_ID. "')";
+				for ($i=0; $i<$player->ach_ma;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+    		if ($player->ach_st >0) {
+    			$row['Characteristics_fStrength'] += CYANIDE_SQLITE_UNIT_ST * $player->ach_st;
+				$query = "INSERT INTO 'Player_Skills' ('idPlayer_Listing','idSkill_Listing') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_ST_SKILL_ID. "')";
+				for ($i=0; $i<$player->ach_st;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+    		if ($player->ach_ag >0) {
+    			$row['Characteristics_fAgility'] += CYANIDE_SQLITE_UNIT_AG * $player->ach_ag;
+				$query = "INSERT INTO 'Player_Skills' ('idPlayer_Listing','idSkill_Listing') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_AG_SKILL_ID. "')";
+				for ($i=0; $i<$player->ach_ag;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+    		if ($player->ach_av >0) {
+	    		// Characteristics_fArmourValue is not linear
+				switch (round($row['Characteristics_fArmourValue'])) {
+					case (round(CYANIDE_SQLITE_UNIT_AV5)) :
+						// av 5 becomes av 6 or av 7
+						if ($player->ach_av == 1)
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV6;
+						else
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV7;
+							
+						break;
+					
+					case (round(CYANIDE_SQLITE_UNIT_AV6)) :
+						// av 6 becomes av 7 or av 8
+						if ($player->ach_av == 1)
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV7;
+						else
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV8;
+							
+						break;
+					
+					case (round(CYANIDE_SQLITE_UNIT_AV7)) :
+						// av 7 becomes av 8 or av 9
+						if ($player->ach_av == 1)
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV8;
+						else
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV9;
+							
+						break;
+					
+					case (round(CYANIDE_SQLITE_UNIT_AV8)) :
+						// av 8 becomes av 9 or av 10
+						if ($player->ach_av == 1)
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV9;
+						else
+							$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV10;
+							
+						break;
+					
+					case (round(CYANIDE_SQLITE_UNIT_AV9)) :
+						// av 9 becomes av 10
+						$row['Characteristics_fArmourValue'] = CYANIDE_SQLITE_UNIT_AV10;
+						
+						break;
+					
+				}
+				$query = "INSERT INTO 'Player_Skills' ('idPlayer_Listing','idSkill_Listing') VALUES ('" .$player_id. "','" .CYANIDE_SQLITE_AV_SKILL_ID. "')";
+				for ($i=0; $i<$player->ach_av;$i++) {
+					if (!($result = $match_report_db->query($query)))
+						return false;
+				}
+			}
+			
+			// Skills
+			$skills = array_merge($player->ach_nor_skills, $player->ach_dob_skills, $player->extra_skills);
+			foreach ($skills as $skill) {
+				
+				if ($skill == "Claw/Claws")
+					$skill = "Claw";
+				else if ($skill == "Very Long Legs")
+					$skill = "Long Legs";
+				
+				$skill = ereg_replace("[^a-zA-Z]", "", $skill);
+				
+				$query = "SELECT SL.ID FROM Skill_Listing SL WHERE SL.DATA_CONSTANT='" .$skill. "'";
+				if (!($result = $match_report_db->query($query)) || !($array = $result->fetchAll()))
+					return false;
+				
+				$skill_id = $array[0]['ID'];
+
+				$query = "INSERT INTO 'Player_Skills' ('idPlayer_Listing','idSkill_Listing') VALUES ('" .$player_id. "','" .$skill_id. "')";
+				if (!($result = $match_report_db->query($query)))
+					return false;
+			}
+			
+			/*
+			 * Insert the new record
+			 */
+			$query = "INSERT INTO Player_Listing ('ID', 'idPlayer_Names','strName','idPlayer_Types','idTeam_Listing','idTeam_Listing_Previous','idRaces','iPlayerColor','iSkinScalePercent','iSkinMeshVariant','iSkinTextureVariant','fAgeing','iNumber','Characteristics_fMovementAllowance','Characteristics_fStrength','Characteristics_fAgility','Characteristics_fArmourValue','idPlayer_Levels','iExperience','idEquipment_Listing_Helmet','idEquipment_Listing_Pauldron','idEquipment_Listing_Gauntlet','idEquipment_Listing_Boot','Durability_iHelmet','Durability_iPauldron','Durability_iGauntlet','Durability_iBoot','iSalary','Contract_iDuration','Contract_iSeasonRemaining','idNegotiation_Condition_Types','Negotiation_iRemainingTries','Negotiation_iConditionDemand','iValue','iMatchSuspended','iNbLevelsUp','LevelUp_iRollResult','LevelUp_iRollResult2','LevelUp_bDouble','bGenerated','bStar','bEdited','bDead','strLevelUp')";
+			$query .= " VALUES (";
+			$i = 0;
+			foreach ($row as $key => $element)
+			{
+				if ($i % 2 == 0) // keep only even elements
+					$query .= "'" .$element. "', ";
+				
+				$i++;
+			}
+			$query = substr($query, 0, -2);
+			$query .= ")";
+			
+			if (!($result = $match_report_db->query($query)))
+				return false;
+			
+    	}
+    	
+    	$query = "DELETE FROM Player_Listing WHERE ID IN (";
+    	foreach ($used_player_ids as $used_id) {
+    		$query .= "'" . $used_id . "', ";
+    	}
+    	$query = substr($query, 0, -2);
+		$query .= ")";
+		
+		if (!($result = $match_report_db->query($query)))
+				return false;
+				
+		/*
+		 * Close db access
+		 */
+		unset ($match_report_db);
     }
 }
 ?>

@@ -51,12 +51,11 @@ foreach ($stars as $s => $d) {
 }
 
 ?>
-<!--
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link type="text/css" href="css/stylesheet1.css" rel="stylesheet">
--->
 <style type="text/css">
 td { background-color: #EEEEEE; color: #000000; font: 13px Tahoma; }
 td.indtitle { background-color: #EEEEEE; color: #000000; font: bold 12px Tahoma; }
@@ -75,12 +74,10 @@ function SendToPDF()
 }
 -->
 </script>
-<!--
 </head>
 <body>
 <div class="everything">
 <div class="section">
--->
 <?php title('Inducements try-out');?>
 <form action="" method="post" name="InduceForm">
 
@@ -168,21 +165,22 @@ if ($brick_n_grotty) { // Print Grotty and add hidden input field
         <td class="indtitle">AV</td>
         <td class="indtitle">Skills</td>
         <td class="indtitle">Extra Skill</td>
+
     </tr>
 <?php
 // Validate to not exceed maximum number of positionals? Leaving it open for now.
-$merc_list[0] = '            <option value="0">-No Induced Mercs-</option>' . "\n";
+$merc_list[0] = '      <option value="0">-No Induced Mercs-</option>' . "\n";
 $merc = array(0=>'No Merc');
 $i=0;
 foreach ($DEA[$t->race]["players"] as $p => $m) {
   $i++;
-  $merc_list[0] .= '            <option value="'."$i".'">'."Merc $p".'</option>' . "\n";
+  $merc_list[0] .= '      <option value="'."$i".'">'."Merc $p".'</option>' . "\n";
   array_push($merc, $m);
   $pos[$i] = $p;
 }
 $i=1;
 while (isset($_POST["Merc$i"])) {
-  print "    <tr>\n";
+  echo '  <tr>';
   if ($_POST["Merc$i"] != '0') {
     $mid=$_POST["Merc$i"];
     if (isset($_POST["Extra$i"])) {
@@ -193,34 +191,32 @@ while (isset($_POST["Merc$i"])) {
       $extra_skill_cost = 0;
       $extra[$i] = false;
     }
-
+    echo "<tr>";
     // Fill skill list from what normal skills positional has to chose from
     $n_skills = $DEA[$t->race]['players'][str_replace('Merc ','',$pos[$mid])]['N skills'];
-    $extra_list[$i] = "            <option>-No Extra Skill-</option>\n";
+    $extra_list[$i] = "<option>-No Extra Skill-</option>\n";
     foreach ($n_skills as $category) {
       foreach ($skillarray[$category] as $skill) {
         if (!in_array($skill, $merc[$mid]["Def skills"])) {
-          $extra_list[$i] .= '            <option>'.$skill.'</option>'."\n";
+          $extra_list[$i] .= '<option>'.$skill.'</option>'."\n";
         }
       }
     }
     $merc_list[$i] = str_replace('<option value="'.$mid.'"','<option selected value="'.$mid.'"', $merc_list[0]);
-    print '        <td><SELECT name="Merc' . $i . '" onChange="this.form.submit()">' . "\n";
+    print '    <td><SELECT name="Merc' . $i . '" onChange="this.form.submit()">' . "\n";
     print $merc_list[$i];
     $cost[$i] = (int) $merc[$mid]["cost"] + MERC_EXTRA_COST + $extra_skill_cost;
-    echo "        </SELECT></td>\n";
-		if (!in_array('Loner', $merc[$mid]["Def skills"]))
-    	array_unshift($merc[$mid]["Def skills"], 'Loner');  // Adding Loner to default skills if Merc does not have Loner already
+    echo '    </SELECT></td>';
     $def_skills = implode(', ', $merc[$mid]["Def skills"]);
     if ($def_skills == '') $def_skills = '&nbsp;';
-    print "        <td>$pos[$mid]</td><td>".str_replace('000','',$cost[$i])."k</td><td class=\"cent\">".$merc[$mid]["ma"]."</td><td class=\"cent\">".$merc[$mid]["st"]."</td>";
+    print "<td>$pos[$mid]</td><td>".str_replace('000','',$cost[$i])."k</td><td class=\"cent\">".$merc[$mid]["ma"]."</td><td class=\"cent\">".$merc[$mid]["st"]."</td>";
     print "<td class=\"cent\">".$merc[$mid]["ag"]."</td><td class=\"cent\">".$merc[$mid]["av"]."</td><td><small>".$def_skills."</small></td>\n";
     if ($extra[$i] != false)
       $extra_list[$i] = str_replace('<option>'.$extra[$i].'</option>', '<option selected>'.$extra[$i].'</option>', $extra_list[$i]);
-    echo '        <td><SELECT name="Extra'.$i.'" onChange="this.form.submit()">'."\n";
+    echo '    <td><SELECT name="Extra'.$i.'" onChange="this.form.submit()">';
     print $extra_list[$i];
-    echo "        </SELECT></td>\n";
-    echo "    </tr>\n";
+    echo '    </SELECT></td>';
+    echo '</tr>';
     $ind_cost+=$cost[$i];
     $i++;
     continue;
@@ -230,17 +226,17 @@ while (isset($_POST["Merc$i"])) {
     break;
   }
 }
-echo "    <tr>\n";
-echo '      <td><SELECT name="Merc' . $i . '" onChange="this.form.submit()">' . "\n";
+echo "  <tr>";
+echo '    <td><SELECT name="Merc' . $i . '" onChange="this.form.submit()">';
 print $merc_list[0];
-echo "      </SELECT></td>\n";
-echo "    </tr>\n";
+echo '    </SELECT></td>';
+echo "  </tr>";
 
 ?>
 
 </table>
 <table>
-<tr><td>
+<tr><td class="cent2">
 <table>
     <tr>
         <td class="indtitle">Inducement</td>
@@ -331,9 +327,7 @@ echo '<tr><td class="indtitle">Match Value:</td><td class="indtitle">'.kilo($ind
 
 </table>
 </form>
-<!--
 </div>
 </div>
 </body>
 </html>
--->

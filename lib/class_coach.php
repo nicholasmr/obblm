@@ -38,8 +38,46 @@ class Coach
     public $retired     = false;
     public $settings    = array();
 
-    // Shortcut for compabillity issues.
     public $admin       = false;
+    
+    // General (total) calcualted fields
+    public $mvp         = 0;
+    public $cp          = 0;
+    public $td          = 0;
+    public $intcpt      = 0;
+    public $bh          = 0;
+    public $si          = 0;
+    public $ki          = 0;
+    public $cas         = 0; // bh+ki+si
+    public $tdcas       = 0; // Is td+cas. Used by some ranking systems. 
+#    public $spp         = 0;
+    //-------------------
+    public $played      = 0;
+    public $won         = 0;
+    public $lost        = 0;
+    public $draw        = 0;
+    public $win_percentage = 0;
+    public $score_team  = 0;    // Total score.
+    public $score_opponent = 0; // Total score made against.
+    public $score_diff  = 0;    // score_team - score_opponent.
+    public $fan_factor  = 0;
+    public $points      = 0; // Total points.
+    public $smp         = 0; // Sportsmanship points.
+    public $tcas        = 0; // Team cas.
+    //-------------------    
+    
+    // Non-constructor filled fields.
+    
+        // By setExtraStats().
+        public $won_tours       = 0;
+        public $teams           = array();
+        public $teams_cnt       = 0;
+        public $avg_team_value  = 0;
+    
+        // By setStreaks().
+        public $row_won  = 0; // Won in row.
+        public $row_lost = 0;
+        public $row_draw = 0;
     
     /***************
      * Methods 
@@ -58,7 +96,7 @@ class Coach
         if (empty($this->phone)) $this->phone = '';         # Re-define as empty string, and not numeric zero.
         if (empty($this->realname)) $this->realname = '';   # Re-define as empty string, and not numeric zero.
         
-        $this->setStats(false,false,false);
+        $this->setStats(false);
         
         // Coach's site settings.
         $this->settings = array(); // Is overwriten to type = string when loading MySQL data into this object.
@@ -75,11 +113,50 @@ class Coach
         return true;
     }
     
-    public function setStats($node, $node_id, $set_avg = false)
-    {
-        foreach (Stats::getAllStats(STATS_COACH, $this->coach_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
+    public function setStats($tour_id = false) {
+        
+        /**
+         * Overwrites object's stats fields.
+         **/
+         
+        foreach (array_merge(Stats::getStats(false, false, $this->coach_id, false, $tour_id), Stats::getMatchStats(STATS_COACH, $this->coach_id, $tour_id)) as $field => $val) {
+            $this->$field = $val;
+        }
+
+        return true;
+    }
+    
+    public function setExtraStats() {
+        
+        /**
+         * Set extra coach stats.
+         **/
+        
+        $this->won_tours      = count($this->getWonTours());
+        $this->teams          = $this->getTeams();
+        $this->teams_cnt      = count($this->teams);
+        
+        $this->avg_team_value = 0;
+        if ($this->teams_cnt > 0) {
+            foreach ($this->teams as $t) {
+                $this->avg_team_value += $t->value;            
+            }
+            $this->avg_team_value = $this->avg_team_value/$this->teams_cnt;
+        }
+        
+        return true;
+    }
+
+    public function setStreaks($trid = false) {
+
+        /**
+         * Counts most won, lost and draw matches in a row.
+         **/
+
+        foreach (Stats::getStreaks(STATS_COACH, $this->coach_id, $trid) as $key => $val) {
             $this->$key = $val;
         }
+
         return true;
     }
     
@@ -141,8 +218,13 @@ class Coach
     }
     
     public function delete() {
+        
+        /**
+         * Deletes coach if deletable.
+         **/
 
         $status = true;
+        
         if ($this->isDeletable()) {
             
             foreach ($this->getTeams() as $t) {
@@ -159,6 +241,11 @@ class Coach
     }
     
     public function setRetired($bool) {
+
+        /**
+         * Retires coach (disables coach login).
+         **/    
+
         return mysql_query("UPDATE coaches SET retired = ".(($bool) ? 1 : 0)." WHERE coach_id = $this->coach_id");
     }
 
@@ -251,36 +338,6 @@ class Coach
         return $coaches;
     }
     
-    public static function login($name, $passwd, $set_session = true) {
-
-        /* Coach log in validation. If $set_session is true, the login will be recorded by server via a session. */
-
-        foreach (Coach::getCoaches() as $coach) {
-            if (($coach->name == $name || $coach->coach_id == $name) && $coach->passwd == md5($passwd)) {
-                if ($set_session) { # This login-function does not necessary actually log the coach in, but can verify the coach's login data.
-                    $_SESSION['logged_in'] = true;
-                    $_SESSION['coach']     = $coach->name;
-                    $_SESSION['coach_id']  = $coach->coach_id;
-                }
-                return true;
-            }
-        }
-
-        // We reach this point if login has failed.
-        if ($set_session) { # Make sure all session data is destroyed.
-            session_unset();
-            session_destroy();
-        }
-        
-        return false;
-    }
-    
-    public static function logout() {
-        session_unset();
-        session_destroy();
-        return true;
-    }
-    
     public static function create(array $input) {
         
         /**
@@ -301,6 +358,24 @@ class Coach
                             '" . $input['ring']."')";
                             
         return mysql_query($query);
+    }
+    
+	public function getScheduledMatches() {
+    
+        /**
+         * Returns an array of match objects scheduled for the coach
+         **/
+		
+		$scheduled_matches = array();
+         
+        $matches = Match::getScheduledMatches();
+        foreach ($matches as $m) {
+        	if ($this->isInMatch($m->match_id)) {
+        		array_push($scheduled_matches, $m);
+        	}
+        }
+        
+        return $scheduled_matches;
     }
 }
 ?>

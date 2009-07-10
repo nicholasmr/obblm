@@ -45,9 +45,9 @@
 function sec_login() {
 
     global $lng, $settings;
-    title($lng->getTrn('global/secLinks/login'));
+
     ?>
-    <div style='padding-top: 20px; text-align: center;'>
+    <div style='padding-top:40px; text-align: center;'>
     <form method="POST" action="index.php">
         <b><?php echo $lng->getTrn('secs/login/coach');?></b>
         <?php
@@ -91,31 +91,9 @@ function sec_login() {
 function sec_main() {
 
     global $settings, $rules, $coach, $lng;
-    $n = $settings['entries_messageboard'];
+    $n = (!isset($_GET['view']) || $_GET['view'] == 'normal') ? $settings['entries_messageboard'] : false; // false == show everything, else show $n board entries.
 
     /*
-        Was any main board actions made?
-    */
-
-    if (isset($_POST['type']) && is_object($coach)) {
-        switch ($_POST['type'])
-        {
-            case 'msgdel': $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
-            case 'msgnew': status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
-            case 'msgedit':	
-                if (get_magic_quotes_gpc()) {
-                    $_POST['title'] = stripslashes($_POST['title']);
-                    $_POST['txt'] = stripslashes($_POST['txt']);
-                }
-                $msg = new Message($_POST['msg_id']); 
-                status($msg->edit($_POST['title'], $_POST['txt']));
-                break;
-        }
-    }
-
-    /*
-        Generate main board.
-
         Left column is the message board, consisting of both commissioner messages and game summaries/results.
         To generate this table we create a general array holding the content of both.
     */
@@ -200,7 +178,7 @@ function sec_main() {
             if ($t->begun && !$t->is_finished) {
                 $teams = $t->getTeams();
                 foreach ($teams as $team) {
-                    $team->setStats(STATS_TOUR, $t->tour_id);
+                    $team->setStats($t->tour_id);
                 }
                 objsort($teams, $t->getRSSortRule());
                 array_push($standings, array('name' => $t->name, 'rs' => $t->rs, 'wpoints' => $t->isRSWithPoints(), 'teams' => array_slice($teams, 0, $settings['entries_standings'])));
@@ -210,7 +188,7 @@ function sec_main() {
         // Now overall standings:
     $teams = Team::getTeams();
     objsort($teams, sort_rule('team'));
-    array_push($standings, array('name' => $lng->getTrn('global/misc/alltime'), 'rs' => 0, 'wpoints' => false, 'teams' => array_slice($teams, 0, $settings['entries_standings'])));
+    array_push($standings, array('name' => 'Overall', 'rs' => 0, 'wpoints' => false, 'teams' => array_slice($teams, 0, $settings['entries_standings'])));
 
     // Latest matches
     $matches = Match::getMatches($settings['entries_latest']);
@@ -238,23 +216,20 @@ function sec_main() {
             echo "</div>\n";
             // New message link
             if (is_object($coach) && $coach->ring <= RING_COM)
-                echo "<a href='javascript:void(0);' onClick=\"document.getElementById('msgnew').style.display='block';\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
+                echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=new', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
 
+            // View mode
+            if (!empty($board)) { # Only show when messages exist.
+                if (isset($_GET['view']) && $_GET['view'] == 'all')
+                    echo "<a href='index.php?section=main&amp;view=normal'>".$lng->getTrn('secs/home/normal')."</a>&nbsp;\n";
+                else
+                    echo "<a href='index.php?section=main&amp;view=all'>".$lng->getTrn('secs/home/showall')."</a>&nbsp;\n";
+            }
             // RSS
             echo "<a href='handler.php?type=rss'>RSS</a>\n";
             ?>
-
-            <div style="display:none; clear:both;" id="msgnew">
-                <br><br>
-                <form method="POST">
-                    <textarea name="title" rows="1" cols="50"><?php echo $lng->getTrn('secs/home/title');?></textarea><br><br>
-                    <textarea name="txt" rows="15" cols="50"><?php echo $lng->getTrn('secs/home/msg');?></textarea><br><br>
-                    <input type="hidden" name="type" value="msgnew">
-                    <input type="submit" value="<?php echo $lng->getTrn('secs/home/submit');?>">
-                </form>
-            </div>
         </div>
-            
+    
         <?php
         $j = 1;
         foreach ($board as $e) {
@@ -305,14 +280,8 @@ function sec_main() {
                             elseif ($e->type == 'msg') {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 if (is_object($coach) && ($coach->admin || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
-                                    echo "<td align='right'><a href='javascript:void(0);' onClick=\"document.getElementById('msgedit$e->msg_id').style.display='block';\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
-                                    echo "<td align='right'>
-                                        <form method='POST' name='msgdel$e->msg_id' style='display:inline; margin:0px;'>
-                                            <input type='hidden' name='type' value='msgdel'>
-                                            <input type='hidden' name='msg_id' value='$e->msg_id'>
-                                            <a href='javascript:void(0);' onClick='document.msgdel$e->msg_id.submit();'>".$lng->getTrn('secs/home/del')."</a>
-                                        </form>
-                                        </td>";
+                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=edit&amp;msg_id=$e->msg_id', 'handler_msg', 'width=550,height=450');\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
+                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"window.open('handler.php?type=msg&amp;action=delete&amp;msg_id=$e->msg_id', 'handler_msg', 'width=250,height=250');\">".$lng->getTrn('secs/home/del')."</a></td>\n";
                                 }
                             }
                             elseif ($e->type == 'tnews') {
@@ -333,18 +302,6 @@ function sec_main() {
                         echo "<script language='JavaScript' type='text/javascript'>
                             document.getElementById('comment$e->match_id').style.display = 'none';
                         </script>\n";
-                    }
-                    elseif ($e->type == 'msg') {
-                        echo "<div style='display:none;' id='msgedit$e->msg_id'>\n";
-                        echo "<hr><br>\n";
-                        echo '<form method="POST">
-                            <textarea name="title" rows="1" cols="50">'.$e->title.'</textarea><br><br>
-                            <textarea name="txt" rows="15" cols="50">'.$e->message.'</textarea><br><br>
-                            <input type="hidden" name="type" value="msgedit">
-                            <input type="hidden" name="msg_id" value="'.$e->msg_id.'">
-                            <input type="submit" value="'.$lng->getTrn('secs/home/submit').'">
-                        </form>';
-                        echo "</div>";
                     }
                     ?>
                 </div>
@@ -367,24 +324,46 @@ function sec_main() {
                     <div class='boxBody'>
                         <table class="boxTable" style='width:100%;'>
                             <tr>
-                                <td style='width:100%;'><b>Team</b></td>
-                                <?php if ($sta['wpoints']) {echo "<td><b>PTS</b></td>\n";}?>
-                                <td><b>Cas</b></td>
+                                <td><b>Team</b></td>
                                 <td><b>W</b></td>
                                 <td><b>L</b></td>
                                 <td><b>D</b></td>
-                                <td><b>Score</b></td>
+                                <?php
+                                if ($sta['wpoints']) {
+                                    echo "<td><b>Points</b></td>\n";
+                                    if ($sta['rs'] == 3) {
+                                        echo "<td><b>TD+Cas</b></td>\n";
+                                    }
+                                    else {
+                                        echo "<td><b>Cas</b></td>\n";                                            
+                                    }
+                                }
+                                else {
+                                    echo "<td><b>Cas</b></td>\n";
+                                    echo "<td><b>Score</b></td>\n";                                
+                                }
+                                ?>
                             </tr>
                             <?php
                             foreach ($sta['teams'] as $t) {
                                 echo "<tr>\n";
                                 echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;team_id=$t->team_id'>$t->name</a>" : $t->name)."</td>\n";
-                                if ($sta['wpoints']) {echo '<td>'.((is_float($t->points)) ? sprintf('%1.2f', $t->points) : $t->points)."</td>\n";} 
-                                echo "<td>$t->cas</td>\n";
                                 echo "<td>$t->won</td>\n";
                                 echo "<td>$t->lost</td>\n";
                                 echo "<td>$t->draw</td>\n";
-                                echo "<td>$t->score_team&nbsp;-&nbsp;$t->score_opponent</td>\n";
+                                if ($sta['wpoints']) {
+                                    echo '<td>'.((is_float($t->points)) ? sprintf('%1.2f', $t->points) : $t->points)."</td>\n";
+                                    if ($sta['rs'] == 3) {
+                                        echo "<td>$t->tdcas</td>\n";
+                                    }
+                                    else {
+                                        echo "<td>$t->cas</td>\n";                                            
+                                    }
+                                }
+                                else {
+                                    echo "<td>$t->cas</td>\n";
+                                    echo "<td>$t->score_team - $t->score_opponent</td>\n";
+                                }
                                 echo "</tr>\n";
                             }
                             ?>
@@ -397,7 +376,7 @@ function sec_main() {
         if ($settings['entries_latest'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/recent');?></h3>
+                <h3 class='boxTitle1'><a href='index.php?section=recent'><?php echo $lng->getTrn('secs/home/recent');?></a></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -559,8 +538,14 @@ function sec_fixturelist() {
         return;
     }
     
+    // New unscheduled match
+    if (isset($_GET['tour_id']) && !preg_match("/[^0-9]/", $_GET['tour_id']) && isset($_GET['match_id']) && $_GET['match_id']=="new") {
+    	unscheduled_match_form($_GET['tour_id']);
+    	return;
+    }
+    
     // Show tournament standings?
-    if (isset($_GET['tour_id']) && !preg_match("/[^0-9]/", $_GET['tour_id'])) {
+    if (isset($_GET['tour_id']) && !preg_match("/[^0-9]/", $_GET['tour_id']) && !isset($_GET['match_id'])) {
         if (!is_object($tour = new Tour($_GET['tour_id'])) || empty($tour->date_created))
             fatal('Sorry. Invalid tournament ID specified.');
 
@@ -568,8 +553,11 @@ function sec_fixturelist() {
 
         switch ($tour->type)
         {
-            case TT_RROBIN: $type = 'Round-Robin'; break;
-            case TT_FFA:    $type = 'FFA tournament'; break;
+            case TT_NOFINAL:  $type = 'Round-Robin without final'; break;
+            case TT_FINAL:    $type = 'Round-Robin with final'; break;
+            case TT_SEMI:     $type = 'Round-Robin with final and semi-finals'; break;
+            case TT_KNOCKOUT: $type = 'Knock-Out tournament'; break;
+            case TT_SINGLE:   $type = 'FFA tournament'; break;
         }
 
         title($tour->name);
@@ -580,7 +568,53 @@ function sec_fixturelist() {
             .((is_object($coach) && $coach->admin) ? "&nbsp;&nbsp;&nbsp;<a href='index.php?section=admin&amp;subsec=chtr'>[".$lng->getTrn('global/misc/change')."]</a>" : '').
             "<br><br>\n";
 
-        HTMLOUT::standings(STATS_TEAM, STATS_TOUR, $tour->tour_id, array('url' => "index.php?section=fixturelist&amp;tour_id=$tour->tour_id", 'hidemenu' => true));
+        $teams = $tour->getStandings();
+        $ELORanks = ELO::getRanks($tour->tour_id);
+        foreach ($teams as $t) {
+            $t->setStreaks($tour->tour_id);
+            $t->elo         = $ELORanks[$t->team_id];
+            $t->APM_ki      = ($t->played == 0) ? 0 : $t->ki/$t->played;
+            $t->APM_cas     = ($t->played == 0) ? 0 : $t->cas/$t->played;
+        }
+
+        $fields = array(
+            'name'           => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
+            'points'         => array('desc' => 'PTS'), 
+            'smp'            => array('desc' => 'SMP'), 
+            'won'            => array('desc' => 'W'), 
+            'lost'           => array('desc' => 'L'), 
+            'draw'           => array('desc' => 'D'), 
+            'played'         => array('desc' => 'GP'), 
+            'win_percentage' => array('desc' => 'WIN%'), 
+            'row_won'        => array('desc' => 'SW'), 
+            'row_lost'       => array('desc' => 'SL'), 
+            'row_draw'       => array('desc' => 'SD'), 
+            'elo'            => array('desc' => 'ELO'), 
+            'score_team'     => array('desc' => 'GF'),
+            'score_opponent' => array('desc' => 'GA'),
+            'APM_ki'         => array('desc' => 'APM Ki'),
+            'APM_cas'        => array('desc' => 'APM Cas'),
+            'tcas'           => array('desc' => 'tcas'), 
+            'td'             => array('desc' => 'Td'), 
+            'cp'             => array('desc' => 'Cp'), 
+            'intcpt'         => array('desc' => 'Int'), 
+            'cas'            => array('desc' => 'Cas'), 
+            'bh'             => array('desc' => 'BH'), 
+            'si'             => array('desc' => 'Si'), 
+            'ki'             => array('desc' => 'Ki'), 
+        );
+
+        if (!$tour->isRSWithPoints())
+            unset($fields['points']);
+        
+        sort_table(
+            "$tour->name ".$lng->getTrn('global/misc/stn'), 
+            "index.php?section=fixturelist&amp;tour_id=$tour->tour_id", 
+            $teams, 
+            $fields, 
+            $tour->getRSSortRule(), 
+            (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array()
+        );
         
         // Prizes
         $trObjWithPrizes = Prize::getPrizesByTour($tour->tour_id, false);
@@ -626,19 +660,6 @@ function sec_fixturelist() {
         return;
     }
     
-    // Division standings?
-    if (isset($_GET['did']) && !preg_match("/[^0-9]/", $_GET['did'])) {
-        title(get_alt_col('divisions', 'did', $_GET['did'], 'name'));
-        HTMLOUT::standings(STATS_TEAM, STATS_DIVISION, (int) $_GET['did'], array('url' => "index.php?section=fixturelist&amp;did=$_GET[did]", 'hidemenu' => true));
-        return;
-    }
-    // League standings?
-    if (isset($_GET['lid']) && !preg_match("/[^0-9]/", $_GET['lid'])) {
-        title(get_alt_col('leagues', 'lid', $_GET['lid'], 'name'));
-        HTMLOUT::standings(STATS_TEAM, STATS_LEAGUE, (int) $_GET['lid'], array('url' => "index.php?section=fixturelist&amp;lid=$_GET[lid]", 'hidemenu' => true));
-        return;
-    }
-    
     // Tournament description?
     if (isset($_GET['tour_id2']) && !preg_match("/[^0-9]/", $_GET['tour_id2'])) {
         if (!is_object($t = new Tour($_GET['tour_id2'])) || empty($t->date_created))
@@ -677,16 +698,6 @@ function sec_fixturelist() {
     
     title($lng->getTrn('global/secLinks/fixtures'));
     
-    if ($settings['leegmgr_enabled']) {
-		?>
-		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
-		<b>BOTOCS match report upload</b>: 
-		<a href='handler.php?type=leegmgr'>Click here</a>
-		</div>
-		<br>
-		<?php
-    }
-    
     $flist = array( # The fixture list
 // $flist MODEL:
 #        'league1' => array(
@@ -712,17 +723,20 @@ function sec_fixturelist() {
             $tours = $d->getTours();
             objsort($tours, array('+date_created'));
             foreach ($tours as $t) {
-                $flist[$l->name][$d->name][$t->name] = array(); # Prevent ksort() errors for empty tournaments.
                 foreach ($t->getMatches() as $m) {
                     $flist[$l->name][$d->name][$t->name][$m->round][$m->match_id] = $m; # Copy match object.
                 }
-                // Sort rounds
-                ksort($flist[$l->name][$d->name][$t->name]); # Sort rounds.
-                foreach ($flist[$l->name][$d->name][$t->name] as $round => $matches) {
-                    if (is_object($flist[$l->name][$d->name][$t->name][$round]))
-                        continue;
-                    else
-                        ksort($flist[$l->name][$d->name][$t->name][$round]); # Sort matches in round by match_id.
+                
+                // Sort rounds (if any)
+                if (!empty($flist[$l->name][$d->name][$t->name]))
+                {
+	                ksort($flist[$l->name][$d->name][$t->name]); # Sort rounds.
+	                foreach ($flist[$l->name][$d->name][$t->name] as $round => $matches) {
+	                    if (is_object($flist[$l->name][$d->name][$t->name][$round]))
+	                        continue;
+	                    else
+	                        ksort($flist[$l->name][$d->name][$t->name][$round]); # Sort matches in round by match_id.
+	                }
                 }
                 // Objects.
                 $flist[$l->name][$d->name][$t->name]['tour_obj'] = $t; # Copy tour object.
@@ -752,22 +766,32 @@ function sec_fixturelist() {
 
         if (is_object($rounds)) continue;
 
+        /*
         // Skip tournaments which have no rounds/matches
-//        if ($flist[$tour]['tour_obj']->empty)
-//            continue;
+        if ($flist[$tour]['tour_obj']->empty)
+            continue;
+        */
 
         $t = $flist[$tour]['tour_obj'];
 
         ?>
         <table style='width:100%;'>
             <tr class='dark'>
-                <td>
+                <td style='width:30%;'>
                     <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
-                    <?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>' : '');?>
-                </td>
-                <td style='width:25%; text-align:right;'>
-                    <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
                     <a href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/standings');?></b></a>&nbsp;
+                    <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
+                    <?php
+                    if ($t->type == TT_KNOCKOUT) {
+                        echo "<a href='javascript:void(0)' onclick=\"window.open('handler.php?type=gdbracket&amp;tour_id=" . $t->tour_id . "', 'handler_tour', 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=400'); return false;\"><b>".$lng->getTrn('secs/fixtures/bracket')."</b></a>\n";
+                    }
+                    ?>
+                </td>
+                <td>
+                    &nbsp;&nbsp;&nbsp;<?php
+                    	$fin = ($t->type == TT_SINGLE) ? '' : '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>';
+                    	echo "<b>$tour</b>".(($t->is_finished) ? $fin : '');
+                    ?>
                 </td>
             </tr>
             <tr>
@@ -784,10 +808,13 @@ function sec_fixturelist() {
             // Determine what to write in "round" field.
             $org_round = $round; # Copy for later use.
             if     ($round == RT_FINAL)         $round = $lng->getTrn('secs/fixtures/mtypes/final');
+            elseif ($round == RT_STANDALONE)    $round = $lng->getTrn('secs/fixtures/mtypes/standalone');
             elseif ($round == RT_3RD_PLAYOFF)   $round = $lng->getTrn('secs/fixtures/mtypes/thirdPlayoff');
             elseif ($round == RT_SEMI)          $round = $lng->getTrn('secs/fixtures/mtypes/semi');
             elseif ($round == RT_QUARTER)       $round = $lng->getTrn('secs/fixtures/mtypes/quarter');
             elseif ($round == RT_ROUND16)       $round = $lng->getTrn('secs/fixtures/mtypes/rnd16');
+            elseif ($round == RT_PLAYIN)        $round = $lng->getTrn('secs/fixtures/mtypes/playin');
+            elseif ($round == RT_FIRST && $t->type == TT_KNOCKOUT) $round = $lng->getTrn('secs/fixtures/mtypes/firstrnd');
             else                                $round = $lng->getTrn('secs/fixtures/mtypes/rnd').": $round";
                 
             ?>
@@ -821,10 +848,12 @@ function sec_fixturelist() {
                     <a href="?section=fixturelist&amp;match_id=<?php echo $match->match_id; ?>">
                     <?php 
                     if (is_object($coach)) {
-                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;\n";
+                        echo ($match->locked ? $lng->getTrn('secs/fixtures/view') : ((($coach->isInMatch($match->match_id) || $coach->admin)) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) ) . "</a>&nbsp;\n";
                         if ($coach->admin) {
                             echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/reset_notice')."')){return false;}\" href='?section=fixturelist&amp;reset=$match->match_id'>".$lng->getTrn('secs/fixtures/reset')."</a>&nbsp;\n";
-                            echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;\n";
+                            if ($t->type != TT_KNOCKOUT) {
+                                echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;\n";
+                            }
                             echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;\n";
                         }
                     }
@@ -878,15 +907,63 @@ function sec_fixturelist() {
 function sec_standings() {
 
     global $lng;
-    title($lng->getTrn('global/secLinks/standings'));
-    echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
-
-    HTMLOUT::standings(STATS_TEAM,false,false,array('url' => 'index.php?section=standings', 'hidemenu' => true));
+    $PMS = (isset($_GET['pms']) && $_GET['pms']); // Per match stats?
     
+    title($lng->getTrn('global/secLinks/standings'));
+
+    echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
+    echo '<a href="index.php?section=standings&amp;pms='.(($PMS) ? 0 : 1).'"><b>['.$lng->getTrn('global/misc/'.(($PMS) ? 'oas' : 'pms'))."]</b></a><br><br>\n";
+
+    $ELORanks = ELO::getRanks(false);
     $teams = Team::getTeams();
+    foreach ($teams as $t) {
+        $t->setExtraStats();
+        $t->setStreaks(false);
+        $t->elo = $ELORanks[$t->team_id] + $t->elo_0;
+        
+        if ($PMS) {
+            foreach (array('score_team', 'score_opponent', 'tcas', 'td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki') as $f) {
+                $t->$f /= ($t->played == 0) ? 1 : $t->played;
+            }
+        }
+    }
+    
+    $fields = array(
+        'name'              => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')), 
+        'won'               => array('desc' => 'W'), 
+        'lost'              => array('desc' => 'L'), 
+        'draw'              => array('desc' => 'D'), 
+        'played'            => array('desc' => 'GP'), 
+        'win_percentage'    => array('desc' => 'WIN%'), 
+        'row_won'           => array('desc' => 'SW'), 
+        'row_lost'          => array('desc' => 'SL'), 
+        'row_draw'          => array('desc' => 'SD'), 
+        'elo'               => array('desc' => 'ELO'), 
+        'score_team'        => array('desc' => 'GF'),
+        'score_opponent'    => array('desc' => 'GA'),
+        'won_tours'         => array('desc' => 'WT'), 
+        'tcas'              => array('desc' => 'tcas'),         
+        'td'                => array('desc' => 'Td'), 
+        'cp'                => array('desc' => 'Cp'), 
+        'intcpt'            => array('desc' => 'Int'), 
+        'cas'               => array('desc' => 'Cas'), 
+        'bh'                => array('desc' => 'BH'), 
+        'si'                => array('desc' => 'Si'), 
+        'ki'                => array('desc' => 'Ki'), 
+    );
+    
+    sort_table(
+        $lng->getTrn('secs/standings/tblTitle'), 
+        'index.php?section=standings'.(($PMS)? '&amp;pms=1' : ''), 
+        $teams, 
+        $fields, 
+        sort_rule('team'), 
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array()
+    );
+    
     $fields = array(
         'name'         => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')), 
-        'race'         => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'f_race_id')), 
+        'race'         => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race')), 
         'coach_name'   => array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'owned_by_coach_id')), 
         'fan_factor'   => array('desc' => 'FF'), 
         'rerolls'      => array('desc' => 'RR'), 
@@ -896,7 +973,7 @@ function sec_standings() {
         'value'        => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'), 
     );
     
-    HTMLOUT::sort_table(
+    sort_table(
         $lng->getTrn('secs/standings/tblTitle2'), 
         'index.php?section=standings', 
         $teams, 
@@ -967,10 +1044,12 @@ function sec_players() {
     // Print table.
     $players = Player::getPlayers();
     foreach ($players as $p) {
+        $p->setExtraStats($tour_id);
+        $p->setStreaks($tour_id);
         if     ($p->is_sold) $p->HTMLbcolor = COLOR_HTML_SOLD;
         elseif ($p->is_dead) $p->HTMLbcolor = COLOR_HTML_DEAD; 
         if ($tour_id) {
-            $p->setStats(STATS_TOUR, $tour_id);
+            $p->setStats($tour_id);
             $p->value = '-';
         }
         
@@ -1004,7 +1083,7 @@ function sec_players() {
         'value'             => array('desc' => 'Value', 'nosort' => $TOUR, 'kilo' => !$TOUR, 'suffix' => (!$TOUR) ? 'k' : ''), 
     );
     
-    HTMLOUT::sort_table(
+    sort_table(
         $lng->getTrn('secs/players/tblTitle'), 
         'index.php?section=players'.(($PMS)? '&amp;pms=1' : ''), 
         $players, 
@@ -1037,7 +1116,7 @@ function sec_coaches() {
         Specific coach page requested? 
     */
     if (isset($_GET['coach_id']) && !preg_match("/[^0-9]/", $_GET['coach_id']) &&
-        is_object($c = new Coach($_GET['coach_id']))) {
+        is_object($c = new Coach($_GET['coach_id'])) && $c->setExtraStats()) {
         
         title("Coach $c->name");
         echo "<center><a href='index.php?section=coaches'>[".$lng->getTrn('global/misc/back')."]</a>&nbsp; |
@@ -1076,15 +1155,15 @@ function sec_coaches() {
                         <table>
                             <tr>
                                 <td><b>Name</b></td>
-                                <td><?php echo empty($c->realname) ? '<i>None</i>' : $c->realname;?></td>
+                                <td><?php echo $c->realname?></td>
                             </tr>
                             <tr>
                                 <td><b>Phone</b></td>
-                                <td><?php echo empty($c->phone) ? '<i>None</i>' : $c->phone?></td>
+                                <td><?php echo $c->phone?></td>
                             </tr>
                             <tr>
                                 <td><b>Mail</b></td>
-                                <td><?php echo empty($c->mail) ? '<i>None</i>' : $c->mail?></td>
+                                <td><?php echo $c->mail?></td>
                             </tr>
                         </table>
                     </td>
@@ -1094,10 +1173,80 @@ function sec_coaches() {
             </tr>
         </table>
         <?php
+
+        /* Coach's teams */
+        foreach ($c->teams as $t) {
+            $t->setExtraStats();
+            $t->setStreaks(false);
+        }
         
-        HTMLOUT::standings(STATS_TEAM,false,false,array('url' => "index.php?section=coaches&amp;coach_id=$c->coach_id", 'teams_from' => STATS_COACH, 'teams_from_id' => $c->coach_id));
-        echo '<br>';
-        HTMLOUT::recentGames(STATS_COACH, $c->coach_id, false, false, false, false, array('url' => "index.php?section=coaches&amp;coach_id=$c->coach_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
+        $fields = array(
+            'name'              => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
+            'race'              => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race')), 
+            'won'               => array('desc' => 'W'), 
+            'lost'              => array('desc' => 'L'), 
+            'draw'              => array('desc' => 'D'), 
+            'played'            => array('desc' => 'GP'), 
+            'win_percentage'    => array('desc' => 'WIN%'), 
+            'row_won'           => array('desc' => 'SW'), 
+            'row_lost'          => array('desc' => 'SL'), 
+            'row_draw'          => array('desc' => 'SD'), 
+            'score_team'        => array('desc' => 'GF'),
+            'score_opponent'    => array('desc' => 'GA'),
+            'won_tours'         => array('desc' => 'WT'), 
+            'td'                => array('desc' => 'Td'), 
+            'cp'                => array('desc' => 'Cp'), 
+            'intcpt'            => array('desc' => 'Int'), 
+            'cas'               => array('desc' => 'Cas'), 
+            'bh'                => array('desc' => 'BH'), 
+            'si'                => array('desc' => 'Si'), 
+            'ki'                => array('desc' => 'Ki'), 
+            'value'             => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'), 
+        );
+        
+        sort_table(
+            $lng->getTrn('secs/coaches/teams'), 
+            "index.php?section=coaches&amp;coach_id=$c->coach_id", 
+            $c->teams, 
+            $fields, 
+            sort_rule('team'), 
+            (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array()
+        );
+        
+        /* Played games */
+        
+        $matches = Stats::getPlayedMatches(STATS_COACH, $c->coach_id, MAX_RECENT_GAMES, true);
+        foreach ($matches as $m) {
+            $me = (get_alt_col('teams', 'team_id', $m->team1_id, 'owned_by_coach_id') == $c->coach_id) ? 1 : 2;
+            $op = ($me == 1) ? 2 : 1;
+            $m->myteam = $m->{"team${me}_name"};
+            $m->opponent = $m->{"team${op}_name"};
+            $m->score = $m->team1_score. ' - ' . $m->team2_score;
+            $m->result = (($m->is_draw) ? 'D' : (($m->winner == $m->{"team${me}_id"}) ? 'W' : 'L'));
+            $m->match = '[view]';
+            $m->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+        }
+        
+        $fields = array(
+            'date_played' => array('desc' => 'Date'),
+            'tour'     => array('desc' => 'Tournament'),
+            'myteam'   => array('desc' => "$c->name's team"), 
+            'opponent' => array('desc' => 'Opponent'), 
+            'gate'     => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false), 
+            'score'    => array('desc' => 'Score', 'nosort' => true), 
+            'result'   => array('desc' => 'Result', 'nosort' => true), 
+            'match'    => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+        );
+        
+        sort_table(
+            '<a name="played">'.$lng->getTrn('secs/coaches/played').'</a>', 
+            "index.php?section=coaches&amp;coach_id=$c->coach_id", 
+            $matches, 
+            $fields, 
+            sort_rule('match'), 
+            (isset($_GET['sort2'])) ? array((($_GET['dir2'] == 'a') ? '+' : '-') . $_GET['sort2']) : array(),
+            array('GETsuffix' => '2', 'anchor' => 'played')
+        );
         
         return;
     }
@@ -1106,8 +1255,88 @@ function sec_coaches() {
         Show coaches table.
     */
 
+    // Generate tournament selection form
+    if (isset($_POST['tour_id'])) {
+        $_SESSION['trid_coaches'] = $_POST['tour_id'];
+    }
+    $tour_id = isset($_SESSION['trid_coaches']) ? $_SESSION['trid_coaches'] : false;
+    $TOUR = (bool) $tour_id;
+
     title($lng->getTrn('global/secLinks/coaches'));
-    HTMLOUT::standings(STATS_COACH, false, false, array('url' => 'index.php?section=coaches'));
+    ?>
+    
+    <form method="POST">
+    <select name="tour_id" onChange='this.form.submit();'>
+    <optgroup label="<?php echo $lng->getTrn('global/misc/all');?>">
+        <option value="0">All tournaments</option>
+    </optgroup>
+    <optgroup label="<?php echo $lng->getTrn('global/misc/specific');?>">
+        <?php
+        foreach (Tour::getTours() as $t) {
+            if (!$t->empty) # Only if tournament contains matches.
+                echo "<option value='$t->tour_id' " . ($tour_id && $tour_id == $t->tour_id ? 'SELECTED' : '') . " >$t->name</option>";
+        }
+        ?>
+    </optgroup>
+    </select>
+    </form>
+    <br>
+    <?php
+
+    $PMS = (isset($_GET['pms']) && $_GET['pms']); // Per match stats?
+    echo '<a href="index.php?section=coaches&amp;pms='.(($PMS) ? 0 : 1).'"><b>['.$lng->getTrn('global/misc/'.(($PMS) ? 'oas' : 'pms'))."]</b></a><br><br>\n";
+
+    $coaches = Coach::getCoaches();
+    foreach ($coaches as $c) {
+        $c->setStats($tour_id);
+        $c->setExtraStats();
+        $c->setStreaks($tour_id);
+        
+        if ($PMS) {
+            foreach (array('score_team', 'score_opponent', 'td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki') as $f) {
+                $c->$f /= ($c->played == 0) ? 1 : $c->played;
+            }
+        }
+    }
+
+    $lnk = 'index.php?section=coaches';
+    $fields = array(
+        'name'              => array('desc' => 'Coach', 'href' => array('link' => $lnk, 'field' => 'coach_id', 'value' => 'coach_id')),
+        'teams_cnt'         => array('desc' => 'Teams'), 
+        'won'               => array('desc' => 'W'), 
+        'lost'              => array('desc' => 'L'), 
+        'draw'              => array('desc' => 'D'), 
+        'played'            => array('desc' => 'GP'), 
+        'win_percentage'    => array('desc' => 'WIN%'), 
+        'row_won'           => array('desc' => 'SW'), 
+        'row_lost'          => array('desc' => 'SL'), 
+        'row_draw'          => array('desc' => 'SD'), 
+        'score_team'        => array('desc' => 'GF'),
+        'score_opponent'    => array('desc' => 'GA'),
+        'won_tours'         => array('desc' => 'WT'), 
+        'td'                => array('desc' => 'Td'), 
+        'cp'                => array('desc' => 'Cp'), 
+        'intcpt'            => array('desc' => 'Int'), 
+        'cas'               => array('desc' => 'Cas'), 
+        'bh'                => array('desc' => 'BH'), 
+        'si'                => array('desc' => 'Si'), 
+        'ki'                => array('desc' => 'Ki'), 
+        'avg_team_value'    => array('desc' => 'TV*', 'kilo' => true, 'suffix' => 'k'), 
+    );
+
+    if ($tour_id) {
+        unset($fields['won_tours']);
+        unset($fields['avg_team_value']);
+    }
+    
+    sort_table(
+        $lng->getTrn('secs/coaches/tblTitle'), 
+        $lnk.(($PMS)? '&amp;pms=1' : ''), 
+        $coaches, 
+        $fields, 
+        sort_rule('coach'), 
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array()
+    );
 }
 
 /*************************
@@ -1118,7 +1347,7 @@ function sec_coaches() {
 
 function sec_races() {
 
-    global $lng;
+    global $DEA, $lng;
 
     /* 
         This function can do two things:
@@ -1126,24 +1355,33 @@ function sec_races() {
             Or, it can show team data from LRB5.
     */
 
-    /*
-        Show specific race stats
-    */
-    if (isset($_GET['race']) && is_object($race = new Race($_GET['race'])) && ($roster = $race->getRoster())) { // Last eval makes sure $roster is not empty array.
-        title($race->race);
+    // A specific race view was requested:
+    if (isset($_GET['race']) && array_key_exists($_GET['race'], $DEA)) {
+    
+        title($r = $_GET['race']);
+        
         ?>
-        <center><img src="<?php echo $roster['other']['icon'];?>" alt="Race icon"></center>
-        <ul><li>Re-roll cost: <?php echo $roster['other']['RerollCost']/1000;?>k</li></ul><br>
+        <center>
+        <img src="<?php echo $DEA[$r]['other']['icon'];?>" alt="Race icon">
+        </center>
+        <ul>
+            <li>Re-roll cost: <?php echo $DEA[$r]['other']['RerollCost']/1000;?>k</li>
+        </ul>
+        <br>
+
         <?php
+        /* Players from chosen race. */
+        
         $players = array();
-        foreach ($roster['players'] as $player => $d) {
-            $p = (object) array_merge(array('position' => $player), $d);
+        foreach ($DEA[$r]['players'] as $p => $d) {
+            array_push($players, (object) array_merge(array('position' => $p), $d));
+        }
+        foreach ($players as $p) {
             $p->skills = implode(', ', $p->{'Def skills'});
             foreach (array('N', 'D') as $s) {
                 array_walk($p->{"$s skills"}, create_function('&$val', '$val = substr($val,0,1);'));
                 $p->$s = implode('', $p->{"$s skills"});
             }
-            $players[] = $p;
         }
         $fields = array(
             'position'  => array('desc' => 'Position'), 
@@ -1157,9 +1395,9 @@ function sec_races() {
             'cost'      => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'), 
             'qty'       => array('desc' => 'Max.'), 
         );
-        HTMLOUT::sort_table(
-            $race->race.' '.$lng->getTrn('secs/races/players'), 
-            "index.php?section=races&amp;race=$race->race",
+        sort_table(
+            "$r ".$lng->getTrn('secs/races/players'), 
+            "index.php?section=races&amp;race=$r",
             $players, 
             $fields, 
             sort_rule('race_page'), 
@@ -1167,21 +1405,87 @@ function sec_races() {
             array('GETsuffix' => 'pl')
         );
         
-        // Teams of the chosen race.
-        HTMLOUT::standings(STATS_TEAM,false,false,array('url' => "index.php?section=races&amp;race=$race->race_id", 'teams_from' => STATS_RACE, 'teams_from_id' => $race->race_id));
-        echo '<br>';
-        HTMLOUT::recentGames(STATS_RACE, $race->race_id, false, false, false, false, array('url' => "index.php?section=races&amp;race=$race->race_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
+        /* Teams of the chosen race. */
+        $teams = Team::getTeams($r);
+        foreach ($teams as $t) {
+            $t->setExtraStats();
+            $t->setStreaks(false);
+        }
         
-        // Don't also print race stats.
+        $fields = array(
+            'name'              => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')), 
+            'coach_name'        => array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'owned_by_coach_id')), 
+            'won'               => array('desc' => 'W'), 
+            'lost'              => array('desc' => 'L'), 
+            'draw'              => array('desc' => 'D'), 
+            'played'            => array('desc' => 'GP'), 
+            'win_percentage'    => array('desc' => 'WIN%'), 
+            'row_won'           => array('desc' => 'SW'), 
+            'row_lost'          => array('desc' => 'SL'), 
+            'row_draw'          => array('desc' => 'SD'), 
+            'score_team'        => array('desc' => 'GF'),
+            'score_opponent'    => array('desc' => 'GA'),
+            'won_tours'         => array('desc' => 'WT'), 
+            'td'                => array('desc' => 'Td'), 
+            'cp'                => array('desc' => 'Cp'), 
+            'intcpt'            => array('desc' => 'Int'), 
+            'cas'               => array('desc' => 'Cas'), 
+            'bh'                => array('desc' => 'BH'), 
+            'si'                => array('desc' => 'Si'), 
+            'ki'                => array('desc' => 'Ki'), 
+            'value'             => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'), 
+        );
+        
+        sort_table(
+            "<a name='teams'>$r ".$lng->getTrn('secs/races/teams')."</a>", 
+            "index.php?section=races&amp;race=$r",
+            $teams, 
+            $fields, 
+            sort_rule('team'), 
+            (isset($_GET['sortt'])) ? array((($_GET['dirt'] == 'a') ? '+' : '-') . $_GET['sortt']) : array(),
+            array('GETsuffix' => 't', 'anchor' => 'teams')
+        );
+        
+        // Return, since we don't wan't continue and print race stats too.
         return; 
     }
 
-    /*
-        Show all races' stats
-    */
+    // No specific race view was requested:
+    title($lng->getTrn('global/secLinks/races'));    
+
+    $races = array();
+    foreach ($DEA as $r => $desc) {
+        array_push($races, (object) Team::getRaceStats($r));
+    }
     
-    title($lng->getTrn('global/secLinks/races')); 
-    HTMLOUT::standings(STATS_RACE,false,false,array('url' => 'index.php?section=races'));
+    $fields = array(
+        'race'              => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race')), 
+        'teams'             => array('desc' => 'Teams'), 
+        'won'               => array('desc' => 'W'), 
+        'lost'              => array('desc' => 'L'), 
+        'draw'              => array('desc' => 'D'), 
+        'played'            => array('desc' => 'GP'), 
+        'win_percentage'    => array('desc' => 'WIN%'), 
+        'won_tours'         => array('desc' => 'WT'), 
+        'td'                => array('desc' => 'Td*'), 
+        'cp'                => array('desc' => 'Cp*'), 
+        'intcpt'            => array('desc' => 'Int*'), 
+        'cas'               => array('desc' => 'Cas*'), 
+        'bh'                => array('desc' => 'BH*'), 
+        'si'                => array('desc' => 'Si*'), 
+        'ki'                => array('desc' => 'Ki*'), 
+        'value'             => array('desc' => 'TV*', 'kilo' => true, 'suffix' => 'k'), 
+    );
+    
+    sort_table(
+        $lng->getTrn('secs/races/tblTitle'), 
+        'index.php?section=races', 
+        $races, 
+        $fields, 
+        sort_rule('race'), 
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+        array('dashed' => array('condField' => 'teams', 'fieldVal' => 0, 'noDashFields' => array('race')))
+    );
 }
 
 /*************************
@@ -1194,37 +1498,136 @@ function sec_stars() {
 
     global $stars, $lng;
 
-    // Specific star hire history
     if (isset($_GET['sid'])) {
+        $mdat = array();
         $s = new Star($_GET['sid']);
-        title($lng->getTrn('secs/stars/hh').' '.$s->name);
+        title($lng->getTrn('secs/stars/hh')." $s->name");
         echo '<center><a href="index.php?section=stars">['.$lng->getTrn('global/misc/back').']</a></center><br><br>';
-        HTMLOUT::starHireHistory(false, false, false, false, $_GET['sid'], array('url' => "index.php?section=stars&amp;sid=$_GET[sid]"));
+        foreach ($s->getHireHistory(false, false, false) as $m) {
+            $o = (object) array();
+            foreach (array('match_id', 'date_played', 'hiredByName', 'hiredAgainstName') as $k) {
+                $o->$k = $m->$k;
+            }
+            $s->setStats(false, $m->match_id, false);
+            foreach (array('td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'mvp', 'spp') as $k) {
+                $o->$k = $s->$k;
+            }
+            $o->match = '[view]';
+            $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+            array_push($mdat, $o);
+        }
+        $fields = array(
+            'date_played'       => array('desc' => 'Hire date'), 
+            'tour'              => array('desc' => 'Tournament'),
+            'hiredByName'       => array('desc' => 'Hired by'), 
+            'hiredAgainstName'  => array('desc' => 'Opponent team'), 
+            'match'             => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+            'cp'     => array('desc' => 'Cp'), 
+            'td'     => array('desc' => 'Td'), 
+            'intcpt' => array('desc' => 'Int'), 
+            'cas'    => array('desc' => 'Cas'), 
+            'bh'     => array('desc' => 'BH'), 
+            'si'     => array('desc' => 'Si'), 
+            'ki'     => array('desc' => 'Ki'), 
+            'mvp'    => array('desc' => 'MVP'), 
+            'spp'    => array('desc' => 'SPP'),
+        );
+        sort_table(
+            $lng->getTrn('secs/stars/hh')." $s->name", 
+            'index.php?section=stars&amp;sid='.$s->star_id, 
+            $mdat, 
+            $fields, 
+            sort_rule('star_HH'), 
+            (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+            array('doNr' => false,)
+        );
         return;
     }
 
-    // All stars
+    // Generate tournament selection form
+    if (isset($_POST['tour_id'])) {
+        $_SESSION['trid_stars'] = $_POST['tour_id'];
+    }
+    $tour_id = isset($_SESSION['trid_stars']) ? $_SESSION['trid_stars'] : false;
+    $TOUR = (bool) $tour_id;
+
     title($lng->getTrn('global/secLinks/stars'));
+    
     echo $lng->getTrn('global/sortTbl/simul')."<br>\n";
     echo $lng->getTrn('global/sortTbl/spp')."<br><br>\n";
-    HTMLOUT::standings(STATS_STAR, false, false, array('url' => 'index.php?section=stars'));
-    $stars = Star::getStars(false,false,false,false);
+    ?>
+    
+    <form method="POST">
+    <select name="tour_id" onChange='this.form.submit();'>
+    <optgroup label="<?php echo $lng->getTrn('global/misc/all');?>">
+        <option value="0">All tournaments</option>
+    </optgroup>
+    <optgroup label="<?php echo $lng->getTrn('global/misc/specific');?>">
+        <?php
+        foreach (Tour::getTours() as $t) {
+            if (!$t->empty) # Only if tournament contains matches.
+                echo "<option value='$t->tour_id' " . ($tour_id && $tour_id == $t->tour_id ? 'SELECTED' : '') . " >$t->name</option>";
+        }
+        ?>
+    </optgroup>
+    </select>
+    </form>
+    <br>
+    <?php
+    
+    $stars = Star::getStars(false, false, false);
     foreach ($stars as $s) {
+        $s->setStats(false, false, $tour_id);
+        $s->setMatchStats(false, false, $tour_id);
+        $s->setStreaks($tour_id);
         $s->skills = '<small>'.implode(', ', $s->skills).'</small>';
         $s->teams = '<small>'.implode(', ', $s->teams).'</small>';
         $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
     }
+    
+    $fields = array(
+        'name'              => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')), 
+        'cost'              => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'), 
+        'ma'                => array('desc' => 'Ma'), 
+        'st'                => array('desc' => 'St'), 
+        'ag'                => array('desc' => 'Ag'), 
+        'av'                => array('desc' => 'Av'), 
+        'won'               => array('desc' => 'W'), 
+        'lost'              => array('desc' => 'L'), 
+        'draw'              => array('desc' => 'D'), 
+        'played'            => array('desc' => 'GP'), 
+        'win_percentage'    => array('desc' => 'WIN%'), 
+        'row_won'           => array('desc' => 'SW'), 
+        'row_lost'          => array('desc' => 'SL'), 
+        'row_draw'          => array('desc' => 'SD'), 
+        'cp'                => array('desc' => 'Cp'), 
+        'td'                => array('desc' => 'Td'), 
+        'intcpt'            => array('desc' => 'Int'), 
+        'cas'               => array('desc' => 'Cas'), 
+        'bh'                => array('desc' => 'BH'), 
+        'si'                => array('desc' => 'Si'), 
+        'ki'                => array('desc' => 'Ki'), 
+        'mvp'               => array('desc' => 'MVP'), 
+        'spp'               => array('desc' => 'SPP'),
+    );
+    
+    sort_table(
+        $lng->getTrn('secs/stars/tblTitle'), 
+        'index.php?section=stars', 
+        $stars, 
+        $fields, 
+        sort_rule('star'), 
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+        array()
+    );
+    
     $fields = array(
         'name'   => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')), 
-        'cost'   => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'), 
-        'ma'     => array('desc' => 'Ma'), 
-        'st'     => array('desc' => 'St'), 
-        'ag'     => array('desc' => 'Ag'), 
-        'av'     => array('desc' => 'Av'),
         'teams'  => array('desc' => 'Teams', 'nosort' => true),
         'skills' => array('desc' => 'Skills', 'nosort' => true), 
     );
-    HTMLOUT::sort_table(
+    
+    sort_table(
         '<a name="s2">'.$lng->getTrn('secs/stars/tblTitle2').'</a>', 
         'index.php?section=stars', 
         $stars, 
@@ -1450,10 +1853,13 @@ function sec_gallery() {
                 foreach ($matches as $m) {
                     $round = $m->round;
                     if     ($round == RT_FINAL)         $round = $lng->getTrn('secs/fixtures/mtypes/final');
+                    elseif ($round == RT_STANDALONE)   $round = $lng->getTrn('secs/fixtures/mtypes/standalone');
                     elseif ($round == RT_3RD_PLAYOFF)   $round = $lng->getTrn('secs/fixtures/mtypes/thirdPlayoff');
                     elseif ($round == RT_SEMI)          $round = $lng->getTrn('secs/fixtures/mtypes/semi');
                     elseif ($round == RT_QUARTER)       $round = $lng->getTrn('secs/fixtures/mtypes/quarter');
                     elseif ($round == RT_ROUND16)       $round = $lng->getTrn('secs/fixtures/mtypes/rnd16');
+                    elseif ($round == RT_PLAYIN)        $round = $lng->getTrn('secs/fixtures/mtypes/playin');
+                    elseif ($round == RT_FIRST && $tr->type == TT_KNOCKOUT) $round = $lng->getTrn('secs/fixtures/mtypes/firstrnd');
                     else                                $round = $lng->getTrn('secs/fixtures/mtypes/rnd').": $round";
         
                     echo "<div style='clear: both;'><i>$m->team1_name</i> vs <i>$m->team2_name</i>, ".((isset($m->date_played) && $m->date_played != 0) ? textdate($m->date_played, true) : 'Not played').", $round, <a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[view]</a><br><hr style='width: 400px; float: left;'></div><br>\n";
@@ -1569,7 +1975,8 @@ function sec_about() {
             <li> <a href="mailto:nicholas.rathmann@gmail.com">Nicholas Mossor Rathmann</a>
             <li> Niels Orsleff Justesen</a>
         </ul>
-        With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
+        With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br>
+        Compatibility with the Cyanide Blood Bowl video game added by Frederic Morel <br><br>
         Bugs reports and suggestions are welcome.
         <br>
         OBBLM consists of valid HTML 4.01 transitional document type pages.
@@ -1756,8 +2163,8 @@ function sec_coachcorner() {
                 <b><?php echo $lng->getTrn('secs/cc/new_team/race');?>:</b> <br>
                 <select name="race">
                     <?php
-                    foreach (Race::getRaces(false) as $r)
-                        echo "<option value='$r'>$r</option>\n";
+                    foreach (get_races() as $race => $icon_file)
+                        echo "<option value='$race'>$race</option>\n";
                     ?>
                 </select>
                 <br><br>
@@ -1786,7 +2193,7 @@ function sec_coachcorner() {
         
             switch ($_POST['type']) 
             {
-                case 'chpasswd':    status(Coach::login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
+                case 'chpasswd':    status(login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
                 case 'chphone':     status($coach->setPhone($_POST['new_phone'])); break;
                 case 'chmail':      status($coach->setMail($_POST['new_email'])); break;
                 case 'chlogin':     status($coach->setName($_POST['new_name'])); break;
@@ -1851,18 +2258,79 @@ function sec_coachcorner() {
         // New team and change coach settings.
         
         ?>
-        <table class="teams" style="width:270px;">
+        <table class="teams">
             <tr>
-                <td style="text-align:center;">
+                <td style="text-align:center;width:270px;">
                     <a href="?section=coachcorner&amp;team_id=new"><img style="border: none;" alt="new team" src="<?php echo RACE_ICONS;?>/new.png"></a>
+                </td>
+                <td>
+                	<table>
+                	<tr>
+                		<td>
+                			
+						</td>
+						<td></td>
+                	</tr>
+                	<?php
+                		 // Display a new match link for each FFA tournament
+                		 
+                		 $single_tournaments = Tour::getToursByType(TT_SINGLE);
+                		 foreach ($single_tournaments as $t) {
+                		 	echo "<tr><td>";
+                		 	echo "[" .$t->name. "] ";
+                		 	echo "</td><td>";
+                		 	echo "<a href='?section=fixturelist&amp;match_id=new&amp;tour_id=" .$t->tour_id. "'>" .$lng->getTrn('secs/cc/main/new_unscheduled_match'). "</a>";
+                		 	echo "</td></tr>";
+                		 }
+                	?>
+                	<?php
+                		 // Display a view/edit and an upload link for each scheduled match
+                		 
+                		 $scheduled_matches = $coach->getScheduledMatches();
+                		 foreach ($scheduled_matches as $m) {
+                		 	$tour = new Tour($m->f_tour_id);
+                		 	echo "<tr>";
+                		 	
+                		 	// Match
+                		 	echo "<td>";
+                		 	echo "[" .$tour->name. "] " .$m->team1_name. " vs " .$m->team2_name;
+                		 	echo "</td>";
+                		 	
+                		 	echo "<td>";
+                		 	
+               			 	// View / Edit
+                		 	echo "<a href='?section=fixturelist&amp;match_id=" .$m->match_id. "'>";
+	                		if (is_object($coach)) {
+		                        echo (($coach->isInMatch($m->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;\n";
+		                    }
+		                    else {
+		                        echo $lng->getTrn('secs/fixtures/view')."</a>\n";
+		                    }
+                		 	
+                		 	// Upload
+                		 	/*
+                		 	echo "<a href='?section=fixturelist&amp;match_id=" .$m->match_id. "&amp;upload=true'>";
+                		 	echo $lng->getTrn('secs/cc/main/upload_match_report');
+                		 	echo "</a>";
+                		 	
+                		 	echo "</td>";
+                		 	
+                		 	echo "</tr>";
+                		 	*/
+                		 }
+                	?>
+                	</table>
                 </td>
             </tr>
             <tr>
                 <td class="light" style="text-align:center;">
                     <?php echo $lng->getTrn('secs/cc/main/start_new');?>
                 </td>
+                <td class="light" style="text-align:center;">
+                	<?php echo $lng->getTrn('secs/cc/main/scheduled_matches');?>
+                </td>
             </tr>
-        </table>       
+        </table>
 
         <table class="text">
             <tr>
@@ -1972,328 +2440,103 @@ function sec_coachcorner() {
 
 /*************************
  *
- *  RECENT MATCHES
- *
+ *  RECENT MATCHES *
  *************************/
 
 function sec_recentmatches() {
 
     global $lng;
     title($lng->getTrn('global/secLinks/recent'));
-    list($node, $node_id) = HTMLOUT::nodeSelector(false,false,false,'');
-    echo '<br>';
-    $ALL = ($node == STATS_LEAGUE && $node_id == 0); // All leagues selected == $node = $node_id = false
-    HTMLOUT::recentGames(false,false,($ALL) ? false : $node, ($ALL) ? false : $node_id, false,false,array('url' => 'index.php?section=recent', 'n' => MAX_RECENT_GAMES));
-}
-
-/*************************
- *
- *  UPCOMMING MATCHES
- *
- *************************/
-
-function sec_upcommingmatches() {
-
-    global $lng;
-    title($lng->getTrn('global/secLinks/upcomming'));
-    list($node, $node_id) = HTMLOUT::nodeSelector(false,false,false,'');
-    echo '<br>';
-    $ALL = ($node == STATS_LEAGUE && $node_id == 0); // All leagues selected == $node = $node_id = false
-    HTMLOUT::upcommingGames(false,false,($ALL) ? false : $node, ($ALL) ? false : $node_id, false,false,array('url' => 'index.php?section=upcomming', 'n' => MAX_RECENT_GAMES));
-}
-
-/*************************
- *
- *  Comparence
- *
- *************************/
-
-function sec_comparence() {
-    
-    global $raceididx;
-    title('Comparence');
-    
-    /* Get all IDs and names for players, teams, coaches and races. */
-    $players = $teams = $coaches = array();
-    // Players
-    $query = "SELECT player_id, players.name AS 'name', teams.name AS 'team_name' FROM players, teams WHERE owned_by_team_id = team_id ORDER BY teams.name ASC, players.name ASC";
-    $result = mysql_query($query);
-    if (is_resource($result) && mysql_num_rows($result) > 0) {
-        while ($r = mysql_fetch_assoc($result)) {
-            $players[$r['player_id']] = array('name' => $r['name'], 'team_name' => $r['team_name']);
-        }
-    }
-    // Teams
-    $query = "SELECT team_id, name FROM teams ORDER BY name ASC";
-    $result = mysql_query($query);
-    if (is_resource($result) && mysql_num_rows($result) > 0) {
-        while ($r = mysql_fetch_assoc($result)) {
-            $teams[$r['team_id']] = $r['name'];
-        }
-    }
-    //Coaches
-    $query = "SELECT coach_id, name FROM coaches ORDER BY name ASC";
-    $result = mysql_query($query);
-    if (is_resource($result) && mysql_num_rows($result) > 0) {
-        while ($r = mysql_fetch_assoc($result)) {
-            $coaches[$r['coach_id']] = $r['name'];
-        }
-    }
+    $tours = Tour::getTours();
+    $matches = Match::getMatches(MAX_RECENT_GAMES, isset($_POST['trid']) ? (int) $_POST['trid'] : false);
     
     ?>
-    <form method="POST">    
-    <table width="100%">
-        <tr>
-            <td><b>Show stats by...</b></td>
-            <td><b>...for games against...</b></td>
-            <td><b>...in</b></td>
-        </tr>
-        <tr>
-            <td>
-                <select name="type_by" onChange="
-                    selConst = Number(this.options[this.selectedIndex].value); 
-                    comparence_disableall('by'); 
-                    switch(selConst) 
-                    {
-                        case <?php echo STATS_PLAYER;?>: document.getElementById('player_by').style.display = 'block'; break;
-                        case <?php echo STATS_TEAM;?>:   document.getElementById('team_by').style.display = 'block'; break;
-                        case <?php echo STATS_COACH;?>:  document.getElementById('coach_by').style.display = 'block'; break;
-                        case <?php echo STATS_RACE;?>:   document.getElementById('race_by').style.display = 'block'; break;
-                    }
-                ">
-                    <?php
-                    foreach (array(STATS_TEAM => 'Team', STATS_PLAYER => 'Player', STATS_COACH => 'Coach', STATS_RACE => 'Race') as $const => $name) {
-                        echo "<option value='$const'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-            </td>
-            <td>
-                <select name="type_ag" onChange="
-                    selConst = Number(this.options[this.selectedIndex].value); 
-                    comparence_disableall('ag'); 
-                    switch(selConst) 
-                    {
-                        case <?php echo STATS_PLAYER;?>: document.getElementById('player_ag').style.display = 'block'; break;
-                        case <?php echo STATS_TEAM;?>:   document.getElementById('team_ag').style.display = 'block'; break;
-                        case <?php echo STATS_COACH;?>:  document.getElementById('coach_ag').style.display = 'block'; break;
-                        case <?php echo STATS_RACE;?>:   document.getElementById('race_ag').style.display = 'block'; break;
-                    }
-                ">
-                    <?php
-                    foreach (array(STATS_TEAM => 'Team', STATS_PLAYER => 'Player', STATS_COACH => 'Coach', STATS_RACE => 'Race') as $const => $name) {
-                        echo "<option value='$const'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-            </td>
-            <td>
-                <select name="type_in" onChange="
-                    selConst = Number(this.options[this.selectedIndex].value); 
-                    comparence_disableall('in'); 
-                    switch(selConst) 
-                    {
-                        case <?php echo STATS_TOUR;?>:      document.getElementById('tour_in').style.display = 'block'; break;
-                        case <?php echo STATS_DIVISION;?>:  document.getElementById('division_in').style.display = 'block'; break;
-                        case <?php echo STATS_LEAGUE;?>:    document.getElementById('league_in').style.display = 'block'; break;
-                    }
-                ">
-                    <?php
-                    foreach (array(STATS_LEAGUE => 'League', STATS_DIVISION => 'Division', STATS_TOUR => 'Tournament') as $const => $name) {
-                        echo "<option value='$const'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <select style='display:none;' name="player_by" id="player_by">
-                    <?php
-                    foreach ($players as $id => $arr) {
-                        if (strlen($arr['team_name']) > 20) {$arr['team_name']  = substr($arr['team_name'],0,17).'...'; }
-                        if (strlen($arr['name']) > 20)      {$arr['name']       = substr($arr['name'],0,17).'...';}
-                        echo "<option value='$id'>$arr[team_name]: $arr[name]</option>\n";
-                    }
-                    ?>
-                </select>
-                <select style='display:none;' name="team_by" id="team_by">
-                    <?php
-                    foreach ($teams as $id => $name) {
-                        echo "<option value='$id'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-                <select style='display:none;' name="coach_by" id="coach_by">
-                    <?php
-                    foreach ($coaches as $id => $name) {
-                        echo "<option value='$id'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-                <select style='display:none;' name="race_by" id="race_by">
-                    <?php
-                    foreach ($raceididx as $id => $name) {
-                        echo "<option value='$id'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-            </td>
-            <td>
-                <select style='display:none;' name="player_ag" id="player_ag">
-                    <?php
-                    foreach ($players as $id => $arr) {
-                        if (strlen($arr['team_name']) > 20) {$arr['team_name']  = substr($arr['team_name'],0,17).'...'; }
-                        if (strlen($arr['name']) > 20)      {$arr['name']       = substr($arr['name'],0,17).'...';}
-                        echo "<option value='$id'>$arr[team_name]: $arr[name]</option>\n";
-                    }
-                    ?>
-                </select>
-                <select style='display:none;' name="team_ag" id="team_ag">
-                    <?php
-                    foreach ($teams as $id => $name) {
-                        echo "<option value='$id'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-                <select style='display:none;' name="coach_ag" id="coach_ag">
-                    <?php
-                    foreach ($coaches as $id => $name) {
-                        echo "<option value='$id'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-                <select style='display:none;' name="race_ag" id="race_ag">
-                    <?php
-                    foreach ($raceididx as $id => $name) {
-                        echo "<option value='$id'>$name</option>\n";
-                    }
-                    ?>
-                </select>
-            </td>
-            <td>
-                <select style='display:none;' name="tour_in" id="tour_in">
-                    <?php
-                    foreach (Tour::getTours() as $t) {
-                        echo "<option value='$t->tour_id'>$t->name</option>\n";
-                    }
-                    ?>
-                </select>
-                <select style='display:none;' name="division_in" id="division_in">
-                    <?php
-                    foreach (Division::getDivisions() as $d) {
-                        echo "<option value='$d->did'>$d->name</option>\n";
-                    }
-                    ?>
-                </select>
-                <select style='display:none;' name="league_in" id="league_in">
-                    <?php
-                    echo "<option value='0'>-All-</option>\n";
-                    foreach (League::getLeagues() as $l) {
-                        echo "<option value='$l->lid'>$l->name</option>\n";
-                    }
-                    ?>
-                </select>
-            </td>
-        </tr>
-    </table>
-    <br>
-    <input type="submit" name="submit" value="Show stats">
+    <form method="POST">
+    <b><?php echo $lng->getTrn('secs/recent/from_tours');?></b><br>
+    <select name="trid" onChange='this.form.submit();'>
+        <option value="0">-All-</option>
+        <?php
+        foreach ($tours as $tr) {
+            echo "<option value='$tr->tour_id' ".((isset($_POST['trid']) && $_POST['trid'] == $tr->tour_id) ? 'SELECTED' : '').">$tr->name</option>\n";
+        }
+        ?>
+    </select>
     </form>
-    <!-- defaults -->
-    <script language="JavaScript" type="text/javascript">
-        document.getElementById('team_by').style.display = 'block';
-        document.getElementById('team_ag').style.display = 'block';
-        document.getElementById('league_in').style.display = 'block';
-        
-        function comparence_disableall(suffix)
-        {
-            if (suffix == 'in') {
-                document.getElementById('tour_in').style.display = 'none';
-                document.getElementById('division_in').style.display = 'none';
-                document.getElementById('league_in').style.display = 'none';
-            }
-            else {
-                document.getElementById('player_'+suffix).style.display = 'none';
-                document.getElementById('team_'+suffix).style.display = 'none';
-                document.getElementById('coach_'+suffix).style.display = 'none';
-                document.getElementById('race_'+suffix).style.display = 'none';
-            }
-            return true;
-        }
-    </script>
-    
+    <br>    
     <?php
-    
-    if (isset($_POST['submit'])) {
-        echo "<br><hr><br>";
-        
-        switch ($obj = $_POST['type_by'])
-        {
-            case STATS_PLAYER:  $o = new Player($obj_id = $_POST['player_by']); break;
-            case STATS_TEAM:    $o = new Team($obj_id = $_POST['team_by']); break;
-            case STATS_COACH:   $o = new Coach($obj_id = $_POST['coach_by']); break;
-            case STATS_RACE:    $o = new Race($obj_id = $_POST['race_by']); break;
-        }
-        switch ($opp_obj = $_POST['type_ag'])
-        {
-            case STATS_PLAYER:  $opp_o = new Player($opp_obj_id = $_POST['player_ag']); break;
-            case STATS_TEAM:    $opp_o = new Team($opp_obj_id = $_POST['team_ag']); break;
-            case STATS_COACH:   $opp_o = new Coach($opp_obj_id = $_POST['coach_ag']); break;
-            case STATS_RACE:    $opp_o = new Race($opp_obj_id = $_POST['race_ag']); break;
-        }
-        switch ($node = $_POST['type_in'])
-        {
-            case STATS_TOUR:        $node_id = $_POST['tour_in']; break;
-            case STATS_DIVISION:    $node_id = $_POST['division_in']; break;
-            case STATS_LEAGUE:      $node_id = $_POST['league_in']; break;
-            default:                $node_id = false; // All-time.
-        }        
-        
-        echo "Stats for <b>$o->name</b> in matches against <b>$opp_o->name</b><br><br>\n";
-        
-        $stats   = Stats::getAllStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);
 
-        /* 
-            Do some printing...
-        */
-        
-        // General stats
-        
-        $fields = array(
-            'won'               => array('desc' => 'W'), 
-            'lost'              => array('desc' => 'L'), 
-            'draw'              => array('desc' => 'D'), 
-            'played'            => array('desc' => 'GP'), 
-            'win_percentage'    => array('desc' => 'WIN%'), 
-            'row_won'           => array('desc' => 'SW'), 
-            'row_lost'          => array('desc' => 'SL'), 
-            'row_draw'          => array('desc' => 'SD'), 
-            'score_team'        => array('desc' => 'GF'),
-            'score_opponent'    => array('desc' => 'GA'),
-            'won_tours'         => array('desc' => 'WT'), 
-            'td'                => array('desc' => 'Td'), 
-            'cp'                => array('desc' => 'Cp'), 
-            'intcpt'            => array('desc' => 'Int'), 
-            'cas'               => array('desc' => 'Cas'), 
-            'bh'                => array('desc' => 'BH'), 
-            'si'                => array('desc' => 'Si'), 
-            'ki'                => array('desc' => 'Ki'), 
-        );
-        $objs = array((object) $stats);
-        HTMLOUT::sort_table(
-            'Achievements', 
-            "index.php?section=comparence", 
-            $objs, 
-            $fields, 
-            array('+won'), 
-            array(),
-            array('doNr' => false)
-        );
-        echo "<br>";
-        
-        // Games played
-        HTMLOUT::recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array('url' => "index.php?section=comparence", 'n' => false, 'GET_SS' => 'gp'));
+    foreach ($matches as $m) {
+         $m->result = "$m->team1_score - $m->team2_score";
+         $m->mlink = "<a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[".$lng->getTrn('secs/recent/view')."]</a>";
     }
+    $fields = array(
+        'date_played'       => array('desc' => 'Date played'), 
+        'team1_name'        => array('desc' => 'Home'),
+        'team2_name'        => array('desc' => 'Away'),
+        'result'            => array('desc' => 'Result', 'nosort' => true), 
+        'mlink'             => array('desc' => 'Match', 'nosort' => true), 
+    );
+    sort_table(
+        $lng->getTrn('secs/recent/tbltitle'), 
+        'index.php?section=recent', 
+        $matches, 
+        $fields, 
+        sort_rule('match'), 
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+        array('doNr' => false, 'noHelp' => true)
+    );
 }
+
+function sec_register () {
+	
+	global $lng, $settings;
+	
+	if (!$settings['allow_automatic_registration']) {
+		title($lng->getTrn('secs/fixtures/forbidden'));
+		return;
+	}
+	
+	title($lng->getTrn('global/secLinks/register'));
+	
+	// If values posted create new coach
+	if (isset($_POST['button']) && $_POST['button'] == "Create coach") {
+		if (get_magic_quotes_gpc()) {
+			$_POST['new_name'] = stripslashes($_POST['new_name']);
+			$_POST['new_realname'] = stripslashes($_POST['new_realname']);
+			$_POST['new_mail'] = stripslashes($_POST['new_mail']);
+			$_POST['new_phone'] = stripslashes($_POST['new_phone']);
+			$_POST['new_passwd'] = stripslashes($_POST['new_passwd']);
+		}
+		
+		status(Coach::create(array(
+                        'name'     => $_POST['new_name'], 
+                        'realname' => $_POST['new_realname'], 
+                        'passwd'   => $_POST['new_passwd'], 
+                        'mail'     => $_POST['new_mail'], 
+                        'phone'    => $_POST['new_phone'], 
+                        'ring'     => 2,
+		)));
+		
+		echo "<meta HTTP-EQUIV='REFRESH' content='2; url=index.php?section=login'>";
+	}
+	
+	?>
+	<form method="POST" action="?section=register">
+		<div class="adminBox">
+	        <div class="boxTitle3">
+	            New coach
+	        </div>
+	        <div class="boxBody">
+	            Coach name (login):<br> <input type="text" name="new_name" size="20" maxlength="50"><br><br>
+	            Full name:<br> <input type="text" name="new_realname" size="20" maxlength="50"><br><br>
+	            Mail (optional):<br> <input type="text" name="new_mail" size="20" maxlength="129"><br><br>
+	            Phone (optional):<br> <input type="text" name="new_phone" size="20" maxlength="129"><br><br>
+	            Password:<br> <input type="password" name="new_passwd" size="20" maxlength="50"><br><br>
+	            <input type="submit" name="button" value="Create coach">
+	        </div>
+	    </div>
+    </form>
+	<?php
+}
+
 ?>

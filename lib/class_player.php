@@ -44,7 +44,32 @@ class Player
     public $ach_dob_skills = array();
     public $extra_skills   = array();
     public $extra_spp = 0;
-    public $extra_val = 0;
+
+    // General (total) calcualted fields
+    public $mvp         = 0;
+    public $cp          = 0;
+    public $td          = 0;
+    public $intcpt      = 0;
+    public $bh          = 0;
+    public $si          = 0;
+    public $ki          = 0;
+    public $cas         = 0; // bh+ki+si
+    public $tdcas       = 0; // Is td+cas. Used by some ranking systems. 
+    public $spp         = 0;
+    //-------------------
+    public $played      = 0;
+    public $won         = 0;
+    public $lost        = 0;
+    public $draw        = 0;
+    public $win_percentage = 0;
+#    public $score_team  = 0;    // Total score made by this team.
+#    public $score_opponent = 0; // Total score made against this team.
+#    public $score_diff  = 0;    // score_team - score_opponent
+#    public $fan_factor  = 0;
+#    public $points      = 0; // Total team points, if points ranking system is used.
+#    public $smp         = 0; // Sportsmanship points.
+#    public $tcas        = 0; // Team cas.
+    //-------------------  
 
     // Characteristics
     public $ma = 0;
@@ -75,7 +100,6 @@ class Player
 
     // Others
     public $value = 0;
-    public $f_race_id = 0;
     public $race = "";
     public $icon = "";
     public $qty = 0;
@@ -85,11 +109,17 @@ class Player
 
     // Non-constructor filled fields.
 
+        // By setStreaks().
+        public $row_won  = 0; // Won in row.
+        public $row_lost = 0;
+        public $row_draw = 0;
+
         // By getDateDied().
         public $date_died = '';
         
         // By setChoosableSkills().
-        public $choosable_skills = array('N skills' => array(), 'D skills' => array());
+        // public $choosable_skills = array('N skills' => array(), 'D skills' => array());
+        public $choosable_skills = array('N skills' => array(), 'D skills' => array(), 'Characs' => array());
         
     /***************
      * Methods 
@@ -97,7 +127,7 @@ class Player
 
     function __construct($player_id) {
 
-        global $DEA, $rules, $raceididx;
+        global $DEA, $rules;
 
         // MySQL stored player data
         $result = mysql_query("SELECT * FROM players WHERE player_id = $player_id");
@@ -112,8 +142,7 @@ class Player
         $this->pos = $this->position;
             
         // Player relations
-        $this->f_race_id  = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'f_race_id');
-        $this->race       = $raceididx[$this->f_race_id];
+        $this->race       = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'race');
         $this->team_name  = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'name');
         $this->coach_id   = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'owned_by_coach_id');
         $this->coach_name = get_alt_col('coaches', 'coach_id', $this->coach_id, 'name');
@@ -139,7 +168,7 @@ class Player
             $this->is_unbuyable = true;
             
         // Set general stats.
-        $this->setStats(false,false,false);
+        $this->setStats(false);
         $this->spp += $this->extra_spp;
 
         // Injuries
@@ -175,8 +204,7 @@ class Player
                        + $this->ach_ag                      * 40000
                        + $this->ach_st                      * 50000
                        + count($this->ach_nor_skills)       * 20000
-                       + count($this->ach_dob_skills)       * 30000
-                       + $this->extra_val;
+                       + count($this->ach_dob_skills)       * 30000;
                        
         // Custom value reduction.
         $this->value -= 
@@ -192,14 +220,45 @@ class Player
         if ($this->is_journeyman)   {$this->position .= ' [J]';}
     }
     
-    public function setStats($node, $node_id, $set_avg = false)
-    {
-        foreach (Stats::getAllStats(STATS_PLAYER, $this->player_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
+    public function setStats($tour_id = false) {
+        
+        /**
+         * Overwrites object's stats fields.
+         **/
+        
+        foreach (Stats::getStats($this->player_id, false, false, false, $tour_id) as $key => $val) {
             $this->$key = $val;
         }
+
         return true;
     }
     
+    public function setExtraStats($tour_id = false) {
+        
+        /**
+         * Overwrites object properties with stats from the specified tournament.
+         **/
+        
+        foreach (Stats::getMatchStats(STATS_PLAYER, $this->player_id, $tour_id) as $key => $val) {
+            $this->$key = $val;
+        }
+
+        return true;
+    }
+
+    public function setStreaks($trid = false) {
+
+        /**
+         * Counts most won, lost and draw matches in a row.
+         **/
+
+        foreach (Stats::getStreaks(STATS_PLAYER, $this->player_id, $trid) as $key => $val) {
+            $this->$key = $val;
+        }
+
+        return true;
+    }
+
     public function setChoosableSkills() {
 
         global $DEA;
@@ -208,6 +267,19 @@ class Player
         $n_skills = $DEA[$this->race]['players'][$this->pos]['N skills'];
         $d_skills = $DEA[$this->race]['players'][$this->pos]['D skills'];
         
+        // Generate random number based on buy date and player id as seed
+        $acquired_skills = array_merge($this->ach_nor_skills, $this->ach_dob_skills, $this->extra_skills);
+        $nb_skills = sizeof($acquired_skills);
+        $seed = $this->date_bought . $this->player_id;
+        $seed = crc32($seed);
+        srand($seed);
+        $rand1 = rand(1,6);
+        $rand2 = rand(1,6);
+        for ($i=0;$i<$nb_skills;$i++) {
+        	$rand1 = rand(1,6);
+        	$rand2 = rand(1,6);
+        }
+        
         foreach ($n_skills as $category) {
             foreach ($skillarray[$category] as $skill) {
                 if (!in_array($skill, $this->ach_nor_skills) && !in_array($skill, $this->def_skills)) {
@@ -215,13 +287,24 @@ class Player
                 }
             }
         }
-        foreach ($d_skills as $category) {
-            foreach ($skillarray[$category] as $skill) {
-                if (!in_array($skill, $this->ach_dob_skills) && !in_array($skill, $this->def_skills)) {
-                    array_push($this->choosable_skills['D skills'], $skill);
-                }
-            }
+        if ($rand1 == $rand2) {
+	        foreach ($d_skills as $category) {
+	            foreach ($skillarray[$category] as $skill) {
+	                if (!in_array($skill, $this->ach_dob_skills) && !in_array($skill, $this->def_skills)) {
+	                    array_push($this->choosable_skills['D skills'], $skill);
+	                }
+	            }
+	        }
         }
+        // ma, st, ag, av
+        if ($rand1+$rand2 == 10) {
+        	array_push($this->choosable_skills['Characs'], 'ma');
+        	array_push($this->choosable_skills['Characs'], 'av');
+        }
+        else if ($rand1+$rand2 == 11)
+        	array_push($this->choosable_skills['Characs'], 'ag');
+        else if ($rand1+$rand2 == 12)
+        	array_push($this->choosable_skills['Characs'], 'st');
         
         return true;
     }
@@ -384,7 +467,10 @@ class Player
          * Rename player.
          **/
     
-        return mysql_query("UPDATE players SET name = '" . mysql_real_escape_string($new_name) . "' WHERE player_id = $this->player_id");
+        if (mysql_query("UPDATE players SET name = '" . mysql_real_escape_string($new_name) . "' WHERE player_id = $this->player_id"))
+            return true;
+        else
+            return false;
     }
     
     public function renumber($number) {
@@ -393,7 +479,10 @@ class Player
          * Renumber player.
          **/
     
-        return ($number <= MAX_PLAYER_NR && mysql_query("UPDATE players SET nr = $number WHERE player_id = $this->player_id"));
+        if ($number <= MAX_PLAYER_NR && mysql_query("UPDATE players SET nr = $number WHERE player_id = $this->player_id"))
+            return true;
+        else
+            return false;
     }
 
     public function dspp($delta) {
@@ -403,17 +492,10 @@ class Player
          **/
         
         $query = "UPDATE players SET extra_spp = IF(extra_spp IS NULL, $delta, extra_spp + ($delta)) WHERE player_id = $this->player_id";
-        return mysql_query($query);
-    }
-
-    public function dval($val = 0) {
-    
-        /**
-         * Add a delta to player's value.
-         **/
-        
-        $query = "UPDATE players SET extra_val = $val WHERE player_id = $this->player_id";
-        return mysql_query($query);
+        if (mysql_query($query))
+            return true;
+        else
+            return false;
     }
 
     public function addSkill($type, $skill) {
@@ -821,27 +903,6 @@ class Player
         else
             return null;
     }
-    
-    public static function theDoctor($code = false) {
-
-        /* The doctor translates PHP constants into their string equivalents. */
-
-        if ($code) {
-            switch($code)
-            {
-                case NONE:  return 'none';
-                case MNG:   return 'mng';
-                case NI:    return 'ni';
-                case MA:    return 'ma';
-                case AV:    return 'av';
-                case AG:    return 'ag';
-                case ST:    return 'st';
-                case DEAD:  return 'dead';
-            }
-        }
-        
-        return false;
-    }
 
     public static function create(array $input, $journeyman = false) {
 
@@ -949,6 +1010,24 @@ class Player
         $row = mysql_fetch_assoc($result);
 
         return array(true, $row['player_id']);
+    }
+    
+    public function getLevel () {
+    	$spp = $this->spp;
+    	if ($spp < 6)
+    		return 1;
+    	else if ($spp >= 6 && $spp < 16)
+    		return 2;
+    	else if ($spp >= 16 && $spp < 31)
+    		return 3;
+    	else if ($spp >= 31 && $spp < 51)
+    		return 4;
+    	else if ($spp >= 51 && $spp < 76)
+    		return 5;
+    	else if ($spp >= 76 && $spp < 176)
+    		return 6;
+    	else if ($spp >= 176)
+    		return 7;
     }
 }
 

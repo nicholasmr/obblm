@@ -4,19 +4,19 @@
  * MySQL database settings 
  **************************/
 
-$db_name   = 'test';
-$db_user   = 'root';
-$db_passwd = '';
+$db_name   = 'obblmdb';
+$db_user   = 'obblm';
+$db_passwd = 'obblm';
 $db_host   = 'localhost';
 
 /*************************
  * OBBLM display settings 
  *************************/
 
-$settings['forum_url'] = 'http://localhost';// URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
+$settings['forum_url'] = '';// URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
 $settings['lang'] = 'en-GB';                // Language. Existing: en-GB.
-$settings['login_list'] = true;             // Show a list of available coaches on logins. If false coaches must type in their username on logins.
-$settings['site_name'] = 'UNNAMED BBL';     // Name of the site or the league name if only one league is being managed.
+$settings['login_list'] = false;             // Show a list of available coaches on logins. If false coaches must type in their username on logins.
+$settings['site_name'] = 'Test league';     // Name of the site or the league name if only one league is being managed.
 $settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
 $settings['show_sort_rule'] = true;         // Default is true. Print in table footers what tables are sorted against?
 
@@ -33,14 +33,8 @@ $settings['show_stars_mercs']     = true;  // Default is true. Show summed up st
 $settings['enable_guest_book']    = false; // Default is false. Enable the guest book?
 $settings['show_active_tours']    = true;  // Default is true. Show not only the overall team standings table on the front page, but show also standings tables for active tournaments?
 $settings['fp_team_news']         = true;  // Default is true. Show team news on front page.
-$settings['fp_links']             = false; // Default is false. Generate coach, team and player links on the front page?
+$settings['fp_links']             = true; // Default is false. Generate coach, team and player links on the front page?
 $settings['force_tour_foldout']   = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.
-
-$settings['leegmgr_enabled']       = true;    // Enables upload of BOTOCS LRB5 application match reports.
-$settings['leegmgr_schedule']      = false;   // Uploads report to a scheduled match.  The options are [false|true|"strict"]
-                                              // false does not check for scheduled matches
-                                              // true checks for scheduled matches and will create a match if not found
-                                              // "strict" will allow only scheduled matches to be used
 
 /*****************
  * OBBLM rule set
@@ -66,7 +60,7 @@ $rules['initial_cheerleaders']  = 0;        // Default is 0.
 // For the below limits, the following applies: -1 = unlimited. 0 = disabled.
 $rules['max_rerolls']           = -1;       // Default is -1.
 $rules['max_fan_factor']        = 9;        // Default is 9.
-$rules['max_ass_coaches']       = -1;       // Default is -1.
+$rules['max_ass_coaches']       = 0;       // Default is -1.
 $rules['max_cheerleaders']      = -1;       // Default is -1.
 
 $rules['cost_apothecary']       = 50000;    // Default is 50000.
@@ -90,7 +84,7 @@ $rules['enable_stars_mercs'] = true; // Default is true. Enable star players and
     IMPORTANT: This setting must not be changed while using OBBLM. Please enable/disable it and leave it that way throughout the use of this software.
  */
 
-$rules['enable_lrb6x'] = true; // Default is false.
+$rules['enable_lrb6x'] = false; // Default is false.
 
 /*****************
  * House ranking systems
@@ -154,5 +148,11 @@ $hrs[2]['points_desc'] = '2 pts for team score, -1 pts for opponent score'; // S
 $hrs[3]['rule']        = array('-score_diff', '-smp');  // Sort teams against: larget score difference, then most sportsmanship points.
 $hrs[3]['points']      = '';                            // Points not used.
 $hrs[3]['points_desc'] = '';                            // Points not used.
+
+/*************************
+ * OBBLM Cyanide support additions
+ *************************/
+$settings['allow_automatic_registration'] = true; // Allow automatic user registration
+$settings['show_unsupported_races_cyanide'] = false; // Show races not supported by Cyanide (see lib/game_data_Cyanide.php)
 
 ?>

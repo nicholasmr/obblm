@@ -78,7 +78,6 @@ function team_roaster($team_id) {
             case 'buy_goods':       status($team->buy($_POST['thing'])); break;
             case 'drop_goods':      status($team->drop($_POST['thing'])); break;
             case 'ready_state':     status($team->setReady(isset($_POST['bool']))); break;
-            case 'unbuy_player':    status($p->unbuy()); break;
             
             case 'skill':        
                 $type = null;
@@ -92,7 +91,6 @@ function team_roaster($team_id) {
             case 'teamtext': status($team->saveText($_POST['teamtext'])); break;
             case 'news':     status($team->writeNews($_POST['txt'])); break;
             case 'newsdel':  status($team->deleteNews($_POST['news_id'])); break;
-            case 'newsedit': status($team->editNews($_POST['news_id'], $_POST['txt'])); break;
 
             case 'pic': 
                 if (isset($_FILES['pic_stad'])) 
@@ -107,13 +105,13 @@ function team_roaster($team_id) {
 
             switch ($_POST['type']) {
                 
+                case 'unbuy_player':      status($p->unbuy()); break;
                 case 'unhire_journeyman': status($p->unhireJourneyman()); break;
                 case 'unsell_player':     status($p->unsell()); break;
                 case 'unbuy_goods':       status($team->unbuy($_POST['thing'])); break;
                 case 'bank':              status($team->dtreasury(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000)); break;
                 case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
                 case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
-                case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
                 
                 case 'extra_skills':    
                     $func = $_POST['sign'] == '+' ? 'addSkill' : 'rmSkill';
@@ -138,6 +136,8 @@ function team_roaster($team_id) {
     
     // Lets prepare the players for the roster.
     $team = new Team($team_id); # Update team object in case of changes to team were made.
+    $team->setExtraStats();
+    $team->setStreaks(false);
     $players_org = $team->getPlayers(); 
     // Make two copies: We will be overwriting $players later when the roster has been printed, so that the team actions boxes have the correct untempered player data to work with.
     $players = array();
@@ -205,8 +205,8 @@ function team_roaster($team_id) {
         
         /* 
             New skills drop-down.
-        */      
-          
+        */
+        
         $x = '';
         if ($ALLOW_EDIT && $p->mayHaveNewSkill()) {
             $p->setChoosableSkills();
@@ -226,13 +226,21 @@ function team_roaster($team_id) {
             }
             $x .= "</optgroup>\n";
             
+            /*
             $x .= "<optgroup label='Other'>\n";
             foreach (array('ma', 'st', 'ag', 'av') as $s) {
                 if ($p->chrLimits('ach', $s))
                     $x .= "<option value='ach_$s'>+ " . ucfirst($s) . "</option>\n";
             }
             $x .= "</optgroup>\n";
-
+            */
+            $x .= "<optgroup label='Other'>\n";
+            foreach ($p->choosable_skills['Characs'] as $s) {
+                if ($p->chrLimits('ach', $s))
+                    $x .= "<option value='ach_$s'>+ " . ucfirst($s) . "</option>\n";
+            }
+            $x .= "</optgroup>\n";
+            
             $x .= '
             </select>
             <input type="submit" name="button" value="OK">
@@ -250,7 +258,7 @@ function team_roaster($team_id) {
     if ($DETAILED && $settings['show_stars_mercs'] && $rules['enable_stars_mercs']) {
     
         $stars = array();
-        foreach (Star::getStars(STATS_TEAM, $team->team_id, false, false) as $s) {
+        foreach (Star::getStars($team->team_id, false, false) as $s) {
             $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
             $s->player_id = $s->star_id;
             $s->nr = 0;
@@ -258,7 +266,7 @@ function team_roaster($team_id) {
             $s->skills = '<small>'.implode(', ', $s->skills).'</small>';
             $s->injs = '';
             $s->value = 0;
-            $s->setStats(STATS_TEAM, $team->team_id, false, false);
+            $s->setStats($team->team_id, false, false);
             $s->cas = "$s->bh/$s->si/$s->ki"; // Must come after setStats(), since it else would overwrite.
             $s->is_dead = $s->is_sold = $s->is_mng = $s->is_journeyman = false;
             $s->HTMLbcolor = COLOR_HTML_STARMERC;
@@ -325,14 +333,14 @@ function team_roaster($team_id) {
         'value'     => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),  
     );
 
-    HTMLOUT::sort_table(
+    sort_table(
         $lng->getTrn('secs/teams/playersof').' '.$team->name, 
         "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
         $players, 
         $fields, 
         ($DETAILED) ? array('+is_dead', '+is_sold', '+is_mng', '+is_journeyman', '+nr', '+name') : sort_rule('player'), 
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-        array('color' => ($DETAILED) ? true : false, 'doNr' => false, 'noHelp' => true)
+        array('color' => ($DETAILED) ? true : false, 'doNr' => false)
     );
     
     // Okey, lets restore the $players array.
@@ -363,17 +371,18 @@ function team_roaster($team_id) {
         <tr>
             <td colspan="8">
             <?php
-            $botocs = "";
-            if ($settings['leegmgr_enabled']) $botocs = " <a href='leegmgr/xml_roster.php?teamid=$_GET[team_id]'>BOTOCS-XML</a>";
             echo "<a href='index.php?section=coachcorner&amp;team_id=$_GET[team_id]&amp;detailed=".(($DETAILED) ? 0 : 1)."'><b>".(($DETAILED) ? $lng->getTrn('secs/teams/n_view') : $lng->getTrn('secs/teams/d_view'))."</b></a>\n";
-            echo "&nbsp;|&nbsp;<b><a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=" . ($DETAILED ? '1' : '0') . "'>PDF</a> <a href='handler.php?type=xmlexport&amp;tid=$_GET[team_id]'>XML</a>{$botocs} ".$lng->getTrn('secs/teams/roster')."</b>\n";
+            echo "&nbsp;|&nbsp;<b><a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=" . ($DETAILED ? '1' : '0') . "'>PDF</a> <a href='handler.php?type=xmlexport&amp;tid=$_GET[team_id]'>XML</a> ".$lng->getTrn('secs/teams/roster')."</b>\n";
             if ($rules['enable_stars_mercs']) {
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"shh=document.getElementById('SHH'); if (shh.style.display != 'none'){shh.style.display='none'}else{shh.style.display='block'};\" title='Show/hide star hire history'><b>Star HH</b></a>\n";
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"mhh=document.getElementById('MHH'); if (mhh.style.display != 'none'){mhh.style.display='none'}else{mhh.style.display='block'};\" title='Show/hide mercenary hire history'><b>Merc. HH</b></a>\n";
             }
+//            echo "&nbsp;|&nbsp;<a href='#anc_about'><b>About</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='#anc_news'><b>News</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='handler.php?type=inducements&amp;team_id=$team->team_id'><b>".$lng->getTrn('secs/teams/indctry')."</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''><b>Vis. stats</b></a>\n";
+//            echo "&nbsp;|&nbsp;<a href='#gp'><b>Matches</b></a>\n";
+//            echo "&nbsp;|&nbsp;<a href='#tr'><b>Rankings</b></a>\n";
             ?>
             </td>
         </tr>
@@ -383,10 +392,44 @@ function team_roaster($team_id) {
             <div id='SHH'>
                 <?php
                 if ($rules['enable_stars_mercs']) {
-                    HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
-                        'url' => "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
-                        'GET_SS' => 'shh', 
-                        'anchor' => 'shh')
+                    $mdat = array();
+                    foreach (Star::getStars($team->team_id, false, false) as $s) {
+                        foreach ($s->getHireHistory($team->team_id, false, false) as $m) {
+                            $o = (object) array();
+                            foreach (array('match_id', 'date_played', 'hiredAgainstName') as $k) {
+                                $o->$k = $m->$k;
+                            }
+                            $s->setStats(false, $m->match_id, false);
+                            foreach (array('name', 'star_id', 'td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'mvp', 'spp') as $k) {
+                                $o->$k = $s->$k;
+                            }
+                            $o->match = '[view]';
+                            array_push($mdat, $o);
+                        }
+                    }
+                    $fields = array(
+                        'date_played'       => array('desc' => 'Hire date'), 
+                        'name'              => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')), 
+                        'hiredAgainstName'  => array('desc' => 'Opponent team'), 
+                        'match'             => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+                        'cp'     => array('desc' => 'Cp'), 
+                        'td'     => array('desc' => 'Td'), 
+                        'intcpt' => array('desc' => 'Int'), 
+                        'cas'    => array('desc' => 'Cas'), 
+                        'bh'     => array('desc' => 'BH'), 
+                        'si'     => array('desc' => 'Si'), 
+                        'ki'     => array('desc' => 'Ki'), 
+                        'mvp'    => array('desc' => 'MVP'), 
+                        'spp'    => array('desc' => 'SPP'),
+                    );
+                    sort_table(
+                        "<a name='shhanc'>$team->name's star hiring history</a>", 
+                        "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+                        $mdat, 
+                        $fields, 
+                        sort_rule('star_HH'), 
+                        (isset($_GET['sortshh'])) ? array((($_GET['dirshh'] == 'a') ? '+' : '-') . $_GET['sortshh']) : array(),
+                        array('GETsuffix' => 'shh', 'doNr' => false, 'anchor' => 'shhanc')
                     );
                 }
                 ?>
@@ -400,34 +443,28 @@ function team_roaster($team_id) {
                 <?php
                 if ($rules['enable_stars_mercs']) {
                     $mdat = array();
-                    foreach (Mercenary::getMercsHiredByTeam($team->team_id, false) as $merc) {
+                    foreach (Mercenary::getMercsHiredByTeam($team->team_id, false) as $m) {
                         $o = (object) array();
-                        $m = new Match($merc->match_id);
-                        $o->date_played = $m->date_played;
-                        $o->opponent = ($m->team1_id == $team->team_id) ? $m->team1_name : $m->team2_name;
+                        $o->date_played = get_alt_col('matches', 'match_id', $m->match_id, 'date_played');
+                        $o->opponent = get_alt_col('teams', 
+                            'team_id', 
+                            ((get_alt_col('matches', 'match_id', $m->match_id, 'team1_id') == $team->team_id) 
+                                ? get_alt_col('matches', 'match_id', $m->match_id, 'team2_id') 
+                                : get_alt_col('matches', 'match_id', $m->match_id, 'team1_id')
+                            ), 
+                            'name');
+                        $o->match = '[view]';
                         foreach (array('match_id', 'skills', 'mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
-                            $o->$f = $merc->$f;
+                            $o->$f = $m->$f;
                         }
                         $o->cas = $o->bh+$o->ki+$o->si;
-                        $o->match = '[view]';
-                        $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
-                        $o->score = "$m->team1_score - $m->team2_score";
-                        $o->result = matchresult_icon(
-                            (
-                            ($m->team1_id == $team->team_id && $m->team1_score > $m->team2_score) ||
-                            ($m->team2_id == $team->team_id && $m->team1_score < $m->team2_score)
-                            ) 
-                                ? 'W'
-                                : (($m->team1_score == $m->team2_score) ? 'D' : 'L')
-                        );
-                        
                         array_push($mdat, $o);
                     }
                     $fields = array(
                         'date_played'   => array('desc' => 'Hire date'), 
-                        'tour'          => array('desc' => 'Tournament'),
                         'opponent'      => array('desc' => 'Opponent team'), 
-                        'skills' => array('desc' => 'Add. skills'), 
+                        'match'         => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+                        'skills' => array('desc' => 'Additional skills'), 
                         'cp'     => array('desc' => 'Cp'), 
                         'td'     => array('desc' => 'Td'), 
                         'intcpt' => array('desc' => 'Int'), 
@@ -436,12 +473,9 @@ function team_roaster($team_id) {
                         'si'     => array('desc' => 'Si'), 
                         'ki'     => array('desc' => 'Ki'), 
                         'mvp'    => array('desc' => 'MVP'), 
-                        'score'  => array('desc' => 'Score', 'nosort' => true),
-                        'result' => array('desc' => 'Result', 'nosort' => true),
-                        'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
                     );
-                    HTMLOUT::sort_table(
-                        "<a name='mhhanc'>Mercenary hiring history</a>", 
+                    sort_table(
+                        "<a name='mhhanc'>$team->name's mercenary hiring history</a>", 
                         "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
                         $mdat, 
                         $fields, 
@@ -480,7 +514,7 @@ function team_roaster($team_id) {
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('secs/teams/box_info/race');?></td>
-                    <td><a href='index.php?section=races&amp;race=<?php echo $team->f_race_id; ?>'><?php echo $team->race; ?></a></td>
+                    <td><a href='index.php?section=races&amp;race=<?php echo $team->race; ?>'><?php echo $team->race; ?></a></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('secs/teams/box_info/ready');?></td>
@@ -585,7 +619,6 @@ function team_roaster($team_id) {
                     'buy_goods'         => $lng->getTrn('secs/teams/box_tm/buy_goods'),
                     'drop_goods'        => $lng->getTrn('secs/teams/box_tm/drop_goods'),
                     'ready_state'       => $lng->getTrn('secs/teams/box_tm/ready_state'),
-                    'unbuy_player'      => $lng->getTrn('secs/teams/box_tm/unbuy_player'),
                 );
 
                 // Set default choice.
@@ -658,7 +691,7 @@ function team_roaster($team_id) {
                         As journeyman: <input type="checkbox" name="as_journeyman" value="1">
                         <br><br>
                         Name:<br>
-                        <input type="text" name="name">
+                        <input type="text" name="name" value="<?php echo getRandomName($team->race); ?>">
                         <input type="hidden" name="type" value="hire_player">
                         <?php
                         break;
@@ -867,29 +900,6 @@ function team_roaster($team_id) {
                         <input type="hidden" name="type" value="ready_state">
                         <?php
                         break;
-                        
-                    /***************
-                     * Un-buy player                     **************/
-                        
-                    case 'unbuy_player':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/unbuy_player');
-                        ?>
-                        <hr><br>
-                        Player:<br>
-                        <select name="player">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($players as $p) {
-                            if ($p->is_unbuyable && !$p->is_sold) {
-                                    echo "<option value='$p->player_id'>$p->name</option>\n";
-                                    $DISABLE = false;
-                            }
-                        }
-                        ?>
-                        </select>
-                        <input type="hidden" name="type" value="unbuy_player">
-                        <?php
-                        break;
                     }
                     ?>
                     <br><br>
@@ -906,13 +916,13 @@ function team_roaster($team_id) {
                     <?php
 
                     $admin_tools = array(
+                        'unbuy_player'      => $lng->getTrn('secs/teams/box_admin/unbuy_player'),
                         'unhire_journeyman' => $lng->getTrn('secs/teams/box_admin/unhire_journeyman'),
                         'unsell_player'     => $lng->getTrn('secs/teams/box_admin/unsell_player'),
                         'unbuy_goods'       => $lng->getTrn('secs/teams/box_admin/unbuy_goods'),
                         'bank'              => $lng->getTrn('secs/teams/box_admin/bank'),
                         'chown'             => $lng->getTrn('secs/teams/box_admin/chown'),
                         'spp'               => $lng->getTrn('secs/teams/box_admin/spp'),
-                        'dval'              => $lng->getTrn('secs/teams/box_admin/dval'),
                         'extra_skills'      => $lng->getTrn('secs/teams/box_admin/extra_skills'),
                         'ach_skills'        => $lng->getTrn('secs/teams/box_admin/ach_skills'),
                     );
@@ -946,6 +956,30 @@ function team_roaster($team_id) {
 
                         switch ($_POST['menu_admintools']) {
 
+                            /***************
+                             * Un-buy player
+                             **************/
+                                
+                            case 'unbuy_player':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/unbuy_player');
+                                ?>
+                                <hr><br>
+                                Player:<br>
+                                <select name="player">
+                                <?php
+                                $DISABLE = true;
+                                foreach ($players as $p) {
+                                    if ($p->is_unbuyable && !$p->is_sold) {
+                                            echo "<option value='$p->player_id'>$p->name</option>\n";
+                                            $DISABLE = false;
+                                    }
+                                }
+                                ?>
+                                </select>
+                                <input type="hidden" name="type" value="unbuy_player">
+                                <?php
+                                break;
+                            
                             /***************
                              * Un-hire journeymen
                              **************/
@@ -1079,39 +1113,8 @@ function team_roaster($team_id) {
                                 <br><br>
                                 <input type="radio" CHECKED name="sign" value="+">+
                                 <input type="radio" name="sign" value="-">-
-                                <input type='text' name='amount' maxlength="5" size="5"> &Delta; SPP
+                                <input type='text' name='amount' maxlength=5 size=5> &Delta; SPP
                                 <input type="hidden" name="type" value="spp">
-                                <?php
-                                break;
-
-                            /***************
-                             * Manage extra player value
-                             **************/
-                                
-                            case 'dval':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/dval');
-                                ?>
-                                <hr><br>
-                                Player:<br>
-                                <select name="player">
-                                <?php
-                                $DISABLE = true;
-                                objsort($players, array('+is_dead', '+name'));
-                                foreach ($players as $p) {
-                                    if (!$p->is_sold) {
-                                        echo "<option value='$p->player_id'".(($p->is_dead) ? ' style="background-color:'.COLOR_HTML_DEAD.';"' : '').">$p->name (current extra = ".($p->extra_val/1000)."k)</option>";
-                                        $DISABLE = false;
-                                    }
-                                }
-                                objsort($players, array('+nr'));
-                                ?>
-                                </select>
-                                <br><br>
-                                Set extra value to<br>
-                                <input type="radio" CHECKED name="sign" value="+">+
-                                <input type="radio" name="sign" value="-">-
-                                <input type='text' name='amount' maxlength="10" size="6">k
-                                <input type="hidden" name="type" value="dval">
                                 <?php
                                 break;
 
@@ -1271,22 +1274,13 @@ function team_roaster($team_id) {
             <?php
             $news_2 = array();
             foreach ($news as $n) {
-                $news_2[] = '<p>'.$n->txt.
-                '<div id="newsedit'.$n->news_id.'" style="display:none; clear:both;"><form method="POST">
-                    <textarea name="txt" cols="60" rows="4">'.$n->txt.'</textarea>
-                    <input type="hidden" name="type" value="newsedit">
-                    <input type="hidden" name="news_id" value="'.$n->news_id.'">
-                    <br><br>
-                    <input type="submit" value="'.$lng->getTrn('secs/teams/submitnews').'">
-                </form></div>
-                <div style="text-align: right;"><p style="display: inline;">'.textdate($n->date, true).
+                $news_2[] = '<p>'.$n->txt.'<div style="text-align: right;"><p style="display: inline;">'.textdate($n->date, true).
                 (($ALLOW_EDIT) 
                     ? " | <form method='POST' name='newsForm$n->news_id' style='display:inline; margin:0px;'>
                         <input type='hidden' name='type' value='newsdel'>
                         <input type='hidden' name='news_id' value='$n->news_id'>
                         <a href='javascript:void(0);' onClick='document.newsForm$n->news_id.submit();'>[".$lng->getTrn('secs/teams/delete')."]</a>
-                        </form>".
-                        "| <a href='javascript:void(0);' onClick=\"document.getElementById('newsedit".$n->news_id."').style.display='block';\">[".$lng->getTrn('secs/teams/edit')."]</a>"
+                        </form>"
                     : '')
                 .'</p></div><br></p>';
             }
@@ -1294,30 +1288,154 @@ function team_roaster($team_id) {
             if (empty($news)) {
                 echo '<i>'.$lng->getTrn('secs/teams/nonews').'</i>';
             }
-
-            if ($ALLOW_EDIT) {
-                ?>
-                <hr>
-                <br>
-                <b><?php echo $lng->getTrn('secs/teams/wnews');?></b>
-                <form method="POST">
-                    <textarea name='txt' cols='60' rows='4'></textarea>
-                    <br><br>
-                    <input type="hidden" name="type" value="news">
-                    <input type='submit' value="<?php echo $lng->getTrn('secs/teams/submitnews');?>">
-                </form>
-                <?php
-            }
             ?>
             </div>    
         </div>
+        <?php
+        if ($ALLOW_EDIT) {
+            ?>
+            <div class="tnewsBoxNew">
+                <div class="boxTitle1"><?php echo $lng->getTrn('secs/teams/wnews');?></div>
+                <div class="boxBody">
+                    <form method="POST">
+                        <textarea name='txt' cols='30' rows='7'></textarea>
+                        <br><br>
+                        <input type="hidden" name="type" value="news">
+                        <input type='submit' value="<?php echo $lng->getTrn('secs/teams/submitnews');?>">
+                    </form>
+                </div>    
+            </div>
+            <?php
+        }
+        ?>
     </div>
     <?php
 
   
     title("<a name='gp'>".$lng->getTrn('secs/teams/gamesplayed')."</a>");
-    HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => "index.php?section=coachcorner&amp;team_id=$team->team_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
     
+    if (isset($_POST['opid']) || isset($_POST['trid'])) {
+        $_SESSION['opid'] = (int) $_POST['opid'];
+        $_SESSION['trid'] = (int) $_POST['trid'];
+    }
+    $trid = isset($_SESSION['trid']) ? $_SESSION['trid'] : false;
+    $opid = isset($_SESSION['opid']) ? $_SESSION['opid'] : false;
+    
+    ?>
+    <form method="POST">
+        <b><?php echo $lng->getTrn('secs/teams/showagainst');?></b>
+        <select name="opid">
+            <option value='-1'><?php echo $lng->getTrn('secs/teams/all');?></option>
+            <?php
+            $teams = Team::getTeams();
+            objsort($teams, array('+name'));
+            foreach ($teams as $t) {
+                if ($t->team_id == $team->team_id)
+                    continue;
+                    
+                echo "<option value='$t->team_id' ".(($opid && $t->team_id == $opid) ? ' SELECTED ' : '').">$t->name</option>\n";
+            }
+            ?>
+        </select>
+        &nbsp;&nbsp;<b><?php echo $lng->getTrn('secs/teams/fromtour');?></b>
+        <select name="trid">
+            <option value='-1'><?php echo $lng->getTrn('secs/teams/all');?></option>
+            <?php
+            foreach (Tour::getTours() as $tr) {
+                echo "<option value='$tr->tour_id' ".(($trid && $tr->tour_id == $trid) ? ' SELECTED ' : '').">$tr->name</option>\n";
+            }
+            ?>        
+        </select>
+        <input type="hidden" name="gamesSort" value="1">
+        &nbsp;&nbsp;&nbsp;
+        <input type="submit" value="<?php echo $lng->getTrn('secs/teams/showmatches');?>">
+        <br><br>
+    </form>
+    <?php
+    
+    if (isset($_POST['gamesSort'])) {
+        ?>
+        <script language="JavaScript" type="text/javascript">
+            window.location = "#gp";
+        </script>
+        <?php
+    }
+    
+    $matches = Stats::getPlayedMatches(
+        STATS_TEAM, 
+        $team->team_id, 
+        MAX_RECENT_GAMES, 
+        true,
+        (($trid && $trid != -1) ? $trid : false), 
+        (($opid && $opid != -1) ? $opid : false)
+    );
+    foreach ($matches as $m) {
+        $me = ($team->team_id == $m->team1_id) ? 1 : 2;
+        $op = ($me == 1) ? 2 : 1;
+        $m->opponent = $m->{"team${op}_name"};
+        $m->stadium = get_alt_col('teams', 'team_id', $m->stadium, 'name');
+        $m->score = $m->team1_score. ' - ' . $m->team2_score;
+        $m->result = matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $team->team_id) ? 'W' : 'L')));
+        $m->match = '[view]';
+        $m->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+    }
+    
+    $fields = array(
+        'date_played' => array('desc' => 'Date'),
+        'tour'     => array('desc' => 'Tournament'),
+        'opponent' => array('desc' => 'Opponent'), 
+        'stadium'  => array('desc' => 'Stadium'), 
+        'gate'     => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false), 
+        'score'    => array('desc' => 'Score', 'nosort' => true), 
+        'result'   => array('desc' => 'Result', 'nosort' => true), 
+        'match'    => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+    );
+    
+    sort_table(
+        $lng->getTrn('secs/teams/gamesplayed'), 
+        "index.php?section=coachcorner&amp;team_id=$team->team_id", 
+        $matches, 
+        $fields, 
+        sort_rule('match'), 
+        (isset($_GET['sortrg'])) ? array((($_GET['dirrg'] == 'a') ? '+' : '-') . $_GET['sortrg']) : array(),
+        array('GETsuffix' => 'rg', 'anchor' => 'gp', 'doNr' => false) // recent games.
+    );
+    
+    title("<a name='tr'>".$lng->getTrn('secs/teams/tourranks')."</a>");
+
+    $tours = $team->getTourRankings();
+    foreach ($tours as $t) {
+        $ELORanks = ELO::getRanks($t->tour_id);
+        $t->elo = $ELORanks[$team->team_id];
+        
+        $t->stnLink = '[View]';
+        $t->finished = ($t->is_finished) ? 'Y' : 'N';
+        if ($t->winner)
+            $t->winner = get_alt_col('teams', 'team_id', $t->winner, 'name');        
+        else
+            $t->winner = '?';
+    }
+
+    $fields = array(
+        'name'          => array('desc' => 'Tournament'),
+        'date_created'  => array('desc' => 'Date started'),
+        'finished'      => array('desc' => 'Finished (Y/N)?', 'nosort' => true),
+        'teamRank'      => array('desc' => 'Rank/placement'), 
+        'elo'           => array('desc' => 'ELO'), 
+        'winner'        => array('desc' => 'Winner'), 
+        'stnLink'       => array('desc' => 'Standings', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'tour_id', 'value' => 'tour_id'), 'nosort' => true), 
+    );
+    
+    sort_table(
+        $lng->getTrn('secs/teams/tourranks'), 
+        "index.php?section=coachcorner&amp;team_id=$team->team_id", 
+        $tours, 
+        $fields, 
+        array('-date_created'), 
+        (isset($_GET['sorttr'])) ? array((($_GET['dirtr'] == 'a') ? '+' : '-') . $_GET['sorttr']) : array(),
+        array('GETsuffix' => 'tr', 'anchor' => 'tr', 'doNr' => false)
+    );
+
     // If an team action was chosen, jump to actions HTML anchor.
     if ($JMP_ANC) {
         ?>
@@ -1341,6 +1459,8 @@ function player_roaster($player_id) {
     $team = new Team(get_alt_col('players', 'player_id', $player_id, 'owned_by_team_id'));
     $coach = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
     $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$team->is_retired);
+    $p->setExtraStats(false);
+    $p->setStreaks(false);
     $p->skills = $p->getSkillsStr(true);
     $p->injs = $p->getInjsStr(true);
 
@@ -1655,9 +1775,33 @@ function player_roaster($player_id) {
         <div class="pboxLong">
             <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('played'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/playedmatches');?></div>
             <div class="boxBody" id="played">
-                <?php
-                HTMLOUT::recentGames(STATS_PLAYER, $p->player_id, false, false, false, false, array('n' => MAX_RECENT_GAMES, 'url' => "index.php?section=coachcorner&player_id=$p->player_id"));
-                ?>
+                <table class="pbox">
+                    <tr>
+                        <td><b>Date played</b></td>
+                        <td><b>Tournament</b></td>
+                        <td><b>Opponent</b></td>
+                        <td><b>Score</b></td>
+                        <td><b>Result</b></td>                        
+                        <td><b>Match</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6"><hr></td>
+                    </tr>
+                    <?php
+                    foreach (Stats::getPlayedMatches(STATS_PLAYER, $p->player_id, MAX_RECENT_GAMES, true) as $m) {
+                        ?>
+                        <tr>
+                            <td><?php echo $m->date_played; ?></td>
+                            <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
+                            <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
+                            <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
+                            <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
+                            <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </table>
             </div>
         </div>
     </div>
@@ -1679,6 +1823,8 @@ function disp_teams($coach_id = null) {
     /* 
         First generate array of team objects. 
     */
+	
+	global $coach;
     
     $teams = array();
     
@@ -1695,8 +1841,13 @@ function disp_teams($coach_id = null) {
     objsort($teams, array('+name'));
     
     foreach ($teams as $t) {
+    	
+    	$can_export_team = false;
+    	if (is_object($coach) && is_object($t) && ($coach->admin || $t->owned_by_coach_id==$coach->coach_id))
+    		$can_export_team = true;
+    	
         $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');
-        $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that HTMLOUT::sort_table does not create the team link on coach name too.
+        $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that sort_table does not create the team link on coach name too.
         $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='" . $t->getLogo() . "'>";
         $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
         $lt = $t->getLatestTour();
@@ -1704,6 +1855,9 @@ function disp_teams($coach_id = null) {
         $prizes = $t->getPrizes(true);
         $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;
         $t->rdy = ($t->rdy) ? '<font color="green">Yes</font>' : '<font color="red">No</font>';
+        
+        // Export team link
+        $t->export = $can_export_team ? "<a href='export_team.php?team_id=" .$t->team_id. "'>Export</a>" : "Export";
     }
 
     $fields = array(
@@ -1714,10 +1868,11 @@ function disp_teams($coach_id = null) {
         'latest_tour' => array('desc' => 'Latest tour'), 
         'prizes'      => array('desc' => 'Prizes', 'nosort' => true), 
         'played'    => array('desc' => 'Games'), 
-        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),  
+        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
+    	'export'    => array('desc' => 'Export'),   
     );
 
-    HTMLOUT::sort_table(
+    sort_table(
         "Teams ". (($coach_id) ? "<a href='javascript:void(0);' onclick=\"window.open('html/coach_corner_teams.html','ccorner_TeamsHelp','width=350,height=400')\">[?]</a>" : ''), 
         "index.php?section=".(($coach_id) ? 'coachcorner' : 'teams'), 
         $teams, 

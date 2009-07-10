@@ -5,7 +5,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 50000,
 			'icon' => RACE_ICONS.'/amazon.png',
-			'race_id' => 0, # (Amazon)
 		),
 		'players'	=> array (
 			'Linewoman'	=> array (
@@ -64,7 +63,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 60000,
 			'icon' => RACE_ICONS.'/chaos.png',
-			'race_id' => 1, # (Chaos)
 		),
 		'players'	=> array (
 			'Beastman'	=> array (
@@ -110,7 +108,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 70000,
 			'icon' => RACE_ICONS.'/chaosdwarf.png',
-			'race_id' => 2, # (Chaos Dwarf)
 		),
 		'players'	=> array (
 			'Hobgoblin'	=> array (
@@ -169,7 +166,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 50000,
 			'icon' => RACE_ICONS.'/darkelf.png',
-			'race_id' => 3, # (Dark Elf)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -239,7 +235,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 40000,
 			'icon' => RACE_ICONS.'/dwarf.png',
-			'race_id' => 4, # (Dwarf)
 		),
 		'players'	=> array (
 			'Blocker'	=> array (
@@ -298,7 +293,7 @@ $DEA = array (
  				'Def skills'	=> array ('Break Tackle', 'Dirty Player', 'Juggernaut', 'Mighty Blow', 'No Hands', 'Secret Weapon', 'Stand Firm'),
  				'N skills'		=> array ('General', 'Strength'),
  				'D skills'		=> array ('Agility', 'Passing'),
- 				'qty'			=> 1,
+ 				'qty'			=> 2,
 				'cost'			=> 160000,
 				'icon'			=> 'ddeathroller1an'
 			)
@@ -309,7 +304,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 50000,
 			'icon' => RACE_ICONS.'/elf.png',
-			'race_id' => 5, # (Elf)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -371,7 +365,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 60000,
 			'icon' => RACE_ICONS.'/goblin.png',
-			'race_id' => 6, # (Goblin)
 		),
 		'players'	=> array (
 			'Goblin'	=> array (
@@ -453,7 +446,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 60000,
 			'icon' => RACE_ICONS.'/halfling.png',
-			'race_id' => 7, # (Halfling)
 		),
 		'players'	=> array (
 			'Halfling'	=> array (
@@ -489,7 +481,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 50000,
 			'icon' => RACE_ICONS.'/highelf.png',
-			'race_id' => 8, # (High Elf)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -547,7 +538,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 50000,
 			'icon' => RACE_ICONS.'/human.png',
-			'race_id' => 9, # (Human)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -617,7 +607,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 70000,
 			'icon' => RACE_ICONS.'/khemri.png',
-			'race_id' => 10, # (Khemri)
 		),
 		'players'	=> array (
 			'Skeleton'	=> array (
@@ -675,7 +664,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 60000,
 			'icon' => RACE_ICONS.'/lizardmen.png',
-			'race_id' => 11, # (Lizardman)
 		),
 		'players'	=> array (
 			'Skink'	=> array (
@@ -721,7 +709,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 60000,
 			'icon' => RACE_ICONS.'/orc.png',
-			'race_id' => 12, # (Orc)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -803,7 +790,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 70000,
 			'icon' => RACE_ICONS.'/necromantic.png',
-			'race_id' => 13, # (Necromantic)
 		),
 		'players'	=> array (
 			'Zombie'	=> array (
@@ -873,7 +859,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 60000,
 			'icon' => RACE_ICONS.'/norse.png',
-			'race_id' => 14, # (Norse)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -955,7 +940,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 70000,
 			'icon' => RACE_ICONS.'/nurgle.png',
-			'race_id' => 15, # (Nurgle)
 		),
 		'players'	=> array (
 			'Rotter'	=> array (
@@ -1013,7 +997,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 70000,
 			'icon' => RACE_ICONS.'/ogros.png',
-			'race_id' => 16, # (Ogre)
 		),
 		'players'	=> array (
 			'Snotling'	=> array (
@@ -1048,7 +1031,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 70000,
 			'icon' => RACE_ICONS.'/undead.png',
-			'race_id' => 17, # (Undead)
 		),
 		'players'	=> array (
 			'Skeleton'	=> array (
@@ -1119,7 +1101,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 70000,
 			'icon' => RACE_ICONS.'/vampire.png',
-			'race_id' => 18, # (Vampire)
 		),
 		'players'	=> array (
 			'Thrall'	=> array (
@@ -1154,7 +1135,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 60000,
 			'icon' => RACE_ICONS.'/skaven.png',
-			'race_id' => 19, # (Skaven)
 		),
 		'players'	=> array (
 			'Linerat'	=> array (
@@ -1224,7 +1204,6 @@ $DEA = array (
 		'other'	=> array (
 			'RerollCost' => 50000,
 			'icon' => RACE_ICONS.'/woodelf.png',
-			'race_id' => 20, # (Wood Elf)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -1290,12 +1269,6 @@ $DEA = array (
 		)
 	)
 );
-
-// Create race ID index (key:val = id:race_name).
-$raceididx = array();
-foreach (array_keys($DEA) as $race) {
-    $raceididx[$DEA[$race]['other']['race_id']] = $race;
-}
 
 $stars = array(
 

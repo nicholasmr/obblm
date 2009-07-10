@@ -63,132 +63,8 @@ function match_form($match_id) {
      
     if (isset($_POST['button']) && $ALLOW_EDIT) {
     
-        if (get_magic_quotes_gpc())
-            $_POST['summary'] =  stripslashes($_POST['summary']);
+        submit_form($m, $team1, $team2, $coach, $stars, $match_id);
         
-        // Update general match data
-        status($m->update(array(
-            'submitter_id'  => $_SESSION['coach_id'],
-            'stadium'       => $_POST['stadium'],
-            'gate'          => (int) ($_POST['gate'] * 1000),
-            'fans'          => (int) $_POST['fans'],
-            'ffactor1'      => $_POST['ff_1'],
-            'ffactor2'      => $_POST['ff_2'],
-            'income1'       => $_POST['inc_1'] ? $_POST['inc_1'] * 1000 : 0,
-            'income2'       => $_POST['inc_2'] ? $_POST['inc_2'] * 1000 : 0,
-            'team1_score'   => $_POST['result1'] ? $_POST['result1'] : 0,
-            'team2_score'   => $_POST['result2'] ? $_POST['result2'] : 0,
-            'smp1'          => (int) $_POST['smp1'],
-            'smp2'          => (int) $_POST['smp2'],
-            'tcas1'         => (int) $_POST['tcas1'],
-            'tcas2'         => (int) $_POST['tcas2'],
-            'fame1'         => (int) $_POST['fame1'],
-            'fame2'         => (int) $_POST['fame2'],
-            'tv1'           => (int) $_POST['tv1']*1000,
-            'tv2'           => (int) $_POST['tv2']*1000,
-            'comment'       => $_POST['summary'] ? $_POST['summary'] : '',
-        )));
-
-        // Pictures.
-        $m->savePics();
-
-        // Update match's player data
-        foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
-        
-            /* Save ordinary players */
-        
-            foreach ($t->getPlayers() as $p) {
-            
-                if (!player_validation($p, $m))
-                    continue;
-                
-                // Set zero entry for MNG player(s).
-                if ($p->getStatus($m->match_id) == 'MNG') {
-                    $_POST['mvp_' . $p->player_id]      = 0;
-                    $_POST['cp_' . $p->player_id]       = 0;
-                    $_POST['td_' . $p->player_id]       = 0;
-                    $_POST['intcpt_' . $p->player_id]   = 0;
-                    $_POST['bh_' . $p->player_id]       = 0;
-                    $_POST['si_' . $p->player_id]       = 0;
-                    $_POST['ki_' . $p->player_id]       = 0;
-                    $_POST['inj_' . $p->player_id]      = NONE;
-                    $_POST['agn1_' . $p->player_id]     = NONE;
-                    $_POST['agn2_' . $p->player_id]     = NONE;
-                }
-                
-                $m->entry(array(
-                    'player_id' => $p->player_id,
-                    'team_id'   => $t->team_id,
-                    /* 
-                        Regarding MVP: We must check for isset() since checkboxes are not sent at all when not checked! 
-                        We must also test for truth since the MNG-status exception above defines the MNG status, and thereby passing isset() here!
-                    */
-                    'mvp'     => (isset($_POST['mvp_' . $p->player_id]) && $_POST['mvp_' . $p->player_id]) ? 1 : 0,
-                    'cp'      => $_POST['cp_' . $p->player_id],
-                    'td'      => $_POST['td_' . $p->player_id],
-                    'intcpt'  => $_POST['intcpt_' . $p->player_id],
-                    'bh'      => $_POST['bh_' . $p->player_id],
-                    'si'      => $_POST['si_' . $p->player_id],
-                    'ki'      => $_POST['ki_' . $p->player_id],
-                    'inj'     => $_POST['inj_' . $p->player_id],
-                    'agn1'    => $_POST['agn1_' . $p->player_id],
-                    'agn2'    => $_POST['agn2_' . $p->player_id],
-                ));
-            }
-            
-            /* 
-                Save stars entries. 
-            */
-
-            foreach ($stars as $star) {
-                $s = new Star($star['id']);
-                if (isset($_POST['team_'.$star['id']]) && $_POST['team_'.$star['id']] == $id) {
-                    $sid = $s->star_id;
-
-                    $m->entry(array(
-                        'player_id' => $sid,
-                        'team_id'   => $t->team_id,
-                        
-                        'mvp'     => (isset($_POST["mvp_$sid"]) && $_POST["mvp_$sid"]) ? 1 : 0,
-                        'cp'      => $_POST["cp_$sid"],
-                        'td'      => $_POST["td_$sid"],
-                        'intcpt'  => $_POST["intcpt_$sid"],
-                        'bh'      => $_POST["bh_$sid"],
-                        'si'      => $_POST["si_$sid"],
-                        'ki'      => $_POST["ki_$sid"],
-                    ));
-                }
-                else {
-                    $s->rmMatchEntry($m->match_id, $t->team_id);
-                }
-            }
-            
-            /* 
-                Save mercenary entries. 
-            */
-            
-            Mercenary::rmMatchEntries($m->match_id, $t->team_id); // Remove all previously saved mercs in this match.
-            for ($i = 0; $i <= 50; $i++)  { # We don't expect over 50 mercs. This is just some large random number.
-                $idm = '_'.ID_MERCS.'_'.$i;
-                if (isset($_POST["team$idm"]) && $_POST["team$idm"] == $id) {
-                    $m->entry(array(
-                        'player_id' => ID_MERCS,
-                        'team_id'   => $t->team_id,
-                        'nr'        => $i,
-                        'skills'    => $_POST["skills$idm"],                    
-                        
-                        'mvp'     => (isset($_POST["mvp$idm"]) && $_POST["mvp$idm"]) ? 1 : 0,
-                        'cp'      => $_POST["cp$idm"],
-                        'td'      => $_POST["td$idm"],
-                        'intcpt'  => $_POST["intcpt$idm"],
-                        'bh'      => $_POST["bh$idm"],
-                        'si'      => $_POST["si$idm"],
-                        'ki'      => $_POST["ki$idm"],
-                    ));
-                }
-            }
-        }
-
         // Refresh objects used to display form.
         $m = new Match($match_id);
         $team1 = new Team($m->team1_id);
@@ -200,9 +76,39 @@ function match_form($match_id) {
         status($m->newComment($coach->coach_id, $_POST['msmrc']));
     }
     
-    // Match comment delete?
-    if (isset($_POST['type']) && $_POST['type'] == 'cmtdel' && is_object($coach)) {
-        status($m->deleteComment($_POST['cid']));
+    /****************
+     *
+     * Upload match report ?
+     *
+     ****************/
+    
+    if (isset($_POST['upload']) && $_POST['upload']=="true" && $ALLOW_EDIT) {
+    	
+    	// This moves the match report in the right folder with the right name
+    	$rand = mt_rand();
+    	$id = "match_report_" .$rand. ".db";
+    	uploadMatchReport("uploaded_match_report", UPLOAD_MATCH_REPORT_DIR, $id);
+    	
+    	$match_report = new CyanideMatchReport(UPLOAD_MATCH_REPORT_DIR ."/". $id);
+    	
+    	@unlink(UPLOAD_MATCH_REPORT_DIR . "/" . $id);
+    	
+    	if ($match_report->home_team_name != $team1->name || $match_report->away_team_name != $team2->name) {
+    		
+    		title ($lng->getTrn('secs/fixtures/report/wrong_teams'));
+    		return;
+    	}
+    	else {
+    		
+    		prepareForm($match_report, $m, $team1, $team2);
+    	
+    		submit_form($m, $team1, $team2, $coach, $stars, $match_id);
+    		
+	    	// Refresh objects used to display form.
+	        $m = new Match($match_id);
+	        $team1 = new Team($m->team1_id);
+	        $team2 = new Team($m->team2_id);
+    	}
     }
 
     /****************
@@ -212,17 +118,9 @@ function match_form($match_id) {
      ****************/
 
     title((($m->team1_id) ? $m->team1_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>') . " - " . (($m->team2_id) ? $m->team2_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>'));
-    $CP = 8; // Colspan.
+    $CP = 6; // Colspan.
 
-    $did = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'f_did'); // For below match relations (league, division etc.) table.
     ?>
-    <table>
-    <tr><td><b>League</b>:</td><td><?php echo get_alt_col('leagues', 'lid', get_alt_col('divisions', 'did', $did, 'f_lid'), 'name');?></td></tr>
-    <tr><td><b>Division</b>:</td><td><?php echo get_alt_col('divisions', 'did', $did, 'name');?></td></tr>
-    <tr><td><b>Tournament</b>:</td><td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?></td></tr>
-    <tr><td><b>Date played</b>:</td><td><?php echo ($m->is_played) ? textdate($m->date_played) : '<i>Not yet played</i>';?></td></tr>
-    </table>
-    <br>
     <div>
         <a href='javascript:void(0);' onClick="document.getElementById('helpbox').style.display = 'block';"><?php echo $lng->getTrn('secs/fixtures/report/click');?></a> <?php echo $lng->getTrn('secs/fixtures/report/forhelp');?>
     </div>
@@ -231,8 +129,29 @@ function match_form($match_id) {
         <?php echo $lng->getTrn('secs/fixtures/report/help');?>
     </div>
     <br>
+    
+    <?php if ($ALLOW_EDIT) { ?>
+    <form method="POST" enctype="multipart/form-data" action="index.php?section=fixturelist&amp;match_id=<?php echo $match_id; ?>" >
+    	<table class="match_form">
+    		<tr>
+                <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('secs/cc/main/upload_match_report');?></b></td>
+            </tr>
+            <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
+            <tr>
+                <td colspan='<?php echo $CP;?>'>
+                	<input name="uploaded_match_report" type="file"/>
+                	<input type="hidden" name="upload" value="true"/>
+                	<input type="submit" value="<?php echo $lng->getTrn('secs/cc/main/upload_match_report');?>" />
+                </td>
+            </tr>
+            <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
+        </table>
+	</form>
+    <?php } ?>
+    
     <form method="POST" enctype="multipart/form-data">
         <table class="match_form">
+            
             <tr>
                 <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/info');?></b></td>
             </tr>
@@ -274,8 +193,6 @@ function match_form($match_id) {
                 <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/ff');?></b></td>
                 <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/smp');?></b></td>
                 <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/tcas');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/fame');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/tv');?></b></td>
             </tr>
             
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
@@ -299,12 +216,6 @@ function match_form($match_id) {
                 <td>
                     <input type="text" name="tcas1" value="<?php echo $m->tcas1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
                 </td>
-                <td>
-                    <input type="text" name="fame1" value="<?php echo $m->fame1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type="text" name="tv1" value="<?php echo ($m->is_played) ? $m->tv1/1000 : $team1->value/1000;?>" size="4" maxlength="10" <?php echo $DIS;?>>k
-                </td>
             </tr>
             <tr>
                 <td><?php echo $m->team2_name;?></td>
@@ -324,12 +235,6 @@ function match_form($match_id) {
                 </td>
                 <td>
                     <input type="text" name="tcas2" value="<?php echo $m->tcas2;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type="text" name="fame2" value="<?php echo $m->fame2;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type="text" name="tv2" value="<?php echo ($m->is_played) ? $m->tv2/1000 : $team2->value/1000;?>" size="4" maxlength="10" <?php echo $DIS;?>>k
                 </td>
             </tr>
             
@@ -510,42 +415,36 @@ function match_form($match_id) {
     <?php
     $CDIS = (!is_object($coach)) ? 'DISABLED' : '';
     ?>
-    <table class="match_form">
-        <tr>
-            <td colspan='13' class='dark'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('secs/fixtures/report/msmrc');?></b></td>
-        </tr>
-        <tr>
-            <td class='seperator'></td>
-        </tr>
-        <tr>
-            <td>
-                <div id="msmrc">
-                    <?php echo $lng->getTrn('secs/fixtures/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('secs/fixtures/report/none').'</i>';?><br><br>
-                    <?php
-                    foreach ($m->getComments() as $c) {
-                        echo "Posted $c->date by <b>$c->sname</b> 
-                            <form method='POST' name='cmt$c->cid' style='display:inline; margin:0px;'>
-                            <input type='hidden' name='type' value='cmtdel'>
-                            <input type='hidden' name='cid' value='$c->cid'>
-                            <a href='javascript:void(0);' onClick='document.cmt$c->cid.submit();'>[".$lng->getTrn('secs/fixtures/report/delete')."]</a>
-                            </form>
-                            :<br>".$c->txt."<br><br>\n";
-                    }
-                    ?>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <form method="POST">
-                <?php echo $lng->getTrn('secs/fixtures/report/newCmt');?>:<br>
-                <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
-                <br>
-                <input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php echo $CDIS;?>>
-                </form>
-            </td>
-        </tr>
-    </table>
+    <form method="POST">
+        <table class="match_form">
+            <tr>
+                <td colspan='13' class='dark'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('secs/fixtures/report/msmrc');?></b></td>
+            </tr>
+            <tr>
+                <td class='seperator'></td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="msmrc">
+                        <?php echo $lng->getTrn('secs/fixtures/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('secs/fixtures/report/none').'</i>';?><br><br>
+                        <?php
+                        foreach ($m->getComments() as $c) {
+                            echo "Posted $c->date by <b>$c->sname</b>:<br>".$c->txt."<br><br>\n";
+                        }
+                        ?>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php echo $lng->getTrn('secs/fixtures/report/newCmt');?>:<br>
+                    <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
+                    <br>
+                    <input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php echo $CDIS;?>>
+                </td>
+            </tr>
+        </table>
+    </form>
     <script language='JavaScript' type='text/javascript'>
         document.getElementById('msmrc').style.display = 'none';
     </script>
@@ -557,8 +456,8 @@ function match_form($match_id) {
     
     $i = 0; // Counter. Used to pass PHP-data to Javascript.
     foreach (array(1 => $team1->team_id, 2 => $team2->team_id) as $id => $t) {
-        foreach (Star::getStars(STATS_TEAM, $t, STATS_MATCH, $m->match_id) as $s) {
-            $s->setStats(false,false, STATS_MATCH, $m->match_id); // Set the star's stats fields to the saved values in the database for this match.
+        foreach (Star::getStars($t, $m->match_id, false) as $s) {
+            $s->setStats(false, $m->match_id, false); // Set the star's stats fields to the saved values in the database for this match.
             echo "<script language='JavaScript' type='text/javascript'>\n";
             echo "var mdat$i = [];\n";
             foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
@@ -610,5 +509,304 @@ function player_validation($p, $m) {
     }
     
     return true;
+}
+
+function unscheduled_match_form($tour_id) {
+	
+	// Is $tour_id valid?
+    if (!get_alt_col('tours', 'tour_id', $tour_id, 'tour_id'))
+        fatal("Invalid tournament ID.");
+    
+    global $stars;
+    global $rules;
+    global $lng;
+    
+    /****************
+     *
+     * Upload match report ?
+     *
+     ****************/
+    
+    if (isset($_POST['upload']) && $_POST['upload']=="true") {
+    	
+    	// Create new match
+    	$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null;
+    	$tour = new Tour($tour_id);
+    	
+    	// This moves the match report in the right folder with the right name
+	    $rand = mt_rand();
+	    $id = "match_report_" .$rand. ".db";
+	    uploadMatchReport("uploaded_match_report", UPLOAD_MATCH_REPORT_DIR, $id);
+	    
+	    $match_report = new CyanideMatchReport(UPLOAD_MATCH_REPORT_DIR ."/". $id);
+    	
+    	@unlink(UPLOAD_MATCH_REPORT_DIR . "/" . $id);
+    	
+    	$team1_id = Team::getTeam($match_report->home_team_name);
+    	$team2_id = Team::getTeam($match_report->away_team_name);
+    	$round=RT_STANDALONE;
+    	$f_tour_id=$tour->tour_id;
+    	$team1 = new Team($team1_id);
+    	$team2 = new Team($team2_id);
+    	
+    	// Determine visitor privileges.
+    	$ALLOW_EDIT = false;
+   		if (is_object($coach) && ($coach->admin || $team1->owned_by_coach_id==$coach->coach_id || $team2->owned_by_coach_id==$coach->coach_id))
+        	$ALLOW_EDIT = true;
+    	
+  		if ($ALLOW_EDIT) {
+	    	$input = array('team1_id' => $team1_id, 'team2_id' => $team2_id, 'round' => $round, 'f_tour_id' => $f_tour_id);
+	    	
+	    	status(Match::create($input));
+	    	
+	    	$query = "SELECT match_id FROM matches 
+	            WHERE date_played IS NULL AND f_tour_id=" .$f_tour_id. " AND round=" .$round. " AND team1_id=" .$team1_id. " AND team2_id=" .$team2_id
+	    		." ORDER BY match_id DESC";
+	        $result = mysql_query($query);
+	        
+	    	if ($result && mysql_num_rows($result) > 0) {
+	            $row = mysql_fetch_assoc($result);
+	            $m = new Match($row['match_id']);
+	            
+	            prepareForm($match_report, $m, $team1, $team2);
+	            submit_form($m, $team1, $team2, $coach, $stars, $row['match_id']);
+	            
+	            // Redirect to the match report edit page
+	            ?>
+		            <script type="text/javascript">
+					<!--
+					window.location = "index.php?section=fixturelist&match_id=<?php echo $m->match_id; ?>";
+					//-->
+					</script>
+				<?php
+	            
+	        }
+  		}
+  		else {
+  			title ($lng->getTrn('secs/fixtures/forbidden'));
+  		}
+  		
+    }
+
+    /****************
+     *
+     * Generate form 
+     *
+     ****************/
+    
+    title($lng->getTrn('secs/cc/main/new_unscheduled_match'));
+    $CP = 6; // Colspan.
+	
+	?>
+	<form method="POST" enctype="multipart/form-data" action="index.php?section=fixturelist&amp;match_id=new&amp;tour_id=<?php echo $tour_id; ?>" >
+	    	<table class="match_form">
+	    		<tr>
+	                <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('secs/cc/main/upload_match_report');?></b></td>
+	            </tr>
+	            <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
+	            <tr>
+	                <td colspan='<?php echo $CP;?>'>
+	                	<input name="uploaded_match_report" type="file"/>
+	                	<input type="hidden" name="upload" value="true"/>
+	                	<input type="submit" value="<?php echo $lng->getTrn('secs/cc/main/upload_match_report');?>" />
+	                </td>
+	            </tr>
+	            <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
+	       </table>
+	</form>
+	<?php
+	
+}
+
+function submit_form ($m, $team1, $team2, $coach, $stars, $match_id) {
+	
+		if (get_magic_quotes_gpc())
+            $_POST['summary'] =  stripslashes($_POST['summary']);
+        
+        // Update general match data
+        status($m->update(array(
+            'submitter_id'  => $_SESSION['coach_id'],
+            'stadium'       => $_POST['stadium'],
+            'gate'          => (int) ($_POST['gate'] * 1000),
+            'fans'          => (int) $_POST['fans'],
+            'ffactor1'      => $_POST['ff_1'],
+            'ffactor2'      => $_POST['ff_2'],
+            'income1'       => $_POST['inc_1'] ? $_POST['inc_1'] * 1000 : 0,
+            'income2'       => $_POST['inc_2'] ? $_POST['inc_2'] * 1000 : 0,
+            'team1_score'   => $_POST['result1'] ? $_POST['result1'] : 0,
+            'team2_score'   => $_POST['result2'] ? $_POST['result2'] : 0,
+            'smp1'          => (int) $_POST['smp1'],
+            'smp2'          => (int) $_POST['smp2'],
+            'tcas1'         => (int) $_POST['tcas1'],
+            'tcas2'         => (int) $_POST['tcas2'],
+            'comment'       => $_POST['summary'] ? $_POST['summary'] : '',
+        )));
+
+        // Pictures.
+        $m->savePics();
+
+        // Update match's player data
+        foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
+        
+            /* Save ordinary players */
+        
+            foreach ($t->getPlayers() as $p) {
+            
+                if (!player_validation($p, $m))
+                    continue;
+                
+                // Set zero entry for MNG player(s).
+                if ($p->getStatus($m->match_id) == 'MNG') {
+                    $_POST['mvp_' . $p->player_id]      = 0;
+                    $_POST['cp_' . $p->player_id]       = 0;
+                    $_POST['td_' . $p->player_id]       = 0;
+                    $_POST['intcpt_' . $p->player_id]   = 0;
+                    $_POST['bh_' . $p->player_id]       = 0;
+                    $_POST['si_' . $p->player_id]       = 0;
+                    $_POST['ki_' . $p->player_id]       = 0;
+                    $_POST['inj_' . $p->player_id]      = NONE;
+                    $_POST['agn1_' . $p->player_id]     = NONE;
+                    $_POST['agn2_' . $p->player_id]     = NONE;
+                }
+                
+                $m->entry(array(
+                    'player_id' => $p->player_id,
+                    /* 
+                        Regarding MVP: We must check for isset() since checkboxes are not sent at all when not checked! 
+                        We must also test for truth since the MNG-status exception above defines the MNG status, and thereby passing isset() here!
+                    */
+                    'mvp'     => (isset($_POST['mvp_' . $p->player_id]) && $_POST['mvp_' . $p->player_id]) ? 1 : 0,
+                    'cp'      => $_POST['cp_' . $p->player_id],
+                    'td'      => $_POST['td_' . $p->player_id],
+                    'intcpt'  => $_POST['intcpt_' . $p->player_id],
+                    'bh'      => $_POST['bh_' . $p->player_id],
+                    'si'      => $_POST['si_' . $p->player_id],
+                    'ki'      => $_POST['ki_' . $p->player_id],
+                    'inj'     => $_POST['inj_' . $p->player_id],
+                    'agn1'    => $_POST['agn1_' . $p->player_id],
+                    'agn2'    => $_POST['agn2_' . $p->player_id],
+                ));
+            }
+            
+            /* 
+                Save stars entries. 
+                Note: These entries are not saved through the match class as above. 
+                It was simpler to implement the routine in the star class.
+            */
+
+            foreach ($stars as $star) {
+                $s = new Star($star['id']);
+                if (isset($_POST['team_'.$star['id']]) && $_POST['team_'.$star['id']] == $id) {
+                    $sid = $s->star_id;
+
+                    $s->mkMatchEntry($m->match_id, $t->team_id, array(
+                        'mvp'     => (isset($_POST["mvp_$sid"]) && $_POST["mvp_$sid"]) ? 1 : 0,
+                        'cp'      => $_POST["cp_$sid"],
+                        'td'      => $_POST["td_$sid"],
+                        'intcpt'  => $_POST["intcpt_$sid"],
+                        'bh'      => $_POST["bh_$sid"],
+                        'si'      => $_POST["si_$sid"],
+                        'ki'      => $_POST["ki_$sid"],
+                    ));
+                }
+                else {
+                    $s->rmMatchEntry($m->match_id, $t->team_id);
+                }
+            }
+            
+            /* 
+                Save mercenary entries. 
+                Note: These entries are not saved through the match class as above. 
+                It was simpler to implement the routine in the mercenary class.
+            */
+            
+            Mercenary::rmMatchEntries($m->match_id, $t->team_id); // Remove all previously saved mercs in this match.
+            for ($i = 0; $i <= 50; $i++)  { # We don't expect over 50 mercs. This is just some large random number.
+                $idm = '_'.ID_MERCS.'_'.$i;
+                if (isset($_POST["team$idm"]) && $_POST["team$idm"] == $id) {
+                    Mercenary::mkMatchEntry($m->match_id, $i, $t->team_id, array(
+                        'mvp'     => (isset($_POST["mvp$idm"]) && $_POST["mvp$idm"]) ? 1 : 0,
+                        'cp'      => $_POST["cp$idm"],
+                        'td'      => $_POST["td$idm"],
+                        'intcpt'  => $_POST["intcpt$idm"],
+                        'bh'      => $_POST["bh$idm"],
+                        'si'      => $_POST["si$idm"],
+                        'ki'      => $_POST["ki$idm"],
+                        'skills'  => $_POST["skills$idm"],
+                    ));
+                }
+            }
+        }
+
+        // Update tournament
+        $tour = new Tour($m->f_tour_id);
+        $tour->update();
+        
+        // Refresh objects used to display form.
+        $m = new Match($match_id);
+        $team1 = new Team($m->team1_id);
+        $team2 = new Team($m->team2_id);
+}
+
+function prepareForm ($match_report, $m, $team1, $team2) {
+	
+		// Prepare POST values for the form
+		$_POST['gate'] = $match_report->spectators;
+    	$_POST['result1'] = $match_report->home_team_score;
+    	$_POST['tcas1'] = $match_report->home_team_inflicted_cas;
+    	$_POST['result2'] = $match_report->away_team_score;
+    	$_POST['tcas2'] = $match_report->away_team_inflicted_cas;
+    	
+    	$_POST['ff_1'] = $match_report->home_team_ff_variation;
+    	$_POST['inc_1'] = $match_report->home_team_cash_earned;
+    	$_POST['ff_2'] = $match_report->away_team_ff_variation;
+    	$_POST['inc_2'] = $match_report->away_team_cash_earned;
+    	
+    	$_POST['stadium'] = $m->team1_id;
+    	$_POST['summary'] = "";
+    	$_POST['fans'] = 0;
+    	$_POST['smp1'] = 0;
+    	$_POST['smp2'] = 0;
+    	
+    	// Players
+    	$home_players_data = $match_report->home_team_player_data;
+    	foreach ($home_players_data as $player_data) {
+    		$players = $team1->getPlayers();
+    		foreach ($players as $player) {
+    			if ($player->name==$player_data['name']) {
+    				$_POST['mvp_' .$player->player_id] = $player_data['mvp'];
+    				$_POST['cp_' .$player->player_id] = $player_data['cp'];
+    				$_POST['td_' .$player->player_id] = $player_data['td'];
+    				$_POST['intcpt_' .$player->player_id] = $player_data['int'];
+    				$_POST['bh_' .$player->player_id] = $player_data['cas'];
+    				$_POST['ki_' .$player->player_id] = $player_data['ki'];
+    				$_POST['inj_' .$player->player_id] = $player_data['inj'];
+    				
+    				$_POST['si_' .$player->player_id] = 0;
+    				$_POST['agn1_' .$player->player_id] = NONE;
+    				$_POST['agn2_' .$player->player_id] = NONE;
+    			}
+    		}
+    	}
+    	
+    	$away_players_data = $match_report->away_team_player_data;
+    	foreach ($away_players_data as $player_data) {
+    		$players = $team2->getPlayers();
+    		foreach ($players as $player) {
+    			if ($player->name==$player_data['name']) {
+    				$_POST['mvp_' .$player->player_id] = $player_data['mvp'];
+    				$_POST['cp_' .$player->player_id] = $player_data['cp'];
+    				$_POST['td_' .$player->player_id] = $player_data['td'];
+    				$_POST['intcpt_' .$player->player_id] = $player_data['int'];
+    				$_POST['bh_' .$player->player_id] = $player_data['cas'];
+    				$_POST['ki_' .$player->player_id] = $player_data['ki'];
+    				$_POST['inj_' .$player->player_id] = $player_data['inj'];
+    				
+    				$_POST['si_' .$player->player_id] = 0;
+    				$_POST['agn1_' .$player->player_id] = NONE;
+    				$_POST['agn2_' .$player->player_id] = NONE;
+    			}
+    		}
+    	}
 }
 

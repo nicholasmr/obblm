@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -20,52 +20,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-/* THIS FILE is used for MySQL-helper routines */
-
-function mysql_up($do_table_check = false) {
-
-    // Brings up MySQL for use in PHP execution.
-
-    global $db_host, $db_user, $db_passwd, $db_name; // From settings.php
-    
-    $conn = mysql_connect($db_host, $db_user, $db_passwd);
-    
-    if (!$conn)
-        die("<font color='red'><b>Could not connect to the MySQL server. 
-            <ul>
-                <li>Is the MySQL server running?</li>
-                <li>Are the settings in settings.php correct?</li>
-                <li>Is PHP set up correctly?</li>
-            </ul></b></font>");
-
-    if (!mysql_select_db($db_name))
-        die("<font color='red'><b>Could not select the database '$db_name'. 
-            <ul>
-                <li>Does the database exist?</li>
-                <li>Does the specified user '$db_user' have the correct privileges?</li>
-            </ul>
-            Try running the install script again.</b></font>");
-
-    // Test if all tables exist.
-    if ($do_table_check) {
-        $tables_expected = array('coaches', 'teams', 'players', 'tours', 'matches', 'match_data', 'texts', 'prizes', 'leagues', 'divisions');
-        $tables_found = array();
-        $query = "SHOW TABLES";
-        $result = mysql_query($query);
-        while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-            array_push($tables_found, $row[0]);
-        }
-        $tables_diff = array_diff($tables_expected, $tables_found);
-        if (count($tables_diff) > 0) {
-            die("<font color='red'><b>Could not find all the expected tables in database. Try running the install script again.<br><br>
-                <i>Tables missing:</i><br> ". implode(', ', $tables_diff) ."
-                </b></font>");  
-        }
-    }
-
-    return $conn;
-}
 
 function get_alt_col($V, $X, $Y, $Z) {
 
@@ -141,7 +95,7 @@ function setup_tables() {
                 mail            VARCHAR(129),
                 phone           VARCHAR(25) NOT NULL,
                 ring            TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                settings        VARCHAR(320) NOT NULL,
+                settings        VARCHAR(320) NOT NULL DEFAULT 0,
                 retired         BOOLEAN NOT NULL DEFAULT 0
                 )';
     mk_table($query, 'coaches');
@@ -151,7 +105,7 @@ function setup_tables() {
                 team_id             MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 name                VARCHAR(50),
                 owned_by_coach_id   MEDIUMINT UNSIGNED,
-                f_race_id           TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                race                VARCHAR(20),
                 treasury            BIGINT SIGNED,
                 apothecary          BOOLEAN,
                 rerolls             MEDIUMINT UNSIGNED,
@@ -192,8 +146,7 @@ function setup_tables() {
                 ach_nor_skills      VARCHAR(320),
                 ach_dob_skills      VARCHAR(320),
                 extra_skills        VARCHAR(320),
-                extra_spp           MEDIUMINT SIGNED,
-                extra_val           MEDIUMINT SIGNED NOT NULL DEFAULT 0 
+                extra_spp           MEDIUMINT SIGNED
                 )';
     /*
         Note: 320 chars comes from:
@@ -226,12 +179,7 @@ function setup_tables() {
                 smp1                TINYINT SIGNED NOT NULL DEFAULT 0,
                 smp2                TINYINT SIGNED NOT NULL DEFAULT 0,
                 tcas1               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                tcas2               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                fame1               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                fame2               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                tv1                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
-                tv2                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
-                hash_botocs         VARCHAR(15)
+                tcas2               TINYINT UNSIGNED NOT NULL DEFAULT 0
                 )';
     mk_table($query, 'matches');
 
@@ -270,7 +218,6 @@ function setup_tables() {
                 f_coach_id          MEDIUMINT UNSIGNED,
                 f_team_id           MEDIUMINT UNSIGNED,
                 f_player_id         MEDIUMINT SIGNED,
-                f_race_id           TINYINT UNSIGNED,
                 f_match_id          MEDIUMINT SIGNED,
                 f_tour_id           MEDIUMINT UNSIGNED,
                 f_did               MEDIUMINT UNSIGNED,

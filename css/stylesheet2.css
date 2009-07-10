@@ -58,21 +58,21 @@ font.white  {color: #eeeeee;}
 div.everything {width: 100%; margin: auto; background-color: #eeeeee;}
 div.section {margin: 5px; padding-bottom: 40px; background-color: inherit;}
 
-/* Banner */
-div.banner
-{
-    width: 1000px;
-/*    height: 150px;*/
-/*    background-image: url(../images/banner_lowres.jpg); *//* 150x1000px */
-    background-repeat: no-repeat;
-    background-position: top left;
-}
-
-/* Menu */
-div.menu
+/* Menu/banner table */
+table.menu
 {
     width: 100%;
-    float: left;
+    background-color: #4D6483; 
+    padding: 6px; 
+    font-size: 13px; 
+    font-weight: bold; 
+    color: #eeeeee;
+   
+    /*background-image: url(../images/banner_lowres.jpg);*/ /* 177x1000px */
+    /*
+    background-repeat: no-repeat;
+    background-position: top left;
+    */
 }
 
 td.menu {vertical-align: bottom;}
@@ -167,13 +167,14 @@ div.main_lcolBox    {margin: 20px; border: 1px solid #545454;}
 div.main_rcolBox    {margin: 10px; border: 1px solid #545454;}
 div.main_cpy        {clear: both; font-size: 10px; padding: 30px; padding-top: 20px; background-color: inherit;}
 
-div.messageContainer    {width:100%;padding:6px 0px 6px 0px;color:#fff;font-weight:bold;}
-div.green               {clear:both;background-color:#390;border:1px solid #298000;}
-div.red                 {clear:both;background-color:#F20000;border:1px solid #c00;}
+div.messageContainer {width:971px;padding:8px;color:#fff;font-weight:bold;}
+div.green{background-color:#390;border:1px solid #298000;}
+div.red{background-color:#F20000;border:1px solid #c00;}
 
 /* Team's page */
 div.tpageBox    {float: left; width: 270px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
-div.tnewsBox    {float: left; width: 800px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
+div.tnewsBox    {float: left; width: 600px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
+div.tnewsBoxNew {float: left; width: 300px; border: 1px solid #545454; margin: 15px; margin-bottom: 0px;}
 
 /* Administration */
 div.admin_menu {clear: both; width: inherit; text-align: center;}
@@ -181,7 +182,7 @@ div.adminBox   {float: left; margin: 20px; border: 1px solid #545454;}
 
 /* Records */
 table.recBoxTable {width: 100%; border-spacing: 2px;}
-div.recBox        {clear: both; width: 800px; border: 1px solid #545454; margin: 20px auto 20px auto;}
+div.recBox        {clear: both; width: 800px; border: 1px solid #545454; margin: 30px auto 30px auto;}
 
 /* Match form */
 table.match_form {width: 100%; padding:10px;}

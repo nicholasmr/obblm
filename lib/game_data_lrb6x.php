@@ -25,7 +25,7 @@
  * Game data replacement for LRB6 experimental rules (LRB5b).
  */
 
-//require_once('lib/game_data.php');
+require_once('lib/game_data.php');
 
 //
 // Changes to present teams/positionals in LRB5b.
@@ -69,7 +69,6 @@ $DEA['Chaos Pact'] = array (
     'other'	=> array (
         'RerollCost' => 70000,
         'icon' => RACE_ICONS.'/chaos.png',
-        'race_id' => 21, # (Chaos Pact)
     ),
     'players'	=> array (
   			'Marauder'	=> array (
@@ -163,7 +162,6 @@ $DEA['Slann'] = array (
     'other'	=> array (
         'RerollCost' => 50000,
         'icon' => RACE_ICONS.'/slann.png',
-        'race_id' => 22, # (Slann)
     ),
     'players'	=> array (
   			'Lineman'	=> array (
@@ -221,7 +219,6 @@ $DEA['Underworld'] = array (
     'other'	=> array (
         'RerollCost' => 70000,
         'icon' => RACE_ICONS.'/underworld.png',
-        'race_id' => 23, # (Underworld)
     ),
     'players'	=> array (
   			'Underworld Goblin'	=> array (
@@ -287,11 +284,6 @@ $DEA['Underworld'] = array (
     )
 );
 
-// Create race ID index (key:val = id:race_name).
-$raceididx = array();
-foreach (array_keys($DEA) as $race) {
-    $raceididx[$DEA[$race]['other']['race_id']] = $race;
-}
 
 //
 // New star players in LRB5b.

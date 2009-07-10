@@ -21,15 +21,13 @@
  *   
  */
  
-error_reporting(E_ALL);
- 
 /********************* 
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.75f');
-$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard');
-define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
+define('OBBLM_VERSION', '0.7');
+$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen');
+define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 
@@ -40,26 +38,6 @@ define('MAX_TNEWS', 3); // This number of entries are shown on the team news boa
 define('STATS_PLAYER', 1);
 define('STATS_TEAM',   2);
 define('STATS_COACH',  3);
-define('STATS_RACE',   4);
-define('STATS_STAR',   5);
-# Match groupings (nodes):
-define('STATS_MATCH',    10);
-define('STATS_TOUR',     11);
-define('STATS_DIVISION', 12);
-define('STATS_LEAGUE',   13);
-
-// Translation between MySQL column match data references in the match_data table to PHP STATS_* constants.
-$CONST_TRANS = array(
-    STATS_PLAYER    => 'match_data.f_player_id',
-    STATS_TEAM      => 'match_data.f_team_id',
-    STATS_COACH     => 'match_data.f_coach_id',
-    STATS_RACE      => 'match_data.f_race_id',
-    
-    STATS_MATCH     => 'match_data.f_match_id',
-    STATS_TOUR      => 'match_data.f_tour_id',
-    STATS_DIVISION  => 'match_data.f_did',
-    STATS_LEAGUE    => 'match_data.f_lid',
-);
 
 /********************* 
  *   Prize types. Used by Prize class.
@@ -160,12 +138,23 @@ define('PLAYER_TYPE_JOURNEY', 2);
  *   For tournaments 
  *********************/
 
-// Tournament Types for MySQL tournament "type" column:
-define('TT_FFA', 1);    # Free For All/manual tournament scheduling.
-define('TT_RROBIN', 2); # Round-Robin
+// Maximum and minimum allowed rounds in a Round-Robin tournament.
+define('MIN_ALLOWED_ROUNDS', 1);
+define('MAX_ALLOWED_ROUNDS', 10);
 
 // Minimum required teams to create tournament.
 define('MIN_TOUR_TEAMS', 3); # DO NOT change this value to less than 3!
+
+// Tournament Types for MySQL tournament "type" column:
+define('TT_NOFINAL',    1); # Round-Robin WITHOUT final
+define('TT_FINAL',      2); # Round-Robin w. final
+define('TT_SEMI',       3); # Round-Robin w. final + semi-final
+define('TT_KNOCKOUT',   4); # Knock-out
+define('TT_SINGLE',     5); # Umbrella for grouping free for all (FFA) matches.
+
+// Max and min type values:
+define('TT_MIN', TT_NOFINAL);
+define('TT_MAX', TT_SINGLE);
 
 /******************** 
  *   For matches
@@ -188,11 +177,43 @@ define('RT_3RD_PLAYOFF', 254); # 3rd place playoff: The two knock-out matches be
 define('RT_SEMI', 253); # Semi-finals.
 define('RT_QUARTER', 252); # Quarter-finals.
 define('RT_ROUND16', 251); # Round of 16.
+define('RT_STANDALONE', 250); # Round of 1.
 
 define('MAX_ROUNDNR', RT_ROUND16); # This should have the value of the smallest reserved round number.
 
+// NON-reserved round numbers, used only for knock-out tournaments:
+define('RT_PLAYIN', 0); # Play-in round.
+define('RT_FIRST', 1); # First round.
+
 // Reserved (non-real) matches:
 define('MATCH_ID_IMPORT', -1);
+
+/******************** 
+ *   For Match report upload / team export
+ ********************/
+define('UPLOAD_MATCH_REPORT_DIR', "match_reports");
+define('TEAM_TEMPLATE_DIR', "team_templates");
+
+define('CYANIDE_SQLITE_UNIT_MA', 8.333);
+define('CYANIDE_SQLITE_UNIT_ST', 10); // + 20
+define('CYANIDE_SQLITE_UNIT_AG', 16.666);
+define('CYANIDE_SQLITE_UNIT_AV5', 42);
+define('CYANIDE_SQLITE_UNIT_AV6', 50);
+define('CYANIDE_SQLITE_UNIT_AV7', 58.333);
+define('CYANIDE_SQLITE_UNIT_AV8', 72.222);
+define('CYANIDE_SQLITE_UNIT_AV9', 83.333);
+define('CYANIDE_SQLITE_UNIT_AV10', 91.666);
+
+define('CYANIDE_SQLITE_MA_CAS_ID', 12);
+define('CYANIDE_SQLITE_ST_CAS_ID', 17);
+define('CYANIDE_SQLITE_AG_CAS_ID', 16);
+define('CYANIDE_SQLITE_AV_CAS_ID', 14);
+define('CYANIDE_SQLITE_NI_CAS_ID', 10);
+
+define('CYANIDE_SQLITE_MA_SKILL_ID', 4);
+define('CYANIDE_SQLITE_ST_SKILL_ID', 2);
+define('CYANIDE_SQLITE_AG_SKILL_ID', 3);
+define('CYANIDE_SQLITE_AV_SKILL_ID', 5);
 
 /******************** 
  *   For matches
@@ -235,10 +256,12 @@ define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, T_TEXT_HOF, T_TEXT_WANTED, T_
 
 // General OBBLM routines and data structures.
 require_once('settings.php');
-require_once('lib/game_data.php'); // LRB5
-if ($rules['enable_lrb6x']) { 
-    require_once('lib/game_data_lrb6x.php');
-}
+if ($rules['enable_lrb6x']) { require_once('lib/game_data_lrb6x.php');}
+else                        { require_once('lib/game_data.php');}
+
+// Cyanide BB support
+if (!$settings['show_unsupported_races_cyanide']) {require_once('lib/game_data_Cyanide.php');} // If no support for races not supported by Cyanide, then use Cyanide game data
+
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
 
@@ -251,13 +274,15 @@ require_once('lib/class_player.php');
 require_once('lib/class_starmerc.php');
 require_once('lib/class_team.php');
 require_once('lib/class_coach.php');
-require_once('lib/class_race.php');
 require_once('lib/class_stats.php');
 require_once('lib/class_text.php');
 require_once('lib/class_prize.php');
 //require_once('lib/class_statsgraph.php'); // Should not be included here due to unnecessary load. Is included in handler.php.
 require_once('lib/class_rrobin.php');
-//require_once('lib/class_knockout.php'); # Deprecated
+require_once('lib/class_knockout.php');
+
+// Cyanide BB
+require_once('lib/class_CyanideMatchReport.php');
 
 // External libraries.
 require_once('lib/class_arraytojs.php');
@@ -268,7 +293,6 @@ require_once('lang/class_translations.php'); // Juergen Unfried
 require_once('lib/class_rss.php'); // Juergen Unfried
 
 // HTML interface routines.
-require_once('lib/class_htmlout.php');
 require_once('sections.php'); // Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('matches.php');
 require_once('teams.php');
