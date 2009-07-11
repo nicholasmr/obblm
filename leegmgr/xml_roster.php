@@ -65,7 +65,16 @@ foreach ( $players as $p )
 	{
 	$skills = $p->getSkillsStr();
 	$a_skills = explode(', ', $skills);
-	
+
+		$stripjourney = strpos($p->position, ' [J]');
+		if ( $stripjourney !== FALSE )
+		{
+		# [J]
+			$p->position = substr ( $p->position, 0, $stripjourney);
+
+		}
+		
+
 		Print "        <player number=\"{$p->nr}\">
             <name>{$p->name}</name>
             <position>{$p->position}</position>
