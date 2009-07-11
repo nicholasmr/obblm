@@ -50,6 +50,7 @@
                         <xs:attribute name="name" type="xs:string" />
                         <xs:attribute name="number" type="t_number" />
                         <xs:attribute name="starPlayer" type="xs:string" />
+                        <xs:attribute name="mercenary" type="xs:string" />
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
