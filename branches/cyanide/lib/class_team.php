@@ -962,6 +962,7 @@ class Team
          **/
         
         $query = "SELECT team_id FROM teams WHERE name='" .$team_name. "';";
+        
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) == 1 ) {
             $row = mysql_fetch_assoc($result);
@@ -1006,9 +1007,16 @@ class Team
 		/*
 		 * Cash, Reroll, Apoth, Cheerleaders, FF, name and value
 		 */
-		$query = "UPDATE 'Team_Listing' SET 'iPopularity' = '" .$this->fan_factor. "', 'iCash' = '0', 'iCheerleaders' = '" .$this->cheerleaders. "', 'bApothecary' = '" .$this->apothecary. "', 'iRerolls' = '" .$this->rerolls. "', 'iValue' = '" .($this->value/1000). "', 'strName' = '" .$this->name. "'";
+		$query = "UPDATE 'Team_Listing' SET 'iPopularity' = '" .$this->fan_factor. "', 'iCash' = '0', 'iCheerleaders' = '" .$this->cheerleaders. "', 'bApothecary' = '" .$this->apothecary. "', 'iRerolls' = '" .$this->rerolls. "', 'iValue' = '" .($this->value/1000). "', 'strName' = '" .sqlite_escape_string($this->name). "'";
 		if (!($result = $match_report_db->query($query)))
-				return false;
+			return false;
+		
+		/*
+		 * Team name as it appears in the Edit screen
+		 */
+		$query = "UPDATE 'SavedGameInfo' SET 'strName' = '" .sqlite_escape_string($this->name). "', 'Championship_strTeamName' = '" .sqlite_escape_string($this->name). "'";
+		if (!($result = $match_report_db->query($query)))
+			return false;
     	
     	foreach ($this->getPlayers() as $player) {
     		
@@ -1057,7 +1065,7 @@ class Team
 			
 			// ID, name, number, experience, level and value
 			$row['ID'] = $player_id;
-			$row['strName'] = $player->name;
+			$row['strName'] = sqlite_escape_string($player->name);
 			$row['iNumber'] = $player->nr;
 			$row['iExperience'] = $player->spp;
 			$row['idPlayer_Levels'] = $player->getLevel();
@@ -1267,6 +1275,8 @@ class Team
 			}
 			$query = substr($query, 0, -2);
 			$query .= ")";
+			
+			$query = $query;
 			
 			if (!($result = $match_report_db->query($query)))
 				return false;

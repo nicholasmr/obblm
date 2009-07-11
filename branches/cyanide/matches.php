@@ -539,11 +539,13 @@ function unscheduled_match_form($tour_id) {
 	    uploadMatchReport("uploaded_match_report", UPLOAD_MATCH_REPORT_DIR, $id);
 	    
 	    $match_report = new CyanideMatchReport(UPLOAD_MATCH_REPORT_DIR ."/". $id);
+	    $home_team_name = mysql_real_escape_string($match_report->home_team_name);
+	    $away_team_name = mysql_real_escape_string($match_report->away_team_name);
     	
     	@unlink(UPLOAD_MATCH_REPORT_DIR . "/" . $id);
     	
-    	$team1_id = Team::getTeam($match_report->home_team_name);
-    	$team2_id = Team::getTeam($match_report->away_team_name);
+    	$team1_id = Team::getTeam($home_team_name);
+    	$team2_id = Team::getTeam($away_team_name);
     	$round=RT_STANDALONE;
     	$f_tour_id=$tour->tour_id;
     	$team1 = new Team($team1_id);

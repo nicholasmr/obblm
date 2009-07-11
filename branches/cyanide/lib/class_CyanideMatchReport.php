@@ -85,6 +85,10 @@ class CyanideMatchReport
 			return false;
 		
 		foreach ($array as $row) {
+			/*
+			 * Set injury type
+			 */
+			
 			$tmp_inj = NONE;
 			
 			if ($row['inj_type']) {
