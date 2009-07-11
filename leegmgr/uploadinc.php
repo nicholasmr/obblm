@@ -66,7 +66,7 @@ function uploadpage () {
 			Print "<br>Retrieved a file.<br>";
 		}
 
-		if ($zip  &&  ( $_FILES['userfile']['type'] == "application/x-zip-compressed" || $_FILES['userfile']['type'] == "application/octet-stream" || $_FILES['userfile']['type'] == "application/zip") ){
+		if ($zip  &&  ( $_FILES['userfile']['type'] == "application/x-zip-compressed" || $_FILES['userfile']['type'] == "application/octet-stream" || $_FILES['userfile']['type'] == "application/zip" || $_FILES['userfile']['type'] == "application/x-zip") ){
 			Print "<br>Retrieved a zip file.<br>";
 
 			while ($zip_entry = zip_read($zip)) {
@@ -120,6 +120,7 @@ function parse_results($xmlresults) {
 
 		$homeplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
 		$homeplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
+		$homeplayers[intval($player->attributes()->number)]['merc'] = $player->attributes()->mercenary;
 		$homeplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
 		$homeplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
 		$homeplayers[intval($player->attributes()->number)]['td'] = $player->touchdown;
@@ -141,6 +142,7 @@ function parse_results($xmlresults) {
 
 		$awayplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
 		$awayplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
+		$awayplayers[intval($player->attributes()->number)]['merc'] = $player->attributes()->mercenary;
 		$awayplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
 		$awayplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
 		$awayplayers[intval($player->attributes()->number)]['td'] = $player->touchdown;
@@ -251,6 +253,7 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 	foreach ( $teamPlayers as $player )
 	{
 		if ( $player['star'] == "true" ) continue;
+		if ( $player['merc'] == "true" ) continue;
 		foreach ( $players as $p  )
 		{
 			if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold ) {
@@ -278,7 +281,7 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 		if ( $agn1 > $inj ) list($inj, $agn1) = array($agn1, $inj);
 		if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
 
-		$match->entry( $input = array ( "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ) );
+		$match->entry( $input = array ( "team_id" => $team_id, "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ) );
 
 	}
 	##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
@@ -289,7 +292,7 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 			$player = new Player ( $p->player_id );
 			$p_matchdata = $player->getMatchData( $match_id );
 			if ( !$p_matchdata['inj'] ) {
-				$match->entry( $input = array ( "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ) );
+				$match->entry( $input = array ( "team_id" => $team_id, "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ) );
 			}
 		}
 	}	
