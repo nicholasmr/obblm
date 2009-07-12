@@ -182,6 +182,18 @@ define('ST',    7);
 define('DEAD',  8);
 define('SOLD',  9);
 
+$STATUS_TRANS = array(
+	NONE => 'NONE',
+	MNG  => 'MNG',
+	NI   => 'NI',
+	MA   => 'MA',
+	AV   => 'AV',
+	AG   => 'AG',
+	ST   => 'ST',
+	DEAD => 'DEAD',
+	SOLD => 'SOLD',
+);
+
 // Round types
 define('RT_FINAL', 255);
 define('RT_3RD_PLAYOFF', 254); # 3rd place playoff: The two knock-out matches between the final four teams with the winners progressing to the grand final. The losers are knocked-out, though take part in a third place play-off.

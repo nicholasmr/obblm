@@ -667,6 +667,7 @@ class Team
         /* 
             Exports a team by the using the same fields as the import XML schema uses.
         */
+        global $STATS_TRANS;
         
         $ELORanks = ELO::getRanks(false);
         $this->elo = $ELORanks[$this->team_id];
@@ -699,7 +700,7 @@ class Team
         $el_root->appendChild($dom->createElement('elo_0', $this->elo));
 
         foreach ($this->getPlayers() as $p) {
-            $status = strtolower($p->getStatus(-1));
+            $status = strtolower($STATS_TRANS[$p->getStatus(-1)]);
             if ($status == 'none') {$status = 'ready';}
             if ($p->is_sold) {$status = 'sold';}
 

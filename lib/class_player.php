@@ -45,6 +45,9 @@ class Player
     public $extra_skills   = array();
     public $extra_spp = 0;
     public $extra_val = 0;
+    
+    public $ach_nor_skills_cnt = 0;
+    public $ach_dob_skills_cnt = 0;    
 
     // Characteristics
     public $ma = 0;
@@ -52,7 +55,7 @@ class Player
     public $av = 0;
     public $st = 0;
 
-    // Defaults
+    // Base characteristics
     public $def_ma = 0;
     public $def_av = 0;
     public $def_ag = 0;
@@ -69,27 +72,22 @@ class Player
     // Player status
     public $is_sold       = false;
     public $is_dead       = false;
-    public $is_unbuyable  = false; # Is able to be un-bought, does not mean that player is not buyable!
     public $is_mng        = false;
     public $is_journeyman = false;
 
     // Others
     public $value = 0;
-    public $f_race_id = 0;
-    public $race = "";
     public $icon = "";
     public $qty = 0;
+    public $date_died = '';
+    public $choosable_skills = array('N skills' => array(), 'D skills' => array());
+    
+    // Relations
     public $team_name = "";
-    public $coach_name = "";
     public $coach_id = 0;
-
-    // Non-constructor filled fields.
-
-        // By getDateDied().
-        public $date_died = '';
-        
-        // By setChoosableSkills().
-        public $choosable_skills = array('N skills' => array(), 'D skills' => array());
+    public $coach_name = "";
+    public $f_race_id = 0;
+    public $race = ""; # Race name
         
     /***************
      * Methods 
@@ -97,99 +95,60 @@ class Player
 
     function __construct($player_id) {
 
-        global $DEA, $rules, $raceididx;
+        global $DEA, $rules;
 
-        // MySQL stored player data
-        $result = mysql_query("SELECT * FROM players WHERE player_id = $player_id");
-        
-        if (mysql_num_rows($result) <= 0)
-            return false;
-
-        $row = mysql_fetch_assoc($result);
-        foreach ($row as $col => $val)
+        /* 
+            MySQL stored player data
+        */
+        $result = mysql_query("SELECT 
+            player_id, type, name, owned_by_team_id, nr, position, date_bought, date_sold, 
+            ach_ma, ach_st, ach_ag, ach_av, extra_spp, extra_val,
+            LENGTH(ach_nor_skills) - LENGTH(REPLACE(ach_nor_skills, ',', '')) + IF(LENGTH(ach_nor_skills) = 0, 0, 1) AS 'ach_nor_skills_cnt', 
+            LENGTH(ach_dob_skills) - LENGTH(REPLACE(ach_dob_skills, ',', '')) + IF(LENGTH(ach_dob_skills) = 0, 0, 1) AS 'ach_dob_skills_cnt'
+            FROM players WHERE player_id = $player_id");
+        foreach (mysql_fetch_assoc($result) as $col => $val) {
             $this->$col = ($val) ? $val : 0;
-            
-        $this->pos = $this->position;
-            
-        // Player relations
-        $this->f_race_id  = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'f_race_id');
-        $this->race       = $raceididx[$this->f_race_id];
-        $this->team_name  = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'name');
-        $this->coach_id   = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'owned_by_coach_id');
-        $this->coach_name = get_alt_col('coaches', 'coach_id', $this->coach_id, 'name');
-        
-        // Skills
-        $this->ach_nor_skills = array();
-        $this->ach_dob_skills = array();
-        $this->extra_skills   = array();
-        if (!empty($row['ach_nor_skills'])) $this->ach_nor_skills = explode(',', $row['ach_nor_skills']);
-        if (!empty($row['ach_dob_skills'])) $this->ach_dob_skills = explode(',', $row['ach_dob_skills']);
-        if (!empty($row['extra_skills']))   $this->extra_skills   = explode(',', $row['extra_skills']);
-        $this->def_skills = $DEA[$this->race]['players'][$this->pos]['Def skills'];
-            
-        // Status
-        $status = $this->getStatus(-1);
-        if ($status == 'DEAD')       $this->is_dead = true;
-        if ($status == 'MNG')        $this->is_mng  = true;
-        if ($this->date_sold)        $this->is_sold = true;
-        if ($this->type == PLAYER_TYPE_JOURNEY) {$this->is_journeyman = true; array_push($this->def_skills, 'Loner');}
-
-        $result = mysql_query("SELECT f_player_id FROM match_data WHERE f_player_id = $this->player_id LIMIT 1");
-        if (mysql_num_rows($result) == 0) # If the player has not participated in any matches then player is un-buyable.
-            $this->is_unbuyable = true;
-            
-        // Set general stats.
-        $this->setStats(false,false,false);
-        $this->spp += $this->extra_spp;
-
-        // Injuries
-        $NI = NI; $MA = MA; $AV = AV; $AG = AG; $ST = ST;
-        $query = "SELECT 
-                    SUM(IF(inj = $NI, 1, 0) + IF(agn1 = $NI, 1, 0) + IF(agn2 = $NI, 1, 0)) AS 'inj_ni', 
-                    SUM(IF(inj = $MA, 1, 0) + IF(agn1 = $MA, 1, 0) + IF(agn2 = $MA, 1, 0)) AS 'inj_ma', 
-                    SUM(IF(inj = $AV, 1, 0) + IF(agn1 = $AV, 1, 0) + IF(agn2 = $AV, 1, 0)) AS 'inj_av', 
-                    SUM(IF(inj = $AG, 1, 0) + IF(agn1 = $AG, 1, 0) + IF(agn2 = $AG, 1, 0)) AS 'inj_ag', 
-                    SUM(IF(inj = $ST, 1, 0) + IF(agn1 = $ST, 1, 0) + IF(agn2 = $ST, 1, 0)) AS 'inj_st' 
-                    FROM match_data WHERE f_player_id = $this->player_id";
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
-            $row = mysql_fetch_assoc($result);
-            foreach ($row as $k => $v) {
-                $this->$k = ($v) ? $v : 0;
-            }
         }
+        $this->pos = $this->position;
+        $this->setRelations();
         
-        // Characteristics
-        $this->def_ma = $DEA[$this->race]['players'][$this->pos]['ma'];
-        $this->def_st = $DEA[$this->race]['players'][$this->pos]['st'];
-        $this->def_ag = $DEA[$this->race]['players'][$this->pos]['ag'];
-        $this->def_av = $DEA[$this->race]['players'][$this->pos]['av'];
-        $this->ma = $this->def_ma + $this->ach_ma - $this->inj_ma;
-        $this->st = $this->def_st + $this->ach_st - $this->inj_st;
-        $this->ag = $this->def_ag + $this->ach_ag - $this->inj_ag;
-        $this->av = $this->def_av + $this->ach_av - $this->inj_av;
-
-        // Player value
-        $this->value =   $DEA[$this->race]['players'][$this->pos]['cost']
-                       + ($this->ach_ma + $this->ach_av)    * 30000
-                       + $this->ach_ag                      * 40000
-                       + $this->ach_st                      * 50000
-                       + count($this->ach_nor_skills)       * 20000
-                       + count($this->ach_dob_skills)       * 30000
-                       + $this->extra_val;
-                       
+        /* 
+            Player value 
+        */
+        $this->value = $DEA[$this->race]['players'][$this->pos]['cost']
+            + ($this->ach_ma + $this->ach_av) * 30000
+            + $this->ach_ag                   * 40000
+            + $this->ach_st                   * 50000
+            + $this->ach_nor_skills_cnt       * 20000
+            + $this->ach_dob_skills_cnt       * 30000
+            + $this->extra_val;
+        
         // Custom value reduction.
         $this->value -= 
             $this->inj_ma*$rules['val_reduc_ma'] + 
             $this->inj_st*$rules['val_reduc_st'] + 
             $this->inj_ag*$rules['val_reduc_ag'] + 
             $this->inj_av*$rules['val_reduc_av'];
+        
+        /* 
+            Set general stats.
+        */
+        $this->setChrs();
+        $this->setSkills();
+        $this->setStatusses();
+        $this->setStats(false,false,false);
                        
-        // Misc
+        /*
+            Misc
+        */
         $this->icon = PLAYER_ICONS.'/' . $DEA[$this->race]['players'][$this->pos]['icon'] . '.gif';
         $this->qty = $DEA[$this->race]['players'][$this->pos]['qty'];
-        if (empty($this->name))     {$this->name = 'Unnamed';}
-        if ($this->is_journeyman)   {$this->position .= ' [J]';}
+        if (empty($this->name)) {
+            $this->name = 'Unnamed';
+        }
+        if ($this->type == PLAYER_TYPE_JOURNEY) { # Check if player is journeyman like this - don't assume setStatusses() has ben called setting $this->is_journeyman.
+            $this->position .= ' [J]';
+        }
     }
     
     public function setStats($node, $node_id, $set_avg = false)
@@ -197,7 +156,39 @@ class Player
         foreach (Stats::getAllStats(STATS_PLAYER, $this->player_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
             $this->$key = $val;
         }
+        
+        // Corrections
+        if (!$node) {
+            $this->spp += $this->extra_spp;
+        }
+        
         return true;
+    }
+    
+    private function setChrs() {
+        
+        global $DEA;
+        
+        // Injuries
+        $NI = NI; $MA = MA; $AV = AV; $AG = AG; $ST = ST;
+        $query = "SELECT 
+            SUM(IF(inj = $NI, 1, 0) + IF(agn1 = $NI, 1, 0) + IF(agn2 = $NI, 1, 0)) AS 'inj_ni', 
+            SUM(IF(inj = $MA, 1, 0) + IF(agn1 = $MA, 1, 0) + IF(agn2 = $MA, 1, 0)) AS 'inj_ma', 
+            SUM(IF(inj = $AV, 1, 0) + IF(agn1 = $AV, 1, 0) + IF(agn2 = $AV, 1, 0)) AS 'inj_av', 
+            SUM(IF(inj = $AG, 1, 0) + IF(agn1 = $AG, 1, 0) + IF(agn2 = $AG, 1, 0)) AS 'inj_ag', 
+            SUM(IF(inj = $ST, 1, 0) + IF(agn1 = $ST, 1, 0) + IF(agn2 = $ST, 1, 0)) AS 'inj_st' 
+            FROM match_data WHERE f_player_id = $this->player_id";
+        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0 && ($row = mysql_fetch_assoc($result))) {
+            foreach ($row as $k => $v) {
+                $this->$k = ($v) ? $v : 0;
+            }
+        }
+        
+        // Current characteristics
+        foreach (array('ma', 'st', 'ag', 'av') as $chr) {
+            $this->{"def_$chr"} = $DEA[$this->race]['players'][$this->pos][$chr];
+            $this->$chr = $this->{"def_$chr"} + $this->{"ach_$chr"} - $this->{"inj_$chr"};        
+        }
     }
     
     public function setChoosableSkills() {
@@ -205,6 +196,7 @@ class Player
         global $DEA;
         global $skillarray;
         
+        $this->setSkills();
         $n_skills = $DEA[$this->race]['players'][$this->pos]['N skills'];
         $d_skills = $DEA[$this->race]['players'][$this->pos]['D skills'];
         
@@ -226,12 +218,51 @@ class Player
         return true;
     }
 
+    private function setSkills() {
+
+        // Skills
+        global $DEA;        
+        $result = mysql_query("SELECT ach_nor_skills, ach_dob_skills, extra_skills FROM players WHERE player_id = $this->player_id");
+        $row = mysql_fetch_assoc($result);
+        $this->ach_nor_skills = (!empty($row['ach_nor_skills'])) ? explode(',', $row['ach_nor_skills']) : array();
+        $this->ach_dob_skills = (!empty($row['ach_dob_skills'])) ? explode(',', $row['ach_dob_skills']) : array();
+        $this->extra_skills   = (!empty($row['extra_skills']))   ? explode(',', $row['extra_skills'])   : array();
+        $this->def_skills     = $DEA[$this->race]['players'][$this->pos]['Def skills'];
+        if ($this->type == PLAYER_TYPE_JOURNEY) { # Check if player is journeyman like this - don't assume setStatusses() has ben called setting $this->is_journeyman.
+            array_push($this->def_skills, 'Loner');
+        }
+    }
+    
+    private function setStatusses() {
+
+        // Status
+        $status = $this->getStatus(-1);
+        $this->is_dead       = ($status == DEAD);
+        $this->is_mng        = ($status == MNG);
+        $this->is_sold       = (bool) $this->date_sold;
+        $this->is_journeyman = ($this->type == PLAYER_TYPE_JOURNEY);
+    }
+    
+    private function setRelations() {
+
+        // Player relations
+        global $raceididx;
+        $query = "SELECT coaches.name AS 'coach_name', coach_id, teams.name AS 'team_name', f_race_id
+FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.team_id = $this->owned_by_team_id";
+        if (($result = mysql_query($query)) && ($row = mysql_fetch_assoc($result))) {
+            foreach ($row as $key => $val) {
+                $this->$key = $val;
+            }
+        }
+        $this->race = $raceididx[$this->f_race_id];
+    }
+    
     public function mayHaveNewSkill() {
 
         global $sparray;
 
-        $skill_count =   count($this->ach_nor_skills)
-                       + count($this->ach_dob_skills)
+        $skill_count =   $this->ach_nor_skills_cnt
+                       + $this->ach_dob_skills_cnt
                        + $this->ach_ma
                        + $this->ach_st
                        + $this->ach_ag
@@ -246,8 +277,14 @@ class Player
             }
         }
 
-//        return (($skill_count < $allowable_skills) && !$this->is_sold && !$this->is_dead); # If fewer skills than able to have for current SPP-level -> allow new skill.
         return (($skill_count < $allowable_skills) && !$this->is_sold); # If fewer skills than able to have for current SPP-level -> allow new skill.
+    }
+
+    public function is_unbuyable() {
+        // Is able to be un-bought, does not mean that player is not buyable!
+        // If the player has NOT participated in any matches then player is un-buyable.
+        $query = "SELECT COUNT(*) AS 'cnt' FROM match_data WHERE f_player_id = $this->player_id";
+        return !(($result = mysql_query($query)) && ($row = mysql_fetch_assoc($result)) && $row['cnt'] > 0);
     }
 
     public function sell() {
@@ -304,7 +341,7 @@ class Player
          * Regret hirering/purchasing player (un-buy).
          **/
     
-        if (!$this->is_unbuyable || $this->is_sold)
+        if (!$this->is_unbuyable() || $this->is_sold)
             return false;
             
         $price = ($this->is_journeyman) ? 0 : Player::price(array('race' => $this->race, 'position' => $this->pos));
@@ -551,55 +588,29 @@ class Player
             $row = mysql_fetch_assoc($result);
             switch ($row['inj'])
             {
-                case NONE: return 'NONE';
-                case DEAD: return 'DEAD';
-                default:   return 'MNG';
+                case NONE: return NONE;
+                case DEAD: return DEAD;
+                default:   return MNG;
             }
         }
         else {
-            return 'NONE';
+            return NONE;
         }
     }
     
     public function getDateDied() {
-
-        /**
-         * If dead, returns the date this player died and sets the obj. field $date_died to the return value.
-         **/
-         
-        $val = false;
-        
         $query = "SELECT date_played FROM matches, match_data WHERE f_match_id = match_id AND f_player_id = $this->player_id AND inj = " . DEAD;
-        $result = mysql_query($query);
-            
-        if ($result && mysql_num_rows($result) > 0 && $row = mysql_fetch_assoc($result)) {
-            $val = $row['date_played'];
-            $this->date_died = $val;
-        }
-        
-        return $val;
+        return (($result = mysql_query($query)) && mysql_num_rows($result) > 0 && ($row = mysql_fetch_assoc($result))) ? ($this->date_died = $row['date_played']) : false;
     }
     
     public function isWanted() {
-
-        /**
-         * Returns true/false depending on whether or not this player is wanted.
-         **/        
-        
         $query = "SELECT f_id FROM texts WHERE f_id = $this->player_id AND type = ".T_TEXT_WANTED;
-        $result = mysql_query($query);
-        return (mysql_num_rows($result) > 0);
+        return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
     }
     
     public function isInHOF() {
-        
-        /**
-         * Returns true/false depending on whether or not this player is in the HoF.
-         **/        
-        
         $query = "SELECT f_id FROM texts WHERE f_id = $this->player_id AND type = ".T_TEXT_HOF;
-        $result = mysql_query($query);
-        return (mysql_num_rows($result) > 0);        
+        return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
     }
     
     public function chrLimits($type, $char) {
@@ -667,8 +678,7 @@ class Player
                 AND cnt = 1
         ";
 
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
+        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($matches, array_merge(array('match_obj' => new Match($row['f_match_id'])), $row));
             }
@@ -686,8 +696,7 @@ class Player
         $mdata = array();
 
         $query = "SELECT mvp, cp, td, intcpt, bh, ki, si, f_match_id FROM match_data, matches WHERE match_id > 0 AND f_match_id = match_id AND f_player_id = $this->player_id AND ($type) > 0 ORDER BY date_played DESC";
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
+        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($mdata, array_merge($row, array('match_obj' => new Match($row['f_match_id']))));
             }
@@ -715,13 +724,11 @@ class Player
     }
     
     public function saveText($str) {
-        
         $desc = new TDesc(T_TEXT_PLAYER, $this->player_id);
         return $desc->save($str);
     }
 
     public function getText() {
-
         $desc = new TDesc(T_TEXT_PLAYER, $this->player_id);
         return $desc->txt;
     }

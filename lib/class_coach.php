@@ -292,13 +292,14 @@ class Coach
         if (empty($input['name']) || empty($input['passwd']) || get_alt_col('coaches', 'name', $input['name'], 'coach_id')) # Name exists already?
             return false;
 
-        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring) 
+        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring, settings) 
                     VALUES ('" . mysql_real_escape_string($input['name']) . "',
                             '" . mysql_real_escape_string($input['realname']) . "', 
                             '" . md5($input['passwd']) . "', 
                             '" . mysql_real_escape_string($input['mail']) . "', 
                             '" . mysql_real_escape_string($input['phone']) . "', 
-                            '" . $input['ring']."')";
+                            '" . $input['ring']."',
+                            '')";
                             
         return mysql_query($query);
     }

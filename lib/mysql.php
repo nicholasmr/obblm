@@ -259,7 +259,8 @@ function setup_tables() {
                 name            VARCHAR(50),
                 type            TINYINT UNSIGNED,
                 date_created    DATETIME,
-                rs              TINYINT UNSIGNED DEFAULT 1
+                rs              TINYINT UNSIGNED DEFAULT 1,
+                locked          BOOLEAN
                 )';
     mk_table($query, 'tours');
 

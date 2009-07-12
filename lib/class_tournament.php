@@ -41,6 +41,7 @@ class Tour
     public $type            = 0;
     public $date_created    = '';
     public $rs              = 0; // Ranking system.
+    public $locked          = false;
 
     // Other
     public $winner          = null; # Team ID.
@@ -62,6 +63,8 @@ class Tour
         foreach ($row as $col => $val) {
             $this->$col = ($val) ? $val : 0;
         }
+        $this->locked = (bool) $this->locked;
+        
         // Empty tournament (all matches have been deleted)?
         $query = "SELECT COUNT(*) AS 'count' FROM matches WHERE f_tour_id = $this->tour_id"; $result = mysql_query($query); $row = mysql_fetch_assoc($result);
         $this->empty = ($row['count'] < 1);
@@ -180,6 +183,11 @@ class Tour
         $query1 = "UPDATE tours SET f_did = $did WHERE tour_id = $this->tour_id";
         $query2 = "UPDATE match_data SET f_did = $did WHERE f_tour_id = $this->tour_id";
         return (mysql_query($query1) && mysql_query($query2));
+    }
+    
+    public function setLocked($lock) {
+        $this->locked = (bool) $lock;
+        return mysql_query("UPDATE tours SET locked = ".(($lock) ? 1 : 0)." WHERE tour_id = $this->tour_id");
     }
 
     /***************

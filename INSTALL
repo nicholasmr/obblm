@@ -79,6 +79,8 @@ NOTE: When upgrading please save your old settings file as a reference for when 
             tours.f_did = divisions.did AND 
             f_player_id < 0;
 
+        ALTER TABLE tours ADD COLUMN locked BOOLEAN;
+
 0.37 -> 0.7
 
     Replace all OBBLM files.
