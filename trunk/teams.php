@@ -869,7 +869,8 @@ function team_roaster($team_id) {
                         break;
                         
                     /***************
-                     * Un-buy player                     **************/
+                     * Un-buy player
+                     **************/
                         
                     case 'unbuy_player':
                         echo $lng->getTrn('secs/teams/box_tm/desc/unbuy_player');
@@ -880,7 +881,7 @@ function team_roaster($team_id) {
                         <?php
                         $DISABLE = true;
                         foreach ($players as $p) {
-                            if ($p->is_unbuyable && !$p->is_sold) {
+                            if ($p->is_unbuyable() && !$p->is_sold) {
                                     echo "<option value='$p->player_id'>$p->name</option>\n";
                                     $DISABLE = false;
                             }
@@ -1332,7 +1333,7 @@ function team_roaster($team_id) {
 
 function player_roaster($player_id) {
 
-    global $lng;
+    global $lng, $STATUS_TRANS;
 
     // Is player id valid?
     if (!get_alt_col('players', 'player_id', $player_id, 'player_id') || !is_object($p = new Player($_GET['player_id'])))
@@ -1421,7 +1422,7 @@ function player_roaster($player_id) {
                                 echo "<b>SOLD</b> ($p->date_sold)";
                             }
                             else {
-                                echo (($status = strtolower($p->getStatus(-1))) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
+                                echo (($status = strtolower($STATUS_TRANS[$p->getStatus(-1)])) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
                             }
                         ?>
                         </td>

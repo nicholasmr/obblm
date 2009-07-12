@@ -722,13 +722,13 @@ class Match
          * Input: team1_id, team2_id, round, f_tour_id
          **/
     
-        if ($input['team1_id'] == $input['team2_id'])
+        if ($input['team1_id'] == $input['team2_id'] || ($isLocked = get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'locked')))
             return false;
 
         $query = "INSERT INTO matches (team1_id, team2_id, round, f_tour_id, date_created)
                     VALUES ($input[team1_id], $input[team2_id], $input[round], '$input[f_tour_id]', NOW())";
 
-        return (mysql_query($query));
+        return mysql_query($query);
     }
 }
 

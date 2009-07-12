@@ -361,7 +361,7 @@ function sec_admin() {
                             <?php
                             foreach (Tour::getTours() as $t)
                                 if ($t->type == TT_FFA)
-                                    echo "<option value='$t->tour_id'>$t->name</option>\n";
+                                    echo "<option value='$t->tour_id'>$t->name".(($t->locked) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
                             ?>
                             </optgroup>
                         </select>
@@ -375,7 +375,7 @@ function sec_admin() {
                             $pure_rounds = array(); 
                             for ($i=1;$i<30;$i++) $pure_rounds[$i] = "Round #$i match";
                             foreach ($pure_rounds as $r => $d) {
-                                echo "<option value='$r'>$d</option>\n";                   
+                                echo "<option value='$r'>$d</option>\n";
                             }
                         ?>
                         </select>
@@ -852,6 +852,11 @@ function sec_admin() {
                     $t = new Tour($_POST['trid']);
                     status($t->ch_did($_POST['did']));
                     break;
+                    
+                case 'lock':
+                    $t = new Tour($_POST['trid']);
+                    status($t->setLocked(isset($_POST['lock']) && $_POST['lock']));
+                    break;                	
             }
         }
 
@@ -958,6 +963,27 @@ function sec_admin() {
                 </select><br><br>
                 <input type="hidden" name="type" value="move">
                 <input type="submit" value="Move">
+            </form>
+            </div>
+        </div>
+        
+        <div class="adminBox">
+            <div class="boxTitle3">Lock/unlock tournament</div>
+            <div class="boxBody">
+            <form method="POST">
+                <b>Tournament</b><br>
+                <select name="trid">
+                    <?php
+                    foreach ($tours as $t) {
+                        echo "<option value='$t->tour_id'>$t->name".(($t->locked) ? ' (is locked)' : '')."</option>\n";
+                    }
+                    ?>
+                </select><br><br>
+                Lock/unlock (check/unchecked)?
+                <input type="checkbox" name="lock" value="1">
+                <br><br>
+                <input type="hidden" name="type" value="lock">
+                <input type="submit" value="OK">
             </form>
             </div>
         </div>

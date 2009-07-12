@@ -103,7 +103,7 @@ function match_form($match_id) {
                     continue;
                 
                 // Set zero entry for MNG player(s).
-                if ($p->getStatus($m->match_id) == 'MNG') {
+                if ($p->getStatus($m->match_id) == MNG) {
                     $_POST['mvp_' . $p->player_id]      = 0;
                     $_POST['cp_' . $p->player_id]       = 0;
                     $_POST['td_' . $p->player_id]       = 0;
@@ -375,20 +375,20 @@ function match_form($match_id) {
                 // Print player row
                 echo "<tr ";
                     if ($p->is_journeyman)    {echo 'style="background-color: '.COLOR_HTML_JOURNEY.'"';}
-                    elseif ($status == 'MNG') {echo 'style="background-color: '.COLOR_HTML_MNG.'"';}
+                    elseif ($status == MNG) {echo 'style="background-color: '.COLOR_HTML_MNG.'"';}
                 echo " >\n";
                 
                 echo "<td>$p->nr</td>\n";
                 echo "<td>$p->name</td>\n";
-                echo "<td>$p->position" . ($status == 'MNG' ? '&nbsp;[MNG]' : '') . "</td>\n";
-                echo "<td><input type='checkbox' " . ($mdat['mvp'] ? 'CHECKED ' : '') . (($DIS || ($status == 'MNG')) ? 'DISABLED' : '') . " name='mvp_$p->player_id'></td>\n";
+                echo "<td>$p->position" . ($status == MNG ? '&nbsp;[MNG]' : '') . "</td>\n";
+                echo "<td><input type='checkbox' " . ($mdat['mvp'] ? 'CHECKED ' : '') . (($DIS || ($status == MNG)) ? 'DISABLED' : '') . " name='mvp_$p->player_id'></td>\n";
                 foreach (array('cp', 'td', 'intcpt', 'bh', 'si', 'ki') as $field) {
-                    echo "<td><input ". (($DIS || ($status == 'MNG')) ? 'DISABLED' : '') . " type='text' onChange='numError(this);' size='1' maxlength='2' name='" . $field . "_$p->player_id' value='" . $mdat[$field] . "'></td>\n";
+                    echo "<td><input ". (($DIS || ($status == MNG)) ? 'DISABLED' : '') . " type='text' onChange='numError(this);' size='1' maxlength='2' name='" . $field . "_$p->player_id' value='" . $mdat[$field] . "'></td>\n";
                 }
                 
                 ?>
                 <td>
-                    <select name="inj_<?php echo $p->player_id;?>" <?php echo $DIS || $status == 'MNG' ? 'DISABLED' : ''; ?>>
+                    <select name="inj_<?php echo $p->player_id;?>" <?php echo $DIS || $status == MNG ? 'DISABLED' : ''; ?>>
                         <?php
                         echo "<option value='" . NONE . "' " .  ($mdat['inj'] == NONE ? 'SELECTED' : '') . ">None</option>\n";
                         echo "<option value='" . MNG . "' " .   ($mdat['inj'] == MNG ?  'SELECTED' : '') . ">MNG</option>\n";
@@ -402,7 +402,7 @@ function match_form($match_id) {
                     </select>
                 </td>
                 <td>
-                    <select name="agn1_<?php echo $p->player_id;?>" <?php echo $DIS || $status == 'MNG' ? 'DISABLED' : ''; ?>>
+                    <select name="agn1_<?php echo $p->player_id;?>" <?php echo $DIS || $status == MNG ? 'DISABLED' : ''; ?>>
                         <?php
                         echo "<option value='" . NONE . "' " .  ($mdat['agn1'] == NONE ? 'SELECTED' : '') . ">None</option>\n";
                         echo "<option value='" . NI . "' " .    ($mdat['agn1'] == NI ? 'SELECTED' : '') . ">Ni</option>\n";
@@ -414,7 +414,7 @@ function match_form($match_id) {
                     </select>
                 </td>
                 <td>
-                    <select name="agn2_<?php echo $p->player_id;?>" <?php echo $DIS || $status == 'MNG' ? 'DISABLED' : ''; ?>>
+                    <select name="agn2_<?php echo $p->player_id;?>" <?php echo $DIS || $status == MNG ? 'DISABLED' : ''; ?>>
                         <?php
                         echo "<option value='" . NONE . "' " .  ($mdat['agn2'] == NONE ? 'SELECTED' : '') . ">None</option>\n";
                         echo "<option value='" . NI . "' " .    ($mdat['agn2'] == NI ? 'SELECTED' : '') . ">Ni</option>\n";
@@ -599,7 +599,7 @@ function player_validation($p, $m) {
             return false;
         
         // Player died in a earlier match.
-        if ($p->getStatus($m->match_id) == 'DEAD')
+        if ($p->getStatus($m->match_id) == DEAD)
             return false;
     }
     // New match?
