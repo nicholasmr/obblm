@@ -124,12 +124,8 @@ class Tour
             }
             
             // Winner determinable?
-            $query = "SELECT IF(team1_score > team2_score, team1_id, team2_id) AS 'team_id' FROM matches WHERE f_tour_id = $this->tour_id AND (round = ".RT_FINAL." OR round = ".RT_STANDALONE.") AND date_played IS NOT NULL AND team1_score != team2_score";
-            $result = mysql_query($query);
-            if ($result && mysql_num_rows($result) > 0) {
-                $row = mysql_fetch_assoc($result);
-                $this->winner = $row['team_id'];
-            }
+            $teams = $this->getStandings();
+            $this->winner = $teams[0]->team_id;
         }
     }
 
