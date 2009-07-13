@@ -125,7 +125,8 @@ class Tour
             
             // Winner determinable?
             $teams = $this->getStandings();
-            $this->winner = $teams[0]->team_id;
+            if (isset($teams) && sizeof($teams)>0)
+            	$this->winner = $teams[0]->team_id;
         }
     }
 
