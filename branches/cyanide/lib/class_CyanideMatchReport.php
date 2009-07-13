@@ -16,6 +16,7 @@ class CyanideMatchReport
 	public $home_team_inflicted_cas = 0;
 	private $home_team_ff = 0;
 	private $home_team_value = 0;
+	public $home_team_fans = 0;
 	
 	public $away_team_name = "";
 	public $away_team_score = 0;
@@ -24,6 +25,7 @@ class CyanideMatchReport
 	public $away_team_inflicted_cas = 0;
 	private $away_team_ff = 0;
 	private $away_team_value = 0;
+	public $away_team_fans = 0;
 	
 	// ['name', 'mvp', 'cp', 'td', 'int', 'cas', 'ki', 'inj']
 	public $home_team_player_data = array();
@@ -46,7 +48,7 @@ class CyanideMatchReport
 		$match_report_db = new PDO("sqlite:" . $sqlite_file_path);
 		
 		// team names, scores, casulties
-		$query = "SELECT A.strName AS Away_strName, Away_iScore, Away_Inflicted_iCasualties, Away_Inflicted_iDead, H.strName AS Home_strName, Home_iScore, Home_Inflicted_iCasualties, Home_Inflicted_iDead FROM Calendar, Away_Team_Listing A, Home_Team_Listing H";
+		$query = "SELECT A.strName AS Away_strName, Away_iScore, Away_Inflicted_iCasualties, Away_Inflicted_iDead, H.strName AS Home_strName, Home_iScore, Home_Inflicted_iCasualties, Home_Inflicted_iDead, iSpectators FROM Calendar, Away_Team_Listing A, Home_Team_Listing H";
 		if (!($result = $match_report_db->query($query)))
 			return false;
 		
@@ -61,6 +63,7 @@ class CyanideMatchReport
 		$this->home_team_name = $row['Home_strName'];
 		$this->home_team_score = $row['Home_iScore'];
 		$this->home_team_inflicted_cas = $row['Home_Inflicted_iCasualties'] + $row['Home_Inflicted_iDead'];
+		$this->spectators = $row['iSpectators'];
 		
 		// team ff, values
 		$query = "SELECT A.iPopularity AS Away_ff, A.iValue AS Away_value, H.iPopularity AS Home_ff, H.iValue AS Home_value FROM Away_Team_Listing A, Home_Team_Listing H;";
@@ -289,8 +292,46 @@ class CyanideMatchReport
 		if ($away_cash_earned < 0)
 			$away_cash_earned = 0;
 		
+		$this->home_team_fans = $home_team_fans;
+		$this->away_team_fans = $away_team_fans;
 		$this->home_team_cash_earned = $home_cash_earned;
 		$this->away_team_cash_earned = $away_cash_earned;
+	}
+	
+	/*
+	 * Reverses home team and away team
+	 */
+	public function reverseHomeAndAway () {
+		
+		$tmp_team_name = $this->home_team_name;
+		$tmp_team_score = $this->home_team_score;
+		$tmp_team_cash_earned = $this->home_team_cash_earned;
+		$tmp_team_ff_variation = $this->home_team_ff_variation;
+		$tmp_team_inflicted_cas = $this->home_team_inflicted_cas;
+		$tmp_team_ff = $this->home_team_ff;
+		$tmp_team_value = $this->home_team_value;
+		$tmp_team_fans = $this->home_team_fans;
+		$tmp_team_player_data = $this->home_team_player_data;
+		
+		$this->home_team_name = $this->away_team_name;
+		$this->home_team_score = $this->away_team_score;
+		$this->home_team_cash_earned = $this->away_team_cash_earned;
+		$this->home_team_ff_variation = $this->away_team_ff_variation;
+		$this->home_team_inflicted_cas = $this->away_team_inflicted_cas;
+		$this->home_team_ff = $this->away_team_ff;
+		$this->home_team_value = $this->away_team_value;
+		$this->home_team_fans = $this->away_team_fans;
+		$this->home_team_player_data = $this->away_team_player_data;
+		
+		$this->away_team_name = $tmp_team_name;
+		$this->away_team_score = $tmp_team_score;
+		$this->away_team_cash_earned = $tmp_team_cash_earned;
+		$this->away_team_ff_variation = $tmp_team_ff_variation;
+		$this->away_team_inflicted_cas = $tmp_team_inflicted_cas;
+		$this->away_team_ff = $tmp_team_ff;
+		$this->away_team_value = $tmp_team_value;
+		$this->away_team_fans = $tmp_team_fans;
+		$this->away_team_player_data = $tmp_team_player_data;
 	}
 	
 }

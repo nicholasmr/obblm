@@ -93,6 +93,10 @@ function match_form($match_id) {
     	
     	@unlink(UPLOAD_MATCH_REPORT_DIR . "/" . $id);
     	
+    	// Check if team1=home team, reverse home and away otherwise
+    	if ($team1->name == $match_report->away_team_name)
+    		$match_report->reverseHomeAndAway();
+    	
     	if ($match_report->home_team_name != $team1->name || $match_report->away_team_name != $team2->name) {
     		
     		title ($lng->getTrn('secs/fixtures/report/wrong_teams'));
@@ -753,7 +757,7 @@ function submit_form ($m, $team1, $team2, $coach, $stars, $match_id) {
 function prepareForm ($match_report, $m, $team1, $team2) {
 	
 		// Prepare POST values for the form
-		$_POST['gate'] = $match_report->spectators;
+		$_POST['gate'] = $match_report->spectators/1000;
     	$_POST['result1'] = $match_report->home_team_score;
     	$_POST['tcas1'] = $match_report->home_team_inflicted_cas;
     	$_POST['result2'] = $match_report->away_team_score;
@@ -766,7 +770,7 @@ function prepareForm ($match_report, $m, $team1, $team2) {
     	
     	$_POST['stadium'] = $m->team1_id;
     	$_POST['summary'] = "";
-    	$_POST['fans'] = 0;
+    	$_POST['fans'] = $match_report->home_team_fans + $match_report->away_team_fans;
     	$_POST['smp1'] = 0;
     	$_POST['smp2'] = 0;
     	

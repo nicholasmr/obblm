@@ -75,7 +75,7 @@ $rules['val_reduc_st'] = 0; // Default is 0 (disabled).
 $rules['val_reduc_av'] = 0; // Default is 0 (disabled).
 $rules['val_reduc_ag'] = 0; // Default is 0 (disabled).
 
-$rules['enable_stars_mercs'] = true; // Default is true. Enable star players and mercenaries.
+$rules['enable_stars_mercs'] = false; // Default is true. Enable star players and mercenaries.
 
 /*
     Enable the partial implementation of the LRB6 experimental rule set.
