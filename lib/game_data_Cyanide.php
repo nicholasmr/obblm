@@ -18,6 +18,5 @@ foreach ($DEA as $race_name => $attrs) {
 // Changes to present teams in Cyanide
 //
 unset ($DEA['Goblin']['players']['Bombardier']);
-$DEA['Goblin']['players']['Fanatic']['cost'] = 40000;
 
 ?>
