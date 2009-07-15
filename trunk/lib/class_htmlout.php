@@ -203,17 +203,19 @@ public static function standings($obj, $node, $node_id, array $opts)
     {
         case STATS_PLAYER:
             $tblTitle = 'Player standings';
-            $tblSortRule = 'player';
-            $DIS_VAL = !($sel_node == STATS_LEAGUE && ($sel_node_id == 0 || $sel_node_id == false));
+            $tblSortRule = 'player_overall';
+            $DIS_VAL = !($sel_node == false && $sel_node_id == false);
             $fields_before = array(
                 'name'      => array('desc' => 'Player', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'player_id', 'value' => 'player_id')),
                 'team_name' => array('desc' => 'Team',   'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'owned_by_team_id')), 
             );
             $fields_after = array(
-                'mvp'   => array('desc' => 'MVP'), 
-                'spp'   => array('desc' => 'SPP'),
+                'mvp'   => array('desc' => 'MVP'.(($set_avg) ? '*' : '')), 
+                'spp'   => array('desc' => 'SPP'.(($set_avg) ? '*' : '')),
                 'value' => array('desc' => 'Value', 'nosort' => $DIS_VAL, 'kilo' => !$DIS_VAL, 'suffix' => (!$DIS_VAL) ? 'k' : ''), 
             );
+            global $settings;
+            $extra['limit'] = $settings['entries_players'];
             $objs = Player::getPlayers();
             foreach ($objs as $o) {
                 if     ($o->is_sold) $o->HTMLbcolor = COLOR_HTML_SOLD;

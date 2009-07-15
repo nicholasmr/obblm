@@ -930,12 +930,9 @@ function sec_teams() {
 
 function sec_players() {
 
-    global $settings, $lng;
-    
+    global $lng;
     title($lng->getTrn('global/secLinks/players'));
-
     HTMLOUT::standings(STATS_PLAYER,false,false,array('url' => 'index.php?section=players'));
-
     ?>
     <?php echo $lng->getTrn('secs/players/colors');?>:
     <ul>
