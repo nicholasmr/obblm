@@ -899,7 +899,7 @@ function sec_admin() {
                 </select>
                
                 <br><br>
-                <b>New tournament type:</b> <?php echo $lng->getTrn('secs/admin/conv_warn');?><br>
+                <b>New tournament type:</b><br>
                 <input type="radio" name="ttype" value="<?php echo TT_RROBIN;?>" > Round-Robin<br>
                 <input type="radio" name="ttype" value="<?php echo TT_FFA;?>" CHECKED> FFA (free for all) single match<br>
                 <br>
@@ -979,7 +979,7 @@ function sec_admin() {
                     }
                     ?>
                 </select><br><br>
-                Lock/unlock (check/unchecked)?
+                <b>Set locked state to</b> (locked/unlocked = checked/unchecked):
                 <input type="checkbox" name="lock" value="1">
                 <br><br>
                 <input type="hidden" name="type" value="lock">

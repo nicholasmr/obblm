@@ -49,7 +49,7 @@ define('STATS_DIVISION', 12);
 define('STATS_LEAGUE',   13);
 
 // Translation between MySQL column match data references in the match_data table to PHP STATS_* constants.
-$CONST_TRANS = array(
+$STATS_TRANS = array(
     STATS_PLAYER    => 'match_data.f_player_id',
     STATS_TEAM      => 'match_data.f_team_id',
     STATS_COACH     => 'match_data.f_coach_id',

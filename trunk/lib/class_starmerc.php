@@ -104,14 +104,14 @@ class Star
                 - hiredAgainstName  (team name)
         */
         
-        global $CONST_TRANS;
+        global $STATS_TRANS;
         $matches = array();
         
         $query = "SELECT DISTINCT f_match_id, f_team_id FROM match_data, matches WHERE 
             f_match_id = match_id 
             AND f_player_id = $this->star_id 
-                ".(($obj)  ? ' AND '.$CONST_TRANS[$obj]. " = $obj_id "  : '').'
-                '.(($node) ? ' AND '.$CONST_TRANS[$node]." = $node_id " : '').'
+                ".(($obj)  ? ' AND '.$STATS_TRANS[$obj]. " = $obj_id "  : '').'
+                '.(($node) ? ' AND '.$STATS_TRANS[$node]." = $node_id " : '').'
             ORDER BY date_played DESC';
             
         if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
@@ -157,7 +157,7 @@ class Star
             Returns an array of star objs for each (depending on arguments) star player.
         */
         
-        global $stars, $CONST_TRANS;
+        global $stars, $STATS_TRANS;
         $starObjs = array();
         
         if (!($obj || $node)) {
@@ -166,8 +166,8 @@ class Star
         else {
             $query = "SELECT DISTINCT f_player_id FROM match_data, matches WHERE 
                 f_match_id = match_id AND f_player_id <= ".ID_STARS_BEGIN." 
-                ".(($obj)  ? ' AND '.$CONST_TRANS[$obj]. " = $obj_id "  : '').'
-                '.(($node) ? ' AND '.$CONST_TRANS[$node]." = $node_id " : '');
+                ".(($obj)  ? ' AND '.$STATS_TRANS[$obj]. " = $obj_id "  : '').'
+                '.(($node) ? ' AND '.$STATS_TRANS[$node]." = $node_id " : '');
             if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
                 while ($row = mysql_fetch_assoc($result)) {
                     array_push($starObjs, new Star($row['f_player_id']));

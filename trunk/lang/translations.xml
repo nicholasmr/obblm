@@ -847,7 +847,6 @@
             </import_notice2>
 
             <!-- Subsec: Tournament handling -->
-            <conv_warn>Warning: Use this feature with caution. Please don't use it to convert K.O. tours.</conv_warn>
             <advise>
                 <have_read>I have read the below advisement</have_read>
                 <pre>

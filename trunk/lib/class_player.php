@@ -829,25 +829,12 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
             return null;
     }
     
-    public static function theDoctor($code = false) {
+    public static function theDoctor($const) {
 
         /* The doctor translates PHP constants into their string equivalents. */
-
-        if ($code) {
-            switch($code)
-            {
-                case NONE:  return 'none';
-                case MNG:   return 'mng';
-                case NI:    return 'ni';
-                case MA:    return 'ma';
-                case AV:    return 'av';
-                case AG:    return 'ag';
-                case ST:    return 'st';
-                case DEAD:  return 'dead';
-            }
-        }
         
-        return false;
+        global $STATUS_TRANS;
+        return strtolower($STATUS_TRANS[$const]);
     }
 
     public static function create(array $input, $journeyman = false) {
