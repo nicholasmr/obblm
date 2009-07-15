@@ -142,7 +142,7 @@ public static function getAllStats($obj, $obj_id, $node, $node_id, $opp_obj, $op
     );
     
     if ($set_avg) {
-        foreach (array('td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'score_team', 'score_opponent') as $key) {
+        foreach (array('td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'mvp', 'spp', 'tdcas', 'score_team', 'score_opponent') as $key) {
             $stats[$key] = ($stats['played'] == 0) ? 0 : $stats[$key]/$stats['played'];
         }
     }
