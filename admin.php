@@ -324,6 +324,10 @@ function sec_admin() {
         ?><br><br>
       
         <form method="POST" name="tourForm" action="index.php?section=admin&amp;subsec=tournament">
+            <b><?php echo $lng->getTrn('secs/admin/tour_type');?>:</b><br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA match <i>(Free For All a.k.a. "open league format" - creates a single match)</i><br>
+            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
+            <br>
             <table><tr>
                 <td>
                     <b><?php echo $lng->getTrn('secs/admin/div_name');?>:</b><br>
@@ -346,6 +350,13 @@ function sec_admin() {
                     }
                     ?>
                     </select>
+                    <br><br>
+                    <?php echo $lng->getTrn('secs/admin/rrobin_rnds');?><br>
+                    <select name="rounds">
+                    <?php
+                    foreach (range(1, 10) as $i) echo "<option value='$i'>$i</option>\n";
+                    ?>
+                    </select>
                 </td>
                 <td>
                     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -353,7 +364,7 @@ function sec_admin() {
                 <td>
                     <div id="existTour" style="display:none;">
                         <b><font color="blue"><?php echo $lng->getTrn('secs/admin/add_match');?></font></b><br>
-                        <select name="existTour">
+                        <select name="existTour" onChange="chFFATour(this.options[this.selectedIndex].value);">
                             <optgroup label="New FFA">
                                 <option value='-1'><?php echo $lng->getTrn('secs/admin/new_tour');?></option>
                             </optgroup>
@@ -386,17 +397,6 @@ function sec_admin() {
                 </td>
             </tr></table>
             <br>
-            <b><?php echo $lng->getTrn('secs/admin/tour_type');?>:</b><br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA (free for all) single match<br>
-            <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
-            <br>
-            <?php echo $lng->getTrn('secs/admin/rrobin_rnds');?><br>
-            <select name="rounds">
-            <?php
-            foreach (range(1, 10) as $i) echo "<option value='$i'>$i</option>\n";
-            ?>
-            </select>
-            <br><br>
             <b><?php echo $lng->getTrn('secs/admin/participants');?>:</b><br>
             <?php
             $teams = Team::getTeams();

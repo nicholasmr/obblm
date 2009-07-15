@@ -82,6 +82,8 @@ class Match
         foreach ($row as $col => $val) {
             $this->$col = ($val) ? $val : 0;
         }
+        $this->locked = (bool) $this->locked;
+        $this->is_played = !empty($this->date_played);
         
         // Make class string properties = empty strings, and not zero's.
         foreach (array('date_created', 'date_played', 'date_modified') as $field) {
@@ -109,29 +111,11 @@ class Match
             $this->winner = 0;
             $this->is_draw = true;
         }
-        
-        if (!empty($this->date_played))
-            $this->is_played = true;
-            
-        // ALWAYS lock waiting matches from knock-out tournaments (team id = 0), since they are not ready to be played, but are only for display.
-        if (($this->team1_id == 0 || $this->team2_id == 0) && !$this->locked)
-            $this->toggleLock();
     }
 
-    public function toggleLock() {
-        
-        /**
-         * Toggles the lock-status of this match.
-         **/
-        
-        $query = "UPDATE matches SET locked = " . ($this->locked ? 'NULL' : '1') . " WHERE match_id = $this->match_id";
-        
-        if (mysql_query($query)) {
-            $this->locked = $this->locked ? false : true;
-            return true;
-        }
-        else
-            return false;
+    public function setLocked($lock) {
+        $this->locked = (bool) $lock;
+        return mysql_query("UPDATE matches SET locked = ".(($lock) ? 1 : 0)." WHERE match_id = $this->match_id");
     }
 
     public function delete() {
