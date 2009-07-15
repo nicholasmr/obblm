@@ -667,7 +667,6 @@ class Team
         /* 
             Exports a team by the using the same fields as the import XML schema uses.
         */
-        global $STATS_TRANS;
         
         $ELORanks = ELO::getRanks(false);
         $this->elo = $ELORanks[$this->team_id];
@@ -677,8 +676,8 @@ class Team
 
         $el_root = $dom->appendChild($dom->createElement('xmlimport'));
         
-        $el_root->appendChild($dom->createElement('coach', $this->coach_name));
-        $el_root->appendChild($dom->createElement('name', $this->name));
+        $el_root->appendChild($dom->createElement('coach', htmlspecialchars($this->coach_name, ENT_NOQUOTES, "UTF-8")));
+        $el_root->appendChild($dom->createElement('name', htmlspecialchars($this->name, ENT_NOQUOTES, "UTF-8")));
         $el_root->appendChild($dom->createElement('race', $this->race));
         $el_root->appendChild($dom->createElement('treasury', $this->treasury));
         $el_root->appendChild($dom->createElement('apothecary', $this->apothecary));
@@ -700,12 +699,12 @@ class Team
         $el_root->appendChild($dom->createElement('elo_0', $this->elo));
 
         foreach ($this->getPlayers() as $p) {
-            $status = strtolower($STATS_TRANS[$p->getStatus(-1)]);
+            $status = Player::theDoctor($p->getStatus(-1));
             if ($status == 'none') {$status = 'ready';}
             if ($p->is_sold) {$status = 'sold';}
 
             $ply = $el_root->appendChild($dom->createElement('player'));
-            $ply->appendChild($dom->createElement('name', $p->name));
+            $ply->appendChild($dom->createElement('name', htmlspecialchars($p->name, ENT_NOQUOTES, "UTF-8")));
             $ply->appendChild($dom->createElement('position', $p->pos));
             $ply->appendChild($dom->createElement('status', $status));
             $ply->appendChild($dom->createElement('stats', "$p->cp/$p->td/$p->intcpt/$p->bh/$p->si/$p->ki/$p->mvp"));

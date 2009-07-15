@@ -1333,7 +1333,7 @@ function team_roaster($team_id) {
 
 function player_roaster($player_id) {
 
-    global $lng, $STATUS_TRANS;
+    global $lng;
 
     // Is player id valid?
     if (!get_alt_col('players', 'player_id', $player_id, 'player_id') || !is_object($p = new Player($_GET['player_id'])))
@@ -1422,7 +1422,7 @@ function player_roaster($player_id) {
                                 echo "<b>SOLD</b> ($p->date_sold)";
                             }
                             else {
-                                echo (($status = strtolower($STATUS_TRANS[$p->getStatus(-1)])) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
+                                echo (($status = Player::theDoctor($p->getStatus(-1))) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
                             }
                         ?>
                         </td>
@@ -1674,62 +1674,5 @@ function player_roaster($player_id) {
 
     return true;
 }
-
-function disp_teams($coach_id = null) {
-
-    /* 
-        First generate array of team objects. 
-    */
-    
-    $teams = array();
-    
-    // Coach teams only?
-    if (isset($coach_id)) {
-        $coach = new Coach($coach_id);
-        $teams = $coach->getTeams();
-    }
-    // All teams
-    else {
-        $teams = Team::getTeams();
-    }
-    
-    objsort($teams, array('+name'));
-    
-    foreach ($teams as $t) {
-        $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');
-        $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that HTMLOUT::sort_table does not create the team link on coach name too.
-        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='" . $t->getLogo() . "'>";
-        $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
-        $lt = $t->getLatestTour();
-        $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
-        $prizes = $t->getPrizes(true);
-        $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;
-        $t->rdy = ($t->rdy) ? '<font color="green">Yes</font>' : '<font color="red">No</font>';
-    }
-
-    $fields = array(
-        'logo'      => array('desc' => 'Logo', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id'), 'nosort' => true), 
-        'name'      => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
-        'rdy'       => array('desc' => 'Ready', 'nosort' => true), 
-        'race'      => array('desc' => 'Race'), 
-        'latest_tour' => array('desc' => 'Latest tour'), 
-        'prizes'      => array('desc' => 'Prizes', 'nosort' => true), 
-        'played'    => array('desc' => 'Games'), 
-        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),  
-    );
-
-    HTMLOUT::sort_table(
-        "Teams ". (($coach_id) ? "<a href='javascript:void(0);' onclick=\"window.open('html/coach_corner_teams.html','ccorner_TeamsHelp','width=350,height=400')\">[?]</a>" : ''), 
-        "index.php?section=".(($coach_id) ? 'coachcorner' : 'teams'), 
-        $teams, 
-        $fields, 
-        array('+name'), 
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-        array('doNr' => false, 'noHelp' => true)
-    );
-    
-    return true;
-}
-
 
 ?>

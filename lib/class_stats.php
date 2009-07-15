@@ -55,7 +55,7 @@ public static function getLeaders($grp = false, $n = false, $sortRule = array(),
  ***************/
 public static function getStatsNaked(array $filter, $grp = false, $n = false, $sortRule = array())
 {
-    global $CONST_TRANS;
+    global $STATS_TRANS;
     
     switch ($grp)
     {
@@ -87,7 +87,7 @@ public static function getStatsNaked(array $filter, $grp = false, $n = false, $s
             IFNULL(SUM(bh+si+ki+td),0) AS \'tdcas\',
             IFNULL(SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5),0) AS \'spp\'            
             '.((!empty($grp)) 
-                ? ','.implode(',', array_map(create_function('$filt, $mysql', 'return "$mysql AS \'$filt\'";'), array_keys($CONST_TRANS), array_values($CONST_TRANS)))
+                ? ','.implode(',', array_map(create_function('$filt, $mysql', 'return "$mysql AS \'$filt\'";'), array_keys($STATS_TRANS), array_values($STATS_TRANS)))
                 : '')."
         FROM 
             match_data"; 
@@ -97,7 +97,7 @@ public static function getStatsNaked(array $filter, $grp = false, $n = false, $s
         $query .= " WHERE ";
         foreach ($filter as $filter_key => $id) {
             if (is_numeric($id)) {
-                $query .= (($and) ? ' AND ' : ' ').$CONST_TRANS[$filter_key]." = $id ";
+                $query .= (($and) ? ' AND ' : ' ').$STATS_TRANS[$filter_key]." = $id ";
                 $and = true;
             }
         }
@@ -182,7 +182,7 @@ public static function getStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_o
 
     /* Add imported player stats if no $node or $opp_obj is specified. */
     if (!$node && !$opp_obj) {
-        global $CONST_TRANS;
+        global $STATS_TRANS;
         $query = '
             SELECT 
                 IFNULL(SUM(mvp),0)    AS \'mvp\', 
@@ -198,7 +198,7 @@ public static function getStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_o
                 IFNULL(SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5),0) AS \'spp\'
             FROM 
                 match_data
-            WHERE '.$CONST_TRANS[$obj]." = $obj_id AND f_match_id = ".MATCH_ID_IMPORT;
+            WHERE '.$STATS_TRANS[$obj]." = $obj_id AND f_match_id = ".MATCH_ID_IMPORT;
         $result = mysql_query($query);
         foreach (mysql_fetch_assoc($result) as $key => $val) {
             $r[$key] += $val;

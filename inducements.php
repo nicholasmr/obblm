@@ -104,7 +104,7 @@ while ($i <= MAX_STARS) {
     if ($sid != 0) {
       $s = new Star($sid);
 
-      $s->setStats(false, false, false);
+      $s->setStats(false, false, false, false);
       $star_list[$i] = $star_list[0];
       if ($sid == "-6" || $sid == "-7") { // Select Brick as selected and add row for Grotty later
         $brick_n_grotty = true;
@@ -112,7 +112,7 @@ while ($i <= MAX_STARS) {
         $star_list[$i] = str_replace('option style="background-color: '.COLOR_HTML_READY.';" value="-6"', 'option selected style="background-color: '.COLOR_HTML_READY.';" value="-6"', $star_list[$i]);
         $sid = -6;
         $s = new Star($sid); // Making sure to switch from Grotty to Brick
-        $s->setStats(false, false, false);
+        $s->setStats(false, false, false, false);
         $star_list[0] = str_replace('      <option value="-6">Brick Far\'th (+ Grotty)</option>'."\n",'',$star_list[0]); // Removing Brick from second row
         $star_list[0] = str_replace('      <option style="background-color: '.COLOR_HTML_READY.';" value="-6">Brick Far\'th (+ Grotty)</option>'."\n", '', $star_list[0]);
         $star_list[0] = str_replace('      <option value="-7">Grotty (included in Brick Far\'th)</option>'."\n",'',$star_list[0]); // Removing Grotty from second row
@@ -146,7 +146,7 @@ while ($i <= MAX_STARS) {
 if ($brick_n_grotty) { // Print Grotty and add hidden input field
   $sid = -7;  // ID for Grotty hardcoded :-P
   $s = new Star($sid);
-  $s->setStats(false, false, false);
+  $s->setStats(false, false, false, false);
   echo '<tr>';
   $grotty_nr = MAX_STARS + 1;
   echo '<td>'.$s->name.'<input type="hidden" name="Star' . $grotty_nr . '" value="-7"></td>';
