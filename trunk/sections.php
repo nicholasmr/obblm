@@ -536,10 +536,10 @@ function sec_fixturelist() {
 
     // Admin actions made?
     if (is_object($coach) && $coach->admin) {
-        if (isset($_GET['tlock']) && !preg_match('/[^0-9]$/', $_GET['tlock'])) {
-            $match = new Match($_GET['tlock']);
+        if (isset($_GET['lock']) && ($state = 1) || isset($_GET['unlock']) && ($state = 2)) {
+            $match = new Match(($state == 1) ? $_GET['lock'] : $_GET['unlock']);
             $KEEP_TOUR_OPEN = $match->f_tour_id;
-            status($match->toggleLock());
+            status($match->setLocked(($state == 1) ? true : false));
         }
         elseif (isset($_GET['mdel']) && !preg_match('/[^0-9]$/', $_GET['mdel'])) {
             $match = new Match($_GET['mdel']);
@@ -825,7 +825,7 @@ function sec_fixturelist() {
                         if ($coach->admin) {
                             echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/reset_notice')."')){return false;}\" href='?section=fixturelist&amp;reset=$match->match_id'>".$lng->getTrn('secs/fixtures/reset')."</a>&nbsp;\n";
                             echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;\n";
-                            echo "<a href='?section=fixturelist&amp;tlock=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;\n";
+                            echo "<a href='?section=fixturelist&amp;".(($match->locked) ? 'unlock' : 'lock')."=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;\n";
                         }
                     }
                     else {
@@ -1450,7 +1450,9 @@ function sec_gallery() {
 function sec_about() {
 
     global $lng;
-
+    
+    echo "<br><br><br><center><img src='images/obblm_logo.png'></center>";
+    
     title($lng->getTrn('secs/obblm/intro'));
 
     ?>
