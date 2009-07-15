@@ -38,7 +38,7 @@ function uploadpage () {
 
 	$tourlist = "";
 	foreach (Tour::getTours() as $t)
-	if ($t->type == TT_FFA)
+	if ($t->type == TT_FFA && !$t->locked)
 	$tourlist .= "<option value='$t->tour_id'>$t->name</option>\n";
 
 	Print "
