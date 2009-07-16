@@ -185,7 +185,7 @@ function report ( $matchparsed ) {
 
 	$match = new Match( $matchfields['match_id'] );
 
-	$match->toggleLock();
+	$match->setLocked(true);
 
 	Print "<br>Successfully uploaded report<br>";
 
