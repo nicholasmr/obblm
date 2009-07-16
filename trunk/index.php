@@ -32,8 +32,7 @@ if (strtolower($iniRG) == 'on' || $iniRG == 1)
     die('<font color="red">Sorry. OBBLM requires the PHP configuration directive <i>register_globals</i> set <b><u>off</u></b> in the <i>php.ini</i> configuration file. Please contact your web host.</font>');
 
 session_start();
-error_reporting(E_ALL);
-require('header.php'); // Includes and constants.
+require('header.php'); // Includes and constants + sets error_reporting() level.
 
 if (!is_writable(IMG))
     fatal('Sorry. OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
