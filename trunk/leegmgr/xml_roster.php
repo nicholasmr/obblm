@@ -28,6 +28,7 @@
  */
 
 require_once('../header.php');
+$noninjplayercount = 0;
 
 $conn = mysql_up();
 
@@ -42,6 +43,10 @@ $apothecary = $team->apothecary;
 		$apothecary = "false";
 	}
 
+$players = $team->getPlayers();
+
+if ( !checkJourneymen ( $players ) ) die('');
+
 Print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <?xml-stylesheet type=\"text/xsl\" href=\"team.xsl\"?>
 <team>
@@ -55,8 +60,6 @@ Print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <apothecary>{$apothecary}</apothecary>
     <treasury>{$team->treasury}</treasury>
     <players>\n";
-
-$players = $team->getPlayers();
 
 foreach ( $players as $p )
 {
@@ -98,5 +101,35 @@ foreach ( $players as $p )
 
 Print "    </players>
 </team>\n";
+
+function checkJourneymen ( $players )
+{
+
+	foreach ( $players as $p )
+	{
+		global $noninjplayercount;
+		if ( $p->is_journeyman && $p->spp > 0 )
+		{
+
+			Print "You have a journeyman with star players points.  Please hire or fire him.";
+			return false;
+
+		}
+
+		if ( !$p->is_dead && !$p->is_sold && !$p->is_mng ) $noninjplayercount ++;
+
+	}
+
+	if ( $noninjplayercount < 11 )
+	{
+
+		Print "You do not have enough players to participate in the next match.  Please hire a player as a journeyman or hire a player.";
+		return false;
+
+	}
+
+	return true;
+
+}
 
 ?>
