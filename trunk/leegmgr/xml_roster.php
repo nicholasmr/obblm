@@ -33,6 +33,8 @@ $noninjplayercount = 0;
 $conn = mysql_up();
 
 $team = new Team ( $_GET["teamid"] );
+$jm = 0;
+if ( isset( $_GET["jm"] ) ) $jm = $_GET["jm"];
 
 $apothecary = $team->apothecary;
 
@@ -119,11 +121,13 @@ function checkJourneymen ( $players )
 		if ( !$p->is_dead && !$p->is_sold && !$p->is_mng ) $noninjplayercount ++;
 
 	}
-
-	if ( $noninjplayercount < 11 )
+	global $jm;
+	if ( !$jm && $noninjplayercount < 11 )
 	{
 
-		Print "You do not have enough players to participate in the next match.  Please hire a player as a journeyman or hire a player.";
+		Print "You may have forgotten to hire a journeyman for the next match.  Please hire a player as a journeyman or hire a player.<br>";
+		$rosterjm = curPageURL();
+		Print "If you want to ignore this error, use the following for your roster:<br><b>{$rosterjm}</b>";
 		return false;
 
 	}
@@ -131,5 +135,16 @@ function checkJourneymen ( $players )
 	return true;
 
 }
+
+function curPageURL() {
+
+	$pageURL = 'http';
+	$pageURL .= "://";
+	$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+	$pageURL .= "&jm=1";
+	return $pageURL;
+
+}
+
 
 ?>
