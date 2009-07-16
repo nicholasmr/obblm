@@ -1163,7 +1163,7 @@ function sec_admin() {
                     <div class="boxTitle3">Create division</div>
                     <div class="boxBody">
                     <form method="POST">
-                    League:<br>
+                    In league:<br>
                     <select name='lid'>
                         <?php
                         foreach ($leagues as $l) {
@@ -1200,7 +1200,7 @@ function sec_admin() {
                         }
                         ?>
                     </select><br><br>
-                    Name:<br>
+                    New name:<br>
                     <input type="text" name="name"><br><br>
                     <input type='submit' value='Modify' <?php echo empty($divisions) ? ' DISABLED ' : '';?>>
                     <input type='hidden' name='type' value='mod_division'>
@@ -1258,9 +1258,9 @@ function sec_admin() {
                         }
                         ?>
                     </select><br><br>
-                    Name:<br>
+                    New name:<br>
                     <input type="text" name="name"><br><br>
-                    Location:<br>
+                    New location:<br>
                     <input type="text" name="location"><br><br>
                     <input type='submit' value='Modify' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
                     <input type='hidden' name='type' value='mod_league'>

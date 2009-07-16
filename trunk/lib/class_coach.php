@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2008. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -49,9 +49,8 @@ class Coach
     
         // MySQL stored information
         $result = mysql_query("SELECT * FROM coaches WHERE coach_id = $coach_id");
-        $row    = mysql_fetch_assoc($result);
-        foreach ($row as $col => $val)
-            $this->$col = $val ? $val : 0;
+        foreach (mysql_fetch_assoc($result) as $col => $val)
+            $this->$col = ($val) ? $val : 0;
             
         $this->admin = ($this->ring == RING_SYS);
         if (empty($this->mail)) $this->mail = '';           # Re-define as empty string, and not numeric zero.
@@ -71,8 +70,6 @@ class Coach
             if (!array_key_exists($key, $this->settings) || !isset($this->settings[$key]))
                 $this->settings[$key] = $val;
         }
-        
-        return true;
     }
     
     public function setStats($node, $node_id, $set_avg = false)
