@@ -52,12 +52,11 @@ function mk_tables() {
 <small>
 <?php
 
-// Option B?
-if (isset($_POST['opt_b'])) {
+// Setup DB?
+if (isset($_POST['setup'])) {
 
     // Erase old tables first.
-    $conn = mysql_up();
-    if ($conn) {
+    if ($conn = mysql_up()) {
         mysql_select_db($db_name);
         mysql_query("DROP TABLES IF EXISTS coaches, teams, players, matches, tours, match_data, texts");
         mysql_close($conn);
@@ -71,11 +70,10 @@ if (isset($_POST['opt_b'])) {
 }
 else {
     ?>
-    <u><b>Please make sure that:</b></u><br><br>
-    The MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>
+    Please make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>
 
     <form method="POST">
-        <input type="submit" name="opt_b" value="Setup DB for OBBLM!">
+        <input type="submit" name="setup" value="Setup DB for OBBLM">
     </form>
     <?php
 }
