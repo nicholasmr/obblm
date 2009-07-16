@@ -124,6 +124,7 @@ class Match
          * Deletes this match (ignoring consequences).
          **/
     
+        // Delete match entry and match data.
         $q = array();
         $q[] = "DELETE FROM matches     WHERE match_id = $this->match_id";
         $q[] = "DELETE FROM match_data  WHERE f_match_id = $this->match_id";
@@ -131,6 +132,11 @@ class Match
         foreach ($q as $query) {
             $status &= mysql_query($query);
         }
+        
+        // Subtract team treasury.
+        $t1 = new Team($this->team1_id);
+        $t2 = new Team($this->team2_id);
+        $status &= $t1->dtreasury(-1*$this->income1) && $t2->dtreasury(-1*$this->income2);
         
         return $status;
     }
