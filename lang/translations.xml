@@ -119,7 +119,8 @@
             
             <standings>Standings</standings>
             <desc>Description</desc>
-            <fin>finished</fin>
+            <fin>Finished</fin>
+            <locked>Locked</locked>
             <undecided>Undecided</undecided>
             <winner>Winner</winner>
             

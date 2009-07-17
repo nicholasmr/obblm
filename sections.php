@@ -197,7 +197,7 @@ function sec_main() {
     if ($settings['show_active_tours']) {
         $tours = Tour::getTours();
         foreach ($tours as $t) {
-            if ($t->begun && !$t->is_finished) {
+            if ($t->is_begun && !$t->is_finished) {
                 $teams = $t->getTeams();
                 foreach ($teams as $team) {
                     $team->setStats(STATS_TOUR, $t->tour_id);
@@ -753,7 +753,7 @@ function sec_fixturelist() {
         if (is_object($rounds)) continue;
 
         // Skip tournaments which have no rounds/matches
-//        if ($flist[$tour]['tour_obj']->empty)
+//        if ($flist[$tour]['tour_obj']->is_empty)
 //            continue;
 
         $t = $flist[$tour]['tour_obj'];
@@ -763,7 +763,13 @@ function sec_fixturelist() {
             <tr class='dark'>
                 <td>
                     <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
-                    <?php echo "<b>$tour</b>".(($t->is_finished) ? '&nbsp;&nbsp;<i>- '.$lng->getTrn('secs/fixtures/fin').'</i>' : '');?>
+                    <?php 
+                    echo "<b>$tour</b>";
+                    $suffix = '';
+                    if ($t->is_finished) { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('secs/fixtures/fin').'</i>&nbsp;&nbsp;';}
+                    if ($t->locked)      { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('secs/fixtures/locked').'</i>&nbsp;&nbsp;';}
+                    if (!empty($suffix)) { echo '&nbsp;&nbsp;'.$suffix;}
+                    ?>
                 </td>
                 <td style='width:25%; text-align:right;'>
                     <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
