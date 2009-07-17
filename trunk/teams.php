@@ -386,7 +386,7 @@ function team_roaster($team_id) {
                     HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
                         'url' => "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
                         'GET_SS' => 'shh', 
-                        'anchor' => 'shh')
+                        'anchor' => 'shhanc')
                     );
                 }
                 ?>
