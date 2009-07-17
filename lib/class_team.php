@@ -1240,6 +1240,9 @@ class Team
 			
 			// Skills
 			$skills = array_merge($player->ach_nor_skills, $player->ach_dob_skills, $player->extra_skills);
+			if ($player->is_journeyman) {
+				array_push($skills, "Loner");
+			}
 			foreach ($skills as $skill) {
 				
 				if ($skill == "Claw/Claws")
