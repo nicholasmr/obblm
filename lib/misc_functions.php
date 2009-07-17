@@ -206,11 +206,6 @@ function get_pic($path, $id) {
     else return NO_PIC;
 }
 
-// Log changes to team:
-function logTeamAction($str, $tid) {
-    @SiteLog::create("$_SESSION[coach] changed ".get_alt_col('teams', 'team_id', $tid, 'name').': '.$str, $_SESSION['coach_id']);
-}
-
 // Prints page title for main section pages.
 function title($title) {
     echo "<h2>$title</h2>\n";

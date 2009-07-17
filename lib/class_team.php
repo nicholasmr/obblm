@@ -491,7 +491,6 @@ class Team
         /**
          * Add a delta to team's treasury.
          **/
-        @logTeamAction("Added treasury delta = $delta", $this->team_id);
         
         $query = "UPDATE teams SET treasury = treasury + $delta WHERE team_id = $this->team_id";
         if (mysql_query($query)) {
