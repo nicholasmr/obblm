@@ -222,7 +222,7 @@ function addMatch ( $matchparsed ) {
 		$match_id = getschMatch( $hometeam_id, $awayteam_id );
 	if ( !$match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
 		Print "<br>Creating match.<br>";
-		$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 255, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
+		$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 1, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
 	}
 
 	unset( $input );
