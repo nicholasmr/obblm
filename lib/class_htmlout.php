@@ -254,9 +254,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                     $objs = Team::getTeams();
             }
             // OPTIONALLY hide retired teams.
-            if ($ALL_TIME && $settings['hide_retired']) {
-            	$objs = array_filter($objs, create_function('$obj', 'return $obj->is_retired;'));
-            }
+            if ($ALL_TIME && $settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj->is_retired;'));}
             // Unless all-time team standings is wanted, then don't print teams who have not played in (for example) the tournament.
             if (!$ALL_TIME) {
                 $extra['remove'] = array('condField' => 'played', 'fieldVal' => 0);
@@ -303,9 +301,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             );
             $objs = Coach::getCoaches();
             // OPTIONALLY hide retired coaches.
-            if ($settings['hide_retired']) {
-            	$objs = array_filter($objs, create_function('$obj', 'return $obj->retired;'));
-    		}
+            if ($settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj->retired;'));}
             foreach ($objs as $o) {
                 $o->setStats($sel_node, $sel_node_id, $set_avg);
             }
@@ -851,9 +847,7 @@ public static function dispTeamList($obj, $obj_id)
             break;
     }
     // OPTIONALLY hide retired teams.
-    if ($settings['hide_retired']) {
-    	$teams = array_filter($teams, create_function('$t', 'return $t->is_retired;'));
-	}
+    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
     objsort($teams, array('+name'));
     foreach ($teams as $t) {
         $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');

@@ -883,13 +883,15 @@ function sec_fixturelist() {
 
 function sec_standings() {
 
-    global $lng;
+    global $lng, $settings;
+    
     title($lng->getTrn('global/secLinks/standings'));
     echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
 
     HTMLOUT::standings(STATS_TEAM,false,false,array('url' => 'index.php?section=standings', 'hidemenu' => true));
     
     $teams = Team::getTeams();
+    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
     $fields = array(
         'name'         => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')), 
         'race'         => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'f_race_id')), 
