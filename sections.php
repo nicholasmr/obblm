@@ -1929,14 +1929,14 @@ function sec_upcommingmatches() {
 
 /*************************
  *
- *  Comparence
+ *  Comparison
  *
  *************************/
 
-function sec_comparence() {
+function sec_comparison() {
     
     global $raceididx;
-    title('Comparence');
+    title('Comparison');
     
     /* Get all IDs and names for players, teams, coaches and races. */
     $players = $teams = $coaches = array();
@@ -1977,7 +1977,7 @@ function sec_comparence() {
             <td>
                 <select name="type_by" onChange="
                     selConst = Number(this.options[this.selectedIndex].value); 
-                    comparence_disableall('by'); 
+                    comparison_disableall('by'); 
                     switch(selConst) 
                     {
                         case <?php echo STATS_PLAYER;?>: document.getElementById('player_by').style.display = 'block'; break;
@@ -1996,7 +1996,7 @@ function sec_comparence() {
             <td>
                 <select name="type_ag" onChange="
                     selConst = Number(this.options[this.selectedIndex].value); 
-                    comparence_disableall('ag'); 
+                    comparison_disableall('ag'); 
                     switch(selConst) 
                     {
                         case <?php echo STATS_PLAYER;?>: document.getElementById('player_ag').style.display = 'block'; break;
@@ -2015,7 +2015,7 @@ function sec_comparence() {
             <td>
                 <select name="type_in" onChange="
                     selConst = Number(this.options[this.selectedIndex].value); 
-                    comparence_disableall('in'); 
+                    comparison_disableall('in'); 
                     switch(selConst) 
                     {
                         case <?php echo STATS_TOUR;?>:      document.getElementById('tour_in').style.display = 'block'; break;
@@ -2131,7 +2131,7 @@ function sec_comparence() {
         document.getElementById('team_ag').style.display = 'block';
         document.getElementById('league_in').style.display = 'block';
         
-        function comparence_disableall(suffix)
+        function comparison_disableall(suffix)
         {
             if (suffix == 'in') {
                 document.getElementById('tour_in').style.display = 'none';
@@ -2208,7 +2208,7 @@ function sec_comparence() {
         $objs = array((object) $stats);
         HTMLOUT::sort_table(
             'Achievements', 
-            "index.php?section=comparence", 
+            "index.php?section=comparison", 
             $objs, 
             $fields, 
             array('+won'), 
@@ -2218,7 +2218,7 @@ function sec_comparence() {
         echo "<br>";
         
         // Games played
-        HTMLOUT::recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array('url' => "index.php?section=comparence", 'n' => false, 'GET_SS' => 'gp'));
+        HTMLOUT::recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array('url' => "index.php?section=comparison", 'n' => false, 'GET_SS' => 'gp'));
     }
 }
 ?>

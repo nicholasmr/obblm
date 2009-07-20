@@ -578,7 +578,7 @@ private static function make_menu()
                     ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
                 }
                 ?>
-                <li><a href="index.php?section=comparence"><?php echo 'Comparence';?></a></li>
+                <li><a href="index.php?section=comparison"><?php echo 'Comparison';?></a></li>
                 <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
             </ul>
         </li>

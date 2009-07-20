@@ -27,6 +27,7 @@ function team_roaster($team_id) {
     global $skillarray;
     global $rules;
     global $settings;
+    global $coach;
     global $lng;
     
     // Is team id valid?
@@ -35,7 +36,6 @@ function team_roaster($team_id) {
 
     // Determine if visitor is team coach
     $team       = new Team($team_id);
-    $coach      = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
     $ALLOW_EDIT = false;
     $JMP_ANC    = false; // Jump to team actions boxes HTML anchor after page load?
 
@@ -110,12 +110,12 @@ function team_roaster($team_id) {
                 case 'unhire_journeyman': status($p->unhireJourneyman()); break;
                 case 'unsell_player':     status($p->unsell()); break;
                 case 'unbuy_goods':       status($team->unbuy($_POST['thing'])); break;
-                case 'bank':              status($team->dtreasury(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000)); break;
+                case 'bank':              status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000) && SiteLog::create("Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas", $coach->coach_id)); break;
                 case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
                 case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
                 case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
                 
-                case 'extra_skills':    
+                case 'extra_skills':
                     $func = $_POST['sign'] == '+' ? 'addSkill' : 'rmSkill';
                     status($p->$func('E', $_POST['skill'])); 
                     break;

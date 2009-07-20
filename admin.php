@@ -992,10 +992,9 @@ function sec_admin() {
     elseif (isset($_GET['subsec']) && $_GET['subsec'] == 'log') {
         title($lng->getTrn('secs/admin/log'));
         echo "<table style='width:100%;'>\n";
-        echo "<tr><td><i>Date</i></td><td><i>Message</i></td></tr>\n";
-        echo "<tr><td colspan='2'><br></td></tr>";
-        foreach (SiteLog::getLogs() as $l) {
-            echo "<tr><td>$l->date</td><td>$l->txt</td></tr>\n";
+        echo "<tr><td><i>Date</i></td><td><i>Message</i></td></tr><tr><td colspan='2'><hr></td></tr>\n";
+        foreach (SiteLog::getLogs(LOG_HIST_LENGTH) as $l) {
+            echo "<tr><td>".textdate($l->date)."</td><td>$l->txt</td></tr>\n";
         }
         echo "</table>\n";
     }
