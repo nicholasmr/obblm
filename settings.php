@@ -35,6 +35,7 @@ $settings['show_active_tours']    = true;  // Default is true. Show not only the
 $settings['fp_team_news']         = true;  // Default is true. Show team news on front page.
 $settings['fp_links']             = false; // Default is false. Generate coach, team and player links on the front page?
 $settings['force_tour_foldout']   = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.
+$settings['hide_retired']		  = false; // Defailt is false. Hides retired coaches and teams from standings tables.
 
 $settings['leegmgr_enabled']       = true;    // Enables upload of BOTOCS LRB5 application match reports.
 $settings['leegmgr_schedule']      = false;   // Uploads report to a scheduled match.  The options are [false|true|"strict"]
