@@ -481,11 +481,11 @@ class SiteLog extends _Text
         return parent::create($f_id, T_TEXT_LOG, $str, false);
     }
     
-    public static function getLogs()
+    public static function getLogs($monthsBack = false)
     {
         $logs = array();
         
-        $query = "SELECT txt_id FROM texts WHERE type = ".T_TEXT_LOG." ORDER BY date DESC";
+        $query = "SELECT txt_id FROM texts WHERE type = ".T_TEXT_LOG.(($monthsBack) ? " AND date > SUBDATE(NOW(), INTERVAL $monthsBack MONTH) " : '')." ORDER BY date DESC";
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {

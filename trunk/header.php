@@ -141,6 +141,8 @@ define('T_TEXT_LOG',    10);
 define('T_TEXT_MSMRC',  11); // Match summary comments.
 define('T_TEXT_TNEWS',  12); // Team news board messages.
 
+define('LOG_HIST_LENGTH', 3); // Show log entries for this number of months back in time.
+
 /********************* 
  *   For players
  *********************/
