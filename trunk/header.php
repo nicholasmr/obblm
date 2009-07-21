@@ -262,8 +262,10 @@ require_once('lib/class_tournament.php');
 require_once('lib/class_division.php');
 require_once('lib/class_league.php');
 require_once('lib/class_player.php');
+require_once('lib/class_player_htmlout.php');
 require_once('lib/class_starmerc.php');
 require_once('lib/class_team.php');
+require_once('lib/class_team_htmlout.php');
 require_once('lib/class_coach.php');
 require_once('lib/class_race.php');
 require_once('lib/class_stats.php');
@@ -285,7 +287,6 @@ require_once('lib/class_rss.php'); // Juergen Unfried
 require_once('lib/class_htmlout.php');
 require_once('sections.php'); // Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('matches.php');
-require_once('teams.php');
 require_once('records.php');
 require_once('admin.php');
 
