@@ -1,8 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
- *      
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *
  *
  *  This file is part of OBBLM.
  *
@@ -18,133 +18,141 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *   
+ *
  */
- 
-function team_roaster($team_id) {
 
-    global $DEA;
-    global $skillarray;
-    global $rules;
-    global $settings;
+class Team_HTMLOUT extends Team
+{
+
+public function teamPage()
+{
+    global $coach, $settings;
+    
+    /* Argument(s) passed to generating functions. */
+    $ALLOW_EDIT = (is_object($coach) && ($this->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$this->is_retired); # Show team action boxes?
+    $DETAILED   = (isset($_GET['detailed']) && $_GET['detailed'] == 1);# Detailed roster view?
+
+    /* Team pages consist of the output of these generating functions. */
+    $this->_handleActions($ALLOW_EDIT); # Handles any actions/request sent.
+    list($players, $players_backup) = $this->_loadPlayers($DETAILED); # Should come after _handleActions().
+    $this->_roster($ALLOW_EDIT, $DETAILED, $players);
+    $players = $players_backup; # Restore the $players array (_roster() manipulates the passed $players array).
+    $this->_linksAndStarMercHH($DETAILED);
+    $this->_actionBoxes($ALLOW_EDIT, $players);
+    $this->_about($ALLOW_EDIT);
+    $this->_news($ALLOW_EDIT);
+    $this->_recentGames();
+}
+
+private function _handleActions($ALLOW_EDIT)
+{
     global $coach;
-    global $lng;
-    
-    // Is team id valid?
-    if (!get_alt_col('teams', 'team_id', $team_id, 'team_id'))
-        fatal("Invalid team ID.");
+    $team = $this; // Copy. Used instead of $this for readability.
 
-    // Determine if visitor is team coach
-    $team       = new Team($team_id);
-    $ALLOW_EDIT = false;
-    $JMP_ANC    = false; // Jump to team actions boxes HTML anchor after page load?
+    // No request sent?
+    if (!isset($_POST['type']) || !$ALLOW_EDIT) {
+        return false;
+    }
 
-    if (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$team->is_retired)
-        $ALLOW_EDIT = true;
+    // Handle request.
+    if (get_magic_quotes_gpc()) {
+        $_POST['name']     = stripslashes(isset($_POST['name'])  ? $_POST['name']  : '');
+        $_POST['skill']    = stripslashes(isset($_POST['skill']) ? $_POST['skill'] : '');
+        $_POST['thing']    = stripslashes(isset($_POST['thing']) ? $_POST['thing'] : '');
+        $_POST['teamtext'] = stripslashes(isset($_POST['teamtext']) ? $_POST['teamtext'] : '');
+        $_POST['txt']      = stripslashes(isset($_POST['txt']) ? $_POST['txt'] : '');
+    }
     
-    // Detailed view wanted?
-    $DETAILED = (isset($_GET['detailed']) && $_GET['detailed'] == 1) ? true : false;
-    
-    // Team management actions sent?
-    if ($ALLOW_EDIT && isset($_POST['type'])) {
+    $p = (isset($_POST['player']) && $_POST['type'] != 'hire_player') ? new Player($_POST['player']) : null;
 
-        if (get_magic_quotes_gpc()) {
-            $_POST['name']     = stripslashes(isset($_POST['name'])  ? $_POST['name']  : '');
-            $_POST['skill']    = stripslashes(isset($_POST['skill']) ? $_POST['skill'] : '');
-            $_POST['thing']    = stripslashes(isset($_POST['thing']) ? $_POST['thing'] : '');
-            $_POST['teamtext'] = stripslashes(isset($_POST['teamtext']) ? $_POST['teamtext'] : '');
-            $_POST['txt']      = stripslashes(isset($_POST['txt']) ? $_POST['txt'] : '');
-        }
+    switch ($_POST['type']) {
+
+        case 'hire_player':
+            $status = Player::create(array(
+                'nr'        => $_POST['number'], 
+                'position'  => $_POST['player'], 
+                'team_id'   => $team->team_id, 
+                'name'      => $_POST['name']),
+                (isset($_POST['as_journeyman']) && $_POST['as_journeyman']) ? true : false);
+            status($status[0], (($status[0] == true) ? null : $status[1]));
+            break;
+
+        case 'hire_journeyman': status($p->hireJourneyman()); break;
+        case 'fire_player':     status($p->sell()); break;
+        case 'rename_player':   status($p->rename($_POST['name'])); break;
+        case 'renumber_player': status($p->renumber($_POST['number'])); break;
+        case 'rename_team':     status($team->rename($_POST['name'])); break;
+        case 'buy_goods':       status($team->buy($_POST['thing'])); break;
+        case 'drop_goods':      status($team->drop($_POST['thing'])); break;
+        case 'ready_state':     status($team->setReady(isset($_POST['bool']))); break;
+        case 'unbuy_player':    status($p->unbuy()); break;
         
-        $p = (isset($_POST['player']) && $_POST['type'] != 'hire_player') ? new Player($_POST['player']) : null;
-    
+        case 'skill':        
+            $type = null;
+            $p->setChoosableSkills();
+            if     (in_array($_POST['skill'], $p->choosable_skills['N skills'])) $type = 'N';
+            elseif (in_array($_POST['skill'], $p->choosable_skills['D skills'])) $type = 'D';
+            elseif (preg_match('/^ach_/', $_POST['skill']))                      $type = 'C';
+            status($p->addSkill($type, $_POST['skill']));
+            break;
+
+        case 'teamtext': status($team->saveText($_POST['teamtext'])); break;
+        case 'news':     status($team->writeNews($_POST['txt'])); break;
+        case 'newsdel':  status($team->deleteNews($_POST['news_id'])); break;
+        case 'newsedit': status($team->editNews($_POST['news_id'], $_POST['txt'])); break;
+
+        case 'pic': 
+            if (isset($_FILES['pic_stad'])) 
+                status(!$team->saveStadiumPic('pic_stad'));
+            elseif (isset($_FILES['pic_logo']))
+                status(!$team->saveLogo('pic_logo'));
+            break;
+    }
+
+    // Administrator tools used?
+    if ($coach->admin) {
+
         switch ($_POST['type']) {
-
-            case 'hire_player':
-                $status = Player::create(array(
-                    'nr'        => $_POST['number'], 
-                    'position'  => $_POST['player'], 
-                    'team_id'   => $team->team_id, 
-                    'name'      => $_POST['name']),
-                    (isset($_POST['as_journeyman']) && $_POST['as_journeyman']) ? true : false);
-                status($status[0], (($status[0] == true) ? null : $status[1]));
-                break;
-
-            case 'hire_journeyman': status($p->hireJourneyman()); break;
-            case 'fire_player':     status($p->sell()); break;
-            case 'rename_player':   status($p->rename($_POST['name'])); break;
-            case 'renumber_player': status($p->renumber($_POST['number'])); break;
-            case 'rename_team':     status($team->rename($_POST['name'])); break;
-            case 'buy_goods':       status($team->buy($_POST['thing'])); break;
-            case 'drop_goods':      status($team->drop($_POST['thing'])); break;
-            case 'ready_state':     status($team->setReady(isset($_POST['bool']))); break;
-            case 'unbuy_player':    status($p->unbuy()); break;
             
-            case 'skill':        
+            case 'unhire_journeyman': status($p->unhireJourneyman()); break;
+            case 'unsell_player':     status($p->unsell()); break;
+            case 'unbuy_goods':       status($team->unbuy($_POST['thing'])); break;
+            case 'bank':              status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000) && SiteLog::create("Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas", $coach->coach_id)); break;
+            case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
+            case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
+            case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
+            
+            case 'extra_skills':
+                $func = ($_POST['sign'] == '+') ? 'addSkill' : 'rmSkill';
+                status($p->$func('E', $_POST['skill'])); 
+                break;
+                
+            case 'ach_skills':
                 $type = null;
-                $p->setChoosableSkills();
-                if     (in_array($_POST['skill'], $p->choosable_skills['N skills'])) $type = 'N';
-                elseif (in_array($_POST['skill'], $p->choosable_skills['D skills'])) $type = 'D';
-                elseif (preg_match('/^ach_/', $_POST['skill']))                      $type = 'C';
-                status($p->addSkill($type, $_POST['skill']));
-                break;
-
-            case 'teamtext': status($team->saveText($_POST['teamtext'])); break;
-            case 'news':     status($team->writeNews($_POST['txt'])); break;
-            case 'newsdel':  status($team->deleteNews($_POST['news_id'])); break;
-            case 'newsedit': status($team->editNews($_POST['news_id'], $_POST['txt'])); break;
-
-            case 'pic': 
-                if (isset($_FILES['pic_stad'])) 
-                    status(!$team->saveStadiumPic('pic_stad'));
-                elseif (isset($_FILES['pic_logo']))
-                    status(!$team->saveLogo('pic_logo'));
+                if     (in_array($_POST['skill'], $p->ach_nor_skills))  $type = 'N';
+                elseif (in_array($_POST['skill'], $p->ach_dob_skills))  $type = 'D';
+                else                                                    $type = 'C'; # Assume it's a characteristic.
+                status($p->rmSkill($type, $_POST['skill']));
                 break;
         }
-
-        // Administrator tools used?
-        if ($coach->admin) {
-
-            switch ($_POST['type']) {
-                
-                case 'unhire_journeyman': status($p->unhireJourneyman()); break;
-                case 'unsell_player':     status($p->unsell()); break;
-                case 'unbuy_goods':       status($team->unbuy($_POST['thing'])); break;
-                case 'bank':              status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000) && SiteLog::create("Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas", $coach->coach_id)); break;
-                case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
-                case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
-                case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
-                
-                case 'extra_skills':
-                    $func = $_POST['sign'] == '+' ? 'addSkill' : 'rmSkill';
-                    status($p->$func('E', $_POST['skill'])); 
-                    break;
-                    
-                case 'ach_skills':
-                    $type = null;
-                    if     (in_array($_POST['skill'], $p->ach_nor_skills))  $type = 'N';
-                    elseif (in_array($_POST['skill'], $p->ach_dob_skills))  $type = 'D';
-                    else                                                    $type = 'C'; # Assume it's a characteristic.
-                    status($p->rmSkill($type, $_POST['skill']));
-                    break;
-            }
-        }
     }
+}
+
+private function _loadPlayers($DETAILED)
+{
+    /* 
+        Lets prepare the players for the roster.
+    */
+    global $settings;
+    $team = $this; // Copy. Used instead of $this for readability.
+    $players = $players_org = array();
     
-    // Set anchor jump value.
-    if (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])) {
-        $JMP_ANC = true;
-    }
-    
-    // Lets prepare the players for the roster.
-    $team = new Team($team_id); # Update team object in case of changes to team were made.
+    $team = new Team($this->team_id); # Update team object in case of changes to team were made by requested actions (_handleActions()).
     $players_org = $team->getPlayers(); 
     // Make two copies: We will be overwriting $players later when the roster has been printed, so that the team actions boxes have the correct untempered player data to work with.
-    $players = array();
     foreach ($players_org as $p) {
         array_push($players, clone $p);
     }
-    
     // Filter players depending on settings and view mode.
     $tmp_players = array();
     foreach ($players as $p) {
@@ -157,8 +165,21 @@ function team_roaster($team_id) {
         array_push($tmp_players, $p);
     }
     $players = $tmp_players;
+    
+    return array($players, $players_org);
+}
 
-    // Make the players ready for roster printing.
+private function _roster($ALLOW_EDIT, $DETAILED, $players)
+{
+    global $rules, $settings, $lng;
+    $team = $this; // Copy. Used instead of $this for readability.
+
+    /******************************
+     *
+     *   Make the players ready for roster printing.
+     *
+     ******************************/
+     
     foreach ($players as $p) {
     
         /* 
@@ -259,7 +280,7 @@ function team_roaster($team_id) {
             $s->injs = '';
             $s->value = 0;
             $s->setStats(STATS_TEAM, $team->team_id, false, false);
-            $s->cas = "$s->bh/$s->si/$s->ki"; // Must come after setStats(), since it else would overwrite.
+            $s->cas = "$s->bh/$s->si/$s->ki"; // Must come after setStats(), since it else would be overwrited.
             $s->is_dead = $s->is_sold = $s->is_mng = $s->is_journeyman = false;
             $s->HTMLbcolor = COLOR_HTML_STARMERC;
             array_push($stars, $s);
@@ -334,13 +355,16 @@ function team_roaster($team_id) {
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
         array('color' => ($DETAILED) ? true : false, 'doNr' => false, 'noHelp' => true)
     );
-    
-    // Okey, lets restore the $players array.
-    $players = $players_org;
-    
+}
+
+private function _linksAndStarMercHH($DETAILED)
+{
     /* 
         Show color descriptions in detailed view and links to special team page actions. 
     */
+
+    global $lng, $rules, $settings;
+    $team = $this; // Copy. Used instead of $this for readability.
 
     ?>
     <table class="text">
@@ -460,8 +484,11 @@ function team_roaster($team_id) {
         <?php if (!isset($_GET['sortshh'])) echo "document.getElementById('SHH').style.display='none';\n"?>
         <?php if (!isset($_GET['sortmhh'])) echo "document.getElementById('MHH').style.display='none';\n"?>
     </script>
-    
     <?php
+}
+
+private function _actionBoxes($ALLOW_EDIT, $players)
+{
     /******************************
      * Team management
      * ---------------
@@ -469,6 +496,11 @@ function team_roaster($team_id) {
      * Here we are able to view team stats and manage the team, depending on visitors privileges.
      *
      ******************************/
+     
+    global $lng, $rules, $skillarray, $coach, $DEA;
+    $team = $this; // Copy. Used instead of $this for readability.
+    $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
+     
     ?>
     <div class="tpageBox">
         <div class="boxTitle1"><a name='aanc'><?php echo $lng->getTrn('secs/teams/box_info/title');?></a></div>
@@ -1214,6 +1246,21 @@ function team_roaster($team_id) {
             <?php
         }
     }
+    
+    // If an team action was chosen, jump to actions HTML anchor.
+    if ($JMP_ANC) {
+        ?>
+        <script language="JavaScript" type="text/javascript">
+        window.location = "#aanc";
+        </script>
+        <?php
+    }
+}
+
+private function _about($ALLOW_EDIT)
+{
+    global $lng;
+    $team = $this; // Copy. Used instead of $this for readability.
 
     title("<a name='anc_about'>".$lng->getTrn('secs/teams/about')." $team->name</a>");
     ?>
@@ -1261,7 +1308,13 @@ function team_roaster($team_id) {
         </tr>
     </table>
     <?php
-  
+}
+
+private function _news($ALLOW_EDIT)
+{
+    global $lng;
+    $team = $this; // Copy. Used instead of $this for readability.
+    
     title("<a name='anc_news'>".$lng->getTrn('secs/teams/news')."</a>");
     $news = $team->getNews(MAX_TNEWS);
     ?>
@@ -1314,365 +1367,15 @@ function team_roaster($team_id) {
         </div>
     </div>
     <?php
+}
 
-  
+private function _recentGames()
+{
+    global $lng;
+    $team = $this; // Copy. Used instead of $this for readability.
+
     title("<a name='gp'>".$lng->getTrn('secs/teams/gamesplayed')."</a>");
     HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => "index.php?section=coachcorner&amp;team_id=$team->team_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
-    
-    // If an team action was chosen, jump to actions HTML anchor.
-    if ($JMP_ANC) {
-        ?>
-        <script language="JavaScript" type="text/javascript">
-        window.location = "#aanc";
-        </script>
-        <?php
-    }
-   
-    return true;
 }
 
-function player_roaster($player_id) {
-
-    global $lng;
-
-    // Is player id valid?
-    if (!get_alt_col('players', 'player_id', $player_id, 'player_id') || !is_object($p = new Player($_GET['player_id'])))
-        fatal("Invalid player ID.");
-
-    $team = new Team(get_alt_col('players', 'player_id', $player_id, 'owned_by_team_id'));
-    $coach = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
-    $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$team->is_retired);
-    $p->skills = $p->getSkillsStr(true);
-    $p->injs = $p->getInjsStr(true);
-
-    // Any save-actions made?
-    if ($ALLOW_EDIT && isset($_POST['type'])) {
-        switch ($_POST['type'])
-        {
-            case 'pic': 
-                status(!$p->savePic('pic'));
-                break;
-                
-            case 'playertext': 
-                if (get_magic_quotes_gpc()) {
-                    $_POST['playertext'] = stripslashes($_POST['playertext']);
-                }
-                status($p->saveText($_POST['playertext']));                
-                break;
-        }
-    }
-
-    /* Print player profile... */
-
-    title($p->name);
-    $players = $team->getPlayers();
-    $i = $next = $prev = 0;
-    $end = end(array_keys($players));
-    foreach ($players as $player) {
-        if ($player->player_id == $p->player_id) {
-            if ($i == 0) {
-                $prev = $end;
-                $next = 1;
-            }
-            elseif ($i == $end) {
-                $prev = $end - 1;
-                $next = 0;
-            }
-            else {
-                $prev = $i-1;
-                $next = $i+1;
-            }
-        }
-        $i++;
-    }
-    if (count($players) > 1) {
-        echo "<center><a href='index.php?section=coachcorner&amp;player_id=".$players[$prev]->player_id."'>[".$lng->getTrn('secs/playerprofile/prev')."]</a> &nbsp;|&nbsp; <a href='index.php?section=coachcorner&amp;player_id=".$players[$next]->player_id."'>[".$lng->getTrn('secs/playerprofile/next')."]</a></center><br>";
-    }
-    ?>
-    <div class="row">
-        <div class="pboxShort">
-            <div class="boxTitle2"><?php echo $lng->getTrn('secs/playerprofile/about');?></div>
-            <div class="boxBody">
-                <table class="pbox">
-                    <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/name');?></b></td>
-                        <td><?php echo "$p->name (#$p->nr)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/pos');?></b></td>
-                        <td><?php echo $p->position; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/team');?></b></td>
-                        <td><a href="index.php?section=coachcorner&amp;team_id=<?php echo $p->owned_by_team_id; ?>"><?php echo $p->team_name; ?></a></td>
-                    </tr>
-                    <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/bought');?></b></td>
-                        <td><?php echo $p->date_bought; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/status');?></b></td>
-                        <td>
-                        <?php 
-                            if ($p->is_dead) {
-                                $p->getDateDied();
-                                echo "<b><font color='red'>DEAD</font></b> ($p->date_died)";
-                            }
-                            elseif ($p->is_sold) {
-                                echo "<b>SOLD</b> ($p->date_sold)";
-                            }
-                            else {
-                                echo (($status = Player::theDoctor($p->getStatus(-1))) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
-                            }
-                        ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><b>Value</b></td>
-                        <td><?php echo $p->value/1000 .'k' ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>SPP/extra</b></td>
-                        <td><?php echo "$p->spp/$p->extra_spp" ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Wanted</b></td>
-                        <td><?php echo ($p->isWanted()) ? '<b><font color="red">Yes</font></b>' : 'No';?></td>
-                    </tr>
-                    <tr>
-                        <td><b>In HoF</b></td>
-                        <td><?php echo ($p->isInHOF()) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Won</b></td>
-                        <td><?php echo "$p->won ($p->row_won streaks)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Lost</b></td>
-                        <td><?php echo "$p->lost ($p->row_lost streaks)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Draw</b></td>
-                        <td><?php echo "$p->draw ($p->row_draw streaks)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Vis. stats</b></td>
-                        <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''><b>View</b></a>\n";; ?></td>
-                    </tr>                    
-                    <tr>
-                        <td colspan="2"><hr></td>
-                    </tr> 
-                    <tr>
-                        <td><b>Ma</b></td>
-                        <td><?php echo $p->ma; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>St</b></td>
-                        <td><?php echo $p->st; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Ag</b></td>
-                        <td><?php echo $p->ag; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Av</b></td>
-                        <td><?php echo $p->av; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Skills</b></td>
-                        <td><?php echo (empty($p->skills)) ? '<i>None</i>' : $p->skills; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Injuries</b></td>
-                        <td><?php echo (empty($p->injs)) ? '<i>None</i>' : $p->injs; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Cp</b></td>
-                        <td><?php echo $p->cp; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Td</b></td>
-                        <td><?php echo $p->td; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Int</b></td>
-                        <td><?php echo $p->intcpt; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>BH/SI/Ki</b></td>
-                        <td><?php echo "$p->bh/$p->si/$p->ki"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Cas</b></td>
-                        <td><?php echo $p->cas; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>MVP</b></td>
-                        <td><?php echo $p->mvp; ?></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <div class="pboxShort">
-            <div class="boxTitle2"><?php echo $lng->getTrn('secs/playerprofile/profile');?></div>
-            <div class="boxBody">
-                <i><?php echo $lng->getTrn('secs/playerprofile/pic');?></i><hr>
-                <?php
-                pic_box($p->getPic(), $ALLOW_EDIT);
-                ?>
-                <br><br>
-                <i><?php echo $lng->getTrn('secs/playerprofile/pic');?></i><hr>
-                <?php
-                $txt = $p->getText(); 
-                if (empty($txt)) {
-                    $txt = $lng->getTrn('secs/playerprofile/nowrite').' '.$p->name; 
-                }
-                if ($ALLOW_EDIT) {
-                    ?>
-                    <form method="POST" enctype="multipart/form-data">
-                        <textarea name='playertext' rows='8' cols='45'><?php echo $txt;?></textarea>
-                        <br><br>
-                        <input type="hidden" name="type" value="playertext">
-                        <input type="submit" name='Save' value='<?php echo $lng->getTrn('secs/playerprofile/save');?>'>
-                    </form>
-                    <?php
-                }
-                else {
-                    echo "<p>$txt</p>";
-                }
-                ?>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('ach'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/ach');?></div>
-            <div class="boxBody" id="ach">
-                <table class="pbox">
-                    <tr>
-                        <td><b>Type</b></td>
-                        <td><b>Tournament</b></td>
-                        <td><b>Opponent</b></td>
-                        <td><b>MVP</b></td>
-                        <td><b>Cp</b></td>
-                        <td><b>Td</b></td>
-                        <td><b>Int</b></td>
-                        <td><b>Cas</b></td>
-                        <td><b>Score</b></td>
-                        <td><b>Result</b></td>
-                        <td><b>Match</b></td>
-                    </tr>
-                    <?php
-                    foreach (array('intcpt' => 'Interceptions', 'cp' => 'Completions', 'td' => 'Touchdowns', 'mvp' => 'MVP awards', 'bh+ki+si' => 'Cas') as $s => $desc) {
-                        $been_there = false;
-                        foreach ($p->getAchEntries($s) as $entry) {
-                            if (!$been_there)
-                                echo "<tr><td colspan='11'><hr></td></tr>";
-                            ?>
-                            <tr>
-                                <?php
-                                $m = $entry['match_obj'];
-                                if ($been_there) {
-                                    echo '<td></td>'; 
-                                }
-                                else {
-                                    echo "<td><i>$desc: " . (($desc == 'Cas') ? $p->cas : $p->$s) . "</i></td>";
-                                    $been_there = true;
-                                }
-                                ?>
-                                <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
-                                <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
-                                <td><?php echo $entry['mvp']; ?></td>
-                                <td><?php echo $entry['cp']; ?></td>
-                                <td><?php echo $entry['td']; ?></td>
-                                <td><?php echo $entry['intcpt']; ?></td>
-                                <td><?php echo $entry['bh']+$entry['si']+$entry['ki']; ?></td>
-                                <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                                <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
-                                <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
-                            </tr>
-                            <?php
-                        }
-                    }
-                    ?>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('mbest'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/best');?></div>
-            <div class="boxBody" id="mbest">
-                <table class="pbox">
-                    <tr>
-                        <td><b>Type</b></td>
-                        <td><b>Tournament</b></td>
-                        <td><b>Opponent</b></td>
-                        <td><b>Td</b></td>
-                        <td><b>Ki</b></td>
-                        <td><b>Score</b></td>
-                        <td><b>Result</b></td>
-                        <td><b>Match</b></td>
-                    </tr>
-                    <?php
-                    foreach (array('td' => 'scorer', 'ki' => 'killer') as $s => $desc) {
-                        $been_there = false;
-                        $matches = $p->getMatchMost($s);
-                        foreach ($matches as $entry) {
-                            if (!$been_there)
-                                echo "<tr><td colspan='8'><hr></td></tr>";
-                            ?>
-                            <tr>
-                                <?php
-                                $m = $entry['match_obj'];
-                                if ($been_there) {
-                                    echo '<td></td>'; 
-                                }
-                                else {
-                                    echo "<td><i>Top $desc: " . count($matches) . " times</i></td>";
-                                    $been_there = true;
-                                }
-                                ?>
-                                <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
-                                <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
-                                <td><?php echo $entry['td']; ?></td>
-                                <td><?php echo $entry['ki']; ?></td>
-                                <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
-                                <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
-                                <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
-                            </tr>
-                            <?php
-                        }
-                    }
-                    ?>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('played'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/playedmatches');?></div>
-            <div class="boxBody" id="played">
-                <?php
-                HTMLOUT::recentGames(STATS_PLAYER, $p->player_id, false, false, false, false, array('n' => MAX_RECENT_GAMES, 'url' => "index.php?section=coachcorner&player_id=$p->player_id"));
-                ?>
-            </div>
-        </div>
-    </div>
-
-    <!-- Default open/close values for boxes -->
-    <script language="JavaScript" type="text/javascript">
-        document.getElementById('ach').style.display    = 'none';
-        document.getElementById('mbest').style.display  = 'none';
-        document.getElementById('played').style.display = 'block';
-    </script>
-    
-    <?php
-
-    return true;
 }
-
-?>

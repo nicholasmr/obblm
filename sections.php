@@ -1627,13 +1627,21 @@ function sec_coachcorner() {
 
     // If player ID is set then show player page. This MUST be checked for before checking if a team's page is wanted, else access will be denied.
     if (isset($_GET['player_id']) && !preg_match("/[^0-9]/", $_GET['player_id'])) {
-        player_roaster($_GET['player_id']);
+        if (!get_alt_col('players', 'player_id', $_GET['player_id'], 'player_id')) {
+            fatal("Invalid player ID.");
+        }
+        $player = new Player_HTMLOUT($_GET['player_id']);
+        $player->playerPage();
         return;
     }
 
     // If team ID is set then show team page.
     if (isset($_GET['team_id']) && !preg_match("/[^0-9]/", $_GET['team_id']) && $_GET['team_id'] != 'new') {
-        team_roaster($_GET['team_id']);
+        if (!get_alt_col('teams', 'team_id', $_GET['team_id'], 'team_id')) {
+                fatal("Invalid team ID.");
+        }
+        $team = new Team_HTMLOUT($_GET['team_id']);
+        $team->teamPage();
         return;
     }
 
