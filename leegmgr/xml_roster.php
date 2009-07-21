@@ -122,6 +122,7 @@ function checkJourneymen ( $players )
 
 	}
 	global $jm;
+	global $noninjplayercount;
 	if ( !$jm && $noninjplayercount < 11 )
 	{
 
