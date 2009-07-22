@@ -327,9 +327,11 @@ function setup_tables() {
         ALTER TABLE match_data  ADD INDEX idx_tr                    (f_tour_id);
         ALTER TABLE match_data  ADD INDEX idx_p_m                   (f_player_id,f_match_id);
         ALTER TABLE match_data  ADD INDEX idx_t_m                   (f_team_id,  f_match_id);
+        ALTER TABLE match_data  ADD INDEX idx_r_m                   (f_race_id,  f_match_id);
         ALTER TABLE match_data  ADD INDEX idx_c_m                   (f_coach_id, f_match_id);
         ALTER TABLE match_data  ADD INDEX idx_p_tr                  (f_player_id,f_tour_id);
         ALTER TABLE match_data  ADD INDEX idx_t_tr                  (f_team_id,  f_tour_id);
+        ALTER TABLE match_data  ADD INDEX idx_r_tr                  (f_race_id,  f_tour_id);
         ALTER TABLE match_data  ADD INDEX idx_c_tr                  (f_coach_id, f_tour_id);
     ";
 
