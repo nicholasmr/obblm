@@ -754,7 +754,7 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
     foreach ((($star_id) ? array(new Star($star_id)) : Star::getStars($obj, $obj_id, $node, $node_id)) as $s) {
         foreach ($s->getHireHistory($obj, $obj_id, $node, $node_id) as $m) {
             $o = (object) array();
-            foreach (array('match_id', 'date_played', 'hiredByName', 'hiredAgainstName') as $k) {
+            foreach (array('match_id', 'date_played', 'hiredBy', 'hiredAgainst', 'hiredByName', 'hiredAgainstName') as $k) {
                 $o->$k = $m->$k;
             }
             $s->setStats(false, false, STATS_MATCH, $m->match_id);
@@ -781,8 +781,8 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
         'date_played'       => array('desc' => 'Hire date'), 
         'name'              => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')),
         'tour'              => array('desc' => 'Tournament'),
-        'hiredByName'       => array('desc' => 'Hired by'), 
-        'hiredAgainstName'  => array('desc' => 'Opponent team'), 
+        'hiredByName'       => array('desc' => 'Hired by',      'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'hiredBy')), 
+        'hiredAgainstName'  => array('desc' => 'Opponent team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'hiredAgainst')), 
         'cp'     => array('desc' => 'Cp'), 
         'td'     => array('desc' => 'Td'), 
         'intcpt' => array('desc' => 'Int'), 
