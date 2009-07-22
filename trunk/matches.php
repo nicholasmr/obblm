@@ -342,7 +342,7 @@ function match_form($match_id) {
             <table class='match_form'>
             <tr><td class='seperator' colspan='13'></td></tr>
             <tr><td colspan='13' class='dark'>
-                <b><?php echo $t->name;?> <?php echo $lng->getTrn('secs/fixtures/report/report');?></b>
+                <b><a href="index.php?section=coachcorner&amp;team_id=<?php echo $t->team_id;?>"><?php echo $t->name;?></a> <?php echo $lng->getTrn('secs/fixtures/report/report');?></b>
             </td></tr>
             <tr><td class='seperator' colspan='13'></td></tr>
 
