@@ -80,6 +80,9 @@ NOTE: When upgrading please save your old settings file as a reference for when 
             f_player_id < 0;
 
         ALTER TABLE tours ADD COLUMN locked BOOLEAN;
+        
+        ALTER TABLE match_data ADD INDEX idx_r_tr (f_race_id, f_tour_id);
+        ALTER TABLE match_data ADD INDEX idx_r_m  (f_race_id, f_match_id);
 
 0.37 -> 0.7
 
