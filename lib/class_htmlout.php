@@ -48,42 +48,29 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
     if (!(array_key_exists('n', $opts) && $opts['n'])) {$opts['n'] = false;}
     
-    if ($obj && $obj_id) {
-        $matches = Stats::getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $opts['n'], true, false);
-        foreach ($matches as $m) {
-             $m->score = "$m->team1_score - $m->team2_score";
-             $m->result = matchresult_icon($m->result);
-             $m->mlink = "<a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[".$lng->getTrn('secs/recent/view')."]</a>";
-             $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+    $matches = ($FOR_OBJ = $obj && $obj_id) 
+        ? $matches = Stats::getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $opts['n'], true, false)
+        : $matches = Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, false);
+
+    foreach ($matches as $m) {
+        $m->score = "$m->team1_score - $m->team2_score";
+        $m->mlink = "<a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[".$lng->getTrn('secs/recent/view')."]</a>";
+        $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+        if ($FOR_OBJ) {
+            $m->result = matchresult_icon($m->result);
         }
-        $fields = array(
-            'date_played'       => array('desc' => 'Date played'), 
-            'tour_name'         => array('desc' => 'Tournament'),
-            'team1_name'        => array('desc' => 'Home'),
-            'team2_name'        => array('desc' => 'Away'),
-            'gate'              => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false), 
-            'score'             => array('desc' => 'Score', 'nosort' => true), 
-            'result'            => array('desc' => 'Result', 'nosort' => true), 
-            'mlink'             => array('desc' => 'Match', 'nosort' => true), 
-        );
     }
-    else {
-        $matches = Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, false);
-        foreach ($matches as $m) {
-             $m->score = "$m->team1_score - $m->team2_score";
-             $m->mlink = "<a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[".$lng->getTrn('secs/recent/view')."]</a>";
-             $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
-        }
-        $fields = array(
-            'date_played'       => array('desc' => 'Date played'), 
-            'tour_name'         => array('desc' => 'Tournament'),
-            'team1_name'        => array('desc' => 'Home'),
-            'team2_name'        => array('desc' => 'Away'),
-            'gate'              => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false), 
-            'score'             => array('desc' => 'Score', 'nosort' => true), 
-            'mlink'             => array('desc' => 'Match', 'nosort' => true), 
-        );
-    }
+
+    $fields = array(
+        'date_played' => array('desc' => 'Date played'), 
+        'tour_name'   => array('desc' => 'Tournament'),
+        'team1_name'  => array('desc' => 'Home', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team1_id')), 
+        'team2_name'  => array('desc' => 'Away', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team2_id')),
+        'gate'        => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false), 
+        'score'       => array('desc' => 'Score', 'nosort' => true), 
+    );
+    if ($FOR_OBJ) {$fields['result'] = array('desc' => 'Result', 'nosort' => true);}
+    $fields['mlink'] = array('desc' => 'Match', 'nosort' => true); # Must be last!
     
     HTMLOUT::sort_table(
         'Recent matches', 
