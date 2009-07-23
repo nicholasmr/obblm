@@ -91,7 +91,7 @@ define('IMG_MATCHES',   UPLOAD_DIR.'/matches');
 define('IMG_PRIZES',    UPLOAD_DIR.'/prizes');
 
 /********************* 
- *   Roster colors
+ *   Roster/status colors
  *********************/
 
 define('COLOR_HTML_NORMAL',   '#FFFFFF'); // Color used when not in detailed view mode.
@@ -208,9 +208,9 @@ define('RING_COACH', 2); // Coach/ordinary user
 
 // General OBBLM routines and data structures.
 require_once('settings.php');
-require_once('lib/game_data.php'); // LRB5
+require_once('lib/game_data.php'); # LRB5
 if ($rules['enable_lrb6x']) { 
-    require_once('lib/game_data_lrb6x.php');
+    require_once('lib/game_data_lrb6x.php'); # LRB6
 }
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
@@ -229,22 +229,22 @@ require_once('lib/class_stats.php');
 require_once('lib/class_text.php');
 require_once('lib/class_prize.php');
 require_once('lib/class_rrobin.php');
-//require_once('lib/class_knockout.php'); # Deprecated
+#require_once('lib/class_knockout.php'); # Deprecated
 require_once('lib/class_module.php');
+
+// External libraries.
+require_once('lib/class_arraytojs.php');
+require_once('lib/class_elo.php');          # Daniel S.
+require_once('lib/class_translations.php'); # Juergen Unfried
 
 // Modules.
 require_once('modules/modsheader.php'); # Registration of modules.
 
-// External libraries.
-require_once('lib/class_arraytojs.php');
-require_once('lib/class_elo.php');          // Daniel S.
-require_once('lib/class_translations.php'); // Juergen Unfried
-
 // HTML interface routines.
+require_once('sections.php'); # Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('lib/class_htmlout.php');
 require_once('lib/class_team_htmlout.php');
 require_once('lib/class_player_htmlout.php');
-require_once('sections.php'); // Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('matches.php');
 require_once('records.php');
 require_once('admin.php');

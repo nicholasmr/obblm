@@ -656,7 +656,7 @@ $DEA = array (
 				'cost'			=> 90000,
 				'icon'			=> 'kmblitzer1an'
 			),
-			'Mummie'	=> array (
+			'Mummy'	=> array (
 				'ma'        	=> 3,
  				'st'        	=> 5,
  				'ag'        	=> 1,
@@ -1099,7 +1099,7 @@ $DEA = array (
 				'cost'			=> 90000,
 				'icon'			=> 'uwight2an'
 			),
-			'Mummie'	=> array (
+			'Mummy'	=> array (
 				'ma'        	=> 3,
  				'st'        	=> 5,
  				'ag'        	=> 1,
@@ -1157,7 +1157,7 @@ $DEA = array (
 			'race_id' => 19, # (Skaven)
 		),
 		'players'	=> array (
-			'Linerat'	=> array (
+			'Lineman'	=> array (
 				'ma'        	=> 7,
  				'st'        	=> 3,
  				'ag'        	=> 3,
