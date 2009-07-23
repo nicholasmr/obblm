@@ -83,6 +83,10 @@ NOTE: When upgrading please save your old settings file as a reference for when 
         
         ALTER TABLE match_data ADD INDEX idx_r_tr (f_race_id, f_tour_id);
         ALTER TABLE match_data ADD INDEX idx_r_m  (f_race_id, f_match_id);
+        
+        UPDATE players, teams SET position = 'Lineman' WHERE owned_by_team_id = team_id AND f_race_id = 19 AND position = 'Linerat';
+        UPDATE players, teams SET position = 'Mummy'   WHERE owned_by_team_id = team_id AND f_race_id = 17 AND position = 'Mummie';
+        UPDATE players, teams SET position = 'Mummy'   WHERE owned_by_team_id = team_id AND f_race_id = 10 AND position = 'Mummie';
 
 0.37 -> 0.7
 
