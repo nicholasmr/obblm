@@ -1458,8 +1458,6 @@ function sec_about() {
 
     global $lng;
     
-    echo "<br><br><br><center><img src='images/obblm_logo.png'></center>";
-    
     title($lng->getTrn('secs/obblm/intro'));
 
     ?>
