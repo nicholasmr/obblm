@@ -1,7 +1,7 @@
 <?php
 
 /*
- *
+ *  Copyright (c) William Leonard <email protected> 2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,20 +21,15 @@
  *
  */
 
-/*
- * Author William Leonard, 2009
- *
- * Note: XXXXXX
- */
+// Registered module main function.
+function leegmgr_load() {
+    global $settings;
+    if ($settings['leegmgr_enabled']) {
+        uploadpage();
+    }
+}
 
-error_reporting(E_ALL); 
-
-require_once('class_match_botocs.php');
-require('settings.php');
-
-if ( $settings['leegmgr_enabled'] ) uploadpage();
-
-function uploadpage () {
+function uploadpage() {
 
 	$tourlist = "";
 	foreach (Tour::getTours() as $t)

@@ -85,8 +85,8 @@ Module::register(array(
     'date'          => '2009',
     'setCanvas'     => true, 
     'main'          => 'leegmgr_load', 
-    'filesRunTime'  => array('leegmgr/uploadinc.php'),
-    'filesLoadTime' => array()
+    'filesRunTime'  => array('leegmgr/class_match_botocs.php', 'leegmgr/uploadinc.php'),
+    'filesLoadTime' => array('leegmgr/settings.php')
 ));
 
 Module::register(array(
@@ -96,7 +96,7 @@ Module::register(array(
     'setCanvas'     => false, 
     'main'          => 'botocsxml_load', 
     'filesRunTime'  => array('leegmgr/xml_roster.php'),
-    'filesLoadTime' => array()
+    'filesLoadTime' => array('leegmgr/settings.php')
 ));
 
 ?>
