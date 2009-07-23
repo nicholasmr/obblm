@@ -37,12 +37,6 @@ $settings['fp_links']             = false; // Default is false. Generate coach, 
 $settings['force_tour_foldout']   = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.
 $settings['hide_retired']		  = false; // Defailt is false. Hides retired coaches and teams from standings tables.
 
-$settings['leegmgr_enabled']       = true;    // Enables upload of BOTOCS LRB5 application match reports.
-$settings['leegmgr_schedule']      = false;   // Uploads report to a scheduled match.  The options are [false|true|"strict"]
-                                              // false does not check for scheduled matches
-                                              // true checks for scheduled matches and will create a match if not found
-                                              // "strict" will allow only scheduled matches to be used
-
 /*****************
  * OBBLM rule set
  *****************/

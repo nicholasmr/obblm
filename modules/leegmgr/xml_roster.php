@@ -1,7 +1,7 @@
 <?php
 
 /*
- *
+ *  Copyright (c) William Leonard <email protected> 2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,17 +21,11 @@
  *
  */
 
-/*
- * Author William Leonard, 2009
- *
- * Note: XXXXX
- */
+// Registered module main function.
+function botocsxml_load() 
+{
 
-require_once('../header.php');
 $noninjplayercount = 0;
-
-$conn = mysql_up();
-
 $team = new Team ( $_GET["teamid"] );
 $jm = 0;
 if ( isset( $_GET["jm"] ) ) $jm = $_GET["jm"];
@@ -103,6 +97,7 @@ foreach ( $players as $p )
 
 Print "    </players>
 </team>\n";
+}
 
 function checkJourneymen ( $players )
 {
