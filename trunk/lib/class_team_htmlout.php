@@ -388,7 +388,7 @@ private function _linksAndStarMercHH($DETAILED)
             <td colspan="8">
             <?php
             $botocs = "";
-            if ($settings['leegmgr_enabled']) $botocs = " <a href='leegmgr/xml_roster.php?teamid=$_GET[team_id]'>BOTOCS-XML</a>";
+            if ($settings['leegmgr_enabled']) $botocs = " <a href='handler.php?type=botocsxml&amp;teamid=$_GET[team_id]'>BOTOCS-XML</a>";
             echo "<a href='index.php?section=coachcorner&amp;team_id=$_GET[team_id]&amp;detailed=".(($DETAILED) ? 0 : 1)."'><b>".(($DETAILED) ? $lng->getTrn('secs/teams/n_view') : $lng->getTrn('secs/teams/d_view'))."</b></a>\n";
             echo "&nbsp;|&nbsp;<b><a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=" . ($DETAILED ? '1' : '0') . "'>PDF</a> <a href='handler.php?type=xmlexport&amp;tid=$_GET[team_id]'>XML</a>{$botocs} ".$lng->getTrn('secs/teams/roster')."</b>\n";
             if ($rules['enable_stars_mercs']) {

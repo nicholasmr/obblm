@@ -661,58 +661,6 @@ class Team
         }
     }
 
-    public function xmlExport()
-    {
-        /* 
-            Exports a team by the using the same fields as the import XML schema uses.
-        */
-        
-        $ELORanks = ELO::getRanks(false);
-        $this->elo = $ELORanks[$this->team_id];
-        
-        $dom = new DOMDocument();
-        $dom->formatOutput = true;
-
-        $el_root = $dom->appendChild($dom->createElement('xmlimport'));
-        
-        $el_root->appendChild($dom->createElement('coach', htmlspecialchars($this->coach_name, ENT_NOQUOTES, "UTF-8")));
-        $el_root->appendChild($dom->createElement('name', htmlspecialchars($this->name, ENT_NOQUOTES, "UTF-8")));
-        $el_root->appendChild($dom->createElement('race', $this->race));
-        $el_root->appendChild($dom->createElement('treasury', $this->treasury));
-        $el_root->appendChild($dom->createElement('apothecary', $this->apothecary));
-        $el_root->appendChild($dom->createElement('rerolls', $this->rerolls));
-        $el_root->appendChild($dom->createElement('fan_factor', $this->fan_factor));
-        $el_root->appendChild($dom->createElement('ass_coaches', $this->ass_coaches));
-        $el_root->appendChild($dom->createElement('cheerleaders', $this->cheerleaders));
-        
-        $el_root->appendChild($dom->createElement('won_0', $this->won));
-        $el_root->appendChild($dom->createElement('lost_0', $this->lost));
-        $el_root->appendChild($dom->createElement('draw_0', $this->draw));
-        $el_root->appendChild($dom->createElement('sw_0', $this->row_won));
-        $el_root->appendChild($dom->createElement('sl_0', $this->row_lost));
-        $el_root->appendChild($dom->createElement('sd_0', $this->row_draw));
-        $el_root->appendChild($dom->createElement('wt_0', $this->won_tours));
-        $el_root->appendChild($dom->createElement('gf_0', $this->score_team));
-        $el_root->appendChild($dom->createElement('ga_0', $this->score_opponent));
-        $el_root->appendChild($dom->createElement('tcas_0', $this->tcas));
-        $el_root->appendChild($dom->createElement('elo_0', $this->elo));
-
-        foreach ($this->getPlayers() as $p) {
-            $status = Player::theDoctor($p->getStatus(-1));
-            if ($status == 'none') {$status = 'ready';}
-            if ($p->is_sold) {$status = 'sold';}
-
-            $ply = $el_root->appendChild($dom->createElement('player'));
-            $ply->appendChild($dom->createElement('name', htmlspecialchars($p->name, ENT_NOQUOTES, "UTF-8")));
-            $ply->appendChild($dom->createElement('position', $p->pos));
-            $ply->appendChild($dom->createElement('status', $status));
-            $ply->appendChild($dom->createElement('stats', "$p->cp/$p->td/$p->intcpt/$p->bh/$p->si/$p->ki/$p->mvp"));
-            $ply->appendChild($dom->createElement('injs', "$p->inj_ma/$p->inj_st/$p->inj_ag/$p->inj_av/$p->inj_ni"));
-        }
-        
-        return $dom->saveXML();
-    }
-
     /***************
      * Statics
      ***************/

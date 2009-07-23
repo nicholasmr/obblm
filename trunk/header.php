@@ -27,7 +27,7 @@ error_reporting(E_ALL);
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.75f');
+define('OBBLM_VERSION', '0.75g');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
@@ -107,21 +107,6 @@ define('COLOR_HTML_CHR_EQP1', '#90EE90'); // Characteristic equal plus one.
 define('COLOR_HTML_CHR_GTP1', '#50FF50'); // Characteristic greater than plus one.
 define('COLOR_HTML_CHR_EQM1', '#FF8888'); // Characteristic equal minus one.
 define('COLOR_HTML_CHR_LTM1', '#FF4444'); // Characteristic less than minus one.
-
-
-define('COLOR_ROSTER_NORMAL',   COLOR_HTML_NORMAL);
-define('COLOR_ROSTER_READY',    '');
-define('COLOR_ROSTER_MNG',      COLOR_HTML_MNG);
-define('COLOR_ROSTER_DEAD',     '');
-define('COLOR_ROSTER_SOLD',     '');
-define('COLOR_ROSTER_STARMERC', '');
-define('COLOR_ROSTER_JOURNEY',  COLOR_HTML_JOURNEY);
-define('COLOR_ROSTER_NEWSKILL', COLOR_HTML_NEWSKILL);
-//-----
-define('COLOR_ROSTER_CHR_EQP1', COLOR_HTML_CHR_EQP1); // Characteristic equal plus one.
-define('COLOR_ROSTER_CHR_GTP1', COLOR_HTML_CHR_GTP1); // Characteristic greater than plus one.
-define('COLOR_ROSTER_CHR_EQM1', COLOR_HTML_CHR_EQM1); // Characteristic equal minus one.
-define('COLOR_ROSTER_CHR_LTM1', COLOR_HTML_CHR_LTM1); // Characteristic less than minus one.
 
 /********************* 
  *   For texts (table)
@@ -209,39 +194,13 @@ define('MAX_ROUNDNR', RT_ROUND16); # This should have the value of the smallest 
 define('MATCH_ID_IMPORT', -1);
 
 /******************** 
- *   For matches
+ *   Security
  ********************/
  
 // Privilege rings (ie. coach access level)
 define('RING_SYS',   0); // Admins
 define('RING_COM',   1); // Commissioners.
 define('RING_COACH', 2); // Coach/ordinary user
-
-/******************** 
- *   For graphical statistics
- ********************/
-
-// SG stands for Stats Graphs.
-
-// Types
-define('SG_T_PLAYER', 1); 
-define('SG_T_TEAM',   2); 
-define('SG_T_COACH',  3); 
-define('SG_T_LEAGUE', 4); 
- 
-// Module setup
-define('SG_MULTIBAR_HIST_LENGTH', 6); // Number of months to show history from.
-define('SG_CNT_HORIZ', 3); // Number of graphs to place hirozontally next to each other.
-# Graph dimensions
-define('SG_DIM_X', 600);
-define('SG_DIM_Y', 400);
-
-/******************** 
- *   RSS related.
- ********************/
-
-define('RSS_SIZE', 20); // Number of entries in feed.
-define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, T_TEXT_HOF, T_TEXT_WANTED, T_TEXT_MSMR, T_TEXT_TNEWS))); // Create feeds from the text types.
 
 /********************
  *  Dependencies
@@ -262,29 +221,29 @@ require_once('lib/class_tournament.php');
 require_once('lib/class_division.php');
 require_once('lib/class_league.php');
 require_once('lib/class_player.php');
-require_once('lib/class_player_htmlout.php');
 require_once('lib/class_starmerc.php');
 require_once('lib/class_team.php');
-require_once('lib/class_team_htmlout.php');
 require_once('lib/class_coach.php');
 require_once('lib/class_race.php');
 require_once('lib/class_stats.php');
 require_once('lib/class_text.php');
 require_once('lib/class_prize.php');
-//require_once('lib/class_statsgraph.php'); // Should not be included here due to unnecessary load. Is included in handler.php.
 require_once('lib/class_rrobin.php');
 //require_once('lib/class_knockout.php'); # Deprecated
+require_once('lib/class_module.php');
+
+// Modules.
+require_once('modules/modsheader.php'); # Registration of modules.
 
 // External libraries.
 require_once('lib/class_arraytojs.php');
-require_once('lib/class_elo.php');    // by Daniel S.
-require_once('pdf/bb_pdf_class.php'); // Roster by Daniel S.
-require_once('pdf/pdf_roster.php');   // Roster by Daniel S.
-require_once('lang/class_translations.php'); // Juergen Unfried
-require_once('lib/class_rss.php'); // Juergen Unfried
+require_once('lib/class_elo.php');          // Daniel S.
+require_once('lib/class_translations.php'); // Juergen Unfried
 
 // HTML interface routines.
 require_once('lib/class_htmlout.php');
+require_once('lib/class_team_htmlout.php');
+require_once('lib/class_player_htmlout.php');
 require_once('sections.php'); // Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('matches.php');
 require_once('records.php');
