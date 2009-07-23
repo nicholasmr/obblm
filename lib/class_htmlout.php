@@ -115,8 +115,8 @@ public static function upcommingGames($obj, $obj_id, $node, $node_id, $opp_obj, 
     $fields = array(
         'date_created'      => array('desc' => 'Date created'), 
         'tour_name'         => array('desc' => 'Tournament'),
-        'team1_name'        => array('desc' => 'Home'),
-        'team2_name'        => array('desc' => 'Away'),
+        'team1_name'        => array('desc' => 'Home', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team1_id')), 
+        'team2_name'        => array('desc' => 'Away', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team2_id')),
         'mlink'             => array('desc' => 'Match', 'nosort' => true), 
     );
     
