@@ -372,7 +372,7 @@ function sec_admin() {
                             <?php
                             foreach (Tour::getTours() as $t)
                                 if ($t->type == TT_FFA)
-                                    echo "<option value='$t->tour_id'>$t->name".(($t->locked) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
+                                    echo "<option value='$t->tour_id' ".(($t->locked) ? 'DISABLED' : '').">$t->name".(($t->locked) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
                             ?>
                             </optgroup>
                         </select>
