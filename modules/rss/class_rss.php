@@ -36,6 +36,9 @@
  * NOTE: don't forget to include the rss.xml file into the html header
  */ 
 
+define('RSS_SIZE', 20); // Number of entries in feed.
+define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, T_TEXT_HOF, T_TEXT_WANTED, T_TEXT_MSMR, T_TEXT_TNEWS))); // Create feeds from the text types.
+
 class OBBLMRssWriter {
 	/**
 	 * The name of the channel. It's how people refer to your service.
@@ -177,6 +180,23 @@ class OBBLMRssWriter {
         fclose($handle);
         
         return $dom->saveXML();
+    }
+    
+    public static function main() {
+    
+        global $settings;
+        $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : ""; 
+        $matches = array();
+        preg_match('/(\w*)/', strtolower($_SERVER["SERVER_PROTOCOL"]), $matches); 
+        $protocol = $matches[0].$s;
+        $rss = new OBBLMRssWriter(
+            $settings['site_name'].' feed', 
+            $protocol."://".$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI']), 
+            'Blood bowl league RSS feed',
+            'en-EN', 
+            explode(',', RSS_FEEDS)
+        );
+        echo $rss->generateNewsRssFeed();
     }
 }
 ?>

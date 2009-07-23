@@ -26,15 +26,6 @@ include("jpgraph/jpgraph_mgraph.php");
 include("jpgraph/jpgraph_bar.php");
 include("jpgraph/jpgraph_pie.php");
 
-// NOTICE: The used constants are defined in header.php.
-
-#$sg_types = array(
-#    SG_CAS      => 'Current CAS distribution',
-#    SG_BHSIKI   => 'Last '.SG_MULTIBAR_HIST_LENGTH.' months casualty distribution',
-#    SG_CPTDINT  => 'Last '.SG_MULTIBAR_HIST_LENGTH.' months Cp, Td and Int distribution',
-#    SG_WLD      => 'Last '.SG_MULTIBAR_HIST_LENGTH.' months won, lost and draw distribution',
-#);
- 
 class SGraph
 {
     public static function make($type, $id, $cmp_id = false)

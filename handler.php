@@ -25,9 +25,8 @@ session_start();
 error_reporting(E_ALL);
 
 require('header.php'); // Includes and constants.
-require('lib/class_statsgraph.php');
 
-// Requirements for frame_begin and end routines.
+// Requirements. Provides the same facilities as ordinary code through index.php.
 $conn = mysql_up(false);
 $lng = new Translations($settings['lang']); # Load language.
 $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
@@ -38,40 +37,42 @@ if (!isset($_GET['type'])) {
     
 switch ($_GET['type'])
 {        
-    /***************
-     *  PDF-roster
-     ***************/
+    /* PDF-roster */
     case 'roster':
-        if (class_exists('FPDF') && class_exists('BB_PDF')) {
-            fpdf_roster();
-        }
-        else {
-            fatal("Sorry. FPDF support is required for this feature to work.");        
-        }
+        Module::run('pdfroster', array());
         break;
 
-    /***************
-     *  RSS feed
-     ***************/        
+    /* RSS feed */
     case 'rss':
-        global $settings;
-        $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : ""; 
-        $matches = array();
-        preg_match('/(\w*)/', strtolower($_SERVER["SERVER_PROTOCOL"]), $matches); 
-        $protocol = $matches[0].$s;
-        $rss = new OBBLMRssWriter(
-            $settings['site_name'].' feed', 
-            $protocol."://".$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI']), 
-            'Blood bowl league RSS feed',
-            'en-EN', 
-            explode(',', RSS_FEEDS)
-        );
-        echo $rss->generateNewsRssFeed();
+        Module::run('rss', array());
         break;
         
-    /***************
-     *  Match gallery
-     ***************/
+    /* Visual stats */
+    case 'graph':
+        Module::run('statsgraph', array($_GET['gtype'], $_GET['id'], false));
+        break;
+        
+    /* Inducements */
+    case 'inducements':
+        Module::run('inducements', array());
+        break;
+
+    /* BOTOCS match import */
+    case 'leegmgr':
+        Module::run('leegmgr', array());
+        break;
+
+    /* Team BOTOCS XML export */
+    case 'botocsxml':
+        Module::run('botocsxml', array());
+        break;
+
+    /* Team XML export */
+    case 'xmlexport':
+        Module::run('teamxmlexport', array($_GET['tid']));
+        break;
+
+    /* Match gallery */
     case 'mg':
     
         if (!isset($_GET['mid']) || !is_numeric($_GET['mid']) || !is_object($m = new Match($_GET['mid']))) {
@@ -93,36 +94,6 @@ switch ($_GET['type'])
         echo "<br><br>\n";
         echo "<img src='".$pics[$curPic]."'>\n";
                 
-        break;
-
-    /***************
-     *  Visual stats
-     ***************/
-    case 'graph':
-        SGraph::make($_GET['gtype'], $_GET['id'], false);
-                
-        break;
-        
-    /***************
-     *  Inducements
-     ***************/
-    case 'inducements':
-        HTMLOUT::frame_begin(); {include('inducements.php');} HTMLOUT::frame_end(); // Daniel's try-out page.
-        break;
-
-    /***************
-     *  Team XML export
-     ***************/
-    case 'xmlexport':
-        $t = new Team($_GET['tid']);
-        echo $t->xmlExport();
-        break;
-
-    /***************
-     *  BOTOCS match import
-     ***************/
-    case 'leegmgr':
-        HTMLOUT::frame_begin(); {include('leegmgr/uploadinc.php');} HTMLOUT::frame_end();
         break;
 
     default:

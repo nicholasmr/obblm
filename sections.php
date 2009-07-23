@@ -30,7 +30,6 @@
  *  These files are:
  *
  *      - matches.php   For handling match reports.
- *      - teams.php     For handling team pages.
  *      - records.php   For handling the records section.
  *      - admin.php     For handling the admin section.
  *       
@@ -1504,6 +1503,17 @@ function sec_about() {
         OBBLM consists of valid HTML 4.01 transitional document type pages.
         <br><br>
         <img src="http://www.w3.org/Icons/valid-html401" alt="Valid HTML 4.01 Transitional" height="31" width="88">
+        
+        <br><br>
+        <b>Modules loaded:</b><br>
+        <?php
+        $mods = array();
+        foreach (Module::getRegistered() as $modname) {
+            list($author,$date) = Module::getInfo($modname);
+            $mods[] = "<i>$modname</i> ($author, $date)";
+        }
+        echo implode(', ', $mods);
+        ?>
     </p>
 
     <?php

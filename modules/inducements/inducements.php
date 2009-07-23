@@ -27,6 +27,8 @@
     
  */
 
+function indcPage()
+{
 
 // Check if teamid is provided, else show error mess
 $team_id = $_GET['team_id'];
@@ -337,3 +339,6 @@ echo '<tr><td class="indtitle">Match Value:</td><td class="indtitle">'.kilo($ind
 </body>
 </html>
 -->
+
+<?php
+}

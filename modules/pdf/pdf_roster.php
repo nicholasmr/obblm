@@ -40,11 +40,27 @@ define("MARGINY", 20);
 define("DEFLINECOLOR", '#000000');
 define("HEADLINEBGCOLOR", '#999999');
 
-// Custom settings for inducements. Should be moved to header.php or settings.php?
+// Custom settings for inducements.
 
 define('MAX_STARS', 2);
 define('MERC_EXTRA_COST', 30000);
 define('MERC_EXTRA_SKILL_COST', 50000);
+
+// Color codes.
+define('COLOR_ROSTER_NORMAL',   COLOR_HTML_NORMAL);
+define('COLOR_ROSTER_READY',    COLOR_HTML_READY);
+define('COLOR_ROSTER_MNG',      COLOR_HTML_MNG);
+define('COLOR_ROSTER_DEAD',     COLOR_HTML_DEAD);
+define('COLOR_ROSTER_SOLD',     COLOR_HTML_SOLD);
+define('COLOR_ROSTER_STARMERC', COLOR_HTML_STARMERC);
+define('COLOR_ROSTER_JOURNEY',  COLOR_HTML_JOURNEY);
+define('COLOR_ROSTER_NEWSKILL', COLOR_HTML_NEWSKILL);
+//-----
+define('COLOR_ROSTER_CHR_EQP1', COLOR_HTML_CHR_EQP1); // Characteristic equal plus one.
+define('COLOR_ROSTER_CHR_GTP1', COLOR_HTML_CHR_GTP1); // Characteristic greater than plus one.
+define('COLOR_ROSTER_CHR_EQM1', COLOR_HTML_CHR_EQM1); // Characteristic equal minus one.
+define('COLOR_ROSTER_CHR_LTM1', COLOR_HTML_CHR_LTM1); // Characteristic less than minus one.
+
 
 $ind_cost=0;
 
@@ -459,7 +475,7 @@ $pdf->RoundedRect(MARGINX+6, 435, 792, 130, 5, 'D');
 $pdf->Image($team->getLogo(),346,436,128,128,'','',false,0);
 
 // OBBLM text lower left corner as a pic
-$pdf->Image('pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
+$pdf->Image('modules/pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
 
 // Color legends
 $pdf->SetFont('Tahoma', '', 8);
