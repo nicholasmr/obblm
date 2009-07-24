@@ -473,7 +473,7 @@ function valXML($xmlresults) {
 	$xml = new DOMDocument();
 	$xml->load($tmpfname); 
 
-	if (!$xml->schemaValidate('leegmgr/botocsreport.xsd')) {
+	if (!$xml->schemaValidate('modules/leegmgr/botocsreport.xsd')) {
 		unlink($tmpfname);
 		print '<b>DOMDocument::schemaValidate() Generated Errors!</b>';
 		libxml_display_errors();
