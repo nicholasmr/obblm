@@ -258,7 +258,6 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 		{
 			global $stars;
 			$stname = strval($player['name']);
-			if ( $stname != 'Eldril Sidewinder' ) Print "The Star Player name does not match what is on the site.";
 			$f_player_id  = $stars[$stname]['id'];
 			$player['inj'] = '';
 		}
