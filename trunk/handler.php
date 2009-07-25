@@ -71,6 +71,11 @@ switch ($_GET['type'])
     case 'xmlexport':
         Module::run('teamxmlexport', array($_GET['tid']));
         break;
+        
+    /* Mem. matches */
+   	case 'memmatches':
+   		Module::run('memmatches', array());
+   		break;
 
     /* Match gallery */
     case 'mg':

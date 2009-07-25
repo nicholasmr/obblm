@@ -27,10 +27,9 @@ error_reporting(E_ALL);
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.75g');
+define('OBBLM_VERSION', '0.75h');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
-define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 
 /********************* 

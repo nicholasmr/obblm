@@ -80,6 +80,16 @@ Module::register(array(
 ));
 
 Module::register(array(
+    'modname'       => 'memmatches',
+    'author'        => 'Nicholas Mossor Rathmann',
+    'date'          => '2008-2009',
+    'setCanvas'     => true, 
+    'main'          => 'Memmatches::main', 
+    'filesRunTime'  => array('memmatches/class_memmatches.php'),
+    'filesLoadTime' => array()
+));
+
+Module::register(array(
     'modname'       => 'leegmgr',
     'author'        => 'William Leonard',
     'date'          => '2009',
