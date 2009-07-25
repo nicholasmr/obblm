@@ -1169,15 +1169,12 @@ function sec_stars() {
 
 function sec_records() {
 
-    global $lng;
-
-    $c = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
-    $ALLOW_EDIT = (is_object($c) && $c->admin) ? true : false;
+    global $lng, $coach;
+    $ALLOW_EDIT = (is_object($coach) && $coach->admin);
     $subsecs = array(
-        'hof'           => $lng->getTrn('secs/records/d_hof'), 
-        'wanted'        => $lng->getTrn('secs/records/d_wanted'), 
-        'memm'          => $lng->getTrn('secs/records/d_memma'),
-        'prize'         => $lng->getTrn('secs/records/d_prizes'),
+        'hof'    => $lng->getTrn('secs/records/d_hof'), 
+        'wanted' => $lng->getTrn('secs/records/d_wanted'), 
+        'prize'  => $lng->getTrn('secs/records/d_prizes'),
     );
 
     // This section's routines are placed in the records.php file.
@@ -1185,33 +1182,18 @@ function sec_records() {
         title($subsecs[$_GET['subsec']]);
         switch ($_GET['subsec'])
         {
-            case 'hof':
-                hof($ALLOW_EDIT);
-                break;
-                
-            case 'wanted':
-                wanted($ALLOW_EDIT);
-                break;
-
-            case 'memm':
-                mem_matches();
-                break;
-                
-            case 'prize':
-                prizes($ALLOW_EDIT);
-                break;
+            case 'hof':    hof($ALLOW_EDIT); break;
+            case 'wanted': wanted($ALLOW_EDIT); break;
+            case 'prize':  prizes($ALLOW_EDIT); break;
         }
         return;
     }
     
     title($lng->getTrn('global/secLinks/records'));
-    
     echo $lng->getTrn('secs/records/menu')."<br><br>\n";
     foreach ($subsecs as $a => $b) {
         echo "<a href='index.php?section=records&amp;subsec=$a'><b>$b</b></a><br>\n";
     }
-    // Add graphical stats link.
-    echo "<a href='handler.php?type=graph&amp;gtype=".(SG_T_LEAGUE)."&amp;id=none'><b>".$lng->getTrn('secs/records/d_gstats')."</b></a><br>\n";
 }
 
 /*************************

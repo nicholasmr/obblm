@@ -561,6 +561,7 @@ private static function make_menu()
                     ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
                 }
                 ?>
+                <li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li>
                 <li><a href="index.php?section=comparison"><?php echo 'Comparison';?></a></li>
                 <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
             </ul>
@@ -569,7 +570,6 @@ private static function make_menu()
             <ul>
                 <li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li>
                 <li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li>
-                <li><a href="index.php?section=records&amp;subsec=memm"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li>
                 <li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li>
             </ul>
         </li>
