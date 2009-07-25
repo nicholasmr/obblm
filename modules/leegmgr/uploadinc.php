@@ -114,6 +114,7 @@ function parse_results($xmlresults) {
 	{
 
 		$homeplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
+		$homeplayers[intval($player->attributes()->number)]['name'] = $player->attributes()->name;
 		$homeplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
 		$homeplayers[intval($player->attributes()->number)]['merc'] = $player->attributes()->mercenary;
 		$homeplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
@@ -136,6 +137,7 @@ function parse_results($xmlresults) {
 	{
 
 		$awayplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
+		$awayplayers[intval($player->attributes()->number)]['name'] = $player->attributes()->name;
 		$awayplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
 		$awayplayers[intval($player->attributes()->number)]['merc'] = $player->attributes()->mercenary;
 		$awayplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
@@ -252,7 +254,14 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 
 	foreach ( $teamPlayers as $player )
 	{
-		if ( $player['star'] == "true" ) continue;
+		if ( $player['star'] == "true" )
+		{
+			global $stars;
+			$stname = strval($player['name']);
+			if ( $stname != 'Eldril Sidewinder' ) Print "The Star Player name does not match what is on the site.";
+			$f_player_id  = $stars[$stname]['id'];
+			$player['inj'] = '';
+		}
 		if ( $player['merc'] == "true" ) continue;
 		foreach ( $players as $p  )
 		{
