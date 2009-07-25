@@ -233,7 +233,11 @@ function addMatch ( $matchparsed ) {
 	$match = new Match_BOTOCS($match_id);
 	$match->setBOTOCSHash($matchparsed['hash']);
 	$coach_id = $_SESSION['coach_id'];
-	$match->update( $input = array("submitter_id" => $coach_id, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor1" => $matchparsed['homeff'], "ffactor2" => $matchparsed['awayff'], "fame1" => $matchparsed['homefame'], "fame2" => $matchparsed['awayfame'], "income1" => $matchparsed['homewinnings'], "income2" => $matchparsed['awaywinnings'], "team1_score" => $matchparsed['homescore'], "team2_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => 0, "tv2" => 0, "comment" => "" ) );
+	$team_home = new Team( $hometeam_id );
+	$tv_home = $team_home->value;
+	$team_away = new Team( $awayteam_id );
+	$tv_away = $team_away->value;
+	$match->update( $input = array("submitter_id" => $coach_id, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor1" => $matchparsed['homeff'], "ffactor2" => $matchparsed['awayff'], "fame1" => $matchparsed['homefame'], "fame2" => $matchparsed['awayfame'], "income1" => $matchparsed['homewinnings'], "income2" => $matchparsed['awaywinnings'], "team1_score" => $matchparsed['homescore'], "team2_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $tv_home, "tv2" => $tv_away, "comment" => "" ) );
 	$matchfields = array( "tour_id" => $tour_id, "hometeam_id" => $hometeam_id, "awayteam_id" => $awayteam_id, "match_id" => $match_id ); # homecoach_id awaycoach_id
 	return $matchfields;
 
