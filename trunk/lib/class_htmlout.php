@@ -562,7 +562,7 @@ private static function make_menu()
                 }
                 ?>
                 <li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li>
-                <li><a href="index.php?section=comparison"><?php echo 'Comparison';?></a></li>
+                <li><a href="handler.php?type=comparison"><?php echo 'Comparison';?></a></li>
                 <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
             </ul>
         </li>

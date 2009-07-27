@@ -90,6 +90,16 @@ Module::register(array(
 ));
 
 Module::register(array(
+    'modname'       => 'comparison',
+    'author'        => 'Nicholas Mossor Rathmann',
+    'date'          => '2009',
+    'setCanvas'     => true, 
+    'main'          => 'Comparison::main', 
+    'filesRunTime'  => array('comparison/class_comparison.php'),
+    'filesLoadTime' => array()
+));
+
+Module::register(array(
     'modname'       => 'leegmgr',
     'author'        => 'William Leonard',
     'date'          => '2009',
