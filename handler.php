@@ -77,6 +77,11 @@ switch ($_GET['type'])
    		Module::run('memmatches', array());
    		break;
 
+    /* Comparison */
+   	case 'comparison':
+   		Module::run('comparison', array());
+   		break;
+
     /* Match gallery */
     case 'mg':
     

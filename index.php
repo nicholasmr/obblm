@@ -76,8 +76,8 @@ switch ($_GET['section'])
     case 'admin':        sec_admin();           break;
     case 'coachcorner':  sec_coachcorner();     break;
     case 'fixturelist':  sec_fixturelist();     break; // Tournaments
-    case 'standings':    sec_standings();       break;
-    case 'teams':        sec_teams();           break;
+    case 'standings':    sec_standings();       break; // All-time team standings
+    case 'teams':        sec_teams();           break; // Teams list.
     case 'players':      sec_players();         break;
     case 'coaches':      sec_coaches();         break;
     case 'races':        sec_races();           break;
