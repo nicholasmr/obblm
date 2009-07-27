@@ -150,7 +150,8 @@ function parse_results($xmlresults) {
 
 	}
 
-	$hash = XOREncrypt ( $hometeam.$gate.$homescore.$homewinnings, $awayteam.$gate.$awayscore.$awaywinnings);
+	#$hash = XOREncrypt ( $hometeam.$gate.$homescore.$homewinnings, $awayteam.$gate.$awayscore.$awaywinnings);
+	$hash = md5 ( $xmlresults );
 
 	$matchparsed = array ( "homeplayers" => $homeplayers, "awayplayers" => $awayplayers, "gate" => $gate, "hometeam" => $hometeam, "homescore" => $homescore, "homewinnings" => $homewinnings, "homeff" => $homeff, "homefame" => $homefame, "awayteam" => $awayteam, "awayscore" => $awayscore, "awaywinnings" => $awaywinnings, "awayff" => $awayff, "awayfame" => $awayfame, "hash" => $hash );
 
@@ -401,43 +402,6 @@ function switchInjury ( $inj ) {
 
 	return $injeffect;
 
-}
-
-function XOREncryption($InputString, $KeyPhrase){
- 
-	$KeyPhraseLength = strlen($KeyPhrase);
- 
-	#Loop trough input string
-	for ($i = 0; $i < strlen($InputString); $i++){
-		#Get key phrase character position
-		$rPos = $i % $KeyPhraseLength;
-
-		#Magic happens here:
-		$r = ord($InputString[$i]) ^ ord($KeyPhrase[$rPos]);
-		#Replace characters
-		$InputString[$i] = chr($r);
-	}
-	return $InputString;
-
-}
- 
-function XOREncrypt($InputString, $KeyPhrase){
-
-	$diff = strlen($InputString) - strlen($KeyPhrase);
-
-	while ( $diff > 0 )
-	{
-		$KeyPhrase = $KeyPhrase." ";
-		$diff = $diff - 1;
-	}
-	while ( $diff < 0 )
-	{
-		$InputString = $InputString." ";
-		$diff = $diff + 1;
-	}
-	$InputString = XOREncryption($InputString, $KeyPhrase);
-	$InputString = base64_encode($InputString);
-	return $InputString;
 }
 
 function libxml_display_error($error)

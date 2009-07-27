@@ -27,8 +27,6 @@ function botocsxml_load()
 
 $noninjplayercount = 0;
 $team = new Team ( $_GET["teamid"] );
-$jm = 0;
-if ( isset( $_GET["jm"] ) ) $jm = $_GET["jm"];
 
 $apothecary = $team->apothecary;
 
@@ -44,7 +42,7 @@ $players = $team->getPlayers();
 if ( !checkJourneymen ( $players ) ) die('');
 
 Print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<?xml-stylesheet type=\"text/xsl\" href=\"team.xsl\"?>
+<?xml-stylesheet type=\"text/xsl\" href=\"/modules/leegmgr/team.xsl\"?>
 <team>
     <name>{$team->name}</name>
     <race>{$team->race}</race>
@@ -105,7 +103,7 @@ function checkJourneymen ( $players )
 	foreach ( $players as $p )
 	{
 		global $noninjplayercount;
-		if ( $p->is_journeyman && $p->spp > 0 )
+		if ( !$p->is_dead && !$p->is_sold && $p->is_journeyman && $p->spp > 0 )
 		{
 
 			Print "You have a journeyman with star players points.  Please hire or fire him.";
@@ -116,8 +114,11 @@ function checkJourneymen ( $players )
 		if ( !$p->is_dead && !$p->is_sold && !$p->is_mng ) $noninjplayercount ++;
 
 	}
-	global $jm;
+	
+	$jm = 0;
+	if ( isset( $_GET["jm"] ) ) $jm = $_GET["jm"];
 	global $noninjplayercount;
+
 	if ( !$jm && $noninjplayercount < 11 )
 	{
 
