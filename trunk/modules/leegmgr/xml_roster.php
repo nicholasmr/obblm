@@ -62,7 +62,7 @@ foreach ( $players as $p )
 	{
 	$skills = $p->getSkillsStr();
 	$a_skills = explode(', ', $skills);
-
+	if ( strpos($p->name, "&") ) $p->name = str_replace("&","&amp;",$p->name);
 		Print "        <player number=\"{$p->nr}\">
             <name>{$p->name}</name>
             <position>{$p->pos}</position>
@@ -77,6 +77,8 @@ foreach ( $players as $p )
 				while ( $i < count( $a_skills ) && strlen( $a_skills[0] ) > 0 )
 				{
 
+					if ( strpos($a_skills[$i], "&") ) $a_skills[$i] = str_replace("&","&amp;",$a_skills[$i]);
+					if ( strpos($a_skills[$i], "*") ) $a_skills[$i] = str_replace("*","",$a_skills[$i]);
 					Print "                <skill>".$a_skills[$i]."</skill>\n";
 					$i++;
 
