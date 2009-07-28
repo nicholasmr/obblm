@@ -231,7 +231,7 @@ function setup_tables() {
                 fame2               TINYINT UNSIGNED NOT NULL DEFAULT 0,
                 tv1                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
                 tv2                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
-                hash_botocs         VARCHAR(15)
+                hash_botocs         VARCHAR(32)
                 )';
     mk_table($query, 'matches');
 
