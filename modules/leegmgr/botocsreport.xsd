@@ -78,14 +78,14 @@
   </xs:simpleType>
   <xs:simpleType name="t_fans">
     <xs:restriction base="xs:integer">
-      <xs:minInclusive value="3000" />
-      <xs:maxInclusive value="30000" />
+      <xs:minInclusive value="2000" />
+      <xs:maxInclusive value="40000" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="t_fame">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="0" />
-      <xs:maxInclusive value="2" />
+      <xs:maxInclusive value="4" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="t_int0_24">
@@ -103,7 +103,7 @@
   <xs:simpleType name="t_winnings">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="0" />
-      <xs:maxInclusive value="90000" />
+      <xs:maxInclusive value="100000" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="t_mvp">
