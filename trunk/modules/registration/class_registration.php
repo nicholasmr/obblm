@@ -21,7 +21,7 @@
  *
  */
 
-require_once('header.php');
+require_once('modules/registration/header.php');
  
 class Registration
 {
@@ -119,7 +119,7 @@ class Registration
                  mysql_real_escape_string($this->username), $this->password, mysql_real_escape_string($this->email), NOT_ACTIVATED );
 
         $results = mysql_query($query);
-        if ( !results )
+        if ( !$results )
         {
             $status = false;
             $this->error = mysql_error();
@@ -160,7 +160,7 @@ class Registration
          **/
 
         $form = "
-        <form method='POST' action='register.php'>
+        <form method='POST' action='handler.php?type=registration'>
             <div class='adminBox'>
                 <div class='boxTitle3'>
                     Register
@@ -190,17 +190,13 @@ class Registration
         
         // Module registered main function.
     
-        #$username = 'funnyfingers1';
-        #$password = 'testtest';
-        #$email = 'funnyfingers@hotmail.com';
-
         if ( isset($_POST['new_name']) && isset($_POST['new_mail']) && isset($_POST['new_passwd']) )
         {
 
             $username = $_POST['new_name'];
             $password = $_POST['new_passwd'];
             $email = $_POST['new_mail'];
-            submitForm($username, $password, $email);
+            self::submitForm($username, $password, $email);
 
         }
         else
