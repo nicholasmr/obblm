@@ -40,6 +40,8 @@ $apothecary = $team->apothecary;
 $players = $team->getPlayers();
 
 if ( !checkJourneymen ( $players ) ) die('');
+$team->name = htmlspecialchars($team->name, ENT_NOQUOTES, 'UTF-8');
+$team->coach_name = htmlspecialchars($team->coach_name, ENT_NOQUOTES, 'UTF-8');
 
 Print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <?xml-stylesheet type=\"text/xsl\" href=\"/modules/leegmgr/team.xsl\"?>
@@ -62,7 +64,7 @@ foreach ( $players as $p )
 	{
 	$skills = $p->getSkillsStr();
 	$a_skills = explode(', ', $skills);
-	if ( strpos($p->name, "&") ) $p->name = str_replace("&","&amp;",$p->name);
+	$p->name = htmlspecialchars($p->name, ENT_NOQUOTES, 'UTF-8');
 		Print "        <player number=\"{$p->nr}\">
             <name>{$p->name}</name>
             <position>{$p->pos}</position>
@@ -77,7 +79,8 @@ foreach ( $players as $p )
 				while ( $i < count( $a_skills ) && strlen( $a_skills[0] ) > 0 )
 				{
 
-					if ( strpos($a_skills[$i], "&") ) $a_skills[$i] = str_replace("&","&amp;",$a_skills[$i]);
+					#if ( strpos($a_skills[$i], "&") ) $a_skills[$i] = str_replace("&","&amp;",$a_skills[$i]);
+					$a_skills[$i] = htmlspecialchars($a_skills[$i], ENT_NOQUOTES, 'UTF-8');
 					if ( strpos($a_skills[$i], "*") ) $a_skills[$i] = str_replace("*","",$a_skills[$i]);
 					Print "                <skill>".$a_skills[$i]."</skill>\n";
 					$i++;

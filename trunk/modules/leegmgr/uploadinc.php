@@ -215,9 +215,15 @@ function addMatch ( $matchparsed ) {
 
 	global $settings;
 	$match_id = '';
+	$revUpdate = false;
 
 	if ( $settings['leegmgr_schedule'] )
 		$match_id = getschMatch( $hometeam_id, $awayteam_id );
+	if (!$match_id) {
+		$match_id = getschMatchRev( $hometeam_id, $awayteam_id );
+		if ($match_id) $revUpdate = true;
+	}
+
 	if ( !$match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
 		Print "<br>Creating match.<br>";
 		$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 1, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
@@ -240,7 +246,10 @@ function addMatch ( $matchparsed ) {
 	$tv_home = $team_home->value;
 	$team_away = new Team( $awayteam_id );
 	$tv_away = $team_away->value;
-	$match->update( $input = array("submitter_id" => $coach_id, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor1" => $matchparsed['homeff'], "ffactor2" => $matchparsed['awayff'], "fame1" => $matchparsed['homefame'], "fame2" => $matchparsed['awayfame'], "income1" => $matchparsed['homewinnings'], "income2" => $matchparsed['awaywinnings'], "team1_score" => $matchparsed['homescore'], "team2_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $tv_home, "tv2" => $tv_away, "comment" => "" ) );
+
+	if (!$revUpdate) $match->update( $input = array("submitter_id" => $coach_id, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor1" => $matchparsed['homeff'], "ffactor2" => $matchparsed['awayff'], "fame1" => $matchparsed['homefame'], "fame2" => $matchparsed['awayfame'], "income1" => $matchparsed['homewinnings'], "income2" => $matchparsed['awaywinnings'], "team1_score" => $matchparsed['homescore'], "team2_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $tv_home, "tv2" => $tv_away, "comment" => "" ) );
+	else $match->update( $input = array("submitter_id" => $coach_id, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor2" => $matchparsed['homeff'], "ffactor1" => $matchparsed['awayff'], "fame2" => $matchparsed['homefame'], "fame1" => $matchparsed['awayfame'], "income2" => $matchparsed['homewinnings'], "income1" => $matchparsed['awaywinnings'], "team2_score" => $matchparsed['homescore'], "team1_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $tv_home, "tv1" => $tv_away, "comment" => "" ) );
+
 	$matchfields = array( "tour_id" => $tour_id, "hometeam_id" => $hometeam_id, "awayteam_id" => $awayteam_id, "match_id" => $match_id ); # homecoach_id awaycoach_id
 	return $matchfields;
 
@@ -357,11 +366,21 @@ function getschMatch( $team_id1, $team_id2 ) {
 
 	#submitter_id team1_id team2_id
 
-	$query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 || team1_id = $team_id2 ) AND  ( team2_id = $team_id1 || team2_id = $team_id2 )";
+	#$query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 || team1_id = $team_id2 ) AND  ( team2_id = $team_id1 || team2_id = $team_id2 )";
+	$query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 ) AND  ( team2_id = $team_id2 )";
+
 	$match_id = mysql_query($query);
-	if (!$match_id) {
-		return false;
-	}
+	$match_id = mysql_fetch_array($match_id);
+	$match_id = $match_id['match_id'];
+	return $match_id;
+
+}
+
+function getschMatchRev( $team_id2, $team_id1 ) {
+
+	$query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 ) AND  ( team2_id = $team_id2 )";
+
+	$match_id = mysql_query($query);
 	$match_id = mysql_fetch_array($match_id);
 	$match_id = $match_id['match_id'];
 	return $match_id;
