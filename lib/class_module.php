@@ -63,7 +63,7 @@ class Module
 
     public static function isRegistered($modname)
     {
-        return array_key_exists($modname, array_keys(self::$modules));
+        return in_array($modname, array_keys(self::$modules));
     }
     
     public static function getInfo($modname)
