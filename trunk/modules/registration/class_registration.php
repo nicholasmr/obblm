@@ -20,9 +20,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-    require('../../lib/mysql.php'); // Includes and constants.
-    require('../../settings.php'); // Includes and constants.
-    mysql_up();
+ 
+// header.php is alraedy included for modules - you have all you need.
+#    require('../../lib/mysql.php'); // Includes and constants.
+#    require('../../settings.php'); // Includes and constants.
+#    mysql_up(); # MySQL is already up for modules.
     // User table information
     define('USERTABLE', 'coaches');
     define('USERNAME', 'name');
@@ -160,12 +162,12 @@ class Registration
         return $status;
 
     }
-    
+
     /***************
      * Statics
      ***************/
      
-    public static function form() {
+    private static function form() {
         
         /**
          * Creates a registration form.
@@ -191,7 +193,41 @@ class Registration
 
         return $form;
     }
+    
+    private static function submitForm($username, $password, $email) {
 
+        $register = new Registration($username, $password, $email);
+        Print "If you  do not see an error message ,than the registration was successful";
+        Print "<br>{$register->error}<br>";
+
+    }
+    
+    public static function main() {
+        
+        // Module registered main function.
+    
+        #$username = 'funnyfingers1';
+        #$password = 'testtest';
+        #$email = 'funnyfingers@hotmail.com';
+
+        if ( isset($_POST['new_name']) && isset($_POST['new_mail']) && isset($_POST['new_passwd']) )
+        {
+
+            $username = $_POST['new_name'];
+            $password = $_POST['new_passwd'];
+            $email = $_POST['new_mail'];
+            submitForm($username, $password, $email);
+
+        }
+        else
+        {
+
+            Print "<html><body>";
+            Print Registration::form();
+            Print "</body></html>";
+
+        }
+    }
 }
 
 ?>

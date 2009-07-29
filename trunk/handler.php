@@ -81,7 +81,12 @@ switch ($_GET['type'])
    	case 'comparison':
    		Module::run('comparison', array());
    		break;
-
+   		
+    /* Register */
+   	case 'registration':
+   		Module::run('registration', array());
+   		break;
+   		
     /* Match gallery */
     case 'mg':
     

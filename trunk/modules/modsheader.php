@@ -119,4 +119,14 @@ Module::register(array(
     'filesLoadTime' => array('leegmgr/settings.php')
 ));
 
+Module::register(array(
+    'modname'       => 'registration',
+    'author'        => 'William Leonard',
+    'date'          => '2009',
+    'setCanvas'     => true, 
+    'main'          => 'Registration::main', 
+    'filesRunTime'  => array('registration/class_registration.php'),
+    'filesLoadTime' => array()
+));
+
 ?>
