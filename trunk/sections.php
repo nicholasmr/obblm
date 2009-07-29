@@ -79,6 +79,9 @@ function sec_login() {
     </form>
     </div>
     <?php
+    if (Module::isRegistered('registration') && $settings['allow_registration']) {
+        echo "<br><a href='handler.php?type=registration'>Register</a>";
+    }
 }
 
 /*************************

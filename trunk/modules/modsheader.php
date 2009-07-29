@@ -126,7 +126,7 @@ Module::register(array(
     'setCanvas'     => true, 
     'main'          => 'Registration::main', 
     'filesRunTime'  => array('registration/class_registration.php'),
-    'filesLoadTime' => array()
+    'filesLoadTime' => array('registration/settings.php')
 ));
 
 ?>
