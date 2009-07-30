@@ -220,6 +220,7 @@ class Registration
                     Username :<br> <input type='text' name='new_name' size='20' maxlength='50'><br><br>
                     eMail :<br> <input type='text' name='new_mail' size='20' maxlength='129'><br><br>
                     Password :<br> <input type='password' name='new_passwd' size='20' maxlength='50'><br><br>
+                    *Admin activation is required.
                     <br><br>
                     <input type='submit' name='button' value='Create user'>
                 </div>
