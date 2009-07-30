@@ -33,29 +33,32 @@
         <secLinks>
             <login>Login</login>
             <logout>Logout</logout>
-            <admin>Admin</admin>
-            <coachcorner>Coach corner</coachcorner>
             <cc>CC</cc> <!-- Leave this untouched. Is abbrev of above. -->
-            <home>Home</home>
-            <fixtures>Tournaments</fixtures>
-            <standings>All-time standings</standings>
+                <coachcorner>Coach corner</coachcorner>
+                <myteams>My teams</myteams>
+                <myprofile>My profile</myprofile>
+            <admin>Admin</admin>
+                <!-- Menu items are defined in secs/admin -->
+            <home>Home</home>    
             <teams>Teams</teams>
-            <players>Players</players>
-            <coaches>Coaches</coaches>
-            <races>Races</races>
-            <stars>Stars</stars>
-            <records>Records</records>
+            <fixtures>Tournaments</fixtures>
+            <statistics>Statistics</statistics>
+                <standings>All-time standings</standings>
+                <tourstn>Tournament standings</tourstn>
+                <divstn>Division standings</divstn>
+                <leaguestn>League standings</leaguestn>
+                <recent>Recent matches</recent> 
+                <upcomming>Upcomming matches</upcomming> 
+                <players>Players</players>
+                <coaches>Coaches</coaches>
+                <races>Races</races>
+                <stars>Stars</stars>
+                <cmp>Comparison</cmp>
+            <records>Records</records>            
             <rules>Rules</rules>
             <gallery>Gallery</gallery>
             <gb>Guest book</gb>
             <forum>Forum</forum>
-            <!-- Not shown amongst menu links -->
-            <recent>Recent matches</recent> 
-            <upcomming>Upcomming matches</upcomming> 
-            <statistics>Statistics</statistics>
-            <specstandings>Tournament standings</specstandings>
-            <myteams>My teams</myteams>
-            <myprofile>My profile</myprofile>
         </secLinks>
         
         <!-- Notifications for sortable tables -->
