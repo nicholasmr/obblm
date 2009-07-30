@@ -524,7 +524,7 @@ private static function make_menu()
         <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/statistics');?></span>
             <ul>
                 <li><a href="index.php?section=standings"><?php echo $lng->getTrn('global/secLinks/standings');?></a></li>
-                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/specstandings');?></span>
+                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/tourstn');?></span>
                     <ul>
                         <?php
                         foreach (Tour::getTours() as $t) {
@@ -533,7 +533,7 @@ private static function make_menu()
                         ?>
                     </ul>
                 </li>
-                <li><span class="dir">Division standings</span>
+                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/divstn');?></span>
                     <ul>
                         <?php
                         foreach (Division::getDivisions() as $d) {
@@ -542,7 +542,7 @@ private static function make_menu()
                         ?>
                     </ul>
                 </li>
-                <li><span class="dir">League standings</span>
+                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/leaguestn');?></span>
                     <ul>
                         <?php
                         foreach (League::getLeagues() as $l) {
@@ -562,7 +562,7 @@ private static function make_menu()
                 }
                 ?>
                 <li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li>
-                <li><a href="handler.php?type=comparison"><?php echo 'Comparison';?></a></li>
+                <li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('global/secLinks/cmp');?></a></li>
                 <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
             </ul>
         </li>
