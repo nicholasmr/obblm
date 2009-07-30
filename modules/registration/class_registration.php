@@ -34,6 +34,11 @@ class Registration
     public $password        = '';
     public $email           = '';
     public $error           = '';
+
+    //admin email
+    public $email_admin     = ''; //This will be concatenated to with admin emails by the sendemail() method.
+                                  //If you specify email addresses here, each address must be separated by a comma.
+                                  //Example: 'john@example.com, jean@example.com' or 'john@example.com'
     
     /***************
      * Methods 
@@ -94,8 +99,9 @@ class Registration
         #'/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i' 
 
         $status = true;
-        list($emailuser,$domain) = split("@",$this->email);
-        //I got the regular expression from http://www.regular-expressions.info/email.html - Will
+        $domain = '';
+        if ( strpos($this->email, '@') ) list($emailuser,$domain) = split("@",$this->email);
+
         $emailexp = "/^([.0-9a-z_-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i";
 
         if ( !preg_match($emailexp, $this->email) ) $status = false;
@@ -113,10 +119,10 @@ class Registration
     public function create() {
 
         $status = true;
-        $query = sprintf( "INSERT INTO %s ( %s, %s, %s, %s ) VALUES ( '%s', '%s', '%s', %d )",
+        $query = sprintf( "INSERT INTO %s ( %s, %s, %s, %s, %s ) VALUES ( '%s', '%s', '%s', %d, %d )",
                  USERTABLE,
-                 USERNAME, PASSWORD, EMAIL, ACTIVATION,
-                 mysql_real_escape_string($this->username), $this->password, mysql_real_escape_string($this->email), NOT_ACTIVATED );
+                 USERNAME, PASSWORD, EMAIL, ACTIVATION, ACCESS,
+                 mysql_real_escape_string($this->username), $this->password, mysql_real_escape_string($this->email), NOT_ACTIVATED, ACCESS_LEVEL );
 
         $results = mysql_query($query);
         if ( !$results )
@@ -132,16 +138,61 @@ class Registration
     public function sendemail() {
 
         $status = true;
-        $to      = $this->email;
+
+        global $settings;
+        $webmaster = $settings['registration_webmaster'];
+
+        $to      = $this->AdminEmails();
         $subject = 'New user registration';
         $message = "You have received a new registration for user: ".$this->username." email: ".$this->email.".";
-        $headers = 'From: webmaster@stuntyleeg.com' . "\r\n" .
-                   'Reply-To: noreply@stuntyleeg.com' . "\r\n" .
+        $headers = 'From: '.$webmaster. "\r\n" .
+                   'Reply-To: '.$webmaster. "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
 
         $mailed = mail($to, $subject, $message, $headers);
 
         if ( !$mailed ) $status = false;
+
+        return $status;
+
+    }
+
+    public function AdminEmails() {
+
+        $email = $this->email_admin;
+        $sep_comma = "";
+        if ( $email ) $sep_comma = ", ";
+        $coaches = Coach::getCoaches();
+        foreach ( $coaches as $c )
+        {
+            if ( $c->ring === 0 && $this->chk_email_Admin($c->mail) )
+            {
+                $email = $email.$sep_comma.$c->mail;
+                if ( $email ) $sep_comma = ", ";
+            }
+
+        }
+        return $email;
+
+    }
+
+    public function chk_email_Admin($email) {
+
+        #'/^([.0-9a-z_-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i' : 
+        #'/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i' 
+
+        $status = true;
+        $domain = '';
+        if ( strpos($email, '@') ) list($emailuser,$domain) = split("@",$email);
+
+        $emailexp = "/^([.0-9a-z_-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i";
+
+        if ( !preg_match($emailexp, $email) ) $status = false;
+
+        if ( !getmxrr($domain, $mxrecords) || !$status )
+        {
+            $status = false;
+        }
 
         return $status;
 
@@ -181,14 +232,28 @@ class Registration
     private static function submitForm($username, $password, $email) {
 
         $register = new Registration($username, $password, $email);
-        Print "If you  do not see an error message ,than the registration was successful";
-        Print "<br>{$register->error}<br>";
+        if ( !$register->error )
+        {
+            Print "Registration was successful.  A site administrator will enable your account or contact you for verification.";
+            unset($register);
+        }
+        else
+        {
+            Print "<br><b>Error: {$register->error}</b><br>";
+            unset($register);
+            unset($_POST['new_name']);
+            unset($_POST['new_mail']);
+            unset($_POST['new_passwd']);
+            Registration::main();
+        }
 
     }
     
     public static function main() {
         
         // Module registered main function.
+        global $settings;
+        if ( !$settings['allow_registration'] ) die ("Registration is currently disabled.");
     
         if ( isset($_POST['new_name']) && isset($_POST['new_mail']) && isset($_POST['new_passwd']) )
         {
