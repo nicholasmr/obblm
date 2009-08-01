@@ -45,7 +45,7 @@ Module::register(array(
     'date'          => '2008-2009',
     'setCanvas'     => false, 
     'main'          => 'fpdf_roster', 
-    'filesRunTime'  => array('pdf/bb_pdf_class.php', 'pdf/pdf_roster.php'),
+    'filesRunTime'  => array('pdf/settings.php', 'pdf/bb_pdf_class.php', 'pdf/pdf_roster.php'),
     'filesLoadTime' => array()
 ));
 
