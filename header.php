@@ -21,7 +21,17 @@
  *   
  */
  
+if (version_compare(PHP_VERSION, '5.1.0') == -1)
+    die('OBBLM requires PHP version 5.1, you are running version '.PHP_VERSION);
+ 
+if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
+    die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
+
+if (false && file_exists('install.php'))
+    die('Please remove <i>install.php</i> before using OBBLM.');
+    
 error_reporting(E_ALL);
+session_start();
  
 /********************* 
  *   General
@@ -247,5 +257,20 @@ require_once('lib/class_player_htmlout.php');
 require_once('matches.php');
 require_once('records.php');
 require_once('admin.php');
+
+/******************** 
+ *   Final setup
+ ********************/
+
+if (!is_writable(IMG))
+    die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
+
+/******************** 
+ *   Globals
+ ********************/
+
+$conn = mysql_up(true); # MySQL connect.
+$lng = new Translations($settings['lang']); # Load language.
+$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
 
 ?>
