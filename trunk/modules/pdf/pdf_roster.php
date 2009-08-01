@@ -469,13 +469,16 @@ $pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINE
 $pdf->SetLineWidth(0.6);
 $pdf->RoundedRect(MARGINX+6, 435, 792, 130, 5, 'D');
 
-// Team logo
-// Comment out if you dont have GD 2.x installed, or if you dont want the logo in roster.
-// Not tested with anything except PNG images that comes with OBBLM.
-$pdf->Image($team->getLogo(),346,436,128,128,'','',false,0);
+global $settings;
+if ($settings['enable_pdf_logos']) {
+    // Team logo
+    // Comment out if you dont have GD 2.x installed, or if you dont want the logo in roster.
+    // Not tested with anything except PNG images that comes with OBBLM.
+    $pdf->Image($team->getLogo(),346,436,128,128,'','',false,0);
 
-// OBBLM text lower left corner as a pic
-$pdf->Image('modules/pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
+    // OBBLM text lower left corner as a pic
+    $pdf->Image('modules/pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
+}
 
 // Color legends
 $pdf->SetFont('Tahoma', '', 8);
