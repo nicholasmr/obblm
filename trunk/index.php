@@ -21,28 +21,14 @@
  *   
  */
 
-if (version_compare(PHP_VERSION, '5.0.0') == -1)
-    die('<font color="red"><b>Sorry. OBBLM requires PHP version 5, you are running version ' . PHP_VERSION . '.</b></font>');
-
-#if (file_exists('install.php'))
-#    die('Please remove <i>install.php</i> before using obblm.');
-    
-$iniRG = ini_get('register_globals');
-if (strtolower($iniRG) == 'on' || $iniRG == 1)
-    die('<font color="red">Sorry. OBBLM requires the PHP configuration directive <i>register_globals</i> set <b><u>off</u></b> in the <i>php.ini</i> configuration file. Please contact your web host.</font>');
-
-session_start();
-require('header.php'); // Includes and constants + sets error_reporting() level.
-
-if (!is_writable(IMG))
-    fatal('Sorry. OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
+/* 
+    Includes, constants, error_reporting() level, session_start(), OBBLM run requirements, MySQL connection, language load.
+*/
+require('header.php');
 
 /********************
  *   Main routine
  ********************/
-
-$conn = mysql_up(true); # MySQL connect.
-$lng = new Translations($settings['lang']); # Load language.
 
 // Make 'main' the default section if no GET section request was sent.
 if (!isset($_GET['section'])) {

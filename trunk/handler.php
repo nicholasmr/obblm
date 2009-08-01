@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,19 +21,10 @@
  *
  */
 
-session_start();
-error_reporting(E_ALL);
-
 require('header.php'); // Includes and constants.
 
-// Requirements. Provides the same facilities as ordinary code through index.php.
-$conn = mysql_up(false);
-$lng = new Translations($settings['lang']); # Load language.
-$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
-
-if (!isset($_GET['type'])) {
+if (!isset($_GET['type']))
     fatal("Sorry. Don't know what to do. Please specify 'type' via GET.");
-}
     
 switch ($_GET['type'])
 {        
