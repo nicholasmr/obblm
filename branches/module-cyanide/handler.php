@@ -101,6 +101,11 @@ switch ($_GET['type'])
         echo "<img src='".$pics[$curPic]."'>\n";
                 
         break;
+        
+    /* Cyanide match import */
+    case 'cyanide':
+        Module::run('cyanide', array());
+        break;
 
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");

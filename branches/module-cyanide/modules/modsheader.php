@@ -129,4 +129,14 @@ Module::register(array(
     'filesLoadTime' => array('registration/settings.php')
 ));
 
+Module::register(array(
+    'modname'       => 'cyanide',
+    'author'        => 'Grégory Romé',
+    'date'          => '2009',
+    'setCanvas'     => true, 
+    'main'          => 'cyanide_load', 
+    'filesRunTime'  => array('cyanide/class_CyanideMatch.php', 'cyanide/uploadinc.php'),
+    'filesLoadTime' => array('cyanide/settings.php')
+));
+
 ?>
