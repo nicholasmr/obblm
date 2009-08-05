@@ -105,7 +105,7 @@ function report ( $matchparsed ) {
 
 	$match->setLocked(true);
 
-	Print "<br>Successfully uploaded report<br>";
+	Print "<h4>Successfully uploaded report</h4>";
 
 }
 
@@ -145,7 +145,7 @@ function addMatch ( $matchparsed ) {
 	}
 
 	if ( !$match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
-		Print "<br>Creating match.<br>";
+		Print "<h4>Creating match.</h4>";
 		$match_id = CyanideMatch::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 1, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
 	}
 
@@ -276,19 +276,19 @@ function checkCoach ( $team ) {
 
 function checkHash ( $hash ) {
 
-	$query = sprintf("SELECT hash_botocs FROM matches WHERE hash_botocs = '%s' ", mysql_real_escape_string($hash) );
-	$hashresults = mysql_query($query);
-	$hashresults = mysql_fetch_array($hashresults);
-	$hashresults = $hashresults['hash_botocs'];
+	print $hash;
 
+	$query = sprintf("
+		SELECT hash_botocs
+		FROM matches
+		WHERE hash_botocs = '%s' ", mysql_real_escape_string($hash) );
 
-	if ( $hashresults == $hash ) {
-		Print "<br>Unique match id already exists: <b>".$hash."<br>";
+	if( mysql_num_rows( $results ) != 0 ) {
+		Print "<h4>Unique match id already exists: ".$hash."</h4>";
 		return false;
 	}
 
 	return true;
-
 }
 
 function checkTeam ( $teamname )
@@ -309,10 +309,11 @@ function checkTeam ( $teamname )
 
 function getschMatch( $team_id1, $team_id2 ) {
 
-	#submitter_id team1_id team2_id
-
-	#$query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 || team1_id = $team_id2 ) AND  ( team2_id = $team_id1 || team2_id = $team_id2 )";
-	$query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 ) AND  ( team2_id = $team_id2 )";
+	$query = "
+		SELECT match_id
+		FROM matches
+		WHERE submitter_id IS NULL
+			AND ( team1_id = $team_id1 ) AND  ( team2_id = $team_id2 )";
 
 	$match_id = mysql_query($query);
 	$match_id = mysql_fetch_array($match_id);
