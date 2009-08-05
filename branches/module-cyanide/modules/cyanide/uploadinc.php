@@ -24,10 +24,10 @@
 
 // Registered module main function.
 function cyanide_load() {
-    global $settings;
-    if ($settings['cyanide_enabled']) {
-        uploadpage();
-    }
+	global $settings;
+	if ($settings['cyanide_enabled']) {
+		uploadpage();
+	}
 }
 
 function uploadpage() {
@@ -37,12 +37,11 @@ function uploadpage() {
 
 	if (isset($_FILES['userfile'])) {
 		parse_results($_FILES['userfile']['tmp_name']);
-    	//$match = new CyanideMatch($_FILES['userfile']['tmp_name']);
 	}else
 	{
 		foreach (Tour::getTours() as $t)
-			if ($t->type == TT_FFA && !$t->locked)
-				$tourlist .= "<option value='$t->tour_id'>$t->name</option>\n";
+		if ($t->type == TT_FFA && !$t->locked)
+		$tourlist .= "<option value='$t->tour_id'>$t->name</option>\n";
 
 		for ($index = 0; $index < 16; $index++) {
 			$roundlist .= "<option value='$index'>Round #$index</option>\n";
@@ -72,17 +71,20 @@ function uploadpage() {
 
 function parse_results($sqlitefile) {
 
-	$matchparsed =  CyanideMatch::parse_file( $sqlitefile );
+	$matchparsed = CyanideMatch::parse_file( $sqlitefile );
 
-	if ( checkCoach ( $hometeam ) || checkCoach ( $awayteam ) )
+	if ( checkCoach ( $matchparsed["hometeam"] ) ||
+			checkCoach ( $matchparsed["awayteam"] ) )
 	{
 		report ( $matchparsed );
 	}
 	else
 	{
-		Print "The currently logged in coach does not own either of the teams in the match report";
-		exit (-1);
+		Print "<br><h2>You are not a coach involved in this match!</h2>";
+		Print "Home team:".$matchparsed["hometeam"]."<br>";
+		Print "Away team:".$matchparsed["awayteam"]."<br>";
 
+		exit (-1);
 	}
 
 }
@@ -93,9 +95,11 @@ function report ( $matchparsed ) {
 
 	$matchfields = addMatch ( $matchparsed );
 
-	matchEntry ( $matchfields['hometeam_id'], $matchfields['match_id'], $matchparsed['homeplayers'] );
+	matchEntry ( $matchfields['hometeam_id'], $matchfields['match_id'],
+					$matchparsed['homeplayers'] );
 
-	matchEntry ( $matchfields['awayteam_id'], $matchfields['match_id'], $matchparsed['awayplayers'] );
+	matchEntry ( $matchfields['awayteam_id'], $matchfields['match_id'],
+					$matchparsed['awayplayers'] );
 
 	$match = new Match( $matchfields['match_id'] );
 
@@ -134,7 +138,7 @@ function addMatch ( $matchparsed ) {
 	$revUpdate = false;
 
 	if ( $settings['leegmgr_schedule'] )
-		$match_id = getschMatch( $hometeam_id, $awayteam_id );
+	$match_id = getschMatch( $hometeam_id, $awayteam_id );
 	if (!$match_id) {
 		$match_id = getschMatchRev( $hometeam_id, $awayteam_id );
 		if ($match_id) $revUpdate = true;
@@ -142,7 +146,7 @@ function addMatch ( $matchparsed ) {
 
 	if ( !$match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
 		Print "<br>Creating match.<br>";
-		$match_id = Match_BOTOCS::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 1, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
+		$match_id = CyanideMatch::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 1, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
 	}
 
 	unset( $input );
@@ -155,8 +159,8 @@ function addMatch ( $matchparsed ) {
 
 	}
 
-	$match = new Match_BOTOCS($match_id);
-	$match->setBOTOCSHash($matchparsed['hash']);
+	$match = new CyanideMatch($match_id);
+	$match->setHashCyanide($matchparsed['hash'], $match_id);
 	$coach_id = $_SESSION['coach_id'];
 	$team_home = new Team( $hometeam_id );
 	$tv_home = $team_home->value;
@@ -180,6 +184,7 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 
 	foreach ( $teamPlayers as $player )
 	{
+
 		if ( $player['star'] == "true" )
 		{
 			global $stars;
@@ -187,13 +192,20 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 			$f_player_id  = $stars[$stname]['id'];
 			$player['inj'] = '';
 		}
+
 		if ( $player['merc'] == "true" ) continue;
+
 		foreach ( $players as $p  )
 		{
 			if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold ) {
 				$f_player_id = $p->player_id;
 				break;
 			}
+		}
+
+		if( !isset($f_player_id) ) {
+			print "<h4>Warning: Player #".$player['nr']." does not exist in OBBLM</h4>";
+			break;
 		}
 
 		$mvp = $player['mvp'];
@@ -215,7 +227,20 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 		if ( $agn1 > $inj ) list($inj, $agn1) = array($agn1, $inj);
 		if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
 
-		$match->entry( $input = array ( "team_id" => $team_id, "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ) );
+		$input = array ("team_id" => $team_id,
+						"player_id" => $f_player_id,
+						"mvp" => $mvp,
+						"cp" => $cp,
+						"td" => $td,
+						"intcpt" => $intcpt,
+						"bh" => $bh,
+						"si" => 0,
+						"ki" => 0,
+						"inj" => $inj,
+						"agn1" => $agn1,
+						"agn2" => 1 );
+
+		$match->entry( $input );
 
 	}
 	##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
@@ -237,10 +262,11 @@ function checkCoach ( $team ) {
 
 	if ( !isset( $_SESSION['coach_id'] ) ) return false;
 
-	$query = sprintf("SELECT owned_by_coach_id FROM teams WHERE owned_by_coach_id = '%s' and name = '%s' ", mysql_real_escape_string($_SESSION['coach_id']), mysql_real_escape_string($team) );
+	$query = sprintf("SELECT owned_by_coach_id
+						FROM teams
+							WHERE owned_by_coach_id = '%s' and name = '%s' ", mysql_real_escape_string($_SESSION['coach_id']), mysql_real_escape_string($team) );
 
-	if ( !mysql_fetch_array( mysql_query( $query ) ) )
-	{
+	if ( !mysql_fetch_array( mysql_query( $query ) ) ) {
 		return false;
 	}
 
@@ -265,17 +291,20 @@ function checkHash ( $hash ) {
 
 }
 
-function checkTeam ( $teamname ) {
+function checkTeam ( $teamname )
+{
+	$query = sprintf("SELECT team_id FROM teams WHERE name = '%s' ",
+						mysql_real_escape_string($teamname) );
 
-	$query = sprintf("SELECT team_id FROM teams WHERE name = '%s' ", mysql_real_escape_string($teamname) );
 	$team_id = mysql_query($query);
 	if (!$team_id) {
 		return false;
 	}
+
 	$team_id = mysql_fetch_array($team_id);
 	$team_id = $team_id['team_id'];
-	return $team_id;
 
+	return $team_id;
 }
 
 function getschMatch( $team_id1, $team_id2 ) {
@@ -333,7 +362,7 @@ function switchInjury ( $inj ) {
 		default:
 			$injeffect = 1;
 			break;
-		}
+	}
 
 	return $injeffect;
 

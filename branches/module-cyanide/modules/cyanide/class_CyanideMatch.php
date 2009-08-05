@@ -28,12 +28,12 @@ class CyanideMatch extends Match
 	public function __construct($mid)
 	{
 		parent::__construct($mid);
-		$this->hash_cyanide = get_alt_col('matches', 'match_id', $mid, 'hash_cyanide');
+		$hash_cyanide = get_alt_col('matches', 'match_id', $mid, 'hash_botocs');
 	}
 
-	public function setHashCyanide($hash)
+	public function setHashCyanide($hash, $match_id)
 	{
-		return mysql_query("UPDATE matches SET hash_cyanide = '".mysql_real_escape_string($hash)."' WHERE match_id = $this->match_id");
+		return mysql_query("UPDATE matches SET hash_botocs = '".mysql_real_escape_string($hash)."' WHERE match_id = $match_id");
 	}
 
 	public static function create(array $input)
@@ -50,6 +50,8 @@ class CyanideMatch extends Match
 
 	public static function parse_file($file)
 	{
+		global $settings;
+
 		$match_report_db = new PDO("sqlite:" . $file);
 		$hash = md5($file);
 
@@ -63,8 +65,8 @@ class CyanideMatch extends Match
 						Home_iScore,
 						Home_Inflicted_iCasualties,
 						Home_Inflicted_iDead,
-						Home_iCashEarned
-						iSpectators,
+						Home_iCashEarned,
+						iSpectators
 						FROM Calendar, Away_Team_Listing A, Home_Team_Listing H";
 
 		if (!($result = $match_report_db->query($query))) {
@@ -78,16 +80,15 @@ class CyanideMatch extends Match
 		$row = $array[0];
 
 
-		$gate = $row['iSpectators']/1000;
+		$gate = $row['iSpectators'];
 
 		$hometeam  = $row['Home_strName'];
-		$homescore = $row['Home_iScore'];
+		$home_team_score = $row['Home_iScore'];
 		$homewinnings = $row['Home_iCashEarned']; // 0 in public league ?
 
 		$awayteam  = $row['Away_strName'];
-		$awayscore = $row['Away_iScore'];
+		$away_team_score = $row['Away_iScore'];
 		$awaywinnings = $row['Away_iCashEarned']; // 0 in public league ?
-
 
 		$away_team_inflicted_cas = $row['Away_Inflicted_iCasualties'] + $row['Away_Inflicted_iDead'];
 		$home_team_inflicted_cas = $row['Home_Inflicted_iCasualties'] + $row['Home_Inflicted_iDead'];
@@ -111,8 +112,8 @@ class CyanideMatch extends Match
 		$awayff = $row['Away_ff'];
 		$homeff = $row['Home_ff'];
 
-		$this->away_team_value = $row['Away_value'];
-		$this->home_team_value = $row['Home_value'];
+		$away_team_value = $row['Away_value'];
+		$home_team_value = $row['Home_value'];
 
 		// Away players
 		$query = "SELECT L.iNumber As nr,
@@ -139,8 +140,8 @@ class CyanideMatch extends Match
 		foreach ($array as $row) {
 			$awayplayers[$row['nr']]['nr'] = $row['nr'];
 			$awayplayers[$row['nr']]['name'] = $row['name'];
-			//$awayplayers[$row['nr']]['star'] = $row['cp'];
-			//$awayplayers[$row['nr']]['merc'] = $row['cp'];
+			$awayplayers[$row['nr']]['star'] = false;
+			$awayplayers[$row['nr']]['merc'] = false;
 			$awayplayers[$row['nr']]['mvp'] = $row['mvp'];
 			$awayplayers[$row['nr']]['cp'] = $row['cp'];
 			$awayplayers[$row['nr']]['td'] = $row['td'];
@@ -148,7 +149,7 @@ class CyanideMatch extends Match
 			$awayplayers[$row['nr']]['bh'] = $row['cas'];
 			$awayplayers[$row['nr']]['si'] = 0;
 			$awayplayers[$row['nr']]['ki'] = $row['ki'];
-			$awayplayers[$row['nr']]['inj'] = $this->getInjury($row['inj']);
+			$awayplayers[$row['nr']]['inj'] = CyanideMatch::getInjury($row['inj_type']);
 			$awayplayers[$row['nr']]['agn1'] = NONE;
 			$awayplayers[$row['nr']]['agn2'] = NONE;
 		}
@@ -180,8 +181,8 @@ class CyanideMatch extends Match
 		foreach ($array as $row) {
 			$homeplayers[$row['nr']]['nr'] = $row['nr'];
 			$homeplayers[$row['nr']]['name'] = $row['name'];
-			//$homeplayers[$row['nr']]['star'] = $row['cp'];
-			//$homeplayers[$row['nr']]['merc'] = $row['cp'];
+			$homeplayers[$row['nr']]['star'] = false;
+			$homeplayers[$row['nr']]['merc'] = false;
 			$homeplayers[$row['nr']]['mvp'] = $row['mvp'];
 			$homeplayers[$row['nr']]['cp'] = $row['cp'];
 			$homeplayers[$row['nr']]['td'] = $row['td'];
@@ -189,15 +190,19 @@ class CyanideMatch extends Match
 			$homeplayers[$row['nr']]['bh'] = $row['cas'];
 			$homeplayers[$row['nr']]['si'] = 0;
 			$homeplayers[$row['nr']]['ki'] = $row['ki'];
-			$homeplayers[$row['nr']]['inj'] = $this->getInjury($row['inj']);
+			$homeplayers[$row['nr']]['inj'] = CyanideMatch::getInjury($row['inj_type']);
 			$homeplayers[$row['nr']]['agn1'] = NONE;
 			$homeplayers[$row['nr']]['agn2'] = NONE;
 		}
 
 		if($settings['cyanide_public_league']) {
+			$home_team_ff = 0;
+			$away_team_ff = 0;
+			$away_team_fans = 0;
+			$home_team_fans = 0;
 
-			$homefame = (rand(2,12) + $this->home_team_ff) * 1000; // (2D6 + ff) * 1000
-			$awayfame = (rand(2,12) + $this->away_team_ff) * 1000; // (2D6 + ff) * 1000
+			$homefame = (rand(2,12) + $home_team_ff) * 1000; // (2D6 + ff) * 1000
+			$awayfame = (rand(2,12) + $away_team_ff) * 1000; // (2D6 + ff) * 1000
 
 			if ($home_team_fans <= $away_team_fans)
 				$home_team_fame = 0;
@@ -217,34 +222,34 @@ class CyanideMatch extends Match
 			$home_cash_earned = (rand(1,6) + $home_team_fame) * 10; // D6 + fame
 			$away_cash_earned = (rand(1,6) + $away_team_fame) * 10; // D6 + fame
 
-			if ($this->home_team_score > $this->away_team_score) {
+			if ($home_team_score > $away_team_score) {
 				// home team won
 				$home_cash_earned += 10;
 
 				$home_ff_roll = rand(3,18); // 3D6
 				$away_ff_roll = rand(2,12); // 2D6
 
-				if ($home_ff_roll > $this->home_team_ff)
-				$this->home_team_ff_variation = 1;
+				if ($home_ff_roll > $home_team_ff)
+				$home_team_ff_variation = 1;
 
-				if ($away_ff_roll < $this->away_team_ff)
-				$this->away_team_ff_variation = -1;
+				if ($away_ff_roll < $away_team_ff)
+				$away_team_ff_variation = -1;
 			}
-			else if ($this->home_team_score == $this->away_team_score) {
+			else if ($home_team_score == $away_team_score) {
 				// draw
 
 				$home_ff_roll = rand(2,12); // 2D6
 				$away_ff_roll = rand(2,12); // 2D6
 
-				if ($home_ff_roll > $this->home_team_ff)
-					$this->home_team_ff_variation = 1;
-				else if ($home_ff_roll < $this->home_team_ff)
-					$this->home_team_ff_variation = -1;
+				if ($home_ff_roll > $home_team_ff)
+					$home_team_ff_variation = 1;
+				else if ($home_ff_roll < $home_team_ff)
+					$home_team_ff_variation = -1;
 
-				if ($away_ff_roll > $this->away_team_ff)
-					$this->away_team_ff_variation = 1;
-				else if ($away_ff_roll < $this->away_team_ff)
-					$this->away_team_ff_variation = -1;
+				if ($away_ff_roll > $away_team_ff)
+					$away_team_ff_variation = 1;
+				else if ($away_ff_roll < $away_team_ff)
+					$away_team_ff_variation = -1;
 			}
 			else {
 				// away team won
@@ -253,36 +258,36 @@ class CyanideMatch extends Match
 				$home_ff_roll = rand(2,12); // 2D6
 				$away_ff_roll = rand(3,18); // 3D6
 
-				if ($home_ff_roll < $this->home_team_ff)
-				$this->home_team_ff_variation = -1;
+				if ($home_ff_roll < $home_team_ff)
+				$home_team_ff_variation = -1;
 
-				if ($away_ff_roll > $this->away_team_ff)
-				$this->away_team_ff_variation = 1;
+				if ($away_ff_roll > $away_team_ff)
+				$away_team_ff_variation = 1;
 			}
 
 			// home team spiralling expenses
-			if ($this->home_team_value > 1750 && $this->home_team_value <= 1890) {
+			if ($home_team_value > 1750 && $home_team_value <= 1890) {
 				$home_cash_earned -= 10;
 			}
-			else if ($this->home_team_value > 1890 && $this->home_team_value <= 2040) {
+			else if ($home_team_value > 1890 && $home_team_value <= 2040) {
 				$home_cash_earned -= 20;
 			}
-			else if ($this->home_team_value > 2040 && $this->home_team_value <= 2190) {
+			else if ($home_team_value > 2040 && $home_team_value <= 2190) {
 				$home_cash_earned -= 30;
 			}
-			else if ($this->home_team_value > 2190 && $this->home_team_value <= 2340) {
+			else if ($home_team_value > 2190 && $home_team_value <= 2340) {
 				$home_cash_earned -= 40;
 			}
-			else if ($this->home_team_value > 2340 && $this->home_team_value <= 2490) {
+			else if ($home_team_value > 2340 && $home_team_value <= 2490) {
 				$home_cash_earned -= 50;
 			}
-			else if ($this->home_team_value > 2490 && $this->home_team_value <= 2640) {
+			else if ($home_team_value > 2490 && $home_team_value <= 2640) {
 				$home_cash_earned -= 60;
 			}
-			else if ($this->home_team_value > 2640 && $this->home_team_value <= 2790) {
+			else if ($home_team_value > 2640 && $home_team_value <= 2790) {
 				$home_cash_earned -= 70;
 			}
-			else if ($this->home_team_value > 2790) {
+			else if ($home_team_value > 2790) {
 				$home_cash_earned -= 80;
 			}
 
@@ -291,28 +296,28 @@ class CyanideMatch extends Match
 			}
 
 			// away team spiralling expenses
-			if ($this->away_team_value > 1750 && $this->away_team_value <= 1890) {
+			if ($away_team_value > 1750 && $away_team_value <= 1890) {
 				$away_cash_earned -= 10;
 			}
-			else if ($this->away_team_value > 1890 && $this->away_team_value <= 2040) {
+			else if ($away_team_value > 1890 && $away_team_value <= 2040) {
 				$away_cash_earned -= 20;
 			}
-			else if ($this->away_team_value > 2040 && $this->away_team_value <= 2190) {
+			else if ($away_team_value > 2040 && $away_team_value <= 2190) {
 				$away_cash_earned -= 30;
 			}
-			else if ($this->away_team_value > 2190 && $this->away_team_value <= 2340) {
+			else if ($away_team_value > 2190 && $away_team_value <= 2340) {
 				$away_cash_earned -= 40;
 			}
-			else if ($this->away_team_value > 2340 && $this->away_team_value <= 2490) {
+			else if ($away_team_value > 2340 && $away_team_value <= 2490) {
 				$away_cash_earned -= 50;
 			}
-			else if ($this->away_team_value > 2490 && $this->away_team_value <= 2640) {
+			else if ($away_team_value > 2490 && $away_team_value <= 2640) {
 				$away_cash_earned -= 60;
 			}
-			else if ($this->away_team_value > 2640 && $this->away_team_value <= 2790) {
+			else if ($away_team_value > 2640 && $away_team_value <= 2790) {
 				$away_cash_earned -= 70;
 			}
-			else if ($this->away_team_value > 2790) {
+			else if ($away_team_value > 2790) {
 				$away_cash_earned -= 80;
 			}
 
@@ -325,20 +330,22 @@ class CyanideMatch extends Match
 			$awaywinnings = $away_cash_earned;
 		}
 
-		return array ( "homeplayers" => $homeplayers,
+		$matchparsed = array ( "homeplayers" => $homeplayers,
 						"awayplayers" => $awayplayers,
 						"gate" => $gate,
 						"hometeam" => $hometeam,
-						"homescore" => $homescore,
+						"homescore" => $home_team_score,
 						"homewinnings" => $homewinnings,
 						"homeff" => $homeff,
 						"homefame" => $homefame,
 						"awayteam" => $awayteam,
-						"awayscore" => $awayscore,
+						"awayscore" => $away_team_score,
 						"awaywinnings" => $awaywinnings,
 						"awayff" => $awayff,
 						"awayfame" => $awayfame,
 						"hash" => $hash );
+
+		return $matchparsed;
 	}
 
 	private function getInjury($inj)
