@@ -53,21 +53,22 @@ class CyanideMatch extends Match
 		global $settings;
 
 		$match_report_db = new PDO("sqlite:" . $file);
-		$hash = md5($file);
+		$hash = md5_file($file);
 
-		// team names, scores, casulties
-		$query = "SELECT A.strName AS Away_strName,
-						Away_iScore,
-						Away_Inflicted_iCasualties,
-						Away_Inflicted_iDead,
-						Away_iCashEarned,
+		// General information
+		$query = "SELECT C.Championship_iDay,
+						A.strName AS Away_strName,
+						C.Away_iScore,
+						C.Away_Inflicted_iCasualties,
+						C.Away_Inflicted_iDead,
+						C.Away_iCashEarned,
 						H.strName AS Home_strName,
-						Home_iScore,
-						Home_Inflicted_iCasualties,
-						Home_Inflicted_iDead,
-						Home_iCashEarned,
-						iSpectators
-						FROM Calendar, Away_Team_Listing A, Home_Team_Listing H";
+						C.Home_iScore,
+						C.Home_Inflicted_iCasualties,
+						C.Home_Inflicted_iDead,
+						C.Home_iCashEarned,
+						C.iSpectators
+						FROM Calendar C, Away_Team_Listing A, Home_Team_Listing H";
 
 		if (!($result = $match_report_db->query($query))) {
 			return false;
