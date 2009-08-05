@@ -73,11 +73,11 @@ function parse_results($sqlitefile) {
 
 	$matchparsed = CyanideMatch::parse_file( $sqlitefile );
 
-	if ( checkCoach ( $matchparsed["hometeam"] ) ||
-			checkCoach ( $matchparsed["awayteam"] ) )
-	{
+	/*if ( checkCoach ( $matchparsed["hometeam"] ) ||
+			checkCoach ( $matchparsed["awayteam"] || true ) )
+	{*/
 		report ( $matchparsed );
-	}
+	/*}
 	else
 	{
 		Print "<br><h2>You are not a coach involved in this match!</h2>";
@@ -85,11 +85,12 @@ function parse_results($sqlitefile) {
 		Print "Away team:".$matchparsed["awayteam"]."<br>";
 
 		exit (-1);
-	}
+	}*/
 
 }
 
 function report ( $matchparsed ) {
+	global $settings;
 
 	$conn = mysql_up();
 
@@ -103,7 +104,10 @@ function report ( $matchparsed ) {
 
 	$match = new Match( $matchfields['match_id'] );
 
-	$match->setLocked(true);
+	if( $settings['cyanide_public_league'] ) {
+		// Private league match need updates
+		$match->setLocked(true);
+	}
 
 	Print "<h4>Successfully uploaded report</h4>";
 
@@ -119,17 +123,17 @@ function addMatch ( $matchparsed ) {
 		exit(-1);
 	}
 
-	$hometeam_id=checkTeam ( $matchparsed['hometeam']);
+	$hometeam_id = checkTeam ( $matchparsed['hometeam']);
 	if ( !$hometeam_id )
 	{
-		Print "<br>The team {$matchparsed['hometeam']} in the report does not exist on this site.<br>";
+		Print "<h4>The team {$matchparsed['hometeam']} in the report does not exist on this site.</h4>";
 		exit(-1);
 	}
 
-	$awayteam_id=checkTeam ( $matchparsed['awayteam']);
+	$awayteam_id = checkTeam ( $matchparsed['awayteam']);
 	if ( !$awayteam_id )
 	{
-		Print "<br>The team {$matchparsed['hometeam']} in the report does not exist on this site.<br>";
+		Print "<h4>The team {$matchparsed['hometeam']} in the report does not exist on this site.</h4>";
 		exit(-1);
 	}
 
@@ -137,14 +141,16 @@ function addMatch ( $matchparsed ) {
 	$match_id = '';
 	$revUpdate = false;
 
-	if ( $settings['leegmgr_schedule'] )
-	$match_id = getschMatch( $hometeam_id, $awayteam_id );
+	if ( $settings['cyanide_schedule'] ) {
+		$match_id = getschMatch( $hometeam_id, $awayteam_id );
+	}
+
 	if (!$match_id) {
 		$match_id = getschMatchRev( $hometeam_id, $awayteam_id );
 		if ($match_id) $revUpdate = true;
 	}
 
-	if ( !$match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
+	if ( !$match_id && $settings['cyanide_schedule'] !== 'strict' ) {
 		Print "<h4>Creating match.</h4>";
 		$match_id = CyanideMatch::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 1, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
 	}
@@ -153,10 +159,8 @@ function addMatch ( $matchparsed ) {
 
 	if ( $match_id < 1 )
 	{
-
-		Print "There was an error uploading the report.  The site may be set to only allow scheduled matches.";
+		Print "<h4>There was an error uploading the report.</h4>";
 		exit (-1);
-
 	}
 
 	$match = new CyanideMatch($match_id);
@@ -167,10 +171,55 @@ function addMatch ( $matchparsed ) {
 	$team_away = new Team( $awayteam_id );
 	$tv_away = $team_away->value;
 
-	if (!$revUpdate) $match->update( $input = array("submitter_id" => $coach_id, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor1" => $matchparsed['homeff'], "ffactor2" => $matchparsed['awayff'], "fame1" => $matchparsed['homefame'], "fame2" => $matchparsed['awayfame'], "income1" => $matchparsed['homewinnings'], "income2" => $matchparsed['awaywinnings'], "team1_score" => $matchparsed['homescore'], "team2_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $tv_home, "tv2" => $tv_away, "comment" => "" ) );
-	else $match->update( $input = array("submitter_id" => $coach_id, "stadium" => $hometeam_id, "gate" => $matchparsed['gate'], "fans" => 0, "ffactor2" => $matchparsed['homeff'], "ffactor1" => $matchparsed['awayff'], "fame2" => $matchparsed['homefame'], "fame1" => $matchparsed['awayfame'], "income2" => $matchparsed['homewinnings'], "income1" => $matchparsed['awaywinnings'], "team2_score" => $matchparsed['homescore'], "team1_score" => $matchparsed['awayscore'], "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $tv_home, "tv1" => $tv_away, "comment" => "" ) );
+	if (!$revUpdate) {
+		$input = array(
+			"submitter_id" => $coach_id,
+			"stadium" => $hometeam_id,
+			"gate" => $matchparsed['gate'],
+			"fans" => $matchparsed['fans'],
+			"ffactor1" => $matchparsed['homeff'],
+			"ffactor2" => $matchparsed['awayff'],
+			"fame1" => $matchparsed['homefame'],
+			"fame2" => $matchparsed['awayfame'],
+			"income1" => $matchparsed['homewinnings'],
+			"income2" => $matchparsed['awaywinnings'],
+			"team1_score" => $matchparsed['homescore'],
+			"team2_score" => $matchparsed['awayscore'],
+			"smp1" => 0,
+			"smp2" => 0,
+			"tcas1" => $matchparsed['home_cas'],
+			"tcas2" => $matchparsed['away_cas'],
+			"tv1" => $tv_home,
+			"tv2" => $tv_away,
+			"comment" => "" );
+
+		$match->update( $input );
+	} else {
+		$input = array(
+			"submitter_id" => $coach_id,
+			"stadium" => $hometeam_id,
+			"gate" => $matchparsed['gate'],
+			"fans" => $matchparsed['fans'],
+			"ffactor2" => $matchparsed['homeff'],
+			"ffactor1" => $matchparsed['awayff'],
+			"fame2" => $matchparsed['homefame'],
+			"fame1" => $matchparsed['awayfame'],
+			"income2" => $matchparsed['homewinnings'],
+			"income1" => $matchparsed['awaywinnings'],
+			"team2_score" => $matchparsed['homescore'],
+			"team1_score" => $matchparsed['awayscore'],
+			"smp1" => 0,
+			"smp2" => 0,
+			"tcas1" => $matchparsed['home_cas'],
+			"tcas2" => $matchparsed['away_cas'],
+			"tv2" => $tv_home,
+			"tv1" => $tv_away,
+			"comment" => "" );
+		$match->update( $input );
+	}
 
 	$matchfields = array( "tour_id" => $tour_id, "hometeam_id" => $hometeam_id, "awayteam_id" => $awayteam_id, "match_id" => $match_id ); # homecoach_id awaycoach_id
+
 	return $matchfields;
 
 }
@@ -204,8 +253,8 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 		}
 
 		if( !isset($f_player_id) ) {
-			print "<h4>Warning: Player #".$player['nr']." does not exist in OBBLM</h4>";
-			break;
+			print "<br>Warning: Player #".$player['nr']." of ".$team->name."does not exist in OBBLM";
+			continue;
 		}
 
 		$mvp = $player['mvp'];
@@ -218,8 +267,6 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 		if ($intcpt == NULL) $intcpt = 0;
 		$bh = $player['bh'][0];
 		if ($bh == NULL) $bh = 0;
-		#$si = $players[$i]
-		#$ki = $players[$i]
 
 		$inj = switchInjury ( $player['inj'] );
 
@@ -251,7 +298,21 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 			$player = new Player ( $p->player_id );
 			$p_matchdata = $player->getMatchData( $match_id );
 			if ( !$p_matchdata['inj'] ) {
-				$match->entry( $input = array ( "team_id" => $team_id, "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ) );
+				$input  = array (
+					"team_id" => $team_id,
+					"player_id" => $p->player_id,
+					"mvp" => 0,
+					"cp" => 0,
+					"td" => 0,
+					"intcpt" => 0,
+					"bh" => 0,
+					"si" => 0,
+					"ki" => 0,
+					"inj" => 1,
+					"agn1" => 1,
+					"agn2" => 1  );
+
+				$match->entry( $input );
 			}
 		}
 	}
@@ -276,12 +337,12 @@ function checkCoach ( $team ) {
 
 function checkHash ( $hash ) {
 
-	print $hash;
-
 	$query = sprintf("
 		SELECT hash_botocs
 		FROM matches
 		WHERE hash_botocs = '%s' ", mysql_real_escape_string($hash) );
+
+	$results = mysql_query($query);
 
 	if( mysql_num_rows( $results ) != 0 ) {
 		Print "<h4>Unique match id already exists: ".$hash."</h4>";

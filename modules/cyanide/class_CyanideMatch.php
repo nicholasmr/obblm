@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Grï¿½gory Romï¿½ <email protected> 2009. All Rights Reserved.
+ *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -41,11 +41,11 @@ class CyanideMatch extends Match
 		/* Like parent but returns match_id of created match */
 
 		return (parent::create($input)
-		&& ($result = mysql_query("Select last_insert_id() from matches"))
-		&& mysql_num_rows($result) > 0
-		&& (list($mid) = array_values(mysql_fetch_assoc($result)))
-		&& $mid
-		) ? $mid : false;
+			&& ($result = mysql_query("Select last_insert_id() from matches"))
+			&& mysql_num_rows($result) > 0
+			&& (list($mid) = array_values(mysql_fetch_assoc($result)))
+			&& $mid
+			) ? $mid : false;
 	}
 
 	public static function parse_file($file)
@@ -56,7 +56,7 @@ class CyanideMatch extends Match
 		$hash = md5_file($file);
 
 		// General information
-		$query = "SELECT C.Championship_iDay,
+		$query = "SELECT C.Championship_iDay AS day,
 						A.strName AS Away_strName,
 						C.Away_iScore,
 						C.Away_Inflicted_iCasualties,
@@ -80,16 +80,13 @@ class CyanideMatch extends Match
 
 		$row = $array[0];
 
-
 		$gate = $row['iSpectators'];
 
 		$hometeam  = $row['Home_strName'];
-		$home_team_score = $row['Home_iScore'];
-		$homewinnings = $row['Home_iCashEarned']; // 0 in public league ?
-
 		$awayteam  = $row['Away_strName'];
+
+		$home_team_score = $row['Home_iScore'];
 		$away_team_score = $row['Away_iScore'];
-		$awaywinnings = $row['Away_iCashEarned']; // 0 in public league ?
 
 		$away_team_inflicted_cas = $row['Away_Inflicted_iCasualties'] + $row['Away_Inflicted_iDead'];
 		$home_team_inflicted_cas = $row['Home_Inflicted_iCasualties'] + $row['Home_Inflicted_iDead'];
@@ -110,9 +107,10 @@ class CyanideMatch extends Match
 		}
 
 		$row = $array[0];
-		$awayff = $row['Away_ff'];
-		$homeff = $row['Home_ff'];
+		$away_team_ff = $row['Away_ff'];
+		$home_team_ff = $row['Home_ff'];
 
+		// Those values are null even for private league
 		$away_team_value = $row['Away_value'];
 		$home_team_value = $row['Home_value'];
 
@@ -196,14 +194,17 @@ class CyanideMatch extends Match
 			$homeplayers[$row['nr']]['agn2'] = NONE;
 		}
 
-		if($settings['cyanide_public_league']) {
-			$home_team_ff = 0;
-			$away_team_ff = 0;
-			$away_team_fans = 0;
-			$home_team_fans = 0;
-
-			$homefame = (rand(2,12) + $home_team_ff) * 1000; // (2D6 + ff) * 1000
-			$awayfame = (rand(2,12) + $away_team_ff) * 1000; // (2D6 + ff) * 1000
+		if(!$settings['cyanide_public_league']) {
+			// MUST MANUALLY EDITED
+			$home_team_fans = (rand(2,12) + $home_team_ff) * 1000; // (2D6 + ff) * 1000
+			$away_team_fans = (rand(2,12) + $away_team_ff) * 1000; // (2D6 + ff) * 1000
+			$home_cash_earned = 0;
+			$away_cash_earned = 0;
+			$home_team_ff_variation = 0;
+			$away_team_ff_variation = 0;
+		} else {
+			$home_team_fans = (rand(2,12) + $home_team_ff) * 1000; // (2D6 + ff) * 1000
+			$away_team_fans = (rand(2,12) + $away_team_ff) * 1000; // (2D6 + ff) * 1000
 
 			if ($home_team_fans <= $away_team_fans)
 				$home_team_fame = 0;
@@ -230,15 +231,15 @@ class CyanideMatch extends Match
 				$home_ff_roll = rand(3,18); // 3D6
 				$away_ff_roll = rand(2,12); // 2D6
 
-				if ($home_ff_roll > $home_team_ff)
-				$home_team_ff_variation = 1;
+				if ($home_ff_roll > $home_team_ff) {
+					$home_team_ff_variation = 1;
+				}
 
-				if ($away_ff_roll < $away_team_ff)
-				$away_team_ff_variation = -1;
-			}
-			else if ($home_team_score == $away_team_score) {
+				if ($away_ff_roll < $away_team_ff) {
+					$away_team_ff_variation = -1;
+				}
+			} else if ($home_team_score == $away_team_score) {
 				// draw
-
 				$home_ff_roll = rand(2,12); // 2D6
 				$away_ff_roll = rand(2,12); // 2D6
 
@@ -251,8 +252,7 @@ class CyanideMatch extends Match
 					$away_team_ff_variation = 1;
 				else if ($away_ff_roll < $away_team_ff)
 					$away_team_ff_variation = -1;
-			}
-			else {
+			} else {
 				// away team won
 				$away_cash_earned += 10;
 
@@ -260,10 +260,10 @@ class CyanideMatch extends Match
 				$away_ff_roll = rand(3,18); // 3D6
 
 				if ($home_ff_roll < $home_team_ff)
-				$home_team_ff_variation = -1;
+					$home_team_ff_variation = -1;
 
 				if ($away_ff_roll > $away_team_ff)
-				$away_team_ff_variation = 1;
+					$away_team_ff_variation = 1;
 			}
 
 			// home team spiralling expenses
@@ -327,23 +327,32 @@ class CyanideMatch extends Match
 				$away_cash_earned = 0;
 			}
 
-			$homewinnings = $home_cash_earned;
-			$awaywinnings = $away_cash_earned;
+			if(!isset($home_team_ff_variation)) {
+				$home_team_ff_variation = 0;
+			}
+			if(!isset($away_team_ff_variation)) {
+				$away_team_ff_variation = 0;
+			}
 		}
 
 		$matchparsed = array ( "homeplayers" => $homeplayers,
 						"awayplayers" => $awayplayers,
 						"gate" => $gate,
+						"fans" => $home_team_fans + $away_team_fans,
 						"hometeam" => $hometeam,
 						"homescore" => $home_team_score,
-						"homewinnings" => $homewinnings,
-						"homeff" => $homeff,
-						"homefame" => $homefame,
+						"homewinnings" => $home_cash_earned * 1000,
+						"homeff" => $home_team_ff,
+						"homefame" => $home_team_fame,
+						"home_ff_variation" => $home_team_ff_variation,
+						"home_cas" => $home_team_inflicted_cas,
 						"awayteam" => $awayteam,
 						"awayscore" => $away_team_score,
-						"awaywinnings" => $awaywinnings,
-						"awayff" => $awayff,
-						"awayfame" => $awayfame,
+						"awaywinnings" => $away_cash_earned * 1000,
+						"awayff" => $away_team_ff,
+						"awayfame" => $away_team_fame,
+						"away_ff_variation" => $away_team_ff_variation,
+						"away_cas" => $home_team_inflicted_cas,
 						"hash" => $hash );
 
 		return $matchparsed;
