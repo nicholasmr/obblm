@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
+ *  Copyright (c) Grï¿½gory Romï¿½ <email protected> 2009. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -202,6 +202,8 @@ class CyanideMatch extends Match
 			$away_cash_earned = 0;
 			$home_team_ff_variation = 0;
 			$away_team_ff_variation = 0;
+			$home_team_fame = 0;
+			$away_team_fame = 0;
 		} else {
 			$home_team_fans = (rand(2,12) + $home_team_ff) * 1000; // (2D6 + ff) * 1000
 			$away_team_fans = (rand(2,12) + $away_team_ff) * 1000; // (2D6 + ff) * 1000
