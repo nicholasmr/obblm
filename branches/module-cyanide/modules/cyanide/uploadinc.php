@@ -41,7 +41,6 @@ function uploadpage() {
 	RT_QUARTER => 'Quarter final',
 	RT_ROUND16 => 'Round of 16 match');
 
-
 	if ( isset($_FILES['userfile']) )
 	{
 		if(!$_FILES['userfile']['tmp_name'])
@@ -108,19 +107,17 @@ function uploadpage() {
 function parse_results($sqlitefile) {
 	global $coach;
 
-	// Quit if coach does not has administrator privileges.
-
 	$matchparsed = CyanideMatch::parse_file( $sqlitefile );
 
 	if ( checkCoach ( $matchparsed["hometeam"] ) ||
 			checkCoach ( $matchparsed["awayteam"] ) ||
-				($coach->ring < RING_COACH) )  // Commisioners can add match.
+			($coach->ring < RING_COACH) )  // Commisioners can add match.
 	{
 		report ( $matchparsed );
 	}
 	else
 	{
-		Print "<h2>You are not a coach involved in this match!</h2>";
+		Print "<h2>You are not either a coach involved in this match or a commisioner!</h2>";
 		Print "<p>Home team:".$matchparsed["hometeam"]."<br>";
 		Print "Away team:".$matchparsed["awayteam"]."</p>";
 
@@ -136,11 +133,22 @@ function report ( $matchparsed ) {
 
 	$matchfields = addMatch ( $matchparsed );
 
+	if( isset($_POST['reverse']) )
+	{
+		$team2_players = $matchparsed['homeplayers'];
+		$team1_players = $matchparsed['awayplayers'];
+	}
+	else
+	{
+		$team1_players = $matchparsed['homeplayers'];
+		$team2_players = $matchparsed['awayplayers'];
+	}
+
 	matchEntry ( $matchfields['hometeam_id'], $matchfields['match_id'],
-					$matchparsed['homeplayers'] );
+					$team1_players );
 
 	matchEntry ( $matchfields['awayteam_id'], $matchfields['match_id'],
-					$matchparsed['awayplayers'] );
+					$team2_players );
 
 	$match = new Match( $matchfields['match_id'] );
 
@@ -157,6 +165,8 @@ function report ( $matchparsed ) {
 }
 
 function addMatch ( $matchparsed ) {
+	global $settings;
+	$match_id = '';
 
 	$tour_id = $_POST['ffatours'];
 	$round =  $_POST['roundnb'];
@@ -181,10 +191,6 @@ function addMatch ( $matchparsed ) {
 		exit(-1);
 	}
 
-	global $settings;
-	$match_id = '';
-	$revUpdate = false;
-
 	if ( $settings['cyanide_schedule'] )
 	{
 		$match_id = getschMatch( $hometeam_id, $awayteam_id );
@@ -206,21 +212,53 @@ function addMatch ( $matchparsed ) {
 		}
 	}
 
+	$team1 = $hometeam_id;
+	$team2 = $awayteam_id;
+	$team1_ffactor = $matchparsed['homeff'];
+	$team2_ffactor = $matchparsed['awayff'];
+	$team1_fame = $matchparsed['homefame'];
+	$team2_fame = $matchparsed['awayfame'];
+	$team1_income = $matchparsed['homewinnings'];
+	$team2_income = $matchparsed['awaywinnings'];
+	$team1_score = $matchparsed['homescore'];
+	$team2_score = $matchparsed['awayscore'];
+	$team1_tcas = $matchparsed['home_cas'];
+	$team2_tcas = $matchparsed['away_cas'];
+
 	if ( !$match_id  )
 	{
-		if( $settings['cyanide_schedule'] == 'strict' )
+		if( $settings['cyanide_schedule'] === 'strict' )
 		{
 			Print "<h2>Strict mode: the match must be scheduled first.</h2>";
 			exit (-1);
 		}
 
+		if( isset($_POST['reverse']) )
+		{
+			$team2 = $hometeam_id;
+			$team1 = $awayteam_id;
+			$team2 = $hometeam_id;
+			$team1 = $awayteam_id;
+			$team2_ffactor = $matchparsed['homeff'];
+			$team1_ffactor = $matchparsed['awayff'];
+			$team2_fame = $matchparsed['homefame'];
+			$team1_fame = $matchparsed['awayfame'];
+			$team2_income = $matchparsed['homewinnings'];
+			$team1_income = $matchparsed['awaywinnings'];
+			$team2_score = $matchparsed['homescore'];
+			$team1_score = $matchparsed['awayscore'];
+			$team2_tcas = $matchparsed['home_cas'];
+			$team1_tcas = $matchparsed['away_cas'];
+		}
+
 		Print "<h3>Creating match.</h3>";
 		$input = array(
-			"team1_id" => $hometeam_id,
-			"team2_id" => $awayteam_id,
+			"team1_id" => $team1,
+			"team2_id" => $team2,
 			"round" => $round,
 			"f_tour_id" => $tour_id,
 			"hash" => $matchparsed['hash'] );
+
 		$match_id =	CyanideMatch::create( $input );
 	}
 
@@ -233,64 +271,41 @@ function addMatch ( $matchparsed ) {
 	}
 
 	$match = new CyanideMatch($match_id);
-	$match->setHashCyanide($matchparsed['hash'], $match_id);
+	//$match->setHashCyanide($matchparsed['hash'], $match_id);
 	$coach_id = $_SESSION['coach_id'];
-	$team_home = new Team( $hometeam_id );
+
+	$team_home = new Team( $team1 );
 	$tv_home = $team_home->value;
-	$team_away = new Team( $awayteam_id );
+	$team_away = new Team( $team2 );
 	$tv_away = $team_away->value;
 
-	if (!$revUpdate) {
-		$input = array(
-			"submitter_id" => $coach_id,
-			"stadium" => $hometeam_id,
-			"gate" => $matchparsed['gate'],
-			"fans" => $matchparsed['fans'],
-			"ffactor1" => $matchparsed['homeff'],
-			"ffactor2" => $matchparsed['awayff'],
-			"fame1" => $matchparsed['homefame'],
-			"fame2" => $matchparsed['awayfame'],
-			"income1" => $matchparsed['homewinnings'],
-			"income2" => $matchparsed['awaywinnings'],
-			"team1_score" => $matchparsed['homescore'],
-			"team2_score" => $matchparsed['awayscore'],
-			"smp1" => 0,
-			"smp2" => 0,
-			"tcas1" => $matchparsed['home_cas'],
-			"tcas2" => $matchparsed['away_cas'],
-			"tv1" => $tv_home,
-			"tv2" => $tv_away,
-			"comment" => "" );
+	$input = array(
+		"submitter_id" => $coach_id,
+		"stadium" => $team1,
+		"gate" => $matchparsed['gate'],
+		"fans" => $matchparsed['fans'],
+		"ffactor1" => $team1_ffactor,
+		"ffactor2" => $team2_ffactor,
+		"fame1" => $team1_fame,
+		"fame2" => $team2_fame,
+		"income1" => $team1_income,
+		"income2" => $team2_income,
+		"team1_score" => $team1_score,
+		"team2_score" => $team2_score,
+		"smp1" => 0,
+		"smp2" => 0,
+		"tcas1" => $team1_tcas,
+		"tcas2" => $team2_tcas,
+		"tv1" => $tv_home,
+		"tv2" => $tv_away,
+		"comment" => "" );
 
-		$match->update( $input );
-	} else {
-		$input = array(
-			"submitter_id" => $coach_id,
-			"stadium" => $hometeam_id,
-			"gate" => $matchparsed['gate'],
-			"fans" => $matchparsed['fans'],
-			"ffactor2" => $matchparsed['homeff'],
-			"ffactor1" => $matchparsed['awayff'],
-			"fame2" => $matchparsed['homefame'],
-			"fame1" => $matchparsed['awayfame'],
-			"income2" => $matchparsed['homewinnings'],
-			"income1" => $matchparsed['awaywinnings'],
-			"team2_score" => $matchparsed['homescore'],
-			"team1_score" => $matchparsed['awayscore'],
-			"smp1" => 0,
-			"smp2" => 0,
-			"tcas1" => $matchparsed['home_cas'],
-			"tcas2" => $matchparsed['away_cas'],
-			"tv2" => $tv_home,
-			"tv1" => $tv_away,
-			"comment" => "" );
-		$match->update( $input );
-	}
+	$match->update( $input );
 
 	$matchfields = array(
 		"tour_id" => $tour_id,
-		"hometeam_id" => $hometeam_id,
-		"awayteam_id" => $awayteam_id,
+		"hometeam_id" => $team1,
+		"awayteam_id" => $team2,
 		"match_id" => $match_id );
 
 	return $matchfields;

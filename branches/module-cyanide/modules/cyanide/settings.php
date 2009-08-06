@@ -19,7 +19,7 @@ $settings['cyanide_public_league'] = true;
 //   * true checks for scheduled matches and will create a match if not found
 //   * "strict" will allow only scheduled matches to be used
 // Default is true.
-$settings['cyanide_schedule']      = "strict"; //@FIXME Default is true.
+$settings['cyanide_schedule']      = true;
 // Allow to select a scheduled match with reverse Home/Away
 // Default is true.
 $settings['cyanide_allow_reverse'] = true;
