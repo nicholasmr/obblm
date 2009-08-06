@@ -34,17 +34,49 @@ function uploadpage() {
 	global $settings;
 	$tourlist = "";
 	$roundlist = "";
+	$match_type = array(
+	RT_FINAL => 'Final',
+	RT_3RD_PLAYOFF => '3rd play-off',
+	RT_SEMI => 'Semi final',
+	RT_QUARTER => 'Quarter final',
+	RT_ROUND16 => 'Round of 16 match');
 
-	if (isset($_FILES['userfile'])) {
+
+	if ( isset($_FILES['userfile']) )
+	{
+		if(!$_FILES['userfile']['tmp_name'])
+		{
+			Print "<h2>Don't forget the file!</h2>";
+			exit(-1);
+		}
+
 		parse_results($_FILES['userfile']['tmp_name']);
-	}else
+	}
+	else
 	{
 		foreach (Tour::getTours() as $t)
-		if ($t->type == TT_FFA && !$t->locked)
-		$tourlist .= "<option value='$t->tour_id'>$t->name</option>\n";
+		{
+			if ($t->type == TT_FFA && !$t->locked)
+			{
+				$tourlist .= "<option value='$t->tour_id'>$t->name</option>\n";
+			}
+		}
 
-		for ($index = 0; $index < 16; $index++) {
-			$roundlist .= "<option value='$index'>Round #$index</option>\n";
+
+		foreach ( $match_type as $r => $d)
+		{
+			$roundlist .= "<option value='$r'>$d</option>\n";
+		}
+
+		$pure_rounds = array();
+		for ($i=1;$i<30;$i++)
+		{
+			$pure_rounds[$i] = "Round #$i match";
+		}
+
+		foreach ($pure_rounds as $r => $d)
+		{
+			$roundlist .= "<option value='$r'>$d</option>\n";
 		}
 
 		Print "<br/><br/>
@@ -53,39 +85,47 @@ function uploadpage() {
 		<!-- MAX_FILE_SIZE must precede the file input field -->
 		<input type='hidden' name='MAX_FILE_SIZE' value='60000' />
 		<!-- Name of input element determines name in $_FILES array -->
-		Send this file: <input name='userfile' type='file' />
-			<select name='ffatours'>
+		<h2>Send Cyanide Match Report</h2>
+		<p>Match Report File: <input name='userfile' type='file' /> (My documents\BloodBowl\MatchReport.sqlite)</p>
+		<p>Tournament:
+		<select name='ffatours'>
 			<optgroup label='Existing FFA'>
 			{$tourlist}
 			</optgroup>
-			</select>
-			<select name='roundnb'>
+		</select></p>
+		<p>Match type:
+		<select name='roundnb'>
 			<optgroup label='Round Number'>
 			{$roundlist}
 			</optgroup>
-			</select>
-		<input type='submit' value='Send File' />
+		</select></p>
+		<p>In case of non scheduled match: reverse Home/Away? <input type='checkbox' name='reverse' value='1'></p>
+		<br><input type='submit' value='Send File' />
 		</form>";
 	}
 }
 
 function parse_results($sqlitefile) {
+	global $coach;
+
+	// Quit if coach does not has administrator privileges.
 
 	$matchparsed = CyanideMatch::parse_file( $sqlitefile );
 
-	/*if ( checkCoach ( $matchparsed["hometeam"] ) ||
-			checkCoach ( $matchparsed["awayteam"] || true ) )
-	{*/
+	if ( checkCoach ( $matchparsed["hometeam"] ) ||
+			checkCoach ( $matchparsed["awayteam"] ) ||
+				($coach->ring < RING_COACH) )  // Commisioners can add match.
+	{
 		report ( $matchparsed );
-	/*}
+	}
 	else
 	{
-		Print "<br><h2>You are not a coach involved in this match!</h2>";
-		Print "Home team:".$matchparsed["hometeam"]."<br>";
-		Print "Away team:".$matchparsed["awayteam"]."<br>";
+		Print "<h2>You are not a coach involved in this match!</h2>";
+		Print "<p>Home team:".$matchparsed["hometeam"]."<br>";
+		Print "Away team:".$matchparsed["awayteam"]."</p>";
 
 		exit (-1);
-	}*/
+	}
 
 }
 
@@ -104,18 +144,22 @@ function report ( $matchparsed ) {
 
 	$match = new Match( $matchfields['match_id'] );
 
-	if( $settings['cyanide_public_league'] ) {
+	if( $settings['cyanide_public_league'] )
+	{
 		// Private league match need updates
 		$match->setLocked(true);
 	}
 
-	Print "<h4>Successfully uploaded report</h4>";
+	Print "<h2>Successfully uploaded report</h2>";
+
+	//HttpResponse::redirect("index.php?section=fixturelist&match_id=".$match_id,HTTP_REDIRECT_POST);
 
 }
 
 function addMatch ( $matchparsed ) {
 
 	$tour_id = $_POST['ffatours'];
+	$round =  $_POST['roundnb'];
 
 	if ( !checkHash ( $matchparsed['hash'] ) )
 	{
@@ -126,14 +170,14 @@ function addMatch ( $matchparsed ) {
 	$hometeam_id = checkTeam ( $matchparsed['hometeam']);
 	if ( !$hometeam_id )
 	{
-		Print "<h4>The team {$matchparsed['hometeam']} in the report does not exist on this site.</h4>";
+		Print "<h2>The team {$matchparsed['hometeam']} in the report does not exist on this site.</h2>";
 		exit(-1);
 	}
 
 	$awayteam_id = checkTeam ( $matchparsed['awayteam']);
 	if ( !$awayteam_id )
 	{
-		Print "<h4>The team {$matchparsed['hometeam']} in the report does not exist on this site.</h4>";
+		Print "<h2>The team {$matchparsed['hometeam']} in the report does not exist on this site.</h2>";
 		exit(-1);
 	}
 
@@ -141,25 +185,50 @@ function addMatch ( $matchparsed ) {
 	$match_id = '';
 	$revUpdate = false;
 
-	if ( $settings['cyanide_schedule'] ) {
+	if ( $settings['cyanide_schedule'] )
+	{
 		$match_id = getschMatch( $hometeam_id, $awayteam_id );
+		if($match_id)
+		{
+			print "<h4>Match scheduled found.</h4>";
+		}
+
 	}
 
-	if (!$match_id) {
-		$match_id = getschMatchRev( $hometeam_id, $awayteam_id );
-		if ($match_id) $revUpdate = true;
+	/* Allow to find the reverse match */
+	if (!$match_id && $settings['cyanide_allow_reverse'])
+	{
+		$match_id = getschMatch( $awayteam_id, $hometeam_id);
+		if ($match_id)
+		{
+			print "<h4>Reverse match scheduled found.</h4>";
+			$revUpdate = true;
+		}
 	}
 
-	if ( !$match_id && $settings['cyanide_schedule'] !== 'strict' ) {
-		Print "<h4>Creating match.</h4>";
-		$match_id = CyanideMatch::create( $input = array("team1_id" => $hometeam_id, "team2_id" => $awayteam_id, "round" => 1, "f_tour_id" => $tour_id, "hash" => $matchparsed['hash'] ) );
+	if ( !$match_id  )
+	{
+		if( $settings['cyanide_schedule'] == 'strict' )
+		{
+			Print "<h2>Strict mode: the match must be scheduled first.</h2>";
+			exit (-1);
+		}
+
+		Print "<h3>Creating match.</h3>";
+		$input = array(
+			"team1_id" => $hometeam_id,
+			"team2_id" => $awayteam_id,
+			"round" => $round,
+			"f_tour_id" => $tour_id,
+			"hash" => $matchparsed['hash'] );
+		$match_id =	CyanideMatch::create( $input );
 	}
 
 	unset( $input );
 
 	if ( $match_id < 1 )
 	{
-		Print "<h4>There was an error uploading the report.</h4>";
+		Print "<h2>There was an error uploading the report.</h2>";
 		exit (-1);
 	}
 
@@ -218,7 +287,11 @@ function addMatch ( $matchparsed ) {
 		$match->update( $input );
 	}
 
-	$matchfields = array( "tour_id" => $tour_id, "hometeam_id" => $hometeam_id, "awayteam_id" => $awayteam_id, "match_id" => $match_id ); # homecoach_id awaycoach_id
+	$matchfields = array(
+		"tour_id" => $tour_id,
+		"hometeam_id" => $hometeam_id,
+		"awayteam_id" => $awayteam_id,
+		"match_id" => $match_id );
 
 	return $matchfields;
 
@@ -253,7 +326,7 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 		}
 
 		if( !isset($f_player_id) ) {
-			print "<br>Warning: Player #".$player['nr']." of ".$team->name."does not exist in OBBLM";
+			print "<h4>Warning: Player #".$player['nr']." of ".$team->name."does not exist in OBBLM</h4>";
 			continue;
 		}
 
@@ -290,8 +363,8 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 		$match->entry( $input );
 
 	}
-	##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 
+	##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 	foreach ( $players as $p  )
 	{
 		if (  !$p->is_dead && !$p->is_sold ) {
@@ -325,7 +398,9 @@ function checkCoach ( $team ) {
 
 	$query = sprintf("SELECT owned_by_coach_id
 						FROM teams
-							WHERE owned_by_coach_id = '%s' and name = '%s' ", mysql_real_escape_string($_SESSION['coach_id']), mysql_real_escape_string($team) );
+							WHERE owned_by_coach_id = '%s' and name = '%s' ",
+	mysql_real_escape_string($_SESSION['coach_id']),
+	mysql_real_escape_string($team) );
 
 	if ( !mysql_fetch_array( mysql_query( $query ) ) ) {
 		return false;
@@ -355,7 +430,7 @@ function checkHash ( $hash ) {
 function checkTeam ( $teamname )
 {
 	$query = sprintf("SELECT team_id FROM teams WHERE name = '%s' ",
-						mysql_real_escape_string($teamname) );
+	mysql_real_escape_string($teamname) );
 
 	$team_id = mysql_query($query);
 	if (!$team_id) {
@@ -374,24 +449,14 @@ function getschMatch( $team_id1, $team_id2 ) {
 		SELECT match_id
 		FROM matches
 		WHERE submitter_id IS NULL
-			AND ( team1_id = $team_id1 ) AND  ( team2_id = $team_id2 )";
+			AND ( team1_id = $team_id1 )
+			AND ( team2_id = $team_id2 )";
 
-	$match_id = mysql_query($query);
-	$match_id = mysql_fetch_array($match_id);
-	$match_id = $match_id['match_id'];
-	return $match_id;
+	$results = mysql_query($query);
+	$rows = mysql_fetch_array($results);
+	mysql_free_result($results);
 
-}
-
-function getschMatchRev( $team_id2, $team_id1 ) {
-
-	$query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 ) AND  ( team2_id = $team_id2 )";
-
-	$match_id = mysql_query($query);
-	$match_id = mysql_fetch_array($match_id);
-	$match_id = $match_id['match_id'];
-	return $match_id;
-
+	return $rows['match_id'];
 }
 
 function switchInjury ( $inj ) {
@@ -429,6 +494,4 @@ function switchInjury ( $inj ) {
 	return $injeffect;
 
 }
-
-
 ?>
