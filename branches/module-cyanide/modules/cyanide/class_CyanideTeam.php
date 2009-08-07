@@ -49,6 +49,8 @@ class CyanideTeam
 		'elo' => 0,
 		'tcas' => 0 );
 
+	public $players = array();
+
 	private $prefix_list = array (
 		0 => "",
 		1 => "Home_",
@@ -62,16 +64,18 @@ class CyanideTeam
 		$team_db = new PDO("sqlite:" . $sqliteFile);
 
 		$results = cyanidedb_query_teamlisting($team_db, $this->prefix);
+		if(!$results) { return false; }
 
 		$this->info['name'] = $results['name'];
 		$this->info['race'] = $results['race'];
 
-		print "<p>Name: ".$this->info['name']."</p>";
-		print "<p>Race: ".$this->info['race']."</p>";
+		$results = obblm_find_team_by_name($this->info['name']);
+		if($results){
+			$this->id = $results[0];
+			$this->info['coach_id'] = $results[1];
+		}
 
-		$results = cyanidedb_query_playerlisting($team_db, $this->prefix);
-
-		$this->is_rdy = true;
+		$this->players = cyanidedb_query_playerlisting($team_db, $this->prefix);
 
 		return true;
 	}
@@ -79,24 +83,42 @@ class CyanideTeam
 	public function create()
 	{
 		global $coach;
-		$this->info['coach_id'] = $coach->coach_id;
 
-		if($this->is_rdy)
+		if( !$this->id )
 		{
+			$this->info['coach_id'] = $coach->coach_id;
+
 			if($this->is_new){ $this->id = Team::create($this->info); }
 			else { $this->id = Team::create($this->info, $this->init); }
-
-			return $this->id;
+		}
+		else
+		{
+			if($coach->coach_id !== $this->info['coach_id'] &&
+				($coach->ring === RING_COACH) )
+			{
+				return false;
+			}
 		}
 
-		return false;
+		return $this->id;
 	}
 
 	public function populate()
 	{
-		if($this->id>0)
+		if( $this->id )
 		{
 			$team = new Team($this->id);
+			foreach($this->players as $player)
+			{
+				$player['team_id'] = $this->id;
+				$player['forceCreate'] = true;
+
+				foreach(array_keys($player) as $key)
+				{
+					print $key." = ".$player[$key]."<br>";
+				}
+				$player_id = Player::create($player, false);
+			}
 
 			return true;
 		}
