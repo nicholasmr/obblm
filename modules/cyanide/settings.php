@@ -55,14 +55,14 @@ $settings['cyanide_allow_reverse'] = true;
 $settings['cyanide_allow_new_player'] = false;
 
 // Races supported by Cyanide.
-$settings['cyanide_races'] = array(
-	'Chaos',
-	'Dwarf',
-	'Goblin',
-	'Human',
-	'Lizardman',
-	'Orc',
-	'Skaven',
-	'Wood Elf');
+$settings['cyanide_races'] = array (
+	1 => 'Human',
+	2 => 'Dwarf',
+	3 => 'Skaven',
+	4 => 'Orc',
+	5 => 'Lizardman',
+	6 => 'Goblin',
+	7 => 'Wood Elf',
+	8 => 'Chaos' );
 
 ?>

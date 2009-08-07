@@ -658,20 +658,6 @@ function sec_admin() {
         title($lng->getTrn('secs/admin/import'));
         echo $lng->getTrn('secs/admin/import_notice1');
         ?>
-        <hr align="left" width="200px">
-        <?php
-        global $settings;
-        if ($settings['cyanide_enabled']) {
-		?>
-		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
-		<b>Import a Cyanide team</b>:
-		<a href='handler.php?type=cyanide_team_import'>Click here</a>
-		</div>
-		<br>
-		<?php
-    	}
-
-        ?>
      	<hr align="left" width="200px">
         <br>
         <?php echo $lng->getTrn('secs/admin/method1');?><br>

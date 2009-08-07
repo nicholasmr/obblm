@@ -22,6 +22,8 @@
  *
  */
 
+require_once 'modules/cyanide/lib_cyanide.php';
+
 // Registered module main function.
 function main()
 {
@@ -88,7 +90,7 @@ function uploadpage()
 
 		Print "<br/><br/>
 		<!-- The data encoding type, enctype, MUST be specified as below -->
-		<form enctype='multipart/form-data' action='handler.php?type=cyanide' method='POST'>
+		<form enctype='multipart/form-data' action='handler.php?type=cyanide_match_import' method='POST'>
 		<!-- MAX_FILE_SIZE must precede the file input field -->
 		<input type='hidden' name='MAX_FILE_SIZE' value='60000' />
 		<!-- Name of input element determines name in $_FILES array -->
@@ -323,7 +325,6 @@ function addMatch ( $matchparsed ) {
 function matchEntry ( $team_id, $match_id, $teamPlayers )
 {
 	global $settings;
-	global $cyanide_player_type;
 	$match = new Match( $match_id );
 
 	$team = new Team( $team_id );
@@ -355,7 +356,7 @@ function matchEntry ( $team_id, $match_id, $teamPlayers )
 			print "<h4>Warning: Player #".$player['nr']." of ".$team->name."does not exist in OBBLM</h4>";
 			if( $settings['cyanide_allow_new_player'] )
 			{
-				print "<h4>Create Player #".$player['nr']." of ".$team->name.": ".$cyanide_player_type[$player['type']][1]."</h4>";
+				print "<h4>Create Player #".$player['nr']." of ".$team->name.": ".cyanidedb_get_postion($player['type'])."</h4>";
 
 				$new_player = array(
 					'name' => $player['name'],

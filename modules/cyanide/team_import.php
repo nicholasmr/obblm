@@ -44,7 +44,7 @@ function team_upload_page()
 			exit(-1);
 		}
 
-		//$team = new CyanideTeam($_FILES['userfile']);
+		$team = new CyanideTeam($_FILES['userfile'], $_POST['file_type']);
 
 		//$team_id = $team->create();
 
@@ -61,6 +61,11 @@ function team_upload_page()
 		<!-- Name of input element determines name in $_FILES array -->
 		<h2>Send Cyanide Team Database</h2>
 		<p>Team File: <input name='userfile' type='file' /></p>
+		<select name='file_type'>
+			<option value='0'>Saved Team</option>
+			<option value='1'>Match Report Home</option>
+			<option value='2'>Match Report Away</option>
+		</select>
 		<br><input type='submit' value='Send File' />
 		</form>";
 	}
