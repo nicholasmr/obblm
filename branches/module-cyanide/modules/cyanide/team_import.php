@@ -36,6 +36,8 @@ function team_upload_page()
 {
 	global $settings;
 
+	print "<h2>Not yet fully implemented</h2>";
+
 	if ( isset($_FILES['userfile']) )
 	{
 		if(!$_FILES['userfile']['tmp_name'])
@@ -44,18 +46,21 @@ function team_upload_page()
 			exit(-1);
 		}
 
-		$team = new CyanideTeam($_FILES['userfile'], $_POST['file_type']);
+		$team = new CyanideTeam($_FILES['userfile']['tmp_name'], $_POST['file_type']);
 
-		//$team_id = $team->create();
+		$team_id = $team->create();
 
-		print "<h2>Not yet implemented</h2>";
+		if($team_id)
+		{
+			$team->populate();
+		}
 	}
 	else
 	{
 
 		Print "<br/><br/>
 		<!-- The data encoding type, enctype, MUST be specified as below -->
-		<form enctype='multipart/form-data' action='handler.php?type=cyanide_import_team' method='POST'>
+		<form enctype='multipart/form-data' action='handler.php?type=cyanide_team_import' method='POST'>
 		<!-- MAX_FILE_SIZE must precede the file input field -->
 		<input type='hidden' name='MAX_FILE_SIZE' value='60000' />
 		<!-- Name of input element determines name in $_FILES array -->
