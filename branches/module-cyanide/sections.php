@@ -1706,7 +1706,21 @@ function sec_coachcorner() {
             </tr>
         </table>
         </form>
+        <hr>
         <?php
+        global $settings;
+        if ($settings['cyanide_enabled']) {
+		?>
+		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
+		<b>Import a Cyanide team</b>:
+		<a href='handler.php?type=cyanide_team_import'>Click here</a>
+		</div>
+		<br>
+		<?php
+    	}
+        ?>
+        <?php
+
     }
 
     /* Show coach corner main page. */

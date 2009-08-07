@@ -22,11 +22,14 @@
  *
  */
 
+require_once 'modules/cyanide/lib_cyanide.php';
+
 class CyanideTeam
 {
 	public $id = 0;
 	public $is_rdy = false;
 	public $is_new = true;
+	public $prefix = "";
 
 	public $info = array (
 		coach_id => 0,
@@ -46,20 +49,37 @@ class CyanideTeam
 		elo => 0,
 		tcas => 0 );
 
+	private $prefix_list = array (
+		0 => "",
+		1 => "Home_",
+		2 => "Away_"
+	);
 
-	function __construct($sqliteFile)
+	function __construct($sqliteFile, $type)
 	{
+		$this->prefix = $this->prefix_list[$type];
+
 		$team_db = new PDO("sqlite:" . $sqliteFile);
+
+		$results = cyanidedb_query_teamlisting($team_db, $this->prefix);
+
+		$this->info[name] = $results[name];
+		$this->info[race] = $results[race];
+
+		return true;
 	}
 
 	public function create()
 	{
+		global $coach;
+		$this->info[coach_id] = $coach->coach_id;
+
 		if($this->is_rdy)
 		{
 			if($this->is_new)
-				$this->id = Team::create($this->info);
+			$this->id = Team::create($this->info);
 			else
-				$this->id = Team::create($this->info, $this->init);
+			$this->id = Team::create($this->info, $this->init);
 
 			return $this->id;
 		}
@@ -71,6 +91,8 @@ class CyanideTeam
 	{
 		if($this->id>0)
 		{
+			$team = new Team($this->id);
+
 			return true;
 		}
 		return false;
