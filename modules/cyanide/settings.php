@@ -49,6 +49,8 @@ $settings['cyanide_schedule']      = true;
 $settings['cyanide_allow_reverse'] = true;
 
 // Enable player creation if it does not exist during Match import.
+// This feature allows to update the team in case of missing player.
+// To use with caution.
 // Default is false.
 $settings['cyanide_allow_new_player'] = false;
 
