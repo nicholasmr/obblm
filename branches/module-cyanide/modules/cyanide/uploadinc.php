@@ -1,8 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) GrÃ©gory RomÃ© <email protected> 2009. All Rights Reserved.
- *
+ *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
+ *  Author(s): Frederic Morel, Grégory Romé
  *
  *
  *  This file is part of OBBLM.
@@ -40,6 +40,11 @@ function uploadpage() {
 	RT_SEMI => 'Semi final',
 	RT_QUARTER => 'Quarter final',
 	RT_ROUND16 => 'Round of 16 match');
+
+	if($settings['cyanide_public_league'])
+	{
+		$reverse_checkbox = "<p>In case of non scheduled match: reverse Home/Away? <input type='checkbox' name='reverse' value='1'></p>";
+	}else { $reverse_checkbox = ""; }
 
 	if ( isset($_FILES['userfile']) )
 	{
@@ -98,7 +103,7 @@ function uploadpage() {
 			{$roundlist}
 			</optgroup>
 		</select></p>
-		<p>In case of non scheduled match: reverse Home/Away? <input type='checkbox' name='reverse' value='1'></p>
+		{$reverse_checkbox}
 		<br><input type='submit' value='Send File' />
 		</form>";
 	}
@@ -271,7 +276,7 @@ function addMatch ( $matchparsed ) {
 	}
 
 	$match = new CyanideMatch($match_id);
-	//$match->setHashCyanide($matchparsed['hash'], $match_id);
+	$match->setHashCyanide($matchparsed['hash'], $match_id);
 	$coach_id = $_SESSION['coach_id'];
 
 	$team_home = new Team( $team1 );
@@ -312,8 +317,9 @@ function addMatch ( $matchparsed ) {
 
 }
 
-function matchEntry ( $team_id, $match_id, $teamPlayers ) {
-
+function matchEntry ( $team_id, $match_id, $teamPlayers )
+{
+	global $settings;
 	$match = new Match( $match_id );
 
 	$team = new Team( $team_id );
@@ -342,7 +348,22 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 
 		if( !isset($f_player_id) ) {
 			print "<h4>Warning: Player #".$player['nr']." of ".$team->name."does not exist in OBBLM</h4>";
-			continue;
+			if( $settings['cyanide_allow_new_player'] )
+			{
+				// @TODO
+				print "<h3>Not yet implemented</h3>";
+				continue;
+				//
+				$new_player = array(
+					'name' => $player['name'],
+					'team_id'=> $team_id,
+			 		'nr' => $player['nr'],
+			 		'position' => getObblmType($player['nr']) ,
+					'forceCreate' => true );
+				$ret = Player::create($new_player, false);
+
+				$f_player_id = $ret[1];
+			} else { continue; }
 		}
 
 		$mvp = $player['mvp'];
@@ -382,10 +403,12 @@ function matchEntry ( $team_id, $match_id, $teamPlayers ) {
 	##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 	foreach ( $players as $p  )
 	{
-		if (  !$p->is_dead && !$p->is_sold ) {
+		if (  !$p->is_dead && !$p->is_sold )
+		{
 			$player = new Player ( $p->player_id );
 			$p_matchdata = $player->getMatchData( $match_id );
-			if ( !$p_matchdata['inj'] ) {
+			if ( !$p_matchdata['inj'] )
+			{
 				$input  = array (
 					"team_id" => $team_id,
 					"player_id" => $p->player_id,
@@ -507,6 +530,11 @@ function switchInjury ( $inj ) {
 	}
 
 	return $injeffect;
+
+}
+
+function getObblmType($cyanide_type)
+{
 
 }
 ?>

@@ -1,7 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) Grï¿½gory Romï¿½ <email protected> 2009. All Rights Reserved.
+ *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
+ *  Author(s): Frederic Morel, Grégory Romé
  *
  *
  *  This file is part of OBBLM.
@@ -115,26 +116,29 @@ class CyanideMatch extends Match
 		$home_team_value = $row['Home_value'];
 
 		// Away players
-		$query = "SELECT L.iNumber As nr,
-						strName AS name,
-						iMVP AS mvp,
-						Inflicted_iPasses AS cp,
-						Inflicted_iTouchdowns AS td,
-						Inflicted_iInterceptions AS intcpt,
-						Inflicted_iCasualties AS cas,
-						Inflicted_iDead AS ki,
-						idPlayer_Casualty_Types AS inj_type,
-						Sustained_iDead As dead
-					FROM Away_Statistics_Players S
-						JOIN Away_Player_Listing L ON S.idPlayer_Listing=L.ID
-						LEFT JOIN Away_Player_Casualties C
-							ON S.idPlayer_Listing=C.idPlayer_Listing";
+		$query = "
+			SELECT L.iNumber As nr,
+				L.idPlayer_Types As type,
+				strName AS name,
+				iMVP AS mvp,
+				Inflicted_iPasses AS cp,
+				Inflicted_iTouchdowns AS td,
+				Inflicted_iInterceptions AS intcpt,
+				Inflicted_iCasualties AS cas,
+				Inflicted_iDead AS ki,
+				idPlayer_Casualty_Types AS inj_type,
+				Sustained_iDead As dead
+			FROM Away_Statistics_Players S
+				JOIN Away_Player_Listing L
+					ON S.idPlayer_Listing=L.ID
+				LEFT JOIN Away_Player_Casualties C
+					ON S.idPlayer_Listing=C.idPlayer_Listing";
 
-		if (!($result = $match_report_db->query($query)))
-			return false;
+		$result = $match_report_db->query($query);
+		if (!$result) {	return false; }
 
-		if (!($array = $result->fetchAll()))
-			return false;
+		$array = $result->fetchAll();
+		if (!$array) { return false; }
 
 		foreach ($array as $row) {
 			$awayplayers[$row['nr']]['nr'] = $row['nr'];
@@ -151,6 +155,8 @@ class CyanideMatch extends Match
 			$awayplayers[$row['nr']]['inj'] = CyanideMatch::getInjury($row['inj_type']);
 			$awayplayers[$row['nr']]['agn1'] = NONE;
 			$awayplayers[$row['nr']]['agn2'] = NONE;
+
+			$awayplayers[$row['nr']]['type'] = $row['type'];
 		}
 
 		// Home players
