@@ -32,22 +32,22 @@ class CyanideTeam
 	public $prefix = "";
 
 	public $info = array (
-		coach_id => 0,
-		name => 0,
-		race => 0);
+		'coach_id' => 0,
+		'name' => 0,
+		'race' => 0);
 
 	public $init = array (
-		won => 0,
-		lost => 0,
-		draw => 0,
-		sw => 0,
-		sl => 0,
-		sd => 0,
-		wt => 0,
-		gf => 0,
-		ga => 0,
-		elo => 0,
-		tcas => 0 );
+		'won' => 0,
+		'lost' => 0,
+		'draw' => 0,
+		'sw' => 0,
+		'sl' => 0,
+		'sd' => 0,
+		'wt' => 0,
+		'gf' => 0,
+		'ga' => 0,
+		'elo' => 0,
+		'tcas' => 0 );
 
 	private $prefix_list = array (
 		0 => "",
@@ -63,8 +63,15 @@ class CyanideTeam
 
 		$results = cyanidedb_query_teamlisting($team_db, $this->prefix);
 
-		$this->info[name] = $results[name];
-		$this->info[race] = $results[race];
+		$this->info['name'] = $results['name'];
+		$this->info['race'] = $results['race'];
+
+		print "<p>Name: ".$this->info['name']."</p>";
+		print "<p>Race: ".$this->info['race']."</p>";
+
+		$results = cyanidedb_query_playerlisting($team_db, $this->prefix);
+
+		$this->is_rdy = true;
 
 		return true;
 	}
@@ -72,14 +79,12 @@ class CyanideTeam
 	public function create()
 	{
 		global $coach;
-		$this->info[coach_id] = $coach->coach_id;
+		$this->info['coach_id'] = $coach->coach_id;
 
 		if($this->is_rdy)
 		{
-			if($this->is_new)
-			$this->id = Team::create($this->info);
-			else
-			$this->id = Team::create($this->info, $this->init);
+			if($this->is_new){ $this->id = Team::create($this->info); }
+			else { $this->id = Team::create($this->info, $this->init); }
 
 			return $this->id;
 		}
