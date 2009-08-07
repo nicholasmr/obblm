@@ -693,7 +693,7 @@ function sec_fixturelist() {
 		?>
 		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
 		<b>Cyanide game match report upload</b>:
-		<a href='handler.php?type=cyanide'>Click here</a>
+		<a href='handler.php?type=cyanide_match_import'>Click here</a>
 		</div>
 		<br>
 		<?php

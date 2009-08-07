@@ -161,6 +161,7 @@ class CyanideMatch extends Match
 
 		// Home players
 		$query = "SELECT L.iNumber As nr,
+						L.idPlayer_Types As type,
 						strName AS name,
 						iMVP AS mvp,
 						Inflicted_iPasses AS cp,
@@ -198,6 +199,8 @@ class CyanideMatch extends Match
 			$homeplayers[$row['nr']]['inj'] = CyanideMatch::getInjury($row['inj_type']);
 			$homeplayers[$row['nr']]['agn1'] = NONE;
 			$homeplayers[$row['nr']]['agn2'] = NONE;
+
+			$homeplayers[$row['nr']]['type'] = $row['type'];
 		}
 
 		if(!$settings['cyanide_public_league']) {
