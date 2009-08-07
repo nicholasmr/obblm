@@ -38,7 +38,7 @@ function team_upload_page()
 
 	print "<h2>Not yet fully implemented</h2>";
 
-	if ( isset($_FILES['userfile']) )
+	if ( isset($_POST['send']) )
 	{
 		if(!$_FILES['userfile']['tmp_name'])
 		{
@@ -50,13 +50,30 @@ function team_upload_page()
 
 		$team_id = $team->create();
 
+		$msg="<h2>Error!</h2>";
+
 		if($team_id)
 		{
-			$team->populate();
+			if($team->populate())
+			{
+				$msg = "<h3>This file contains the team: <b>".$team->info['name']." of ".$team_coach->name."</b>!</h3>";
+			};
 		}
 	}
 	else
 	{
+		if( isset($_POST['check']) && $_FILES['userfile']['tmp_name'] )
+		{
+
+			$team = new CyanideTeam($_FILES['userfile']['tmp_name'], $_POST['file_type']);
+			$team_coach = new Coach($team->info['coach_id']);
+			$msg = "<h3>This file contains the team: <b>".$team->info['name']." of ".$team_coach->name."</b>!</h3>";
+		} else { $msg = ""; }
+
+		$selected[0] = "";
+		$selected[1] = "";
+		$selected[2] = "";
+		$selected[$_POST['file_type']]="selected";
 
 		Print "<br/><br/>
 		<!-- The data encoding type, enctype, MUST be specified as below -->
@@ -65,13 +82,14 @@ function team_upload_page()
 		<input type='hidden' name='MAX_FILE_SIZE' value='60000' />
 		<!-- Name of input element determines name in $_FILES array -->
 		<h2>Send Cyanide Team Database</h2>
+		{$msg}
 		<p>Team File: <input name='userfile' type='file' /></p>
-		<select name='file_type'>
-			<option value='0'>Saved Team</option>
-			<option value='1'>Match Report Home</option>
-			<option value='2'>Match Report Away</option>
-		</select>
-		<br><input type='submit' value='Send File' />
+		<select name='file_type' selected='2'>
+			<option value='0' $selected[0] >Saved Team</option>
+			<option value='1' $selected[1] >Match Report Home</option>
+			<option value='2' $selected[2] >Match Report Away</option>
+		</select> <input type='submit' value='Check' name='check'/>
+		<br><input type='submit' value='Send File' name='send'/>
 		</form>";
 	}
 }
