@@ -890,9 +890,8 @@ function sec_standings() {
     title($lng->getTrn('global/secLinks/standings'));
     echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
 
-    HTMLOUT::standings(STATS_TEAM,false,false,array('url' => 'index.php?section=standings', 'hidemenu' => true));
-    
-    $teams = Team::getTeams();
+    $teams = HTMLOUT::standings(STATS_TEAM,false,false,array('url' => 'index.php?section=standings', 'hidemenu' => true, 'return_objects' => true));
+
     if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
     $fields = array(
         'name'         => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')), 
