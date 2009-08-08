@@ -22,6 +22,7 @@
  */
 
 error_reporting(E_ALL);
+define('NO_STARTUP', true); # header.php hint.
 require('header.php'); // Includes and constants.
 
 function mk_tables() {

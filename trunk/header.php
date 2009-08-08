@@ -21,8 +21,8 @@
  *   
  */
  
-if (version_compare(PHP_VERSION, '5.1.0') == -1)
-    die('OBBLM requires PHP version 5.1, you are running version '.PHP_VERSION);
+if (version_compare(PHP_VERSION, '5.2.3') == -1)
+    die('OBBLM requires PHP version 5.2.3, you are running version '.PHP_VERSION);
  
 if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
     die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
@@ -266,11 +266,13 @@ if (!is_writable(IMG))
     die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
 
 /******************** 
- *   Globals
+ *   Globals/Startup
  ********************/
 
-$conn = mysql_up(true); # MySQL connect.
+if (!defined('NO_STARTUP')) {
+    $conn = mysql_up(true); # MySQL connect. If constant is set before calling this header table checking will be ignored.
+    $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
+}
 $lng = new Translations($settings['lang']); # Load language.
-$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
 
 ?>
