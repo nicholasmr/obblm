@@ -101,8 +101,8 @@ function sec_main() {
 
     if (isset($_POST['type']) && is_object($coach)) {
         if (get_magic_quotes_gpc()) {
-            $_POST['title'] = stripslashes($_POST['title']);
-            $_POST['txt'] = stripslashes($_POST['txt']);
+            if (isset($_POST['title'])) $_POST['title'] = stripslashes($_POST['title']);
+            if (isset($_POST['txt']))   $_POST['txt']   = stripslashes($_POST['txt']);
         }
         switch ($_POST['type'])
         {
