@@ -57,7 +57,7 @@ class CyanideTeam
 		2 => "Away_"
 	);
 
-	function __construct($sqliteFile, $type)
+	function __construct($sqliteFile, $type, $coach_id=false)
 	{
 		$this->prefix = $this->prefix_list[$type];
 
@@ -69,10 +69,19 @@ class CyanideTeam
 		$this->info['name'] = $results['name'];
 		$this->info['race'] = $results['race'];
 
+		print $this->info['race'];
+
 		$results = obblm_find_team_by_name($this->info['name']);
-		if($results){
+		if($results)
+		{
 			$this->id = $results[0];
 			$this->info['coach_id'] = $results[1];
+		} else
+		{
+			if($coach_id)
+			{
+				$this->info['coach_id'] = $coach_id;
+			}
 		}
 
 		$this->players = cyanidedb_query_playerlisting($team_db, $this->prefix);
@@ -86,7 +95,10 @@ class CyanideTeam
 
 		if( !$this->id )
 		{
-			$this->info['coach_id'] = $coach->coach_id;
+			if(!$this->info['coach_id'])
+			{
+				$this->info['coach_id'] = $coach->coach_id;
+			}
 
 			if($this->is_new){ $this->id = Team::create($this->info); }
 			else { $this->id = Team::create($this->info, $this->init); }
