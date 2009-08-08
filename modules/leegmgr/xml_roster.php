@@ -80,6 +80,7 @@ foreach ( $players as $p )
 				{
 
 					if ( strpos($a_skills[$i], "Ball & Chain") !== FALSE ) $a_skills[$i] = "Ball and Chain";
+					if ( strpos($a_skills[$i], "Nurgle's Rot") !== FALSE ) $a_skills[$i] = "Nurgles Rot";
 					$a_skills[$i] = htmlspecialchars($a_skills[$i], ENT_NOQUOTES, 'UTF-8');
 					if ( strpos($a_skills[$i], "*") ) $a_skills[$i] = str_replace("*","",$a_skills[$i]);
 					Print "                <skill>".$a_skills[$i]."</skill>\n";
