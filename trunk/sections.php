@@ -100,15 +100,15 @@ function sec_main() {
     */
 
     if (isset($_POST['type']) && is_object($coach)) {
+        if (get_magic_quotes_gpc()) {
+            $_POST['title'] = stripslashes($_POST['title']);
+            $_POST['txt'] = stripslashes($_POST['txt']);
+        }
         switch ($_POST['type'])
         {
             case 'msgdel': $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
             case 'msgnew': status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
             case 'msgedit':	
-                if (get_magic_quotes_gpc()) {
-                    $_POST['title'] = stripslashes($_POST['title']);
-                    $_POST['txt'] = stripslashes($_POST['txt']);
-                }
                 $msg = new Message($_POST['msg_id']); 
                 status($msg->edit($_POST['title'], $_POST['txt']));
                 break;
