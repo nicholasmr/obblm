@@ -42,6 +42,13 @@ class Module
     {
         self::$modules[$struct['modname']] = $struct;
         unset(self::$modules[$struct['modname']]['modname']);
+        /*
+            From manual/en/function.include.php
+            
+            When a file is included, the code it contains inherits the variable scope of the line on which the include occurs. 
+            Any variables available at that line in the calling file will be available within the called file, from that point forward. 
+            However, all functions and classes defined in the included file have the global scope. 
+        */
         foreach ($struct['filesLoadTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
     }
     
