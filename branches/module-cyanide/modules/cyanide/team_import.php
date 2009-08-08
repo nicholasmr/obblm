@@ -65,6 +65,13 @@ function team_upload_page()
 			};
 		}
 
+		foreach ($team->err as $key => $errs) {
+			print "<p>".$key."<br>";
+			foreach($errs as $err)
+				print $err." ";
+			print "</p>";
+		}
+
 		print $msg;
 	}
 	else

@@ -31,10 +31,23 @@ class CyanideTeam
 	public $is_new = true;
 	public $prefix = "";
 
+	public $err = Array (
+		'new_player_err' => array(),
+		'get_player_err' => array()
+	);
+
 	public $info = array (
-		'coach_id' => 0,
-		'name' => 0,
-		'race' => 0);
+			'name' => 0,
+			'race' => 0,
+			'coach_id' => false,
+			'comment' => "",
+			'tv' => 0,
+			'ff' => 0,
+			'treasury' => 0,
+			'cheerleaders' => 0,
+			'apothecary' => 0,
+			'ass_coaches' => 0,
+			'rerolls' => 0 );
 
 	public $init = array (
 		'won' => 0,
@@ -63,19 +76,14 @@ class CyanideTeam
 
 		$team_db = new PDO("sqlite:" . $sqliteFile);
 
-		$results = cyanidedb_query_teamlisting($team_db, $this->prefix);
-		if(!$results) { return false; }
-
-		$this->info['name'] = $results['name'];
-		$this->info['race'] = $results['race'];
-
-		print $this->info['race'];
+		$this->info = cyanidedb_query_teamlisting($team_db, $this->prefix);
+		if(!$this->info) { return false; }
 
 		$results = obblm_find_team_by_name($this->info['name']);
 		if($results)
 		{
-			$this->id = $results[0];
-			$this->info['coach_id'] = $results[1];
+			$this->id = $results['team_id'];
+			$this->info['coach_id'] = $results['coach_id'];
 		} else
 		{
 			if($coach_id)
@@ -120,20 +128,94 @@ class CyanideTeam
 		if( $this->id )
 		{
 			$team = new Team($this->id);
+
+			// ALLOW TO UPDATE TEAM
+			$team->dtreasury(1000);
+
+			if($this->info['apothecary'] > $team->apothecary)
+			{
+				$team->buy('apothecary');
+			}
+
+			$diff = $this->info['rerolls'] - $team->rerolls;
+			if($diff)
+			{
+				for($i = 0; $i <$diff; $i++)
+				{
+					$team->buy('rerolls');
+				}
+			}
+
+			$diff = $this->info['ass_coaches'] - $team->ass_coaches;
+			if($diff)
+			{
+				for($i = 0; $i <$diff; $i++)
+				{
+					$team->buy('ass_coaches');
+				}
+			}
+
+			$diff = $this->info['cheerleaders'] - $team->cheerleaders;
+			if($diff)
+			{
+				for($i = 0; $i <$diff; $i++)
+				{
+					$team->buy('cheerleaders');
+				}
+			}
+
 			foreach($this->players as $player)
 			{
 				$player['team_id'] = $this->id;
 				$player['forceCreate'] = true;
 
-				foreach(array_keys($player) as $key)
+				$results = obblm_find_player_by_number($player['nr'], $this->id);
+
+				if($results)
 				{
-					print $key." = ".$player[$key]."<br>";
+					print
+					$player_id = $results['player_id'];
 				}
-				$player_id = Player::create($player, false);
+				else
+				{
+					$player_id = Player::create($player, false);
+					if(!$player_id)
+					{
+						array_push($this->err['new_player_err'], $player['nr']);
+						continue;
+					}
+				}
+
+				$new_player = new Player($player_id);
+
+				if(!$new_player)
+				{
+					array_push($this->err['get_player_err'], $player_id);
+					continue;
+				}
+
+				if($new_player->name !== $player['name'])
+				{
+					$new_player->rename($player['name']);
+				}
+			}
+
+			for($i = 0; $i <$this->info['ff']; $i++)
+			{
+				if(!$team->buy('fan_factor')) {break;}
+			}
+
+			$team->dtreasury(1000);
+
+			$diff = $this->info['treasury'] - $team->treasury;
+			if($diff)
+			{
+				$team->dtreasury($diff);
 			}
 
 			return true;
 		}
+
 		return false;
 	}
 
