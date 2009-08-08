@@ -151,7 +151,31 @@ function obblm_find_team_by_name ( $team_name )
 
 	$row = mysql_fetch_array($results);
 
-	return array($row['team_id'], $row['owned_by_coach_id']);
+	$out = array(
+		'team_id' =>  $row['team_id'],
+		'coach_id' => $row['owned_by_coach_id']);
+
+	return $out;
 }
+
+function obblm_find_player_by_number ( $nr, $team_id )
+{
+	$query = "
+		SELECT name, player_id
+		FROM players
+		WHERE nr = '".$nr."'
+		AND owned_by_team_id = '".$team_id."'
+		LIMIT 1";
+
+	$results = mysql_query($query);
+	if (!$results) { return false; }
+
+	if(mysql_num_rows($results) !== 1) { return false; }
+
+	$row = mysql_fetch_array($results);
+
+	return array('player_id' => $row['player_id'], 'name' => $row['name']);
+}
+
 
 ?>
