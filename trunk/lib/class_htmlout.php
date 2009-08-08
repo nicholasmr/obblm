@@ -141,8 +141,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             'url' => page URL on which table is to be displayed (required!)
             'GET_SS' => GET Sorting suffix
             'hidemenu' => bool
-            'team_from' => STATS_*
-            'team_from_id => obj ID
+            'return_objects' => bool
          );
      */
      
@@ -323,6 +322,8 @@ public static function standings($obj, $node, $node_id, array $opts)
        (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
        $extra
     );
+    
+    return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? $objs : true;
 }
 
 public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $prefix = '') 
