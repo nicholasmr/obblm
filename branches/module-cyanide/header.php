@@ -21,8 +21,8 @@
  *
  */
 
-if (version_compare(PHP_VERSION, '5.1.0') == -1)
-die('OBBLM requires PHP version 5.1, you are running version '.PHP_VERSION);
+if (version_compare(PHP_VERSION, '5.2.3') == -1)
+    die('OBBLM requires PHP version 5.2.3, you are running version '.PHP_VERSION);
 
 if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
 die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
@@ -37,7 +37,7 @@ session_start();
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.75i');
+define('OBBLM_VERSION', '0.75rc1');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
@@ -255,7 +255,6 @@ if($settings['cyanide_enabled'])
 	require_once('modules/cyanide/game_data.php');
 }
 
-
 // HTML interface routines.
 require_once('sections.php'); # Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('lib/class_htmlout.php');
@@ -273,11 +272,13 @@ if (!is_writable(IMG))
 die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
 
 /********************
- *   Globals
+ *   Globals/Startup
  ********************/
 
-$conn = mysql_up(true); # MySQL connect.
+if (!defined('NO_STARTUP')) {
+    $conn = mysql_up(true); # MySQL connect. If constant is set before calling this header table checking will be ignored.
+    $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
+}
 $lng = new Translations($settings['lang']); # Load language.
-$coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
 
 ?>

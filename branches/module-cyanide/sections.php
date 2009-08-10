@@ -100,15 +100,15 @@ function sec_main() {
     */
 
     if (isset($_POST['type']) && is_object($coach)) {
+        if (get_magic_quotes_gpc()) {
+            if (isset($_POST['title'])) $_POST['title'] = stripslashes($_POST['title']);
+            if (isset($_POST['txt']))   $_POST['txt']   = stripslashes($_POST['txt']);
+        }
         switch ($_POST['type'])
         {
             case 'msgdel': $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
             case 'msgnew': status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
             case 'msgedit':
-                if (get_magic_quotes_gpc()) {
-                    $_POST['title'] = stripslashes($_POST['title']);
-                    $_POST['txt'] = stripslashes($_POST['txt']);
-                }
                 $msg = new Message($_POST['msg_id']);
                 status($msg->edit($_POST['title'], $_POST['txt']));
                 break;
@@ -689,16 +689,6 @@ function sec_fixturelist() {
 		<?php
     }
 
-    if (isset($coach) && $settings['cyanide_enabled']) {
-		?>
-		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
-		<b>Cyanide game match report upload</b>:
-		<a href='handler.php?type=cyanide_match_import'>Click here</a>
-		</div>
-		<br>
-		<?php
-    }
-
     $flist = array( # The fixture list
 // $flist MODEL:
 #        'league1' => array(
@@ -900,9 +890,8 @@ function sec_standings() {
     title($lng->getTrn('global/secLinks/standings'));
     echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
 
-    HTMLOUT::standings(STATS_TEAM,false,false,array('url' => 'index.php?section=standings', 'hidemenu' => true));
+    $teams = HTMLOUT::standings(STATS_TEAM,false,false,array('url' => 'index.php?section=standings', 'hidemenu' => true, 'return_objects' => true));
 
-    $teams = Team::getTeams();
     if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
     $fields = array(
         'name'         => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
@@ -1706,22 +1695,7 @@ function sec_coachcorner() {
             </tr>
         </table>
         </form>
-        <hr>
         <?php
-        global $settings;
-        if ($settings['cyanide_enabled'])
-        {
-		?>
-		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
-		<b>Import a Cyanide team</b>:
-		<a href='handler.php?type=cyanide_team_import'>Click here</a>
-		</div>
-		<br>
-		<?php
-    	}
-        ?>
-        <?php
-
     }
 
     /* Show coach corner main page. */

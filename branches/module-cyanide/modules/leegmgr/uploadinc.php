@@ -40,7 +40,7 @@ function uploadpage() {
 	<!-- The data encoding type, enctype, MUST be specified as below -->
 	<form enctype='multipart/form-data' action='handler.php?type=leegmgr' method='POST'>
 	<!-- MAX_FILE_SIZE must precede the file input field -->
-	<input type='hidden' name='MAX_FILE_SIZE' value='30000' />
+	<input type='hidden' name='MAX_FILE_SIZE' value='100000' />
 	<!-- Name of input element determines name in $_FILES array -->
 	Send this file: <input name='userfile' type='file' />
 		<select name='ffatours'>
@@ -66,9 +66,9 @@ function uploadpage() {
 
 			while ($zip_entry = zip_read($zip)) {
 
-				if (strpos(zip_entry_name($zip_entry),".xml") > 1 ) {
+				if (strpos(zip_entry_name($zip_entry),"report.xml") !== false ) {
 					Print "<br>Reading XML file from the zip file.<br>";
-					$xmlresults = zip_entry_read($zip_entry, 10240);
+					$xmlresults = zip_entry_read($zip_entry, 100000);
 					zip_entry_close($zip_entry);
 				}
 
