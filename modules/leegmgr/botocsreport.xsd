@@ -104,7 +104,7 @@
   <xs:simpleType name="t_winnings">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="0" />
-      <xs:maxInclusive value="100000" />
+      <xs:maxInclusive value="200000" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="t_mvp">
