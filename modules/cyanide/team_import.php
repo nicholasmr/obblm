@@ -65,14 +65,20 @@ function team_upload_page()
 			};
 		}
 
-		foreach ($team->err as $key => $errs) {
-			print "<p>".$key."<br>";
-			foreach($errs as $err)
-				print $err." ";
-			print "</p>";
-		}
+		if($team->has_err)
+		{
+			foreach ($team->err as $key => $errs)
+			{
+				print "<p>".$key."<br>";
+				foreach($errs as $err)
+				{
+					print $err." ";
+				}
+				print "</p>";
+			}
 
-		print $msg;
+			print $msg;
+		}
 	}
 	else
 	{
@@ -80,8 +86,15 @@ function team_upload_page()
 		{
 
 			$team = new CyanideTeam($_FILES['userfile']['tmp_name'], $_POST['file_type']);
-			$team_coach = new Coach($team->info['coach_id']);
-			$msg = "<h3>This file contains the team: <b>".$team->info['name']." of ".$team_coach->name."</b>!</h3>";
+			if(!$team->info['coach_id'])
+			{
+				$msg = "<h3>The '".$team->info['name']."' is unknown!</h3>";
+			}
+			else
+			{
+				$team_coach = new Coach($team->info['coach_id']);
+				$msg = "<h3>This file contains the team: <b>".$team->info['name']." of ".$team_coach->name."</b>!</h3>";
+			}
 		} else { $msg = ""; }
 
 		$selected[0] = "";
@@ -107,7 +120,7 @@ function team_upload_page()
 				$coach_selection .= "<option value='$c->coach_id' ".(($coach_id == $c->coach_id) ? 'SELECTED' : '').">$c->name </option>\n";
 			}
 
-            $coach_selection .= "</select><br>";
+			$coach_selection .= "</select><br>";
 		}
 
 		Print "<br/><br/>

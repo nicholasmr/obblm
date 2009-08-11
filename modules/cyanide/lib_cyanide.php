@@ -174,7 +174,9 @@ function obblm_find_player_by_number ( $nr, $team_id )
 
 	$row = mysql_fetch_array($results);
 
-	return array('player_id' => $row['player_id'], 'name' => $row['name']);
+	$out = array('player_id' => $row['player_id'], 'name' => $row['name']);
+
+	return $out;
 }
 
 

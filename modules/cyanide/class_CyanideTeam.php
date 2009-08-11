@@ -31,6 +31,7 @@ class CyanideTeam
 	public $is_new = true;
 	public $prefix = "";
 
+	public $has_err = false;
 	public $err = Array (
 		'new_player_err' => array(),
 		'get_player_err' => array()
@@ -86,10 +87,7 @@ class CyanideTeam
 			$this->info['coach_id'] = $results['coach_id'];
 		} else
 		{
-			if($coach_id)
-			{
-				$this->info['coach_id'] = $coach_id;
-			}
+			$this->info['coach_id'] = false;
 		}
 
 		$this->players = cyanidedb_query_playerlisting($team_db, $this->prefix);
@@ -128,9 +126,6 @@ class CyanideTeam
 		if( $this->id )
 		{
 			$team = new Team($this->id);
-
-			// ALLOW TO UPDATE TEAM
-			$team->dtreasury(1000);
 
 			if($this->info['apothecary'] > $team->apothecary)
 			{
@@ -173,23 +168,29 @@ class CyanideTeam
 
 				if($results)
 				{
-					print
 					$player_id = $results['player_id'];
 				}
 				else
 				{
-					$player_id = Player::create($player, false);
-					if(!$player_id)
+					 $results = Player::create($player, false);
+
+					if(!$results)
 					{
+						$has_err = true;
 						array_push($this->err['new_player_err'], $player['nr']);
 						continue;
+					} else
+					{
+						$player_id=$results[1];
 					}
+
 				}
 
 				$new_player = new Player($player_id);
 
 				if(!$new_player)
 				{
+					$has_err = true;
 					array_push($this->err['get_player_err'], $player_id);
 					continue;
 				}
@@ -205,11 +206,12 @@ class CyanideTeam
 				if(!$team->buy('fan_factor')) {break;}
 			}
 
-			$team->dtreasury(1000);
-
+			/* Required the updated treasury */
+			$team = new Team($this->id);
 			$diff = $this->info['treasury'] - $team->treasury;
 			if($diff)
 			{
+				print "<h3>".$diff."</h3>";
 				$team->dtreasury($diff);
 			}
 
