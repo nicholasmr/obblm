@@ -114,8 +114,8 @@ Module::register(array(
     'author'        => 'William Leonard',
     'date'          => '2009',
     'setCanvas'     => false, 
-    'main'          => 'botocsxml_load', 
-    'filesRunTime'  => array('leegmgr/xml_roster.php'),
+    'main'          => 'XML_BOTOCS::main', 
+    'filesRunTime'  => array('leegmgr/class_xml_botocs.php'),
     'filesLoadTime' => array('leegmgr/settings.php')
 ));
 
