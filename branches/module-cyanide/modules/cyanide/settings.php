@@ -34,7 +34,7 @@ $settings['cyanide_enabled']       = true; //@FIXME Default is false.
 //   * fans.
 // If false the match is not locked.
 // Default is true.
-$settings['cyanide_public_league'] = true;
+$settings['cyanide_public_league'] = false; //@FIXME Default is true.
 
 // Uploads report to a scheduled match.
 // The options are [false|true|"strict"]:

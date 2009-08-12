@@ -127,8 +127,11 @@ class CyanideTeam
 		{
 			$team = new Team($this->id);
 
+			$team->dtreasury(1000000);
+
 			if($this->info['apothecary'] > $team->apothecary)
 			{
+				print "<p>Buy Apothecary</p>";
 				$team->buy('apothecary');
 			}
 
@@ -137,6 +140,7 @@ class CyanideTeam
 			{
 				for($i = 0; $i <$diff; $i++)
 				{
+					print "<p>Buy Reroll</p>";
 					$team->buy('rerolls');
 				}
 			}
@@ -146,6 +150,7 @@ class CyanideTeam
 			{
 				for($i = 0; $i <$diff; $i++)
 				{
+					print "<p>Buy Assistant Coaches</p>";
 					$team->buy('ass_coaches');
 				}
 			}
@@ -155,6 +160,7 @@ class CyanideTeam
 			{
 				for($i = 0; $i <$diff; $i++)
 				{
+					print "<p>Buy Cheerleaders</p>";
 					$team->buy('cheerleaders');
 				}
 			}
@@ -172,6 +178,7 @@ class CyanideTeam
 				}
 				else
 				{
+					print "<p>Create Player</p>";
 					 $results = Player::create($player, false);
 
 					if(!$results)
@@ -197,21 +204,27 @@ class CyanideTeam
 
 				if($new_player->name !== $player['name'])
 				{
+					print "<p>Rename Player</p>";
 					$new_player->rename($player['name']);
 				}
 			}
 
-			for($i = 0; $i <$this->info['ff']; $i++)
+			$team->setStats(false,false,false);
+			$diff = $this->info['ff'] - $team->fan_factor;
+			for($i = 0; $i <$diff; $i++)
 			{
-				if(!$team->buy('fan_factor')) {break;}
+				print "<p>Buy Fan Factor</p>";
+				$team->buy('fan_factor', true);
 			}
 
+			$team->dtreasury(-1000000);
+
 			/* Required the updated treasury */
-			$team = new Team($this->id);
+			$team = New Team($this->id);
 			$diff = $this->info['treasury'] - $team->treasury;
 			if($diff)
 			{
-				print "<h3>".$diff."</h3>";
+				print "<p>Update Treasury</p>";
 				$team->dtreasury($diff);
 			}
 

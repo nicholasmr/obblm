@@ -92,6 +92,8 @@ function team_upload_page()
 			}
 			else
 			{
+				$team_ = new Team($team->id);
+				print $team_->fan_factor;
 				$team_coach = new Coach($team->info['coach_id']);
 				$msg = "<h3>This file contains the team: <b>".$team->info['name']." of ".$team_coach->name."</b>!</h3>";
 			}
