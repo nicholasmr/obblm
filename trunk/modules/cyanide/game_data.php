@@ -24,22 +24,34 @@
 
 global $DEA;
 global $raceididx;
+global $hrs;
 
-foreach ($DEA as $race_name => $attrs)
+if($settings['cyanide_enabled'])
 {
 
-	if (!in_array($race_name, $settings['cyanide_races']))
+	foreach ($DEA as $race_name => $attrs)
 	{
-		unset($DEA[$race_name]);
+		if (!in_array($race_name, $settings['cyanide_races']))
+		{
+			unset($DEA[$race_name]);
+		}
 	}
-}
 
-unset ($DEA['Goblin']['players']['Bombardier']);
+	unset ($DEA['Goblin']['players']['Bombardier']);
 
-$raceididx = array();
-foreach (array_keys($DEA) as $race)
-{
-	$raceididx[$DEA[$race]['other']['race_id']] = $race;
+	$raceididx = array();
+	foreach (array_keys($DEA) as $race)
+	{
+		$raceididx[$DEA[$race]['other']['race_id']] = $race;
+	}
+
+	$rule = array(
+		'rule' => array('-points', '-value', '-score_diff'),
+		'points' => '3*[won] + 1*[draw]',
+		'points_desc' => '3*[won] + 1*[draw]'
+		);
+
+	array_push($hrs, $rule);
 }
 
 ?>
