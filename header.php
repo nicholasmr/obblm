@@ -2,7 +2,7 @@
 
 /*
  *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2009. All Rights Reserved.
- *      
+ *
  *
  *  This file is part of OBBLM.
  *
@@ -18,22 +18,22 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *   
+ *
  */
- 
+
 if (version_compare(PHP_VERSION, '5.2.3') == -1)
     die('OBBLM requires PHP version 5.2.3, you are running version '.PHP_VERSION);
- 
+
 if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
-    die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
+die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
 
 if (false && file_exists('install.php'))
-    die('Please remove <i>install.php</i> before using OBBLM.');
-    
+die('Please remove <i>install.php</i> before using OBBLM.');
+
 error_reporting(E_ALL);
 session_start();
- 
-/********************* 
+
+/*********************
  *   General
  *********************/
 
@@ -42,7 +42,7 @@ $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 
-/********************* 
+/*********************
  *   Stats types. Used by Stats class.
  *********************/
 
@@ -59,18 +59,18 @@ define('STATS_LEAGUE',   13);
 
 // Translation between MySQL column match data references in the match_data table to PHP STATS_* constants.
 $STATS_TRANS = array(
-    STATS_PLAYER    => 'match_data.f_player_id',
-    STATS_TEAM      => 'match_data.f_team_id',
-    STATS_COACH     => 'match_data.f_coach_id',
-    STATS_RACE      => 'match_data.f_race_id',
-    
-    STATS_MATCH     => 'match_data.f_match_id',
-    STATS_TOUR      => 'match_data.f_tour_id',
-    STATS_DIVISION  => 'match_data.f_did',
-    STATS_LEAGUE    => 'match_data.f_lid',
+STATS_PLAYER    => 'match_data.f_player_id',
+STATS_TEAM      => 'match_data.f_team_id',
+STATS_COACH     => 'match_data.f_coach_id',
+STATS_RACE      => 'match_data.f_race_id',
+
+STATS_MATCH     => 'match_data.f_match_id',
+STATS_TOUR      => 'match_data.f_tour_id',
+STATS_DIVISION  => 'match_data.f_did',
+STATS_LEAGUE    => 'match_data.f_lid',
 );
 
-/********************* 
+/*********************
  *   Prize types. Used by Prize class.
  *********************/
 
@@ -80,7 +80,7 @@ define('PRIZE_3RD',     3);
 define('PRIZE_LETHAL',  4);
 define('PRIZE_FAIR',    5);
 
-/********************* 
+/*********************
  *   Images
  *********************/
 
@@ -99,7 +99,7 @@ define('IMG_COACHES',   UPLOAD_DIR.'/coaches');
 define('IMG_MATCHES',   UPLOAD_DIR.'/matches');
 define('IMG_PRIZES',    UPLOAD_DIR.'/prizes');
 
-/********************* 
+/*********************
  *   Roster/status colors
  *********************/
 
@@ -117,7 +117,7 @@ define('COLOR_HTML_CHR_GTP1', '#50FF50'); // Characteristic greater than plus on
 define('COLOR_HTML_CHR_EQM1', '#FF8888'); // Characteristic equal minus one.
 define('COLOR_HTML_CHR_LTM1', '#FF4444'); // Characteristic less than minus one.
 
-/********************* 
+/*********************
  *   For texts (table)
  *********************/
 
@@ -137,7 +137,7 @@ define('T_TEXT_TNEWS',  12); // Team news board messages.
 
 define('LOG_HIST_LENGTH', 3); // Show log entries for this number of months back in time.
 
-/********************* 
+/*********************
  *   For players
  *********************/
 
@@ -152,8 +152,8 @@ define('ID_STARS_BEGIN', -5); // First star's player_id, second id is one smalle
 define('PLAYER_TYPE_NORMAL',  1);
 define('PLAYER_TYPE_JOURNEY', 2);
 
-/********************* 
- *   For tournaments 
+/*********************
+ *   For tournaments
  *********************/
 
 // Tournament Types for MySQL tournament "type" column:
@@ -163,7 +163,7 @@ define('TT_RROBIN', 2); # Round-Robin
 // Minimum required teams to create tournament.
 define('MIN_TOUR_TEAMS', 3); # DO NOT change this value to less than 3!
 
-/******************** 
+/********************
  *   For matches
  ********************/
 
@@ -179,15 +179,15 @@ define('DEAD',  8);
 define('SOLD',  9);
 
 $STATUS_TRANS = array(
-	NONE => 'NONE',
-	MNG  => 'MNG',
-	NI   => 'NI',
-	MA   => 'MA',
-	AV   => 'AV',
-	AG   => 'AG',
-	ST   => 'ST',
-	DEAD => 'DEAD',
-	SOLD => 'SOLD',
+NONE => 'NONE',
+MNG  => 'MNG',
+NI   => 'NI',
+MA   => 'MA',
+AV   => 'AV',
+AG   => 'AG',
+ST   => 'ST',
+DEAD => 'DEAD',
+SOLD => 'SOLD',
 );
 
 // Round types
@@ -202,10 +202,10 @@ define('MAX_ROUNDNR', RT_ROUND16); # This should have the value of the smallest 
 // Reserved (non-real) matches:
 define('MATCH_ID_IMPORT', -1);
 
-/******************** 
+/********************
  *   Security
  ********************/
- 
+
 // Privilege rings (ie. coach access level)
 define('RING_SYS',   0); // Admins
 define('RING_COM',   1); // Commissioners.
@@ -218,8 +218,8 @@ define('RING_COACH', 2); // Coach/ordinary user
 // General OBBLM routines and data structures.
 require_once('settings.php');
 require_once('lib/game_data.php'); # LRB5
-if ($rules['enable_lrb6x']) { 
-    require_once('lib/game_data_lrb6x.php'); # LRB6
+if ($rules['enable_lrb6x']) {
+	require_once('lib/game_data_lrb6x.php'); # LRB6
 }
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
@@ -249,6 +249,12 @@ require_once('lib/class_translations.php'); # Juergen Unfried
 // Modules.
 require_once('modules/modsheader.php'); # Registration of modules.
 
+// Cyanide data modifications
+if($settings['cyanide_enabled'])
+{
+	require_once('modules/cyanide/game_data.php');
+}
+
 // HTML interface routines.
 require_once('sections.php'); # Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('lib/class_htmlout.php');
@@ -258,14 +264,14 @@ require_once('matches.php');
 require_once('records.php');
 require_once('admin.php');
 
-/******************** 
+/********************
  *   Final setup
  ********************/
 
 if (!is_writable(IMG))
-    die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
+die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
 
-/******************** 
+/********************
  *   Globals/Startup
  ********************/
 
