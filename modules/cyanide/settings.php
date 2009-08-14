@@ -26,7 +26,7 @@ global $settings;
 
 // Enable Cyanide game support.
 // Default is false.
-$settings['cyanide_enabled']       = true; //@FIXME Default is false.
+$settings['cyanide_enabled'] = false;
 
 // If true the module is in charge to compute some team data:
 //   * cash earned,
@@ -34,7 +34,7 @@ $settings['cyanide_enabled']       = true; //@FIXME Default is false.
 //   * fans.
 // If false the match is not locked.
 // Default is true.
-$settings['cyanide_public_league'] = false; //@FIXME Default is true.
+$settings['cyanide_public_league'] = true;
 
 // Uploads report to a scheduled match.
 // The options are [false|true|"strict"]:
@@ -42,7 +42,7 @@ $settings['cyanide_public_league'] = false; //@FIXME Default is true.
 //   * true checks for scheduled matches and will create a match if not found
 //   * "strict" will allow only scheduled matches to be used
 // Default is true.
-$settings['cyanide_schedule']      = true;
+$settings['cyanide_schedule'] = true;
 
 // Allow to select a scheduled match with reverse Home/Away
 // Default is true.
