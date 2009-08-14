@@ -25,30 +25,30 @@
  THIS FILE is used for HTML-helper routines.
  */
 
-class HTMLOUT 
+class HTMLOUT
 {
 
 public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array $opts)
 {
     /*
         Make recent games table.
-        
+
          $opts = array(
             'url' => The URL of the page on which this table is to be printed.
             'n' => (int) Fetch the n most recent games. If not specified all matches are displayed.
             'GET_SS' => GET Sorting suffix
          );
     */
-    
+
     global $lng;
-    
+
     $extra = array('doNr' => false, 'noHelp' => true);
-    
+
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
     if (!(array_key_exists('n', $opts) && $opts['n'])) {$opts['n'] = false;}
-    
-    $matches = ($FOR_OBJ = $obj && $obj_id) 
+
+    $matches = ($FOR_OBJ = $obj && $obj_id)
         ? $matches = Stats::getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $opts['n'], true, false)
         : $matches = Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, false);
 
@@ -62,48 +62,48 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
     }
 
     $fields = array(
-        'date_played' => array('desc' => 'Date played'), 
+        'date_played' => array('desc' => 'Date played'),
         'tour_name'   => array('desc' => 'Tournament'),
-        'team1_name'  => array('desc' => 'Home', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team1_id')), 
+        'team1_name'  => array('desc' => 'Home', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team1_id')),
         'team2_name'  => array('desc' => 'Away', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team2_id')),
-        'gate'        => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false), 
-        'score'       => array('desc' => 'Score', 'nosort' => true), 
+        'gate'        => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false),
+        'score'       => array('desc' => 'Score', 'nosort' => true),
     );
     if ($FOR_OBJ) {$fields['result'] = array('desc' => 'Result', 'nosort' => true);}
     $fields['mlink'] = array('desc' => 'Match', 'nosort' => true); # Must be last!
-    
+
     HTMLOUT::sort_table(
-        'Recent matches', 
-        $opts['url'], 
-        $matches, 
-        $fields, 
-        sort_rule('match'), 
+        'Recent matches',
+        $opts['url'],
+        $matches,
+        $fields,
+        sort_rule('match'),
         (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
         $extra
     );
 }
 
-public static function upcommingGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array $opts) 
+public static function upcommingGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array $opts)
 {
     /*
         Make upcomming games table.
-        
+
          $opts = array(
             'url' => The URL of the page on which this table is to be printed.
             'n' => (int) Fetch the n most recent games. If not specified all matches are displayed.
             'GET_SS' => GET Sorting suffix
          );
     */
-    
+
     global $lng;
-    
+
     $extra = array('doNr' => false, 'noHelp' => true);
-    
+
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
     if (!(array_key_exists('n', $opts) && $opts['n'])) {$opts['n'] = false;}
-    
-    $matches = ($obj && $obj_id) 
+
+    $matches = ($obj && $obj_id)
         ? Stats::getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $opts['n'], true, true)
         : Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, true);
 
@@ -113,30 +113,30 @@ public static function upcommingGames($obj, $obj_id, $node, $node_id, $opp_obj, 
     }
 
     $fields = array(
-        'date_created'      => array('desc' => 'Date created'), 
+        'date_created'      => array('desc' => 'Date created'),
         'tour_name'         => array('desc' => 'Tournament'),
-        'team1_name'        => array('desc' => 'Home', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team1_id')), 
+        'team1_name'        => array('desc' => 'Home', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team1_id')),
         'team2_name'        => array('desc' => 'Away', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team2_id')),
-        'mlink'             => array('desc' => 'Match', 'nosort' => true), 
+        'mlink'             => array('desc' => 'Match', 'nosort' => true),
     );
-    
+
     HTMLOUT::sort_table(
-        'Upcomming matches', 
-        $opts['url'], 
-        $matches, 
-        $fields, 
-        array('+date_created'), 
+        'Upcomming matches',
+        $opts['url'],
+        $matches,
+        $fields,
+        array('+date_created'),
         (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
         $extra
     );
 }
 
-public static function standings($obj, $node, $node_id, array $opts) 
-{    
+public static function standings($obj, $node, $node_id, array $opts)
+{
     /*
-         Makes various kinds of standings tables.   
+         Makes various kinds of standings tables.
          $obj and $node types are STATS_* types.
-         
+
          $opts = array(
             'url' => page URL on which table is to be displayed (required!)
             'GET_SS' => GET Sorting suffix
@@ -144,9 +144,9 @@ public static function standings($obj, $node, $node_id, array $opts)
             'return_objects' => bool
          );
      */
-     
+
     global $lng, $settings;
-    
+
     $tblTitle = $tblSortRule = '';
     $objs = $fields = $extra = array();
     $fields_before = $fields_after = array(); // To be merged with $fields.
@@ -154,7 +154,7 @@ public static function standings($obj, $node, $node_id, array $opts)
 
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
-    
+
     $hidemenu = (array_key_exists('hidemenu', $opts) && $opts['hidemenu']);
     echo '<div ' . (($hidemenu) ? "style='display:none;'" : '').'>';
     list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector($node, $node_id, $hidemenu, '');
@@ -165,26 +165,26 @@ public static function standings($obj, $node, $node_id, array $opts)
 
     // Common $obj type fields.
     $fields = array(
-        'won'               => array('desc' => 'W'), 
-        'lost'              => array('desc' => 'L'), 
-        'draw'              => array('desc' => 'D'), 
-        'played'            => array('desc' => 'GP'), 
-        'win_percentage'    => array('desc' => 'WIN%'), 
-        'row_won'           => array('desc' => 'SW'), 
-        'row_lost'          => array('desc' => 'SL'), 
-        'row_draw'          => array('desc' => 'SD'), 
+        'won'               => array('desc' => 'W'),
+        'lost'              => array('desc' => 'L'),
+        'draw'              => array('desc' => 'D'),
+        'played'            => array('desc' => 'GP'),
+        'win_percentage'    => array('desc' => 'WIN%'),
+        'row_won'           => array('desc' => 'SW'),
+        'row_lost'          => array('desc' => 'SL'),
+        'row_draw'          => array('desc' => 'SD'),
         'score_team'        => array('desc' => 'GF'.(($set_avg) ? '*' : '')),
         'score_opponent'    => array('desc' => 'GA'.(($set_avg) ? '*' : '')),
-        'won_tours'         => array('desc' => 'WT'), 
-        'td'                => array('desc' => 'Td'.(($set_avg) ? '*' : '')), 
-        'cp'                => array('desc' => 'Cp'.(($set_avg) ? '*' : '')), 
-        'intcpt'            => array('desc' => 'Int'.(($set_avg) ? '*' : '')), 
-        'cas'               => array('desc' => 'Cas'.(($set_avg) ? '*' : '')), 
-        'bh'                => array('desc' => 'BH'.(($set_avg) ? '*' : '')), 
-        'si'                => array('desc' => 'Si'.(($set_avg) ? '*' : '')), 
-        'ki'                => array('desc' => 'Ki'.(($set_avg) ? '*' : '')), 
+        'won_tours'         => array('desc' => 'WT'),
+        'td'                => array('desc' => 'Td'.(($set_avg) ? '*' : '')),
+        'cp'                => array('desc' => 'Cp'.(($set_avg) ? '*' : '')),
+        'intcpt'            => array('desc' => 'Int'.(($set_avg) ? '*' : '')),
+        'cas'               => array('desc' => 'Cas'.(($set_avg) ? '*' : '')),
+        'bh'                => array('desc' => 'BH'.(($set_avg) ? '*' : '')),
+        'si'                => array('desc' => 'Si'.(($set_avg) ? '*' : '')),
+        'ki'                => array('desc' => 'Ki'.(($set_avg) ? '*' : '')),
     );
-    
+
     switch ($obj)
     {
         case STATS_PLAYER:
@@ -193,33 +193,35 @@ public static function standings($obj, $node, $node_id, array $opts)
             $DIS_VAL = !($sel_node == false && $sel_node_id == false);
             $fields_before = array(
                 'name'      => array('desc' => 'Player', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'player_id', 'value' => 'player_id')),
-                'team_name' => array('desc' => 'Team',   'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'owned_by_team_id')), 
+                'team_name' => array('desc' => 'Team',   'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'owned_by_team_id')),
             );
             $fields_after = array(
-                'mvp'   => array('desc' => 'MVP'.(($set_avg) ? '*' : '')), 
+                'mvp'   => array('desc' => 'MVP'.(($set_avg) ? '*' : '')),
                 'spp'   => array('desc' => 'SPP'.(($set_avg) ? '*' : '')),
-                'value' => array('desc' => 'Value', 'nosort' => $DIS_VAL, 'kilo' => !$DIS_VAL, 'suffix' => (!$DIS_VAL) ? 'k' : ''), 
+                'value' => array('desc' => 'Value', 'nosort' => $DIS_VAL, 'kilo' => !$DIS_VAL, 'suffix' => (!$DIS_VAL) ? 'k' : ''),
             );
             global $settings;
             $extra['limit'] = $settings['entries_players'];
             $objs = Player::getPlayers();
             foreach ($objs as $o) {
                 if     ($o->is_sold) $o->HTMLbcolor = COLOR_HTML_SOLD;
-                elseif ($o->is_dead) $o->HTMLbcolor = COLOR_HTML_DEAD; 
+                elseif ($o->is_dead) $o->HTMLbcolor = COLOR_HTML_DEAD;
                 if ($DIS_VAL) $o->value = '-';
                 $o->setStats($sel_node, $sel_node_id, $set_avg);
             }
             break;
-            
+
         case STATS_TEAM:
             $tblTitle = 'Team standings';
             $tblSortRule = 'team';
             $fields_before = array('name' => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')));
             $fields_after = array('tcas'  => array('desc' => 'tcas'), 'value' => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'));
-            $ALL_TIME = ($sel_node == false && ($sel_node_id == 0 || $sel_node_id === false));
-            if ($USE_ELO = ($sel_node == STATS_TOUR || $ALL_TIME)) {
+            $ALL_TIME = ($sel_node == false && ($sel_node_id == 0 || $sel_node_id === false));            
+            $cyanide = ( isset($settings['cyanide_enabled']) ? $settings['cyanide_enabled'] : false);
+            if ($USE_ELO = (($sel_node == STATS_TOUR || $ALL_TIME) && !$cyanide)) {
                 $fields_after['elo'] = array('desc' => 'ELO');
             }
+
             // Show teams standings list only for teams owned by... ?
             switch ((array_key_exists('teams_from', $opts)) ? $opts['teams_from'] : false)
             {
@@ -228,13 +230,13 @@ public static function standings($obj, $node, $node_id, array $opts)
                     $c = new Coach($opts['teams_from_id']);
                     $objs = $c->getTeams();
                     break;
-                    
+
                 case STATS_RACE:
                     $fields_before['coach_name'] = array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'owned_by_coach_id'));
                     $r = new Race($opts['teams_from_id']);
-                    $objs = $r->getTeams();                
+                    $objs = $r->getTeams();
                     break;
-                
+
                 // All teams
                 default:
                     $objs = Team::getTeams();
@@ -251,39 +253,43 @@ public static function standings($obj, $node, $node_id, array $opts)
                 if ($tr->isRSWithPoints()) {
                     $fields_after['points'] = array('desc' => 'PTS');
                 }
-                $fields_after['smp'] = array('desc' => 'SMP');
-                unset($fields_after['value']);
+                
+                if(!$cyanide)
+                {
+                	$fields_after['smp'] = array('desc' => 'SMP');
+                	unset($fields_after['value']);
+                }
             }
-            
+
             if ($USE_ELO) {$ELORanks = ELO::getRanks(($sel_node == STATS_TOUR) ? $sel_node_id : false);}
             foreach ($objs as $o) {
                 if ($USE_ELO) {$o->elo = $ELORanks[$o->team_id];}
-                $o->setStats($sel_node, $sel_node_id, $set_avg);
-            }            
+                	$o->setStats($sel_node, $sel_node_id, $set_avg);
+            }
             break;
-            
+
         case STATS_RACE:
             $tblTitle = 'Race standings';
             $tblSortRule = 'race';
             $fields_before = array(
-                'name'      => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race_id')), 
+                'name'      => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'race_id')),
                 'teams_cnt' => array('desc' => 'Teams'),
             );
             $extra['dashed'] = array('condField' => 'teams_cnt', 'fieldVal' => 0, 'noDashFields' => array('name'));
-            
+
             $objs = Race::getRaces(true);
             foreach ($objs as $o) {
                 $o->setStats($sel_node, $sel_node_id, $set_avg);
             }
-                
+
             break;
-            
+
         case STATS_COACH:
             $tblTitle = 'Coaches standings';
             $tblSortRule = 'coach';
             $fields_before = array(
                 'name'      => array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'coach_id')),
-                'teams_cnt' => array('desc' => 'Teams'), 
+                'teams_cnt' => array('desc' => 'Teams'),
             );
             $objs = Coach::getCoaches();
             // OPTIONALLY hide retired coaches.
@@ -292,18 +298,18 @@ public static function standings($obj, $node, $node_id, array $opts)
                 $o->setStats($sel_node, $sel_node_id, $set_avg);
             }
             break;
-            
+
         case STATS_STAR:
             $tblTitle = 'Star standings';
             $tblSortRule = 'star';
             $fields_before = array(
-                'name' => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')), 
+                'name' => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')),
             );
             $fields_after = array('mvp' => array('desc' => 'MVP'), 'spp' => array('desc' => 'SPP'));
             unset($fields['score_team']); unset($fields['score_opponent']); unset($fields['won_tours']);
             unset($fields['row_won']); unset($fields['row_lost']); unset($fields['row_draw']);
             $extra['dashed'] = array('condField' => 'played', 'fieldVal' => 0, 'noDashFields' => array('name'));
-            
+
             $objs = Star::getStars(false,false,false,false);
             foreach ($objs as $o) {
                 $o->setStats(false, false, $sel_node, $sel_node_id, $set_avg);
@@ -311,22 +317,22 @@ public static function standings($obj, $node, $node_id, array $opts)
             }
             break;
     }
-    
+
     $fields = array_merge($fields_before, $fields, $fields_after);
     HTMLOUT::sort_table(
-       $tblTitle, 
-       $opts['url'].(($set_avg) ? '&amp;pms=1' : ''), 
-       $objs, 
-       $fields, 
-       (empty($CUSTOM_SORT)) ? sort_rule($tblSortRule) : $CUSTOM_SORT, 
+       $tblTitle,
+       $opts['url'].(($set_avg) ? '&amp;pms=1' : ''),
+       $objs,
+       $fields,
+       (empty($CUSTOM_SORT)) ? sort_rule($tblSortRule) : $CUSTOM_SORT,
        (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
        $extra
     );
-    
+
     return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? $objs : true;
 }
 
-public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $prefix = '') 
+public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $prefix = '')
 {
     // Set defaults
     $s_node     = "${prefix}_node";     # _SESSION index
@@ -335,7 +341,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         $_SESSION[$s_node] = $node;
         $_SESSION[$s_node_id] = $node_id;
     }
-    
+
     $NEW = isset($_POST['select']);
     switch ($_SESSION[$s_node] = ($NEW) ? (int) $_POST['node'] : (($_SESSION[$s_node]) ? $_SESSION[$s_node] : STATS_LEAGUE))
     {
@@ -344,14 +350,14 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         case STATS_LEAGUE:      if ($NEW) {$_SESSION[$s_node_id] = (int) $_POST['league_in'];} break;
         default:                $_SESSION[$s_node_id] = false; // All-time.
     }
-    
+
     ?>
     <form method="POST">
-    Display from 
+    Display from
     <select name="node" onChange="
-        selConst = Number(this.options[this.selectedIndex].value); 
+        selConst = Number(this.options[this.selectedIndex].value);
         disableall();
-        switch(selConst) 
+        switch(selConst)
         {
             case <?php echo STATS_TOUR;?>:      document.getElementById('tour_in').style.display = 'inline'; break;
             case <?php echo STATS_DIVISION;?>:  document.getElementById('division_in').style.display = 'inline'; break;
@@ -398,7 +404,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
     <script language="JavaScript" type="text/javascript">
         <?php
         echo '
-            switch('.$_SESSION[$s_node].') 
+            switch('.$_SESSION[$s_node].')
             {
                 case '.STATS_TOUR.':      open = "tour"; break;
                 case '.STATS_DIVISION.':  open = "division"; break;
@@ -422,7 +428,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
     return array($_SESSION[$s_node], $_SESSION[$s_node_id]);
 }
 
-public static function frame_begin($stylesheet = false) 
+public static function frame_begin($stylesheet = false)
 {
     global $settings;
     ?>
@@ -434,7 +440,7 @@ public static function frame_begin($stylesheet = false)
         <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
         <script type="text/javascript" src="lib/misc_functions.js"></script>
-        
+
         <!-- CSS MENU (./cssmenu extension) -->
         <link href="cssmenu/css/dropdown/dropdown.css" media="all" rel="stylesheet" type="text/css" />
         <link href="cssmenu/css/dropdown/themes/default/default.ultimate.css" media="all" rel="stylesheet" type="text/css" />
@@ -453,11 +459,11 @@ public static function frame_begin($stylesheet = false)
     <?php
 }
 
-public static function frame_end() 
+public static function frame_end()
 {
     ?>
                 <!-- Pseudo container to force parent container to have the correct height for (potential) floating children -->
-                <div style="clear: both;"></div> 
+                <div style="clear: both;"></div>
             </div> <!-- End of section div -->
         </div> <!-- End of everything div -->
     </body>
@@ -466,17 +472,17 @@ public static function frame_end()
     return true;
 }
 
-private static function make_menu() 
+private static function make_menu()
 {
 
     global $lng, $coach, $settings, $rules;
-    
+
     ?>
     <ul id="nav" class="dropdown dropdown-horizontal">
-        <?php 
+        <?php
         if (isset($_SESSION['logged_in'])) { ?><li><a href="index.php?logout=1">     <?php echo $lng->getTrn('global/secLinks/logout');?></a></li><?php }
         else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('global/secLinks/login');?></a></li><?php }
-        if (isset($_SESSION['logged_in'])) { 
+        if (isset($_SESSION['logged_in'])) {
             ?>
             <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/cc');?></span>
                 <ul>
@@ -510,7 +516,7 @@ private static function make_menu()
                         if ($coach->ring == RING_SYS) {
                             foreach ($ring_sys_access as $lnk => $desc) {
                                 echo "<li><a style='font-style: italic;' href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
-                            }            
+                            }
                         }
                         ?>
                     </ul>
@@ -574,11 +580,11 @@ private static function make_menu()
                 <li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li>
             </ul>
         </li>
-        
+
         <li><a href="index.php?section=rules"><?php echo $lng->getTrn('global/secLinks/rules');?></a></li>
         <li><a href="index.php?section=gallery"><?php echo $lng->getTrn('global/secLinks/gallery');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>
-        <?php 
+        <?php
         if ($settings['enable_guest_book']) {
             ?><li><a href="index.php?section=guest"><?php echo $lng->getTrn('global/secLinks/gb');?></a></li><?php
         }
@@ -591,13 +597,13 @@ private static function make_menu()
 }
 
 // Prints an advanced sort table.
-public static function sort_table($title, $lnk, array $objs, array $fields, array $std_sort, $sort = array(), $extra = array()) 
+public static function sort_table($title, $lnk, array $objs, array $fields, array $std_sort, $sort = array(), $extra = array())
 {
 
-    /*  
+    /*
         extra fields:
             tableWidth  => CSS style width value
-            
+
             dashed => array(
                 'condField' => field name,                    // When an object has this field's (condField) = fieldVal, then a "-" is put in the place of all values.
                 'fieldVal'  => field value,
@@ -605,19 +611,19 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             );
             remove => array(
                 'condField' => field name,  // When an object has this field's (condField) = fieldVal, then the entry/row is not printed in the html table.
-                'fieldVal'  => field value,            
+                'fieldVal'  => field value,
             );
             GETsuffix => suffix to paste into "dir" and "sort" GET strings.
-            
+
             color => true/false. Boolean telling wheter or not we should look into each object for the field "HTMLfcolor" and "HTMLbcolor", and use these color codes to color the obj's row. Note: the object must contain the two previously stated fields, or else black-on-white is used as default.
-            
+
             doNr => true/false. Boolean telling wheter or not to print the "Nr." column.
             limit => int. Stop printing rows when this row number is reached.
             anchor => string. Will create table sorting links, that include this identifier as an anchor.
             noHelp => true/false. Will enable/disable help link [?].
     */
     global $settings;
-    
+
     if (array_key_exists('remove', $extra)) {
         $objs = array_filter($objs, create_function('$obj', 'return ($obj->'.$extra['remove']['condField'].' != '.$extra['remove']['fieldVal'].');'));
     }
@@ -627,14 +633,14 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
     $DONR = (!array_key_exists('doNr', $extra) || $extra['doNr']) ? true : false;
     $LIMIT = (array_key_exists('limit', $extra)) ? $extra['limit'] : -1;
     $ANCHOR = (array_key_exists('anchor', $extra)) ? $extra['anchor'] : false;
-    
+
     if ($DONR) {
         $fields = array_merge(array('nr' => array('desc' => 'Nr.')), $fields);
         array_push($no_print_fields, 'nr');
     }
 
     $CP = count($fields);
-    
+
     ?>
     <table class="sort" <?php echo (array_key_exists('tableWidth', $extra)) ? "style='width: $extra[tableWidth];'" : '';?>>
         <tr>
@@ -649,7 +655,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
         </tr>
         <tr>
             <?php
-            foreach ($fields as $f => $attr) 
+            foreach ($fields as $f => $attr)
                 echo "<td><i>$attr[desc]</i></td>";
             ?>
         </tr>
@@ -666,13 +672,13 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             }
             else {
                 $sort = 'sort';
-                $dir = 'dir';         
+                $dir = 'dir';
             }
             $anc = '';
             if ($ANCHOR) {
                 $anc = "#$ANCHOR";
             }
-                
+
             echo "<td><b><a href='$lnk&amp;$sort=$f&amp;$dir=a$anc' title='Sort ascending'>+</a>/<a href='$lnk&amp;$sort=$f&amp;$dir=d$anc' title='Sort descending'>-</a></b></td>";
         }
         ?>
@@ -705,9 +711,9 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                         $cpy = sprintf("%1.2f", $cpy);
                     if (array_key_exists('suffix', $a) && $a['suffix'])
                         $cpy .= $a['suffix'];
-                    if (array_key_exists('color', $a) && $a['color']) 
+                    if (array_key_exists('color', $a) && $a['color'])
                         $cpy = "<font color='$a[color]'>".$cpy."</font>\n";
-                    if (array_key_exists('href', $a) && $a['href']) 
+                    if (array_key_exists('href', $a) && $a['href'])
                         $cpy  = "<a href='" . $a['href']['link'] . "&amp;" . $a['href']['field'] . "=" . $o->{$a['href']['value']} . "'>". $cpy . "</a>";
 
                     if (isset($o->{"${f}_color"})) {
@@ -743,15 +749,15 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
 public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id = false, $opts = array())
 {
     /* If $star_id is false, then the HH from all stars of $obj = $obj_id will be displayed, instead of only the HH of star = $star_id */
-    
+
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
     $extra['doNr'] = false;
     $extra['noHelp'] = true;
     if ($ANC = array_key_exists('anchor', $opts)) {$extra['anchor'] = $opts['anchor'];}
-    
+
     $mdat = array();
-    
+
     foreach ((($star_id) ? array(new Star($star_id)) : Star::getStars($obj, $obj_id, $node, $node_id)) as $s) {
         foreach ($s->getHireHistory($obj, $obj_id, $node, $node_id) as $m) {
             $o = (object) array();
@@ -769,7 +775,7 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
                 (
                 ($m->team1_id == $m->hiredBy && $m->team1_score > $m->team2_score) ||
                 ($m->team2_id == $m->hiredBy && $m->team1_score < $m->team2_score)
-                ) 
+                )
                     ? 'W'
                     : (($m->team1_score == $m->team2_score) ? 'D' : 'L')
             );
@@ -779,18 +785,18 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
         }
     }
     $fields = array(
-        'date_played'       => array('desc' => 'Hire date'), 
+        'date_played'       => array('desc' => 'Hire date'),
         'name'              => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')),
         'tour'              => array('desc' => 'Tournament'),
-        'hiredByName'       => array('desc' => 'Hired by',      'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'hiredBy')), 
-        'hiredAgainstName'  => array('desc' => 'Opponent team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'hiredAgainst')), 
-        'cp'     => array('desc' => 'Cp'), 
-        'td'     => array('desc' => 'Td'), 
-        'intcpt' => array('desc' => 'Int'), 
-        'cas'    => array('desc' => 'Cas'), 
-        'bh'     => array('desc' => 'BH'), 
-        'si'     => array('desc' => 'Si'), 
-        'ki'     => array('desc' => 'Ki'), 
+        'hiredByName'       => array('desc' => 'Hired by',      'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'hiredBy')),
+        'hiredAgainstName'  => array('desc' => 'Opponent team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'hiredAgainst')),
+        'cp'     => array('desc' => 'Cp'),
+        'td'     => array('desc' => 'Td'),
+        'intcpt' => array('desc' => 'Int'),
+        'cas'    => array('desc' => 'Cas'),
+        'bh'     => array('desc' => 'BH'),
+        'si'     => array('desc' => 'Si'),
+        'ki'     => array('desc' => 'Ki'),
         'mvp'    => array('desc' => 'MVP'),
         'score'  => array('desc' => 'Score', 'nosort' => true),
         'result' => array('desc' => 'Result', 'nosort' => true),
@@ -801,11 +807,11 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
     $title = "Star hire history";
     if ($ANC) {$title = "<a name='$opts[anchor]'>".$title.'<a>';}
     HTMLOUT::sort_table(
-        $title, 
-        $opts['url'], 
-        $mdat, 
-        $fields, 
-        sort_rule('star_HH'), 
+        $title,
+        $opts['url'],
+        $mdat,
+        $fields,
+        sort_rule('star_HH'),
         (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
         $extra
     );
@@ -814,21 +820,21 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
 public static function dispTeamList($obj, $obj_id)
 {
     // Prints a list of teams owned by $obj (STATS_*) with ID = $obj_id.
-    
+
     global $settings;
-    
+
     $teams = array();
     switch ($obj) {
         case STATS_COACH:
             $c = new Coach($obj_id);
             $teams = $c->getTeams();
             break;
-            
+
         case STATS_RACE:
             $r = new Race($obj_id);
             $teams = $r->getTeams();
             break;
-            
+
         case false:
         default:
             $teams = Team::getTeams();
@@ -849,21 +855,21 @@ public static function dispTeamList($obj, $obj_id)
         $t->rdy = ($t->rdy) ? '<font color="green">Yes</font>' : '<font color="red">No</font>';
     }
     $fields = array(
-        'logo'      => array('desc' => 'Logo', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id'), 'nosort' => true), 
+        'logo'      => array('desc' => 'Logo', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id'), 'nosort' => true),
         'name'      => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
-        'rdy'       => array('desc' => 'Ready', 'nosort' => true), 
-        'race'      => array('desc' => 'Race'), 
-        'latest_tour' => array('desc' => 'Latest tour'), 
-        'prizes'      => array('desc' => 'Prizes', 'nosort' => true), 
-        'played'    => array('desc' => 'Games'), 
-        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),  
+        'rdy'       => array('desc' => 'Ready', 'nosort' => true),
+        'race'      => array('desc' => 'Race'),
+        'latest_tour' => array('desc' => 'Latest tour'),
+        'prizes'      => array('desc' => 'Prizes', 'nosort' => true),
+        'played'    => array('desc' => 'Games'),
+        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
     );
     HTMLOUT::sort_table(
-        "Teams ". (($obj == STATS_COACH) ? "<a href='javascript:void(0);' onclick=\"window.open('html/coach_corner_teams.html','ccorner_TeamsHelp','width=350,height=400')\">[?]</a>" : ''), 
-        "index.php?section=".(($obj == STATS_COACH) ? 'coachcorner' : 'teams'), 
-        $teams, 
-        $fields, 
-        array('+name'), 
+        "Teams ". (($obj == STATS_COACH) ? "<a href='javascript:void(0);' onclick=\"window.open('html/coach_corner_teams.html','ccorner_TeamsHelp','width=350,height=400')\">[?]</a>" : ''),
+        "index.php?section=".(($obj == STATS_COACH) ? 'coachcorner' : 'teams'),
+        $teams,
+        $fields,
+        array('+name'),
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
         array('doNr' => false, 'noHelp' => true)
     );

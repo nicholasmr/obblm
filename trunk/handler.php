@@ -25,9 +25,9 @@ require('header.php'); // Includes and constants.
 
 if (!isset($_GET['type']))
     fatal("Sorry. Don't know what to do. Please specify 'type' via GET.");
-    
+
 switch ($_GET['type'])
-{        
+{
     /* PDF-roster */
     case 'roster':
         Module::run('pdfroster', array());
@@ -37,12 +37,12 @@ switch ($_GET['type'])
     case 'rss':
         Module::run('rss', array());
         break;
-        
+
     /* Visual stats */
     case 'graph':
         Module::run('statsgraph', array($_GET['gtype'], $_GET['id'], false));
         break;
-        
+
     /* Inducements */
     case 'inducements':
         Module::run('inducements', array());
@@ -62,7 +62,7 @@ switch ($_GET['type'])
     case 'xmlexport':
         Module::run('teamxmlexport', array($_GET['tid']));
         break;
-        
+
     /* Mem. matches */
    	case 'memmatches':
    		Module::run('memmatches', array());
@@ -72,15 +72,15 @@ switch ($_GET['type'])
    	case 'comparison':
    		Module::run('comparison', array());
    		break;
-   		
+
     /* Register */
    	case 'registration':
    		Module::run('registration', array());
    		break;
-   		
+
     /* Match gallery */
     case 'mg':
-    
+
         if (!isset($_GET['mid']) || !is_numeric($_GET['mid']) || !is_object($m = new Match($_GET['mid']))) {
             fatal("Sorry, invalid match ID.");
         }
@@ -99,13 +99,24 @@ switch ($_GET['type'])
         echo "</center>\n";
         echo "<br><br>\n";
         echo "<img src='".$pics[$curPic]."'>\n";
-                
+
         break;
+
+    /* Cyanide match import */
+    case 'cyanide_match_import':
+        Module::run('cyanide_match_import', array());
+        break;
+
+    /* Cyanide team import */
+    case 'cyanide_team_import':
+        Module::run('cyanide_team_import', array());
+        break;
+
 
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
 }
 
-mysql_close($conn); 
+mysql_close($conn);
 
 ?>

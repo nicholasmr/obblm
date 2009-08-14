@@ -129,4 +129,25 @@ Module::register(array(
     'filesLoadTime' => array('registration/settings.php')
 ));
 
+Module::register(array(
+    'modname'       => 'cyanide_match_import',
+    'author'        => 'Grégory Romé',
+    'date'          => '2009',
+    'setCanvas'     => true,
+    'main'          => 'main',
+    'filesRunTime'  => array('cyanide/class_CyanideMatch.php', 'cyanide/match_import.php'),
+    'filesLoadTime' => array('cyanide/settings.php')
+));
+
+
+Module::register(array(
+    'modname'       => 'cyanide_team_import',
+    'author'        => 'Grégory Romé',
+    'date'          => '2009',
+    'setCanvas'     => true,
+    'main'          => 'main',
+    'filesRunTime'  => array('cyanide/class_CyanideTeam.php', 'cyanide/team_import.php'),
+    'filesLoadTime' => array('cyanide/settings.php')
+));
+
 ?>
