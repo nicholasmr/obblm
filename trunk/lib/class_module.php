@@ -61,7 +61,8 @@ class Module
     {
         $module = self::$modules[$modname]; # Shortcut.
         foreach ($module['filesRunTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
-        if ($module['setCanvas']) {HTMLOUT::frame_begin();}
+        global $coach; # Used for fetching stylesheet.
+        if ($module['setCanvas']) {HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : false);}
         $return = call_user_func_array($module['main'], $argv);
         if ($module['setCanvas']) {HTMLOUT::frame_end();}
         

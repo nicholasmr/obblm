@@ -263,6 +263,10 @@ function sec_admin() {
                 status(false, "Please fill out the tournament name.<br>\n");
                 $STATUS = false;
             }
+            if (get_alt_col('tours', 'name', $_POST['name'], 'tour_id')) {
+                status(false, "Tournament name already in use.<br>\n");
+                $STATUS = false;
+            }
 
             // Find passed team IDs.
             $team_ids = array();
@@ -806,7 +810,7 @@ function sec_admin() {
                 <li><?php echo $lng->getTrn('secs/admin/import_notice2/e3');?></li>
             </ul>
 
-            <table>
+            <table id="playerTable">
                 <tr>
                     <td>#</td>
                     <td>Name</td>
@@ -815,11 +819,6 @@ function sec_admin() {
                     <td>Cp/Td/Int/BH/SI/Ki/Mvp</td>
                     <td>Inj.: Ma/St/Ag/Av/Ni</td>
                 </tr>
-                <?php
-                for ($i = 1; $i <= 25; $i++) {
-                    echo "<tr id='row${i}'><td></td></tr>\n";
-                }
-                ?>
                 <!-- Body (player rows) are added by javascript -->
             </table>
             <a href="javascript:void(0)" onClick="addPlayerEntry();return false;" title="Add new player entry"><b>[+]</b></a>

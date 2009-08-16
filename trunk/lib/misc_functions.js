@@ -302,16 +302,25 @@ function addPlayerEntry()
     players = ++document.importForm.players.value;
     
     // Player table element/object.
-    t = document.getElementById('row'+players);
+    t = document.getElementById('playerTable');
 
-    t.innerHTML = '\
-        <td>'+players+'</td> \
-        <td><input type="text" name="'+players+'name" size="15" maxlength="50"></td> \
-        <td><select name="'+players+'position"></select></td> \
-        <td><select name="'+players+'status"></select></td> \
-        <td><input type="text" name="'+players+'stats" value="0/0/0/0/0/0/0" size="20" maxlength="20"></td> \
-        <td><input type="text" name="'+players+'injs" value="0/0/0/0/0" size="15" maxlength="15"></td> \
-        ';
+    // TDs content.
+    var cont = new Array();
+    cont[0] = players;
+    cont[1] = '<input type="text" name="'+players+'name" size="15" maxlength="50">';
+    cont[2] = '<select name="'+players+'position"></select>';
+    cont[3] = '<select name="'+players+'status"></select>';
+    cont[4] = '<input type="text" name="'+players+'stats" value="0/0/0/0/0/0/0" size="20" maxlength="20">';
+    cont[5] = '<input type="text" name="'+players+'injs" value="0/0/0/0/0" size="15" maxlength="15">';
+
+    // Add table TRs and TDs.
+    t.insertRow(players);
+    t.rows[players].setAttribute("id", "row"+players);
+    for (i = 0; i < cont.length; i++) { 
+        var newTD = document.createElement('td');
+        newTD.innerHTML = cont[i];
+        t.rows[players].appendChild(newTD);
+    }
 
     document.importForm[players+'position'].options[0] = new Option('Please re-select team race', 0);
     document.importForm[players+'status'].options[0] = new Option('Ready', NONE);

@@ -53,7 +53,7 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
         : $matches = Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, false);
 
     foreach ($matches as $m) {
-        $m->score = "$m->team1_score - $m->team2_score";
+        $m->score = "$m->team1_score&mdash;$m->team2_score";
         $m->mlink = "<a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[".$lng->getTrn('secs/recent/view')."]</a>";
         $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
         if ($FOR_OBJ) {
@@ -217,11 +217,9 @@ public static function standings($obj, $node, $node_id, array $opts)
             $fields_before = array('name' => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')));
             $fields_after = array('tcas'  => array('desc' => 'tcas'), 'value' => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'));
             $ALL_TIME = ($sel_node == false && ($sel_node_id == 0 || $sel_node_id === false));            
-            $cyanide = ( isset($settings['cyanide_enabled']) ? $settings['cyanide_enabled'] : false);
-            if ($USE_ELO = (($sel_node == STATS_TOUR || $ALL_TIME) && !$cyanide)) {
+            if ($USE_ELO = ($sel_node == STATS_TOUR || $ALL_TIME)) {
                 $fields_after['elo'] = array('desc' => 'ELO');
             }
-
             // Show teams standings list only for teams owned by... ?
             switch ((array_key_exists('teams_from', $opts)) ? $opts['teams_from'] : false)
             {
@@ -253,18 +251,14 @@ public static function standings($obj, $node, $node_id, array $opts)
                 if ($tr->isRSWithPoints()) {
                     $fields_after['points'] = array('desc' => 'PTS');
                 }
-                
-                if(!$cyanide)
-                {
-                	$fields_after['smp'] = array('desc' => 'SMP');
-                	unset($fields_after['value']);
-                }
+            	$fields_after['smp'] = array('desc' => 'SMP');
+            	unset($fields_after['value']);
             }
 
             if ($USE_ELO) {$ELORanks = ELO::getRanks(($sel_node == STATS_TOUR) ? $sel_node_id : false);}
             foreach ($objs as $o) {
                 if ($USE_ELO) {$o->elo = $ELORanks[$o->team_id];}
-                	$o->setStats($sel_node, $sel_node_id, $set_avg);
+            	$o->setStats($sel_node, $sel_node_id, $set_avg);
             }
             break;
 
