@@ -240,6 +240,7 @@ require_once('lib/class_prize.php');
 require_once('lib/class_rrobin.php');
 #require_once('lib/class_knockout.php'); # Deprecated
 require_once('lib/class_module.php');
+require_once('lib/class_tablehandler.php');
 
 // External libraries.
 require_once('lib/class_arraytojs.php');
