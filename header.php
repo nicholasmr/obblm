@@ -25,10 +25,10 @@ if (version_compare(PHP_VERSION, '5.2.3') == -1)
     die('OBBLM requires PHP version 5.2.3, you are running version '.PHP_VERSION);
 
 if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
-die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
+    die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
 
-if (false && file_exists('install.php'))
-die('Please remove <i>install.php</i> before using OBBLM.');
+if (file_exists('install.php'))
+    die('Please remove <i>install.php</i> before using OBBLM.');
 
 error_reporting(E_ALL);
 session_start();
@@ -37,8 +37,8 @@ session_start();
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.75rc1');
-$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard');
+define('OBBLM_VERSION', '0.8a');
+$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Gregory Rome');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 
@@ -59,15 +59,15 @@ define('STATS_LEAGUE',   13);
 
 // Translation between MySQL column match data references in the match_data table to PHP STATS_* constants.
 $STATS_TRANS = array(
-STATS_PLAYER    => 'match_data.f_player_id',
-STATS_TEAM      => 'match_data.f_team_id',
-STATS_COACH     => 'match_data.f_coach_id',
-STATS_RACE      => 'match_data.f_race_id',
+    STATS_PLAYER    => 'match_data.f_player_id',
+    STATS_TEAM      => 'match_data.f_team_id',
+    STATS_COACH     => 'match_data.f_coach_id',
+    STATS_RACE      => 'match_data.f_race_id',
 
-STATS_MATCH     => 'match_data.f_match_id',
-STATS_TOUR      => 'match_data.f_tour_id',
-STATS_DIVISION  => 'match_data.f_did',
-STATS_LEAGUE    => 'match_data.f_lid',
+    STATS_MATCH     => 'match_data.f_match_id',
+    STATS_TOUR      => 'match_data.f_tour_id',
+    STATS_DIVISION  => 'match_data.f_did',
+    STATS_LEAGUE    => 'match_data.f_lid',
 );
 
 /*********************
@@ -179,15 +179,15 @@ define('DEAD',  8);
 define('SOLD',  9);
 
 $STATUS_TRANS = array(
-NONE => 'NONE',
-MNG  => 'MNG',
-NI   => 'NI',
-MA   => 'MA',
-AV   => 'AV',
-AG   => 'AG',
-ST   => 'ST',
-DEAD => 'DEAD',
-SOLD => 'SOLD',
+    NONE => 'NONE',
+    MNG  => 'MNG',
+    NI   => 'NI',
+    MA   => 'MA',
+    AV   => 'AV',
+    AG   => 'AG',
+    ST   => 'ST',
+    DEAD => 'DEAD',
+    SOLD => 'SOLD',
 );
 
 // Round types
@@ -249,7 +249,7 @@ require_once('lib/class_translations.php'); # Juergen Unfried
 // Modules.
 require_once('modules/modsheader.php'); # Registration of modules.
 
-// Cyanide data modifications
+// Cyanide data modifications # Grégory: PLEASE REMOVE AND INSERT IN modules/modsheader.php.
 if($settings['cyanide_enabled'])
 {
 	require_once('modules/cyanide/game_data.php');
@@ -269,7 +269,7 @@ require_once('admin.php');
  ********************/
 
 if (!is_writable(IMG))
-die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
+    die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
 
 /********************
  *   Globals/Startup

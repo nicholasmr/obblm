@@ -391,7 +391,7 @@ class Team
         return mysql_query("UPDATE teams SET retired = ".(($bool) ? 1 : 0)." WHERE team_id = $this->team_id");
     }
 
-    public function buy($thing, $force=false) {
+    public function buy($thing) {
 
         /**
          * Buy team stuff (coaching staff/re-rolls/fan factor).
@@ -406,7 +406,7 @@ class Team
             return false;
 
         // Is post game FF purchaseable? Note: Only counts for when teams are not newly imported ie. $this->played = $this-> "played_0".
-        if (!$force && ($thing == 'fan_factor' && !$rules['post_game_ff'] && $this->played > 0 && $this->played != $this->won_0 + $this->lost_0 + $this->draw_0))
+        if ($thing == 'fan_factor' && !$rules['post_game_ff'] && $this->played > 0 && $this->played != $this->won_0 + $this->lost_0 + $this->draw_0)
             return false;
 
         // Enough money?

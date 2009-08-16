@@ -155,7 +155,7 @@ function sec_main() {
         // General fields:
         $o->type      = 'match';
         $o->author    = get_alt_col('coaches', 'coach_id', $r->submitter_id, 'name');
-        $o->title     = "Match: $r->team1_name $r->team1_score - $r->team2_score $r->team2_name";
+        $o->title     = "Match: $r->team1_name $r->team1_score&mdash;$r->team2_score $r->team2_name";
         $o->message   = $r->comment;
         $o->date      = $r->date_played;
         array_push($board, $o);
@@ -386,7 +386,7 @@ function sec_main() {
                                 echo "<td>$t->won</td>\n";
                                 echo "<td>$t->lost</td>\n";
                                 echo "<td>$t->draw</td>\n";
-                                echo "<td>$t->score_team&nbsp;-&nbsp;$t->score_opponent</td>\n";
+                                echo "<td><nobr>$t->score_team&mdash;$t->score_opponent<nobr></td>\n";
                                 echo "</tr>\n";
                             }
                             ?>
@@ -405,8 +405,6 @@ function sec_main() {
                         <tr>
                             <td style="text-align: right;" width="50%"><b>Home</b></td>
                             <td> </td>
-                            <td><b>-</b></td>
-                            <td> </td>
                             <td style="text-align: left;" width="50%"><b>Guest</b></td>
                             <td> </td>
 
@@ -424,9 +422,7 @@ function sec_main() {
 
                             echo "<tr>\n";
                             echo "<td style='text-align: right;'>" . $m->$home_name . "</td>\n";
-                            echo "<td>" . $m->$home_score . "</td>\n";
-                            echo "<td>-</td>\n";
-                            echo "<td>" . $m->$guest_score . "</td>\n";
+                            echo "<td><nobr>" . $m->$home_score . "&mdash;" . $m->$guest_score . "</nobr></td>\n";
                             echo "<td style='text-align: left;'>" . $m->$guest_name . "</td>\n";
                             echo "<td><a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>Show</a></td>";
                             echo "</tr>";
