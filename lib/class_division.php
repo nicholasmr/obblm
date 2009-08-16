@@ -63,7 +63,7 @@ public function set_f_lid($f_lid)
 public function setName($name)
 {
     $query = "UPDATE divisions SET name = '".mysql_real_escape_string($name)."' WHERE did = $this->did";
-    return mysql_query($query);
+    return (get_alt_col('divisions', 'name', $name, 'did')) ? false : mysql_query($query);
 }
 
 public function getTours($onlyIds = false)
@@ -93,7 +93,7 @@ public static function getDivisions($onlyIds = false)
 public static function create($f_lid, $name)
 {
     $query = "INSERT INTO divisions (f_lid, name) VALUES ($f_lid, '".mysql_real_escape_string($name)."')";
-    return mysql_query($query);
+    return (get_alt_col('divisions', 'name', $name, 'did')) ? false : mysql_query($query);
 }
 
 }

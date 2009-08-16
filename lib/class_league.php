@@ -60,7 +60,7 @@ public function delete()
 public function setName($name)
 {
     $query = "UPDATE leagues SET name = '".mysql_real_escape_string($name)."' WHERE lid = $this->lid";
-    return mysql_query($query);
+    return (get_alt_col('leagues', 'name', $name, 'lid')) ? false : mysql_query($query);
 }
 
 public function setLocation($location)
@@ -96,6 +96,6 @@ public static function getLeagues($onlyIds = false)
 public static function create($name, $location)
 {
     $query = "INSERT INTO leagues (date, location, name) VALUES (NOW(), '".mysql_real_escape_string($location)."', '".mysql_real_escape_string($name)."')";
-    return mysql_query($query);
+    return (get_alt_col('leagues', 'name', $name, 'lid')) ? false : mysql_query($query);
 }
 }
