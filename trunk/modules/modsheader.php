@@ -104,10 +104,11 @@ Module::register(array(
     'author'        => 'William Leonard',
     'date'          => '2009',
     'setCanvas'     => true, 
-    'main'          => 'leegmgr_load', 
-    'filesRunTime'  => array('leegmgr/class_match_botocs.php', 'leegmgr/uploadinc.php'),
+    'main'          => 'UPLOAD_BOTOCS::main', 
+    'filesRunTime'  => array('leegmgr/class_match_botocs.php', 'leegmgr/class_upload_botocs.php'),
     'filesLoadTime' => array('leegmgr/settings.php')
 ));
+
 
 Module::register(array(
     'modname'       => 'botocsxml',
