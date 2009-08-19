@@ -31,7 +31,8 @@ public static function main() {
     global $lng;
     title($lng->getTrn('secs/records/d_memma'));
     echo $lng->getTrn('secs/records/memma/desc')."<br><br>\n";
-    foreach (self::getMemMatches() as $d => $matches) {
+    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(false,false,false,'memm');
+    foreach (self::getMemMatches($sel_node, $sel_node_id) as $d => $matches) {
         ?>
         <div class="recBox" style="width:60%;">
             <div class="boxTitle2"><?php echo $lng->getTrn('secs/records/memma/'.$d); ?></div>
@@ -94,7 +95,7 @@ public static function main() {
     }
 }
 
-private static function getMemMatches() {
+private static function getMemMatches($node = false, $node_id = false) {
     
     /*
          Creates an array of matches for those matches which:
@@ -126,7 +127,9 @@ private static function getMemMatches() {
     );        
     
     /* Queries for finding the matches holding records. */
-    
+
+    // For all-time.
+    /*    
     $ach = "SELECT f_match_id AS 'match_id', SUM(REPLACE_BY_ACH) as 'sumA' FROM match_data WHERE f_match_id > 0 GROUP BY f_match_id HAVING sumA > 0 AND sumA = (
         SELECT MAX(sumB) FROM (SELECT SUM(REPLACE_BY_ACH) AS 'sumB' FROM match_data WHERE f_match_id > 0 GROUP BY f_match_id) AS tmpTable
     )";
@@ -139,6 +142,34 @@ private static function getMemMatches() {
     $str3 = '((tv1 > tv2 AND team1_score < team2_score) OR (tv1 < tv2 AND team1_score > team2_score))';
     $str4 = 'ABS(CAST((tv1 - tv2) AS SIGNED))';
     $tvdiff = "SELECT match_id, $str4 AS tvdiff FROM matches WHERE $str3 AND $str4 = (SELECT MAX($str4) FROM matches WHERE $str3)";
+    */
+    
+    // Node filter
+    $ref = array(
+        STATS_TOUR      => "f_tour_id",
+        STATS_DIVISION  => "f_did",
+        STATS_LEAGUE    => "f_lid",
+    );
+    $tables         = ($node) ? ',tours,divisions' : ''; # For matches references.
+    $tables_wKey    = ($node) ? "$tables WHERE" : '';
+    $where1         = ($node) ? 'matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did AND '.$ref[$node]." = $node_id AND " : ''; # For matches table.
+    $where2         = ($node) ? $ref[$node]." = $node_id AND " : ''; # For match_data table.
+    $where1_noAnd   = ($node) ? substr($where1, 0, -4) : '';
+    $where2_noAnd   = ($node) ? substr($where2, 0, -4) : '';
+    
+    // Queries
+    $ach = "SELECT f_match_id AS 'match_id', SUM(REPLACE_BY_ACH) as 'sumA' FROM match_data WHERE $where2 f_match_id > 0 GROUP BY f_match_id HAVING sumA > 0 AND sumA = (
+        SELECT MAX(sumB) FROM (SELECT SUM(REPLACE_BY_ACH) AS 'sumB' FROM match_data WHERE $where2 f_match_id > 0 GROUP BY f_match_id) AS tmpTable
+    )";
+    $str1 = 'ABS(CAST((team1_score - team2_score) AS SIGNED))';
+    $str2 = "(SELECT MAX(IF(income1>income2, income1, income2)) FROM matches $tables_wKey $where1_noAnd)";
+    $svic = "SELECT match_id, $str1 FROM matches $tables WHERE $where1 $str1 != 0 AND $str1 = (SELECT MAX($str1) AS 'mdiff' FROM matches $tables_wKey $where1_noAnd HAVING mdiff IS NOT NULL)";    
+    $inc = "SELECT match_id, income1, income2 FROM matches $tables WHERE $where1 (income1 != 0 OR income2 != 0) AND IF(income1>income2, income1 = $str2, income2 = $str2)";
+    $gate = "SELECT match_id, gate FROM matches $tables WHERE $where1 gate = (SELECT MAX(gate) FROM matches $tables_wKey $where1_noAnd)";
+    $mfans = "SELECT match_id, fans FROM matches $tables WHERE $where1 fans = (SELECT MAX(fans) FROM matches $tables_wKey $where1_noAnd)";
+    $str3 = '((tv1 > tv2 AND team1_score < team2_score) OR (tv1 < tv2 AND team1_score > team2_score))';
+    $str4 = 'ABS(CAST((tv1 - tv2) AS SIGNED))';
+    $tvdiff = "SELECT match_id, $str4 AS tvdiff FROM matches $tables WHERE $where1 $str3 AND $str4 = (SELECT MAX($str4) FROM matches $tables WHERE $where1 $str3)";
     
     /* Create an array to loop through containing the queries to throw at mysql. */
     
@@ -160,6 +191,9 @@ private static function getMemMatches() {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($mObjs, new Match($row['match_id']));
             }
+        }
+        elseif (mysql_errno() != 0) {
+            die("<b>Query:</b><br>\n$query<br>\n<br>\n<b>Error:</b><br>\n".mysql_error()."<br>\n");
         }
         objsort($mObjs, array('+date_played'));
         $m[$k] = (count($mObjs) > MAX_MEM_MATCHES) ? array() : $mObjs;
