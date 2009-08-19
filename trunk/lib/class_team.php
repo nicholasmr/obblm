@@ -110,6 +110,7 @@ class Team
             $this->lost           += $this->lost_0;
             $this->draw           += $this->draw_0;
             $this->played         += $this->won_0 + $this->lost_0 + $this->draw_0;
+            $this->won_tours      += $this->wt_0;
             $this->score_team     += $this->gf_0;
             $this->score_opponent += $this->ga_0;
             $this->tcas           += $this->tcas_0;
