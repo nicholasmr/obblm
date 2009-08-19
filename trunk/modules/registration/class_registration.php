@@ -39,25 +39,51 @@ class Registration
     public $email_admin     = ''; //This will be concatenated to with admin emails by the sendemail() method.
                                   //If you specify email addresses here, each address must be separated by a comma.
                                   //Example: 'john@example.com, jean@example.com' or 'john@example.com'
+
+    //Password reset specific values
+    public $reset_code      = '';
     
     /***************
      * Methods 
      ***************/
     
-    function __construct($username, $password, $email) {
+    function __construct($username, $password = "", $email = "", $form = "register") {
 
-        $this->username = $username;
-        $this->password = $password;
-        $this->email = $email;
+        switch ( $form ){
 
-        // Check to see if coach name already exists.
-        if ( !$this->chk_username() || !$this->chk_password() || !$this->chk_email() )
-        {
-            return false;  //Use ->error to display the error message to the user.
+            case "register":
+                $this->username = $username;
+                $this->password = $password;
+                $this->email = $email;
+
+                // Check to see if coach name already exists.
+                if ( !$this->chk_username() || !$this->chk_password() || !$this->chk_email() )
+                {
+                    return false;  //Use ->error to display the error message to the user.
+                }
+
+                $this->create();
+                $this->sendemail();
+                break;
+            case "forgot":
+                $this->username = $username;
+
+                // Check to see if coach name exists.
+                if ( $this->chk_username() || strlen($this->username) < 3 )
+                {
+                    $this->error = USERNAME_RESET_ERROR;
+                    return false;  //Use ->error to display the error message to the user.
+                }
+                else $this->error = "";
+
+                $this->email = get_alt_col(USERTABLE, USERNAME, $this->username, EMAIL);
+                if ( !$this->chk_email() ) return false;
+                $this->createResetCode();
+                $this->sendResetemail();
+                break;
+
         }
 
-        $this->create();
-        $this->sendemail();
 
     }
 
@@ -225,11 +251,12 @@ class Registration
                     <input type='submit' name='button' value='Create user'>
                 </div>
             </div>
+        </form>
         ";
 
         return $form;
     }
-    
+
     private static function submitForm($username, $password, $email) {
 
         $register = new Registration($username, $password, $email);
@@ -249,13 +276,15 @@ class Registration
         }
 
     }
-    
+
     public static function main() {
         
         // Module registered main function.
         global $settings;
         if ( !$settings['allow_registration'] ) die ("Registration is currently disabled.");
-    
+        $form = "";
+        if ( isset($_GET['form']) ) $form = $_GET['form'];
+
         if ( isset($_POST['new_name']) && isset($_POST['new_mail']) && isset($_POST['new_passwd']) )
         {
 
@@ -263,7 +292,23 @@ class Registration
             $password = $_POST['new_passwd'];
             $email = $_POST['new_mail'];
             self::submitForm($username, $password, $email);
+            return true;
 
+        }
+        if ( $form == "forgot" )
+        {
+
+            if ( isset($_POST['new_name']) )
+            {
+                $username = $_POST['new_name'];
+                self::forgotsubmitForm($username);
+            }
+            else
+            {
+                Print "<html><body>";
+                Print Registration::forgotform();
+                Print "</body></html>";
+            }
         }
         else
         {
@@ -274,6 +319,86 @@ class Registration
 
         }
     }
+
+    private static function forgotform() {
+        
+        /**
+         * Creates a forgot password form.
+         *
+         * 
+         **/
+
+        $form = "
+        <form method='POST' action='handler.php?type=registration&form=forgot'>
+            <div class='adminBox'>
+                <div class='boxTitle3'>
+                    Register
+                </div>
+                <div class='boxBody'>
+                    Username :<br> <input type='text' name='new_name' size='20' maxlength='50'><br><br>
+                    *Instructions to reset <br>your password will be <br>emailed to you.
+                    <br><br>
+                    <input type='submit' name='button' value='Reset password'>
+                </div>
+            </div>
+        </form>
+        ";
+
+        return $form;
+
+    }
+
+    private static function forgotsubmitForm($username) {
+
+        $register = new Registration($username, '', '',"forgot");
+        if ( !$register->error )
+        {
+            Print "Instructions to reset your password have been sent to the email address on file.";
+            unset($register);
+        }
+        else
+        {
+            Print "<br><b>Error: {$register->error}</b><br>";
+            unset($register);
+            unset($_POST['new_name']);
+            Registration::main();
+        }
+
+    }
+
+    function createResetCode() {
+
+        $i = 0;
+        while ( $i <10 )
+        {
+            $this->reset_code .= dechex ( rand(0, 15) );
+            $i++;
+        }
+
+    }
+
+    function sendResetemail() {
+
+        $status = true;
+
+        global $settings;
+        $webmaster = $settings['registration_webmaster'];
+
+        $to      = $this->email;
+        $subject = 'Password Reset Instructions';
+        $message = "Your password reset code is: ".$this->reset_code;
+        $headers = 'From: '.$webmaster. "\r\n" .
+                   'Reply-To: '.$webmaster. "\r\n" .
+                   'X-Mailer: PHP/' . phpversion();
+
+        $mailed = mail($to, $subject, $message, $headers);
+
+        if ( !$mailed ) $status = false;
+
+        return $status;
+
+    }
+
 }
 
 ?>

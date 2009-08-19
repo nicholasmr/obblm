@@ -14,4 +14,6 @@ define('ACCESS_LEVEL', 2);
 define('USERNAME_ERROR', 'The username already exists or must be at least 3 characters long.');
 define('PASSWORD_ERROR', 'The password must be at least 5 characters long');
 define('EMAIL_ERROR', 'The email address is not valid.');
+
+define('USERNAME_RESET_ERROR', 'The username does not exist.');
 ?>
