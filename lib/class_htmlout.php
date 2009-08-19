@@ -257,7 +257,7 @@ public static function standings($obj, $node, $node_id, array $opts)
 
             if ($USE_ELO) {$ELORanks = ELO::getRanks(($sel_node == STATS_TOUR) ? $sel_node_id : false);}
             foreach ($objs as $o) {
-                if ($USE_ELO) {$o->elo = $ELORanks[$o->team_id];}
+                if ($USE_ELO) {$o->elo = $ELORanks[$o->team_id] + (($ALL_TIME) ? $o->elo_0 : 0);}
             	$o->setStats($sel_node, $sel_node_id, $set_avg);
             }
             break;

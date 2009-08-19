@@ -30,7 +30,7 @@ class Team_export extends Team
         */
         
         $ELORanks = ELO::getRanks(false);
-        $this->elo = $ELORanks[$this->team_id];
+        $this->elo = $ELORanks[$this->team_id] + $this->elo_0;
         
         $dom = new DOMDocument();
         $dom->formatOutput = true;

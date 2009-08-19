@@ -51,7 +51,7 @@ class Table
     
     public static function getTables()
     {
-        return $this->tables;
+        return self::$tables;
     }
 }
 ?>
