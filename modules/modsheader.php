@@ -104,8 +104,8 @@ Module::register(array(
     'author'        => 'William Leonard',
     'date'          => '2009',
     'setCanvas'     => true, 
-    'main'          => 'leegmgr_load', 
-    'filesRunTime'  => array('leegmgr/class_match_botocs.php', 'leegmgr/uploadinc.php'),
+    'main'          => 'UPLOAD_BOTOCS::main', 
+    'filesRunTime'  => array('leegmgr/class_match_botocs.php', 'leegmgr/class_upload_botocs.php'),
     'filesLoadTime' => array('leegmgr/settings.php')
 ));
 
@@ -129,10 +129,9 @@ Module::register(array(
     'filesLoadTime' => array('registration/settings.php')
 ));
 
-// Cyanide modules
 Module::register(array(
     'modname'       => 'cyanide_match_import',
-    'author'        => 'Grégory Romé',
+    'author'        => 'Grï¿½gory Romï¿½',
     'date'          => '2009',
     'setCanvas'     => true,
     'main'          => 'main',
@@ -143,17 +142,12 @@ Module::register(array(
 
 Module::register(array(
     'modname'       => 'cyanide_team_import',
-    'author'        => 'Grégory Romé',
+    'author'        => 'Grï¿½gory Romï¿½',
     'date'          => '2009',
     'setCanvas'     => true,
     'main'          => 'main',
     'filesRunTime'  => array('cyanide/class_CyanideTeam.php', 'cyanide/team_import.php'),
     'filesLoadTime' => array('cyanide/settings.php')
 ));
-
-if(isset($settings['cyanide_enabled']) && $settings['cyanide_enabled'] )
-{
-	require_once('modules/cyanide/game_data.php');
-}
 
 ?>
