@@ -250,12 +250,6 @@ require_once('lib/class_translations.php'); # Juergen Unfried
 // Modules.
 require_once('modules/modsheader.php'); # Registration of modules.
 
-// Cyanide data modifications # Grégory: PLEASE REMOVE AND INSERT IN modules/modsheader.php.
-if($settings['cyanide_enabled'])
-{
-	require_once('modules/cyanide/game_data.php');
-}
-
 // HTML interface routines.
 require_once('sections.php'); # Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('lib/class_htmlout.php');
