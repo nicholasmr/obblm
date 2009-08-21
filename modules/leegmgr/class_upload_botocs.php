@@ -189,6 +189,7 @@ class UPLOAD_BOTOCS
 
     function matchEntry ( $team_id, $teamPlayers ) {
 
+        $addZombie = false;
         $match = new Match( $this->match_id );
 
         $team = new Team( $team_id );
@@ -196,6 +197,8 @@ class UPLOAD_BOTOCS
 
         foreach ( $teamPlayers as $player )
         {
+            if ( $player['nr'] == 100 ) $addZombie = true;  //Must add zombie last so that dead players can be reported first.
+            else $addZombie = false;
             if ( $player['star'] == "true" )
             {
                 global $stars;
@@ -233,7 +236,19 @@ class UPLOAD_BOTOCS
             if ( $agn1 > $inj ) list($inj, $agn1) = array($agn1, $inj);
             if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
 
+            if ( !$addZombie )
             $match->entry( $input = array ( "team_id" => $team_id, "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ) );
+            else
+            {
+                    $delta = Player::price( array('race' => $team->race, 'position' => "Zombie") );
+                    $team->dtreasury($delta);
+                    $zombie_added = Player::create(array( 'nr' => $player['nr'], 'position' => "Zombie", 'team_id' => $team_id, 'name' => $player['name']) );
+                    if ( !$zombie_added[0] ) $team->dtreasury(-$delta);
+                    else
+                    {
+                        $input = array ( "team_id" => $team_id, "player_id" => $zombie_added[1], "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 );
+                    }
+            }
 
         }
 
@@ -248,7 +263,7 @@ class UPLOAD_BOTOCS
                     $match->entry( $input = array ( "team_id" => $team_id, "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ) );
                 }
             }
-        }	
+        }
 
         return true;
 

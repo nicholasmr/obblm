@@ -168,6 +168,12 @@ class XML_BOTOCS
             return false;
         }
 
+        if ( !$p->is_dead && !$p->is_sold && $p->nr == 100 )
+        {
+            Print "Player number 100 is reserved for newly raised zombies.  Please renumber the player.";
+            return false;
+        }
+
         return true;
 
     }
