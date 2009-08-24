@@ -65,8 +65,7 @@ class XML_BOTOCS
             $this->ass_coaches = $team->ass_coaches;
             $this->cheerleaders = $team->cheerleaders;
             $this->apothecary = $team->apothecary;
-                if ( $this->apothecary == "1" ) $this->apothecary = "true";
-                else $this->apothecary = "false";
+                $this->apothecary = ( $this->apothecary == "1" ) ? "true" : "false";
             $this->treasury = $team->treasury;
             
         if ( !$this->checkJourneymen() ) return false;
@@ -120,8 +119,7 @@ class XML_BOTOCS
 				$this->roster .= "                <skill>".htmlspecialchars($a_skills[$i], ENT_NOQUOTES, 'UTF-8')."</skill>\n";
                         $i++;
                     }
-                $injured = "false";
-                if ( $p->is_mng ) $injured = "true";
+                $injured = ( $p->is_mng ) ? "true" : "false";
                 $this->roster .= "            </skills>\n";
                 $this->roster .= "            <spp>".$p->spp."</spp>\n";
                 $this->roster .= "            <nigglings>".$p->inj_ni."</nigglings>\n";
@@ -133,7 +131,7 @@ class XML_BOTOCS
         }
 
         $this->roster .= "    </players>\n";
-        $this->roster .= "</team>\n";
+        $this->roster .= "</team>";
 
     }
 
