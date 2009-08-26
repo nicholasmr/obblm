@@ -217,14 +217,12 @@ class Coach
         return $desc->txt;
     }
     
-    public function savePic($name) {
-        return save_pic($name, IMG_COACHES, $this->coach_id);
+    public function savePic($name = false) {
+        $img = new Image(IMGTYPE_COACH, $this->coach_id);
+        list($retstatus, $error) = $img->save($name);
+        return $retstatus;
     }
     
-    public function getPic() {
-        return get_pic(IMG_COACHES, $this->coach_id);
-    }
-
     /***************
      * Statics
      ***************/

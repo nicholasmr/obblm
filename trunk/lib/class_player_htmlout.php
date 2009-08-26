@@ -52,7 +52,7 @@ private function _handleActions($ALLOW_EDIT)
     switch ($_POST['type'])
     {
         case 'pic': 
-            status(!$p->savePic('pic'));
+            status($p->savePic(false));
             break;
             
         case 'playertext': 
@@ -150,14 +150,24 @@ private function _about($ALLOW_EDIT)
                         <td><b>SPP/extra</b></td>
                         <td><?php echo "$p->spp/$p->extra_spp" ?></td>
                     </tr>
-                    <tr>
-                        <td><b>Wanted</b></td>
-                        <td><?php echo ($p->isWanted()) ? '<b><font color="red">Yes</font></b>' : 'No';?></td>
-                    </tr>
-                    <tr>
-                        <td><b>In HoF</b></td>
-                        <td><?php echo ($p->isInHOF()) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
-                    </tr>
+                    <?php
+                    if (Module::isRegistered('wanted')) {
+                        ?>
+                        <tr>
+                            <td><b>Wanted</b></td>
+                            <td><?php echo (Module::run('wanted', array('isWanted', array($p->player_id)))) ? '<b><font color="red">Yes</font></b>' : 'No';?></td>
+                        </tr>
+                        <?php
+                    }
+                    if (Module::isRegistered('hof')) {
+                        ?>
+                        <tr>
+                            <td><b>In HoF</b></td>
+                            <td><?php echo (Module::run('hof', array('isInHOF', array($p->player_id)))) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
                     <tr>
                         <td><b>Won</b></td>
                         <td><?php echo "$p->won ($p->row_won streaks)"; ?></td>
@@ -233,7 +243,7 @@ private function _about($ALLOW_EDIT)
             <div class="boxBody">
                 <i><?php echo $lng->getTrn('secs/playerprofile/pic');?></i><hr>
                 <?php
-                pic_box($p->getPic(), $ALLOW_EDIT);
+                Image::makeBox(IMGTYPE_PLAYER, $p->player_id, $ALLOW_EDIT, false);
                 ?>
                 <br><br>
                 <i><?php echo $lng->getTrn('secs/playerprofile/pic');?></i><hr>

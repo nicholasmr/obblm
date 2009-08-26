@@ -37,8 +37,8 @@ session_start();
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.8a');
-$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Gregory Rome');
+define('OBBLM_VERSION', '0.8b');
+$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 
@@ -85,19 +85,8 @@ define('PRIZE_FAIR',    5);
  *********************/
 
 define('IMG', 'images');
-
-define('RACE_ICONS',    IMG.'/race_icons');
-define('PLAYER_ICONS',  IMG.'/player_icons');
-
-define('NO_PIC', IMG.'/nopic.jpg');
-define('UPLOAD_DIR', IMG);
-
-define('IMG_PLAYERS',   UPLOAD_DIR.'/players');
-define('IMG_TEAMS',     UPLOAD_DIR.'/teams'); // team togo
-define('IMG_STADIUMS',  UPLOAD_DIR.'/stadiums');
-define('IMG_COACHES',   UPLOAD_DIR.'/coaches');
-define('IMG_MATCHES',   UPLOAD_DIR.'/matches');
-define('IMG_PRIZES',    UPLOAD_DIR.'/prizes');
+define('RACE_ICONS', IMG.'/race_icons');
+define('PLAYER_ICONS', IMG.'/player_icons');
 
 /*********************
  *   Roster/status colors
@@ -126,8 +115,14 @@ define('T_TEXT_MSG',    1);
 define('T_TEXT_COACH',  2);
 define('T_TEXT_TEAM',   3);
 define('T_TEXT_PLAYER', 4);
-define('T_TEXT_HOF',    5); // Hall of fame.
-define('T_TEXT_WANTED', 6);
+    /*
+        DEV NOTE:
+        --------
+        These must go into the module. 
+        Also, make some system for giving _TEXT extensions there own constant ID's. without having to know which are in use etc..
+    */
+    define('T_TEXT_HOF',    5); // Hall of fame.
+    define('T_TEXT_WANTED', 6);
 define('T_TEXT_MSMR',   7); // Match summary.
 define('T_TEXT_TOUR',   8);
 define('T_TEXT_GUEST',  9);
@@ -241,6 +236,7 @@ require_once('lib/class_rrobin.php');
 #require_once('lib/class_knockout.php'); # Deprecated
 require_once('lib/class_module.php');
 require_once('lib/class_tablehandler.php');
+require_once('lib/class_images.php');
 
 // External libraries.
 require_once('lib/class_arraytojs.php');

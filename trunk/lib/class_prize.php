@@ -88,7 +88,7 @@ public function edit($type, $tid, $trid, $title, $txt, $pic = false)
 
 private function getPic() 
 {
-    return get_pic(IMG_PRIZES, $this->prize_id);
+    return NO_PIC;
 }
 
 /***************

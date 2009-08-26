@@ -89,9 +89,6 @@ function match_form($match_id) {
             'comment'       => $_POST['summary'] ? $_POST['summary'] : '',
         )));
 
-        // Pictures.
-        $m->savePics();
-
         // Update match's player data
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
         
@@ -471,35 +468,6 @@ function match_form($match_id) {
             <tr>
                 <td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->comment; ?></textarea></td>
             </tr>
-            <tr>
-                <td class='seperator' colspan='13'></td>
-            </tr>
-            <tr>
-                <td colspan='13' class='dark'><b><?php echo $lng->getTrn('secs/fixtures/report/photos');?></b></td>
-            </tr>
-            <?php
-            $rows = 3; // Number of rows of pics.
-            $ppr = 4; // Pics per row.
-            for ($pics = $m->getPics(), $i = 1; $i <= $rows; $i++) { // Limit to three rows of pics.
-                echo "<tr><td>\n";
-                for ($j = 1; $j <= $ppr && ($pic = array_shift($pics)); $j++) {
-                    echo "<a href='handler.php?type=mg&amp;mid=$m->match_id&amp;pic=".(($i-1)*$ppr+$j)."'><img alt='match photo' src='$pic' width='220'></a>\n";
-                }
-                echo "</td></tr>\n";
-            }
-            ?>
-            <tr>
-                <td class='seperator' colspan='13'></td>
-            </tr>
-            <tr>
-                <td class='seperator' colspan='13'><?php echo $lng->getTrn('secs/fixtures/report/pnote');?></td>
-            </tr>
-
-            <?php
-            for ($i = 1; $i <= 10; $i++) {
-                echo "<tr><td>".$lng->getTrn('secs/fixtures/report/photo')." #$i: <input $DIS type='file' name='img$i'>".(($m->picExists($i)) ? '&nbsp;&nbsp;<font color="orange"><b>'.$lng->getTrn('secs/fixtures/report/occ').'</b></font>' : '')."</td></tr>\n";
-            }
-            ?>
         </table>
         <br>
         <center>

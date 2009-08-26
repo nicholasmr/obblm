@@ -146,11 +146,9 @@ function sec_main() {
     foreach ($reports as $r) {
         $o = (object) array();
         $m = new Match($r->match_id);
-        $pics = $m->getPics();
         // Specific fields:
         $o->date_mod  = $r->date_modified;
         $o->match_id  = $r->match_id;
-        $o->hasPics   = !empty($pics);
         $o->comments  = $r->getComments();
         // General fields:
         $o->type      = 'match';
@@ -299,9 +297,6 @@ function sec_main() {
                                 echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>".$lng->getTrn('secs/home/show')."</a></td>\n";
                                 if (!empty($e->comments)) {
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"obj=document.getElementById('comment$e->match_id'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
-                                }
-                                if ($e->hasPics) {
-                                    echo "<td align='right'><a href='handler.php?type=mg&amp;mid=$e->match_id'>".$lng->getTrn('secs/home/photos')."</a></td>\n";
                                 }
                             }
                             elseif ($e->type == 'msg') {
@@ -991,7 +986,7 @@ function sec_coaches() {
             <tr>
                 <td>
                     <?php
-                    pic_box($c->getPic(), false);
+                    Image::makeBox(IMGTYPE_COACH, $c->coach_id, false, false);
                     ?>
                 </td>
                 <td valign='top'>
@@ -1187,12 +1182,11 @@ function sec_records() {
 
     // This section's routines are placed in the records.php file.
     if (isset($_GET['subsec'])) {
-        title($subsecs[$_GET['subsec']]);
         switch ($_GET['subsec'])
         {
-            case 'hof':    hof($ALLOW_EDIT); break;
-            case 'wanted': wanted($ALLOW_EDIT); break;
-            case 'prize':  prizes($ALLOW_EDIT); break;
+            case 'hof':    Module::run('hof',    array('makeList', array($ALLOW_EDIT))); break;
+            case 'wanted': Module::run('wanted', array('makeList', array($ALLOW_EDIT))); break;
+            case 'prize':  title($subsecs[$_GET['subsec']]); prizes($ALLOW_EDIT); break;
         }
         return;
     }
@@ -1202,6 +1196,7 @@ function sec_records() {
     foreach ($subsecs as $a => $b) {
         echo "<a href='index.php?section=records&amp;subsec=$a'><b>$b</b></a><br>\n";
     }
+
 }
 
 /*************************
@@ -1353,31 +1348,9 @@ function sec_gallery() {
                 echo "<b>".$lng->getTrn('secs/gallery/playersof')." $t->name</b><br><hr><br>\n";
                 $players = $t->getPlayers();
                 foreach ($players as $p) {
-                    $pic = $p->getPic();
+                    $img = new Image(IMGTYPE_PLAYER, $p->player_id);
+                    $pic = $img->getPath();
                     echo "<div style='float:left; padding:10px;'>$p->name (#$p->nr)<br><a href='index.php?section=coachcorner&amp;player_id=$p->player_id'><img HEIGHT=150 src='$pic' alt='pic'></a></div>";
-                }
-                break;
-
-            case 'tour':
-                $tr = new Tour((int) $_POST['trid']);
-                echo "<b>".$lng->getTrn('secs/gallery/matchesof')." $tr->name</b><br><hr><br>\n";
-                $matches = $tr->getMatches();
-                objsort($matches, array('-date_played'));
-                foreach ($matches as $m) {
-                    $round = $m->round;
-                    if     ($round == RT_FINAL)         $round = $lng->getTrn('secs/fixtures/mtypes/final');
-                    elseif ($round == RT_3RD_PLAYOFF)   $round = $lng->getTrn('secs/fixtures/mtypes/thirdPlayoff');
-                    elseif ($round == RT_SEMI)          $round = $lng->getTrn('secs/fixtures/mtypes/semi');
-                    elseif ($round == RT_QUARTER)       $round = $lng->getTrn('secs/fixtures/mtypes/quarter');
-                    elseif ($round == RT_ROUND16)       $round = $lng->getTrn('secs/fixtures/mtypes/rnd16');
-                    else                                $round = $lng->getTrn('secs/fixtures/mtypes/rnd').": $round";
-
-                    echo "<div style='clear: both;'><i>$m->team1_name</i> vs <i>$m->team2_name</i>, ".((isset($m->date_played) && $m->date_played != 0) ? textdate($m->date_played, true) : 'Not played').", $round, <a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>[view]</a><br><hr style='width: 400px; float: left;'></div><br>\n";
-
-                    foreach ($m->getPics() as $pic) {
-                        echo "<div style='float:left; padding:10px;'><img HEIGHT=150 src='$pic' alt='pic'></div>";
-                    }
-                    echo "<br><br>\n";
                 }
                 break;
 
@@ -1385,7 +1358,8 @@ function sec_gallery() {
                 echo "<b>".$lng->getTrn('secs/gallery/stads')."</b><br><hr><br>\n";
                 $teams = Team::getTeams();
                 foreach ($teams as $t) {
-                    $pic = $t->getStadiumPic();
+                    $img = new Image(IMGTYPE_TEAMSTADIUM, $t->team_id);
+                    $pic = $img->getPath();
                     echo "<div style='float:left; padding:10px;'>$t->name<br><a href='$pic'><img HEIGHT=150 src='$pic' alt='pic'></a></div>";
                 }
                 break;
@@ -1394,7 +1368,8 @@ function sec_gallery() {
                 echo "<b>".$lng->getTrn('secs/gallery/coaches')."</b><br><hr><br>\n";
                 $coaches = Coach::getCoaches();
                 foreach ($coaches as $c) {
-                    $pic = $c->getPic();
+                    $img = new Image(IMGTYPE_COACH, $c->coach_id);
+                    $pic = $img->getPath();
                     echo "<div style='float:left; padding:10px;'>$c->name<br><a href='$pic'><img HEIGHT=150 src='$pic' alt='pic'></a></div>";
                 }
                 break;
@@ -1408,12 +1383,6 @@ function sec_gallery() {
         <option value='0'>-".$lng->getTrn('secs/gallery/none')."-</option>".
         implode("\n", array_map(create_function('$o', 'return "<option value=\'$o->team_id\'>$o->name</option>";'), Team::getTeams()))
         ."</select><input type='hidden' name='type' value='team'></form>
-    ";
-    $tour_list = "
-        <form method='POST' style='display:inline; margin:0px;'><select name='trid' onChange='this.form.submit();'>
-        <option value='0'>-".$lng->getTrn('secs/gallery/none')."-</option>".
-        implode("\n", array_map(create_function('$o', 'return "<option value=\'$o->tour_id\'>$o->name</option>";'), Tour::getTours()))
-        ."</select><input type='hidden' name='type' value='tour'></form>
     ";
     $stad = "
         <form method='POST' name='stadForm' style='display:inline; margin:0px;'>
@@ -1431,7 +1400,6 @@ function sec_gallery() {
     ?>
     <ul>
     <li><?php echo $lng->getTrn('secs/gallery/players').$team_list?></li>
-    <li><?php echo $lng->getTrn('secs/gallery/matches').$tour_list?></li>
     <li><?php echo $stad?></li>
     <li><?php echo $coaches?></li>
     </ul>
@@ -1728,7 +1696,7 @@ function sec_coachcorner() {
                 case 'chname':      status($coach->setRealName($_POST['new_realname'])); break;
                 case 'chtheme':     status($coach->setSetting('theme', (int) $_POST['new_theme'])); break;
 
-                case 'pic':         status(!$coach->savePic('pic')); break;
+                case 'pic':         status($coach->savePic(false)); break;
                 case 'coachtext':
                     if (get_magic_quotes_gpc()) {
                         $_POST['coachtext'] = stripslashes($_POST['coachtext']);
@@ -1881,7 +1849,7 @@ function sec_coachcorner() {
             <tr>
                 <td>
                     <?php
-                    pic_box($coach->getPic(), true);
+                    Image::makeBox(IMGTYPE_COACH, $coach->coach_id, true, false);
                     ?>
                 </td>
                 <td valign='top'>
