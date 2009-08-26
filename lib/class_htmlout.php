@@ -569,8 +569,8 @@ private static function make_menu()
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/records');?></span>
             <ul>
-                <li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li>
-                <li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li>
+                <?php if (Module::isRegistered('hof')) { ?><li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('wanted')) { ?><li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li><?php } ?>
                 <li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li>
             </ul>
         </li>
@@ -840,7 +840,8 @@ public static function dispTeamList($obj, $obj_id)
     foreach ($teams as $t) {
         $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');
         $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that HTMLOUT::sort_table does not create the team link on coach name too.
-        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='" . $t->getLogo() . "'>";
+        $img = new Image(IMGTYPE_TEAMLOGO, $t->team_id);
+        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath()."'>";
         $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
         $lt = $t->getLatestTour();
         $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';

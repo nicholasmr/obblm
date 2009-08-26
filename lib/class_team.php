@@ -604,27 +604,15 @@ class Team
     }
 
     public function saveLogo($name) {
-        return save_pic($name, IMG_TEAMS, $this->team_id);
+        $img = new Image(IMGTYPE_TEAMLOGO, $this->team_id);
+        list($retstatus, $error) = $img->save($name);
+        return $retstatus;
     }
 
-    public function getLogo() {
-        $p = get_pic(IMG_TEAMS, $this->team_id);
-        if (!preg_match('/'.basename(NO_PIC).'/', $p)) {
-            return $p;
-        }
-        else {
-            $r = new Race($this->f_race_id);
-            $roster = $r->getRoster();
-            return $roster['other']['icon'];
-        }
-    }
-
-    public function saveStadiumPic($name) {
-        return save_pic($name, IMG_STADIUMS, $this->team_id);
-    }
-
-    public function getStadiumPic() {
-        return get_pic(IMG_STADIUMS, $this->team_id);
+    public function saveStadiumPic($name = false) {
+        $img = new Image(IMGTYPE_TEAMSTADIUM, $this->team_id);
+        list($retstatus, $error) = $img->save($name);
+        return $retstatus;
     }
 
     public function writeNews($txt) {

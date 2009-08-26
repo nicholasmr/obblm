@@ -97,7 +97,6 @@
             <del>Delete</del>
             <edit>Edit</edit>
             <show>Show</show>
-            <photos>Photos</photos>
             <comments>Comments</comments>
             <posted>Posted</posted>
             <by>by</by>
@@ -223,12 +222,6 @@
                     <tv>TVs</tv>
                     
                 <summary>Game summary</summary>
-                <photos>Match photos</photos>
-                    <occ>Occupied</occ>
-                    <photo>Photo</photo>
-                    <pnote>
-                    <![CDATA[<i>Note:</i> uploading in photo numbers already occupied will overwrite the current photo in that position.]]>
-                    </pnote>
                 <msmrc>Match comment(s)</msmrc>
                     <existCmt>Existing comment(s)</existCmt>
                     <newCmt>New comment</newCmt>
@@ -626,12 +619,10 @@
             <note>Please select one of the below options.</note>
             <none>None selected</none>
             <players>Players from team</players>
-            <matches>Matches from tournament</matches>
             <stads>Team stadiums</stads>
             <coaches>Coaches</coaches>
             
             <playersof>Players of</playersof>
-            <matchesof>Matches of tournament</matchesof>
         </gallery>
         
         <obblm>

@@ -603,16 +603,6 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
         return (($result = mysql_query($query)) && mysql_num_rows($result) > 0 && ($row = mysql_fetch_assoc($result))) ? ($this->date_died = $row['date_played']) : false;
     }
     
-    public function isWanted() {
-        $query = "SELECT f_id FROM texts WHERE f_id = $this->player_id AND type = ".T_TEXT_WANTED;
-        return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
-    }
-    
-    public function isInHOF() {
-        $query = "SELECT f_id FROM texts WHERE f_id = $this->player_id AND type = ".T_TEXT_HOF;
-        return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
-    }
-    
     public function chrLimits($type, $char) {
 
         /**
@@ -733,12 +723,10 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
         return $desc->txt;
     }
     
-    public function savePic($name) {
-        return save_pic($name, IMG_PLAYERS, $this->player_id);
-    }
-    
-    public function getPic() {
-        return get_pic(IMG_PLAYERS, $this->player_id);
+    public function savePic($name = false) {
+        $img = new Image(IMGTYPE_PLAYER, $this->player_id);
+        list($retstatus, $error) = $img->save($name);
+        return $retstatus;
     }
     
     public function getSkillsStr($HTML = false) 

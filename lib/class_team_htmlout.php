@@ -102,10 +102,10 @@ private function _handleActions($ALLOW_EDIT)
         case 'newsedit': status($team->editNews($_POST['news_id'], $_POST['txt'])); break;
 
         case 'pic': 
-            if (isset($_FILES['pic_stad'])) 
-                status(!$team->saveStadiumPic('pic_stad'));
-            elseif (isset($_FILES['pic_logo']))
-                status(!$team->saveLogo('pic_logo'));
+            if (isset($_FILES[Image::$defaultHTMLUploadName.'_stad'])) 
+                status($team->saveStadiumPic(Image::$defaultHTMLUploadName.'_stad'));
+            elseif (isset($_FILES[Image::$defaultHTMLUploadName.'_logo']))
+                status($team->saveLogo(Image::$defaultHTMLUploadName.'_logo'));
             break;
     }
 
@@ -1273,12 +1273,12 @@ private function _about($ALLOW_EDIT)
         <tr>
             <td>
                 <?php
-                pic_box($team->getLogo(), $ALLOW_EDIT, '_logo');
+                Image::makeBox(IMGTYPE_TEAMLOGO, $team->team_id, $ALLOW_EDIT, '_logo');
                 ?>
             </td>
             <td>
                 <?php
-                pic_box($team->getStadiumPic(), $ALLOW_EDIT,  '_stad');
+                Image::makeBox(IMGTYPE_TEAMSTADIUM, $team->team_id, $ALLOW_EDIT, '_stad');
                 ?>
             </td>
             <td valign='top' style='width: 100%;'>

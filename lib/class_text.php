@@ -157,67 +157,6 @@ class Message extends _Text
 }
 
 /* 
- *  Handles entries in the hall of fame.
- */
-
-class HOF extends _Text
-{
-    /***************
-     * Properties 
-     ***************/
-
-    public $hof_id      = 0;
-    public $player_id   = 0;
-    public $title       = '';
-    public $about       = '';
-
-    /***************
-     * Methods 
-     ***************/    
-
-    function __construct($hof_id) 
-    {
-        parent::__construct($hof_id);
-        
-        $this->hof_id       = $this->txt_id;        
-        $this->player_id    = $this->f_id;
-        $this->title        = $this->txt2;
-        $this->about        = $this->txt;
-        
-        unset($this->txt2);
-        unset($this->txt);
-    }
-    
-    public function edit($title, $about) 
-    {
-        return parent::edit($about, $title, false, false);
-    }
-    
-    /***************
-     * Statics
-     ***************/
-    
-    public static function getHOF($n = false)
-    {
-        $HOF = array();
-
-        $result = mysql_query("SELECT txt_id, f_id FROM texts WHERE type = ".T_TEXT_HOF." ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                array_push($HOF, array('hof' => new HOF($row['txt_id']), 'player' => new Player($row['f_id'])));
-            }
-        }
-        
-        return $HOF;
-    }
-    
-    public static function create($player_id, $title, $about)
-    {
-        return parent::create($player_id, T_TEXT_HOF, $about, $title);
-    }
-}
-
-/* 
  *  Handles text Descriptions for players (T_TEXT_PLAYER), teams (T_TEXT_TEAM) and coaches (T_TEXT_COACH).
  */
 
@@ -255,67 +194,6 @@ class TDesc extends _Text
         return (empty($this->txt)) 
             ? parent::create($this->f_id, $this->type, $txt, false) 
             : parent::edit($txt, false, false, false);
-    }
-}
-
-/* 
- *  Handles wanted players.
- */
-
-class Wanted extends _Text
-{
-    /***************
-     * Properties 
-     ***************/
-
-    public $wanted_id   = 0;
-    public $player_id   = 0;
-    public $why         = '';
-    public $bounty      = '';
-
-    /***************
-     * Methods 
-     ***************/    
-
-    function __construct($wanted_id) 
-    {
-        parent::__construct($wanted_id);
-        
-        $this->wanted_id    = $this->txt_id;        
-        $this->player_id    = $this->f_id;
-        $this->bounty       = $this->txt2;
-        $this->why          = $this->txt;
-        
-        unset($this->txt2);
-        unset($this->txt);
-    }
-    
-    public function edit($why, $bounty) 
-    {
-        return parent::edit($why, $bounty, false, false);
-    }
-    
-    /***************
-     * Statics
-     ***************/
-    
-    public static function getWanted($n = false)
-    {
-        $w = array();
-
-        $result = mysql_query("SELECT txt_id, f_id FROM texts WHERE type = ".T_TEXT_WANTED." ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                array_push($w, array('wanted' => new Wanted($row['txt_id']), 'player' => new Player($row['f_id'])));
-            }
-        }
-        
-        return $w;
-    }
-    
-    public static function create($player_id, $why, $bounty)
-    {
-        return parent::create($player_id, T_TEXT_WANTED, $why, $bounty);
     }
 }
 
@@ -360,6 +238,68 @@ class MSMR extends _Text
         return (!$this->exists) 
             ? parent::create($this->match_id, T_TEXT_MSMR, $txt, false) 
             : parent::edit($txt, false, false, false);
+    }
+}
+
+/* 
+ *  Match summary comments
+ */
+
+class MSMRC extends _Text
+{
+    /***************
+     * Properties 
+     ***************/
+
+    public $cid = 0; // Comment ID.
+    public $mid = 0; // ID of match to which this summary comment belongs to.
+    public $sid = 0; // Submitter's ID.
+    public $sname = ''; // Submitter's name.
+    public $txt = '';
+
+    /***************
+     * Methods 
+     ***************/    
+
+    function __construct($cid) 
+    {
+        parent::__construct($cid);
+        $this->cid = $cid;
+        $this->mid = $this->f_id;
+        $this->sid = (int) $this->txt2; // NOTE: The submitter's ID is stored in a text field type!
+        $this->sname = get_alt_col('coaches', 'coach_id', $this->sid, 'name');
+        
+        return true;
+    }
+    
+    /***************
+     * Statics
+     ***************/
+     
+    public static function matchHasComments($mid)
+    {
+        $query = "SELECT COUNT(*) AS 'cnt' FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC;
+        $result = mysql_query($query);
+        $row = mysql_fetch_assoc($result);
+        return ((int) $row['cnt'] > 0);
+    }
+    
+    public static function getComments($mid, $sort = '-')
+    {
+        $c = array();
+        $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC.' ORDER BY date '.(($sort == '-') ? 'DESC' : 'ASC');
+        $result = mysql_query($query);
+        if ($result && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                array_push($c, new MSMRC($row['txt_id']));
+            }
+        }
+        return $c;
+    }
+    
+    public static function create($mid, $sid, $txt)
+    {
+        return parent::create($mid, T_TEXT_MSMRC, $txt, $sid);
     }
 }
 
@@ -494,68 +434,6 @@ class SiteLog extends _Text
         }
         
         return $logs;
-    }
-}
-
-/* 
- *  Match summary comments
- */
-
-class MSMRC extends _Text
-{
-    /***************
-     * Properties 
-     ***************/
-
-    public $cid = 0; // Comment ID.
-    public $mid = 0; // ID of match to which this summary comment belongs to.
-    public $sid = 0; // Submitter's ID.
-    public $sname = ''; // Submitter's name.
-    public $txt = '';
-
-    /***************
-     * Methods 
-     ***************/    
-
-    function __construct($cid) 
-    {
-        parent::__construct($cid);
-        $this->cid = $cid;
-        $this->mid = $this->f_id;
-        $this->sid = (int) $this->txt2; // NOTE: The submitter's ID is stored in a text field type!
-        $this->sname = get_alt_col('coaches', 'coach_id', $this->sid, 'name');
-        
-        return true;
-    }
-    
-    /***************
-     * Statics
-     ***************/
-     
-    public static function matchHasComments($mid)
-    {
-        $query = "SELECT COUNT(*) AS 'cnt' FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC;
-        $result = mysql_query($query);
-        $row = mysql_fetch_assoc($result);
-        return ((int) $row['cnt'] > 0);
-    }
-    
-    public static function getComments($mid, $sort = '-')
-    {
-        $c = array();
-        $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC.' ORDER BY date '.(($sort == '-') ? 'DESC' : 'ASC');
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                array_push($c, new MSMRC($row['txt_id']));
-            }
-        }
-        return $c;
-    }
-    
-    public static function create($mid, $sid, $txt)
-    {
-        return parent::create($mid, T_TEXT_MSMRC, $txt, $sid);
     }
 }
 

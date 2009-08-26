@@ -131,7 +131,7 @@ Module::register(array(
 
 Module::register(array(
     'modname'       => 'cyanide_match_import',
-    'author'        => 'Gr�gory Rom�',
+    'author'        => 'Grégory Romé',
     'date'          => '2009',
     'setCanvas'     => true,
     'main'          => 'main',
@@ -142,12 +142,32 @@ Module::register(array(
 
 Module::register(array(
     'modname'       => 'cyanide_team_import',
-    'author'        => 'Gr�gory Rom�',
+    'author'        => 'Grégory Romé',
     'date'          => '2009',
     'setCanvas'     => true,
     'main'          => 'main',
     'filesRunTime'  => array('cyanide/class_CyanideTeam.php', 'cyanide/team_import.php'),
     'filesLoadTime' => array('cyanide/settings.php')
+));
+
+Module::register(array(
+    'modname'       => 'wanted',
+    'author'        => 'Nicholas Mossor Rathmann',
+    'date'          => '2008',
+    'setCanvas'     => false,
+    'main'          => 'Wanted::main',
+    'filesRunTime'  => array('wanted/class_wanted.php'),
+    'filesLoadTime' => array()
+));
+
+Module::register(array(
+    'modname'       => 'hof',
+    'author'        => 'Nicholas Mossor Rathmann',
+    'date'          => '2008',
+    'setCanvas'     => false,
+    'main'          => 'HOF::main',
+    'filesRunTime'  => array('halloffame/class_hof.php'),
+    'filesLoadTime' => array()
 ));
 
 ?>
