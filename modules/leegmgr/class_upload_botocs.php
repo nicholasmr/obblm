@@ -164,6 +164,12 @@ class UPLOAD_BOTOCS
             if ($this->match_id) $revUpdate = true;
         }
 
+        if ( $this->chkAltSchedule() )
+        {
+            $this->error = "One of the teams has another match scheduled.";
+            return false;
+        }
+
         if ( !$this->match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
             $this->match_id = Match_BOTOCS::create( $input = array("team1_id" => $this->hometeam_id, "team2_id" => $this->awayteam_id, "round" => 1, "f_tour_id" => $this->tour_id, "hash" => $this->hash ) );
         }
@@ -339,6 +345,21 @@ class UPLOAD_BOTOCS
         $match_id = $match_id['match_id'];
 
         return $match_id;
+
+    }
+
+    function chkAltSchedule() {
+
+        $team_id1 = $this->hometeam_id;
+        $team_id2 = $this->awayteam_id;
+
+        $query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( ( team1_id = $team_id1 ) OR  ( team1_id = $team_id2 ) OR  ( team2_id = $team_id1 ) OR ( team2_id = $team_id2 ) )";
+
+        $match_id = mysql_query($query);
+        $match_id = mysql_fetch_array($match_id);
+        $match_id = $match_id['match_id'];
+
+        return $status = ($match_id > 0) ? true : false;
 
     }
 
