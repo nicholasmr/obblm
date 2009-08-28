@@ -1,8 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
- *  Author(s): Frederic Morel, Grégory Romé
+ *  Copyright (c) Gregory RomÃ© <email protected> 2009. All Rights Reserved.
+ *  Author(s): Frederic Morel, Gregory RomÃ©
  *
  *
  *  This file is part of OBBLM.
@@ -41,8 +41,6 @@ function team_upload_page()
 
 	$coach_id = $coach->coach_id;
 
-	print "<h2>Not yet fully implemented</h2>";
-
 	if ( isset($_POST['send']) )
 	{
 		if(!$_FILES['userfile']['tmp_name'])
@@ -52,7 +50,17 @@ function team_upload_page()
 		}
 
 		$team = new CyanideTeam($_FILES['userfile']['tmp_name'], $_POST['file_type']);
-
+		if(!$team)
+		{
+			Print "<h2>ERROR: Impossible to parse the team</h2>";
+			exit(-1);
+		}
+		
+		if(!isset($_POST['is_new']) || ($_POST['is_new'] !== 'on'))
+		{
+			$team->is_new = false;
+		}
+		
 		$team_id = $team->create();
 
 		$msg="<h2>Error!</h2>";
@@ -62,7 +70,7 @@ function team_upload_page()
 			if($team->populate())
 			{
 				$msg = "<h2>Team Imported!</h2>";
-			};
+			}
 		}
 
 		if($team->has_err)
@@ -140,7 +148,8 @@ function team_upload_page()
 			<option value='0' $selected[0] >Saved Team</option>
 			<option value='1' $selected[1] >Match Report Home</option>
 			<option value='2' $selected[2] >Match Report Away</option>
-		</select></p>
+		</select> 
+        Is this team is new? <input type='checkbox' checked name='is_new'></p>
 		<input type='submit' value='Check' name='check'/>
 		<br><input type='submit' value='Send File' name='send'/>
 		</form>";

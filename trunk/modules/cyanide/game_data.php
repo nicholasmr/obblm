@@ -1,8 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
- *  Author(s): Frederic Morel, Grégory Romé
+ *  Copyright (c) GrÃ©gory RomÃ© <email protected> 2009. All Rights Reserved.
+ *  Author(s): Frederic Morel, GrÃ©gory RomÃ©
  *
  *
  *  This file is part of OBBLM.
@@ -28,7 +28,6 @@ global $hrs;
 
 if($settings['cyanide_enabled'])
 {
-
 	foreach ($DEA as $race_name => $attrs)
 	{
 		if (!in_array($race_name, $settings['cyanide_races']))

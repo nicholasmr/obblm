@@ -170,4 +170,9 @@ Module::register(array(
     'filesLoadTime' => array()
 ));
 
+if(isset($settings['cyanide_enabled']) && $settings['cyanide_enabled'] )
+{
+	require_once('modules/cyanide/game_data.php');
+}
+
 ?>

@@ -1,8 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) GrÈgory RomÈ <email protected> 2009. All Rights Reserved.
- *  Author(s): GrÈgory RomÈ
+ *  Copyright (c) Gr√©gory Rom√© <email protected> 2009. All Rights Reserved.
+ *  Author(s): Gr√©gory Rom√©
  *
  *
  *  This file is part of OBBLM.
