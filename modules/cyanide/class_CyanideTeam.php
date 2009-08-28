@@ -1,8 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
- *  Author(s): Grégory Romé
+ *  Copyright (c) Gregory RomÃ© <email protected> 2009. All Rights Reserved.
+ *  Author(s): Gregory RomÃ©
  *
  *
  *  This file is part of OBBLM.
@@ -74,7 +74,7 @@ class CyanideTeam
 	function __construct($sqliteFile, $type, $coach_id=false)
 	{
 		$this->prefix = $this->prefix_list[$type];
-
+		
 		$team_db = new PDO("sqlite:" . $sqliteFile);
 
 		$this->info = cyanidedb_query_teamlisting($team_db, $this->prefix);
@@ -83,6 +83,7 @@ class CyanideTeam
 		$results = obblm_find_team_by_name($this->info['name']);
 		if($results)
 		{
+			print "<h3>Team '".$this->info['name']."' exists!</h3>";
 			$this->id = $results['team_id'];
 			$this->info['coach_id'] = $results['coach_id'];
 		} else
@@ -105,9 +106,12 @@ class CyanideTeam
 			{
 				$this->info['coach_id'] = $coach->coach_id;
 			}
-
-			if($this->is_new){ $this->id = Team::create($this->info); }
-			else { $this->id = Team::create($this->info, $this->init); }
+			print "<h3>Create new team</h3>";
+			if( Team::create($this->info) )
+			{
+				$results = obblm_find_team_by_name($this->info['name']);
+				$this->id = $results['team_id'];
+			}
 		}
 		else
 		{
@@ -127,7 +131,10 @@ class CyanideTeam
 		{
 			$team = new Team($this->id);
 
-			$team->dtreasury(1000000);
+			if(!$this->is_new)
+			{
+				$team->dtreasury(1000000);
+			}
 
 			if($this->info['apothecary'] > $team->apothecary)
 			{
@@ -168,7 +175,7 @@ class CyanideTeam
 			foreach($this->players as $player)
 			{
 				$player['team_id'] = $this->id;
-				$player['forceCreate'] = true;
+				$player['forceCreate'] = !$this->is_new;
 
 				$results = obblm_find_player_by_number($player['nr'], $this->id);
 
@@ -214,18 +221,21 @@ class CyanideTeam
 			for($i = 0; $i <$diff; $i++)
 			{
 				print "<p>Buy Fan Factor</p>";
-				$team->buy('fan_factor', true);
+				$this>force_buy_ff();
 			}
 
-			$team->dtreasury(-1000000);
-
-			/* Required the updated treasury */
-			$team = New Team($this->id);
-			$diff = $this->info['treasury'] - $team->treasury;
-			if($diff)
+			if(!$this->is_new)
 			{
-				print "<p>Update Treasury</p>";
-				$team->dtreasury($diff);
+				$team->dtreasury(1000000);
+			
+				/* Required the updated treasury */
+				$team = New Team($this->id);
+				$diff = $this->info['treasury'] - $team->treasury;
+				if($diff)
+				{
+					print "<p>Update Treasury</p>";
+					$team->dtreasury($diff);
+				}
 			}
 
 			return true;
@@ -233,6 +243,30 @@ class CyanideTeam
 
 		return false;
 	}
+	
+	private function force_buy_ff() 
+	{
+		$thing == 'fan_factor';
+        $team_goods = $this->getGoods();
+    
+        if (!array_key_exists($thing, $team_goods))
+            return false;
+
+        $price = $team_goods[$thing]['cost'];
+        $query = "
+        	UPDATE teams 
+        	SET treasury = treasury - $price, $thing = $thing + 1 
+        	WHERE team_id = $this->team_id";
+        if (mysql_query($query))
+        {
+            $this->$thing++;
+            $this->treasury -= $price;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 }
 
