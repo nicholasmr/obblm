@@ -164,7 +164,7 @@ class UPLOAD_BOTOCS
             if ($this->match_id) $revUpdate = true;
         }
 
-        if ( $this->chkAltSchedule() )
+        if ( $this->chkAltSchedule() && !$this->match_id )
         {
             $this->error = "One of the teams has another match scheduled.";
             return false;
