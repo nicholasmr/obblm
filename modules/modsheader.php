@@ -130,7 +130,7 @@ Module::register(array(
 ));
 
 Module::register(array(
-    'modname'       => 'cyanide_match_import',
+    'modname'       => 'cyanide',
     'author'        => 'Grégory Romé',
     'date'          => '2009',
     'setCanvas'     => true,
@@ -139,6 +139,15 @@ Module::register(array(
     'filesLoadTime' => array('cyanide/settings.php')
 ));
 
+Module::register(array(
+    'modname'       => 'cyanide_match_import',
+    'author'        => 'Grégory Romé',
+    'date'          => '2009',
+    'setCanvas'     => true,
+    'main'          => 'main',
+    'filesRunTime'  => array('cyanide/class_CyanideMatch.php', 'cyanide/match_import.php'),
+    'filesLoadTime' => array('cyanide/settings.php')
+));
 
 Module::register(array(
     'modname'       => 'cyanide_team_import',
@@ -169,10 +178,5 @@ Module::register(array(
     'filesRunTime'  => array('halloffame/class_hof.php'),
     'filesLoadTime' => array()
 ));
-
-if(isset($settings['cyanide_enabled']) && $settings['cyanide_enabled'] )
-{
-	require_once('modules/cyanide/game_data.php');
-}
 
 ?>
