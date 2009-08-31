@@ -64,10 +64,5 @@ $settings['cyanide_races'] = array (
 	6 => 'Goblin',
 	7 => 'Wood Elf',
 	8 => 'Chaos' );
-
-// -----------------------------------------------------------------------------
-	
-if($settings['cyanide_enabled'])
-	require_once('modules/cyanide/game_data.php');
 	
 ?>
