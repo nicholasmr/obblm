@@ -27,7 +27,7 @@ if (version_compare(PHP_VERSION, '5.2.3') == -1)
 if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
     die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
 
-if (file_exists('install.php'))
+if (!defined('NO_STARTUP') && file_exists('install.php'))
     die('Please remove <i>install.php</i> before using OBBLM.');
 
 error_reporting(E_ALL);
