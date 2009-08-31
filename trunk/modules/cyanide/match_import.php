@@ -1,8 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
- *  Author(s): Frederic Morel, Grégory Romé
+ *  Copyright (c) Grï¿½gory Romï¿½ <email protected> 2009. All Rights Reserved.
+ *  Author(s): Frederic Morel, Grï¿½gory Romï¿½
  *
  *
  *  This file is part of OBBLM.
@@ -384,12 +384,12 @@ function matchEntry ( $team_id, $match_id, $teamPlayers )
 
 		$bh = $player['bh'][0];
 		if ($bh == NULL) { $bh = 0; }
+		
+		$ki = $player['ki'][0];
+		if ($ki == NULL) { $ki = 0; } else { $bh = $bh - $ki;}
 
-		$inj = switchInjury ( $player['inj'] );
-
-		$agn1 = switchInjury ( $player['agn1'] );
-		if ( $agn1 > $inj ) list($inj, $agn1) = array($agn1, $inj);
-		if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
+		$inj = $player['inj'];
+		print $inj."<br>";
 
 		$input = array ("team_id" => $team_id,
 						"player_id" => $f_player_id,
@@ -399,9 +399,9 @@ function matchEntry ( $team_id, $match_id, $teamPlayers )
 						"intcpt" => $intcpt,
 						"bh" => $bh,
 						"si" => 0,
-						"ki" => 0,
+						"ki" => $ki,
 						"inj" => $inj,
-						"agn1" => $agn1,
+						"agn1" => 1,
 						"agn2" => 1 );
 
 		$match->entry( $input );
@@ -506,44 +506,4 @@ function getschMatch( $team_id1, $team_id2 ) {
 	return $rows['match_id'];
 }
 
-function switchInjury ( $inj ) {
-
-	switch ( $inj ) {
-		case NULL:
-			$injeffect = 1;
-			break;
-		case "Miss Next Game":
-			$injeffect = 2;
-			break;
-		case "Niggling Injury":
-			$injeffect = 3;
-			break;
-		case "-1 MA":
-			$injeffect = 4;
-			break;
-		case "-1 AV":
-			$injeffect = 5;
-			break;
-		case "-1 AG":
-			$injeffect = 6;
-			break;
-		case "-1 ST":
-			$injeffect = 7;
-			break;
-		case "Dead":
-			$injeffect = 8;
-			break;
-		default:
-			$injeffect = 1;
-			break;
-	}
-
-	return $injeffect;
-
-}
-
-function getObblmType($cyanide_type)
-{
-
-}
 ?>

@@ -1,8 +1,8 @@
 <?php
 
 /*
- *  Copyright (c) Grégory Romé <email protected> 2009. All Rights Reserved.
- *  Author(s): Frederic Morel, Grégory Romé
+ *  Copyright (c) Grï¿½gory Romï¿½ <email protected> 2009. All Rights Reserved.
+ *  Author(s): Frederic Morel, Grï¿½gory Romï¿½
  *
  *
  *  This file is part of OBBLM.
@@ -89,8 +89,8 @@ class CyanideMatch extends Match
 		$home_team_score = $row['Home_iScore'];
 		$away_team_score = $row['Away_iScore'];
 
-		$away_team_inflicted_cas = $row['Away_Inflicted_iCasualties'] + $row['Away_Inflicted_iDead'];
-		$home_team_inflicted_cas = $row['Home_Inflicted_iCasualties'] + $row['Home_Inflicted_iDead'];
+		$away_team_inflicted_cas = $row['Away_Inflicted_iCasualties'];
+		$home_team_inflicted_cas = $row['Home_Inflicted_iCasualties'];
 
 		// team ff, values
 		$query = "SELECT A.iPopularity AS Away_ff,
@@ -153,6 +153,7 @@ class CyanideMatch extends Match
 			$awayplayers[$row['nr']]['si'] = 0;
 			$awayplayers[$row['nr']]['ki'] = $row['ki'];
 			$awayplayers[$row['nr']]['inj'] = CyanideMatch::getInjury($row['inj_type']);
+
 			$awayplayers[$row['nr']]['agn1'] = NONE;
 			$awayplayers[$row['nr']]['agn2'] = NONE;
 
@@ -203,7 +204,8 @@ class CyanideMatch extends Match
 			$homeplayers[$row['nr']]['type'] = $row['type'];
 		}
 
-		if(!$settings['cyanide_public_league']) {
+		if(!$settings['cyanide_public_league'])
+		{
 			// MUST MANUALLY EDITED
 			$home_team_fans = (rand(2,12) + $home_team_ff) * 1000; // (2D6 + ff) * 1000
 			$away_team_fans = (rand(2,12) + $away_team_ff) * 1000; // (2D6 + ff) * 1000
@@ -213,7 +215,9 @@ class CyanideMatch extends Match
 			$away_team_ff_variation = 0;
 			$home_team_fame = 0;
 			$away_team_fame = 0;
-		} else {
+		} 
+		else 
+		{
 			$home_team_fans = (rand(2,12) + $home_team_ff) * 1000; // (2D6 + ff) * 1000
 			$away_team_fans = (rand(2,12) + $away_team_ff) * 1000; // (2D6 + ff) * 1000
 
@@ -353,17 +357,15 @@ class CyanideMatch extends Match
 						"hometeam" => $hometeam,
 						"homescore" => $home_team_score,
 						"homewinnings" => $home_cash_earned * 1000,
-						"homeff" => $home_team_ff,
+						"homeff" => $home_team_ff_variation,
 						"homefame" => $home_team_fame,
-						"home_ff_variation" => $home_team_ff_variation,
 						"home_cas" => $home_team_inflicted_cas,
 						"awayteam" => $awayteam,
 						"awayscore" => $away_team_score,
 						"awaywinnings" => $away_cash_earned * 1000,
-						"awayff" => $away_team_ff,
+						"awayff" => $away_team_ff_variation,
 						"awayfame" => $away_team_fame,
-						"away_ff_variation" => $away_team_ff_variation,
-						"away_cas" => $home_team_inflicted_cas,
+						"away_cas" => $away_team_inflicted_cas,
 						"hash" => $hash );
 
 		return $matchparsed;
@@ -396,9 +398,6 @@ class CyanideMatch extends Match
 				$tmp_inj = DEAD;
 			}
 		}
-
-		if ($inj == 1)
-			$tmp_inj = DEAD;
 
 		return $tmp_inj;
 	}
