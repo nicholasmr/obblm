@@ -43,11 +43,13 @@ class Table
         return myqsl_query($query);
     }
 
+    /*
     public function createColumnIfNotExists($colName, $type) 
     {
         myqsl_query("ALTER TABLE $this->tblName ADD COLUMN $colName $type");
         return true; # Don't care about errors when column exists.
     }
+    */
     
     public static function getTables()
     {
