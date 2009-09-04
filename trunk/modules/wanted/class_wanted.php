@@ -21,7 +21,7 @@
  *
  */
 
-class Wanted extends _Text
+class Wanted extends _Text implements ModuleInterface
 {
 /***************
  * Properties 
@@ -78,14 +78,34 @@ public static function create($player_id, $why, $bounty)
 }
 
 /***************
- * main() related.
+ * Interface
  ***************/
 
-public static function main($func, $argv) 
+public static function main($argv) 
 {
     // func may be "isWanted" or "makeList".
+    $func = array_shift($argv);
     return call_user_func_array("Wanted::$func", $argv);
 }
+
+public static function getModuleAttributes()
+{
+    return array(
+        'author'     => 'Nicholas Mossor Rathmann',
+        'moduleName' => 'Wanted',
+        'date'       => '2008',
+        'setCanvas'  => false,
+    );
+}
+
+public static function getModuleTables()
+{
+    return array();
+}
+
+/***************
+ * main() related.
+ ***************/
 
 public static  function isWanted($pid) 
 {

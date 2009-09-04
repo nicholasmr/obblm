@@ -387,17 +387,23 @@ private function _linksAndStarMercHH($DETAILED)
         <tr>
             <td colspan="8">
             <?php
-            $botocs = "";
-            if ($settings['leegmgr_enabled']) $botocs = " <a href='handler.php?type=botocsxml&amp;teamid=$_GET[team_id]'>BOTOCS-XML</a>";
             echo "<a href='index.php?section=coachcorner&amp;team_id=$_GET[team_id]&amp;detailed=".(($DETAILED) ? 0 : 1)."'><b>".(($DETAILED) ? $lng->getTrn('secs/teams/n_view') : $lng->getTrn('secs/teams/d_view'))."</b></a>\n";
-            echo "&nbsp;|&nbsp;<b><a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=" . ($DETAILED ? '1' : '0') . "'>PDF</a> <a href='handler.php?type=xmlexport&amp;tid=$_GET[team_id]'>XML</a>{$botocs} ".$lng->getTrn('secs/teams/roster')."</b>\n";
+            // Rosters
+            $pdf    = (Module::isRegistered('PDFroster')) ? "<a href='handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=".($DETAILED ? '1' : '0')."'>PDF</a>" : '';
+            $xml    = (Module::isRegistered('Team_export')) ? "<a href='handler.php?type=xmlexport&amp;tid=$_GET[team_id]'>XML</a>" : '';
+            $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_enabled']) ? " <a href='handler.php?type=botocsxml&amp;teamid=$_GET[team_id]'>BOTOCS-XML</a>" : '';
+            if ($pdf || $xml || $botocs) {
+                echo "&nbsp;|&nbsp;<b> $pdf $xml $botocs ".$lng->getTrn('secs/teams/roster')."</b>\n";
+            }
             if ($rules['enable_stars_mercs']) {
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"shh=document.getElementById('SHH'); if (shh.style.display != 'none'){shh.style.display='none'}else{shh.style.display='block'};\" title='Show/hide star hire history'><b>Star HH</b></a>\n";
                 echo "&nbsp;|&nbsp;<a href='javascript:void(0)' onClick=\"mhh=document.getElementById('MHH'); if (mhh.style.display != 'none'){mhh.style.display='none'}else{mhh.style.display='block'};\" title='Show/hide mercenary hire history'><b>Merc. HH</b></a>\n";
             }
             echo "&nbsp;|&nbsp;<a href='#anc_news'><b>News</b></a>\n";
             echo "&nbsp;|&nbsp;<a href='handler.php?type=inducements&amp;team_id=$team->team_id'><b>".$lng->getTrn('secs/teams/indctry')."</b></a>\n";
-            echo "&nbsp;|&nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''><b>Vis. stats</b></a>\n";
+            if (Module::isRegistered('SGraph')) {
+                echo "&nbsp;|&nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''><b>Vis. stats</b></a>\n";
+            }
             ?>
             </td>
         </tr>
@@ -591,10 +597,16 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td><?php echo $lng->getTrn('secs/teams/box_info/toursplayed');?></td>
                     <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>'.$lng->getTrn('secs/teams/none').'</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
                 </tr>
-                <tr valign="top">
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/prizes');?></td>
-                    <td><small><?php $prizes = $team->getPrizes(true); echo (empty($prizes)) ? '<i>'.$lng->getTrn('secs/teams/none').'</i>' : $prizes; ?></small></td>
-                </tr>
+                <?php
+                if (Module::isRegistered('Prize')) {
+                    ?>
+                    <tr valign="top">
+                        <td><?php echo $lng->getTrn('secs/teams/box_info/prizes');?></td>
+                        <td><small><?php $prizes = Module::run('Prize', array('getPrizesString', $team->team_id)); echo (empty($prizes)) ? '<i>'.$lng->getTrn('secs/teams/none').'</i>' : $prizes; ?></small></td>
+                    </tr>
+                    <?php
+                }
+                ?>
             </table>
         </div>
     </div>

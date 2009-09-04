@@ -26,7 +26,7 @@ global $settings;
 
 // Enable Cyanide game support.
 // Default is false.
-$settings['cyanide_enabled']       = true; //@FIXME Default is false.
+$settings['cyanide_enabled']       = false; //@FIXME Default is false.
 
 // If true the module is in charge to compute some team data:
 //   * cash earned,

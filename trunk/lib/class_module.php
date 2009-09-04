@@ -20,17 +20,27 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+ 
+/*
+    The contents for this file is definitions used by modules.
+*/
 
+// Modules MUST implement this interface.
+interface ModuleInterface
+{
+    public static function main($argv);
+    public static function getModuleAttributes();
+    public static function getModuleTables();
+}
+
+// Module handler
 class Module
 {
 
     private static $modules = array(
     /*
         'modname' => array(
-                'author'        => string,
-                'date'          => string,
-                'setCanvas'     => bool, # Set page canvas (menu, frames, etc.)
-                'main'          => function name (must be normal function or static method like 'class::methodName'),
+                'class'         => Name of module class in which implements ModuleInterface.
                 'filesLoadTime' => array('file1', 'file2', 'file3'),
                 'filesRunTime'  => array('file1', 'file2', 'file3'),
         ),
@@ -40,8 +50,7 @@ class Module
     
     public static function register(array $struct)
     {
-        self::$modules[$struct['modname']] = $struct;
-        unset(self::$modules[$struct['modname']]['modname']);
+        self::$modules[$struct['class']] = $struct;
         /*
             From manual/en/function.include.php
             
@@ -52,36 +61,48 @@ class Module
         foreach ($struct['filesLoadTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
     }
     
-    public static function unregister($modname)
+    public static function unregister($class)
     {
-        unset(self::$modules[$modname]);
+        unset(self::$modules[$class]);
     }
     
-    public static function run($modname, array $argv)
+    public static function run($class, array $argv)
     {
-        $module = self::$modules[$modname]; # Shortcut.
-        foreach ($module['filesRunTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
+        foreach (self::$modules[$class]['filesRunTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
+        $module = array_merge(self::$modules[$class], call_user_func("$class::getModuleAttributes")); # Shortcut.
         global $coach; # Used for fetching stylesheet.
         if ($module['setCanvas']) {HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : false);}
-        $return = call_user_func_array($module['main'], $argv);
+#        if (!((new $class(0,0,0,0,0)) instanceof ModuleInterface)) {fatal("Module registered by class name '$class' does not implement the interface 'ModuleInterface'");}
+        $return = call_user_func("$class::main", $argv);
         if ($module['setCanvas']) {HTMLOUT::frame_end();}
         
         return $return;
     }
 
-    public static function isRegistered($modname)
+    public static function isRegistered($class)
     {
-        return in_array($modname, array_keys(self::$modules));
+        return in_array($class, array_keys(self::$modules));
     }
     
-    public static function getInfo($modname)
+    public static function getInfo($class)
     {
-        $module = self::$modules[$modname];
-        return array($module['author'], $module['date']);
+        $module = array_merge(self::$modules[$class], call_user_func("$class::getModuleAttributes")); # Shortcut.
+        return array($module['author'], $module['date'], $module['moduleName']);
     }
     
     public static function getRegistered()
     {
         return array_keys(self::$modules);
+    }
+    
+    public static function createAllRequiredTables()
+    {
+        $tables = array();
+        foreach (array_keys(self::$modules) as $class) {
+            foreach (call_user_func("$class::getModuleTables") as $name => $tblStruct) {
+                $tables[$class][$name] = Table::createTableIfNotExists($name, $tblStruct);
+            }
+        }
+        return $tables;
     }
 }

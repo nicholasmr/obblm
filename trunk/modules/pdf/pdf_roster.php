@@ -27,8 +27,27 @@
  * Note: Detailed view does not work, only regular view. Detailed view with player history (sold/dead) would never fit on an A4 paper.
  */
  
-function fpdf_roster()
+class PDFroster implements ModuleInterface
 {
+
+public static function getModuleAttributes()
+{
+    return array(
+        'author'     => 'Daniel Straalman',
+        'moduleName' => 'PDF roster',
+        'date'       => '2008-2009',
+        'setCanvas'  => false, 
+    );
+}
+
+public static function getModuleTables()
+{
+    return array();
+}
+ 
+public static function main($argv)
+{
+
 global $pdf;
 global $DEA;
 global $skillarray;
@@ -474,7 +493,8 @@ if ($settings['enable_pdf_logos']) {
     // Team logo
     // Comment out if you dont have GD 2.x installed, or if you dont want the logo in roster.
     // Not tested with anything except PNG images that comes with OBBLM.
-    $pdf->Image($team->getLogo(),346,436,128,128,'','',false,0);
+    $img = new Image(IMGTYPE_TEAMLOGO,$team->team_id);
+    $pdf->Image($img->getPath(),346,436,128,128,'','',false,0);
 
     // OBBLM text lower left corner as a pic
     $pdf->Image('modules/pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
@@ -509,6 +529,7 @@ $pdf->Cell(50, 8, 'Stat downgrade', 0, 0, 'L', false);
 // Output the PDF document
 $pdf->Output(utf8_decode($team->name) . date(' Y-m-d') . '.pdf', 'I');
 
+}
 }
 
 ?>

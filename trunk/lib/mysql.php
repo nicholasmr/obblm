@@ -301,6 +301,7 @@ function setup_tables() {
                 )';
     mk_table($query, 'texts');
     
+    /*
     $query = 'CREATE TABLE IF NOT EXISTS prizes
                 (
                 prize_id    MEDIUMINT UNSIGNED  NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -312,6 +313,7 @@ function setup_tables() {
                 txt         TEXT
                 )';
     mk_table($query, 'prizes');
+    */
 
     /* Add tables indexes/keys. */
     
@@ -342,7 +344,18 @@ function setup_tables() {
         }
     }
 
-    /* Create root user and leave welcome message on messageboard*/
+    // Tables used by modules.
+    foreach (Module::createAllRequiredTables() as $module => $tables) {
+        foreach ($tables as $name => $tblStat) {
+            if ($tblStat)
+                echo "<font color='green'>For module '$module' created $name table successfully.</font><br>\n";
+            else
+                echo "<font color='red'>Failed creating $name table.</font><br>\n";
+        }
+    }
+    
+
+    /* Create root user and leave welcome message on messageboard */
 
     if (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => RING_SYS, 'mail' => 'None', 'phone' => '')))
         echo "<font color=green>Created root user successfully.</font><br>\n";

@@ -562,16 +562,16 @@ private static function make_menu()
                     ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
                 }
                 ?>
-                <li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li>
-                <li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('global/secLinks/cmp');?></a></li>
-                <li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li>
+                <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('global/secLinks/cmp');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li><?php } ?>
             </ul>
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/records');?></span>
             <ul>
-                <?php if (Module::isRegistered('hof')) { ?><li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('wanted')) { ?><li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li><?php } ?>
-                <li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li>
+                <?php if (Module::isRegistered('HOF'))   { ?><li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Wanted')){ ?><li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Prize')) { ?><li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li><?php } ?>
             </ul>
         </li>
 
@@ -845,7 +845,9 @@ public static function dispTeamList($obj, $obj_id)
         $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
         $lt = $t->getLatestTour();
         $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
-        $prizes = $t->getPrizes(true);
+        if (Module::isRegistered('Prize')) {
+            $prizes = Module::run('Prize', array('getPrizesString', $t->team_id));
+        }
         $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;
         $t->rdy = ($t->rdy) ? '<font color="green">Yes</font>' : '<font color="red">No</font>';
     }
@@ -859,6 +861,9 @@ public static function dispTeamList($obj, $obj_id)
         'played'    => array('desc' => 'Games'),
         'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
     );
+    if (!Module::isRegistered('Prize')) {
+        unset($fields['prizes']);
+    }
     HTMLOUT::sort_table(
         "Teams ". (($obj == STATS_COACH) ? "<a href='javascript:void(0);' onclick=\"window.open('html/coach_corner_teams.html','ccorner_TeamsHelp','width=350,height=400')\">[?]</a>" : ''),
         "index.php?section=".(($obj == STATS_COACH) ? 'coachcorner' : 'teams'),

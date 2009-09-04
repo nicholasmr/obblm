@@ -21,7 +21,7 @@
  *
  */
 
-class HOF extends _Text
+class HOF extends _Text implements ModuleInterface
 {
 /***************
  * Properties 
@@ -78,16 +78,36 @@ public static function create($player_id, $title, $about)
 }
 
 /***************
- * main() related.
+ * Interface
  ***************/
 
-public static function main($func, $argv) 
+public static function main($argv) 
 {
     // func may be "isInHOF" or "makeList".
+    $func = array_shift($argv);
     return call_user_func_array("HOF::$func", $argv);
 }
 
-public static  function isInHOF($pid) 
+public static function getModuleAttributes()
+{
+    return array(
+        'author'     => 'Nicholas Mossor Rathmann',
+        'moduleName' => 'Hall of fame',
+        'date'       => '2008',
+        'setCanvas'  => false,
+    );
+}
+
+public static function getModuleTables()
+{
+    return array();
+}
+
+/***************
+ * main() related.
+ ***************/
+
+public static function isInHOF($pid) 
 {
     $query = "SELECT f_id FROM texts WHERE f_id = $pid AND type = ".T_TEXT_HOF;
     return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);

@@ -23,7 +23,7 @@
 
 require_once('modules/registration/header.php');
  
-class Registration
+class Registration implements ModuleInterface
 {
     /***************
      * Properties 
@@ -277,7 +277,22 @@ class Registration
 
     }
 
-    public static function main() {
+    public static function getModuleAttributes()
+    {
+        return array(
+            'author'     => 'William Leonard',
+            'moduleName' => 'Registration',
+            'date'       => '2009',
+            'setCanvas'  => true,
+        );
+    }
+
+    public static function getModuleTables()
+    {
+        return array();
+    }
+
+    public static function main($argv) {
         
         // Module registered main function.
         global $settings;

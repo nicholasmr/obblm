@@ -30,52 +30,52 @@ switch ($_GET['type'])
 {
     /* PDF-roster */
     case 'roster':
-        Module::run('pdfroster', array());
+        Module::run('PDFroster', array());
         break;
 
     /* RSS feed */
     case 'rss':
-        Module::run('rss', array());
+        Module::run('RSSfeed', array());
         break;
 
     /* Visual stats */
     case 'graph':
-        Module::run('statsgraph', array($_GET['gtype'], $_GET['id'], false));
+        Module::run('SGraph', array($_GET['gtype'], $_GET['id'], false));
         break;
 
     /* Inducements */
     case 'inducements':
-        Module::run('inducements', array());
+        Module::run('IndcPage', array());
         break;
 
     /* BOTOCS match import */
     case 'leegmgr':
-        Module::run('leegmgr', array());
+        Module::run('UPLOAD_BOTOCS', array());
         break;
 
     /* Team BOTOCS XML export */
     case 'botocsxml':
-        Module::run('botocsxml', array());
+        Module::run('XML_BOTOCS', array());
         break;
 
     /* Team XML export */
     case 'xmlexport':
-        Module::run('teamxmlexport', array($_GET['tid']));
+        Module::run('Team_export', array($_GET['tid']));
         break;
 
     /* Mem. matches */
    	case 'memmatches':
-   		Module::run('memmatches', array());
+   		Module::run('Memmatches', array());
    		break;
 
     /* Comparison */
    	case 'comparison':
-   		Module::run('comparison', array());
+   		Module::run('Comparison', array());
    		break;
 
     /* Register */
    	case 'registration':
-   		Module::run('registration', array());
+   		Module::run('Registration', array());
    		break;
 
     /* Cyanide match import */
