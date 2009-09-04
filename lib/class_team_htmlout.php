@@ -119,6 +119,7 @@ private function _handleActions($ALLOW_EDIT)
             case 'unbuy_goods':       status($team->unbuy($_POST['thing'])); break;
             case 'bank':              status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000) && SiteLog::create("Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas", $coach->coach_id)); break;
             case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
+            case 'chlid':             status($team->setLeagueID((int) $_POST['lid'])); break;
             case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
             case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
             
@@ -503,7 +504,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
      *
      ******************************/
      
-    global $lng, $rules, $skillarray, $coach, $DEA;
+    global $lng, $rules, $settings, $skillarray, $coach, $DEA;
     $team = $this; // Copy. Used instead of $this for readability.
     $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
      
@@ -520,6 +521,16 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td><?php echo $lng->getTrn('secs/teams/box_info/race');?></td>
                     <td><a href='index.php?section=races&amp;race=<?php echo $team->f_race_id; ?>'><?php echo $team->race; ?></a></td>
                 </tr>
+                <?php
+                if ($settings['relate_team_to_league']) {
+                    ?>
+                    <tr>
+                        <td><?php echo $lng->getTrn('secs/teams/box_info/league');?></td>
+                        <td><?php echo get_alt_col('leagues', 'lid', $team->f_lid, 'name');?></td>
+                    </tr>
+                    <?php
+                }
+                ?>
                 <tr>
                     <td><?php echo $lng->getTrn('secs/teams/box_info/ready');?></td>
                     <td><?php echo ($team->rdy) ? $lng->getTrn('secs/teams/yes') : $lng->getTrn('secs/teams/no'); ?></td>
@@ -956,11 +967,16 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         'unbuy_goods'       => $lng->getTrn('secs/teams/box_admin/unbuy_goods'),
                         'bank'              => $lng->getTrn('secs/teams/box_admin/bank'),
                         'chown'             => $lng->getTrn('secs/teams/box_admin/chown'),
+                        'chlid'             => $lng->getTrn('secs/teams/box_admin/chlid'),
                         'spp'               => $lng->getTrn('secs/teams/box_admin/spp'),
                         'dval'              => $lng->getTrn('secs/teams/box_admin/dval'),
                         'extra_skills'      => $lng->getTrn('secs/teams/box_admin/extra_skills'),
                         'ach_skills'        => $lng->getTrn('secs/teams/box_admin/ach_skills'),
                     );
+                    
+                    if (!$settings['relate_team_to_league']) {
+                        unset($admin_tools['chlid']);
+                    }
 
                     // Set default choice.
                     if (!isset($_POST['menu_admintools'])) {
@@ -1096,6 +1112,28 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 ?>
                                 </select>
                                 <input type="hidden" name="type" value="chown">
+                                <?php
+                                break;
+
+                            /***************
+                             * Change team-league association
+                             **************/
+                                
+                            case 'chlid':
+                                echo $lng->getTrn('secs/teams/box_admin/desc/chlid');
+                                ?>
+                                <hr><br>
+                                League:<br>
+                                <select name="lid">
+                                <?php
+                                $leagues = League::getLeagues();
+                                $DISABLE = empty($leagues);
+                                foreach ($leagues as $l) {
+                                    echo "<option value='$l->lid'".(($l->lid == $team->f_lid) ? ' SELECTED ' : '').">$l->name</option>\n";
+                                }
+                                ?>
+                                </select>
+                                <input type="hidden" name="type" value="chlid">
                                 <?php
                                 break;
                                 

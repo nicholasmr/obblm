@@ -681,8 +681,14 @@ class Match
          *
          * Input: team1_id, team2_id, round, f_tour_id
          **/
+
+        global $settings;
     
         if ($input['team1_id'] == $input['team2_id'] || ($isLocked = get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'locked')))
+            return false;
+            
+        // If team->league relations are on don't allow teams from different leagues to play each other.
+        if ($settings['relate_team_to_league'] && get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid') != get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid'))
             return false;
 
         $query = "INSERT INTO matches (team1_id, team2_id, round, f_tour_id, date_created)
