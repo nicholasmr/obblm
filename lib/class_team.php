@@ -632,24 +632,6 @@ class Team
         return $news->edit($new_txt);
     }
 
-    public function getPrizes($mkStr = false) {
-
-        $prizes = Prize::getPrizesByTeam($this->team_id);
-        if ($mkStr) {
-            $str = array();
-            $ptypes = Prize::getTypes();
-            foreach ($ptypes as $idx => $type) {
-                $cnt = count(array_filter($prizes, create_function('$p', 'return ($p->type == '.$idx.');')));
-                if ($cnt > 0)
-                    $str[] = $cnt.' '.$ptypes[$idx];
-            }
-            return implode(', ', $str);
-        }
-        else {
-            return $prizes;
-        }
-    }
-
     /***************
      * Statics
      ***************/

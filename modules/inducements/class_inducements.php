@@ -27,7 +27,25 @@
     
  */
 
-function indcPage()
+class IndcPage implements ModuleInterface
+{
+
+public static function getModuleAttributes()
+{
+    return array(
+        'author'     => 'Daniel Straalman',
+        'moduleName' => 'Inducements',
+        'date'       => '2009',
+        'setCanvas'  => true, 
+    );
+}
+
+public static function getModuleTables()
+{
+    return array();
+}
+
+static public function main($argv)
 {
 
 // Check if teamid is provided, else show error mess
@@ -341,4 +359,5 @@ echo '<tr><td class="indtitle">Match Value:</td><td class="indtitle">'.kilo($ind
 -->
 
 <?php
+}
 }

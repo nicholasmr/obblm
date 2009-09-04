@@ -23,10 +23,25 @@
 
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
 
-class Memmatches
+class Memmatches implements ModuleInterface
 {
-	
-public static function main() {
+
+public static function getModuleAttributes()
+{
+    return array(
+        'author'     => 'Nicholas Mossor Rathmann',
+        'moduleName' => 'Memorable matches',
+        'date'       => '2008-2009',
+        'setCanvas'  => true,
+    );
+}
+
+public static function getModuleTables()
+{
+    return array();
+}
+
+public static function main($argv) {
 
     global $lng;
     title($lng->getTrn('secs/records/d_memma'));
@@ -47,9 +62,11 @@ public static function main() {
                 foreach ($matches as $m) {
                     $t1 = new Team($m->team1_id);
                     $t2 = new Team($m->team2_id);
+                    $img1 = new Image(IMGTYPE_TEAMLOGO, $t1->team_id);
+                    $img2 = new Image(IMGTYPE_TEAMLOGO, $t2->team_id);
                     ?>
                     <tr>
-                        <td align="left" style="width:40%;"><img border='0px' height='30' width='30' alt='team picture' src='<?php echo $t1->getLogo();?>'><?php echo $t1->name;?></td>
+                        <td align="left" style="width:40%;"><img border='0px' height='30' width='30' alt='team picture' src='<?php echo $img1->getPath();?>'><?php echo $t1->name;?></td>
                         <td align="center">
                         <?php 
                         switch ($d)
@@ -71,7 +88,7 @@ public static function main() {
                         } 
                         ?>
                         </td>
-                        <td align="right" style="width:40%;"><?php echo $t2->name;?><img border='0px' height='30' width='30' alt='team picture' src='<?php echo $t2->getLogo();?>'></td>
+                        <td align="right" style="width:40%;"><?php echo $t2->name;?><img border='0px' height='30' width='30' alt='team picture' src='<?php echo $img2->getPath();?>'></td>
                     </tr>
                     <tr>
                         <td align="right" colspan="3">

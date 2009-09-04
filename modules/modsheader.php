@@ -27,146 +27,112 @@
     NOTE:
     -----
     filesRunTime are loaded when Module::run() is executed whilest filesLoadTime are loaded when Module::register() is executed.
+    
+    The 'class' field should be the name of the class that implements the interface "ModuleInterface".
+    The main() containing class MUST be loaded in "filesLoadTime".
 */ 
 
 Module::register(array(
-    'modname'       => 'inducements', 
-    'author'        => 'Daniel Straalman',
-    'date'          => '2009',
-    'setCanvas'     => true, 
-    'main'          => 'indcPage', 
-    'filesRunTime'  => array('inducements/inducements.php'),
-    'filesLoadTime' => array()
+    'class'         => 'IndcPage',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('inducements/class_inducements.php')
 ));
 
 Module::register(array(
-    'modname'       => 'pdfroster',
-    'author'        => 'Daniel Straalman',
-    'date'          => '2008-2009',
-    'setCanvas'     => false, 
-    'main'          => 'fpdf_roster', 
-    'filesRunTime'  => array('pdf/settings.php', 'pdf/bb_pdf_class.php', 'pdf/pdf_roster.php'),
-    'filesLoadTime' => array()
+    'class'         => 'PDFroster', 
+    'filesRunTime'  => array('pdf/settings.php', 'pdf/bb_pdf_class.php'),
+    'filesLoadTime' => array('pdf/pdf_roster.php')
 ));
 
 Module::register(array(
-    'modname'       => 'rss',
-    'author'        => 'Juergen Unfried',
-    'date'          => '2008',
-    'setCanvas'     => false, 
-    'main'          => 'OBBLMRssWriter::main', 
-    'filesRunTime'  => array('rss/class_rss.php'),
-    'filesLoadTime' => array()
+    'class'         => 'RSSfeed', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('rss/class_rss.php')
+));
+
+// @FIXME Clash with JPGRAPH class name "Image".
+#Module::register(array(
+#    'class'         => 'SGraph', 
+#    'filesRunTime'  => array(),
+#    'filesLoadTime' => array('statsgraph/header.php', 'statsgraph/class_statsgraph.php')
+#));
+
+Module::register(array(
+    'class'         => 'Team_export', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('teamxmlexport/class_team_export.php')
 ));
 
 Module::register(array(
-    'modname'       => 'statsgraph',
-    'author'        => 'Nicholas Mossor Rathmann',
-    'date'          => '2008-2009',
-    'setCanvas'     => false, 
-    'main'          => 'SGraph::make', 
-    'filesRunTime'  => array('statsgraph/class_statsgraph.php'),
-    'filesLoadTime' => array('statsgraph/header.php')
+    'class'         => 'Memmatches', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('memmatches/class_memmatches.php')
 ));
 
 Module::register(array(
-    'modname'       => 'teamxmlexport',
-    'author'        => 'Nicholas Mossor Rathmann',
-    'date'          => '2009',
-    'setCanvas'     => false, 
-    'main'          => 'Team_export::main', 
-    'filesRunTime'  => array('teamxmlexport/class_team_export.php'),
-    'filesLoadTime' => array()
+    'class'         => 'Comparison', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('comparison/class_comparison.php')
 ));
 
 Module::register(array(
-    'modname'       => 'memmatches',
-    'author'        => 'Nicholas Mossor Rathmann',
-    'date'          => '2008-2009',
-    'setCanvas'     => true, 
-    'main'          => 'Memmatches::main', 
-    'filesRunTime'  => array('memmatches/class_memmatches.php'),
-    'filesLoadTime' => array()
+    'class'         => 'Wanted',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('wanted/class_wanted.php')
 ));
 
 Module::register(array(
-    'modname'       => 'comparison',
-    'author'        => 'Nicholas Mossor Rathmann',
-    'date'          => '2009',
-    'setCanvas'     => true, 
-    'main'          => 'Comparison::main', 
-    'filesRunTime'  => array('comparison/class_comparison.php'),
-    'filesLoadTime' => array()
+    'class'         => 'HOF',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('halloffame/class_hof.php')
 ));
 
 Module::register(array(
-    'modname'       => 'leegmgr',
-    'author'        => 'William Leonard',
-    'date'          => '2009',
-    'setCanvas'     => true, 
-    'main'          => 'UPLOAD_BOTOCS::main', 
-    'filesRunTime'  => array('leegmgr/class_match_botocs.php', 'leegmgr/class_upload_botocs.php'),
-    'filesLoadTime' => array('leegmgr/settings.php')
+    'class'         => 'Prize',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('prizes/header.php', 'prizes/class_prize.php')
 ));
 
 Module::register(array(
-    'modname'       => 'botocsxml',
-    'author'        => 'William Leonard',
-    'date'          => '2009',
-    'setCanvas'     => false, 
-    'main'          => 'XML_BOTOCS::main', 
-    'filesRunTime'  => array('leegmgr/class_xml_botocs.php'),
-    'filesLoadTime' => array('leegmgr/settings.php')
+    'class'         => 'UPLOAD_BOTOCS', 
+    'filesRunTime'  => array('leegmgr/class_match_botocs.php'),
+    'filesLoadTime' => array('leegmgr/settings.php', 'leegmgr/class_upload_botocs.php')
 ));
 
 Module::register(array(
-    'modname'       => 'registration',
-    'author'        => 'William Leonard',
-    'date'          => '2009',
-    'setCanvas'     => true, 
-    'main'          => 'Registration::main', 
-    'filesRunTime'  => array('registration/class_registration.php'),
-    'filesLoadTime' => array('registration/settings.php')
+    'class'         => 'XML_BOTOCS', 
+    'filesRunTime'  => array(''),
+    'filesLoadTime' => array('leegmgr/settings.php', 'leegmgr/class_xml_botocs.php')
 ));
 
 Module::register(array(
-    'modname'       => 'cyanide_match_import',
-    'author'        => 'Grégory Romé',
-    'date'          => '2009',
-    'setCanvas'     => true,
-    'main'          => 'main',
-    'filesRunTime'  => array('cyanide/class_CyanideMatch.php', 'cyanide/match_import.php'),
-    'filesLoadTime' => array('cyanide/settings.php', 'cyanide/game_data.php')
+    'class'         => 'Registration', 
+    'filesRunTime'  => array(''),
+    'filesLoadTime' => array('registration/settings.php', 'registration/class_registration.php')
 ));
 
-Module::register(array(
-    'modname'       => 'cyanide_team_import',
-    'author'        => 'Grégory Romé',
-    'date'          => '2009',
-    'setCanvas'     => true,
-    'main'          => 'main',
-    'filesRunTime'  => array('cyanide/class_CyanideTeam.php', 'cyanide/team_import.php'),
-    'filesLoadTime' => array('cyanide/settings.php', 'cyanide/game_data.php')
-));
+/*
+    NOTE to Grégory: Please wrap your code into a class that implements "ModuleInterface". Sorry for the inconvenience.
+*/
 
-Module::register(array(
-    'modname'       => 'wanted',
-    'author'        => 'Nicholas Mossor Rathmann',
-    'date'          => '2008',
-    'setCanvas'     => false,
-    'main'          => 'Wanted::main',
-    'filesRunTime'  => array('wanted/class_wanted.php'),
-    'filesLoadTime' => array()
-));
+#Module::register(array(
+#    'modname'       => 'cyanide_match_import',
+#    'author'        => 'Grégory Romé',
+#    'date'          => '2009',
+#    'setCanvas'     => true,
+#    'main'          => 'main',
+#    'filesRunTime'  => array('cyanide/class_CyanideMatch.php', 'cyanide/match_import.php'),
+#    'filesLoadTime' => array('cyanide/settings.php', 'cyanide/game_data.php')
+#));
 
-Module::register(array(
-    'modname'       => 'hof',
-    'author'        => 'Nicholas Mossor Rathmann',
-    'date'          => '2008',
-    'setCanvas'     => false,
-    'main'          => 'HOF::main',
-    'filesRunTime'  => array('halloffame/class_hof.php'),
-    'filesLoadTime' => array()
-));
+#Module::register(array(
+#    'modname'       => 'cyanide_team_import',
+#    'author'        => 'Grégory Romé',
+#    'date'          => '2009',
+#    'setCanvas'     => true,
+#    'main'          => 'main',
+#    'filesRunTime'  => array('cyanide/class_CyanideTeam.php', 'cyanide/team_import.php'),
+#    'filesLoadTime' => array('cyanide/settings.php', 'cyanide/game_data.php')
+#));
 
 ?>

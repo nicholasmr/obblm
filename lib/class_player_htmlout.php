@@ -151,19 +151,19 @@ private function _about($ALLOW_EDIT)
                         <td><?php echo "$p->spp/$p->extra_spp" ?></td>
                     </tr>
                     <?php
-                    if (Module::isRegistered('wanted')) {
+                    if (Module::isRegistered('Wanted')) {
                         ?>
                         <tr>
                             <td><b>Wanted</b></td>
-                            <td><?php echo (Module::run('wanted', array('isWanted', array($p->player_id)))) ? '<b><font color="red">Yes</font></b>' : 'No';?></td>
+                            <td><?php echo (Module::run('Wanted', array('isWanted', $p->player_id))) ? '<b><font color="red">Yes</font></b>' : 'No';?></td>
                         </tr>
                         <?php
                     }
-                    if (Module::isRegistered('hof')) {
+                    if (Module::isRegistered('HOF')) {
                         ?>
                         <tr>
                             <td><b>In HoF</b></td>
-                            <td><?php echo (Module::run('hof', array('isInHOF', array($p->player_id)))) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
+                            <td><?php echo (Module::run('HOF', array('isInHOF', $p->player_id))) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
                         </tr>
                         <?php
                     }
@@ -180,10 +180,16 @@ private function _about($ALLOW_EDIT)
                         <td><b>Draw</b></td>
                         <td><?php echo "$p->draw ($p->row_draw streaks)"; ?></td>
                     </tr>
-                    <tr>
-                        <td><b>Vis. stats</b></td>
-                        <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''><b>View</b></a>\n";; ?></td>
-                    </tr>                    
+                    <?php
+                    if (Module::isRegistered('SGraph')) {
+                        ?>
+                        <tr>
+                            <td><b>Vis. stats</b></td>
+                            <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''><b>View</b></a>\n";; ?></td>
+                        </tr>
+                        <?php                    
+                    }
+                    ?>
                     <tr>
                         <td colspan="2"><hr></td>
                     </tr> 

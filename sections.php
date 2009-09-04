@@ -30,7 +30,6 @@
  *  These files are:
  *
  *      - matches.php   For handling match reports.
- *      - records.php   For handling the records section.
  *      - admin.php     For handling the admin section.
  *
  ***************************************************/
@@ -79,7 +78,7 @@ function sec_login() {
     </form>
     </div>
     <?php
-    if (Module::isRegistered('registration') && $settings['allow_registration']) {
+    if (Module::isRegistered('Registration') && $settings['allow_registration']) {
         echo "<br><a href='handler.php?type=registration'>Register</a>";
     }
 }
@@ -574,48 +573,9 @@ function sec_fixturelist() {
             "<br><br>\n";
 
         HTMLOUT::standings(STATS_TEAM, STATS_TOUR, $tour->tour_id, array('url' => "index.php?section=fixturelist&amp;tour_id=$tour->tour_id", 'hidemenu' => true));
-
-        // Prizes
-        $trObjWithPrizes = Prize::getPrizesByTour($tour->tour_id, false);
-
-        if (!empty($trObjWithPrizes[0]->prizes)) {
-            // For the below cut and paste to work.
-            $t = $trObjWithPrizes[0];
-            $ALLOW_EDIT = false;
-            /* COPY FROM RECORDS SECTION !!! */
-            ?>
-            <div class="recBox">
-                <div class="boxTitle2"><?php echo "$t->name prizes";?> <a href='javascript:void(0);' onClick="obj=document.getElementById('<?php echo 'trpr'.$t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a></div>
-                <div id="trpr<?php echo $t->tour_id;?>">
-                <div class="boxBody">
-                    <table class="recBoxTable" style='border-spacing: 10px;'>
-                        <tr>
-                            <td><b>Prize&nbsp;type</b></td>
-                            <td align='center'><b>Team</b></td>
-                            <td><b>About</b></td>
-                            <td><b>Photo</b></td>
-                        </tr>
-                        <?php
-                        $ptypes = Prize::getTypes();
-                        foreach ($t->prizes as $idx => $probj) {
-                            echo "<tr><td colspan='4'><hr></td></td>";
-                            echo "<tr>\n";
-                            $delete = ($ALLOW_EDIT) ? '<a href="index.php?section=records&amp;subsec=prize&amp;action=delete&amp;prid='.$probj->prize_id.'">[X]</a>' : '';
-                            echo "<td valign='top'><i>".preg_replace('/\s/', '&nbsp;', $ptypes[$idx])."</i>&nbsp;$delete</td>\n";
-                            echo "<td valign='top'><b>".preg_replace('/\s/', '&nbsp;', get_alt_col('teams', 'team_id', $probj->team_id, 'name'))."</b></td>\n";
-                            echo "<td valign='top'>".$probj->title."<br><br><i>".$probj->txt."</i></td>\n";
-                            echo "<td><a href='$probj->pic'><img HEIGHT=70 src='$probj->pic' alt='Photo'></a>
-    </td>\n";
-                            echo "</tr>\n";
-                        }
-                        ?>
-                    </table>
-                </div>
-                </div>
-            </div>
-            <?php
+        if (Module::isRegistered('Prize')) {
+            Module::run('Prize', array('printList', $tour->tour_id, false));
         }
-
         return;
     }
 
@@ -670,7 +630,7 @@ function sec_fixturelist() {
 
     title($lng->getTrn('global/secLinks/fixtures'));
 
-    if ($settings['leegmgr_enabled']) {
+    if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) {
 		?>
 		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
 		<b>BOTOCS match report upload</b>:
@@ -969,8 +929,12 @@ function sec_coaches() {
         is_object($c = new Coach($_GET['coach_id']))) {
 
         title("Coach $c->name");
-        echo "<center><a href='index.php?section=coaches'>[".$lng->getTrn('global/misc/back')."]</a>&nbsp; |
-            &nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$c->coach_id''>[Vis. stats]</a></center><br>\n";
+        echo "<center>";
+        echo "<a href='index.php?section=coaches'>[".$lng->getTrn('global/misc/back')."]</a>";
+        if (Module::isRegistered('SGraph')) {
+            echo "&nbsp; | &nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$c->coach_id''>[Vis. stats]</a>\n";
+        }
+        echo "</center><br>\n";
 
         ?>
         <table class='picAndText'>
@@ -1184,9 +1148,9 @@ function sec_records() {
     if (isset($_GET['subsec'])) {
         switch ($_GET['subsec'])
         {
-            case 'hof':    Module::run('hof',    array('makeList', array($ALLOW_EDIT))); break;
-            case 'wanted': Module::run('wanted', array('makeList', array($ALLOW_EDIT))); break;
-            case 'prize':  title($subsecs[$_GET['subsec']]); prizes($ALLOW_EDIT); break;
+            case 'hof':    Module::run('HOF',    array('makeList', $ALLOW_EDIT)); break;
+            case 'wanted': Module::run('Wanted', array('makeList', $ALLOW_EDIT)); break;
+            case 'prize':  Module::run('Prize',  array('makeList', $ALLOW_EDIT)); break;
         }
         return;
     }
@@ -1465,8 +1429,8 @@ function sec_about() {
         <?php
         $mods = array();
         foreach (Module::getRegistered() as $modname) {
-            list($author,$date) = Module::getInfo($modname);
-            $mods[] = "<i>$modname</i> ($author, $date)";
+            list($author,$date,$moduleName) = Module::getInfo($modname);
+            $mods[] = "<i>$moduleName</i> ($author, $date)";
         }
         echo implode(', ', $mods);
         ?>

@@ -21,8 +21,29 @@
  *
  */
 
-class Team_export extends Team
+class Team_export extends Team implements ModuleInterface
 {
+
+    public static function main($argv) {
+        $t = new Team_export(array_shift($argv));
+        echo $t->xmlExport();
+    }
+    
+    public static function getModuleAttributes()
+    {
+        return array(
+            'author'     => 'Nicholas Mossor Rathmann',
+            'moduleName' => 'Team XML export',
+            'date'       => '2009',
+            'setCanvas'  => false,
+        );
+    }
+
+    public static function getModuleTables()
+    {
+        return array();
+    }
+
     public function xmlExport()
     {
         /* 
@@ -73,11 +94,6 @@ class Team_export extends Team
         }
         
         return $dom->saveXML();
-    }
-    
-    public static function main($tid) {
-        $t = new Team_export($tid);
-        echo $t->xmlExport();
     }
 }
 

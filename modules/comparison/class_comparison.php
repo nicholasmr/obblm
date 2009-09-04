@@ -21,10 +21,25 @@
  *   
  */
 
-class Comparison
+class Comparison implements ModuleInterface
 {
 
-public static function main()
+public static function getModuleAttributes()
+{
+    return array(
+        'author'     => 'Nicholas Mossor Rathmann',
+        'moduleName' => 'Comparison',
+        'date'       => '2009',
+        'setCanvas'  => true,
+    );
+}
+
+public static function getModuleTables()
+{
+    return array();
+}
+
+public static function main($argv)
 {
 global $raceididx;
 title('Comparison');

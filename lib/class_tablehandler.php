@@ -23,37 +23,12 @@
 
 class Table
 {
-    public $tblName = null;
-    public $tableStruct = array();
-    
-    private static $tables = array();
-
-    public function __construct($tblName) 
+    public static function createTableIfNotExists($name, $tblStruct)
     {
-        $this->tblName = $tblName;
-        $this->tables[$tblName] = ''; # Register table.
-    }
-    
-    public function createTableIfNotExists($tblStruct)
-    {
-        $this->tables[$this->tblName] = ($this->tblStruct = $tblStruct); # Register table structure.
-        $query = 'CREATE TABLE '.$this->tblName.' IF NOT EXISTS (
-            '.implode(', ', array_map(create_function('$key,$val', 'return "$key\t $val";'), array_keys($this->tblStruct), array_values($this->tableStruct))).'
+        $query = 'CREATE TABLE IF NOT EXISTS '.$name.' (
+            '.implode(', ', array_map(create_function('$key,$val', 'return "$key\t $val";'), array_keys($tblStruct), array_values($tblStruct))).'
         )';
-        return myqsl_query($query);
-    }
-
-    /*
-    public function createColumnIfNotExists($colName, $type) 
-    {
-        myqsl_query("ALTER TABLE $this->tblName ADD COLUMN $colName $type");
-        return true; # Don't care about errors when column exists.
-    }
-    */
-    
-    public static function getTables()
-    {
-        return self::$tables;
+        return mysql_query($query);
     }
 }
 ?>

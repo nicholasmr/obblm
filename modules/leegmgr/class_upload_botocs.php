@@ -21,7 +21,7 @@
  *
  */
 
-class UPLOAD_BOTOCS
+class UPLOAD_BOTOCS implements ModuleInterface
 {
     /***************
      * Properties 
@@ -549,7 +549,11 @@ class UPLOAD_BOTOCS
 
     }
 
-    public static function main() {
+    /*
+     * Module interface
+     */ 
+
+    public static function main($argv) {
         
         // Module registered main function.
         global $settings;
@@ -569,6 +573,21 @@ class UPLOAD_BOTOCS
             Print "</body></html>";
         }
 
+    }
+    
+    public static function getModuleAttributes()
+    {
+        return array(
+            'author'     => 'William Leonard',
+            'moduleName' => 'BOTOCS match upload',
+            'date'       => '2009',
+            'setCanvas'  => true,
+        );
+    }
+
+    public static function getModuleTables()
+    {
+        return array();
     }
 
 }

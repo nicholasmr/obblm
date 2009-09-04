@@ -24,7 +24,7 @@
  * Usage example:
  * --------------
  * require_once 'class.OBBLMRssWriter.php';
- * $rss = new OBBLMRssWriter('OBBLM League xyz', 'http://www.xyz.com', 'The rss feed for the league....'EN', '1,2');
+ * $rss = new RSSfeed('OBBLM League xyz', 'http://www.xyz.com', 'The rss feed for the league....'EN', '1,2');
  * $rss->generateNewsRssFeed();
  *
  * NOTE: This class reads the version from the translations file, so it is required
@@ -39,7 +39,8 @@
 define('RSS_SIZE', 20); // Number of entries in feed.
 define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, T_TEXT_HOF, T_TEXT_WANTED, T_TEXT_MSMR, T_TEXT_TNEWS))); // Create feeds from the text types.
 
-class OBBLMRssWriter {
+class RSSfeed implements ModuleInterface
+{
 	/**
 	 * The name of the channel. It's how people refer to your service.
 	 */
@@ -75,7 +76,7 @@ class OBBLMRssWriter {
 	private $type = '1';
 	
 	/**
-	 * Constructor for the OBBLMRssWriter class
+	 * Constructor for the RSSfeed class
 	 *
 	 * Required elements
 	 * @param String the name of the channel
@@ -98,7 +99,7 @@ class OBBLMRssWriter {
   	 * Generates the newsfeed and writes it to disc.
   	 *
   	 */
-	function generateNewsRssFeed() {
+	public function generateNewsRssFeed() {
         $dom = new DOMDocument();
         $dom->formatOutput = true;
 
@@ -131,16 +132,20 @@ class OBBLMRssWriter {
                     break;
                     
                 case T_TEXT_HOF:
-                    foreach (HOF::getHOF(RSS_SIZE) as $item) {
-                        $item = $item['hof'];
-                        $entries[] = (object) array('title' => "HOF entry for ".get_alt_col('players', 'player_id', $item->player_id, 'name').": $item->title", 'desc' => $item->about, 'date' => $item->date);
+                    if (Module::isRegistered('HOF')) {
+                        foreach (Module::run('HOF', array('getHOF',RSS_SIZE)) as $item) {
+                            $item = $item['hof'];
+                            $entries[] = (object) array('title' => "HOF entry for ".get_alt_col('players', 'player_id', $item->player_id, 'name').": $item->title", 'desc' => $item->about, 'date' => $item->date);
+                        }
                     }
                     break;
                 
                 case T_TEXT_WANTED:
-                    foreach (Wanted::getWanted(RSS_SIZE) as $item) {
-                        $item = $item['wanted'];
-                        $entries[] = (object) array('title' => "Wanted entry for ".get_alt_col('players', 'player_id', $item->player_id, 'name').": $item->bounty", 'desc' => $item->why, 'date' => $item->date);
+                    if (Module::isRegistered('Wanted')) {
+                        foreach (Module::run('Wanted', array('getWanted', RSS_SIZE)) as $item) {
+                            $item = $item['wanted'];
+                            $entries[] = (object) array('title' => "Wanted entry for ".get_alt_col('players', 'player_id', $item->player_id, 'name').": $item->bounty", 'desc' => $item->why, 'date' => $item->date);
+                        }
                     }
                     break;
                 
@@ -182,14 +187,14 @@ class OBBLMRssWriter {
         return $dom->saveXML();
     }
     
-    public static function main() {
+    public static function main($argv) {
     
         global $settings;
         $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : ""; 
         $matches = array();
         preg_match('/(\w*)/', strtolower($_SERVER["SERVER_PROTOCOL"]), $matches); 
         $protocol = $matches[0].$s;
-        $rss = new OBBLMRssWriter(
+        $rss = new RSSfeed(
             $settings['site_name'].' feed', 
             $protocol."://".$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI']), 
             'Blood bowl league RSS feed',
@@ -197,6 +202,21 @@ class OBBLMRssWriter {
             explode(',', RSS_FEEDS)
         );
         echo $rss->generateNewsRssFeed();
+    }
+    
+    public static function getModuleAttributes()
+    {
+        return array(
+            'author'     => 'Juergen Unfried',
+            'moduleName' => 'RSS feed',
+            'date'       => '2008',
+            'setCanvas'  => false,
+        );
+    }
+
+    public static function getModuleTables()
+    {
+        return array();
     }
 }
 ?>

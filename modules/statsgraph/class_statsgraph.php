@@ -26,10 +26,27 @@ include("jpgraph/jpgraph_mgraph.php");
 include("jpgraph/jpgraph_bar.php");
 include("jpgraph/jpgraph_pie.php");
 
-class SGraph
+class SGraph implements ModuleInterface
 {
-    public static function make($type, $id, $cmp_id = false)
+    public static function getModuleAttributes()
     {
+        return array(
+            'author'     => 'Nicholas Mossor Rathmann',
+            'moduleName' => 'Graphical statistics',
+            'date'       => '2008-2009',
+            'setCanvas'  => false,
+        );
+    }
+
+    public static function getModuleTables()
+    {
+        return array();
+    }
+
+    public static function main($argv)
+    {
+        list($type, $id, $cmp_id) = $argv;
+                
         // General.
         $o           = null;
         $opts        = array('xdim' => SG_DIM_X, 'ydim' => SG_DIM_Y, 'retObj' => true); // Options to pass to mbars().

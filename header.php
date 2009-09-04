@@ -37,7 +37,7 @@ session_start();
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.8b');
+define('OBBLM_VERSION', '0.8c');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
@@ -69,16 +69,6 @@ $STATS_TRANS = array(
     STATS_DIVISION  => 'match_data.f_did',
     STATS_LEAGUE    => 'match_data.f_lid',
 );
-
-/*********************
- *   Prize types. Used by Prize class.
- *********************/
-
-define('PRIZE_1ST',     1);
-define('PRIZE_2ND',     2);
-define('PRIZE_3RD',     3);
-define('PRIZE_LETHAL',  4);
-define('PRIZE_FAIR',    5);
 
 /*********************
  *   Images
@@ -231,7 +221,6 @@ require_once('lib/class_coach.php');
 require_once('lib/class_race.php');
 require_once('lib/class_stats.php');
 require_once('lib/class_text.php');
-require_once('lib/class_prize.php');
 require_once('lib/class_rrobin.php');
 #require_once('lib/class_knockout.php'); # Deprecated
 require_once('lib/class_module.php');
@@ -252,7 +241,6 @@ require_once('lib/class_htmlout.php');
 require_once('lib/class_team_htmlout.php');
 require_once('lib/class_player_htmlout.php');
 require_once('matches.php');
-require_once('records.php');
 require_once('admin.php');
 
 /********************
