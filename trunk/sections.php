@@ -1544,7 +1544,7 @@ function sec_guest() {
 
 function sec_coachcorner() {
 
-    global $lng;
+    global $lng, $settings;
 
     /*
         Before displaying coach corner we check if visitor wants a specific team's page or a player page.
@@ -1597,12 +1597,12 @@ function sec_coachcorner() {
     if (isset($_GET['team_id']) && $_GET['team_id'] == 'new') {
 
         // Form posted? -> Create team.
-        if (isset($_POST['new_team']) && !empty($_POST['name']) && !empty($_POST['race'])) {
+        if (isset($_POST['new_team']) && !empty($_POST['name'])) {
 
             if (get_magic_quotes_gpc())
                 $_POST['name'] = stripslashes($_POST['name']);
 
-            status(Team::create(array('name' => $_POST['name'], 'coach_id' => $coach->coach_id, 'race' => $_POST['race'])));
+            status(Team::create(array('name' => $_POST['name'], 'coach_id' => $coach->coach_id, 'race' => $_POST['race'], 'f_lid' => isset($_POST['race']) ? $_POST['f_lid'] : 0)));
 
             // Go back to coach corner main page again.
             unset($_GET['team_id']);
@@ -1628,7 +1628,22 @@ function sec_coachcorner() {
                     ?>
                 </select>
                 <br><br>
-                <input type="submit" name="new_team" value="<?php echo $lng->getTrn('secs/cc/new_team/button');?>">
+                <?php
+                if ($settings['relate_team_to_league']) {
+                    $leagues = League::getLeagues();
+                    ?>
+                    <b><?php echo $lng->getTrn('secs/cc/new_team/league');?>:</b> <br>
+                    <select name="f_lid" <?php if (empty($leagues)){echo "DISABLED";}?>>
+                    <?php
+                    foreach ($leagues as $l)
+                        echo "<option value='$l->lid'>$l->name</option>\n";
+                    ?>
+                    </select>
+                    <br><br>
+                    <?php
+                }
+                ?>
+                <input type="submit" name="new_team" value="<?php echo $lng->getTrn('secs/cc/new_team/button');?>" <?php if (empty($leagues)){echo "DISABLED";}?>>
             </td>
             </tr>
         </table>

@@ -282,6 +282,7 @@
                 <title>Team info and statistics</title>
                 <coach>Coach</coach>
                 <race>Race</race>
+                <league>In league</league>
                 <ready>Ready</ready>
                 
                 <gp><![CDATA[Games&nbsp;played]]></gp>
@@ -378,6 +379,7 @@
                 <unbuy_goods>Un-buy team goods</unbuy_goods>
                 <bank>Gold bank</bank>
                 <chown>Change ownership</chown>
+                <chlid>Change league association</chlid>
                 <spp>Manage extra player SPP</spp>
                 <dval>Manage extra player value</dval>
                 <extra_skills>Manage extra player skills</extra_skills>
@@ -410,6 +412,11 @@
                     Change this team's ownership.
                     ]]>
                     </chown>
+                    <chlid>
+                    <![CDATA[
+                    Change this team's league association.
+                    ]]>
+                    </chlid>
                     <spp>
                     <![CDATA[
                     Manage a player's extra SPP.
@@ -778,6 +785,7 @@
                 <race>Race</race>
                 <name>Team name</name>
                 <button>Create team</button>
+                <league>Associated league</league>
             </new_team>
         </cc>
         

@@ -152,6 +152,7 @@ function setup_tables() {
                 name                VARCHAR(50),
                 owned_by_coach_id   MEDIUMINT UNSIGNED,
                 f_race_id           TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                f_lid               MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
                 treasury            BIGINT SIGNED,
                 apothecary          BOOLEAN,
                 rerolls             MEDIUMINT UNSIGNED,

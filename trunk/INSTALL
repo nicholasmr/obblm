@@ -28,6 +28,13 @@ UPGRADING
 
 NOTE: When upgrading please save your old settings file as a reference for when filling out the new settings file.
 
+0.75 -> 0.8
+
+    Replace all OBBLM files.
+    Execute the following MySQL queries:
+    
+        ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id;
+
 0.7 -> 0.75
 
     Replace all OBBLM files.

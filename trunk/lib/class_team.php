@@ -32,6 +32,7 @@ class Team
     public $name              = "";
     public $owned_by_coach_id = 0;
     public $f_race_id         = 0;
+    public $f_lid             = 0;
     public $treasury          = 0;
     public $apothecary        = 0;
     public $rerolls           = 0;
@@ -285,6 +286,16 @@ class Team
 
         $query = "UPDATE teams SET owned_by_coach_id = $cid WHERE team_id = $this->team_id";
         return (mysql_query($query) && ($this->owned_by_coach_id = $cid));
+    }
+    
+    public function setLeagueID($lid) {
+
+        /**
+         * Changes team's league association.
+         **/
+
+        $query = "UPDATE teams SET f_lid = $lid WHERE team_id = $this->team_id";
+        return (mysql_query($query) && ($this->f_lid = $lid));
     }
 
     public function getPlayers() {
@@ -660,7 +671,7 @@ class Team
         /**
          * Creates a new team.
          *
-         * Input: coach_id, name, race (race name)
+         * Input: coach_id, name, race (race name), f_lid
          **/
 
         global $rules, $raceididx;
@@ -679,6 +690,7 @@ class Team
                         name,
                         owned_by_coach_id,
                         f_race_id,
+                        f_lid,
                         treasury,
                         apothecary,
                         rerolls,
@@ -707,6 +719,7 @@ class Team
                         '" . mysql_real_escape_string($input['name']) . "',
                         $input[coach_id],
                         $input[race],
+                        $input[f_lid],
                         $rules[initial_treasury],
                         0,
                         $rules[initial_rerolls],
