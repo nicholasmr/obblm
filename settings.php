@@ -36,7 +36,7 @@ $settings['fp_team_news']          = true;  // Default is true. Show team news o
 $settings['fp_links']              = false; // Default is false. Generate coach, team and player links on the front page?
 $settings['force_tour_foldout']    = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.
 $settings['hide_retired']		   = false; // Defailt is false. Hides retired coaches and teams from standings tables.
-$settings['relate_team_to_league'] = false; // Default is false. Associate teams with leagues.
+$settings['relate_team_to_league'] = false; // Default is false. Associate teams with leagues. Teams from different leagues can not schedule matches against each other. 
 
 /*****************
  * OBBLM rule set

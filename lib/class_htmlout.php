@@ -202,6 +202,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             );
             global $settings;
             $extra['limit'] = $settings['entries_players'];
+            $extra['color'] = true;
             $objs = Player::getPlayers();
             foreach ($objs as $o) {
                 if     ($o->is_sold) $o->HTMLbcolor = COLOR_HTML_SOLD;
