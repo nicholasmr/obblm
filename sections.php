@@ -1643,7 +1643,7 @@ function sec_coachcorner() {
                     <?php
                 }
                 ?>
-                <input type="submit" name="new_team" value="<?php echo $lng->getTrn('secs/cc/new_team/button');?>" <?php if (empty($leagues)){echo "DISABLED";}?>>
+                <input type="submit" name="new_team" value="<?php echo $lng->getTrn('secs/cc/new_team/button');?>" <?php if ($settings['relate_team_to_league'] && empty($leagues)){echo "DISABLED";}?>>
             </td>
             </tr>
         </table>
