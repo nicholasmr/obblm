@@ -689,11 +689,10 @@ class Match
             
         // If team->league relations are on don't allow teams from different leagues to play each other.
         // If tour (f_tour_id) is not a node under the league associated with both teams, then deny match creation.
-        if (
-            $settings['relate_team_to_league'] && (
-            ($lid = get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid')) != get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid') ||
-            get_alt_col('divisions', 'did', get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'f_did'), 'f_lid') == $lid
-            ))
+        $tr = get_alt_col('divisions', 'did', get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'f_did'), 'f_lid');
+        $t1 = get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid');
+        $t2 = get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid');
+        if ($settings['relate_team_to_league'] && ($t1 == $t2 && $t1 != $tr || $t1 != $t2))
             return false;
 
         $query = "INSERT INTO matches (team1_id, team2_id, round, f_tour_id, date_created)
