@@ -101,13 +101,13 @@ Module::register(array(
 
 Module::register(array(
     'class'         => 'XML_BOTOCS', 
-    'filesRunTime'  => array(''),
+    'filesRunTime'  => array(),
     'filesLoadTime' => array('leegmgr/settings.php', 'leegmgr/class_xml_botocs.php')
 ));
 
 Module::register(array(
     'class'         => 'Registration', 
-    'filesRunTime'  => array(''),
+    'filesRunTime'  => array(),
     'filesLoadTime' => array('registration/settings.php', 'registration/class_registration.php')
 ));
 
