@@ -1602,7 +1602,7 @@ function sec_coachcorner() {
             if (get_magic_quotes_gpc())
                 $_POST['name'] = stripslashes($_POST['name']);
 
-            status(Team::create(array('name' => $_POST['name'], 'coach_id' => $coach->coach_id, 'race' => $_POST['race'], 'f_lid' => isset($_POST['race']) ? $_POST['f_lid'] : 0)));
+            status(Team::create(array('name' => $_POST['name'], 'coach_id' => $coach->coach_id, 'race' => $_POST['race'], 'f_lid' => isset($_POST['f_lid']) ? $_POST['f_lid'] : 0)));
 
             // Go back to coach corner main page again.
             unset($_GET['team_id']);
