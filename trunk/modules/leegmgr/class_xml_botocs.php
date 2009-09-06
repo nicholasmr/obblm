@@ -21,7 +21,7 @@
  *
  */
 
-class XML_BOTOCS implements ModuleInterface
+class XML_BOTOCS
 {
     /***************
      * Properties 
@@ -115,6 +115,7 @@ class XML_BOTOCS implements ModuleInterface
 
                         if ( strpos($a_skills[$i], "Ball & Chain") !== FALSE ) $a_skills[$i] = "Ball and Chain";
                         if ( strpos($a_skills[$i], "Nurgle's Rot") !== FALSE ) $a_skills[$i] = "Nurgles Rot";
+                        if ( strpos($a_skills[$i], "Claw/Claws") !== FALSE ) $a_skills[$i] = "Claws";
                         if ( strpos($a_skills[$i], "*") ) $a_skills[$i] = str_replace("*","",$a_skills[$i]);
 				$this->roster .= "                <skill>".htmlspecialchars($a_skills[$i], ENT_NOQUOTES, 'UTF-8')."</skill>\n";
                         $i++;
@@ -202,12 +203,8 @@ class XML_BOTOCS implements ModuleInterface
        return $teams[$key];
 
     }
-    
-    /*
-     * Module interface
-     */ 
 
-    public static function main($argv) {
+    public static function main() {
         
         // Module registered main function.
         global $settings;
@@ -233,21 +230,7 @@ class XML_BOTOCS implements ModuleInterface
             Print "</body></html>";
         }
 
-    }
-    
-    public static function getModuleAttributes()
-    {
-        return array(
-            'author'     => 'William Leonard',
-            'moduleName' => 'BOTOCS team XML export',
-            'date'       => '2009',
-            'setCanvas'  => false,
-        );
-    }
 
-    public static function getModuleTables()
-    {
-        return array();
     }
 
 }
