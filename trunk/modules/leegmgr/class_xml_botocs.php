@@ -185,6 +185,23 @@ class XML_BOTOCS implements ModuleInterface
         return $pageURL;
 
     }
+
+    private static function random_team($coach_id) {
+
+        $teams = array();
+        
+        $result = mysql_query( "SELECT team_id FROM teams WHERE owned_by_coach_id = $coach_id and name LIKE '%[P]' ORDER BY name ASC" );
+        if ($result && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                $teams[] = $row['team_id'];
+            }
+        }
+        if ( count($teams) < 5 ) return false;
+       $key = array_rand($teams);
+
+       return $teams[$key];
+
+    }
     
     /*
      * Module interface
@@ -195,8 +212,13 @@ class XML_BOTOCS implements ModuleInterface
         // Module registered main function.
         global $settings;
         if ( !$settings['leegmgr_enabled'] ) die ("LeegMgr is currently disabled.");
+
+        if ( isset($_GET["coachid"]) )
+        {
+            $_GET["teamid"] = self::random_team($_GET["coachid"]);
+        }
     
-        if ( isset($_GET["teamid"]) )
+        if ( isset($_GET["teamid"]) && $_GET["teamid"] )
         {
             $team_id = $_GET["teamid"];
             if ( isset($_GET["jm"]) ) $jm = $_GET["jm"];
