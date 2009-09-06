@@ -48,7 +48,8 @@ class RRobin {
     
     // Create Round-Robin tournament
     public function create($list = array()) {
-        
+    
+        shuffle($list);
         // Test input
         if (!is_array($list))
             return false;
