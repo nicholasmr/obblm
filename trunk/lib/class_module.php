@@ -72,7 +72,9 @@ class Module
         $module = array_merge(self::$modules[$class], call_user_func("$class::getModuleAttributes")); # Shortcut.
         global $coach; # Used for fetching stylesheet.
         if ($module['setCanvas']) {HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : false);}
-#        if (!((new $class(0,0,0,0,0)) instanceof ModuleInterface)) {fatal("Module registered by class name '$class' does not implement the interface 'ModuleInterface'");}
+        // Test if module implements the required interface.
+        $reflection = new ReflectionClass($class);
+        if (!$reflection->implementsInterface($modIntf = 'ModuleInterface')) {fatal("Module registered by class name '$class' does not implement the interface '$modIntf'");}
         $return = call_user_func("$class::main", $argv);
         if ($module['setCanvas']) {HTMLOUT::frame_end();}
         
