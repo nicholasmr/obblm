@@ -34,6 +34,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
     public $coach_id = '';
 
     //Parsed values
+    public $winner = '';
+    public $concession = false;
     public $gate = 0;
     public $hash = '';
     public $hometeam = '';
@@ -73,7 +75,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
         }
 
         $conn = mysql_up();
-        if ( !$this->addMatch () ) return false;
+        if ( !$this->addMatch () )
+        {
+            $this->error = "Failed to create the match.  The most likely reason for this is an illegal matchup.";
+            return false;
+        }
         if ( !$this->matchEntry ( $this->hometeam_id, $this->homeplayers ) ) return false;
         if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
 
@@ -87,6 +93,9 @@ class UPLOAD_BOTOCS implements ModuleInterface
     function parse_results() {
 
         $results =  simplexml_load_string( $this->xmlresults );
+
+        Print $this->winner = $results->winner;
+        Print $this->concession = $results->winner->attributes()->concession;
 
         $this->gate = $results->team[0]->fans + $results->team[1]->fans;
 
@@ -133,6 +142,15 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $this->awayplayers[intval($player->attributes()->number)]['inj'] = $player->injuries->injury[0];
             $this->awayplayers[intval($player->attributes()->number)]['agn1'] = $player->injuries->injury[1];
 
+        }
+
+        //Check winner and concession to change the score to 2 to 0 in favor of the team that did not concede.
+        if ( $this->concession )
+        {
+            if ( $this->winner == $this->hometeam && $this->homescore <= $this->awayscore )
+                $this->homescore = $this->homescore + $this->awayscore - $this->homescore +1;
+            if ( $this->winner == $this->awayteam && $this->awayscore <= $this->homescore )
+                $this->awayscore = $this->awayscore + $this->homescore - $this->awayscore +1;
         }
 
         $this->hash = md5 ( $this->xmlresults );
@@ -501,7 +519,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             Print "<br><b>Error: {$upload->error}</b><br>";
             unset($upload);
             unset($_FILES['userfile']);
-            UPLOAD_BOTOCS::main();
+            UPLOAD_BOTOCS::main(array());
         }
 
     }
