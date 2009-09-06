@@ -21,7 +21,7 @@
  *
  */
 
-class XML_BOTOCS
+class XML_BOTOCS implements ModuleInterface
 {
     /***************
      * Properties 
@@ -203,8 +203,12 @@ class XML_BOTOCS
        return $teams[$key];
 
     }
+    
+    /*
+     * Module interface
+     */ 
 
-    public static function main() {
+    public static function main($argv) {
         
         // Module registered main function.
         global $settings;
@@ -230,7 +234,21 @@ class XML_BOTOCS
             Print "</body></html>";
         }
 
+    }
+    
+    public static function getModuleAttributes()
+    {
+        return array(
+            'author'     => 'William Leonard',
+            'moduleName' => 'BOTOCS team XML export',
+            'date'       => '2009',
+            'setCanvas'  => false,
+        );
+    }
 
+    public static function getModuleTables()
+    {
+        return array();
     }
 
 }
