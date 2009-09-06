@@ -245,8 +245,7 @@
             <!-- General -->
             <playersof>Players of</playersof>
             
-            <d_view>Detailed view</d_view>
-            <n_view>Normal view</n_view>
+            <viewtoggle>Toggle roster view</viewtoggle>
             <roster>roster</roster>
             <indctry>Inducements try-out</indctry>
             
