@@ -109,7 +109,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         {
             $this->homeplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
             $this->homeplayers[intval($player->attributes()->number)]['name'] = $player->attributes()->name;
-            $this->homeplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
+            $this->homeplayers[intval($player->attributes()->number)]['star'] = addslashes($player->attributes()->starPlayer);
             $this->homeplayers[intval($player->attributes()->number)]['merc'] = $player->attributes()->mercenary;
             $this->homeplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
             $this->homeplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
@@ -227,6 +227,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             {
                 global $stars;
                 $stname = strval($player['name']);
+                if ( $stname == "Morg ‘n’ Thorg" ) $stname = "Morg 'n' Thorg";
                 $f_player_id  = $stars[$stname]['id'];
                 $player['inj'] = '';
             }
