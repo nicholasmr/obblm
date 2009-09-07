@@ -36,12 +36,13 @@ if (!isset($_GET['section'])) {
 }
 
 // Login?
+Coach::cookieLogin(); # If not already logged in then check for login-cookie and try to log in using the stored credentials.
 if (isset($_POST['login'])) {
     if (get_magic_quotes_gpc()) {
         $_POST['coach'] = stripslashes($_POST['coach']);
         $_POST['passwd'] = stripslashes($_POST['passwd']);
     }
-    if (!Coach::login($_POST['coach'], $_POST['passwd'], true)) {
+    if (!Coach::login($_POST['coach'], $_POST['passwd'], isset($_POST['remember']))) {
         $_GET['section'] = 'login';
     }
 }

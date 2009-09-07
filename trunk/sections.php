@@ -74,6 +74,9 @@ function sec_login() {
         <input type="password" name="passwd" size="20" maxlength="50">
         <div style='display: none;'><input type='text' name='hackForHittingEnterToLogin' size='1'></div>
         <br><br>
+        <b><?php echo $lng->getTrn('secs/login/remember');?></b>
+        <input type='checkbox' name='remember' value='1'>
+        <br><br>
         <input type="submit" name="login" value="Login">
     </form>
     </div>
@@ -1668,7 +1671,7 @@ function sec_coachcorner() {
 
             switch ($_POST['type'])
             {
-                case 'chpasswd':    status(Coach::login($coach->name, $_POST['old_passwd'], false) && $coach->setPasswd($_POST['new_passwd'])); break;
+                case 'chpasswd':    status(Coach::checkPasswd($coach->coach_id, $_POST['old_passwd']) && $coach->setPasswd($_POST['new_passwd'])); break;
                 case 'chphone':     status($coach->setPhone($_POST['new_phone'])); break;
                 case 'chmail':      status($coach->setMail($_POST['new_email'])); break;
                 case 'chlogin':     status($coach->setName($_POST['new_name'])); break;
