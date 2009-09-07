@@ -21,6 +21,9 @@
  *
  */
 
+define('LOGIN_COOKIE_COACHID',   'obblmuserid');
+define('LOGIN_COOKIE_PASSWD', 'obblmpasswd');
+
 class Coach
 {
     /***************
@@ -246,33 +249,68 @@ class Coach
         return $coaches;
     }
     
-    public static function login($name, $passwd, $set_session = true) {
+    public static function login($coach, $passwd, $setCookie = false) {
+        // $coach may be cid or coach name.
 
-        /* Coach log in validation. If $set_session is true, the login will be recorded by server via a session. */
+        if (!is_numeric($coach))
+            $coach = get_alt_col('coaches', 'name', $coach, 'coach_id');
 
-        foreach (Coach::getCoaches() as $coach) {
-            if (($coach->name == $name || $coach->coach_id == $name) && $coach->passwd == md5($passwd)) {
-                if ($set_session) { # This login-function does not necessary actually log the coach in, but can verify the coach's login data.
-                    $_SESSION['logged_in'] = true;
-                    $_SESSION['coach']     = $coach->name;
-                    $_SESSION['coach_id']  = $coach->coach_id;
-                }
-                return true;
-            }
+        if (self::checkPasswd($coach, $passwd)) {
+            self::_setSession($coach);
+            if ($setCookie) {self::_setCookie($coach);}
+            return true;
         }
-
-        // We reach this point if login has failed.
-        if ($set_session) { # Make sure all session data is destroyed.
-            session_unset();
-            session_destroy();
+        else {
+            self::_delSession();
+            self::_delCookies();
+            return false;
         }
-        
-        return false;
+    }
+    
+    public static function cookieLogin() {
+
+        return (
+            !isset($_SESSION['logged_in']) && 
+            isset($_COOKIE[LOGIN_COOKIE_COACHID]) && 
+            isset($_COOKIE[LOGIN_COOKIE_PASSWD]) && 
+            self::checkPasswd($_COOKIE[LOGIN_COOKIE_COACHID], $_COOKIE[LOGIN_COOKIE_PASSWD], false) &&
+            self::_setSession($_COOKIE[LOGIN_COOKIE_COACHID])
+        );
     }
     
     public static function logout() {
+        self::_delSession();
+        self::_delCookies();
+        return true;
+    }
+    
+    public static function checkPasswd($cid, $passwd, $MD5 = true) {
+        return (get_alt_col('coaches', 'coach_id', $cid, 'passwd') == ($MD5 ? md5($passwd) : $passwd));
+    }
+    
+    protected static function _setSession($cid) {
+        $_SESSION['logged_in'] = true;
+        $_SESSION['coach']     = get_alt_col('coaches', 'coach_id', $cid, 'name');
+        $_SESSION['coach_id']  = $cid;
+        return true;
+    }
+    
+    protected static function _delSession() {
         session_unset();
         session_destroy();
+        return true;
+    }
+
+    protected static function _setCookie($cid) {
+        $expire=time()+60*60*24*30;
+        setcookie(LOGIN_COOKIE_COACHID, $cid, $expire);
+        setcookie(LOGIN_COOKIE_PASSWD, get_alt_col('coaches', 'coach_id', $cid, 'passwd'), $expire);
+        return true;
+    }    
+   
+    protected static function _delCookies() {
+        setcookie(LOGIN_COOKIE_COACHID, '', time()-3600);
+        setcookie(LOGIN_COOKIE_PASSWD, '', time()-3600);
         return true;
     }
     

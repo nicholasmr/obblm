@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<obblm version="OBBLM v. 0.38">
+<obblm version="OBBLM v. 0.8d">
 <!--
     For each language/locale a block of translations is
     provided. First, the language is specified, second the
@@ -750,6 +750,7 @@
         <login>
             <coach>Coach</coach>
             <passwd>Password</passwd>
+            <remember>Remember me</remember>
         </login>
         
         <cc>
