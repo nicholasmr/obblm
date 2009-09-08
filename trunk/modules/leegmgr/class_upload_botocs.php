@@ -556,7 +556,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
                           ( $this->userfile['type'] == "application/x-zip-compressed" ||
                             $this->userfile['type'] == "application/octet-stream"     ||
                             $this->userfile['type'] == "application/zip"              ||
-                            $this->userfile['type'] == "application/x-zip"
+                            $this->userfile['type'] == "application/x-zip"            ||
+                            $this->userfile['type'] == ""
                           )
                                                                                          )
             {
