@@ -29,6 +29,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
     public $userfile = array();
     public $xmlresults = '';
+    public $replay;
     public $error = '';
     public $tour_id = 0;
     public $coach_id = '';
@@ -86,6 +87,23 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $match = new Match( $this->match_id );
         $match->setLocked(true);
 
+        //Begin add replay
+        $query = "INSERT INTO leegmgr_matches
+        (
+            mid,
+            replay
+        )
+        VALUES
+        (
+            $this->match_id,
+            \"$this->replay\"
+        )";
+        if ( !mysql_query( $query ) )
+        {
+            $this->error = "Failed to upload the replay file with the following error: ".mysql_error();
+            return false;
+        }
+        #//End add replay
         return true;
 
     }
@@ -94,8 +112,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         $results =  simplexml_load_string( $this->xmlresults );
 
-        Print $this->winner = $results->winner;
-        Print $this->concession = $results->winner->attributes()->concession;
+        $this->winner = $results->winner;
+        $this->concession = $results->winner->attributes()->concession;
 
         $this->gate = $results->team[0]->fans + $results->team[1]->fans;
 
@@ -483,7 +501,6 @@ class UPLOAD_BOTOCS implements ModuleInterface
          * 
          **/
 
-
         $tourlist = "";
         foreach (Tour::getTours() as $t)
             if ($t->type == TT_FFA && !$t->locked) $tourlist .= "<option value='$t->tour_id'>$t->name</option>\n";
@@ -530,6 +547,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $status = true;
             $uploaddir = '/var/www/uploads/';
             $uploadfile = $uploaddir . basename($this->userfile['name']);
+#            $this->replay = addslashes(fread(fopen($this->userfile['tmp_name'], "r"), filesize($this->userfile['tmp_name'])));
+            $this->replay = mysql_real_escape_string(fread(fopen($this->userfile['tmp_name'], "r"), filesize($this->userfile['tmp_name'])));
 
             if (strlen($this->userfile['tmp_name'])>3) $zip = zip_open($this->userfile['tmp_name']);
 
@@ -548,6 +567,12 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         $this->xmlresults = zip_entry_read($zip_entry, 100000);
                         zip_entry_close($zip_entry);
                     }
+#                    if (strpos(zip_entry_name($zip_entry),"replay.rep") !== false )
+#                    {
+#                        $this->replay = zip_entry_read($zip_entry, 100000);
+#                        mysql_real_escape_string(fread(fopen(zip_entry_read($zip_entry, 100000), "r"), filesize(zip_entry_read($zip_entry, 100000))));
+#                        zip_entry_close($zip_entry);
+#                    }
                 }
                 zip_close($zip);
 
@@ -577,6 +602,22 @@ class UPLOAD_BOTOCS implements ModuleInterface
         // Module registered main function.
         global $settings;
         if ( !$settings['leegmgr_enabled'] ) die ("LeegMgr is currently disabled.");
+
+        if ( isset($_GET['replay']) )
+        {
+            $mid = $_GET['replay']; #461
+            $test= mysql_query( "SELECT replay FROM `leegmgr_matches` WHERE mid = $mid" );
+            $test = mysql_fetch_array($test);
+            $test = $test[0];
+#            header("location: 1.html"); 
+#            header('Content-type: application/zip');
+#            header('Content-Disposition: attachment; filename="replay.zip"');
+#            readfile($test);
+            Print "<!-- BEGIN DOWNLOAD OF REPLAY -->";
+            Print $test;
+            Print "<!-- END DOWNLOAD OF REPLAY -->";
+		return true;
+        }
     
         if ( isset($_FILES['userfile']) && isset($_SESSION['coach_id']) )
         {
@@ -608,7 +649,6 @@ class UPLOAD_BOTOCS implements ModuleInterface
     {
         return array();
     }
-
 }
 
 ?>
