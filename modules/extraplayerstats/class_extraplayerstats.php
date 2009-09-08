@@ -30,7 +30,7 @@ public static $types = array(
     "Sustained_iDead" 		    => "TINYINT UNSIGNED NOT NULL DEFAULT 0",
 );
 
-public static $relations array(
+public static $relations = array(
     "f_cid"  => 'MEDIUMINT UNSIGNED',   # Coach ID
     "f_tid"  => 'MEDIUMINT UNSIGNED',   # Team ID
     "f_pid"  => 'MEDIUMINT SIGNED',     # Player ID
@@ -44,7 +44,7 @@ public static $relations array(
 public static function main($argv) # argv = argument vector (array).
 {
     $func = array_shift($argv);
-    return self::$func($argv);
+    return call_user_func_array(__CLASS__."::$func", $argv);
 }
 
 public static function getModuleAttributes()
@@ -64,18 +64,23 @@ public static function getModuleTables()
 
 public static function makeEntry(array $relations, array $playerData)
 {
+    // Ready the data.
+    # Required keys/columns.
+    $_expectedInput = array_merge(self::$relations, self::$types); ksort($_expectedInput);
+    $KEYS           = array_keys($_expectedInput); 
+    # Recieved data.
+    $_receivedInput = array_merge($relations, $playerData); ksort($_receivedInput);
+    $INPUT_KEYS     = array_keys($_receivedInput);
+    $INPUT_VALUES   = array_values($_receivedInput);
+    
     // Verify input.
-    $KEYS         = array_keys(ksort(array_merge(self::$relations, self::$types))); # Required keys/columns.
-    $_sortedInput = ksort(array_merge($relations, $playerData));
-    $INPUT_KEYS   = array_keys($_sortedInput);
-    $INPUT_VALUES = array_values($_sortedInput);
     if ($INPUT_KEYS !== $KEYS)
         return false;
     
     // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
     $WHERE = "f_mid = $relations[f_mid] AND f_pid = $relations[f_pid]";
     $query = 'SELECT f_mid FROM '.self::TABLE." WHERE $WHERE";
-    if ($result = mysql_query($query) && mysql_num_rows($result) > 0) {
+    if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
         mysql_query('DELETE FROM '.self::TABLE." WHERE $WHERE");
     }
     

@@ -32,7 +32,7 @@ class MyModule implements ModuleInterface
  *  
  *  The below main() example illustrates how main() COULD work as a wrapper, when the subdivision of code is done into functions in this SAME class.
  */
-public static main($argv) # argv = argument vector (array).
+public static function main($argv) # argv = argument vector (array).
 {
     /* 
         Let $argv[0] be the name of the function we wish main() to call. 
@@ -42,13 +42,13 @@ public static main($argv) # argv = argument vector (array).
     */
 
     $func = array_shift($argv);
-    return self::$func($argv);
+    return call_user_func_array(__CLASS__."::$func", $argv);
 }
 
 /*
  *  This function returns information about the module and its author.
  */
-public static getModuleAttributes()
+public static function getModuleAttributes()
 {
     return array(
         'author'     => 'Name of author',
@@ -61,7 +61,7 @@ public static getModuleAttributes()
 /*
  *  This function returns the MySQL table definitions for the tables required by the module. If no tables are used array() should be returned.
  */
-public static getModuleTables()
+public static function getModuleTables()
 {
     return array(
         # Table name => column definitions
@@ -97,7 +97,7 @@ public function myMethod()
     return $this->attribute;
 }
 
-public static myStaticMethod($arg)
+public static function myStaticMethod($arg)
 {
     $obj = new self('New value');
     echo $obj->myMethod();
