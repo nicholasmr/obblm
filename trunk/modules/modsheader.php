@@ -111,6 +111,12 @@ Module::register(array(
     'filesLoadTime' => array('registration/settings.php', 'registration/class_registration.php')
 ));
 
+Module::register(array(
+    'class'         => 'EPS', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('extraplayerstats/class_extraplayerstats.php')
+));
+
 /*
     NOTE to Grégory: Please wrap your code into a class that implements "ModuleInterface". Sorry for the inconvenience.
 */
