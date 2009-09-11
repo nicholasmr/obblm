@@ -741,6 +741,49 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
     echo "</table>\n";
 }
 
+public static function sort_rule($w) {
+    
+    $rules = array(
+        'coach'             => array('-win_percentage', '-won_tours', '-cas', '+name'),         // Coach standings.
+        'team'              => array('-won', '-draw', '+lost', '-score_diff', '-cas', '+name'), // Team standings.
+        'player'            => array('-value', '-td', '-cas', '-spp', '+name'),                 // Player standings.
+        'team_roster'       => array('+nr', '+name'),               // Team roster.
+        'star'              => array('-played', '+name'),           // Star standings.
+        'starmerc_HH'       => array('-date_played'),               // Star & Merc hire history (HH) tables.
+        'race_roster'       => array('+cost', '-position'),         // Race roster
+        'race'              => array('-win_percentage', '+race'),   // Race standings.
+        'matcherecent'      => array('-date_played'),               // Recent matches table.
+        'matcheupcomming'   => array('-date_played'),               // Upcomming matches table.
+    );
+
+    return $rules[$w];
+}
+
+public static function rule_dict(array $rule) {
+    
+    /* Translates sort rules. */
+    
+    $d = array(
+        'win_percentage'    => 'win percentage',
+        'date_played'       => 'date played',
+        'won_tours'         => 'won tours',
+        'score_diff'        => 'score diff.',
+        'tdcas'             => '{td+cas}',
+        'row_won'           => 'won in row',
+        'row_lost'          => 'lost in row',
+        'row_draw'          => 'draw in row',
+    );
+    
+    foreach ($rule as &$r) {
+        $r = preg_replace('/_tour$/', '', $r);
+        foreach ($d as $idx => $rpl) {
+            $r = preg_replace("/$idx/", $rpl, $r);
+        }
+    }
+    
+    return $rule;
+}
+
 public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id = false, $opts = array())
 {
     /* If $star_id is false, then the HH from all stars of $obj = $obj_id will be displayed, instead of only the HH of star = $star_id */

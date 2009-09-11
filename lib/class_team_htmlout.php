@@ -400,7 +400,7 @@ private function _menu($ALLOW_EDIT, $DETAILED)
     <br>
     <ul id="nav" class="dropdown dropdown-horizontal">
         <li><a href="<?php echo "index.php?section=coachcorner&amp;team_id=$_GET[team_id]&amp;detailed=".(($DETAILED) ? 0 : 1);?>"><?php echo $lng->getTrn('secs/teams/viewtoggle');?></a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_actionboxes');?>>Action boxes</a></li>
+        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_actionboxes');?>>Team Management</a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_news');?>>News</a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_about');?>>About</a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_recent');?>>Recent games</a></li>
@@ -683,6 +683,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     'ready_state'       => $lng->getTrn('secs/teams/box_tm/ready_state'),
                     'unbuy_player'      => $lng->getTrn('secs/teams/box_tm/unbuy_player'),
                 );
+                
+                # If one of these are selected from the menu, a JavaScript confirm prompt is displayed before submitting.
+                $tmange_confirm = array('hire_player', 'hire_journeyman', 'fire_player', 'buy_goods', 'drop_goods'); 
 
                 // Set default choice.
                 if (!isset($_POST['menu_tmanage'])) {
@@ -990,7 +993,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     }
                     ?>
                     <br><br>
-                    <input type="submit" name="button" value="OK" <?php echo ($DISABLE ? 'DISABLED' : '');?> >
+                    <input type="submit" name="button" value="OK" <?php echo ($DISABLE ? 'DISABLED' : '');?> 
+                        <?php if (in_array($_POST['menu_tmanage'], $tmange_confirm)) {echo "onClick=\"if(!confirm('Are you sure?')){return false;}\"";}?>
+                    >
                 </form>
             </div>
         </div>
