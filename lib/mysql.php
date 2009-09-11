@@ -23,6 +23,148 @@
 
 /* THIS FILE is used for MySQL-helper routines */
 
+
+// These are the OBBLM core tables.
+$core_tables = array(
+    'coaches' => array(
+        'coach_id'  => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'name'      => 'VARCHAR(50)',
+        'realname'  => 'VARCHAR(50)',
+        'passwd'    => 'VARCHAR(32)',
+        'mail'      => 'VARCHAR(129)',
+        'phone'     => 'VARCHAR(25) NOT NULL',
+        'ring'      => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+        'settings'  => 'VARCHAR(320) NOT NULL',
+        'retired'   => 'BOOLEAN NOT NULL DEFAULT 0',
+    ),
+    'teams' => array(
+        'team_id'           => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'name'              => 'VARCHAR(50)',
+        'owned_by_coach_id' => 'MEDIUMINT UNSIGNED',
+        'f_race_id'         => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+        'f_lid'             => 'MEDIUMINT UNSIGNED NOT NULL DEFAULT 0',
+        'treasury'          => 'BIGINT SIGNED',
+        'apothecary'        => 'BOOLEAN',
+        'rerolls'           => 'MEDIUMINT UNSIGNED',
+        'fan_factor'        => 'MEDIUMINT UNSIGNED',
+        'ass_coaches'       => 'MEDIUMINT UNSIGNED',
+        'cheerleaders'      => 'MEDIUMINT UNSIGNED',
+        'rdy'               => 'BOOLEAN NOT NULL DEFAULT 1',
+        'imported'          => 'BOOLEAN NOT NULL DEFAULT 0',
+        'retired'           => 'BOOLEAN NOT NULL DEFAULT 0',
+        'won_0'     => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'lost_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'draw_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'sw_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'sl_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'sd_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'wt_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'gf_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'ga_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'tcas_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'elo_0'     => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+    ),
+    'players' => array(
+        'player_id'         => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'type'              => 'TINYINT UNSIGNED DEFAULT 1',
+        'name'              => 'VARCHAR(50)',
+        'owned_by_team_id'  => 'MEDIUMINT UNSIGNED',
+        'nr'                => 'MEDIUMINT UNSIGNED',
+        'position'          => 'VARCHAR(50)',
+        'date_bought'       => 'DATETIME',
+        'date_sold'         => 'DATETIME',
+        'ach_ma'            => 'TINYINT UNSIGNED',
+        'ach_st'            => 'TINYINT UNSIGNED',
+        'ach_ag'            => 'TINYINT UNSIGNED',
+        'ach_av'            => 'TINYINT UNSIGNED',
+        'ach_nor_skills'    => 'VARCHAR(320)',
+        'ach_dob_skills'    => 'VARCHAR(320)',
+        'extra_skills'      => 'VARCHAR(320)',
+        'extra_spp'         => 'MEDIUMINT SIGNED',
+        'extra_val'         => 'MEDIUMINT SIGNED NOT NULL DEFAULT 0',
+    ),
+    'leagues' => array(
+        'lid'       => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'name'      => 'VARCHAR(50)',
+        'location'  => 'VARCHAR(50)',
+        'date'      => 'DATETIME',
+
+    ),
+    'divisions' => array(
+        'did'   => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'f_lid' => 'MEDIUMINT UNSIGNED',
+        'name'  => 'VARCHAR(50)',
+
+    ),
+    'tours' => array(
+        'tour_id'       => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'f_did'         => 'MEDIUMINT UNSIGNED',
+        'name'          => 'VARCHAR(50)',
+        'type'          => 'TINYINT UNSIGNED',
+        'date_created'  => 'DATETIME',
+        'rs'            => 'TINYINT UNSIGNED DEFAULT 1',
+        'locked'        => 'BOOLEAN',
+    ),
+    'matches' => array(
+        'match_id'      => 'MEDIUMINT SIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'round'         => 'TINYINT UNSIGNED',
+        'f_tour_id'     => 'MEDIUMINT UNSIGNED',
+        'locked'        => 'BOOLEAN',
+        'submitter_id'  => 'MEDIUMINT UNSIGNED',
+        'stadium'       => 'MEDIUMINT UNSIGNED',
+        'gate'          => 'MEDIUMINT UNSIGNED',
+        'fans'          => 'MEDIUMINT UNSIGNED NOT NULL DEFAULT 0',
+        'ffactor1'      => 'TINYINT SIGNED',
+        'ffactor2'      => 'TINYINT SIGNED',
+        'income1'       => 'MEDIUMINT SIGNED',
+        'income2'       => 'MEDIUMINT SIGNED',
+        'team1_id'      => 'MEDIUMINT UNSIGNED',
+        'team2_id'      => 'MEDIUMINT UNSIGNED',
+        'date_created'  => 'DATETIME',
+        'date_played'   => 'DATETIME',
+        'date_modified' => 'DATETIME',
+        'team1_score'   => 'TINYINT UNSIGNED',
+        'team2_score'   => 'TINYINT UNSIGNED',
+        'smp1'          => 'TINYINT SIGNED NOT NULL DEFAULT 0',
+        'smp2'          => 'TINYINT SIGNED NOT NULL DEFAULT 0',
+        'tcas1'         => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+        'tcas2'         => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+        'fame1'         => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+        'fame2'         => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+        'tv1'           => 'MEDIUMINT UNSIGNED NOT NULL DEFAULT 0',
+        'tv2'           => 'MEDIUMINT UNSIGNED NOT NULL DEFAULT 0',
+        'hash_botocs'   => 'VARCHAR(32)',
+    ),
+    'match_data' => array(
+        'f_coach_id'    => 'MEDIUMINT UNSIGNED',
+        'f_team_id'     => 'MEDIUMINT UNSIGNED',
+        'f_player_id'   => 'MEDIUMINT SIGNED',
+        'f_race_id'     => 'TINYINT UNSIGNED',
+        'f_match_id'    => 'MEDIUMINT SIGNED',
+        'f_tour_id'     => 'MEDIUMINT UNSIGNED',
+        'f_did'         => 'MEDIUMINT UNSIGNED',
+        'f_lid'         => 'MEDIUMINT UNSIGNED',
+        'mvp'           => 'TINYINT UNSIGNED',
+        'cp'            => 'TINYINT UNSIGNED',
+        'td'            => 'TINYINT UNSIGNED',
+        'intcpt'        => 'TINYINT UNSIGNED',
+        'bh'            => 'TINYINT UNSIGNED',
+        'si'            => 'TINYINT UNSIGNED',
+        'ki'            => 'TINYINT UNSIGNED',
+        'inj'           => 'TINYINT UNSIGNED',
+        'agn1'          => 'TINYINT UNSIGNED',
+        'agn2'          => 'TINYINT UNSIGNED',
+    ),
+    'texts' => array(
+        'txt_id'    => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'type'      => 'TINYINT UNSIGNED',
+        'f_id'      => 'MEDIUMINT UNSIGNED',
+        'date'      => 'DATETIME',
+        'txt2'      => 'TEXT',
+        'txt'       => 'TEXT',
+    ),
+);
+
 function mysql_up($do_table_check = false) {
 
     // Brings up MySQL for use in PHP execution.
@@ -49,7 +191,8 @@ function mysql_up($do_table_check = false) {
 
     // Test if all tables exist.
     if ($do_table_check) {
-        $tables_expected = array('coaches', 'teams', 'players', 'tours', 'matches', 'match_data', 'texts', 'prizes', 'leagues', 'divisions');
+        global $core_tables;
+        $tables_expected = array_keys($core_tables);
         $tables_found = array();
         $query = "SHOW TABLES";
         $result = mysql_query($query);
@@ -105,205 +248,32 @@ function set_list($table, $col, $val, $new_col, $new_val = array()) {
         return false;
 }
 
-function setup_tables() {
+function setup_database() {
 
-    /*
-     *  MySQL datatypes:
-     *
-     *      TINYINT   UNSIGNED  = max 255
-     *      MEDIUMINT UNSIGNED  = max 16777215
-     *      BIGINT    UNSIGNED  = max 18446744073709551615
-     *
-     *  http://dev.mysql.com/doc/refman/5.1/en/data-types.html
-     */
-
-    // Connect to MySQL
+    global $core_tables;
     $conn = mysql_up();
 
-    // Small subroutine used by outer function.
-    if (!function_exists('mk_table')) {
-        function mk_table($query, $table) {
-            if (mysql_query($query))
-                echo "<font color='green'>Created $table table successfully.</font><br>\n";
-            else
-                echo "<font color='red'>Failed creating $table table.</font><br>\n";
+    // Create core tables.
+    echo "<b>Creating core tables...</b><br>\n";
+    foreach ($core_tables as $tblName => $def) {    
+        echo (Table::createTable($tblName, $def))
+            ? "<font color='green'>OK &mdash; $tblName</font><br>\n"
+            : "<font color='red'>FAILED &mdash; $tblName</font><br>\n";
+    }
+    
+    // Create tables used by modules.
+    echo "<b>Creating module tables...</b><br>\n";
+    foreach (Module::createAllRequiredTables() as $module => $tables) {
+        foreach ($tables as $name => $tblStat) {
+            echo ($tblStat)
+                ? "<font color='green'>OK &mdash; $name</font><br>\n"
+                : "<font color='red'>FAILED &mdash; $name</font><br>\n";
         }
     }
 
-    /* Table creation queries */
-
-    $query = 'CREATE TABLE IF NOT EXISTS coaches
-                (
-                coach_id        MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                name            VARCHAR(50),
-                realname        VARCHAR(50),
-                passwd          VARCHAR(32),
-                mail            VARCHAR(129),
-                phone           VARCHAR(25) NOT NULL,
-                ring            TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                settings        VARCHAR(320) NOT NULL,
-                retired         BOOLEAN NOT NULL DEFAULT 0
-                )';
-    mk_table($query, 'coaches');
-
-    $query = 'CREATE TABLE IF NOT EXISTS teams
-                (
-                team_id             MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                name                VARCHAR(50),
-                owned_by_coach_id   MEDIUMINT UNSIGNED,
-                f_race_id           TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                f_lid               MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
-                treasury            BIGINT SIGNED,
-                apothecary          BOOLEAN,
-                rerolls             MEDIUMINT UNSIGNED,
-                fan_factor          MEDIUMINT UNSIGNED,
-                ass_coaches         MEDIUMINT UNSIGNED,
-                cheerleaders        MEDIUMINT UNSIGNED,
-                rdy                 BOOLEAN NOT NULL DEFAULT 1,
-                imported            BOOLEAN NOT NULL DEFAULT 0,
-                retired             BOOLEAN NOT NULL DEFAULT 0,
-                won_0               SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                lost_0              SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                draw_0              SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                sw_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                sl_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                sd_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                wt_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                gf_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                ga_0                SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                tcas_0              SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                elo_0               SMALLINT UNSIGNED NOT NULL DEFAULT 0
-                )';
-    mk_table($query, 'teams');
-
-    $query = 'CREATE TABLE IF NOT EXISTS players
-                (
-                player_id           MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                type                TINYINT UNSIGNED DEFAULT 1,
-                name                VARCHAR(50),
-                owned_by_team_id    MEDIUMINT UNSIGNED,
-                nr                  MEDIUMINT UNSIGNED,
-                position            VARCHAR(50),
-                date_bought         DATETIME,
-                date_sold           DATETIME,
-                ach_ma              TINYINT UNSIGNED,
-                ach_st              TINYINT UNSIGNED,
-                ach_ag              TINYINT UNSIGNED,
-                ach_av              TINYINT UNSIGNED,
-                ach_nor_skills      VARCHAR(320),
-                ach_dob_skills      VARCHAR(320),
-                extra_skills        VARCHAR(320),
-                extra_spp           MEDIUMINT SIGNED,
-                extra_val           MEDIUMINT SIGNED NOT NULL DEFAULT 0 
-                )';
-    /*
-        Note: 320 chars comes from:
-        Chars = Max_number_of_skills * (char_lenght_of_longest_skillname + 1_delimter_char)
-        Chars = 16 * (19 + 1) = 320
-    */
-    mk_table($query, 'players');
-
-    $query = 'CREATE TABLE IF NOT EXISTS matches
-                (
-                match_id            MEDIUMINT SIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                round               TINYINT UNSIGNED,
-                f_tour_id           MEDIUMINT UNSIGNED,
-                locked              BOOLEAN,
-                submitter_id        MEDIUMINT UNSIGNED,
-                stadium             MEDIUMINT UNSIGNED,
-                gate                MEDIUMINT UNSIGNED,
-                fans                MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
-                ffactor1            TINYINT SIGNED,
-                ffactor2            TINYINT SIGNED,
-                income1             MEDIUMINT SIGNED,
-                income2             MEDIUMINT SIGNED,
-                team1_id            MEDIUMINT UNSIGNED,
-                team2_id            MEDIUMINT UNSIGNED,
-                date_created        DATETIME,
-                date_played         DATETIME,
-                date_modified       DATETIME,
-                team1_score         TINYINT UNSIGNED,
-                team2_score         TINYINT UNSIGNED,
-                smp1                TINYINT SIGNED NOT NULL DEFAULT 0,
-                smp2                TINYINT SIGNED NOT NULL DEFAULT 0,
-                tcas1               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                tcas2               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                fame1               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                fame2               TINYINT UNSIGNED NOT NULL DEFAULT 0,
-                tv1                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
-                tv2                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
-                hash_botocs         VARCHAR(32)
-                )';
-    mk_table($query, 'matches');
-
-    $query = 'CREATE TABLE IF NOT EXISTS leagues
-                (
-                lid         MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                name        VARCHAR(50),
-                location    VARCHAR(50),
-                date        DATETIME
-                )';
-    mk_table($query, 'leagues');
+    echo "<b>Other tasks...</b><br>\n";
     
-    $query = 'CREATE TABLE IF NOT EXISTS divisions
-                (
-                did   MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                f_lid MEDIUMINT UNSIGNED,
-                name  VARCHAR(50)
-                )';
-    mk_table($query, 'divisions');
-    
-    $query = 'CREATE TABLE IF NOT EXISTS tours
-                (
-                tour_id         MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                f_did           MEDIUMINT UNSIGNED,
-                name            VARCHAR(50),
-                type            TINYINT UNSIGNED,
-                date_created    DATETIME,
-                rs              TINYINT UNSIGNED DEFAULT 1,
-                locked          BOOLEAN
-                )';
-    mk_table($query, 'tours');
-
-    // Note: "f_" is a abbreviation for "from_".
-
-    $query = 'CREATE TABLE IF NOT EXISTS match_data
-                (
-                f_coach_id          MEDIUMINT UNSIGNED,
-                f_team_id           MEDIUMINT UNSIGNED,
-                f_player_id         MEDIUMINT SIGNED,
-                f_race_id           TINYINT UNSIGNED,
-                f_match_id          MEDIUMINT SIGNED,
-                f_tour_id           MEDIUMINT UNSIGNED,
-                f_did               MEDIUMINT UNSIGNED,
-                f_lid               MEDIUMINT UNSIGNED,
-                mvp                 TINYINT UNSIGNED,
-                cp                  TINYINT UNSIGNED,
-                td                  TINYINT UNSIGNED,
-                intcpt              TINYINT UNSIGNED,
-                bh                  TINYINT UNSIGNED,
-                si                  TINYINT UNSIGNED,
-                ki                  TINYINT UNSIGNED,
-                inj                 TINYINT UNSIGNED,
-                agn1                TINYINT UNSIGNED,
-                agn2                TINYINT UNSIGNED
-
-                )';
-    mk_table($query, 'match_data');
-
-    $query = 'CREATE TABLE IF NOT EXISTS texts
-                (
-                txt_id  MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                type    TINYINT UNSIGNED,
-                f_id    MEDIUMINT UNSIGNED,
-                date    DATETIME,
-                txt2    TEXT,
-                txt     TEXT
-                )';
-    mk_table($query, 'texts');
-    
-    /* Add tables indexes/keys. */
-    
+    // Add tables indexes/keys.
     $indexes = "
         ALTER TABLE texts       ADD INDEX idx_f_id                  (f_id);
         ALTER TABLE texts       ADD INDEX idx_type                  (type);
@@ -323,37 +293,28 @@ function setup_tables() {
         ALTER TABLE match_data  ADD INDEX idx_r_tr                  (f_race_id,  f_tour_id);
         ALTER TABLE match_data  ADD INDEX idx_c_tr                  (f_coach_id, f_tour_id);
     ";
-
+    $status = true;
     foreach (explode(';', $indexes) as $query) {
         $query = trim($query);
         if (!empty($query)) {
-            mysql_query($query);
+            $status &= mysql_query($query);
         }
     }
+    echo ($tblStat)
+        ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
 
-    // Tables used by modules.
-    foreach (Module::createAllRequiredTables() as $module => $tables) {
-        foreach ($tables as $name => $tblStat) {
-            if ($tblStat)
-                echo "<font color='green'>For module '$module' created $name table successfully.</font><br>\n";
-            else
-                echo "<font color='red'>Failed creating $name table.</font><br>\n";
-        }
-    }
-    
+    // Create root user and leave welcome message on messageboard
+    echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => RING_SYS, 'mail' => 'None', 'phone' => ''))) 
+        ? "<font color=green>OK &mdash; root user created.</font><br>\n"
+        : "<font color=red>FAILED &mdash; root user was not created.</font><br>\n";
 
-    /* Create root user and leave welcome message on messageboard */
-
-    if (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => RING_SYS, 'mail' => 'None', 'phone' => '')))
-        echo "<font color=green>Created root user successfully.</font><br>\n";
-    else
-        echo "<font color=red>Failed to create root user.</font><br>\n";
-        
     Message::create(array(
         'f_coach_id' => 1, 
         'title'      => 'OBBLM installed!', 
         'msg'        => 'Congratulations! You have successfully installed Online Blood Bowl League Manager. See "about" and "introduction" for more information.'));
-
+    
+    // Done!
     mysql_close($conn);
     return true;
 }

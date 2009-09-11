@@ -21,22 +21,8 @@
  *   
  */
 
-error_reporting(E_ALL);
 define('NO_STARTUP', true); # header.php hint.
 require('header.php'); // Includes and constants.
-
-function mk_tables() {
-    if (setup_tables())
-        echo "<br><b><font color='green'>Done</font></b>";
-    else
-        echo "<br><b><font color='red'>Error</font></b>";
-    
-    ?>
-    <br><br>
-    Use the coach account 'root' with password 'root' first time you log in.<br> 
-    From there you may enter the administration section and add new users (coaches) including changing the root password.
-    <?php
-}
 
 ?>
 <html>
@@ -52,22 +38,16 @@ function mk_tables() {
 <br>
 <small>
 <?php
-
-// Setup DB?
 if (isset($_POST['setup'])) {
-
-    // Erase old tables first.
-    if ($conn = mysql_up()) {
-        mysql_select_db($db_name);
-        mysql_query("DROP TABLES IF EXISTS coaches, teams, players, matches, tours, match_data, texts");
-        mysql_close($conn);
-    }
-    else {
-        die("Sorry. Could not make proper database connection.");
-    }
-
-    // Make new tables.
-    mk_tables();
+    echo setup_database()
+        ? "<br><b><font color='green'>Done</font></b>"
+        : "<br><b><font color='red'>Error</font></b>";
+    
+    ?>
+    <br><br>
+    Use the coach account 'root' with password 'root' first time you log in.<br> 
+    From there you may enter the administration section and add new users (coaches) including changing the root password.
+    <?php
 }
 else {
     ?>
