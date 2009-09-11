@@ -91,13 +91,15 @@ private function _handleActions($ALLOW_EDIT)
 
         case 'hire_journeyman': status($p->hireJourneyman()); break;
         case 'fire_player':     status($p->sell()); break;
+        case 'unbuy_player':    status($p->unbuy()); break;
         case 'rename_player':   status($p->rename($_POST['name'])); break;
         case 'renumber_player': status($p->renumber($_POST['number'])); break;
         case 'rename_team':     status($team->rename($_POST['name'])); break;
         case 'buy_goods':       status($team->buy($_POST['thing'])); break;
         case 'drop_goods':      status($team->drop($_POST['thing'])); break;
         case 'ready_state':     status($team->setReady(isset($_POST['bool']))); break;
-        case 'unbuy_player':    status($p->unbuy()); break;
+        case 'retire':          status(isset($_POST['bool']) && $team->setRetired(true)); break;
+        case 'delete':          status(isset($_POST['bool']) && $team->delete()); break;
         
         case 'skill':        
             $type = null;
@@ -675,13 +677,15 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     'hire_player'       => $lng->getTrn('secs/teams/box_tm/hire_player'),
                     'hire_journeyman'   => $lng->getTrn('secs/teams/box_tm/hire_journeyman'),
                     'fire_player'       => $lng->getTrn('secs/teams/box_tm/fire_player'),
+                    'unbuy_player'      => $lng->getTrn('secs/teams/box_tm/unbuy_player'),
                     'rename_player'     => $lng->getTrn('secs/teams/box_tm/rename_player'),
                     'renumber_player'   => $lng->getTrn('secs/teams/box_tm/renumber_player'),
                     'rename_team'       => $lng->getTrn('secs/teams/box_tm/rename_team'),
                     'buy_goods'         => $lng->getTrn('secs/teams/box_tm/buy_goods'),
                     'drop_goods'        => $lng->getTrn('secs/teams/box_tm/drop_goods'),
                     'ready_state'       => $lng->getTrn('secs/teams/box_tm/ready_state'),
-                    'unbuy_player'      => $lng->getTrn('secs/teams/box_tm/unbuy_player'),
+                    'retire'            => $lng->getTrn('secs/teams/box_tm/retire'),
+                    'delete'            => $lng->getTrn('secs/teams/box_tm/delete'),
                 );
                 
                 # If one of these are selected from the menu, a JavaScript confirm prompt is displayed before submitting.
@@ -812,6 +816,30 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         ?>
                         </select>
                         <input type="hidden" name="type" value="fire_player">
+                        <?php
+                        break;
+                        
+                    /***************
+                     * Un-buy player
+                     **************/
+                        
+                    case 'unbuy_player':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/unbuy_player');
+                        ?>
+                        <hr><br>
+                        Player:<br>
+                        <select name="player">
+                        <?php
+                        $DISABLE = true;
+                        foreach ($players as $p) {
+                            if ($p->is_unbuyable() && !$p->is_sold) {
+                                    echo "<option value='$p->player_id'>$p->name</option>\n";
+                                    $DISABLE = false;
+                            }
+                        }
+                        ?>
+                        </select>
+                        <input type="hidden" name="type" value="unbuy_player">
                         <?php
                         break;
                         
@@ -968,28 +996,36 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         break;
                         
                     /***************
-                     * Un-buy player
+                     * Retire
                      **************/
                         
-                    case 'unbuy_player':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/unbuy_player');
+                    case 'retire':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/retire');
                         ?>
                         <hr><br>
-                        Player:<br>
-                        <select name="player">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($players as $p) {
-                            if ($p->is_unbuyable() && !$p->is_sold) {
-                                    echo "<option value='$p->player_id'>$p->name</option>\n";
-                                    $DISABLE = false;
-                            }
-                        }
-                        ?>
-                        </select>
-                        <input type="hidden" name="type" value="unbuy_player">
+                        Retire?
+                        <input type="checkbox" name="bool" value="1">
+                        <input type="hidden" name="type" value="retire">
                         <?php
                         break;
+                        
+                    /***************
+                     * Delete
+                     **************/
+                        
+                    case 'delete':
+                        echo $lng->getTrn('secs/teams/box_tm/desc/delete');
+                        if (!$this->isDeletable()) {
+                            $DISABLE = true;
+                        }
+                        ?>
+                        <hr><br>
+                        Delete?
+                        <input type="checkbox" name="bool" value="1" <?php echo ($DISABLE) ? 'DISABLED' : '';?>>
+                        <input type="hidden" name="type" value="delete">
+                        <?php
+                        break;
+                        
                     }
                     ?>
                     <br><br>
