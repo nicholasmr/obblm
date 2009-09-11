@@ -169,45 +169,6 @@ function coachCorner() {
 
         title($lng->getTrn('global/secLinks/coachcorner'));
 
-        // Coach stats.
-        ?>
-        <table class="text">
-            <tr>
-                <td class="light">
-                    <b><?php echo $lng->getTrn('secs/cc/main/cstats');?></b>
-                </td>
-            </tr>
-        </table>
-
-        <table class="text" style="padding:10px; border-spacing:5px;">
-            <tr>
-                <td width="150px"></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><?php echo $lng->getTrn('secs/cc/main/games_played');?>:</td>
-                <td><?php echo $coach->played; ?></td>
-            </tr>
-            <tr>
-                <td><?php echo $lng->getTrn('secs/cc/main/win_ptc');?>:</td>
-                <td><?php echo sprintf("%1.1f", $coach->played == 0 ? 0 : $coach->won/$coach->played * 100) . '%'; ?></td>
-            </tr>
-            <tr>
-                <td><?php echo $lng->getTrn('secs/cc/main/tours_won');?>:</td>
-                <td>
-                <?php
-                $won_tours = array();
-                foreach ($coach->getWonTours() as $tour) {
-                    array_push($won_tours, $tour->name);
-                }
-                echo empty($won_tours) ? '<i>None</i>' : implode(', ', $won_tours);
-                ?>
-                </td>
-            </tr>
-        </table>
-        <?php
-
-
         // Generate teams list.
 
         HTMLOUT::dispTeamList(STATS_COACH, $coach->coach_id);
