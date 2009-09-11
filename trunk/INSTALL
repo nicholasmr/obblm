@@ -34,6 +34,26 @@ NOTE: When upgrading please save your old settings file as a reference for when 
     Execute the following MySQL queries:
     
         ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id;
+        CREATE TABLE IF NOT EXISTS hof
+        (
+                hof_id  MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                pid     MEDIUMINT UNSIGNED,
+                date    DATETIME,
+                title   TEXT,
+                about   TEXT
+        );
+        INSERT INTO hof (pid, date, title, about) SELECT f_id, date, txt2, txt FROM texts WHERE type = 5 ORDER BY date ASC;
+        DELETE FROM texts WHERE type = 5;
+        CREATE TABLE IF NOT EXISTS wanted
+        (
+                wanted_id   MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                pid         MEDIUMINT UNSIGNED,
+                date        DATETIME,
+                why         TEXT,
+                bounty      TEXT
+        );
+        INSERT INTO wanted (pid, date, why, bounty) SELECT f_id, date, txt, txt2 FROM texts WHERE type = 6 ORDER BY date ASC;
+        DELETE FROM texts WHERE type = 6;
 
 0.7 -> 0.75
 

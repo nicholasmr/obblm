@@ -41,8 +41,8 @@ public static function getModuleTables()
 
 public static function main($argv)
 {
-global $raceididx;
-title('Comparison');
+global $raceididx, $lng;
+title($lng->getTrn('name', 'Comparison'));
 
 /* Get all IDs and names for players, teams, coaches and races. */
 $players = $teams = $coaches = array();

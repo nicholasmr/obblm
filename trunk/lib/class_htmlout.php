@@ -563,16 +563,16 @@ private static function make_menu()
                     ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
                 }
                 ?>
-                <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('secs/records/d_memma');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('global/secLinks/cmp');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('secs/records/d_gstats');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('name', 'Comparison');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
             </ul>
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/records');?></span>
             <ul>
-                <?php if (Module::isRegistered('HOF'))   { ?><li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('secs/records/d_hof');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Wanted')){ ?><li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('secs/records/d_wanted');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Prize')) { ?><li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('secs/records/d_prizes');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('HOF'))   { ?><li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Wanted')){ ?><li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Prize')) { ?><li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
             </ul>
         </li>
 
@@ -580,9 +580,6 @@ private static function make_menu()
         <li><a href="index.php?section=gallery"><?php echo $lng->getTrn('global/secLinks/gallery');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>
         <?php
-        if ($settings['enable_guest_book']) {
-            ?><li><a href="index.php?section=guest"><?php echo $lng->getTrn('global/secLinks/gb');?></a></li><?php
-        }
         if (!empty($settings['forum_url'])) {
             ?><li><a href="<?php echo $settings['forum_url'];?>"><?php echo $lng->getTrn('global/secLinks/forum');?></a></li><?php
         }

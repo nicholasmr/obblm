@@ -44,18 +44,18 @@ public static function getModuleTables()
 public static function main($argv) {
 
     global $lng;
-    title($lng->getTrn('secs/records/d_memma'));
-    echo $lng->getTrn('secs/records/memma/desc')."<br><br>\n";
+    title($lng->getTrn('name', __CLASS__));
+    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
     list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(false,false,false,'memm');
     foreach (self::getMemMatches($sel_node, $sel_node_id) as $d => $matches) {
         ?>
         <div class="recBox" style="width:60%;">
-            <div class="boxTitle2"><?php echo $lng->getTrn('secs/records/memma/'.$d); ?></div>
+            <div class="boxTitle2"><?php echo $lng->getTrn($d, __CLASS__); ?></div>
             <div class="boxBody">
                 <table class="recBoxTable">
                 <?php
                 if (empty($matches)) {
-                    ?><tr><td align="center"><br><br><?php echo preg_replace('/\sX\s/', ' '.MAX_MEM_MATCHES.' ', $lng->getTrn('secs/records/memma/filled'));?><br><br></td></tr><?php
+                    ?><tr><td align="center"><br><br><?php echo preg_replace('/\sX\s/', ' '.MAX_MEM_MATCHES.' ', $lng->getTrn('filled', __CLASS__));?><br><br></td></tr><?php
                 }
                 else {
                 $i = count($matches);
@@ -94,7 +94,7 @@ public static function main($argv) {
                         <td align="right" colspan="3">
                         <small>
                         <i><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?>, <?php echo textdate($m->date_played, true);?></i>, 
-                        <a href="index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('secs/records/memma/view');?></a> 
+                        <a href="index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('view', __CLASS__);?></a> 
                         </small>
                         </td>
                     </tr>

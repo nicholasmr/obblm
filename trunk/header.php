@@ -41,6 +41,7 @@ define('OBBLM_VERSION', '0.8c');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
+define('LOG_HIST_LENGTH', 3); // Show log entries for this number of months back in time.
 
 /*********************
  *   Stats types. Used by Stats class.
@@ -95,32 +96,6 @@ define('COLOR_HTML_CHR_EQP1', '#90EE90'); // Characteristic equal plus one.
 define('COLOR_HTML_CHR_GTP1', '#50FF50'); // Characteristic greater than plus one.
 define('COLOR_HTML_CHR_EQM1', '#FF8888'); // Characteristic equal minus one.
 define('COLOR_HTML_CHR_LTM1', '#FF4444'); // Characteristic less than minus one.
-
-/*********************
- *   For texts (table)
- *********************/
-
-// Table "text" type definitions.
-define('T_TEXT_MSG',    1);
-define('T_TEXT_COACH',  2);
-define('T_TEXT_TEAM',   3);
-define('T_TEXT_PLAYER', 4);
-    /*
-        DEV NOTE:
-        --------
-        These must go into the module. 
-        Also, make some system for giving _TEXT extensions there own constant ID's. without having to know which are in use etc..
-    */
-    define('T_TEXT_HOF',    5); // Hall of fame.
-    define('T_TEXT_WANTED', 6);
-define('T_TEXT_MSMR',   7); // Match summary.
-define('T_TEXT_TOUR',   8);
-define('T_TEXT_GUEST',  9);
-define('T_TEXT_LOG',    10);
-define('T_TEXT_MSMRC',  11); // Match summary comments.
-define('T_TEXT_TNEWS',  12); // Team news board messages.
-
-define('LOG_HIST_LENGTH', 3); // Show log entries for this number of months back in time.
 
 /*********************
  *   For players
@@ -222,18 +197,14 @@ require_once('lib/class_race.php');
 require_once('lib/class_stats.php');
 require_once('lib/class_text.php');
 require_once('lib/class_rrobin.php');
-#require_once('lib/class_knockout.php'); # Deprecated
 require_once('lib/class_module.php');
 require_once('lib/class_tablehandler.php');
 require_once('lib/class_images.php');
+require_once('lib/class_translations.php');
 
 // External libraries.
 require_once('lib/class_arraytojs.php');
-require_once('lib/class_elo.php');          # Daniel S.
-require_once('lib/class_translations.php'); # Juergen Unfried
-
-// Modules.
-require_once('modules/modsheader.php'); # Registration of modules.
+require_once('lib/class_elo.php'); # Daniel S.
 
 // HTML interface routines.
 require_once('sections.php'); # Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
@@ -259,5 +230,8 @@ if (!defined('NO_STARTUP')) {
     $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
 }
 $lng = new Translations($settings['lang']); # Load language.
+
+// Modules.
+require_once('modules/modsheader.php'); # Registration of modules.
 
 ?>

@@ -59,6 +59,11 @@ class Module
             However, all functions and classes defined in the included file have the global scope. 
         */
         foreach ($struct['filesLoadTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
+        // Load translation file, if exists. Exploit that the translation.xml MUST lie in same directory as $struct['filesLoadTime'][0].
+        if (file_exists($file = self::MOD_RPATH.dirname($struct['filesLoadTime'][0]).'/translations.xml')) {
+            global $lng;
+            $lng->registerTranslationFile($struct['class'], $file);
+        }
     }
     
     public static function unregister($class)

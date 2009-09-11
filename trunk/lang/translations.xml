@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<obblm version="OBBLM v. 0.8d">
 <!--
     For each language/locale a block of translations is
     provided. First, the language is specified, second the
@@ -53,11 +52,9 @@
                 <coaches>Coaches</coaches>
                 <races>Races</races>
                 <stars>Stars</stars>
-                <cmp>Comparison</cmp>
             <records>Records</records>            
             <rules>Rules</rules>
             <gallery>Gallery</gallery>
-            <gb>Guest book</gb>
             <forum>Forum</forum>
         </secLinks>
         
@@ -505,81 +502,7 @@
             <hh>Hire history of</hh>
             
         </stars>
-        
-        <records>
-        
-            <!-- General -->
-            <menu>Please select one of the below pages.</menu>
-            <d_hof>Hall of fame</d_hof>
-            <d_wanted>Wanted players</d_wanted>
-            <d_memma>Memorable matches</d_memma>
-            <d_prizes>Prizes</d_prizes>
-            <d_gstats>Overall graphical statistics</d_gstats>
-            <new>New entry</new>
-            <edit>Edit</edit>
-            <del>Delete</del>
-            <submit>Submit</submit>
-            <posted>Posted</posted>
-            <from>from</from>
-            <player>Player</player>
-            <team>Team</team>
-            <tour>Tournament</tour>
-            
-            <!-- Subsection: Hall of fame -->
-            <hof>
-                <g_title>Title</g_title>
-                <g_about>General description</g_about>
-                
-                <desc><![CDATA[Welcome to the hall of fame.<br>Here league commissioners may exercise their power by giving publicity to players of noteworthy achievements.]]></desc>
-                <title><![CDATA[First write a title.<br>This should be a short description of what the player has achieved, for example in which area the achievement has been made in.]]></title>
-                <about><![CDATA[Now write about the player's achievement in detail.<br>If the player has received an bonus (extra) skill, you could also write about that.]]></about>
-            </hof>
-            
-            <!-- Subsection: Wanted players -->
-            <wanted>
-                <g_title>Bounty</g_title>
-                <g_about>Wanted for</g_about>
-                <killed>HAS BEEN KILLED!</killed>
-                <wanted>Wanted</wanted>
-            
-                <desc><![CDATA[Welcome to the wall of wanted players.<br>Watch out for these player, a bounty is out for each of their heads!]]></desc>
-                <title><![CDATA[What is the bounty for this player's head?<br>This could be anything from raw gold to a free bonus skill for one of the players on the killing team.]]></title>
-                <about>Why is the player wanted?</about>
-                
-                <note>Please note: Once the player has been killed it is up to a leagues commissioner (admin) to give the appropriate award.</note>
-            </wanted>
-            
-            <!-- Subsection: Memorable matches -->
-            <memma>
-                <view>View</view>
-                <desc>Which matches are worth remembering in terms of most TDs, killed and so on?</desc>
-                <filled>More than X matches have the same record or no record exists at all.</filled>
-                
-                <!-- Most of... -->
-                <td>Most touchdowns</td>
-                <cp>Most completions</cp>
-                <intcpt>Most interceptions</intcpt>
-                <ki>Most killed</ki>
-                <cas>Most casualties</cas>
-                <svic>Largest score-difference</svic>
-                <inc>Largest team income</inc>
-                <gate>Largest gate</gate>
-                <mfans>Most RL fans/spectators</mfans>
-                <tvdiff>Largest TV difference in which underdog won</tvdiff>
-            </memma>
-            
-            <!-- Subsection: Prizes -->
-            <prizes>
-                <kind>Kind of prize</kind>
-                <g_title>Title</g_title>
-                <g_about>Description</g_about>
-                <desc><![CDATA[Welcome to the prizes section. Here you may find teams who have won prizes in tournaments for being 1st, 2nd and 3rd place and for being most lethal or fair.]]></desc>
-                <title><![CDATA[Short introduction to the prize or the winning team.]]></title>
-                <about>Details about the prize. Did the winning team/coach get something in real life?</about>
-            </prizes>
-            
-        </records>
-        
+       
         <rules>
             <intro>
             <![CDATA[
@@ -736,17 +659,6 @@
             
         </obblm>
         
-        <gb>
-            <new>Post new entry</new>
-            <note>
-            <![CDATA[
-            <i>Note</i>: Uses HTML formatting. Linebreaks should therefore be typed in as <i>&lt;br&gt;</i>.
-            ]]>
-            </note>
-            <posted>Posted</posted>
-            <del>Delete</del>
-        </gb>
-        
         <login>
             <coach>Coach</coach>
             <passwd>Password</passwd>
@@ -885,4 +797,4 @@
     </secs>        
 
 </en-GB>
-</obblm>
+

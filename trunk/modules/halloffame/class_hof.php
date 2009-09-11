@@ -21,14 +21,16 @@
  *
  */
 
-class HOF extends _Text implements ModuleInterface
+class HOF implements ModuleInterface
 {
+
 /***************
  * Properties 
  ***************/
 
 public $hof_id      = 0;
-public $player_id   = 0;
+public $pid         = 0;
+public $date        = '';
 public $title       = '';
 public $about       = '';
 
@@ -38,20 +40,33 @@ public $about       = '';
 
 function __construct($hof_id) 
 {
-    parent::__construct($hof_id);
-    
-    $this->hof_id       = $this->txt_id;        
-    $this->player_id    = $this->f_id;
-    $this->title        = $this->txt2;
-    $this->about        = $this->txt;
-    
-    unset($this->txt2);
-    unset($this->txt);
+    $result = mysql_query("SELECT * FROM hof WHERE hof_id = $hof_id");
+    if ($result && mysql_num_rows($result) > 0) {
+        while ($row = mysql_fetch_assoc($result)) {
+            foreach ($row as $key => $val) {
+                $this->$key = $val;
+            }
+        }
+    }
 }
 
 public function edit($title, $about) 
 {
-    return parent::edit($about, $title, false, false);
+    if (mysql_query("UPDATE hof SET 
+                    title = '".mysql_real_escape_string($title)."', 
+                    about = '".mysql_real_escape_string($about)."' 
+                    WHERE hof_id = $this->hof_id")) {
+        $this->title = $title;
+        $this->about = $about;
+        return true;
+    }
+    else
+        return false;
+}
+
+public function delete()
+{
+    return (mysql_query("DELETE FROM hof WHERE hof_id = $this->hof_id"));
 }
 
 /***************
@@ -62,10 +77,10 @@ public static function getHOF($n = false)
 {
     $HOF = array();
 
-    $result = mysql_query("SELECT txt_id, f_id FROM texts WHERE type = ".T_TEXT_HOF." ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
+    $result = mysql_query("SELECT hof_id, pid FROM hof ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
-            array_push($HOF, array('hof' => new HOF($row['txt_id']), 'player' => new Player($row['f_id'])));
+            array_push($HOF, array('hof' => new HOF($row['hof_id']), 'player' => new Player($row['pid'])));
         }
     }
     
@@ -74,7 +89,12 @@ public static function getHOF($n = false)
 
 public static function create($player_id, $title, $about)
 {
-    return parent::create($player_id, T_TEXT_HOF, $about, $title);
+    return (mysql_query("
+            INSERT INTO hof 
+            (pid, title, about, date) 
+            VALUES 
+            ($player_id, '".mysql_real_escape_string($title)."', '".mysql_real_escape_string($about)."', NOW())
+            "));
 }
 
 /***************
@@ -85,7 +105,7 @@ public static function main($argv)
 {
     // func may be "isInHOF" or "makeList".
     $func = array_shift($argv);
-    return call_user_func_array("HOF::$func", $argv);
+    return call_user_func_array(__CLASS__."::$func", $argv);
 }
 
 public static function getModuleAttributes()
@@ -100,7 +120,15 @@ public static function getModuleAttributes()
 
 public static function getModuleTables()
 {
-    return array();
+    return array(
+        'hof' => array(
+            'hof_id' => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+            'pid'    => 'MEDIUMINT UNSIGNED',
+            'date'   => 'DATETIME',
+            'title'  => 'TEXT',
+            'about'  => 'TEXT',
+        )
+    );
 }
 
 /***************
@@ -109,14 +137,14 @@ public static function getModuleTables()
 
 public static function isInHOF($pid) 
 {
-    $query = "SELECT f_id FROM texts WHERE f_id = $pid AND type = ".T_TEXT_HOF;
+    $query = "SELECT pid FROM hof WHERE pid = $pid";
     return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
 }
 
 public static function makeList($ALLOW_EDIT) {
     
     global $lng;
-    title($lng->getTrn('secs/records/d_hof'));
+    title($lng->getTrn('name', __CLASS__));
     
     /* A new entry was sent. Add it to system */
     
@@ -188,7 +216,7 @@ public static function makeList($ALLOW_EDIT) {
                 echo $easyconvert->output_all();
                 ?>
                 <form method="POST">
-                <b><?php echo $lng->getTrn('secs/records/team');?>:</b><br>
+                <b><?php echo $lng->getTrn('team', __CLASS__);?>:</b><br>
                 <select name="player_id" id="teams" onChange="updateTeamPlayers(this.options[this.selectedIndex].value, document.getElementById('players'));">
                     <?php
                     objsort($teams, array('+name'));
@@ -198,20 +226,20 @@ public static function makeList($ALLOW_EDIT) {
                     ?>
                 </select>                
                 <br><br>
-                <b><?php echo $lng->getTrn('secs/records/player');?>:</b><br>
+                <b><?php echo $lng->getTrn('player', __CLASS__);?>:</b><br>
                 <select name="player_id" id="players">
                     <option value='0'>-Empty-</option>
                 </select>
                 <br><br>
-                <?php echo $lng->getTrn('secs/records/hof/title');?><br>
-                <b><?php echo $lng->getTrn('secs/records/hof/g_title');?>:</b><br>
+                <?php echo $lng->getTrn('title', __CLASS__);?><br>
+                <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
                 <input type="text" name="title" size="60" maxlength="100" value="<?php echo $title;?>">
                 <br><br>
-                <?php echo $lng->getTrn('secs/records/hof/about');?><br>
-                <b><?php echo $lng->getTrn('secs/records/hof/g_about');?>:</b><br>
+                <?php echo $lng->getTrn('about', __CLASS__);?><br>
+                <b><?php echo $lng->getTrn('g_about', __CLASS__);?>:</b><br>
                 <textarea name="about" rows="15" cols="100"><?php echo $about;?></textarea>
                 <br><br>
-                <input type="submit" value="<?php echo $lng->getTrn('secs/records/submit');?>" name="Submit">
+                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit">
                 </form>
                 
                 <!-- Set player list to be the players from the default selected team. -->
@@ -229,9 +257,9 @@ public static function makeList($ALLOW_EDIT) {
     
     /* Print the hall of fame */
     
-    echo $lng->getTrn('secs/records/hof/desc')."<br><br>\n";
+    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
     if ($ALLOW_EDIT) {
-        echo "<a href='index.php?section=records&amp;subsec=hof&amp;action=new'>".$lng->getTrn('secs/records/new')."</a><br>\n";
+        echo "<a href='index.php?section=records&amp;subsec=hof&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
     $HOF = HOF::getHOF();
@@ -242,7 +270,7 @@ public static function makeList($ALLOW_EDIT) {
     
         ?>    
         <div class="recBox">
-            <div class="boxTitle2"><?php echo "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a> ".$lng->getTrn('secs/records/from')." <a href='index.php?section=coachcorner&amp;team_id=$p->owned_by_team_id'>$p->team_name</a>: $h->title";?></div>
+            <div class="boxTitle2"><?php echo "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a> ".$lng->getTrn('from', __CLASS__)." <a href='index.php?section=coachcorner&amp;team_id=$p->owned_by_team_id'>$p->team_name</a>: $h->title";?></div>
             <div class="boxBody">
                 <table class="recBoxTable">
                     <tr>
@@ -258,15 +286,15 @@ public static function makeList($ALLOW_EDIT) {
                     </tr>
                     <tr>
                         <td align="left">
-                        <?php echo $lng->getTrn('secs/records/posted').' '. $h->date;?>
+                        <?php echo $lng->getTrn('posted', __CLASS__).' '. $h->date;?>
                         </td>
                         <td colspan="2" align="right">
                         <?php
                         if ($ALLOW_EDIT) {
                             ?> 
-                            <a href="index.php?section=records&amp;subsec=hof&amp;action=edit&amp;hof_id=<?php echo $h->hof_id;?>"><?php echo $lng->getTrn('secs/records/edit');?></a>
+                            <a href="index.php?section=records&amp;subsec=hof&amp;action=edit&amp;hof_id=<?php echo $h->hof_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
                             &nbsp;
-                            <a href="index.php?section=records&amp;subsec=hof&amp;action=delete&amp;hof_id=<?php echo $h->hof_id;?>"><?php echo $lng->getTrn('secs/records/del');?></a> 
+                            <a href="index.php?section=records&amp;subsec=hof&amp;action=delete&amp;hof_id=<?php echo $h->hof_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
                             <?php
                         }
                         ?>
