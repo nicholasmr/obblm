@@ -37,7 +37,7 @@
  */ 
 
 define('RSS_SIZE', 20); // Number of entries in feed.
-define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, T_TEXT_HOF, T_TEXT_WANTED, T_TEXT_MSMR, T_TEXT_TNEWS))); // Create feeds from the text types.
+define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, 'HOF', 'Wanted', T_TEXT_MSMR, T_TEXT_TNEWS))); // Create feeds from the text types.
 
 class RSSfeed implements ModuleInterface
 {
@@ -131,20 +131,20 @@ class RSSfeed implements ModuleInterface
                     }
                     break;
                     
-                case T_TEXT_HOF:
+                case 'HOF':
                     if (Module::isRegistered('HOF')) {
                         foreach (Module::run('HOF', array('getHOF',RSS_SIZE)) as $item) {
                             $item = $item['hof'];
-                            $entries[] = (object) array('title' => "HOF entry for ".get_alt_col('players', 'player_id', $item->player_id, 'name').": $item->title", 'desc' => $item->about, 'date' => $item->date);
+                            $entries[] = (object) array('title' => "HOF entry for ".get_alt_col('players', 'player_id', $item->pid, 'name').": $item->title", 'desc' => $item->about, 'date' => $item->date);
                         }
                     }
                     break;
                 
-                case T_TEXT_WANTED:
+                case 'Wanted':
                     if (Module::isRegistered('Wanted')) {
                         foreach (Module::run('Wanted', array('getWanted', RSS_SIZE)) as $item) {
                             $item = $item['wanted'];
-                            $entries[] = (object) array('title' => "Wanted entry for ".get_alt_col('players', 'player_id', $item->player_id, 'name').": $item->bounty", 'desc' => $item->why, 'date' => $item->date);
+                            $entries[] = (object) array('title' => "Wanted entry for ".get_alt_col('players', 'player_id', $item->pid, 'name').": $item->bounty", 'desc' => $item->why, 'date' => $item->date);
                         }
                     }
                     break;

@@ -1142,9 +1142,9 @@ function sec_records() {
     global $lng, $coach;
     $ALLOW_EDIT = (is_object($coach) && $coach->admin);
     $subsecs = array(
-        'hof'    => $lng->getTrn('secs/records/d_hof'),
-        'wanted' => $lng->getTrn('secs/records/d_wanted'),
-        'prize'  => $lng->getTrn('secs/records/d_prizes'),
+        'hof'    => $lng->getTrn('name', 'HOF'),
+        'wanted' => $lng->getTrn('name', 'Wanted'),
+        'prize'  => $lng->getTrn('name', 'Prize'),
     );
 
     // This section's routines are placed in the records.php file.
@@ -1159,7 +1159,7 @@ function sec_records() {
     }
 
     title($lng->getTrn('global/secLinks/records'));
-    echo $lng->getTrn('secs/records/menu')."<br><br>\n";
+    echo "Please select one of the below pages<br><br>\n";
     foreach ($subsecs as $a => $b) {
         echo "<a href='index.php?section=records&amp;subsec=$a'><b>$b</b></a><br>\n";
     }
@@ -1472,71 +1472,6 @@ function sec_about() {
         along with this program.  If not, see http://www.gnu.org/licenses/.
     </p>
     <?php
-}
-
-/*************************
- *
- *  GUEST BOOK
- *
- *************************/
-
-function sec_guest() {
-
-    global $coach, $lng;
-
-    /*
-        Show guest book
-    */
-
-    if (isset($_POST['msg']) && !empty($_POST['msg'])) {
-        status(GuestBook::create($_POST['msg']));
-    }
-
-    if (isset($_GET['delete'])) {
-        $g = new GuestBook($_GET['delete']);
-        $g->delete();
-        unset($g);
-    }
-
-    title($lng->getTrn('global/secLinks/gb'));
-    ?>
-    <div style="text-align: center;">
-    <b>        <?php echo $lng->getTrn('secs/gb/new');?>: </b>
-    <form method="POST">
-        <textarea name="msg" rows="5" cols="50"></textarea>
-        <br>
-        <?php echo $lng->getTrn('secs/gb/note');?>
-        <br><br>
-        <input type="submit" value="Submit">
-    </form>
-    </div>
-    <br>
-    <?php
-
-    foreach (GuestBook::getBook() as $g) {
-        echo "<div class='gb'>\n";
-            echo "<div class='boxTitle1'>".$lng->getTrn('secs/gb/posted')." $g->date</div>\n";
-            echo "<div class='boxBody'>\n";
-                echo "$g->txt";
-                if (is_object($coach) && $coach->admin) {
-                    ?>
-                    <br><br><hr>
-                    <table class='boxTable' style="width: 100%">
-                    <tr>
-                    <td style="text-align: right;">
-                    <?php
-                    echo "<a href='index.php?section=guest&amp;delete=$g->gb_id'>".$lng->getTrn('secs/gb/del')."</a>\n";
-                    ?>
-                    </td>
-                    </tr>
-                    </table>
-                    <?php
-                }
-                ?>
-            </div>
-        </div>
-        <?php
-    }
 }
 
 /*************************

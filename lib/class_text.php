@@ -25,6 +25,21 @@
  *  Generic class for handling the "texts" table.
  */
 
+// Table "text" type definitions.
+define('T_TEXT_MSG',    1);
+define('T_TEXT_COACH',  2);
+define('T_TEXT_TEAM',   3);
+define('T_TEXT_PLAYER', 4);
+// The gap is due to modularisation of code (have own tables instead of using texts table).
+#define('T_TEXT_HOF',    5); # Deprecated
+#define('T_TEXT_WANTED', 6); # Deprecated
+define('T_TEXT_MSMR',   7); // Match summary.
+define('T_TEXT_TOUR',   8);
+#define('T_TEXT_GUEST',  9); # Deprecated
+define('T_TEXT_LOG',    10);
+define('T_TEXT_MSMRC',  11); // Match summary comments.
+define('T_TEXT_TNEWS',  12); // Team news board messages.
+
 class _Text
 {
     /***************
@@ -53,8 +68,6 @@ class _Text
                 }
             }
         }
-        
-#        $this->txt = preg_replace('/\r/', '<br>', $this->txt);
     }
     
     public function delete()
@@ -334,53 +347,6 @@ class TourDesc extends _Text
         return (empty($this->txt)) 
             ? parent::create($this->tour_id, T_TEXT_TOUR, $txt, false) 
             : parent::edit($txt, false, false, false);
-    }
-}
-
-/* 
- *  Handles guest book entries.
- */
-
-class GuestBook extends _Text
-{
-    /***************
-     * Properties 
-     ***************/
-
-    public $gb_id = 0;
-
-    /***************
-     * Methods 
-     ***************/    
-
-    function __construct($gb_id) 
-    {
-        parent::__construct($gb_id);
-        $this->gb_id = $gb_id;
-    }
-    
-    /***************
-     * Statics
-     ***************/
-    
-    public static function create($txt)
-    {
-        return parent::create(0, T_TEXT_GUEST, $txt, false);
-    }
-    
-    public static function getBook()
-    {
-        $gb = array();
-        
-        $query = "SELECT txt_id FROM texts WHERE type = ".T_TEXT_GUEST." ORDER BY date DESC";
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                array_push($gb, new GuestBook($row['txt_id']));
-            }
-        }
-        
-        return $gb;
     }
 }
 

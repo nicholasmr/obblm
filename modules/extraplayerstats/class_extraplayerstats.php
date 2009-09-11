@@ -50,9 +50,9 @@ public static function main($argv) # argv = argument vector (array).
 public static function getModuleAttributes()
 {
     return array(
-        'author'     => 'Nicholas, William, Grégory',
+        'author'     => 'Nicholas Mossor Rathmann',
         'moduleName' => 'Extra Player Stats',
-        'date'       => 'Sep, 2009', # For example '2009'.
+        'date'       => '2009', # For example '2009'.
         'setCanvas'  => false, # If true, whenever your main() is run through Module::run() your code's output will be "sandwiched" into the standard HTML frame.
     );
 }

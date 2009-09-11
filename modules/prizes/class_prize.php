@@ -21,55 +21,7 @@
  *   
  */
 
-/********************
-    Wrapper for old "Prize" class for compatibility with module subsystem.
- ********************/
-class Prize extends PrizeOLD implements ModuleInterface
-{
-
-public static function getModuleAttributes()
-{
-    return array(
-        'author'     => 'Nicholas Mossor Rathmann',
-        'moduleName' => 'Prizes',
-        'date'       => '2009',
-        'setCanvas'  => false,
-    );
-}
-
-public static function getModuleTables()
-{
-    return array(
-        # Table 1 name => column definitions
-        'prizes' => array(
-            # Column name => definition
-            'prize_id' => 'MEDIUMINT UNSIGNED  NOT NULL PRIMARY KEY AUTO_INCREMENT',
-            'team_id'  => 'MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0',
-            'tour_id'  => 'MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0',
-            'type'     => 'TINYINT UNSIGNED    NOT NULL DEFAULT 0',
-            'date'     => 'DATETIME',
-            'title'    => 'VARCHAR(100)',
-            'txt'      => 'TEXT',
-        ),
-    );
-}
-
-public static function main($argv)
-{
-    /*
-        First argument is func name in old Prize class, the rest are arguments for that func.
-    */
-    return (($func = array_shift($argv)) == 'getInstance') 
-        ? (new PrizeOLD($prid = array_shift($argv))) 
-        : call_user_func_array("PrizeOLD::$func", $argv);
-}
-
-}
-
-/********************
-    Old "Prize" class.
- ********************/
-class PrizeOLD
+class Prize implements ModuleInterface
 {
 
 /***************
@@ -228,12 +180,56 @@ public static function create($type, $tid, $trid, $title, $txt)
     return true;
 }
 
+/***************
+ * Interface
+ ***************/
+
+public static function getModuleAttributes()
+{
+    return array(
+        'author'     => 'Nicholas Mossor Rathmann',
+        'moduleName' => 'Prizes',
+        'date'       => '2009',
+        'setCanvas'  => false,
+    );
+}
+
+public static function getModuleTables()
+{
+    return array(
+        # Table 1 name => column definitions
+        'prizes' => array(
+            # Column name => definition
+            'prize_id' => 'MEDIUMINT UNSIGNED  NOT NULL PRIMARY KEY AUTO_INCREMENT',
+            'team_id'  => 'MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0',
+            'tour_id'  => 'MEDIUMINT UNSIGNED  NOT NULL DEFAULT 0',
+            'type'     => 'TINYINT UNSIGNED    NOT NULL DEFAULT 0',
+            'date'     => 'DATETIME',
+            'title'    => 'VARCHAR(100)',
+            'txt'      => 'TEXT',
+        ),
+    );
+}
+
+public static function main($argv)
+{
+    /*
+        First argument is func name in old Prize class, the rest are arguments for that func.
+    */
+    $func = array_shift($argv);
+    return call_user_func_array(__CLASS__."::$func", $argv);
+}
+
+/***************
+ * main() related.
+ ***************/
+
 // Main prizes page.
 public static function makeList($ALLOW_EDIT)
 {
     
     global $lng;
-    title($lng->getTrn('secs/records/d_prizes'));
+    title($lng->getTrn('name', 'Prize'));
     
     /* A new entry was sent. Add it to system */
     
@@ -270,7 +266,7 @@ public static function makeList($ALLOW_EDIT)
             case 'new':
                 ?>
                 <form method="POST" enctype="multipart/form-data">
-                <b><?php echo $lng->getTrn('secs/records/tour');?>:</b><br>
+                <b><?php echo $lng->getTrn('tour', __CLASS__);?>:</b><br>
                 <select name="trid">
                     <?php
                     $tours = Tour::getTours();
@@ -281,7 +277,7 @@ public static function makeList($ALLOW_EDIT)
                     ?>
                 </select>
                 <br><br>
-                <b><?php echo $lng->getTrn('secs/records/team');?>:</b><br>
+                <b><?php echo $lng->getTrn('team', __CLASS__);?>:</b><br>
                 <select name="tid">
                     <?php
                     $teams = Team::getTeams();
@@ -292,7 +288,7 @@ public static function makeList($ALLOW_EDIT)
                     ?>
                 </select>
                 <br><br>
-                <b><?php echo $lng->getTrn('secs/records/prizes/kind');?>:</b><br>
+                <b><?php echo $lng->getTrn('kind', __CLASS__);?>:</b><br>
                 <select name="ptype">
                     <?php
                     foreach (Prize::getTypes() as $ptype => $desc) {
@@ -301,15 +297,15 @@ public static function makeList($ALLOW_EDIT)
                     ?>
                 </select>
                 <br><br>
-                <?php echo $lng->getTrn('secs/records/prizes/title');?><br>
-                <b><?php echo $lng->getTrn('secs/records/prizes/g_title');?>:</b><br>
+                <?php echo $lng->getTrn('title', __CLASS__);?><br>
+                <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
                 <input type="text" name="title" size="60" maxlength="100" value="">
                 <br><br>
-                <?php echo $lng->getTrn('secs/records/prizes/about');?><br>
-                <b><?php echo $lng->getTrn('secs/records/prizes/g_about');?>:</b><br>
+                <?php echo $lng->getTrn('about', __CLASS__);?><br>
+                <b><?php echo $lng->getTrn('g_about', __CLASS__);?>:</b><br>
                 <textarea name="txt" rows="15" cols="100"></textarea>
                 <br><br><br>
-                <input type="submit" value="<?php echo $lng->getTrn('secs/records/submit');?>" name="Submit" <?php echo (empty($tours) | empty($teams)) ? 'DISABLED' : '';?>>
+                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit" <?php echo (empty($tours) | empty($teams)) ? 'DISABLED' : '';?>>
                 </form>
                 <br>
                 <?php
@@ -321,9 +317,9 @@ public static function makeList($ALLOW_EDIT)
     }
     
     /* Print the prizes */
-    echo $lng->getTrn('secs/records/prizes/desc')."<br><br>\n";
+    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
     if ($ALLOW_EDIT) {
-        echo "<a href='index.php?section=records&amp;subsec=prize&amp;action=new'>".$lng->getTrn('secs/records/new')."</a><br>\n";
+        echo "<a href='index.php?section=records&amp;subsec=prize&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
     Prize::printList(false, $ALLOW_EDIT);
