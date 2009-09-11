@@ -207,12 +207,12 @@ require_once('lib/class_arraytojs.php');
 require_once('lib/class_elo.php'); # Daniel S.
 
 // HTML interface routines.
-require_once('sections.php'); # Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
+require_once('general/sections.php'); # Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('lib/class_htmlout.php');
 require_once('lib/class_team_htmlout.php');
 require_once('lib/class_player_htmlout.php');
-require_once('matches.php');
-require_once('admin.php');
+require_once('general/matches.php');
+require_once('admin/admin.php');
 
 /********************
  *   Final setup

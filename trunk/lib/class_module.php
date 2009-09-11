@@ -107,7 +107,7 @@ class Module
         $tables = array();
         foreach (array_keys(self::$modules) as $class) {
             foreach (call_user_func("$class::getModuleTables") as $name => $tblStruct) {
-                $tables[$class][$name] = Table::createTableIfNotExists($name, $tblStruct);
+                $tables[$class][$name] = Table::createTable($name, $tblStruct);
             }
         }
         return $tables;
