@@ -114,10 +114,10 @@ private function _handleActions($ALLOW_EDIT)
         case 'newsedit': status($team->editNews($_POST['news_id'], $_POST['txt'])); break;
 
         case 'pic': 
-            if (isset($_FILES[Image::$defaultHTMLUploadName.'_stad'])) 
-                status($team->saveStadiumPic(Image::$defaultHTMLUploadName.'_stad'));
-            elseif (isset($_FILES[Image::$defaultHTMLUploadName.'_logo']))
-                status($team->saveLogo(Image::$defaultHTMLUploadName.'_logo'));
+            if (isset($_FILES[ImageSubSys::$defaultHTMLUploadName.'_stad'])) 
+                status($team->saveStadiumPic(ImageSubSys::$defaultHTMLUploadName.'_stad'));
+            elseif (isset($_FILES[ImageSubSys::$defaultHTMLUploadName.'_logo']))
+                status($team->saveLogo(ImageSubSys::$defaultHTMLUploadName.'_logo'));
             break;
     }
 
@@ -1371,12 +1371,12 @@ private function _about($ALLOW_EDIT)
         <tr>
             <td>
                 <?php
-                Image::makeBox(IMGTYPE_TEAMLOGO, $team->team_id, $ALLOW_EDIT, '_logo');
+                ImageSubSys::makeBox(IMGTYPE_TEAMLOGO, $team->team_id, $ALLOW_EDIT, '_logo');
                 ?>
             </td>
             <td>
                 <?php
-                Image::makeBox(IMGTYPE_TEAMSTADIUM, $team->team_id, $ALLOW_EDIT, '_stad');
+                ImageSubSys::makeBox(IMGTYPE_TEAMSTADIUM, $team->team_id, $ALLOW_EDIT, '_stad');
                 ?>
             </td>
             <td valign='top' style='width: 100%;'>

@@ -249,7 +249,7 @@ private function _about($ALLOW_EDIT)
             <div class="boxBody">
                 <i><?php echo $lng->getTrn('secs/playerprofile/pic');?></i><hr>
                 <?php
-                Image::makeBox(IMGTYPE_PLAYER, $p->player_id, $ALLOW_EDIT, false);
+                ImageSubSys::makeBox(IMGTYPE_PLAYER, $p->player_id, $ALLOW_EDIT, false);
                 ?>
                 <br><br>
                 <i><?php echo $lng->getTrn('secs/playerprofile/pic');?></i><hr>

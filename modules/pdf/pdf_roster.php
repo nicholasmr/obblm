@@ -493,7 +493,7 @@ if ($settings['enable_pdf_logos']) {
     // Team logo
     // Comment out if you dont have GD 2.x installed, or if you dont want the logo in roster.
     // Not tested with anything except PNG images that comes with OBBLM.
-    $img = new Image(IMGTYPE_TEAMLOGO,$team->team_id);
+    $img = new ImageSubSys(IMGTYPE_TEAMLOGO,$team->team_id);
     $pdf->Image($img->getPath(),346,436,128,128,'','',false,0);
 
     // OBBLM text lower left corner as a pic

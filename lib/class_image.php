@@ -34,7 +34,7 @@ define('IMGPATH_TEAMLOGOS',    UPLOAD_DIR.'/teams');
 define('IMGPATH_TEAMSTADIUMS', UPLOAD_DIR.'/stadiums');
 define('IMGPATH_COACHES',      UPLOAD_DIR.'/coaches');
 
-class Image
+class ImageSubSys
 {
     /***************
      * Properties 
@@ -135,7 +135,7 @@ class Image
     {
         // Prints a nice picture box.    
         $height = $width = 250; # Picture dimensions.
-        $img = new Image($obj, $obj_id);
+        $img = new self($obj, $obj_id);
         
         ?>
         <img alt="Image" height="<?php echo $height;?>" width="<?php echo $width;?>" src="<?php echo $img->getPath()?>">
