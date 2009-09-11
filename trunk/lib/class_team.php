@@ -615,13 +615,13 @@ class Team
     }
 
     public function saveLogo($name) {
-        $img = new Image(IMGTYPE_TEAMLOGO, $this->team_id);
+        $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $this->team_id);
         list($retstatus, $error) = $img->save($name);
         return $retstatus;
     }
 
     public function saveStadiumPic($name = false) {
-        $img = new Image(IMGTYPE_TEAMSTADIUM, $this->team_id);
+        $img = new ImageSubSys(IMGTYPE_TEAMSTADIUM, $this->team_id);
         list($retstatus, $error) = $img->save($name);
         return $retstatus;
     }

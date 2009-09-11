@@ -50,12 +50,11 @@ Module::register(array(
     'filesLoadTime' => array('rss/class_rss.php')
 ));
 
-// @FIXME Clash with JPGRAPH class name "Image".
-#Module::register(array(
-#    'class'         => 'SGraph', 
-#    'filesRunTime'  => array(),
-#    'filesLoadTime' => array('statsgraph/header.php', 'statsgraph/class_statsgraph.php')
-#));
+Module::register(array(
+    'class'         => 'SGraph', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('statsgraph/header.php', 'statsgraph/class_statsgraph.php')
+));
 
 Module::register(array(
     'class'         => 'Team_export', 

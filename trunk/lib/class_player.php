@@ -724,7 +724,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
     }
     
     public function savePic($name = false) {
-        $img = new Image(IMGTYPE_PLAYER, $this->player_id);
+        $img = new ImageSubSys(IMGTYPE_PLAYER, $this->player_id);
         list($retstatus, $error) = $img->save($name);
         return $retstatus;
     }

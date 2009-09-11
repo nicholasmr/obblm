@@ -62,8 +62,8 @@ public static function main($argv) {
                 foreach ($matches as $m) {
                     $t1 = new Team($m->team1_id);
                     $t2 = new Team($m->team2_id);
-                    $img1 = new Image(IMGTYPE_TEAMLOGO, $t1->team_id);
-                    $img2 = new Image(IMGTYPE_TEAMLOGO, $t2->team_id);
+                    $img1 = new ImageSubSys(IMGTYPE_TEAMLOGO, $t1->team_id);
+                    $img2 = new ImageSubSys(IMGTYPE_TEAMLOGO, $t2->team_id);
                     ?>
                     <tr>
                         <td align="left" style="width:40%;"><img border='0px' height='30' width='30' alt='team picture' src='<?php echo $img1->getPath();?>'><?php echo $t1->name;?></td>

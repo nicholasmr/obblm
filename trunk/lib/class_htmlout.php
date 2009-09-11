@@ -881,7 +881,7 @@ public static function dispTeamList($obj, $obj_id)
     foreach ($teams as $t) {
         $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');
         $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that HTMLOUT::sort_table does not create the team link on coach name too.
-        $img = new Image(IMGTYPE_TEAMLOGO, $t->team_id);
+        $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
         $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath()."'>";
         $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
         $lt = $t->getLatestTour();

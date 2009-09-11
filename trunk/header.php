@@ -199,7 +199,7 @@ require_once('lib/class_text.php');
 require_once('lib/class_rrobin.php');
 require_once('lib/class_module.php');
 require_once('lib/class_tablehandler.php');
-require_once('lib/class_images.php');
+require_once('lib/class_image.php');
 require_once('lib/class_translations.php');
 
 // External libraries.
@@ -209,6 +209,7 @@ require_once('lib/class_elo.php'); # Daniel S.
 // HTML interface routines.
 require_once('general/sections.php'); # Main file. Some of the subroutines in this file are quite large and are therefore split into the files below.
 require_once('lib/class_htmlout.php');
+require_once('lib/class_coach_htmlout.php');
 require_once('lib/class_team_htmlout.php');
 require_once('lib/class_player_htmlout.php');
 require_once('general/matches.php');

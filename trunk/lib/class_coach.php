@@ -221,7 +221,7 @@ class Coach
     }
     
     public function savePic($name = false) {
-        $img = new Image(IMGTYPE_COACH, $this->coach_id);
+        $img = new ImageSubSys(IMGTYPE_COACH, $this->coach_id);
         list($retstatus, $error) = $img->save($name);
         return $retstatus;
     }
