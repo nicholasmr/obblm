@@ -525,7 +525,8 @@ private static function make_menu()
         <li><a href="index.php?section=fixturelist"><?php echo $lng->getTrn('global/secLinks/fixtures');?></a></li>
         <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/statistics');?></span>
             <ul>
-                <li><a href="index.php?section=standings"><?php echo $lng->getTrn('global/secLinks/standings');?></a></li>
+                <li><a href="index.php?section=recent"><?php echo $lng->getTrn('global/secLinks/recent');?></a></li>
+                <li><a href="index.php?section=upcomming"><?php echo $lng->getTrn('global/secLinks/upcomming');?></a></li>
                 <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/tourstn');?></span>
                     <ul>
                         <?php
@@ -553,8 +554,7 @@ private static function make_menu()
                         ?>
                     </ul>
                 </li>
-                <li><a href="index.php?section=recent"><?php echo $lng->getTrn('global/secLinks/recent');?></a></li>
-                <li><a href="index.php?section=upcomming"><?php echo $lng->getTrn('global/secLinks/upcomming');?></a></li>
+                <li><a href="index.php?section=standings"><?php echo $lng->getTrn('global/secLinks/standings');?></a></li>
                 <li><a href="index.php?section=players"><?php echo $lng->getTrn('global/secLinks/players');?></a></li>
                 <li><a href="index.php?section=coaches"><?php echo $lng->getTrn('global/secLinks/coaches');?></a></li>
                 <li><a href="index.php?section=races"><?php echo $lng->getTrn('global/secLinks/races');?></a></li>
@@ -563,16 +563,16 @@ private static function make_menu()
                     ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
                 }
                 ?>
-                <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('name', 'Comparison');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
             </ul>
         </li>
-        <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/records');?></span>
+        <li><span class="dir"><?php echo 'Plugins';#$lng->getTrn('global/secLinks/records');?></span>
             <ul>
                 <?php if (Module::isRegistered('HOF'))   { ?><li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Wanted')){ ?><li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Prize')) { ?><li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('name', 'Comparison');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
             </ul>
         </li>
 
