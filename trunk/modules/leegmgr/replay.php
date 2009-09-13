@@ -7,18 +7,21 @@ if ( isset($_GET['replay']) )
     $mid = $_GET['replay'];
     header('Content-type: application/octec-stream');
     header('Content-Disposition: attachment; filename=match'.$mid.'.rep');
-    $replayurl = "http://ate.stuntyleeg.com/handler.php?type=leegmgr&replay=".$mid;
+    $replayurl = "http://".$_SERVER["SERVER_NAME"]."/handler.php?type=leegmgr&replay=".$mid;
     $zip = file_get_contents( $replayurl );
     $start = strpos($zip, "<!-- BEGIN DOWNLOAD OF REPLAY -->") + 33;
     $end = strpos($zip, "<!-- END DOWNLOAD OF REPLAY -->") + 31;
     $zip = substr($zip, $start, $end - $start);
 
-
     $temp_path = sys_get_temp_dir();
-    $tempname = tempnam($temp_path, "lm_");
+    $tempname = tempnam($temp_path, "");
+
     $f_r = fopen($tempname, 'w+');
     fwrite($f_r, $zip);
     fseek($f_r, 0);
+
+    #$test = fread( $f_r ,filesize($tempname) );
+    #Print $test;
 
     $zip_r = zip_open($tempname);
     while ($zip_entry = zip_read($zip_r))
@@ -30,12 +33,7 @@ if ( isset($_GET['replay']) )
         }
     }
     zip_close($zip_r);
-
-    fclose($f_r); // this removes the file
-
     Print $replay;
-    
-    
 }
 
 ?>

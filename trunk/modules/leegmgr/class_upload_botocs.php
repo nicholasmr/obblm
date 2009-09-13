@@ -44,12 +44,14 @@ class UPLOAD_BOTOCS implements ModuleInterface
         public $homewinnings = 0;
         public $homeff = 0;
         public $homefame = 0;
+        public $hometransferedGold = 0;
         public $homeplayers;
     public $awayteam = '';
         public $awayscore = 0;
         public $awaywinnings = 0;
         public $awayff = 0;
         public $awayfame = 0;
+        public $awaytransferedGold = 0;
         public $awayplayers;
 
     public $hometeam_id = 0;
@@ -122,6 +124,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $this->homewinnings = $results->team[0]->winnings;
         $this->homeff = $results->team[0]->fanfactor;
         $this->homefame = $results->team[0]->fame;
+        $this->hometransferedGold = $results->team[0]->transferedGold;
+
 
         foreach ( $results->team[0]->players->player as $player )
         {
@@ -144,6 +148,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $this->awaywinnings = $results->team[1]->winnings;
         $this->awayff = $results->team[1]->fanfactor;
         $this->awayfame = $results->team[1]->fame;
+        $this->awaytransferedGold = $results->team[1]->transferedGold;
 
         foreach ( $results->team[1]->players->player as $player )
         {
