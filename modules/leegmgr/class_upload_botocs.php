@@ -614,10 +614,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
         {
             #Retrieve the entire ZIP file that was previously uploaded.
             $mid = $_GET['replay'];
-            $zip = mysql_query( "SELECT replay FROM `leegmgr_matches` WHERE mid = $mid" );
-            $zip = mysql_fetch_array($zip);
-            $zip = $zip[0];
-            if ( !$zip )
+            if ( is_numeric($mid) )
+            {
+                $zip = mysql_query( "SELECT replay FROM `leegmgr_matches` WHERE mid = $mid" );
+                $zip = mysql_fetch_array($zip);
+                $zip = $zip[0];
+            }
+            if ( !isset($zip) || !$zip )
             {
                 Print "An upload could not be retrieved for the specified match id.";
                 return false;
