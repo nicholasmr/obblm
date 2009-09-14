@@ -542,7 +542,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             Print "<br><b>Error: {$upload->error}</b><br>";
             unset($upload);
             unset($_FILES['userfile']);
-            UPLOAD_BOTOCS::main(array());
+            UPLOAD_BOTOCS::main(array(true));
         }
 
     }
@@ -606,25 +606,55 @@ class UPLOAD_BOTOCS implements ModuleInterface
     public static function main($argv) {
         
         // Module registered main function.
+        global $coach;
         global $settings;
         if ( !$settings['leegmgr_enabled'] ) die ("LeegMgr is currently disabled.");
-
+        #Begin Replay Retrieval
         if ( isset($_GET['replay']) )
         {
-            $mid = $_GET['replay']; #461
-            $test= mysql_query( "SELECT replay FROM `leegmgr_matches` WHERE mid = $mid" );
-            $test = mysql_fetch_array($test);
-            $test = $test[0];
-#            header("location: 1.html"); 
-#            header('Content-type: application/zip');
-#            header('Content-Disposition: attachment; filename="replay.zip"');
-#            readfile($test);
-            Print "<!-- BEGIN DOWNLOAD OF REPLAY -->";
-            Print $test;
-            Print "<!-- END DOWNLOAD OF REPLAY -->";
+            #Retrieve the entire ZIP file that was previously uploaded.
+            $mid = $_GET['replay'];
+            $zip = mysql_query( "SELECT replay FROM `leegmgr_matches` WHERE mid = $mid" );
+            $zip = mysql_fetch_array($zip);
+            $zip = $zip[0];
+            if ( !$zip )
+            {
+                Print "An upload could not be retrieved for the specified match id.";
+                return false;
+            }
+
+            #Create a temporary file name that the ZIP file can be written to.
+            $temp_path = sys_get_temp_dir();
+            $tempname = tempnam($temp_path, "");
+
+            #Open and write the retrieved ZIP file to the temporary file.
+            $f_r = fopen($tempname, 'w+');
+            fwrite($f_r, $zip);
+            fseek($f_r, 0);
+            fclose($f_r);
+
+            #Open up the temp file for extracting the replay.rep file from the ZIP file.
+            $zip_r = zip_open($tempname);
+            while ($zip_entry = zip_read($zip_r))
+            {
+                if (strpos(zip_entry_name($zip_entry),"replay.rep") !== false )
+                {
+                    $replay = zip_entry_read($zip_entry, 100000);
+                    zip_entry_close($zip_entry);
+                }
+            }
+            zip_close($zip_r);
+
+            #Specify the header so that the browser is prompted to download the replay.rep file.
+            header('Content-type: application/octec-stream');
+            header('Content-Disposition: attachment; filename=match'.$mid.'.rep');
+            #Whatever is printed to the screen will be in the file.
+            Print $replay;
+
 		return true;
         }
-    
+        #End Replay Retrieval
+        if ( !isset($argv[0]) ) HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : false);    
         if ( isset($_FILES['userfile']) && isset($_SESSION['coach_id']) )
         {
             $userfile = $_FILES['userfile'];
@@ -639,6 +669,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
             Print "</body></html>";
         }
 
+        HTMLOUT::frame_end();
+
     }
     
     public static function getModuleAttributes()
@@ -647,7 +679,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             'author'     => 'William Leonard',
             'moduleName' => 'BOTOCS match upload',
             'date'       => '2009',
-            'setCanvas'  => true,
+            'setCanvas'  => false,
         );
     }
 
