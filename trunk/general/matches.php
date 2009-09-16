@@ -212,6 +212,12 @@ function match_form($match_id) {
     $CP = 8; // Colspan.
 
     $did = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'f_did'); // For below match relations (league, division etc.) table.
+
+    if ( Module::isRegistered('UPLOAD_BOTOCS') )  #&& isset($settings['leegmgr_enabled']) && $settings['leegmgr_enabled']
+    {
+        Print "<center><a href='http://".$_SERVER["SERVER_NAME"]."/handler.php?type=leegmgr&replay=".$m->match_id."'>view replay</a></center>";
+    }
+
     ?>
     <table>
     <tr><td><b>League</b>:</td><td><?php echo get_alt_col('leagues', 'lid', get_alt_col('divisions', 'did', $did, 'f_lid'), 'name');?></td></tr>
