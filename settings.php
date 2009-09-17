@@ -10,7 +10,7 @@ $db_passwd = '';
 $db_host   = 'localhost';
 
 /*************************
- * OBBLM display settings 
+ * OBBLM settings 
  *************************/
 
 $settings['forum_url'] = 'http://localhost';// URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
@@ -36,6 +36,10 @@ $settings['fp_links']              = false; // Default is false. Generate coach,
 $settings['force_tour_foldout']    = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.
 $settings['hide_retired']		   = false; // Defailt is false. Hides retired coaches and teams from standings tables.
 $settings['relate_team_to_league'] = false; // Default is false. Associate teams with leagues. Teams from different leagues can not schedule matches against each other. 
+
+// The style of the team list in the match scheduling section.
+// Options: 1, 2. 1: Sorts against coach name, then team name. 2: Sorts against team name only. 1 is preferably if coaches have multiple teams, else 2.
+$settings['scheduling_list_style'] = 2; // Default is 1.
 
 /*****************
  * OBBLM rule set
@@ -146,8 +150,29 @@ $hrs[2]['points']      = '2*[score_team] - 1*[score_opponent]';             // T
 $hrs[2]['points_desc'] = '2 pts for team score, -1 pts for opponent score'; // Set the description of the points to be this string.
 
 // Example 3
-$hrs[3]['rule']        = array('-score_diff', '-smp');  // Sort teams against: larget score difference, then most sportsmanship points.
+$hrs[3]['rule']        = array('-score_diff', '-smp');  // Sort teams against: largest score difference, then most sportsmanship points.
 $hrs[3]['points']      = '';                            // Points not used.
 $hrs[3]['points_desc'] = '';                            // Points not used.
+
+/*****************
+ * Enable/disable modules
+ *****************/
+// Change value from true to false if you wish to disable a module.
+
+$settings['modules_enabled'] = array(
+    'IndcPage'      => true, # Inducements try-out
+    'PDFroster'     => true, # Team PDF roster
+    'RSSfeed'       => true, # Site RSS feed
+    'SGraph'        => true, # Graphical statistics
+    'Team_export'   => true, # Standard XML export of team
+    'Memmatches'    => true, # Memorable matches viewer
+    'Comparison'    => true, # Cross compare stats between coaches, teams, races, players.
+    'Wanted'        => true, # Wanted list
+    'HOF'           => true, # Hall of fame
+    'Prize'         => true, # Tournament prizes list
+    'UPLOAD_BOTOCS' => true, # Allow upload of a BOTOCS match
+    'XML_BOTOCS'    => true, # BOTOCS XML export of team
+    'Registration'  => true, # Allows users to register on the site.
+);
 
 ?>

@@ -50,6 +50,12 @@ class Module
     
     public static function register(array $struct)
     {
+        // Disabled? Don't load, return.
+        global $settings;
+        if (isset($settings['modules_enabled'][$struct['class']]) && !$settings['modules_enabled'][$struct['class']]) { 
+            return;
+        }
+        
         self::$modules[$struct['class']] = $struct;
         /*
             From manual/en/function.include.php
