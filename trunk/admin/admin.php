@@ -29,7 +29,7 @@
 
 function sec_admin() {
 
-    global $rules, $DEA, $coach, $lng;
+    global $rules, $settings, $DEA, $coach, $lng;
 
     // Quit if coach does not has administrator privileges.
 

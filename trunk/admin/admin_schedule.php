@@ -161,9 +161,20 @@ objsort($divisions, array('+dispName'));
     <b><?php echo $lng->getTrn('secs/admin/participants');?>:</b><br>
     <?php
     $teams = Team::getTeams();
-    objsort($teams, array('+coach_name'));
-    foreach ($teams as $t)
-        echo "<input type='checkbox' name='$t->team_id' value='$t->team_id'>$t->coach_name'".((substr($t->coach_name,-1)=='s')?'':'s')." $t->name<br>\n";
+    $entriesToPrint = array();
+    switch ($settings['scheduling_list_style'])
+    {
+        case 2:
+            objsort($teams, array('+name'));
+            $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'><b>$t->name</b> ($t->coach_name)";'), $teams);
+            break;
+        # case 1:
+        default: 
+            objsort($teams, array('+coach_name', '+name'));
+            $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'>$t->coach_name\'s $t->name";'), $teams);
+            break;
+    }
+    print implode("<br\n", $entriesToPrint);
     ?>
     <br>
     <hr align="left" width="200px">
