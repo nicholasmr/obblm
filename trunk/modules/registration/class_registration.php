@@ -63,7 +63,10 @@ class Registration implements ModuleInterface
                 }
 
                 $this->create();
-                $this->sendemail();
+                if ( !$this->sendemail() )
+                {
+                    $this->error = SEND_EMAIL_ERROR;
+                }
                 break;
             case "forgot":
                 $this->username = $username;
@@ -169,8 +172,8 @@ class Registration implements ModuleInterface
         $webmaster = $settings['registration_webmaster'];
 
         $to      = $this->AdminEmails();
-        $subject = 'New user registration';
-        $message = "You have received a new registration for user: ".$this->username." email: ".$this->email.".";
+        $subject = EMAIL_SUBJECT;
+        $message = EMAIL_MESSAGE.$this->username.", ".$this->email."\n"."http://".$_SERVER["SERVER_NAME"]."/index.php?section=admin&subsec=ctman";
         $headers = 'From: '.$webmaster. "\r\n" .
                    'Reply-To: '.$webmaster. "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
@@ -262,7 +265,7 @@ class Registration implements ModuleInterface
         $register = new Registration($username, $password, $email);
         if ( !$register->error )
         {
-            Print "Registration was successful.  A site administrator will enable your account or contact you for verification.";
+            Print SUCCESS_MSG;
             unset($register);
         }
         else
@@ -272,7 +275,7 @@ class Registration implements ModuleInterface
             unset($_POST['new_name']);
             unset($_POST['new_mail']);
             unset($_POST['new_passwd']);
-            Registration::main();
+            Registration::main(array());
         }
 
     }
@@ -376,7 +379,7 @@ class Registration implements ModuleInterface
             Print "<br><b>Error: {$register->error}</b><br>";
             unset($register);
             unset($_POST['new_name']);
-            Registration::main();
+            Registration::main(array());
         }
 
     }
