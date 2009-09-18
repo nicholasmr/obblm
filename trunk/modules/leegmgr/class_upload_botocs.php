@@ -121,10 +121,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         $this->hometeam = $results->team[0]->attributes()->name;
         $this->homescore = $results->team[0]->score;
-        $this->homewinnings = $results->team[0]->winnings;
+        $this->homewinnings = $results->team[0]->winnings - $results->team[0]->transferedGold;
         $this->homeff = $results->team[0]->fanfactor;
         $this->homefame = $results->team[0]->fame;
-        $this->hometransferedGold = $results->team[0]->transferedGold;
+        #$this->hometransferedGold = $results->team[0]->transferedGold;
 
 
         foreach ( $results->team[0]->players->player as $player )
@@ -145,10 +145,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         $this->awayteam = $results->team[1]->attributes()->name;
         $this->awayscore = $results->team[1]->score;
-        $this->awaywinnings = $results->team[1]->winnings;
+        $this->awaywinnings = $results->team[1]->winnings - $results->team[1]->transferedGold;
         $this->awayff = $results->team[1]->fanfactor;
         $this->awayfame = $results->team[1]->fame;
-        $this->awaytransferedGold = $results->team[1]->transferedGold;
+        #$this->awaytransferedGold = $results->team[1]->transferedGold;
 
         foreach ( $results->team[1]->players->player as $player )
         {
@@ -226,6 +226,71 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $tv_home = $team_home->value;
         $team_away = new Team( $this->awayteam_id );
         $tv_away = $team_away->value;
+        //Spiraling Expenses
+        switch ( $tv_home ) {
+            case ( $tv_home >= 1750000 && $tv_home <= 1890000 ):
+                $this->homewinnings -= 10000;
+                break;
+            case ( $tv_home >= 1900000 && $tv_home <= 2040000 ):
+                $this->homewinnings -= 20000;
+                break;
+            case ( $tv_home >= 2050000 && $tv_home <= 2190000 ):
+                $this->homewinnings -= 30000;
+                break;
+            case ( $tv_home >= 2200000 && $tv_home <= 2340000 ):
+                $this->homewinnings -= 40000;
+                break;
+            case ( $tv_home >= 2350000 && $tv_home <= 2490000 ):
+                $this->homewinnings -= 50000;
+                break;
+            case ( $tv_home >= 2500000 && $tv_home <= 2640000 ):
+                $this->homewinnings -= 60000;
+                break;
+            case ( $tv_home >= 2650000 && $tv_home <= 2790000 ):
+                $this->homewinnings -= 70000;
+                break;
+            case ( $tv_home >= 2800000 && $tv_home <= 2940000 ):
+                $this->homewinnings -= 80000;
+                break;
+            case ( $tv_home > 2950000 && $tv_home <= 3090000 ):
+                $this->homewinnings -= 90000;
+                break;
+            case ( $tv_home > 3100000 ):
+                $this->homewinnings -= 100000;
+                break;
+        }
+        switch ( $tv_away ) {
+            case ( $tv_away >= 1750000 && $tv_away <= 1890000 ):
+                $this->awaywinnings -= 10000;
+                break;
+            case ( $tv_away >= 1900000 && $tv_away <= 2040000 ):
+                $this->awaywinnings -= 20000;
+                break;
+            case ( $tv_away >= 2050000 && $tv_away <= 2190000 ):
+                $this->awaywinnings -= 30000;
+                break;
+            case ( $tv_away >= 2200000 && $tv_away <= 2340000 ):
+                $this->awaywinnings -= 40000;
+                break;
+            case ( $tv_away >= 2350000 && $tv_away <= 2490000 ):
+                $this->awaywinnings -= 50000;
+                break;
+            case ( $tv_away >= 2500000 && $tv_away <= 2640000 ):
+                $this->awaywinnings -= 60000;
+                break;
+            case ( $tv_away >= 2650000 && $tv_away <= 2790000 ):
+                $this->awaywinnings -= 70000;
+                break;
+            case ( $tv_away >= 2800000 && $tv_away <= 2940000 ):
+                $this->awaywinnings -= 80000;
+                break;
+            case ( $tv_away > 2950000 && $tv_away <= 3090000 ):
+                $this->awaywinnings -= 90000;
+                break;
+            case ( $tv_away > 3100000 ):
+                $this->awaywinnings -= 100000;
+                break;
+        }
 
         if (!$revUpdate) $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor1" => $this->homeff, "ffactor2" => $this->awayff, "fame1" => $this->homefame, "fame2" => $this->awayfame, "income1" => $this->homewinnings, "income2" => $this->awaywinnings, "team1_score" => $this->homescore, "team2_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $tv_home, "tv2" => $tv_away, "comment" => "" ) );
         else $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor2" => $this->homeff, "ffactor1" => $this->awayff, "fame2" => $this->homefame, "fame1" => $this->awayfame, "income2" => $this->homewinnings, "income1" => $this->awaywinnings, "team2_score" => $this->homescore, "team1_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $tv_home, "tv1" => $tv_away, "comment" => "" ) );
