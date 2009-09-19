@@ -24,7 +24,11 @@
 /*
  THIS FILE is used for HTML-helper routines.
  */
-
+ 
+define('T_BOX_ADMIN', 1);
+define('T_BOX_USER',  2);
+define('T_BOX_OTHER', 3);
+ 
 class HTMLOUT
 {
 
@@ -738,48 +742,48 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
     echo "</table>\n";
 }
 
-public static function sort_rule($w) {
-    
-    $rules = array(
-        'coach'             => array('-win_percentage', '-won_tours', '-cas', '+name'),         // Coach standings.
-        'team'              => array('-won', '-draw', '+lost', '-score_diff', '-cas', '+name'), // Team standings.
-        'player'            => array('-value', '-td', '-cas', '-spp', '+name'),                 // Player standings.
-        'team_roster'       => array('+nr', '+name'),               // Team roster.
-        'star'              => array('-played', '+name'),           // Star standings.
-        'starmerc_HH'       => array('-date_played'),               // Star & Merc hire history (HH) tables.
-        'race_roster'       => array('+cost', '-position'),         // Race roster
-        'race'              => array('-win_percentage', '+race'),   // Race standings.
-        'matcherecent'      => array('-date_played'),               // Recent matches table.
-        'matcheupcomming'   => array('-date_played'),               // Upcomming matches table.
-    );
+#public static function sort_rule($w) {
+#    
+#    $rules = array(
+#        'coach'             => array('-win_percentage', '-won_tours', '-cas', '+name'),         // Coach standings.
+#        'team'              => array('-won', '-draw', '+lost', '-score_diff', '-cas', '+name'), // Team standings.
+#        'player'            => array('-value', '-td', '-cas', '-spp', '+name'),                 // Player standings.
+#        'team_roster'       => array('+nr', '+name'),               // Team roster.
+#        'star'              => array('-played', '+name'),           // Star standings.
+#        'starmerc_HH'       => array('-date_played'),               // Star & Merc hire history (HH) tables.
+#        'race_roster'       => array('+cost', '-position'),         // Race roster
+#        'race'              => array('-win_percentage', '+race'),   // Race standings.
+#        'matcherecent'      => array('-date_played'),               // Recent matches table.
+#        'matcheupcomming'   => array('-date_played'),               // Upcomming matches table.
+#    );
 
-    return $rules[$w];
-}
+#    return $rules[$w];
+#}
 
-public static function rule_dict(array $rule) {
-    
-    /* Translates sort rules. */
-    
-    $d = array(
-        'win_percentage'    => 'win percentage',
-        'date_played'       => 'date played',
-        'won_tours'         => 'won tours',
-        'score_diff'        => 'score diff.',
-        'tdcas'             => '{td+cas}',
-        'row_won'           => 'won in row',
-        'row_lost'          => 'lost in row',
-        'row_draw'          => 'draw in row',
-    );
-    
-    foreach ($rule as &$r) {
-        $r = preg_replace('/_tour$/', '', $r);
-        foreach ($d as $idx => $rpl) {
-            $r = preg_replace("/$idx/", $rpl, $r);
-        }
-    }
-    
-    return $rule;
-}
+#public static function rule_dict(array $rule) {
+#    
+#    /* Translates sort rules. */
+#    
+#    $d = array(
+#        'win_percentage'    => 'win percentage',
+#        'date_played'       => 'date played',
+#        'won_tours'         => 'won tours',
+#        'score_diff'        => 'score diff.',
+#        'tdcas'             => '{td+cas}',
+#        'row_won'           => 'won in row',
+#        'row_lost'          => 'lost in row',
+#        'row_draw'          => 'draw in row',
+#    );
+#    
+#    foreach ($rule as &$r) {
+#        $r = preg_replace('/_tour$/', '', $r);
+#        foreach ($d as $idx => $rpl) {
+#            $r = preg_replace("/$idx/", $rpl, $r);
+#        }
+#    }
+#    
+#    return $rule;
+#}
 
 public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id = false, $opts = array())
 {
@@ -915,6 +919,27 @@ public static function dispTeamList($obj, $obj_id)
         array('doNr' => false, 'noHelp' => true)
     );
 }
+
+#public static function mkBox($type, $title, $body, $options = array()) 
+#{
+#    /*
+#        Prints box.
+#        
+#        $options are:
+#            style (str):            Additional CSS styling.
+#            classes (array of str): Additional CSS class names.
+#    */
+#    
+#    echo <<<END
+#    <div class="???">
+#        <h3 class='boxTitle1'>$title</h3>
+#        <div class='boxBody'>
+#            $body
+#        </div>
+#    </div>
+#END;
+
+#}
 
 }
 
