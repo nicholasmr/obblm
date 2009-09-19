@@ -39,7 +39,7 @@ $settings['relate_team_to_league'] = false; // Default is false. Associate teams
 
 // The style of the team list in the match scheduling section.
 // Options: 1, 2. 1: Sorts against coach name, then team name. 2: Sorts against team name only. 1 is preferably if coaches have multiple teams, else 2.
-$settings['scheduling_list_style'] = 2; // Default is 1.
+$settings['scheduling_list_style'] = 1; // Default is 1.
 
 /*****************
  * OBBLM rule set
