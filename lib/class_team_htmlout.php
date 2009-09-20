@@ -689,7 +689,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 );
                 
                 # If one of these are selected from the menu, a JavaScript confirm prompt is displayed before submitting.
-                $tmange_confirm = array('hire_player', 'hire_journeyman', 'fire_player', 'buy_goods', 'drop_goods'); 
+                $tmange_confirm = array('hire_journeyman', 'fire_player', 'buy_goods', 'drop_goods'); 
 
                 // Set default choice.
                 if (!isset($_POST['menu_tmanage'])) {
@@ -1020,7 +1020,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         }
                         ?>
                         <hr><br>
-                        Delete?
+                        Are you sure you wish to delete this team?
                         <input type="checkbox" name="bool" value="1" <?php echo ($DISABLE) ? 'DISABLED' : '';?>>
                         <input type="hidden" name="type" value="delete">
                         <?php
