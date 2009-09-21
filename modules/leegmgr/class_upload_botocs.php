@@ -309,6 +309,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         foreach ( $teamPlayers as $player )
         {
+            $f_player_id = '';
             if ( $player['nr'] == 100 ) $addZombie = true;  //Must add zombie last so that dead players can be reported first.
             else $addZombie = false;
             if ( $player['star'] == "true" )
@@ -324,7 +325,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
             foreach ( $players as $p  )
             {
-                if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold ) {
+                if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold && !$f_player_id ) {
                     $f_player_id = $p->player_id;
                     break;
                 }
