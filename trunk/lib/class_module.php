@@ -80,13 +80,13 @@ class Module
     public static function run($class, array $argv)
     {
         foreach (self::$modules[$class]['filesRunTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
-        $module = array_merge(self::$modules[$class], call_user_func("$class::getModuleAttributes")); # Shortcut.
+        $module = array_merge(self::$modules[$class], call_user_func(array($class, 'getModuleAttributes'))); # Shortcut.
         global $coach; # Used for fetching stylesheet.
         if ($module['setCanvas']) {HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : false);}
         // Test if module implements the required interface.
         $reflection = new ReflectionClass($class);
         if (!$reflection->implementsInterface($modIntf = 'ModuleInterface')) {fatal("Module registered by class name '$class' does not implement the interface '$modIntf'");}
-        $return = call_user_func("$class::main", $argv);
+        $return = call_user_func(array($class, 'main'), $argv);
         if ($module['setCanvas']) {HTMLOUT::frame_end();}
         
         return $return;
@@ -99,7 +99,7 @@ class Module
     
     public static function getInfo($class)
     {
-        $module = array_merge(self::$modules[$class], call_user_func("$class::getModuleAttributes")); # Shortcut.
+        $module = array_merge(self::$modules[$class], call_user_func(array($class, 'getModuleAttributes'))); # Shortcut.
         return array($module['author'], $module['date'], $module['moduleName']);
     }
     
@@ -112,7 +112,7 @@ class Module
     {
         $tables = array();
         foreach (array_keys(self::$modules) as $class) {
-            foreach (call_user_func("$class::getModuleTables") as $name => $tblStruct) {
+            foreach (call_user_func(array($class, 'getModuleTables')) as $name => $tblStruct) {
                 $tables[$class][$name] = Table::createTable($name, $tblStruct);
             }
         }

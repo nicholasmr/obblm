@@ -42,7 +42,7 @@ public static function main($argv) # argv = argument vector (array).
     */
 
     $func = array_shift($argv);
-    return call_user_func_array(__CLASS__."::$func", $argv);
+    return call_user_func_array(array(__CLASS__, $func), $argv);
 }
 
 /*

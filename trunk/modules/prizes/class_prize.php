@@ -217,7 +217,7 @@ public static function main($argv)
         First argument is func name in old Prize class, the rest are arguments for that func.
     */
     $func = array_shift($argv);
-    return call_user_func_array(__CLASS__."::$func", $argv);
+    return call_user_func_array(array(__CLASS__, $func), $argv);
 }
 
 /***************
