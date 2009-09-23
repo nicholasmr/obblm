@@ -21,8 +21,8 @@
  *
  */
 
-if (version_compare(PHP_VERSION, '5.2.3') == -1)
-    die('OBBLM requires PHP version 5.2.3, you are running version '.PHP_VERSION);
+if (version_compare(PHP_VERSION, '5.1.0') == -1)
+    die('OBBLM requires PHP version 5.1.0, you are running version '.PHP_VERSION);
 
 if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
     die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
@@ -37,7 +37,7 @@ session_start();
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.8f');
+define('OBBLM_VERSION', '0.8g');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.

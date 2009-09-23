@@ -104,7 +104,7 @@ public static function main($argv)
 {
     // func may be "isWanted" or "makeList".
     $func = array_shift($argv);
-    return call_user_func_array(__CLASS__."::$func", $argv);
+    return call_user_func_array(array(__CLASS__, $func), $argv);
 }
 
 public static function getModuleAttributes()
