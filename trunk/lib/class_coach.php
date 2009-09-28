@@ -21,7 +21,7 @@
  *
  */
 
-define('LOGIN_COOKIE_COACHID',   'obblmuserid');
+define('LOGIN_COOKIE_COACHID', 'obblmuserid');
 define('LOGIN_COOKIE_PASSWD', 'obblmpasswd');
 
 class Coach
@@ -255,7 +255,7 @@ class Coach
         if (!is_numeric($coach))
             $coach = get_alt_col('coaches', 'name', $coach, 'coach_id');
 
-        if (self::checkPasswd($coach, $passwd)) {
+        if (self::checkPasswd($coach, $passwd) && !get_alt_col('coaches', 'coach_id', $coach, 'retired')) {
             self::_setSession($coach);
             if ($setCookie) {self::_setCookie($coach);}
             return true;
@@ -273,6 +273,7 @@ class Coach
             !isset($_SESSION['logged_in']) && 
             isset($_COOKIE[LOGIN_COOKIE_COACHID]) && 
             isset($_COOKIE[LOGIN_COOKIE_PASSWD]) && 
+            !get_alt_col('coaches', 'coach_id', $_COOKIE[LOGIN_COOKIE_COACHID], 'retired') && # Is not retired?
             self::checkPasswd($_COOKIE[LOGIN_COOKIE_COACHID], $_COOKIE[LOGIN_COOKIE_PASSWD], false) &&
             self::_setSession($_COOKIE[LOGIN_COOKIE_COACHID])
         );
