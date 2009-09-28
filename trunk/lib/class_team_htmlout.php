@@ -426,7 +426,9 @@ private function _menu($ALLOW_EDIT, $DETAILED)
         </li>
         <?php
         }
-        echo "<li><a href='handler.php?type=inducements&amp;team_id=$team->team_id'>".$lng->getTrn('secs/teams/indctry')."</a></li>\n";
+        if (Module::isRegistered('IndcPage')) {
+            echo "<li><a href='handler.php?type=inducements&amp;team_id=$team->team_id'>".$lng->getTrn('secs/teams/indctry')."</a></li>\n";
+        }
         if (Module::isRegistered('SGraph')) {
             echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''>Vis. stats</a></li>\n";
         }
