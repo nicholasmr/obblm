@@ -90,16 +90,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $match->setLocked(true);
 
         //Begin add replay
-        $query = "INSERT INTO leegmgr_matches
-        (
-            mid,
-            replay
-        )
-        VALUES
-        (
-            $this->match_id,
-            \"$this->replay\"
-        )";
+        $query = "UPDATE leegmgr_matches SET replay = \"$this->replay\" WHERE mid = $this->match_id";
+
         if ( !mysql_query( $query ) )
         {
             $this->error = "Failed to upload the replay file with the following error: ".mysql_error();
@@ -398,10 +390,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
     function checkHash () {
 
-        $query = sprintf("SELECT hash_botocs FROM matches WHERE hash_botocs = '%s' ", mysql_real_escape_string($this->hash) );
+        $query = sprintf("SELECT hash FROM leegmgr_matches WHERE hash = '%s' ", mysql_real_escape_string($this->hash) );
         $hashresults = mysql_query($query);
         $hashresults = mysql_fetch_array($hashresults);
-        $hashresults = $hashresults['hash_botocs'];
+        $hashresults = $hashresults['hash'];
 
         if ( $hashresults == $this->hash ) {
             $this->error = "Unique match id already exists: ".$this->hash;
@@ -617,8 +609,12 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
             $status = true;
             $uploaddir = '/var/www/uploads/';
+            if ( !$this->userfile['name'] )
+            {
+                $this->error = "Please choose a file to upload.";
+                return false;
+            }
             $uploadfile = $uploaddir . basename($this->userfile['name']);
-#            $this->replay = addslashes(fread(fopen($this->userfile['tmp_name'], "r"), filesize($this->userfile['tmp_name'])));
             $this->replay = mysql_real_escape_string(fread(fopen($this->userfile['tmp_name'], "r"), filesize($this->userfile['tmp_name'])));
 
             if (strlen($this->userfile['tmp_name'])>3) $zip = zip_open($this->userfile['tmp_name']);
@@ -639,12 +635,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         $this->xmlresults = zip_entry_read($zip_entry, 100000);
                         zip_entry_close($zip_entry);
                     }
-#                    if (strpos(zip_entry_name($zip_entry),"replay.rep") !== false )
-#                    {
-#                        $this->replay = zip_entry_read($zip_entry, 100000);
-#                        mysql_real_escape_string(fread(fopen(zip_entry_read($zip_entry, 100000), "r"), filesize(zip_entry_read($zip_entry, 100000))));
-#                        zip_entry_close($zip_entry);
-#                    }
+
                 }
                 zip_close($zip);
 
@@ -754,7 +745,14 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
     public static function getModuleTables()
     {
-        return array();
+        return array(
+            'leegmgr_matches' =>
+                array( 
+                    'mid' => 'MEDIUMINT', 
+                    'hash' => 'VARCHAR(32)',
+                    'replay' => 'MEDIUMBLOB',
+                ),
+        );
     }
 }
 
