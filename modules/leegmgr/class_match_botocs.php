@@ -28,12 +28,13 @@ class Match_BOTOCS extends Match
     public function __construct($mid) 
     {
         parent::__construct($mid);
-        $this->hash_botocs = get_alt_col('matches', 'match_id', $mid, 'hash_botocs');
+        $this->hash_botocs = get_alt_col('leegmgr_matches', 'mid', $mid, 'hash');
     }
     
     public function setBOTOCSHash($hash) 
     {
-        return mysql_query("UPDATE matches SET hash_botocs = '".mysql_real_escape_string($hash)."' WHERE match_id = $this->match_id");
+        #return mysql_query("UPDATE leegmgr_matches SET hash = '".mysql_real_escape_string($hash)."' WHERE mid = $this->match_id");
+        return mysql_query("INSERT INTO leegmgr_matches (mid, hash) VALUES ($this->match_id, '".mysql_real_escape_string($hash)."')");
     }
     
     public static function create(array $input)
