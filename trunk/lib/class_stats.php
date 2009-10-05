@@ -264,7 +264,7 @@ public static function getMatchStats($obj, $obj_id, $node, $node_id, $opp_obj, $
         
         // Is the ranking system a house ranking system? If not then don't load extra fields since non-house RSs don't use the extra fields at all.
         if (($hrs_nr = $rs_nr - $limit) > 0 && preg_match('/'.implode('|', $fields).'/', $hrs[$hrs_nr]['points'])) {
-            $s = array_merge($s, Stats::getStats($obj, $obj_id, STATS_TOUR, $node_id));
+            $s = array_merge($s, Stats::getStats($obj, $obj_id, STATS_TOUR, $node_id, false, false));
         }
 
         switch ($rs_nr)
