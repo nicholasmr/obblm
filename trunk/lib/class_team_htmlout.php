@@ -419,9 +419,9 @@ private function _menu($ALLOW_EDIT, $DETAILED)
         ?>
         <li><span class="dir">Roster</span>
             <ul>
-                <?php if ($pdf)    { ?><li><a href="<?php echo $pdf;?>">PDF</a></li> <?php } ?>
-                <?php if ($xml)    { ?><li><a href="<?php echo $xml;?>">XML</a></li> <?php } ?>
-                <?php if ($botocs) { ?><li><a href="<?php echo $botocs;?>">BOTOCS-XML</a></li> <?php } ?>
+                <?php if ($pdf)    { ?><li><a TARGET="_blank" href="<?php echo $pdf;?>">PDF</a></li> <?php } ?>
+                <?php if ($xml)    { ?><li><a TARGET="_blank" href="<?php echo $xml;?>">XML</a></li> <?php } ?>
+                <?php if ($botocs) { ?><li><a TARGET="_blank" href="<?php echo $botocs;?>">BOTOCS-XML</a></li> <?php } ?>
             </ul>
         </li>
         <?php
