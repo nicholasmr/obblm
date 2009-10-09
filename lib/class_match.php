@@ -152,19 +152,25 @@ class Match
         $q[] = "UPDATE matches SET 
             date_played = NULL, date_modified = NULL, 
             team1_score = NULL, team2_score = NULL,
-            smp1 = NULL, smp2 = NULL, 
-            tcas1 = NULL, tcas2 = NULL, 
-            fame1 = NULL, fame2 = NULL, 
-            tv1 = NULL, tv2 = NULL, 
+            smp1 = 0, smp2 = 0, 
+            tcas1 = 0, tcas2 = 0, 
+            fame1 = 0, fame2 = 0, 
+            tv1 = 0, tv2 = 0, 
             income1 = NULL, income2 = NULL,
             ffactor1 = NULL, ffactor2 = NULL, 
-            fans = NULL, gate = NULL, stadium = NULL, submitter_id = NULL, locked = NULL, hash_botocs = NULL
+            fans = 0, gate = NULL, stadium = NULL, submitter_id = NULL, locked = NULL, hash_botocs = NULL
             WHERE match_id = $this->match_id";
             
         $status = true;
         foreach ($q as $qry) {
             $status &= mysql_query($qry);
         }
+        
+        // Reset team treasuries
+        $t1 = new Team($this->team1_id);
+        $t2 = new Team($this->team2_id);
+        $t1->dtreasury(-1*$this->income1);
+        $t2->dtreasury(-1*$this->income2);
         
         return $status;
     }

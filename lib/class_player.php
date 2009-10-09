@@ -221,7 +221,7 @@ class Player
         foreach ($IllegalSkillCombinations as $hasSkill => $dropSkills) {
             if (in_array($hasSkill, $all_skills)) {
                 foreach (array('N', 'D') as $type) {
-                    $this->choosable_skills["$type skills"] = array_filter($this->choosable_skills["$type skills"], create_function('$skill', $a="return !in_array(\$skill, array('".implode("','",$dropSkills)."'));"));
+                    $this->choosable_skills["$type skills"] = array_filter($this->choosable_skills["$type skills"], create_function('$skill', "return !in_array(\$skill, array('".implode("','",$dropSkills)."'));"));
                 }
             }
         }
