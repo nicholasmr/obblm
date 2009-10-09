@@ -505,7 +505,7 @@ $stars['Ugroth Bolgrot']['cost']                    = 100000;
 $stars['Ugroth Bolgrot']['teams']                   = array ('Orc', 'Chaos Pact');
 $stars['Varag Ghoul-Chewer']['cost']                = 290000;
 $stars['Zara the Slayer']['teams']                  = array ('Amazon', 'Dwarf', 'Halfling', 'High Elf', 'Human', 'Norse', 'Wood Elf');
-$stars['Zzarg Madeye']['teams']                     = array ('Chaos Dwarf', 'Chaos Pact');
+$stars['Zzharg Madeye']['teams']                    = array ('Chaos Dwarf', 'Chaos Pact');
 
 ksort($stars, SORT_STRING);
 

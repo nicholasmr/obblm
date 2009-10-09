@@ -1755,7 +1755,7 @@ $stars = array(
        'icon'          => 'star',
        'teams'         => array('Amazon', 'Dwarf', 'Human', 'Norse'),
    ),
-   'Zzarg Madeye' => array (
+   'Zzharg Madeye' => array (
        'id'            => -46,
        'ma'            => 4,
        'st'            => 4,
