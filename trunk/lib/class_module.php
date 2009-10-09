@@ -31,6 +31,7 @@ interface ModuleInterface
     public static function main($argv);
     public static function getModuleAttributes();
     public static function getModuleTables();
+#    public static function getModuleUpgradeSQL();
 }
 
 // Module handler

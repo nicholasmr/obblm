@@ -319,4 +319,40 @@ function setup_database() {
     return true;
 }
 
+function upgrade_database($fromTo)
+{
+    $sql = array();
+    switch ($fromTo)
+    {
+        case '075-080':
+            $sql = array();
+            break;
+
+        case '070-075':
+            $sql = array();
+            break;
+            
+        case '037-070':
+            $sql = array();
+            break;
+            
+        case '036-037':
+            $sql = array();
+            break;
+            
+        case '035-036':
+            $sql = array();
+            break;
+            
+        case '034-035':
+            $sql = array();
+            break;
+
+        default:
+            die('Undefined version upgrade specified.');
+    }
+    
+    // Modules upgrade SQL code...
+}
+
 ?>
