@@ -1897,6 +1897,16 @@ $skillarray	= array (
 	),
 );
 
+$IllegalSkillCombinations = array(
+    /*
+        Syntax:
+        "If player has this skill" => array("player may not have this skill", "or this skills", ...),
+    */
+    'Frenzy'        => array('Grab'),
+    'Grab'          => array('Frenzy'),
+    'Ball & Chain'  => array('Diving Tackle', 'Frenzy', 'Kick-Off Return', 'Pass Block', 'Shadowing'),
+);
+
 $inducements = array (
     'Bloodweiser Babes' => array (
         'cost' => 50000,

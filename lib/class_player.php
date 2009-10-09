@@ -215,6 +215,17 @@ class Player
             }
         }
         
+        /* Remove illegal combinations: */
+        $all_skills = array_merge($this->def_skills, $this->extra_skills, $this->ach_nor_skills,$this->ach_dob_skills);
+        global $IllegalSkillCombinations;
+        foreach ($IllegalSkillCombinations as $hasSkill => $dropSkills) {
+            if (in_array($hasSkill, $all_skills)) {
+                foreach (array('N', 'D') as $type) {
+                    $this->choosable_skills["$type skills"] = array_filter($this->choosable_skills["$type skills"], create_function('$skill', $a="return !in_array(\$skill, array('".implode("','",$dropSkills)."'));"));
+                }
+            }
+        }
+        
         return true;
     }
 
