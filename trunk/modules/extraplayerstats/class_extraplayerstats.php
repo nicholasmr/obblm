@@ -62,6 +62,11 @@ public static function getModuleTables()
     return array(self::TABLE => array_merge(self::$relations, self::$types));
 }    
 
+public static function getModuleUpgradeSQL()
+{
+    return array();
+}
+
 public static function makeEntry(array $relations, array $playerData)
 {
     // Ready the data.

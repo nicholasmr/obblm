@@ -211,6 +211,11 @@ public static function getModuleTables()
     );
 }
 
+public static function getModuleUpgradeSQL()
+{
+    return array();
+}
+
 public static function main($argv)
 {
     /*

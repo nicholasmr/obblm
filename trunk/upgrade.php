@@ -38,32 +38,30 @@ require('header.php'); // Includes and constants.
 <br>
 <small>
 <?php
-if (isset($_POST['upgrade'])) {
-    echo upgrade_database('')
+if (isset($_POST['version'])) {
+    echo upgrade_database($_POST['version'])
         ? "<br><b><font color='green'>Done</font></b>"
         : "<br><b><font color='red'>Error</font></b>";
-    
-    ?>
-    <?php
-}
-else {
-    ?>
-    Please make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>
-    Now, click the appropriate SQL to run depending on the version upgrade you are doing.<br> 
-    If upgrading across two or more versions simply run the SQL code for the next version, one after the other until the latest version is reached.
-
-    <br><br>
-    <form method="POST">
-        <input type="submit" name="075-080" value="v 0.75 --> v 0.80"><br><br>
-        <input type="submit" name="070-075" value="v 0.70 --> v 0.75"><br><br>
-        <input type="submit" name="037-070" value="v 0.37 --> v 0.70"><br><br>
-        <input type="submit" name="036-037" value="v 0.36 --> v 0.37"><br><br>
-        <input type="submit" name="035-036" value="v 0.35 --> v 0.36"><br><br>
-        <input type="submit" name="034-035" value="v 0.34 --> v 0.35"><br><br>
-    </form>
-    <?php
+        
+    echo "<br><hr>";
 }
 ?>
+Please make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>
+Now, click the appropriate SQL code to run depending on the version upgrade you are doing.<br> 
+If upgrading across two or more versions simply run the SQL code for the next version, one after the other until the latest version is reached.
+
+<br><br>
+<form method="POST">
+    <INPUT TYPE=RADIO NAME="version" VALUE="075-080">v 0.75 --> v 0.80<br>
+    <INPUT TYPE=RADIO NAME="version" VALUE="070-075">v 0.70 --> v 0.75<br>
+    <INPUT TYPE=RADIO NAME="version" VALUE="037-070">v 0.37 --> v 0.70<br>
+    <INPUT TYPE=RADIO NAME="version" VALUE="036-037">v 0.36 --> v 0.37<br>
+    <INPUT TYPE=RADIO NAME="version" VALUE="035-036">v 0.35 --> v 0.36<br>
+    <INPUT TYPE=RADIO NAME="version" VALUE="034-035">v 0.34 --> v 0.35<br>
+    <br>
+    <input type="submit" name='submit' value="Run upgrade SQLs">
+</form>
+
 </small>
 </body>
 </html>

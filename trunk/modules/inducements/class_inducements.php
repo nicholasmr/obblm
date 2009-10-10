@@ -45,6 +45,11 @@ public static function getModuleTables()
     return array();
 }
 
+public static function getModuleUpgradeSQL()
+{
+    return array();
+}
+
 static public function main($argv)
 {
 

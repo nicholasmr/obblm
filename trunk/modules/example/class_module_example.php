@@ -79,6 +79,22 @@ public static function getModuleTables()
     );
 }    
 
+public static function getModuleUpgradeSQL()
+{
+    return array(
+        '075-080' => array(
+            'SQL CODE #1',
+            'SQL CODE #2',
+            'SQL CODE #N',
+        ),
+        '070-075' => array(
+            'SQL CODE #1',
+            'SQL CODE #2',
+            'SQL CODE #N',
+        ),
+    );
+}
+
 /***************
  * OPTIONAL subdivision of module code into class methods.
  * 

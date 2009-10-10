@@ -754,6 +754,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 ),
         );
     }
+    
+    public static function getModuleUpgradeSQL()
+    {
+        return array();
+    }
 }
 
 ?>

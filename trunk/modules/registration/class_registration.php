@@ -295,6 +295,11 @@ class Registration implements ModuleInterface
         return array();
     }
 
+    public static function getModuleUpgradeSQL()
+    {
+        return array();
+    }
+
     public static function main($argv) {
         
         // Module registered main function.

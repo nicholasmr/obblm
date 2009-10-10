@@ -218,5 +218,10 @@ class RSSfeed implements ModuleInterface
     {
         return array();
     }
+    
+    public static function getModuleUpgradeSQL()
+    {
+        return array();
+    }
 }
 ?>

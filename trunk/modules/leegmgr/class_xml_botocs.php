@@ -251,6 +251,11 @@ class XML_BOTOCS implements ModuleInterface
         return array();
     }
 
+    public static function getModuleUpgradeSQL()
+    {
+        return array();
+    }
+    
 }
 
 ?>

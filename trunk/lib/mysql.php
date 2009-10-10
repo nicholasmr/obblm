@@ -338,40 +338,66 @@ function setup_database() {
     return true;
 }
 
-function upgrade_database($fromTo)
+function upgrade_database($version)
 {
-    $sql = array();
-    switch ($fromTo)
+    $SQLs = array();
+    switch ($version)
     {
         case '075-080':
-            $sql = array();
+            $SQLs = array(
+                'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id',
+                'ALTER TABLE coaches ADD COLUMN com_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER retired',
+            );
             break;
 
         case '070-075':
-            $sql = array();
+            $SQLs = array();
             break;
             
         case '037-070':
-            $sql = array();
+            $SQLs = array();
             break;
             
         case '036-037':
-            $sql = array();
+            $SQLs = array();
             break;
             
         case '035-036':
-            $sql = array();
+            $SQLs = array();
             break;
             
         case '034-035':
-            $sql = array();
+            $SQLs = array();
             break;
 
         default:
             die('Undefined version upgrade specified.');
     }
+
+    $conn = mysql_up();
+
+    // Core
+    echo "<b>Running SQLs for core system upgrade...</b><br>\n";
+    $status = true;
+    foreach ($SQLs as $query) {    
+        $status &= mysql_query($query) or die(mysql_error());
+    }
+    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
     
-    // Modules upgrade SQL code...
+    // Modules
+    echo "<b>Running SQLs for modules upgrade...</b><br>\n";
+    foreach (Module::getAllUpgradeSQLs($version) as $modname => $SQLs) {
+        if (empty($SQLs))
+            continue;
+        foreach ($SQLs as $query) {    
+            $status &= mysql_query($query) or die(mysql_error());
+        }
+        echo ($status) ? "<font color='green'>OK &mdash; $modname SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; $modname SQLs</font><br>\n";
+    }
+    
+    // Done!
+    mysql_close($conn);
+    return true;
 }
 
 ?>
