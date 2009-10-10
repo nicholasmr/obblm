@@ -278,7 +278,7 @@ class Tour
          *
          * Arguments:
          * ----------
-         *  name, type, rs, teams => array(team_ids, ...), 'rounds' (ONLY if round-robin or single matches, else ignored)
+         *  name, type, rs, teams => array(team_ids, ...), 'rounds'
          **/
 
         /* Check input */
@@ -288,7 +288,8 @@ class Tour
             return false;
         
         // Team array OK?
-        if (empty($input['teams']) || !is_array($input['teams']) || (count($input['teams']) < MIN_TOUR_TEAMS && $input['type'] != TT_FFA))
+        $teamsCnt = count($input['teams']);
+        if (empty($input['teams']) || !is_array($input['teams']) || ($input['type'] == TT_FFA && $teamsCnt != 2) || ($input['type'] == TT_RROBIN && $teamsCnt < 3))
             return false;
 
         /* Create tournament */

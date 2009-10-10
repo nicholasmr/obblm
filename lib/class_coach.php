@@ -39,6 +39,7 @@ class Coach
     public $phone       = '';
     public $ring        = 0; // Privilege ring (ie. coach access level).
     public $retired     = false;
+    public $com_lid    = 0;
     public $settings    = array();
 
     // Shortcut for compabillity issues.
@@ -192,6 +193,12 @@ class Coach
     public function setRealName($rname) {
         $query = "UPDATE coaches SET realname = '".mysql_real_escape_string($rname)."' WHERE coach_id = $this->coach_id";
         return (mysql_query($query) && ($this->realname = $rname));
+    }
+
+    public function setCommissionerLid($lid) {
+        $this->com_lid = $lid;
+        $query = "UPDATE coaches SET com_lid = $lid WHERE coach_id = $this->coach_id";
+        return mysql_query($query);
     }
 
     public function isInMatch($match_id) {

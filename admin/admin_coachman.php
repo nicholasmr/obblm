@@ -1,9 +1,9 @@
 <?php
-if (isset($_POST['button'])) {
+if (isset($_POST['type'])) {
 
-    switch ($_POST['button']) {
+    switch ($_POST['type']) {
 
-        case 'Create coach':
+        case 'mk_coach':
             if (get_magic_quotes_gpc()) {
                 $_POST['new_name'] = stripslashes($_POST['new_name']);
                 $_POST['new_realname'] = stripslashes($_POST['new_realname']);
@@ -21,7 +21,7 @@ if (isset($_POST['button'])) {
             )));
             break;
 
-        case 'Change privileges':
+        case 'ch_ring':
             $coach = new Coach($_POST['chring_coachid']);
             if (!is_object($coach)) {
                 status(false);
@@ -32,9 +32,14 @@ if (isset($_POST['button'])) {
             }
             break;
 
-        case 'Change password':
+        case 'ch_passwd':
             $coach = new Coach($_POST['chpass_coachid']);
             status($coach->setPasswd($_POST['ch_passwd']));
+            break;
+            
+        case 'ch_comlid':
+            $coach = new Coach($_POST['chcomlid_coachid']);
+            status($coach->setCommissionerLid($_POST['chcomlid_lid']));
             break;
     }
 
@@ -52,6 +57,7 @@ foreach ($coaches as $c) {
 
 title($lng->getTrn('secs/admin/um'));
 objsort($coaches, array('+name'));
+$com_coaches = array_filter($coaches, create_function('$c', 'return ($c->ring == '.RING_COM.');'));
 $rings = array(
     RING_SYS    => 'Ring '.RING_SYS.': Site admin',
     RING_COM    => 'Ring '.RING_COM.': League commissioner',
@@ -86,11 +92,16 @@ $rings = array(
                 }
                 ?>
             </select>
+            <br><i>(Commisioners are by default not<br> assigned to any league, you must<br> do this after creating the coach).</i>
             <br><br>
+            <input type="hidden" name="type" value="mk_coach">
             <input type="submit" name="button" value="Create coach">
         </div>
     </div>
 
+    <div style='float:left;'> <!-- Outer -->
+    <div class="row"> <!-- Inner row 1 -->
+    
     <div class="adminBox">
         <div class="boxTitle3">
             Change coach access level
@@ -114,6 +125,7 @@ $rings = array(
                 ?>
             </select>
             <br><br>
+            <input type="hidden" name="type" value="ch_ring">
             <input type="submit" name="button" value="Change privileges">
         </div>
     </div>
@@ -133,9 +145,45 @@ $rings = array(
             </select>
             <br><br>
             Password:<br> <input type="password" name="ch_passwd" size="20" maxlength="50"><br><br>
+            <input type="hidden" name="type" value="ch_passwd">
             <input type="submit" name="button" value="Change password">
         </div>
     </div>
+    
+    </div> <!-- END row 1 -->
+    <div class="row"> <!-- Intter row 2 -->
+    
+    <div class="adminBox">
+        <div class="boxTitle3">
+            Change commissioner's league
+        </div>
+        <div class="boxBody">
+            Coach:<br>
+            <select name="chcomlid_coachid">
+                <?php
+                foreach ($com_coaches as $coach) {
+                    echo "<option value='$coach->coach_id'>$coach->name</option>\n";
+                }
+                ?>
+            </select>
+            <br><br>
+            Set to commision the league:<br>
+            <select name="chcomlid_lid">
+                <?php
+                foreach (League::getLeagues() as $l) {
+                    echo "<option value='$l->lid'>$l->name</option>\n";
+                }
+                echo "<option value='".RING_COM_NOLEAGUE."'>--No league--</option>\n";
+                ?>
+            </select>
+            <br><br>
+            <input type="hidden" name="type" value="ch_comlid">
+            <input type="submit" name="button" value="Change relation" <?php echo empty($com_coaches) ? 'DISABLED' : '';?>>
+        </div>
+    </div>
+    
+    </div> <!-- END row 1 -->
+    </div> <!-- END Outer -->
 
     <div class="adminBox" style="clear: both;">
         <div class="boxTitle4">
@@ -151,8 +199,9 @@ $rings = array(
                         <td><b>Nickname</b></td>
                         <td><b>Phone</b></td>
                         <td><b>Mail</b></td>
-                        <td><b>Coach ID</b></td>
-                        <td><b>Access level</b></td>
+                        <td><b>Coach&nbsp;ID</b></td>
+                        <td><b>Access&nbsp;level</b></td>
+                        <td><b>Commish's&nbsp;leauge</b></td>
                     </tr>
                 <?php
                 foreach ($coaches as $coach) {
@@ -162,7 +211,8 @@ $rings = array(
                     echo "<td>".((empty($coach->phone)) ? '<i>None</i>' : $coach->phone)."</td>\n";
                     echo "<td>".((empty($coach->mail)) ? '<i>None</i>' : "<a href='mailto:$coach->mail'>$coach->mail</a>")."</td>\n";
                     echo "<td>$coach->coach_id</td>\n";
-                    echo "<td>" . $rings[$coach->ring] . " </td>\n";
+                    echo "<td>".$rings[$coach->ring]."</td>\n";
+                    echo "<td>".(($coach->ring == RING_COM) ? (($coach->com_lid != RING_COM_NOLEAGUE) ? get_alt_col('leagues', 'lid', $coach->com_lid, 'name') :  '<i>None</i>') : '&mdash;')."</td>\n";
                     echo "</tr>\n";
                 }
                 echo "</table>\n";
