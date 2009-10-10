@@ -131,6 +131,24 @@ public static function getModuleTables()
     );
 }
 
+public static function getModuleUpgradeSQL()
+{
+    return array(
+        '075-080' => array(
+            'CREATE TABLE IF NOT EXISTS hof
+            (
+                    hof_id  MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    pid     MEDIUMINT UNSIGNED,
+                    date    DATETIME,
+                    title   TEXT,
+                    about   TEXT
+            )',
+            'INSERT INTO hof (pid, date, title, about) SELECT f_id, date, txt2, txt FROM texts WHERE type = 5 ORDER BY date ASC';
+            'DELETE FROM texts WHERE type = 5';
+        ),
+    );
+}
+
 /***************
  * main() related.
  ***************/

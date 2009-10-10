@@ -43,6 +43,11 @@ class Team_export extends Team implements ModuleInterface
     {
         return array();
     }
+    
+    public static function getModuleUpgradeSQL()
+    {
+        return array();
+    }
 
     public function xmlExport()
     {

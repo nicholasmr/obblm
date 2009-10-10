@@ -31,7 +31,7 @@ interface ModuleInterface
     public static function main($argv);
     public static function getModuleAttributes();
     public static function getModuleTables();
-#    public static function getModuleUpgradeSQL();
+    public static function getModuleUpgradeSQL();
 }
 
 // Module handler
@@ -118,5 +118,15 @@ class Module
             }
         }
         return $tables;
+    }
+    
+    public static function getAllUpgradeSQLs($version)
+    {
+        $SQLs = array();
+        foreach (array_keys(self::$modules) as $class) {
+            $mod_SQLs = call_user_func(array($class, 'getModuleUpgradeSQL'));
+            $SQLs[$class] = isset($mod_SQLs[$version]) ? $mod_SQLs[$version] : array();
+        }
+        return $SQLs;
     }
 }

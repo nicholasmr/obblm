@@ -130,6 +130,24 @@ public static function getModuleTables()
     );
 }
 
+public static function getModuleUpgradeSQL()
+{
+    return array(
+        '075-080' => array(
+            'CREATE TABLE IF NOT EXISTS wanted
+            (
+                    wanted_id   MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    pid         MEDIUMINT UNSIGNED,
+                    date        DATETIME,
+                    why         TEXT,
+                    bounty      TEXT
+            )',
+            'INSERT INTO wanted (pid, date, why, bounty) SELECT f_id, date, txt, txt2 FROM texts WHERE type = 6 ORDER BY date ASC',
+            'DELETE FROM texts WHERE type = 6',
+        ),
+    );
+}
+
 /***************
  * main() related.
  ***************/
