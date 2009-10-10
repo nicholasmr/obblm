@@ -36,6 +36,7 @@ $core_tables = array(
         'ring'      => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
         'settings'  => 'VARCHAR(320) NOT NULL',
         'retired'   => 'BOOLEAN NOT NULL DEFAULT 0',
+        'com_lid'   => 'MEDIUMINT UNSIGNED NOT NULL DEFAULT 0',
     ),
     'teams' => array(
         'team_id'           => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -229,6 +230,24 @@ function get_alt_col($V, $X, $Y, $Z) {
     }
 
     return null;
+}
+
+
+function get_rows($tbl, array $getFields) {
+    /* 
+        Useful for when wanting to quickly make objects with basic fields.
+        
+        Ex: Get all teams' name and ID:
+            get_rows('teams', array('team_id', 'name'));
+        ...will return an (unsorted) array of objects with the attributes 'team_id' and 'name', found in the teams table.
+    */
+    $query = 'SELECT '.implode(',', $getFields)." FROM $tbl";
+    $result = mysql_query($query);
+    $ret = array();
+    while ($row = mysql_fetch_object($result)) {
+        $ret[] = $row;
+    }
+    return $ret;
 }
 
 function get_list($table, $col, $val, $new_col) {

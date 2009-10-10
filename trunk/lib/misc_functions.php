@@ -197,4 +197,12 @@ function matchresult_icon($result) {
     return "<div class='match_icon ". $class ."' title='". $title ."'></div>";
 }
 
+#function get_parent_node($node, $node_id, $parent_node) {
+# Should be written soon.
+#}
+
+#function get_parent_obj($obj, $obj_id, $parent_obj) {
+# Should be written soon.
+#}
+
 ?>

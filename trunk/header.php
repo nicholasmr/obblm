@@ -37,7 +37,7 @@ session_start();
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.8g');
+define('OBBLM_VERSION', '0.8h');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
@@ -120,9 +120,6 @@ define('PLAYER_TYPE_JOURNEY', 2);
 define('TT_FFA', 1);    # Free For All/manual tournament scheduling.
 define('TT_RROBIN', 2); # Round-Robin
 
-// Minimum required teams to create tournament.
-define('MIN_TOUR_TEAMS', 3); # DO NOT change this value to less than 3!
-
 /********************
  *   For matches
  ********************/
@@ -170,6 +167,8 @@ define('MATCH_ID_IMPORT', -1);
 define('RING_SYS',   0); // Admins
 define('RING_COM',   1); // Commissioners.
 define('RING_COACH', 2); // Coach/ordinary user
+
+define('RING_COM_NOLEAGUE', 0); // Value of commisioner's league ID reference if the commisioner is NOT assinged to any league.
 
 /********************
  *  Dependencies

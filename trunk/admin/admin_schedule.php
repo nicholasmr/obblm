@@ -1,66 +1,69 @@
 <?php
 if (isset($_POST['button'])) {
+
+    $all_teams = get_rows('teams', array('team_id', 'name')); // Fast team objects.
+    $team_ids = array_values(array_map(create_function('$t', 'return $t->team_id;'), array_filter($all_teams, create_function('$t', 'return isset($_POST[$t->team_id]);'))));
+    $teamsCount = count($team_ids);
+    
+    /*
+        Input validation.
+    */
+    
+    // Shortcut booleans:
+    $mkNewFFA       = ($_POST['type'] == TT_FFA && $_POST['existTour'] == -1);
+    $addMatchToFFA  = ($_POST['type'] == TT_FFA && $_POST['existTour'] != -1);
+    $nameSet        = (isset($_POST['name']) && !empty($_POST['name']));
+
+    // Error condition definitions.
+    $errors = array(
+        # "Halt if bool is true" => "Error message"
+        array(!$nameSet && !$addMatchToFFA, "Please fill out the tournament name."),
+        array($nameSet && get_alt_col('tours', 'name', $_POST['name'], 'tour_id'), "Tournament name already in use."),
+        array($coach->ring == RING_COM && (
+            $mkNewFFA && $coach->com_lid != get_alt_col('divisions', 'did', $_POST['did'], 'f_lid')
+            ||
+            $addMatchToFFA && $coach->com_lid != get_alt_col('divisions', 'did', get_alt_col('tours', 'tour_id', $_POST['existTour'], 'f_did'), 'f_lid') 
+        ), 'You are not allowed to schedule matches in that league.'),
+        array($_POST['type'] == TT_FFA && $teamsCount != 2, 'Please select only 2 teams'),
+        array($_POST['type'] == TT_RROBIN && $teamsCount < 3, 'Please select at least 3 teams'),
+    );
+    
+    // Print errors.
     $STATUS = true;
-
-    // Initialize needed HTML post values which due to tournament types are disabled by javascript.
-    switch ($_POST['type'])
-    {
-        case TT_FFA:
-            $_POST['rounds'] = 1;
-            if (!isset($_POST['name'])) {
-                $_POST['name'] = 'Single';
-            }
-            break;
-        case TT_RROBIN:
-            break;
+    foreach ($errors as $e) {
+        if ($e[0]) {
+            status(false, $e[1]."<br>\n");
+            $STATUS = false;        
+        }
     }
 
-    // Check passed tournament name.
-    if ((!isset($_POST['name']) || empty($_POST['name'])) && !($_POST['type'] == TT_FFA && $_POST['existTour'] != -1)) {
-        status(false, "Please fill out the tournament name.<br>\n");
-        $STATUS = false;
+    /*
+        Input modification.
+    */
+    
+    if ($nameSet && get_magic_quotes_gpc()) {
+        $_POST['name'] = stripslashes($_POST['name']);
     }
-    if (get_alt_col('tours', 'name', $_POST['name'], 'tour_id')) {
-        status(false, "Tournament name already in use.<br>\n");
-        $STATUS = false;
-    }
-
-    // Find passed team IDs.
-    $team_ids = array();
-    foreach (Team::getTeams() as $team) {
-        if (isset($_POST[$team->team_id]))
-            array_push($team_ids, $team->team_id);
-    }
-
-    $i = count($team_ids);
-    if (
-        ($_POST['type'] == TT_FFA    && $i < 2              && ($cnt = 2)) ||
-        ($_POST['type'] == TT_RROBIN && $i < MIN_TOUR_TEAMS && ($cnt = MIN_TOUR_TEAMS))
-    ) {
-        status(false, "Please select at least $cnt participants.<br>\n");
-        $STATUS = false;
-    }
-
     // Reverse pair-up for FFA match?
     if ($_POST['type'] == TT_FFA && isset($_POST['reverse']) && $_POST['reverse']) {
         $team_ids = array_reverse($team_ids);
     }
+    // When creating a new FFA tour the "rounds" input is intepreted as the round number of the initial match being created in the new tour.
+    if ($mkNewFFA) {
+        $_POST['rounds'] = $_POST['round'];
+    }
 
-    // Only create tour if all went well.
-    if ($STATUS) {
-        if (get_magic_quotes_gpc())
-            $_POST['name'] = stripslashes($_POST['name']);
-
-        // Is the whish to add a match to a FFA tour?
-        if ($_POST['type'] == TT_FFA && $_POST['existTour'] != -1) {
+    /*
+        Create the requested matches.
+    */
+    if ($STATUS) { # Did all input pass verification?
+        // Add match to existing FFA?
+        if ($addMatchToFFA) {
             $rnd = (!isset($_POST['round'])) ? 1 : (int) $_POST['round'];
             status(Match::create(array('team1_id' => $team_ids[0], 'team2_id' => $team_ids[1], 'round' => $rnd, 'f_tour_id' => (int) $_POST['existTour'])));
         }
         // Create new tour...
         else {
-            if ($_POST['type'] == TT_FFA) {
-                $_POST['rounds'] = $_POST['round'];
-            }
             status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => (int) $_POST['type'], 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
         }
     }
@@ -95,7 +98,9 @@ objsort($divisions, array('+dispName'));
             <select name='did'>
                 <?php
                 foreach ($divisions as $d) {
-                    echo "<option value='$d->did'>$d->dispName</option>\n";
+                    if ($coach->ring == RING_SYS || $coach->ring == RING_COM && $coach->com_lid == $d->f_lid) {
+                        echo "<option value='$d->did'>$d->dispName</option>\n";
+                    }
                 }
                 ?>
             </select>
@@ -132,7 +137,7 @@ objsort($divisions, array('+dispName'));
                     <optgroup label="Existing FFA">
                     <?php
                     foreach (Tour::getTours() as $t)
-                        if ($t->type == TT_FFA)
+                        if ($t->type == TT_FFA && ($coach->ring == RING_SYS || $coach->ring == RING_COM && $coach->com_lid == get_alt_col('divisions', 'did', $t->f_did, 'f_lid')))
                             echo "<option value='$t->tour_id' ".(($t->locked) ? 'DISABLED' : '').">$t->name".(($t->locked) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
                     ?>
                     </optgroup>
