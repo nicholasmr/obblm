@@ -143,8 +143,8 @@ public static function getModuleUpgradeSQL()
                     title   TEXT,
                     about   TEXT
             )',
-            'INSERT INTO hof (pid, date, title, about) SELECT f_id, date, txt2, txt FROM texts WHERE type = 5 ORDER BY date ASC';
-            'DELETE FROM texts WHERE type = 5';
+            'INSERT INTO hof (pid, date, title, about) SELECT f_id, date, txt2, txt FROM texts WHERE type = 5 ORDER BY date ASC',
+            'DELETE FROM texts WHERE type = 5',
         ),
     );
 }
