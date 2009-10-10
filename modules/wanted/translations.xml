@@ -4,7 +4,7 @@
 <name>Wanted</name>
 
 <player>Player</player>
-<team>Team</team>
+<sort_hint>Hint: clicking on the dropdown and pressing any letter on the keyboard scrolls the dropdown down to the first team name beginning with that letter.</sort_hint>
 <submit>Submit</submit>
 <new>New entry</new>
 <posted>Posted</posted>

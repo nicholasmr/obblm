@@ -202,34 +202,19 @@ public static function makeList($ALLOW_EDIT) {
                 // Fall-through to "new" !!!
 
             case 'new':
-                $teams = Team::getTeams();
-                $jsteams = array();
-                foreach ($teams as $t) {
-                    $players = $t->getPlayers();
-                    objsort($players, array('+name'));
-                    foreach ($players as $p) {
-                        $jsteams[$t->team_id][] = array('pid' => $p->player_id, 'name' => $p->name);
-                    }
-                }
-                $easyconvert = new array_to_js();
-                @$easyconvert->add_array($jsteams, 'jsteams'); // Load Game Data array into JavaScript array.
-                echo $easyconvert->output_all();
                 ?>
                 <form method="POST">
-                <b><?php echo $lng->getTrn('team', __CLASS__);?>:</b><br>
-                <select name="player_id" id="teams" onChange="updateTeamPlayers(this.options[this.selectedIndex].value, document.getElementById('players'));">
+                <b><?php echo $lng->getTrn('player', __CLASS__);?>:</b><br>
+                <i><?php echo $lng->getTrn('sort_hint', __CLASS__);?></i><br>
+                <select name="player_id" id="players">
                     <?php
-                    objsort($teams, array('+name'));
-                    foreach ($teams as $t) {
-                        echo "<option value='$t->team_id'>$t->name</option>\n";
+                    $query = "SELECT player_id, players.name AS 'name', teams.name AS 'team_name' FROM players, teams WHERE owned_by_team_id = team_id ORDER by team_name ASC, name ASC";
+                    $result = mysql_query($query);
+                    while ($row = mysql_fetch_assoc($result)) {
+                        echo "<option value='$row[player_id]'>$row[team_name]: $row[name] </option>\n";
                     }
                     ?>
                 </select>                
-                <br><br>
-                <b><?php echo $lng->getTrn('player', __CLASS__);?>:</b><br>
-                <select name="player_id" id="players">
-                    <option value='0'>-Empty-</option>
-                </select>
                 <br><br>
                 <?php echo $lng->getTrn('title', __CLASS__);?><br>
                 <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
@@ -241,12 +226,6 @@ public static function makeList($ALLOW_EDIT) {
                 <br><br>
                 <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit">
                 </form>
-                
-                <!-- Set player list to be the players from the default selected team. -->
-                <script language='JavaScript' type='text/javascript'>
-                    tsel = document.getElementById('teams');
-                    updateTeamPlayers(tsel.options[tsel.selectedIndex].value, document.getElementById('players'));
-                </script>
                 <?php                
         
                 return;

@@ -3,8 +3,8 @@
 
 <name>Hall of fame</name>
 
-<team>Team</team>
 <player>Player</player>
+<sort_hint>Hint: clicking on the dropdown and pressing any letter on the keyboard scrolls the dropdown down to the first team name beginning with that letter.</sort_hint>
 <submit>Submit</submit>
 <new>New entry</new>
 <edit>Edit</edit>
