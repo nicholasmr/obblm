@@ -439,6 +439,8 @@ public static function frame_begin($stylesheet = false)
         <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
         <script type="text/javascript" src="lib/misc_functions.js"></script>
+        <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
+
 
         <!-- CSS MENU (./cssmenu extension) -->
         <link href="cssmenu/css/dropdown/dropdown.css" media="all" rel="stylesheet" type="text/css" />
