@@ -47,17 +47,21 @@ if (isset($_POST['version'])) {
 }
 ?>
 Please make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>
-Now, click the appropriate SQL code to run depending on the version upgrade you are doing.<br> 
-If upgrading across two or more versions simply run the SQL code for the next version, one after the other until the latest version is reached.
+Now, click the appropriate SQL code to run depending on the version upgrade you are doing.<br><br>
+<b>Please note:</b>
+<ul>
+<li>If upgrading across two or more versions simply run the SQL code for the next version, one after the other until the latest version is reached.</li>
+<li>If upgrading <i>from</i> versions previous of v. 0.75 you must consult the <i>INSTALL</i> file and run the listed SQL queries <u>manually</u>.</li>
+</ul>
 
-<br><br>
+<br>
 <form method="POST">
-    <INPUT TYPE=RADIO NAME="version" VALUE="075-080">v 0.75 --> v 0.80<br>
-    <INPUT TYPE=RADIO NAME="version" VALUE="070-075">v 0.70 --> v 0.75<br>
-    <INPUT TYPE=RADIO NAME="version" VALUE="037-070">v 0.37 --> v 0.70<br>
-    <INPUT TYPE=RADIO NAME="version" VALUE="036-037">v 0.36 --> v 0.37<br>
-    <INPUT TYPE=RADIO NAME="version" VALUE="035-036">v 0.35 --> v 0.36<br>
-    <INPUT TYPE=RADIO NAME="version" VALUE="034-035">v 0.34 --> v 0.35<br>
+    <INPUT TYPE=RADIO NAME="version" VALUE="075-080">v 0.75 to v 0.80<br>
+<!--    <INPUT TYPE=RADIO NAME="version" VALUE="070-075">v 0.70 to v 0.75<br>-->
+<!--    <INPUT TYPE=RADIO NAME="version" VALUE="037-070">v 0.37 to v 0.70<br>-->
+<!--    <INPUT TYPE=RADIO NAME="version" VALUE="036-037">v 0.36 to v 0.37<br>-->
+<!--    <INPUT TYPE=RADIO NAME="version" VALUE="035-036">v 0.35 to v 0.36<br>-->
+<!--    <INPUT TYPE=RADIO NAME="version" VALUE="034-035">v 0.34 to v 0.35<br>-->
     <br>
     <input type="submit" name='submit' value="Run upgrade SQLs">
 </form>
