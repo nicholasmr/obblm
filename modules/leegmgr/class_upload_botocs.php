@@ -748,8 +748,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
         return array(
             'leegmgr_matches' =>
                 array( 
-                    'mid' => 'MEDIUMINT', 
-                    'hash' => 'VARCHAR(32)',
+                    'mid'    => 'MEDIUMINT', 
+                    'hash'   => 'VARCHAR(32)',
                     'replay' => 'MEDIUMBLOB',
                 ),
         );
@@ -757,7 +757,26 @@ class UPLOAD_BOTOCS implements ModuleInterface
     
     public static function getModuleUpgradeSQL()
     {
-        return array();
+        return array(
+            '075-080' => array(
+                'CREATE TABLE IF NOT EXISTS leegmgr_matches (
+                    mid     MEDIUMINT,
+                    replay  MEDIUMBLOB,
+                    hash    VARCHAR(32)
+                )',
+                // In case of people having used the 0.80 revisions we must save their exisitng leegmgr data:
+                'CREATE TABLE leegmgr_matches_temp (
+                    mid     MEDIUMINT,
+                    replay  MEDIUMBLOB,
+                    hash    VARCHAR(32)
+                )
+                ',
+                'INSERT INTO leegmgr_matches_temp (mid, hash) SELECT match_id, hash_botocs FROM matches',
+                'UPDATE leegmgr_matches_temp, leegmgr_matches SET leegmgr_matches_temp.replay = leegmgr_matches.replay WHERE leegmgr_matches_temp.mid = leegmgr_matches.mid',
+                'DROP TABLE leegmgr_matches',
+                'ALTER TABLE leegmgr_matches_temp RENAME TO leegmgr_matches',
+            ),
+        );
     }
 }
 

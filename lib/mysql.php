@@ -340,64 +340,63 @@ function setup_database() {
 
 function upgrade_database($version)
 {
-    $SQLs = array();
+    $conn = mysql_up();
+
+    $core_SQLs = array();
     switch ($version)
     {
         case '075-080':
-            $SQLs = array(
-                'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id',
-                'ALTER TABLE coaches ADD COLUMN com_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER retired',
+            $core_SQLs = array(
+                SQLUpgrade::runIfColumnNotExists('teams', 'f_lid',      'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id'),
+                SQLUpgrade::runIfColumnNotExists('coaches', 'com_lid',  'ALTER TABLE coaches ADD COLUMN com_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER retired'),
             );
-            break;
-
-        case '070-075':
-            $SQLs = array();
-            break;
-            
-        case '037-070':
-            $SQLs = array();
-            break;
-            
-        case '036-037':
-            $SQLs = array();
-            break;
-            
-        case '035-036':
-            $SQLs = array();
-            break;
-            
-        case '034-035':
-            $SQLs = array();
             break;
 
         default:
             die('Undefined version upgrade specified.');
     }
 
-    $conn = mysql_up();
-
-    // Core
-    echo "<b>Running SQLs for core system upgrade...</b><br>\n";
-    $status = true;
-    foreach ($SQLs as $query) {    
-        $status &= mysql_query($query) or die(mysql_error());
-    }
-    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
-    
     // Modules
     echo "<b>Running SQLs for modules upgrade...</b><br>\n";
     foreach (Module::getAllUpgradeSQLs($version) as $modname => $SQLs) {
         if (empty($SQLs))
             continue;
+        $status = true;
         foreach ($SQLs as $query) {    
-            $status &= mysql_query($query) or die(mysql_error());
+            $status &= (mysql_query($query) or die(mysql_error()));
         }
-        echo ($status) ? "<font color='green'>OK &mdash; $modname SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; $modname SQLs</font><br>\n";
+        echo ($status) ? "<font color='green'>OK &mdash; SQLs of $modname</font><br>\n" : "<font color='red'>FAILED &mdash; SQLs of $modname</font><br>\n";
     }
+
+    // Core
+    echo "<b>Running SQLs for core system upgrade...</b><br>\n";
+    $status = true;
+    foreach ($core_SQLs as $query) {
+        $status &= (mysql_query($query) or die(mysql_error()));
+    }
+    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
     
     // Done!
     mysql_close($conn);
     return true;
+}
+
+class SQLUpgrade
+{
+    public static function runIfColumnNotExists($tbl, $col, $query)
+    {
+        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
+        $result = mysql_query($colCheck);
+        $row = mysql_fetch_assoc($result);
+        return ((int) $row['exists']) ? 'SELECT \'1\'' : $query;
+    }
+    
+    public static function runIfTrue($evalQuery, $query)
+    {
+        $result = mysql_query($evalQuery);
+        $row = mysql_fetch_row($result);
+        return ((int) $row[0]) ? $query : 'SELECT \'1\'';
+    }
 }
 
 ?>
