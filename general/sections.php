@@ -263,12 +263,9 @@ function sec_main() {
             echo "<div class='main_lcolBox'>\n";
                 switch ($e->type)
                 {
-                    case 'tnews':
-                        $i = 1; break;
-                    case 'msg':
-                        $i = 3; break;
-                    case 'match':
-                        $i = 2; break;
+                    case 'tnews': $i = 1; break;
+                    case 'msg':   $i = 3; break;
+                    case 'match': $i = 2; break;
                 }
 
                 echo "<h3 class='boxTitle$i'>$e->title</h3>\n";
@@ -276,13 +273,14 @@ function sec_main() {
                 echo "<div class='boxBody'>\n";
 
                     $isLong = (strlen($e->message) > 300 && $e->type != 'msg');
+                    $fmtMsg = fmtprint($e->message); # Basic supported syntax: linebreaks.
                     echo "<div id='short$j'>";
-                        echo substr($e->message, 0, 300)." ...&nbsp;<a href='javascript:void(0)'
+                        echo substr($fmtMsg, 0, 300)." ...&nbsp;<a href='javascript:void(0)'
                             onclick=\"document.getElementById('long$j').style.display='block'; document.getElementById('short$j').style.display='none';\"
                             >[".$lng->getTrn('secs/home/more')."]</a>\n";
                     echo "</div>\n";
                     echo "<div id='long$j'>";
-                        echo $e->message;
+                        echo $fmtMsg;
                     echo "</div>\n";
                     echo "<script language='JavaScript' type='text/javascript'>
                         ".(($isLong)
@@ -962,7 +960,7 @@ function sec_coaches() {
                     if (empty($txt)) {
                         $txt = $lng->getTrn('secs/coaches/nowrite')." $c->name.";
                     }
-                    echo '<p>'.$txt."</p>\n";
+                    echo '<p>'.fmtprint($txt)."</p>\n";
                     ?>
                 </td>
                 <?php

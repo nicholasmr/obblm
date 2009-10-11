@@ -1437,7 +1437,7 @@ private function _about($ALLOW_EDIT)
                     <?php
                 }
                 else {
-                    echo '<p>'.$txt."</p>\n";
+                    echo '<p>'.fmtprint($txt)."</p>\n";
                 }
                 ?>
             </td>
@@ -1463,7 +1463,7 @@ private function _news($ALLOW_EDIT)
             <?php
             $news_2 = array();
             foreach ($news as $n) {
-                $news_2[] = '<p>'.$n->txt.
+                $news_2[] = '<p>'.fmtprint($n->txt).
                 '<div id="newsedit'.$n->news_id.'" style="display:none; clear:both;"><form method="POST">
                     <textarea name="txt" cols="60" rows="4">'.$n->txt.'</textarea>
                     <input type="hidden" name="type" value="newsedit">

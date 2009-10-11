@@ -269,7 +269,7 @@ private function _about($ALLOW_EDIT)
                     <?php
                 }
                 else {
-                    echo "<p>$txt</p>";
+                    echo '<p>'.fmtprint($txt).'</p>';
                 }
                 ?>
             </div>
