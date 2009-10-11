@@ -41,7 +41,6 @@ define('OBBLM_VERSION', '0.8h');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
-define('LOG_HIST_LENGTH', 3); // Show log entries for this number of months back in time.
 
 /*********************
  *   Stats types. Used by Stats class.

@@ -692,7 +692,6 @@
         <th>Management: Tournament</th> <!-- Tournament handling -->
         <delete>Delete+retire coach or team</delete>
         <schedule>Schedule matches</schedule>
-        <log>Log</log>
         <import>Import team</import>
 
         <pick>Please pick one of the above links.</pick>
@@ -753,9 +752,6 @@
         <edit_tour>Edit existing tournament</edit_tour>
         <tour_del>Tournament deletion</tour_del>
         <move_div>Move tour to other division</move_div>
-
-        <!-- Subsec: Log -->
-            <!-- Nothing! -->
             
         <!-- Subsec: Coach/team admin management -->
         <retire>

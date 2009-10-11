@@ -131,7 +131,12 @@ private function _handleActions($ALLOW_EDIT)
             case 'unhire_journeyman': status($p->unhireJourneyman()); break;
             case 'unsell_player':     status($p->unsell()); break;
             case 'unbuy_goods':       status($team->unbuy($_POST['thing'])); break;
-            case 'bank':              status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000) && SiteLog::create("Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas", $coach->coach_id)); break;
+            case 'bank':              
+                status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000)); 
+                if (Module::isRegistered('LogSubSys')) {
+                    Module::run('LogSubSys', array('createEntry', LOG_T_DTREASURY, $coach->coach_id, "Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas"));
+                }
+                break;
             case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
             case 'chlid':             status($team->setLeagueID((int) $_POST['lid'])); break;
             case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;

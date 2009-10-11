@@ -503,7 +503,7 @@ private static function make_menu()
         }
         if (isset($_SESSION['logged_in'])) {
             $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'ldm' => $lng->getTrn('secs/admin/ldm'), 'chtr' => $lng->getTrn('secs/admin/th'), 'import' => $lng->getTrn('secs/admin/import'), 'ctman' => $lng->getTrn('secs/admin/delete'));
-            $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('secs/admin/log'));
+            $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('name', 'LogSubSys'));
             if (is_object($coach) && $coach->ring <= RING_COM) {
                 ?>
                 <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/admin');?></span>

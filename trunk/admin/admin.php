@@ -37,7 +37,7 @@ function sec_admin() {
         fatal("Sorry. Only site administrators and commissioners are allowed to access this section.");
 
     $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'ldm' => $lng->getTrn('secs/admin/ldm'), 'import' => $lng->getTrn('secs/admin/import'), 'chtr' => $lng->getTrn('secs/admin/th'), 'ctman' => $lng->getTrn('secs/admin/delete'));
-    $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('secs/admin/log'));
+    $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('name', 'LogSubSys'));
 
     if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
         fatal("Sorry. Your access level does not allow you opening the requested page.");
@@ -60,16 +60,7 @@ function sec_admin() {
         case 'chtr':        include('admin/admin_tourman.php'); break;
         case 'ctman':       include('admin/admin_team_coach_retire_del.php'); break;
         case 'ldm':         include('admin/admin_league_division_man.php'); break;
-        case 'log': 
-            title($lng->getTrn('secs/admin/log'));
-            echo "<table style='width:100%;'>\n";
-            echo "<tr><td><i>Date</i></td><td><i>Message</i></td></tr><tr><td colspan='2'><hr></td></tr>\n";
-            foreach (SiteLog::getLogs(LOG_HIST_LENGTH) as $l) {
-                echo "<tr><td>".textdate($l->date)."</td><td>$l->txt</td></tr>\n";
-            }
-            echo "</table>\n";
-            break;
-   
+        case 'log':         Module::run('LogSubSys', array('logViewPage')); break;
     }
 }
 
