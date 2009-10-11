@@ -197,6 +197,10 @@ function matchresult_icon($result) {
     return "<div class='match_icon ". $class ."' title='". $title ."'></div>";
 }
 
+function fmtprint($str) {
+    return preg_replace("/(\r\n|\n\r|\n|\r)/", '<br>', $str);
+}
+
 #function get_parent_node($node, $node_id, $parent_node) {
 # Should be written soon.
 #}
