@@ -32,6 +32,12 @@ interface ModuleInterface
     public static function getModuleAttributes();
     public static function getModuleTables();
     public static function getModuleUpgradeSQL();
+    
+    // These routines are triggered by the Match class.
+    public static function triggerMatchCreate($mid);
+    public static function triggerMatchSave($mid);
+    public static function triggerMatchDelete($mid);
+    public static function triggerMatchReset($mid);
 }
 
 // Module handler
@@ -48,6 +54,11 @@ class Module
     */
     );
     const MOD_RPATH = 'modules/'; # Relative path from base path to the modules directory in which modules (dirs) are placed.
+    
+    const TRIGGER_CREATE = 1;
+    const TRIGGER_SAVE   = 2;
+    const TRIGGER_DELETE = 3;    
+    const TRIGGER_RESET  = 4;
     
     public static function register(array $struct)
     {
@@ -128,5 +139,21 @@ class Module
             $SQLs[$class] = isset($mod_SQLs[$version]) ? $mod_SQLs[$version] : array();
         }
         return $SQLs;
+    }
+    
+    public static function runTriggers($trigger_type, $mid)
+    {
+        $func = '';
+        switch ($trigger_type)
+        {
+            case self::TRIGGER_CREATE: $func = 'triggerMatchCreate'; break;
+            case self::TRIGGER_SAVE:   $func = 'triggerMatchSave'; break;
+            case self::TRIGGER_DELETE: $func = 'triggerMatchDelete'; break;
+            case self::TRIGGER_RESET:  $func = 'triggerMatchReset'; break;
+        }
+        foreach (array_keys(self::$modules) as $class) {
+            call_user_func(array($class, $func), $mid);
+        }
+        return true;
     }
 }
