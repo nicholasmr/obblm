@@ -307,9 +307,9 @@ class CyanideMatch extends Match
 				$home_cash_earned -= 80;
 			}
 
-			if ($home_cash_earned < 0) {
-				$home_cash_earned = 0;
-			}
+#			if ($home_cash_earned < 0) {
+#				$home_cash_earned = 0;
+#			}
 
 			// away team spiralling expenses
 			if ($away_team_value > 1750 && $away_team_value <= 1890) {
@@ -337,10 +337,10 @@ class CyanideMatch extends Match
 				$away_cash_earned -= 80;
 			}
 
-			if ($away_cash_earned < 0)
-			{
-				$away_cash_earned = 0;
-			}
+#			if ($away_cash_earned < 0)
+#			{
+#				$away_cash_earned = 0;
+#			}
 
 			if(!isset($home_team_ff_variation)) {
 				$home_team_ff_variation = 0;
