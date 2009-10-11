@@ -50,6 +50,11 @@ public static function getModuleUpgradeSQL()
     return array();
 }
 
+public static function triggerMatchCreate($mid){}
+public static function triggerMatchSave($mid){}
+public static function triggerMatchDelete($mid){}
+public static function triggerMatchReset($mid){}
+
 static public function main($argv)
 {
 

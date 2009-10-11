@@ -148,6 +148,11 @@ public static function getModuleUpgradeSQL()
     );
 }
 
+public static function triggerMatchCreate($mid){}
+public static function triggerMatchSave($mid){}
+public static function triggerMatchDelete($mid){}
+public static function triggerMatchReset($mid){}
+
 /***************
  * main() related.
  ***************/

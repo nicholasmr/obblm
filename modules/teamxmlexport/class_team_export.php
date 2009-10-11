@@ -48,6 +48,11 @@ class Team_export extends Team implements ModuleInterface
     {
         return array();
     }
+    
+    public static function triggerMatchCreate($mid){}
+    public static function triggerMatchSave($mid){}
+    public static function triggerMatchDelete($mid){}
+    public static function triggerMatchReset($mid){}
 
     public function xmlExport()
     {
