@@ -36,7 +36,7 @@ define('T_TEXT_PLAYER', 4);
 define('T_TEXT_MSMR',   7); // Match summary.
 define('T_TEXT_TOUR',   8);
 #define('T_TEXT_GUEST',  9); # Deprecated
-define('T_TEXT_LOG',    10);
+#define('T_TEXT_LOG',    10); # Deprecated
 define('T_TEXT_MSMRC',  11); // Match summary comments.
 define('T_TEXT_TNEWS',  12); // Team news board messages.
 
@@ -347,59 +347,6 @@ class TourDesc extends _Text
         return (empty($this->txt)) 
             ? parent::create($this->tour_id, T_TEXT_TOUR, $txt, false) 
             : parent::edit($txt, false, false, false);
-    }
-}
-
-/* 
- *  Handles the logging of actions made on the site by coaches.
- */
-
-class SiteLog extends _Text
-{
-    /***************
-     * Properties 
-     ***************/
-
-    public $log_id = 0;
-    public $f_id = 0; // Submitter (coach).
-    public $txt = '';
-
-    /***************
-     * Methods 
-     ***************/    
-
-    public function __construct($lid) 
-    {
-        $this->log_id = $lid;
-        parent::__construct($lid);
-    }
-
-    /* 
-        Parent has delete() implemented.
-    */
-
-    /***************
-     * Statics
-     ***************/
-    
-    public static function create($str, $f_id)
-    {
-        return parent::create($f_id, T_TEXT_LOG, $str, false);
-    }
-    
-    public static function getLogs($monthsBack = false)
-    {
-        $logs = array();
-        
-        $query = "SELECT txt_id FROM texts WHERE type = ".T_TEXT_LOG.(($monthsBack) ? " AND date > SUBDATE(NOW(), INTERVAL $monthsBack MONTH) " : '')." ORDER BY date DESC";
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                array_push($logs, new SiteLog($row['txt_id']));
-            }
-        }
-        
-        return $logs;
     }
 }
 

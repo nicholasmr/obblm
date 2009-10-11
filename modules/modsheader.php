@@ -116,6 +116,12 @@ Module::register(array(
     'filesLoadTime' => array('extraplayerstats/class_extraplayerstats.php')
 ));
 
+Module::register(array(
+    'class'         => 'LogSubSys', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('log/class_log.php', 'log/header.php')
+));
+
 /*
     NOTE to Grégory: Please wrap your code into a class that implements "ModuleInterface". Sorry for the inconvenience.
 */
