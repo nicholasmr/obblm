@@ -214,7 +214,7 @@ public static function makeList($ALLOW_EDIT)
             case 'edit':
                 if (isset($_GET['wanted_id']) && is_numeric($_GET['wanted_id'])) {
                     $w = new Wanted($_GET['wanted_id']);
-                    $player_id = $w->player_id;
+                    $player_id = $w->pid;
                     $why = $w->why;
                     $bounty = $w->bounty;
                 }
@@ -234,7 +234,7 @@ public static function makeList($ALLOW_EDIT)
                     $query = "SELECT player_id, players.name AS 'name', teams.name AS 'team_name' FROM players, teams WHERE owned_by_team_id = team_id ORDER by team_name ASC, name ASC";
                     $result = mysql_query($query);
                     while ($row = mysql_fetch_assoc($result)) {
-                        echo "<option value='$row[player_id]'>$row[team_name]: $row[name] </option>\n";
+                        echo "<option value='$row[player_id]' ".(($player_id == $row['player_id']) ? 'SELECTED' : '').">$row[team_name]: $row[name] </option>\n";
                     }
                     ?>
                 </select>                
