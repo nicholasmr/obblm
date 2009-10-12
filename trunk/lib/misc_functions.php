@@ -201,12 +201,4 @@ function fmtprint($str) {
     return preg_replace("/(\r\n|\n\r|\n|\r)/", '<br>', $str);
 }
 
-#function get_parent_node($node, $node_id, $parent_node) {
-# Should be written soon.
-#}
-
-#function get_parent_obj($obj, $obj_id, $parent_obj) {
-# Should be written soon.
-#}
-
 ?>

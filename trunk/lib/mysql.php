@@ -250,6 +250,36 @@ function get_rows($tbl, array $getFields) {
     return $ret;
 }
 
+$relations_node = array(
+    T_NODE_MATCH        => array('id' => 'match_id', 'parent_id' => 'f_tour_id', 'tbl' => 'matches'),
+    T_NODE_TOURNAMENT   => array('id' => 'tour_id',  'parent_id' => 'f_did',     'tbl' => 'tours'),
+    T_NODE_DIVISION     => array('id' => 'did',      'parent_id' => 'f_lid',     'tbl' => 'divisions'),
+    T_NODE_LEAGUE       => array('id' => 'lid',      'parent_id' => null,        'tbl' => 'leagues'),
+);
+$relations_obj = array(
+    T_OBJ_PLAYER => array('id' => 'player_id', 'parent_id' => 'owned_by_team_id',   'tbl' => 'players'),
+    T_OBJ_TEAM   => array('id' => 'team_id',   'parent_id' => 'owned_by_coach_id',  'tbl' => 'teams'),
+    T_OBJ_COACH  => array('id' => 'coach_id',  'parent_id' => null,                 'tbl' => 'coaches'),
+);
+function get_parent_id($type, $id, $parent_type) {
+    global $relations_node, $relations_obj;
+    $relations = in_array($type, array_keys($relations_node)) ? $relations_node : $relations_obj;
+    if ($type >= $parent_type)
+        return null;
+    # Don't include tables below $node OR above $parent_node OR parent_node table itself!
+    list($zeroEntry) = array_keys($relations);
+    $REL_trimmed = array_slice($relations, $type-$zeroEntry, $parent_type-$type);
+    $REL_trimmed_padded = $REL_trimmed; 
+    $tables = array_map(create_function('$rl', 'return $rl["tbl"];'), $REL_trimmed);
+    array_pop($REL_trimmed);
+    array_shift($REL_trimmed_padded);
+    $wheres = array_map(create_function('$rl,$rl_next', 'return "$rl[tbl].$rl[parent_id] = $rl_next[tbl].$rl_next[id]";'), $REL_trimmed, $REL_trimmed_padded);
+    $query = 'SELECT '.$relations[$parent_type-1]['parent_id'].' AS "parent_id" FROM '.implode(',', $tables).' WHERE '.$relations[$type]['id']."=$id".((!empty($wheres)) ? ' AND '.implode(' AND ', $wheres) : '');
+    $result = mysql_query($query);
+    $row = mysql_fetch_assoc($result);
+    return $row['parent_id'];
+}
+
 function get_list($table, $col, $val, $new_col) {
     $result = mysql_query("SELECT $new_col FROM $table WHERE $col = '$val'");
     if (mysql_num_rows($result) <= 0)

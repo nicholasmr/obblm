@@ -37,10 +37,23 @@ session_start();
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.8h');
+define('OBBLM_VERSION', '0.8i');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
+
+/*********************
+ *   Node and object types
+ *********************/
+
+define('T_OBJ_PLAYER',  1);
+define('T_OBJ_TEAM',    2);
+define('T_OBJ_COACH',   3);
+
+define('T_NODE_MATCH',      11);
+define('T_NODE_TOURNAMENT', 12);
+define('T_NODE_DIVISION',   13);
+define('T_NODE_LEAGUE',     14);
 
 /*********************
  *   Stats types. Used by Stats class.
@@ -52,10 +65,10 @@ define('STATS_COACH',  3);
 define('STATS_RACE',   4);
 define('STATS_STAR',   5);
 # Match groupings (nodes):
-define('STATS_MATCH',    10);
-define('STATS_TOUR',     11);
-define('STATS_DIVISION', 12);
-define('STATS_LEAGUE',   13);
+define('STATS_MATCH',    11);
+define('STATS_TOUR',     12);
+define('STATS_DIVISION', 13);
+define('STATS_LEAGUE',   14);
 
 // Translation between MySQL column match data references in the match_data table to PHP STATS_* constants.
 $STATS_TRANS = array(

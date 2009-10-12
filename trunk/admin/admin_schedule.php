@@ -20,9 +20,9 @@ if (isset($_POST['button'])) {
         array(!$nameSet && !$addMatchToFFA, "Please fill out the tournament name."),
         array($nameSet && get_alt_col('tours', 'name', $_POST['name'], 'tour_id'), "Tournament name already in use."),
         array($coach->ring == RING_COM && (
-            $mkNewFFA && $coach->com_lid != get_alt_col('divisions', 'did', $_POST['did'], 'f_lid')
+            $mkNewFFA && $coach->com_lid != get_parent_id(T_NODE_DIVISION, $_POST['did'], T_NODE_LEAGUE)
             ||
-            $addMatchToFFA && $coach->com_lid != get_alt_col('divisions', 'did', get_alt_col('tours', 'tour_id', $_POST['existTour'], 'f_did'), 'f_lid') 
+            $addMatchToFFA && $coach->com_lid != get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE) 
         ), 'You are not allowed to schedule matches in that league.'),
         array($_POST['type'] == TT_FFA && $teamsCount != 2, 'Please select only 2 teams'),
         array($_POST['type'] == TT_RROBIN && $teamsCount < 3, 'Please select at least 3 teams'),
