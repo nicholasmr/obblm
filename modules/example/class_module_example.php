@@ -95,21 +95,10 @@ public static function getModuleUpgradeSQL()
     );
 }
 
-public static function triggerMatchCreate($mid)
-{
-    // Do stuff on match creation.
-}
-public static function triggerMatchSave($mid)
-{
-    // Do stuff on match save.
-}
-public static function triggerMatchDelete($mid)
-{
-    // Do stuff on match delete.
-}
-public static function triggerMatchReset($mid)
-{
-    // Do stuff on match reset.
+public static function triggerHandler($type, $argv){
+
+    // Do stuff on trigger events.
+    // $type may be any one of the T_TRIGGER_* types.
 }
 
 /***************

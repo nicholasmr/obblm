@@ -134,7 +134,7 @@ private function _handleActions($ALLOW_EDIT)
             case 'bank':              
                 status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000)); 
                 if (Module::isRegistered('LogSubSys')) {
-                    Module::run('LogSubSys', array('createEntry', LOG_T_DTREASURY, $coach->coach_id, "Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas"));
+                    Module::run('LogSubSys', array('createEntry', T_LOG_GOLDBANK, $coach->coach_id, "Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas"));
                 }
                 break;
             case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;

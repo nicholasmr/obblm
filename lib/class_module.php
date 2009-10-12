@@ -32,12 +32,7 @@ interface ModuleInterface
     public static function getModuleAttributes();
     public static function getModuleTables();
     public static function getModuleUpgradeSQL();
-    
-    // These routines are triggered by the Match class.
-    public static function triggerMatchCreate($mid);
-    public static function triggerMatchSave($mid);
-    public static function triggerMatchDelete($mid);
-    public static function triggerMatchReset($mid);
+    public static function triggerHandler($type, $argv);
 }
 
 // Module handler
@@ -54,11 +49,6 @@ class Module
     */
     );
     const MOD_RPATH = 'modules/'; # Relative path from base path to the modules directory in which modules (dirs) are placed.
-    
-    const TRIGGER_CREATE = 1;
-    const TRIGGER_SAVE   = 2;
-    const TRIGGER_DELETE = 3;    
-    const TRIGGER_RESET  = 4;
     
     public static function register(array $struct)
     {
@@ -120,6 +110,10 @@ class Module
         return array_keys(self::$modules);
     }
     
+    /*
+        SQL
+    */
+    
     public static function createAllRequiredTables()
     {
         $tables = array();
@@ -141,19 +135,36 @@ class Module
         return $SQLs;
     }
     
-    public static function runTriggers($trigger_type, $mid)
+    /*
+        Triggers
+    */
+    
+    private static $TRIGGER_CNT = 1;
+    const TRIGGER_TYPE_PREFIX = 'T_TRIGGER_'; # Ex T_TRIGGER_MATCH_SAVE
+    
+    public static function runTriggers($type, array $argv)
     {
-        $func = '';
-        switch ($trigger_type)
-        {
-            case self::TRIGGER_CREATE: $func = 'triggerMatchCreate'; break;
-            case self::TRIGGER_SAVE:   $func = 'triggerMatchSave'; break;
-            case self::TRIGGER_DELETE: $func = 'triggerMatchDelete'; break;
-            case self::TRIGGER_RESET:  $func = 'triggerMatchReset'; break;
-        }
         foreach (array_keys(self::$modules) as $class) {
-            call_user_func(array($class, $func), $mid);
+            call_user_func(array($class, 'triggerHandler'), $type, $argv);
         }
         return true;
     }
+    
+    public static function registerTrigger($name)
+    {
+        define($const = self::TRIGGER_TYPE_PREFIX.$name, self::$TRIGGER_CNT++);
+        return $const; # Return name of trigger constant, not its value.
+    }
+    
+    public static function isTriggerRegistered($name)
+    {
+        return defined(self::TRIGGER_TYPE_PREFIX.$name);
+    }
 }
+
+// Register core triggers.
+foreach (array('MATCH_CREATE', 'MATCH_SAVE', 'MATCH_DELETE', 'MATCH_RESET') as $name) {
+    Module::registerTrigger($name);
+}
+
+?>

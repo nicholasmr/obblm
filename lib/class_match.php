@@ -139,7 +139,7 @@ class Match
         $status &= $t1->dtreasury(-1*$this->income1) && $t2->dtreasury(-1*$this->income2);
         
         // Run triggers.
-        Module::runTriggers(Module::TRIGGER_DELETE, $this->match_id);
+        Module::runTriggers(T_TRIGGER_MATCH_DELETE, array($this->match_id));
         
         return $status;
     }
@@ -176,7 +176,7 @@ class Match
         $t2->dtreasury(-1*$this->income2);
         
         // Run triggers
-        Module::runTriggers(Module::TRIGGER_RESET, $this->match_id);
+        Module::runTriggers(T_TRIGGER_MATCH_RESET, array($this->match_id));
         
         return $status;
     }
@@ -267,7 +267,7 @@ class Match
         $this->saveText($input['comment']);
         
         // Run triggers.
-        Module::runTriggers(Module::TRIGGER_SAVE, $this->match_id);
+        Module::runTriggers(T_TRIGGER_MATCH_SAVE, array($this->match_id));
         
         return true;
     }
@@ -713,7 +713,7 @@ class Match
         $query = "INSERT INTO matches (team1_id, team2_id, round, f_tour_id, date_created)
                     VALUES ($input[team1_id], $input[team2_id], $input[round], '$input[f_tour_id]', NOW())";
 
-        return mysql_query($query) && Module::runTriggers(Module::TRIGGER_CREATE, mysql_insert_id());
+        return mysql_query($query) && Module::runTriggers(T_TRIGGER_MATCH_CREATE, array(mysql_insert_id()));
     }
 }
 

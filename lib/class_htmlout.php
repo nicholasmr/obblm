@@ -923,12 +923,23 @@ public static function dispTeamList($obj, $obj_id)
     );
 }
 
-public static function helpBox($body, $idx = 1, $link = '', $style = '')
+private static $helpBoxIdx = 0;
+public static function helpBox($body, $link = '', $style = '')
 {
+    $ID = 'helpBox'.(++self::$helpBoxIdx);
     if (!empty($link)) {
-        echo "<a href='javascript:void(0);' onClick='$(\"#helpbox$idx\").slideDown(\"slow\");'>$link</a><br><br>";
+        echo "<a href='javascript:void(0);' onClick='slideToggle(\"$ID\");'>$link</a><br><br>";
     }
-    echo "<div id='helpbox$idx' class='helpBox' style='".(empty($link) ? '' : 'display:none').";$style'>".$body.'</div>';
+    echo "<div id='$ID' class='helpBox' style='".(empty($link) ? '' : 'display:none').";$style'>".$body.'</div>';
+    return $ID;
+}
+
+private static $assistantBoxIdx = 0;
+public static function assistantBox($body, $style = '')
+{
+    $ID = 'assistantBox'.(++self::$assistantBoxIdx);
+    echo "<div id='$ID' class='assistantBox' style='$style'>".$body.'</div>';
+    return $ID;
 }
 
 #public static function mkBox($type, $title, $body, $options = array()) 
