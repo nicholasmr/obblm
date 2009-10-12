@@ -437,6 +437,7 @@ public static function frame_begin($stylesheet = false)
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <title><?php echo $settings['site_name']; ?> Blood Bowl League</title>
         <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
+        <link type="text/css" href="css/ss.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
@@ -912,7 +913,7 @@ public static function dispTeamList($obj, $obj_id)
         unset($fields['prizes']);
     }
     HTMLOUT::sort_table(
-        "Teams ". (($obj == STATS_COACH) ? "<a href='javascript:void(0);' onclick=\"window.open('html/coach_corner_teams.html','ccorner_TeamsHelp','width=350,height=400')\">[?]</a>" : ''),
+        "Teams",
         "index.php?section=".(($obj == STATS_COACH) ? 'coachcorner' : 'teams'),
         $teams,
         $fields,
@@ -920,6 +921,14 @@ public static function dispTeamList($obj, $obj_id)
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
         array('doNr' => false, 'noHelp' => true)
     );
+}
+
+public static function helpBox($body, $idx = 1, $link = '', $style = '')
+{
+    if (!empty($link)) {
+        echo "<a href='javascript:void(0);' onClick='$(\"#helpbox$idx\").slideDown(\"slow\");'>$link</a><br><br>";
+    }
+    echo "<div id='helpbox$idx' class='helpBox' style='".(empty($link) ? '' : 'display:none').";$style'>".$body.'</div>';
 }
 
 #public static function mkBox($type, $title, $body, $options = array()) 

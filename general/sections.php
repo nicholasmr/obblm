@@ -240,7 +240,7 @@ function sec_main() {
             echo "</div>\n";
             // New message link
             if (is_object($coach) && $coach->ring <= RING_COM)
-                echo "<a href='javascript:void(0);' onClick=\"document.getElementById('msgnew').style.display='block';\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
+                echo "<a href='javascript:void(0);' onClick=\"$('#msgnew').fadeIn('slow');\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
 
             // RSS
             echo "<a href='handler.php?type=rss'>RSS</a>\n";
@@ -271,23 +271,8 @@ function sec_main() {
                 echo "<h3 class='boxTitle$i'>$e->title</h3>\n";
 
                 echo "<div class='boxBody'>\n";
-
-                    $isLong = (strlen($e->message) > 300 && $e->type != 'msg');
                     $fmtMsg = fmtprint($e->message); # Basic supported syntax: linebreaks.
-                    echo "<div id='short$j'>";
-                        echo substr($fmtMsg, 0, 300)." ...&nbsp;<a href='javascript:void(0)'
-                            onclick=\"document.getElementById('long$j').style.display='block'; document.getElementById('short$j').style.display='none';\"
-                            >[".$lng->getTrn('secs/home/more')."]</a>\n";
-                    echo "</div>\n";
-                    echo "<div id='long$j'>";
-                        echo $fmtMsg;
-                    echo "</div>\n";
-                    echo "<script language='JavaScript' type='text/javascript'>
-                        ".(($isLong)
-                            ? "document.getElementById('long$j').style.display = 'none'; document.getElementById('short$j').style.display = 'block';"
-                            : "document.getElementById('long$j').style.display = 'block'; document.getElementById('short$j').style.display = 'none';"
-                        )."
-                    </script>\n";
+                    echo substr($fmtMsg, 0, 300)."<span id='e$j' style='display:none;'>".substr($fmtMsg, 300)."</span><span id='moreLink$j' ".((strlen($fmtMsg) > 300) ? '' : 'style="display:none"')."> ...&nbsp;<a href='javascript:void(0)' onclick=\"$('#moreLink$j').fadeOut('slow');$('#e$j').fadeIn('slow');\">[".$lng->getTrn('secs/home/more')."]</a></span>\n";
                     echo "<br><hr>\n";
 
                     echo "<table class='boxTable'>\n";
@@ -296,13 +281,13 @@ function sec_main() {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." " . (isset($e->date_mod) ? "(".$lng->getTrn('secs/home/lastedit')." ".textdate($e->date_mod).") " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>".$lng->getTrn('secs/home/show')."</a></td>\n";
                                 if (!empty($e->comments)) {
-                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"obj=document.getElementById('comment$e->match_id'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
+                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"$('#comment$e->match_id').fadeIn('slow');\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
                                 }
                             }
                             elseif ($e->type == 'msg') {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
                                 if (is_object($coach) && ($coach->admin || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
-                                    echo "<td align='right'><a href='javascript:void(0);' onClick=\"document.getElementById('msgedit$e->msg_id').style.display='block';\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
+                                    echo "<td align='right'><a href='javascript:void(0);' onClick=\"$('#msgedit$e->msg_id').fadeIn('slow');\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
                                     echo "<td align='right'>
                                         <form method='POST' name='msgdel$e->msg_id' style='display:inline; margin:0px;'>
                                             <input type='hidden' name='type' value='msgdel'>

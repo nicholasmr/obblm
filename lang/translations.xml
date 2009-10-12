@@ -127,8 +127,7 @@
         <report>
             
             <!-- General -->
-            <click>Click here</click>
-            <forhelp>for help on filling out a match report.</forhelp>
+            <clickforhelp>Need help?</clickforhelp>
             <help>
             <![CDATA[
             <b>Preliminary info</b><br>
