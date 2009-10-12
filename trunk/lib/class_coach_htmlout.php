@@ -176,7 +176,7 @@ function coachCorner() {
                 This means you are free to make a testing team for yourself. 
                 Teams are deletable as long as they are not scheduled to play any matches or have already played.
             </p>",
-            1, 'Need help?', 'width:400px;'
+            'Need help?', 'width:400px;'
         );
         echo "<br>\n";
         // Generate teams list.

@@ -72,9 +72,55 @@ if (isset($_POST['button'])) {
 title($lng->getTrn('secs/admin/schedule'));
 ?>
 <script language="JavaScript" type="text/javascript">
-    // Global JavaScript Variables.
+
     var TT_FFA    = <?php echo TT_FFA; ?>;
     var TT_RROBIN = <?php echo TT_RROBIN; ?>;
+    
+    function chTour(t)
+    {
+        /*
+            Handles the disabling and enabling of form elements depending on what tournament type is chosen.
+            
+            Expects TT_* PHP constants to be globally available to javascript.
+        */
+
+        n = document.tourForm['name'];
+        r = document.tourForm['rounds'];
+        FFA = document.getElementById(BOX_FFA);
+        RR = document.getElementById(BOX_RR);
+
+        if (t == TT_FFA) {
+            n.disabled = false;
+            r.disabled = true;
+            slideDown(BOX_FFA);
+            slideUp(BOX_RR);
+            
+            et2 = document.tourForm['existTour'];
+            chFFATour(et2.options[et2.selectedIndex].value); // Re-load state of fields.
+        }
+        else if (t == TT_RROBIN) {
+            n.disabled = false;
+            r.disabled = false;
+            slideDown(BOX_RR);
+            slideUp(BOX_FFA);
+            
+            chFFATour(-1); // Re-load state of fields.
+        }
+        
+        return true;
+    }
+
+    function chFFATour(trid)
+    {
+        /*
+            Disables fields "name", "ranking system" and such when adding a FFA match to an existing tour, in which case they are not needed.
+        */
+        
+        var val = !(trid == -1);
+        document.tourForm['did'].disabled  = val;
+        document.tourForm['name'].disabled = val;
+        document.tourForm['rs'].disabled   = val;
+    }
 </script>
 
 <?php
@@ -92,76 +138,79 @@ objsort($divisions, array('+dispName'));
     <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA match <i>(Free For All a.k.a. "open league format" - creates a single match)</i><br>
     <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
     <br>
-    <table><tr>
-        <td>
-            <b><?php echo $lng->getTrn('secs/admin/div_name');?>:</b><br>
-            <select name='did'>
-                <?php
-                foreach ($divisions as $d) {
-                    if ($coach->ring == RING_SYS || $coach->ring == RING_COM && $coach->com_lid == $d->f_lid) {
-                        echo "<option value='$d->did'>$d->dispName</option>\n";
-                    }
-                }
-                ?>
-            </select>
-            <br><br>
-            <b><?php echo $lng->getTrn('secs/admin/tour_name');?>:</b><br>
-            <input type="text" name="name" size="30" maxlength="50">
-            <br><br>
-            <b><?php echo $lng->getTrn('secs/admin/rank_sys');?>:</b> (<?php echo $lng->getTrn('secs/admin/prefixes');?>)<br>
-            <select name='rs'>
+    <table>
+    <tr>
+    <td valign='top'>
+        <b><?php echo $lng->getTrn('secs/admin/div_name');?>:</b><br>
+        <select name='did'>
             <?php
-            foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
-                echo "<option value='$idx'>RS #$idx | $r</option>\n";
+            foreach ($divisions as $d) {
+                if ($coach->ring == RING_SYS || $coach->ring == RING_COM && $coach->com_lid == $d->f_lid) {
+                    echo "<option value='$d->did'>$d->dispName</option>\n";
+                }
             }
             ?>
-            </select>
-            <br><br>
-            <?php echo $lng->getTrn('secs/admin/rrobin_rnds');?><br>
-            <select name="rounds">
-            <?php
-            foreach (range(1, 10) as $i) echo "<option value='$i'>$i</option>\n";
-            ?>
-            </select>
-        </td>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <td>
-            <div id="existTour" style="display:none;">
-                <b><font color="blue"><?php echo $lng->getTrn('secs/admin/add_match');?></font></b><br>
-                <select name="existTour" onChange="chFFATour(this.options[this.selectedIndex].value);">
-                    <optgroup label="New FFA">
-                        <option value='-1'><?php echo $lng->getTrn('secs/admin/new_tour');?></option>
-                    </optgroup>
-                    <optgroup label="Existing FFA">
-                    <?php
-                    foreach (Tour::getTours() as $t)
-                        if ($t->type == TT_FFA && ($coach->ring == RING_SYS || $coach->ring == RING_COM && $coach->com_lid == get_alt_col('divisions', 'did', $t->f_did, 'f_lid')))
-                            echo "<option value='$t->tour_id' ".(($t->locked) ? 'DISABLED' : '').">$t->name".(($t->locked) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
-                    ?>
-                    </optgroup>
-                </select>
-                <br><br>
-                <b><font color="blue"><?php echo $lng->getTrn('secs/admin/as_type');?></font></b><br>
-                <select name="round">
-                <?php
-                    foreach (array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') as $r => $d) {
-                        echo "<option value='$r'>$d</option>\n";
-                    }
-                    $pure_rounds = array();
-                    for ($i=1;$i<30;$i++) $pure_rounds[$i] = "Round #$i match";
-                    foreach ($pure_rounds as $r => $d) {
-                        echo "<option value='$r'>$d</option>\n";
-                    }
-                ?>
-                </select>
-                <br><br>
-                <b><font color="blue"><?php echo $lng->getTrn('secs/admin/as_reverse');?></font></b><br>
-                <input type="checkbox" name="reverse" value="1">
-            </div>
-        </td>
-    </tr></table>
+        </select>
+        <br><br>
+        <b><?php echo $lng->getTrn('secs/admin/tour_name');?>:</b><br>
+        <input type="text" name="name" size="30" maxlength="50">
+        <br><br>
+        <b><?php echo $lng->getTrn('secs/admin/rank_sys');?>:</b> (<?php echo $lng->getTrn('secs/admin/prefixes');?>)<br>
+        <select name='rs'>
+        <?php
+        foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
+            echo "<option value='$idx'>RS #$idx | $r</option>\n";
+        }
+        ?>
+        </select>
+    </td>
+    <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+    </td>
+    <td valign='top'>
+        <?php
+        $body = '';
+        // FFA settings.
+        $body .= '<b>'.$lng->getTrn('secs/admin/FFA_settings').'</b><br><hr><br>';
+        $body .= '<b>'.$lng->getTrn('secs/admin/add_match').'</b><br>';
+        $body .= '<select name="existTour" onChange="chFFATour(this.options[this.selectedIndex].value);">';
+        $body .= '<optgroup label="New FFA">';
+        $body .= "<option value='-1'>".$lng->getTrn('secs/admin/new_tour').'</option>';
+        $body .= '</optgroup>';
+        $body .= '<optgroup label="Existing FFA">';
+        foreach (Tour::getTours() as $t)
+            if ($t->type == TT_FFA && ($coach->ring == RING_SYS || $coach->ring == RING_COM && $coach->com_lid == get_alt_col('divisions', 'did', $t->f_did, 'f_lid')))
+                $body .= "<option value='$t->tour_id' ".(($t->locked) ? 'DISABLED' : '').">$t->name".(($t->locked) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
+        $body .= '</optgroup>';
+        $body .= '</select>';
+        $body .= '<br><br>';
+        $body .= '<b>'.$lng->getTrn('secs/admin/as_type').'</b><br>';
+        $body .= '<select name="round">';
+        foreach (array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') as $r => $d) {
+            $body .= "<option value='$r'>$d</option>\n";
+        }
+        $pure_rounds = array();
+        for ($i=1;$i<30;$i++) $pure_rounds[$i] = "Round #$i match";
+        foreach ($pure_rounds as $r => $d) {
+            $body .= "<option value='$r'>$d</option>\n";
+        }
+        $body .= '</select>';
+        $body .= '<br><br>';
+        $body .= '<b>'.$lng->getTrn('secs/admin/as_reverse').'</b><br>';
+        $body .= '<input type="checkbox" name="reverse" value="1">';
+        $BOX_FFA = HTMLOUT::assistantBox($body);
+        
+        // Round robin seed multiplier.
+        $body = '';
+        $body .= '<b>'.$lng->getTrn('secs/admin/RR_settings').'</b><br><hr><br>';
+        $body .= $lng->getTrn('secs/admin/rrobin_rnds')."<br>N = <select name='rounds'>";
+        foreach (range(1, 10) as $i) $body .= "<option value='$i'>$i</option>\n";
+        $body .= "</select></div>\n";
+        $BOX_RR = HTMLOUT::assistantBox($body, 'display:none;');
+        ?>
+    </td>
+    </tr>
+    </table>
     <br>
     <b><?php echo $lng->getTrn('secs/admin/participants');?>:</b><br>
     <?php
@@ -185,7 +234,11 @@ objsort($divisions, array('+dispName'));
     <hr align="left" width="200px">
     <input type="submit" name="button" value="<?php echo $lng->getTrn('secs/admin/create');?>" <?php echo (empty($divisions) ? 'DISABLED' : '');?>>
 </form>
+
 <script language="JavaScript" type="text/javascript">
+    var BOX_FFA = '<?php echo $BOX_FFA;?>';
+    var BOX_RR = '<?php echo $BOX_RR;?>';
     chTour(<?php echo TT_FFA;?>);
 </script>
+
 <?php

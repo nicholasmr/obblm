@@ -1,7 +1,16 @@
-.helpBox{
+
+.helpBox {
 	color: #FFFFFF;
 	border: 2px solid #CC6633;
 	background-color: #4C6260;
+	padding:10px;
+	line-height:1.4em;
+}
+
+.assistantBox {
+	color: #000000;
+	border: 2px solid #3D3D3D;
+	background-color: #FFCCFF;
 	padding:10px;
 	line-height:1.4em;
 }
