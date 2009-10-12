@@ -169,6 +169,16 @@ function coachCorner() {
 
         title($lng->getTrn('global/secLinks/coachcorner'));
 
+        HTMLOUT::helpBox(
+            "<b>Your teams</b>
+            <p>
+                This is a list of the teams you coach. Only the teams selected by the league commissioner play in the created leagues. 
+                This means you are free to make a testing team for yourself. 
+                Teams are deletable as long as they are not scheduled to play any matches or have already played.
+            </p>",
+            1, 'Need help?', 'width:400px;'
+        );
+        echo "<br>\n";
         // Generate teams list.
 
         HTMLOUT::dispTeamList(STATS_COACH, $coach->coach_id);

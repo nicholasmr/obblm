@@ -226,14 +226,7 @@ function match_form($match_id) {
     <tr><td><b>Date played</b>:</td><td><?php echo ($m->is_played) ? textdate($m->date_played) : '<i>Not yet played</i>';?></td></tr>
     </table>
     <br>
-    <div>
-        <a href='javascript:void(0);' onClick="document.getElementById('helpbox').style.display = 'block';"><?php echo $lng->getTrn('secs/fixtures/report/click');?></a> <?php echo $lng->getTrn('secs/fixtures/report/forhelp');?>
-    </div>
-    <div id='helpbox' style='display: none;'>
-        <br>
-        <?php echo $lng->getTrn('secs/fixtures/report/help');?>
-    </div>
-    <br>
+    <?php HTMLOUT::helpBox($lng->getTrn('secs/fixtures/report/help'), 1, $lng->getTrn('secs/fixtures/report/clickforhelp')); ?>
     <form method="POST" enctype="multipart/form-data">
         <table class="match_form">
             <tr>
