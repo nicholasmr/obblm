@@ -725,12 +725,12 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
     }
     
     public function saveText($str) {
-        $desc = new TDesc(T_TEXT_PLAYER, $this->player_id);
+        $desc = new ObjDescriptions(T_TEXT_PLAYER, $this->player_id);
         return $desc->save($str);
     }
 
     public function getText() {
-        $desc = new TDesc(T_TEXT_PLAYER, $this->player_id);
+        $desc = new ObjDescriptions(T_TEXT_PLAYER, $this->player_id);
         return $desc->txt;
     }
     

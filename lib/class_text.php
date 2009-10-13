@@ -30,17 +30,16 @@ define('T_TEXT_MSG',    1);
 define('T_TEXT_COACH',  2);
 define('T_TEXT_TEAM',   3);
 define('T_TEXT_PLAYER', 4);
-// The gap is due to modularisation of code (have own tables instead of using texts table).
 #define('T_TEXT_HOF',    5); # Deprecated
 #define('T_TEXT_WANTED', 6); # Deprecated
-define('T_TEXT_MSMR',   7); // Match summary.
+define('T_TEXT_MATCH_SUMMARY', 7);
 #define('T_TEXT_TOUR',   8); # Deprecated
 #define('T_TEXT_GUEST',  9); # Deprecated
 #define('T_TEXT_LOG',    10); # Deprecated
-define('T_TEXT_MSMRC',  11); // Match summary comments.
-define('T_TEXT_TNEWS',  12); // Team news board messages.
+define('T_TEXT_MATCH_COMMENT', 11);
+define('T_TEXT_TNEWS',  12); // Team news.
 
-class _Text
+class TextSubSys
 {
     /***************
      * Properties 
@@ -104,13 +103,121 @@ class _Text
                 ($f_id, '".mysql_real_escape_string($txt2)."', '".mysql_real_escape_string($txt)."', NOW(), $type)
                 "));
     }
+    
+    public static function getMainBoardMessages($n) 
+    {
+        global $settings;
+        $board = array();
+
+        // First we add all commissioner messages to the board structure.
+        foreach (Message::getMessages($n) as $m) {
+            $o = (object) array();
+            // Specific fields:
+            $o->msg_id    = $m->msg_id;
+            $o->author_id = $m->f_coach_id;
+            // General fields:
+            $o->cssidx    = T_HTMLBOX_ADMIN; // CSS box index
+            $o->type      = T_TEXT_MSG;
+            $o->author    = get_alt_col('coaches', 'coach_id', $m->f_coach_id, 'name');
+            $o->title     = $m->title;
+            $o->message   = $m->message;
+            $o->date      = $m->date_posted;
+            array_push($board, $o);
+        }
+
+        // Now we add all game summaries.
+        foreach (MatchSummary::getSummaries($n) as $r) {
+            $o = (object) array();
+            $m = new Match($r->match_id);
+            // Specific fields:
+            $o->date_mod  = $m->date_modified;
+            $o->match_id  = $m->match_id;
+            $o->comments  = $m->getComments();
+            // General fields:
+            $o->cssidx    = T_HTMLBOX_INFO; // CSS box index
+            $o->type      = T_TEXT_MATCH_SUMMARY;
+            $o->author    = get_alt_col('coaches', 'coach_id', $m->submitter_id, 'name');
+            $o->title     = "Match: $m->team1_name $m->team1_score&mdash;$m->team2_score $m->team2_name";
+            $o->message   = $m->comment;
+            $o->date      = $m->date_played;
+            array_push($board, $o);
+        }
+
+        // And finally team news.
+        if ($settings['fp_team_news']) {
+            foreach (TeamNews::getNews(false, $n) as $t) {
+                $o = (object) array();
+                // Specific fields:
+                    # none
+                // General fields:
+                $o->cssidx    = T_HTMLBOX_INFO; // CSS box index
+                $o->type      = T_TEXT_TNEWS;
+                $o->author    = get_alt_col('teams', 'team_id', $t->f_id, 'name');
+                $o->title     = "Team news: $o->author";
+                $o->message   = $t->txt;
+                $o->date      = $t->date;
+                array_push($board, $o);
+            }
+        }
+
+        // Last touch on the board.
+        if (!empty($board)) {
+            objsort($board, array('-date'));
+            if ($n) {
+                $board = array_slice($board, 0, $n);
+            }
+        }
+        
+        return $board;
+    }
+}
+
+/* 
+ *  Handles text Descriptions for players (T_TEXT_PLAYER), teams (T_TEXT_TEAM) and coaches (T_TEXT_COACH).
+ */
+
+class ObjDescriptions extends TextSubSys
+{
+    /***************
+     * Properties 
+     ***************/
+     
+     // From MySQL.
+     public $type = 0;
+     public $txt = '';
+
+    /***************
+     * Methods 
+     ***************/
+
+    function __construct($type, $f_id) 
+    {
+        $result = mysql_query("SELECT * FROM texts WHERE type = $type AND f_id = $f_id");
+        if ($result && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                foreach ($row as $key => $val) {
+                    $this->$key = $val;
+                }
+            }
+        }
+        
+        $this->type = $type;
+        $this->f_id = $f_id;
+    }
+
+    public function save($txt)
+    {
+        return (empty($this->txt)) 
+            ? parent::create($this->f_id, $this->type, $txt, false) 
+            : parent::edit($txt, false, false, false);
+    }
 }
 
 /* 
  *  Handles messages for the messages board.
  */
 
-class Message extends _Text
+class Message extends TextSubSys
 {
     /***************
      * Properties 
@@ -170,56 +277,15 @@ class Message extends _Text
 }
 
 /* 
- *  Handles text Descriptions for players (T_TEXT_PLAYER), teams (T_TEXT_TEAM) and coaches (T_TEXT_COACH).
- */
-
-class TDesc extends _Text
-{
-    /***************
-     * Properties 
-     ***************/
-     
-     // From MySQL.
-     public $type = 0;
-     public $txt = '';
-
-    /***************
-     * Methods 
-     ***************/
-
-    function __construct($type, $f_id) 
-    {
-        $result = mysql_query("SELECT * FROM texts WHERE type = $type AND f_id = $f_id");
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                foreach ($row as $key => $val) {
-                    $this->$key = $val;
-                }
-            }
-        }
-        
-        $this->type = $type;
-        $this->f_id = $f_id;
-    }
-
-    public function save($txt)
-    {
-        return (empty($this->txt)) 
-            ? parent::create($this->f_id, $this->type, $txt, false) 
-            : parent::edit($txt, false, false, false);
-    }
-}
-
-/* 
  *  Handles match summaries.
  */
 
-class MSMR extends _Text
+class MatchSummary extends TextSubSys
 {
     /*
         Please note: 
         
-            The date field for MSMR is not used for anything and its contents is not reliable. 
+            The date field for MatchSummary is not used for anything and its contents is not reliable. 
             Instead use the date fields of the corresponding match object.
     */
 
@@ -237,7 +303,7 @@ class MSMR extends _Text
     function __construct($mid) 
     {
         $this->match_id = $mid;
-        $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMR;
+        $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MATCH_SUMMARY;
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
             $this->exists = true;
@@ -249,8 +315,32 @@ class MSMR extends _Text
     public function save($txt)
     {
         return (!$this->exists) 
-            ? parent::create($this->match_id, T_TEXT_MSMR, $txt, false) 
+            ? parent::create($this->match_id, T_TEXT_MATCH_SUMMARY, $txt, false) 
             : parent::edit($txt, false, false, false);
+    }
+    
+    public static function getSummaries($n = false) {
+        
+        $r = array();
+        
+        $query = "SELECT match_id, txt FROM matches, texts WHERE 
+                match_id = f_id 
+            AND type = ".T_TEXT_MATCH_SUMMARY." 
+            AND date_played IS NOT NULL 
+            AND txt IS NOT NULL 
+            AND txt != '' 
+            ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
+        
+        $result = mysql_query($query);
+        if ($result && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                if (!empty($row['txt'])) {
+                    $r[] = new self($row['match_id']);
+                }
+            }
+        }
+
+        return $r;
     }
 }
 
@@ -258,7 +348,7 @@ class MSMR extends _Text
  *  Match summary comments
  */
 
-class MSMRC extends _Text
+class MatchComment extends TextSubSys
 {
     /***************
      * Properties 
@@ -291,7 +381,7 @@ class MSMRC extends _Text
      
     public static function matchHasComments($mid)
     {
-        $query = "SELECT COUNT(*) AS 'cnt' FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC;
+        $query = "SELECT COUNT(*) AS 'cnt' FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MATCH_COMMENT;
         $result = mysql_query($query);
         $row = mysql_fetch_assoc($result);
         return ((int) $row['cnt'] > 0);
@@ -300,11 +390,11 @@ class MSMRC extends _Text
     public static function getComments($mid, $sort = '-')
     {
         $c = array();
-        $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MSMRC.' ORDER BY date '.(($sort == '-') ? 'DESC' : 'ASC');
+        $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MATCH_COMMENT.' ORDER BY date '.(($sort == '-') ? 'DESC' : 'ASC');
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
-                array_push($c, new MSMRC($row['txt_id']));
+                array_push($c, new self($row['txt_id']));
             }
         }
         return $c;
@@ -312,7 +402,7 @@ class MSMRC extends _Text
     
     public static function create($mid, $sid, $txt)
     {
-        return parent::create($mid, T_TEXT_MSMRC, $txt, $sid);
+        return parent::create($mid, T_TEXT_MATCH_COMMENT, $txt, $sid);
     }
 }
 
@@ -320,7 +410,7 @@ class MSMRC extends _Text
  *  Team news board.
  */
 
-class TNews extends _Text
+class TeamNews extends TextSubSys
 {
     /***************
      * Properties 
@@ -366,7 +456,7 @@ class TNews extends _Text
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
-                array_push($news, new TNews($row['txt_id']));
+                array_push($news, new TeamNews($row['txt_id']));
             }
         }
         

@@ -201,4 +201,13 @@ function fmtprint($str) {
     return preg_replace("/(\r\n|\n\r|\n|\r)/", '<br>', $str);
 }
 
+function urlcompile($type, $id) {
+    return 'index.php?section='.(($type > T_OBJ_COACH) ? 'standings' : 'profile')."&amp;type=$type&amp;id=$id";
+}
+
+function inlineform($fields, $formName, $buttonText) {
+    echo "<form method='POST' name='$formName' style='display:inline; margin:0px;'>".
+          implode("\n", array_map(create_function('$key,$val', 'return "<input type=\'hidden\' name=\'$key\' value=\'$val\'>";'),array_keys($fields),array_values($fields)))
+          ."<a href='javascript:void(0);' onClick='document.$formName.submit();'>$buttonText</a></form>";
+}
 ?>

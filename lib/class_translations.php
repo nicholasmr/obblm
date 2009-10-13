@@ -32,7 +32,7 @@ public function __construct($lang = false) {
 	if ($lang) {
 		$this->lang = $lang;
 	}
-	$this->registerTranslationFile(self::main, 'lang/translations.xml');
+	$this->registerTranslationFile(self::main, 'lang/translations2.xml');
 }
 
 public function registerTranslationFile($doc, $file) {

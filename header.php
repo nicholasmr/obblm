@@ -50,6 +50,9 @@ define('T_OBJ_PLAYER',  1);
 define('T_OBJ_TEAM',    2);
 define('T_OBJ_COACH',   3);
 
+define('T_OBJ_RACE',   4);
+define('T_OBJ_STAR',   5);
+
 define('T_NODE_MATCH',      11);
 define('T_NODE_TOURNAMENT', 12);
 define('T_NODE_DIVISION',   13);
@@ -58,7 +61,7 @@ define('T_NODE_LEAGUE',     14);
 /*********************
  *   Stats types. Used by Stats class.
  *********************/
-
+// Repalce these by the T_[OBJ|NODE]_* constants.
 define('STATS_PLAYER', 1);
 define('STATS_TEAM',   2);
 define('STATS_COACH',  3);
@@ -108,6 +111,16 @@ define('COLOR_HTML_CHR_EQP1', '#90EE90'); // Characteristic equal plus one.
 define('COLOR_HTML_CHR_GTP1', '#50FF50'); // Characteristic greater than plus one.
 define('COLOR_HTML_CHR_EQM1', '#FF8888'); // Characteristic equal minus one.
 define('COLOR_HTML_CHR_LTM1', '#FF4444'); // Characteristic less than minus one.
+
+/*********************
+ *   HTML BOX types
+ *********************/
+
+define('T_HTMLBOX_INFO',  1);
+define('T_HTMLBOX_COACH', 2);
+define('T_HTMLBOX_ADMIN', 3);
+define('T_HTMLBOX_STATS', 4);
+define('T_HTMLBOX_OTHER', 5);
 
 /*********************
  *   For players

@@ -604,13 +604,13 @@ class Team
 
     public function saveText($str) {
 
-        $txt = new TDesc(T_TEXT_TEAM, $this->team_id);
+        $txt = new ObjDescriptions(T_TEXT_TEAM, $this->team_id);
         return $txt->save($str);
     }
 
     public function getText() {
 
-        $desc = new TDesc(T_TEXT_TEAM, $this->team_id);
+        $desc = new ObjDescriptions(T_TEXT_TEAM, $this->team_id);
         return $desc->txt;
     }
 
@@ -627,19 +627,19 @@ class Team
     }
 
     public function writeNews($txt) {
-        return TNews::create($txt, $this->team_id);
+        return TeamNews::create($txt, $this->team_id);
     }
 
     public function getNews($n = false) {
-        return TNews::getNews($this->team_id, $n);
+        return TeamNews::getNews($this->team_id, $n);
     }
 
     public function deleteNews($news_id) {
-        $news = new TNews($news_id);
+        $news = new TeamNews($news_id);
         return $news->delete();
     }
     public function editNews($news_id, $new_txt) {
-        $news = new TNews($news_id);
+        $news = new TeamNews($news_id);
         return $news->edit($new_txt);
     }
 
