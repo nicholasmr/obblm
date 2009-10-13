@@ -46,6 +46,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         public $homefame = 0;
         public $hometransferedGold = 0;
         public $homeplayers;
+        public $tv_home = 0;
     public $awayteam = '';
         public $awayscore = 0;
         public $awaywinnings = 0;
@@ -53,10 +54,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
         public $awayfame = 0;
         public $awaytransferedGold = 0;
         public $awayplayers;
+        public $tv_away = 0;
 
     public $hometeam_id = 0;
     public $awayteam_id = 0;
     public $match_id = 0;
+
+    public $revUpdate = false;
 
 
 
@@ -77,14 +81,27 @@ class UPLOAD_BOTOCS implements ModuleInterface
             return false;
         }
 
-        $conn = mysql_up();
         if ( !$this->addMatch () )
         {
             $this->error = "Failed to create the match.  The most likely reason for this is an illegal matchup.";
             return false;
         }
+
+        $team_home = new Team( $this->hometeam_id );
+        $this->tv_home = $team_home->value;
+        $team_away = new Team( $this->awayteam_id );
+        $this->tv_away = $team_away->value;
+
         if ( !$this->matchEntry ( $this->hometeam_id, $this->homeplayers ) ) return false;
         if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
+
+        $this->checkSpiralingExpenses();
+        if ( !$this->updateMatch () )
+        {
+            $this->error = "Failed to update the match.";
+            return false;
+        }
+        
 
         $match = new Match( $this->match_id );
         $match->setLocked(true);
@@ -188,13 +205,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         global $settings;
 
-        $revUpdate = false;
+        #$revUpdate = false;
 
         if ( $settings['leegmgr_schedule'] ) $this->match_id = $this->getschMatch();
 
         if (!$this->match_id) {
             $this->match_id = $this->getschMatchRev();
-            if ($this->match_id) $revUpdate = true;
+            if ($this->match_id) $this->revUpdate = true;
         }
 
         if ( $this->chkAltSchedule() && !$this->match_id )
@@ -214,78 +231,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $match = new Match_BOTOCS($this->match_id);
         $match->setBOTOCSHash($this->hash);
 
-        $team_home = new Team( $this->hometeam_id );
-        $tv_home = $team_home->value;
-        $team_away = new Team( $this->awayteam_id );
-        $tv_away = $team_away->value;
-        //Spiraling Expenses
-        switch ( $tv_home ) {
-            case ( $tv_home >= 1750000 && $tv_home <= 1890000 ):
-                $this->homewinnings -= 10000;
-                break;
-            case ( $tv_home >= 1900000 && $tv_home <= 2040000 ):
-                $this->homewinnings -= 20000;
-                break;
-            case ( $tv_home >= 2050000 && $tv_home <= 2190000 ):
-                $this->homewinnings -= 30000;
-                break;
-            case ( $tv_home >= 2200000 && $tv_home <= 2340000 ):
-                $this->homewinnings -= 40000;
-                break;
-            case ( $tv_home >= 2350000 && $tv_home <= 2490000 ):
-                $this->homewinnings -= 50000;
-                break;
-            case ( $tv_home >= 2500000 && $tv_home <= 2640000 ):
-                $this->homewinnings -= 60000;
-                break;
-            case ( $tv_home >= 2650000 && $tv_home <= 2790000 ):
-                $this->homewinnings -= 70000;
-                break;
-            case ( $tv_home >= 2800000 && $tv_home <= 2940000 ):
-                $this->homewinnings -= 80000;
-                break;
-            case ( $tv_home > 2950000 && $tv_home <= 3090000 ):
-                $this->homewinnings -= 90000;
-                break;
-            case ( $tv_home > 3100000 ):
-                $this->homewinnings -= 100000;
-                break;
-        }
-        switch ( $tv_away ) {
-            case ( $tv_away >= 1750000 && $tv_away <= 1890000 ):
-                $this->awaywinnings -= 10000;
-                break;
-            case ( $tv_away >= 1900000 && $tv_away <= 2040000 ):
-                $this->awaywinnings -= 20000;
-                break;
-            case ( $tv_away >= 2050000 && $tv_away <= 2190000 ):
-                $this->awaywinnings -= 30000;
-                break;
-            case ( $tv_away >= 2200000 && $tv_away <= 2340000 ):
-                $this->awaywinnings -= 40000;
-                break;
-            case ( $tv_away >= 2350000 && $tv_away <= 2490000 ):
-                $this->awaywinnings -= 50000;
-                break;
-            case ( $tv_away >= 2500000 && $tv_away <= 2640000 ):
-                $this->awaywinnings -= 60000;
-                break;
-            case ( $tv_away >= 2650000 && $tv_away <= 2790000 ):
-                $this->awaywinnings -= 70000;
-                break;
-            case ( $tv_away >= 2800000 && $tv_away <= 2940000 ):
-                $this->awaywinnings -= 80000;
-                break;
-            case ( $tv_away > 2950000 && $tv_away <= 3090000 ):
-                $this->awaywinnings -= 90000;
-                break;
-            case ( $tv_away > 3100000 ):
-                $this->awaywinnings -= 100000;
-                break;
-        }
-
-        if (!$revUpdate) $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor1" => $this->homeff, "ffactor2" => $this->awayff, "fame1" => $this->homefame, "fame2" => $this->awayfame, "income1" => $this->homewinnings, "income2" => $this->awaywinnings, "team1_score" => $this->homescore, "team2_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $tv_home, "tv2" => $tv_away, "comment" => "" ) );
-        else $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor2" => $this->homeff, "ffactor1" => $this->awayff, "fame2" => $this->homefame, "fame1" => $this->awayfame, "income2" => $this->homewinnings, "income1" => $this->awaywinnings, "team2_score" => $this->homescore, "team1_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $tv_home, "tv1" => $tv_away, "comment" => "" ) );
+#        if (!$revUpdate) $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor1" => $this->homeff, "ffactor2" => $this->awayff, "fame1" => $this->homefame, "fame2" => $this->awayfame, "income1" => $this->homewinnings, "income2" => $this->awaywinnings, "team1_score" => $this->homescore, "team2_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $tv_home, "tv2" => $tv_away, "comment" => "" ) );
+#        else $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor2" => $this->homeff, "ffactor1" => $this->awayff, "fame2" => $this->homefame, "fame1" => $this->awayfame, "income2" => $this->homewinnings, "income1" => $this->awaywinnings, "team2_score" => $this->homescore, "team1_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $tv_home, "tv1" => $tv_away, "comment" => "" ) );
 
         return true;
 
@@ -373,6 +320,15 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         return true;
 
+    }
+
+    function updateMatch () {
+
+        $match = new Match( $this->match_id );
+        if (!$this->revUpdate) $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor1" => $this->homeff, "ffactor2" => $this->awayff, "fame1" => $this->homefame, "fame2" => $this->awayfame, "income1" => $this->homewinnings, "income2" => $this->awaywinnings, "team1_score" => $this->homescore, "team2_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $this->tv_home, "tv2" => $this->tv_away, "comment" => "" ) );
+        else $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor2" => $this->homeff, "ffactor1" => $this->awayff, "fame2" => $this->homefame, "fame1" => $this->awayfame, "income2" => $this->homewinnings, "income1" => $this->awaywinnings, "team2_score" => $this->homescore, "team1_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $this->tv_home, "tv1" => $this->tv_away, "comment" => "" ) );
+
+        return true;
     }
 
     function checkCoach ( $team ) {
@@ -498,6 +454,79 @@ class UPLOAD_BOTOCS implements ModuleInterface
         return $injeffect;
 
     }
+
+    function checkSpiralingExpenses () {
+        $team_home = new Team( $this->hometeam_id );
+        $tv_home = $team_home->value;
+        $team_away = new Team( $this->awayteam_id );
+        $tv_away = $team_away->value;
+        //Spiraling Expenses
+        switch ( $tv_home ) {
+            case ( $tv_home >= 1750000 && $tv_home <= 1890000 ):
+                $this->homewinnings -= 10000;
+                break;
+            case ( $tv_home >= 1900000 && $tv_home <= 2040000 ):
+                $this->homewinnings -= 20000;
+                break;
+            case ( $tv_home >= 2050000 && $tv_home <= 2190000 ):
+                $this->homewinnings -= 30000;
+                break;
+            case ( $tv_home >= 2200000 && $tv_home <= 2340000 ):
+                $this->homewinnings -= 40000;
+                break;
+            case ( $tv_home >= 2350000 && $tv_home <= 2490000 ):
+                $this->homewinnings -= 50000;
+                break;
+            case ( $tv_home >= 2500000 && $tv_home <= 2640000 ):
+                $this->homewinnings -= 60000;
+                break;
+            case ( $tv_home >= 2650000 && $tv_home <= 2790000 ):
+                $this->homewinnings -= 70000;
+                break;
+            case ( $tv_home >= 2800000 && $tv_home <= 2940000 ):
+                $this->homewinnings -= 80000;
+                break;
+            case ( $tv_home > 2950000 && $tv_home <= 3090000 ):
+                $this->homewinnings -= 90000;
+                break;
+            case ( $tv_home > 3100000 ):
+                $this->homewinnings -= 100000;
+                break;
+        }
+        switch ( $tv_away ) {
+            case ( $tv_away >= 1750000 && $tv_away <= 1890000 ):
+                $this->awaywinnings -= 10000;
+                break;
+            case ( $tv_away >= 1900000 && $tv_away <= 2040000 ):
+                $this->awaywinnings -= 20000;
+                break;
+            case ( $tv_away >= 2050000 && $tv_away <= 2190000 ):
+                $this->awaywinnings -= 30000;
+                break;
+            case ( $tv_away >= 2200000 && $tv_away <= 2340000 ):
+                $this->awaywinnings -= 40000;
+                break;
+            case ( $tv_away >= 2350000 && $tv_away <= 2490000 ):
+                $this->awaywinnings -= 50000;
+                break;
+            case ( $tv_away >= 2500000 && $tv_away <= 2640000 ):
+                $this->awaywinnings -= 60000;
+                break;
+            case ( $tv_away >= 2650000 && $tv_away <= 2790000 ):
+                $this->awaywinnings -= 70000;
+                break;
+            case ( $tv_away >= 2800000 && $tv_away <= 2940000 ):
+                $this->awaywinnings -= 80000;
+                break;
+            case ( $tv_away > 2950000 && $tv_away <= 3090000 ):
+                $this->awaywinnings -= 90000;
+                break;
+            case ( $tv_away > 3100000 ):
+                $this->awaywinnings -= 100000;
+                break;
+        }
+    }
+
 
     function libxml_display_error($error)
     {
@@ -779,7 +808,15 @@ class UPLOAD_BOTOCS implements ModuleInterface
         );
     }
     
-    public static function triggerHandler($type, $argv){}
+    public static function triggerHandler($type, $argv)
+    {
+        switch ($type) {
+            case ( $type == T_TRIGGER_MATCH_DELETE || $type == T_TRIGGER_MATCH_RESET ):
+                $result = mysql_query( 'DELETE FROM leegmgr_matches WHERE mid = '.$argv[0].' LIMIT 1' );
+                break;
+        }
+    }
+
 }
 
 ?>
