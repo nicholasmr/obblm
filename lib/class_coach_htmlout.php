@@ -21,8 +21,83 @@
  *
  */
 
-class Coach_HTMLOUT extends Team
+class Coach_HTMLOUT extends Coach
 {
+
+public function coachPage()
+{
+    $c = $this;
+
+    title("Coach $c->name");
+    echo "<center>";
+    echo "<a href='index.php?section=coaches'>[".$lng->getTrn('global/misc/back')."]</a>";
+    if (Module::isRegistered('SGraph')) {
+        echo "&nbsp; | &nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$c->coach_id''>[Vis. stats]</a>\n";
+    }
+    echo "</center><br>\n";
+
+    ?>
+    <table class='picAndText'>
+        <tr>
+            <td class='light'><b><?php echo $lng->getTrn('secs/coaches/pic');?> <?php echo $c->name; ?></b></td>
+            <td class='light'><b><?php echo $lng->getTrn('secs/coaches/about');?></b></td>
+            <?php
+            if (is_object($coach)) {
+                ?><td class='light'><b><?php echo $lng->getTrn('secs/coaches/contact');?></b></td><?php
+            }
+            ?>
+        </tr>
+        <tr>
+            <td>
+                <?php
+                ImageSubSys::makeBox(IMGTYPE_COACH, $c->coach_id, false, false);
+                ?>
+            </td>
+            <td valign='top'>
+                <?php
+                $txt = $c->getText();
+                if (empty($txt)) {
+                    $txt = $lng->getTrn('secs/coaches/nowrite')." $c->name.";
+                }
+                echo '<p>'.fmtprint($txt)."</p>\n";
+                ?>
+            </td>
+            <?php
+            if (is_object($coach)) {
+                ?>
+                <td valign='top'>
+                    <table>
+                        <tr>
+                            <td><b>Name</b></td>
+                            <td><?php echo empty($c->realname) ? '<i>None</i>' : $c->realname;?></td>
+                        </tr>
+                        <tr>
+                            <td><b>Phone</b></td>
+                            <td><?php echo empty($c->phone) ? '<i>None</i>' : $c->phone?></td>
+                        </tr>
+                        <tr>
+                            <td><b>Mail</b></td>
+                            <td><?php echo empty($c->mail) ? '<i>None</i>' : $c->mail?></td>
+                        </tr>
+                    </table>
+                </td>
+                <?php
+            }
+            ?>
+        </tr>
+    </table>
+    <?php
+
+    HTMLOUT::standings(STATS_TEAM,false,false,array('url' => "index.php?section=coaches&amp;coach_id=$c->coach_id", 'teams_from' => STATS_COACH, 'teams_from_id' => $c->coach_id));
+    echo '<br>';
+    HTMLOUT::recentGames(STATS_COACH, $c->coach_id, false, false, false, false, array('url' => "index.php?section=coaches&amp;coach_id=$c->coach_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
+}
+
+public static function standings()
+{
+    title($lng->getTrn('global/secLinks/coaches'));
+    HTMLOUT::standings(STATS_COACH, false, false, array('url' => 'index.php?section=coaches'));
+}
 
 function coachCorner() {
 

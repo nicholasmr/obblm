@@ -24,6 +24,38 @@
 class Team_HTMLOUT extends Team
 {
 
+public static function standings($node = false, $node_id = false)
+{
+    global $lng, $settings;
+
+    title($lng->getTrn('global/secLinks/standings'));
+    echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
+
+    $teams = HTMLOUT::standings(STATS_TEAM,$node,$node_id,array('url' => 'index.php?section=standings', 'hidemenu' => false, 'return_objects' => true));
+
+    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
+    $fields = array(
+        'name'         => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
+        'race'         => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'f_race_id')),
+        'coach_name'   => array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'owned_by_coach_id')),
+        'fan_factor'   => array('desc' => 'FF'),
+        'rerolls'      => array('desc' => 'RR'),
+        'ass_coaches'  => array('desc' => 'Ass. coaches'),
+        'cheerleaders' => array('desc' => 'Cheerleaders'),
+        'treasury'     => array('desc' => 'Treasury', 'kilo' => true, 'suffix' => 'k'),
+        'value'        => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
+    );
+
+    HTMLOUT::sort_table(
+        $lng->getTrn('secs/standings/tblTitle2'),
+        'index.php?section=standings',
+        $teams,
+        $fields,
+        sort_rule('team'),
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array()
+    );
+}
+
 public function teamPage()
 {
     global $coach, $settings;

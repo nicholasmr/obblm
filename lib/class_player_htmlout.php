@@ -24,6 +24,20 @@
 class Player_HTMLOUT extends Player
 {
 
+public static function stadings()
+{
+    global $lng;
+    title($lng->getTrn('global/secLinks/players'));
+    HTMLOUT::standings(STATS_PLAYER,false,false,array('url' => 'index.php?section=players'));
+    ?>
+    <?php echo $lng->getTrn('secs/players/colors');?>:
+    <ul>
+        <li style='width: 4em;background-color:<?php echo COLOR_HTML_DEAD;?>;'>Dead</li>
+        <li style='width: 4em;background-color:<?php echo COLOR_HTML_SOLD;?>;'>Sold</li>
+    </ul>
+    <?php
+}
+
 public function playerPage() 
 {
     global $lng, $coach;
