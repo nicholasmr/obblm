@@ -389,17 +389,33 @@ function sec_main() {
     <?php
 }
 
-function sec_standings() {
-    
-    switch ($t = $_GET['type']) 
+function sec_teamlist() {
+    global $lng;
+    title($lng->getTrn('global/secLinks/teams'));
+    HTMLOUT::dispTeamList(false, false);
+
+}
+function sec_matches() {
+    switch ($_GET['type'])
     {
-        case T_NODE_MATCH: match_form($_GET['id']); break;
-        
-#        case T_NODE_DIVISION: 
-#            title(get_alt_col($relations[$t]['tbl'], $relations[$t]['id'], (int) $_GET['id'], 'name'));
-#            HTMLOUT::standings(STATS_TEAM, STATS_DIVISION, (int) $_GET['did'], array('url' => "index.php?section=fixturelist&amp;did=$_GET[did]", 'hidemenu' => true));
-#            break;
-        
+        # Save all these subroutines in class_match_htmlout.php
+        case 'bracket': # "TOURNAMENTS" section.
+        case 'report': # Match reports.
+        case 'recent':
+        case 'upcomming':
+    }    
+}
+
+function sec_standings() {
+    switch ($_GET['type'])
+    {
+        case T_OBJ_PLAYER: Player_HTMLOUT::standings(); break;
+        case T_OBJ_TEAM:   Team_HTMLOUT::standings();   break;
+# For team node specific standings...
+#        Team_HTMLOUT::standings($_GET['type'], $_GET['id']);
+        case T_OBJ_COACH:  Coach_HTMLOUT::standings();  break;
+        case T_OBJ_STAR:   Star_HTMLOUT::standings();   break;
+        case T_OBJ_RACE:   Race_HTMLOUT::standings();   break;
     }
 }
 
@@ -702,295 +718,6 @@ function sec_fixturelist() {
     echo "</table>\n";
 }
 
-/*************************
- *
- *  STANDINGS
- *
- *************************/
-
-function sec_standings() {
-
-    global $lng, $settings;
-
-    title($lng->getTrn('global/secLinks/standings'));
-    echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
-
-    $teams = HTMLOUT::standings(STATS_TEAM,false,false,array('url' => 'index.php?section=standings', 'hidemenu' => true, 'return_objects' => true));
-
-    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
-    $fields = array(
-        'name'         => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
-        'race'         => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'f_race_id')),
-        'coach_name'   => array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'owned_by_coach_id')),
-        'fan_factor'   => array('desc' => 'FF'),
-        'rerolls'      => array('desc' => 'RR'),
-        'ass_coaches'  => array('desc' => 'Ass. coaches'),
-        'cheerleaders' => array('desc' => 'Cheerleaders'),
-        'treasury'     => array('desc' => 'Treasury', 'kilo' => true, 'suffix' => 'k'),
-        'value'        => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
-    );
-
-    HTMLOUT::sort_table(
-        $lng->getTrn('secs/standings/tblTitle2'),
-        'index.php?section=standings',
-        $teams,
-        $fields,
-        sort_rule('team'),
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array()
-    );
-
-}
-
-/*************************
- *
- *  TEAMS
- *
- *************************/
-
-function sec_teams() {
-
-    /* Generates browsable list over all teams */
-
-    global $lng;
-    title($lng->getTrn('global/secLinks/teams'));
-    HTMLOUT::dispTeamList(false, false);
-}
-
-/*************************
- *
- *  PLAYERS
- *
- *************************/
-
-function sec_players() {
-
-    global $lng;
-    title($lng->getTrn('global/secLinks/players'));
-    HTMLOUT::standings(STATS_PLAYER,false,false,array('url' => 'index.php?section=players'));
-    ?>
-    <?php echo $lng->getTrn('secs/players/colors');?>:
-    <ul>
-        <li style='width: 4em;background-color:<?php echo COLOR_HTML_DEAD;?>;'>Dead</li>
-        <li style='width: 4em;background-color:<?php echo COLOR_HTML_SOLD;?>;'>Sold</li>
-    </ul>
-    <?php
-}
-
-/*************************
- *
- *  COACHES
- *
- *************************/
-
-function sec_coaches() {
-
-    global $lng, $coach;
-
-    /*
-        Specific coach page requested?
-    */
-    if (isset($_GET['coach_id']) && !preg_match("/[^0-9]/", $_GET['coach_id']) &&
-        is_object($c = new Coach($_GET['coach_id']))) {
-
-        title("Coach $c->name");
-        echo "<center>";
-        echo "<a href='index.php?section=coaches'>[".$lng->getTrn('global/misc/back')."]</a>";
-        if (Module::isRegistered('SGraph')) {
-            echo "&nbsp; | &nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$c->coach_id''>[Vis. stats]</a>\n";
-        }
-        echo "</center><br>\n";
-
-        ?>
-        <table class='picAndText'>
-            <tr>
-                <td class='light'><b><?php echo $lng->getTrn('secs/coaches/pic');?> <?php echo $c->name; ?></b></td>
-                <td class='light'><b><?php echo $lng->getTrn('secs/coaches/about');?></b></td>
-                <?php
-                if (is_object($coach)) {
-                    ?><td class='light'><b><?php echo $lng->getTrn('secs/coaches/contact');?></b></td><?php
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>
-                    <?php
-                    ImageSubSys::makeBox(IMGTYPE_COACH, $c->coach_id, false, false);
-                    ?>
-                </td>
-                <td valign='top'>
-                    <?php
-                    $txt = $c->getText();
-                    if (empty($txt)) {
-                        $txt = $lng->getTrn('secs/coaches/nowrite')." $c->name.";
-                    }
-                    echo '<p>'.fmtprint($txt)."</p>\n";
-                    ?>
-                </td>
-                <?php
-                if (is_object($coach)) {
-                    ?>
-                    <td valign='top'>
-                        <table>
-                            <tr>
-                                <td><b>Name</b></td>
-                                <td><?php echo empty($c->realname) ? '<i>None</i>' : $c->realname;?></td>
-                            </tr>
-                            <tr>
-                                <td><b>Phone</b></td>
-                                <td><?php echo empty($c->phone) ? '<i>None</i>' : $c->phone?></td>
-                            </tr>
-                            <tr>
-                                <td><b>Mail</b></td>
-                                <td><?php echo empty($c->mail) ? '<i>None</i>' : $c->mail?></td>
-                            </tr>
-                        </table>
-                    </td>
-                    <?php
-                }
-                ?>
-            </tr>
-        </table>
-        <?php
-
-        HTMLOUT::standings(STATS_TEAM,false,false,array('url' => "index.php?section=coaches&amp;coach_id=$c->coach_id", 'teams_from' => STATS_COACH, 'teams_from_id' => $c->coach_id));
-        echo '<br>';
-        HTMLOUT::recentGames(STATS_COACH, $c->coach_id, false, false, false, false, array('url' => "index.php?section=coaches&amp;coach_id=$c->coach_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
-
-        return;
-    }
-
-    /*
-        Show coaches table.
-    */
-
-    title($lng->getTrn('global/secLinks/coaches'));
-    HTMLOUT::standings(STATS_COACH, false, false, array('url' => 'index.php?section=coaches'));
-}
-
-/*************************
- *
- *  RACES
- *
- *************************/
-
-function sec_races() {
-
-    global $lng;
-
-    /*
-        This function can do two things:
-            Either, it can show race statistics
-            Or, it can show team data from LRB5.
-    */
-
-    /*
-        Show specific race stats
-    */
-    if (isset($_GET['race']) && is_object($race = new Race($_GET['race'])) && ($roster = $race->getRoster())) { // Last eval makes sure $roster is not empty array.
-        title($race->race);
-        ?>
-        <center><img src="<?php echo $roster['other']['icon'];?>" alt="Race icon"></center>
-        <ul><li>Re-roll cost: <?php echo $roster['other']['RerollCost']/1000;?>k</li></ul><br>
-        <?php
-        $players = array();
-        foreach ($roster['players'] as $player => $d) {
-            $p = (object) array_merge(array('position' => $player), $d);
-            $p->skills = implode(', ', $p->{'Def skills'});
-            foreach (array('N', 'D') as $s) {
-                array_walk($p->{"$s skills"}, create_function('&$val', '$val = substr($val,0,1);'));
-                $p->$s = implode('', $p->{"$s skills"});
-            }
-            $players[] = $p;
-        }
-        $fields = array(
-            'position'  => array('desc' => 'Position'),
-            'ma'        => array('desc' => 'Ma'),
-            'st'        => array('desc' => 'St'),
-            'ag'        => array('desc' => 'Ag'),
-            'av'        => array('desc' => 'Av'),
-            'skills'    => array('desc' => 'Skills', 'nosort' => true),
-            'N'         => array('desc' => 'Normal', 'nosort' => true),
-            'D'         => array('desc' => 'Double', 'nosort' => true),
-            'cost'      => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'),
-            'qty'       => array('desc' => 'Max.'),
-        );
-        HTMLOUT::sort_table(
-            $race->race.' '.$lng->getTrn('secs/races/players'),
-            "index.php?section=races&amp;race=$race->race",
-            $players,
-            $fields,
-            sort_rule('race_page'),
-            (isset($_GET['sortpl'])) ? array((($_GET['dirpl'] == 'a') ? '+' : '-') . $_GET['sortpl']) : array(),
-            array('GETsuffix' => 'pl')
-        );
-
-        // Teams of the chosen race.
-        HTMLOUT::standings(STATS_TEAM,false,false,array('url' => "index.php?section=races&amp;race=$race->race_id", 'teams_from' => STATS_RACE, 'teams_from_id' => $race->race_id));
-        echo '<br>';
-        HTMLOUT::recentGames(STATS_RACE, $race->race_id, false, false, false, false, array('url' => "index.php?section=races&amp;race=$race->race_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
-
-        // Don't also print race stats.
-        return;
-    }
-
-    /*
-        Show all races' stats
-    */
-
-    title($lng->getTrn('global/secLinks/races'));
-    HTMLOUT::standings(STATS_RACE,false,false,array('url' => 'index.php?section=races'));
-}
-
-/*************************
- *
- *  STAR PLAYERS
- *
- *************************/
-
-function sec_stars() {
-
-    global $stars, $lng;
-
-    // Specific star hire history
-    if (isset($_GET['sid'])) {
-        $s = new Star($_GET['sid']);
-        title($lng->getTrn('secs/stars/hh').' '.$s->name);
-        echo '<center><a href="index.php?section=stars">['.$lng->getTrn('global/misc/back').']</a></center><br><br>';
-        HTMLOUT::starHireHistory(false, false, false, false, $_GET['sid'], array('url' => "index.php?section=stars&amp;sid=$_GET[sid]"));
-        return;
-    }
-
-    // All stars
-    title($lng->getTrn('global/secLinks/stars'));
-    echo $lng->getTrn('global/sortTbl/simul')."<br>\n";
-    echo $lng->getTrn('global/sortTbl/spp')."<br><br>\n";
-    HTMLOUT::standings(STATS_STAR, false, false, array('url' => 'index.php?section=stars'));
-    $stars = Star::getStars(false,false,false,false);
-    foreach ($stars as $s) {
-        $s->skills = '<small>'.implode(', ', $s->skills).'</small>';
-        $s->teams = '<small>'.implode(', ', $s->teams).'</small>';
-        $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
-    }
-    $fields = array(
-        'name'   => array('desc' => 'Star', 'href' => array('link' => 'index.php?section=stars', 'field' => 'sid', 'value' => 'star_id')),
-        'cost'   => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'),
-        'ma'     => array('desc' => 'Ma'),
-        'st'     => array('desc' => 'St'),
-        'ag'     => array('desc' => 'Ag'),
-        'av'     => array('desc' => 'Av'),
-        'teams'  => array('desc' => 'Teams', 'nosort' => true),
-        'skills' => array('desc' => 'Skills', 'nosort' => true),
-    );
-    HTMLOUT::sort_table(
-        '<a name="s2">'.$lng->getTrn('secs/stars/tblTitle2').'</a>',
-        'index.php?section=stars',
-        $stars,
-        $fields,
-        sort_rule('star'),
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-        array('anchor' => 's2')
-    );
-}
 
 /*************************
  *

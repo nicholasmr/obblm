@@ -201,8 +201,13 @@ function fmtprint($str) {
     return preg_replace("/(\r\n|\n\r|\n|\r)/", '<br>', $str);
 }
 
-function urlcompile($type, $id) {
-    return 'index.php?section='.(($type > T_OBJ_COACH) ? 'standings' : 'profile')."&amp;type=$type&amp;id=$id";
+# URL compile constants
+define('T_URL_PROFILE',   1);
+define('T_URL_STANDINGS', 2);
+
+function urlcompile($type, $obj, $id, $extraGETs = array()) {
+    return 'index.php?section='.(($profile = ($type == T_URL_PROFILE)) ? 'profile' : 'standings')."&amp;type=$type".(($profile) ? "&amp;id=$id" : '').
+    implode("\n", array_map(create_function('$key,$val', 'return "$key=&amp;$val";'),array_keys($fields),array_values($fields)));
 }
 
 function inlineform($fields, $formName, $buttonText) {
