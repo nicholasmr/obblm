@@ -88,7 +88,6 @@
         <reset_notice><![CDATA[Are you sure you want to reset the match?\n\nPLEASE NOTE:\nResetting a match clears all match data.\nResetting a match in which one, or both, of the competing teams have played subsequent matches may result in incorrect player states in the match reports of the subsequent matches.]]></reset_notice>
         
         <standings>Standings</standings>
-        <desc>Description</desc>
         <fin>Finished</fin>
         <locked>Locked</locked>
         <undecided>Undecided</undecided>
@@ -117,12 +116,6 @@
             <rs>Ranking system</rs>
         </stn>
 
-        <!-- Subsection: Tournament description -->                
-        <tDesc>
-            <desc>description</desc>
-            <noTourDesc>Nothing has been written about this tournament.</noTourDesc>
-        </tDesc>
-        
         <!-- Subsection: match report(s) -->
         <report>
             

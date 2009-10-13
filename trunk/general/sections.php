@@ -21,19 +21,6 @@
  *
  */
 
-/***************************************************
- *  ------------
- *  PLEASE NOTE:
- *  ------------
- *
- *  Chunks of the section code are so large, that they have been divided into other files.
- *  These files are:
- *
- *      - matches.php   For handling match reports.
- *      - admin.php     For handling the admin section.
- *
- ***************************************************/
-
 /*************************
  *
  *  Login
@@ -578,38 +565,6 @@ function sec_fixturelist() {
         return;
     }
 
-    // Tournament description?
-    if (isset($_GET['tour_id2']) && !preg_match("/[^0-9]/", $_GET['tour_id2'])) {
-        if (!is_object($t = new Tour($_GET['tour_id2'])) || empty($t->date_created))
-            fatal('Sorry. Invalid tournament ID specified.');
-
-        // New description sent?
-        if (isset($_POST['desc']) && !empty($_POST['desc']) && is_object($coach) && $coach->admin) {
-            $txt = new TourDesc($t->tour_id);
-            status($txt->save($_POST['desc']));
-            unset($txt);
-        }
-
-        title("$t->name ".$lng->getTrn('secs/fixtures/tDesc/desc'));
-
-        if (is_object($txt = new TourDesc($t->tour_id)) && empty($txt->txt))
-            $txt->txt = $lng->getTrn('secs/fixtures/tDesc/noTourDesc');
-
-        $DIS = (is_object($coach) && $coach->admin) ? '' : 'DISABLED';
-
-        ?>
-        <center>
-            <form method="POST">
-                <textarea name="desc" rows="20" cols="100" ><?php echo $txt->txt;?></textarea>
-                <br><br>
-                <input <?php echo $DIS;?> type="submit" value="Submit">
-            </from>
-        </center>
-        <?php
-
-        return;
-    }
-
     /*
         Show fixture list.
     */
@@ -721,7 +676,6 @@ function sec_fixturelist() {
                     ?>
                 </td>
                 <td style='width:25%; text-align:right;'>
-                    <a href='index.php?section=fixturelist&amp;tour_id2=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/desc');?></b></a>&nbsp;
                     <a href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/standings');?></b></a>&nbsp;
                 </td>
             </tr>

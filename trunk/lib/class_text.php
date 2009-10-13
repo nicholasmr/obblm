@@ -34,7 +34,7 @@ define('T_TEXT_PLAYER', 4);
 #define('T_TEXT_HOF',    5); # Deprecated
 #define('T_TEXT_WANTED', 6); # Deprecated
 define('T_TEXT_MSMR',   7); // Match summary.
-define('T_TEXT_TOUR',   8);
+#define('T_TEXT_TOUR',   8); # Deprecated
 #define('T_TEXT_GUEST',  9); # Deprecated
 #define('T_TEXT_LOG',    10); # Deprecated
 define('T_TEXT_MSMRC',  11); // Match summary comments.
@@ -313,40 +313,6 @@ class MSMRC extends _Text
     public static function create($mid, $sid, $txt)
     {
         return parent::create($mid, T_TEXT_MSMRC, $txt, $sid);
-    }
-}
-
-/* 
- *  Handles tournament descriptions.
- */
-
-class TourDesc extends _Text
-{
-    /***************
-     * Properties 
-     ***************/
-
-    public $tour_id = 0;
-
-    /***************
-     * Methods 
-     ***************/    
-
-    function __construct($tid) 
-    {
-        $this->tour_id = $tid;
-        $query = "SELECT txt_id FROM texts WHERE f_id = $tid AND type = ".T_TEXT_TOUR;
-        $result = mysql_query($query);
-        $row = mysql_fetch_assoc($result);
-        parent::__construct($row['txt_id']);
-        
-    }
-    
-    public function save($txt)
-    {
-        return (empty($this->txt)) 
-            ? parent::create($this->tour_id, T_TEXT_TOUR, $txt, false) 
-            : parent::edit($txt, false, false, false);
     }
 }
 
