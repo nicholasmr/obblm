@@ -30,11 +30,11 @@
 function sec_login() {
 
     global $lng, $settings;
-    title($lng->getTrn('global/secLinks/login'));
+    title($lng->getTrn('login/name'));
     ?>
-    <div style='padding-top: 20px; text-align: center;'>
+    <div class='login'>
     <form method="POST" action="index.php">
-        <b><?php echo $lng->getTrn('secs/login/coach');?></b>
+        <b><?php echo $lng->getTrn('login/loginname');?></b>
         <?php
         if ($settings['login_list']) {
             ?>
@@ -57,14 +57,14 @@ function sec_login() {
         }
         ?>
         &nbsp;&nbsp;
-        <b><?php echo $lng->getTrn('secs/login/passwd');?></b>
+        <b><?php echo $lng->getTrn('login/passwd');?></b>
         <input type="password" name="passwd" size="20" maxlength="50">
         <div style='display: none;'><input type='text' name='hackForHittingEnterToLogin' size='1'></div>
         <br><br>
-        <b><?php echo $lng->getTrn('secs/login/remember');?></b>
+        <b><?php echo $lng->getTrn('login/remember');?></b>
         <input type='checkbox' name='remember' value='1'>
         <br><br>
-        <input type="submit" name="login" value="Login">
+        <input type="submit" name="login" value="<?php echo $lng->getTrn('login/loginbutton');?>">
     </form>
     </div>
     <?php
@@ -82,7 +82,6 @@ function sec_login() {
 function sec_main() {
 
     global $settings, $rules, $coach, $lng;
-    $n = $settings['entries_messageboard'];
 
     /*
         Was any main board actions made?
@@ -95,12 +94,9 @@ function sec_main() {
         }
         switch ($_POST['type'])
         {
-            case 'msgdel': $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
-            case 'msgnew': status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
-            case 'msgedit':
-                $msg = new Message($_POST['msg_id']);
-                status($msg->edit($_POST['title'], $_POST['txt']));
-                break;
+            case 'msgdel':  $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
+            case 'msgnew':  status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
+            case 'msgedit': $msg = new Message($_POST['msg_id']); status($msg->edit($_POST['title'], $_POST['txt'])); break;
         }
     }
 
@@ -110,79 +106,22 @@ function sec_main() {
         Left column is the message board, consisting of both commissioner messages and game summaries/results.
         To generate this table we create a general array holding the content of both.
     */
+    
+    $board = TextSubSys::getMainBoardMessages($settings['entries_messageboard']);
 
-    $msgs    = Message::getMessages($n);
-    $reports = Match::getReports($n);
-    $tnews   = TNews::getNews(false, $n);
-    $board   = array();
-
-    // First we add all commissioner messages to the board structure.
-    foreach ($msgs as $m) {
-        $o = (object) array();
-        // Specific fields:
-        $o->msg_id    = $m->msg_id;
-        $o->author_id = $m->f_coach_id;
-        // General fields:
-        $o->type      = 'msg';
-        $o->author    = get_alt_col('coaches', 'coach_id', $m->f_coach_id, 'name');
-        $o->title     = $m->title;
-        $o->message   = $m->message;
-        $o->date      = $m->date_posted;
-        array_push($board, $o);
-    }
-
-    // Now we add all game summaries.
-    foreach ($reports as $r) {
-        $o = (object) array();
-        $m = new Match($r->match_id);
-        // Specific fields:
-        $o->date_mod  = $r->date_modified;
-        $o->match_id  = $r->match_id;
-        $o->comments  = $r->getComments();
-        // General fields:
-        $o->type      = 'match';
-        $o->author    = get_alt_col('coaches', 'coach_id', $r->submitter_id, 'name');
-        $o->title     = "Match: $r->team1_name $r->team1_score&mdash;$r->team2_score $r->team2_name";
-        $o->message   = $r->comment;
-        $o->date      = $r->date_played;
-        array_push($board, $o);
-    }
-
-    // And finally team news.
-    if ($settings['fp_team_news']) {
-        foreach ($tnews as $t) {
-            $o = (object) array();
-            // Specific fields:
-                # none
-            // General fields:
-            $o->type      = 'tnews';
-            $o->author    = get_alt_col('teams', 'team_id', $t->f_id, 'name');
-            $o->title     = "Team news: $o->author";
-            $o->message   = $t->txt;
-            $o->date      = $t->date;
-            array_push($board, $o);
-        }
-    }
-
-    // Last touch on the board.
-    if (!empty($board)) {
-        objsort($board, array('-date'));
-        if ($n) {
-            $board = array_slice($board, 0, $n);
-        }
-    }
 
     /*
         Right column optionally (depending on settings.php) contains standings, latest game results, touchdown and casualties stats.
         We will now generate the stats, so that they are ready to be printed in correct order.
     */
 
-    $standings  = array();
-    $matches    = array();
-    $touchdowns = array();
+    $matches = Match::getMatches($settings['entries_latest']); // Recent matches
+    $touchdowns  = Stats::getLeaders(STATS_PLAYER, $settings['entries_touchdown'], array('-td'), true);          // Touchdowns
+    $casualties  = Stats::getLeaders(STATS_PLAYER, $settings['entries_casualties'], array('-bh+ki+si'), true);   // Casualties
+    $completions = Stats::getLeaders(STATS_PLAYER, $settings['entries_completions'], array('-cp'), true);        // Completions
 
     // Standings
-        // First tournament specific standings:
+    $standings  = array();
     if ($settings['show_active_tours']) {
         $tours = Tour::getTours();
         foreach ($tours as $t) {
@@ -196,20 +135,6 @@ function sec_main() {
             }
         }
     }
-        // Now overall standings:
-    $teams = Team::getTeams();
-    objsort($teams, sort_rule('team'));
-    array_push($standings, array('name' => $lng->getTrn('global/misc/alltime'), 'rs' => 0, 'wpoints' => false, 'teams' => array_slice($teams, 0, $settings['entries_standings'])));
-
-    // Latest matches
-    $matches = Match::getMatches($settings['entries_latest']);
-
-    // Touchdowns
-    $touchdowns = Stats::getLeaders(STATS_PLAYER, $settings['entries_touchdown'], array('-td'), true);
-    // Casualties
-    $casualties = Stats::getLeaders(STATS_PLAYER, $settings['entries_casualties'], array('-bh+ki+si'), true);
-    // Completions
-    $completions = Stats::getLeaders(STATS_PLAYER, $settings['entries_completions'], array('-cp'), true);
 
     /*****
      *
@@ -218,28 +143,23 @@ function sec_main() {
      *****/
 
     ?>
-    <div class="main_title"><?php echo $settings['site_name']; ?></div>
-    <div class='main_lcol'>
-        <div class="main_lcolLinks">
+    <div class="main_head"><?php echo $settings['site_name']; ?></div>
+    <div class='main_leftColumn'>
+        <div class="main_leftColumn_head">
             <?php
-            echo "<div class='mail_welcome'>\n";
+            echo "<div class='main_leftColumn_welcome'>\n";
             readfile('WELCOME');
             echo "</div>\n";
-            // New message link
-            if (is_object($coach) && $coach->ring <= RING_COM)
-                echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('secs/home/new')."</a>&nbsp;\n";
-
-            // RSS
-            echo "<a href='handler.php?type=rss'>RSS</a>\n";
+            if (is_object($coach) && $coach->ring <= RING_COM) {echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";}
+            if (Module::isRegistered('RSSfeed')) {echo "<a href='handler.php?type=rss'>RSS</a>\n";}
             ?>
-
             <div style="display:none; clear:both;" id="msgnew">
                 <br><br>
                 <form method="POST">
-                    <textarea name="title" rows="1" cols="50"><?php echo $lng->getTrn('secs/home/title');?></textarea><br><br>
-                    <textarea name="txt" rows="15" cols="50"><?php echo $lng->getTrn('secs/home/msg');?></textarea><br><br>
+                    <textarea name="title" rows="1" cols="50"><?php echo $lng->getTrn('common/notitle');?></textarea><br><br>
+                    <textarea name="txt" rows="15" cols="50"><?php echo $lng->getTrn('common/nobody');?></textarea><br><br>
                     <input type="hidden" name="type" value="msgnew">
-                    <input type="submit" value="<?php echo $lng->getTrn('secs/home/submit');?>">
+                    <input type="submit" value="<?php echo $lng->getTrn('common/submit');?>">
                 </form>
             </div>
         </div>
@@ -247,63 +167,44 @@ function sec_main() {
         <?php
         $j = 1;
         foreach ($board as $e) {
-            echo "<div class='main_lcolBox'>\n";
-                switch ($e->type)
-                {
-                    case 'tnews': $i = 1; break;
-                    case 'msg':   $i = 3; break;
-                    case 'match': $i = 2; break;
-                }
-
-                echo "<h3 class='boxTitle$i'>$e->title</h3>\n";
-
+            echo "<div class='main_leftColumn_box'>\n";
+                echo "<h3 class='boxTitle$e->cssidx'>$e->title</h3>\n";
                 echo "<div class='boxBody'>\n";
                     $fmtMsg = fmtprint($e->message); # Basic supported syntax: linebreaks.
-                    echo substr($fmtMsg, 0, 300)."<span id='e$j' style='display:none;'>".substr($fmtMsg, 300)."</span><span id='moreLink$j' ".((strlen($fmtMsg) > 300) ? '' : 'style="display:none"')."> ...&nbsp;<a href='javascript:void(0)' onclick=\"fadeOut('moreLink$j');fadeIn('e$j');\">[".$lng->getTrn('secs/home/more')."]</a></span>\n";
+                    echo substr($fmtMsg, 0, 300)."<span id='e$j' style='display:none;'>".substr($fmtMsg, 300)."</span><span id='moreLink$j' ".((strlen($fmtMsg) > 300) ? '' : 'style="display:none"')."> ...&nbsp;<a href='javascript:void(0)' onclick=\"fadeOut('moreLink$j');fadeIn('e$j');\">[".$lng->getTrn('main/more')."]</a></span>\n";
                     echo "<br><hr>\n";
-
-                    echo "<table class='boxTable'>\n";
-                        echo "<tr>\n";
-                            if ($e->type == 'match') {
-                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." " . (isset($e->date_mod) ? "(".$lng->getTrn('secs/home/lastedit')." ".textdate($e->date_mod).") " : '') .$lng->getTrn('secs/home/by')." $e->author</td>\n";
-                                echo "<td align='right'><a href='index.php?section=fixturelist&amp;match_id=$e->match_id'>".$lng->getTrn('secs/home/show')."</a></td>\n";
+                    echo "<table class='boxTable'><tr>\n";
+                        switch ($e->type) 
+                        {
+                            case T_TEXT_MATCH_SUMMARY:
+                                echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." " . (isset($e->date_mod) ? "(".$lng->getTrn('main/lastedit')." ".textdate($e->date_mod).") " : '') .$lng->getTrn('main/by')." $e->author</td>\n";
+                                echo "<td align='right'><a href='".urlcompile(T_NODE_MATCH, $e->match_id)."'>".$lng->getTrn('common/view')."</a></td>\n";
                                 if (!empty($e->comments)) {
-                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"slideToggle('comment$e->match_id');\">".$lng->getTrn('secs/home/comments')."</a></td>\n";
+                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"slideToggle('comment$e->match_id');\">".$lng->getTrn('main/comments')."</a></td>\n";
                                 }
-                            }
-                            elseif ($e->type == 'msg') {
-                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)." ".$lng->getTrn('secs/home/by')." $e->author</td>\n";
+                                break;
+                            case  T_TEXT_MSG:
+                                echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." ".$lng->getTrn('main/by')." $e->author</td>\n";
                                 if (is_object($coach) && ($coach->admin || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
-                                    echo "<td align='right'><a href='javascript:void(0);' onClick=\"slideToggle('msgedit$e->msg_id');\">".$lng->getTrn('secs/home/edit')."</a></td>\n";
-                                    echo "<td align='right'>
-                                        <form method='POST' name='msgdel$e->msg_id' style='display:inline; margin:0px;'>
-                                            <input type='hidden' name='type' value='msgdel'>
-                                            <input type='hidden' name='msg_id' value='$e->msg_id'>
-                                            <a href='javascript:void(0);' onClick='document.msgdel$e->msg_id.submit();'>".$lng->getTrn('secs/home/del')."</a>
-                                        </form>
-                                        </td>";
+                                    echo "<td align='right'><a href='javascript:void(0);' onClick=\"slideToggle('msgedit$e->msg_id');\">".$lng->getTrn('common/edit')."</a></td>\n";
+                                    echo "<td align='right'>";
+                                    inlineform(array('type' => 'msgdel', 'msg_id' => $e->msg_id), "msgdel$e->msg_id", $lng->getTrn('common/delete'));
+                                    echo "</td>";
                                 }
-                            }
-                            elseif ($e->type == 'tnews') {
-                                echo "<td align='left' width='100%'>".$lng->getTrn('secs/home/posted')." ".textdate($e->date)."</td>\n";
-                            }
-                        ?>
-                        </tr>
-                    </table>
-                    <?php
-                    if ($e->type == 'match' && !empty($e->comments)) {
-                        echo "<div id='comment$e->match_id'>\n";
-                        echo "<hr>\n";
-                        foreach ($e->comments as $c) {
-                            echo "<br>Posted ".textdate($c->date)." by $c->sname:<br>\n";
-                            echo $c->txt."<br>\n";
+                                break;
+                            case T_TEXT_TNEWS:
+                                echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)."</td>\n";
+                                break;
                         }
+                        ?>
+                    </tr></table>
+                    <?php
+                    if ($e->type == T_TEXT_MATCH_SUMMARY && !empty($e->comments)) {
+                        echo "<div style='display:none;' id='comment$e->match_id'><hr>\n";
+                        foreach ($e->comments as $c) { echo '<br>'.$lng->getTrn('main/posted').' '.textdate($c->date).' '.$lng->getTrn('main/by')." $c->sname:<br>\n".$c->txt."<br>\n";}
                         echo "</div>";
-                        echo "<script language='JavaScript' type='text/javascript'>
-                            document.getElementById('comment$e->match_id').style.display = 'none';
-                        </script>\n";
                     }
-                    elseif ($e->type == 'msg') {
+                    elseif ($e->type == T_TEXT_MSG) {
                         echo "<div style='display:none;' id='msgedit$e->msg_id'>\n";
                         echo "<hr><br>\n";
                         echo '<form method="POST">
@@ -311,7 +212,7 @@ function sec_main() {
                             <textarea name="txt" rows="15" cols="50">'.$e->message.'</textarea><br><br>
                             <input type="hidden" name="type" value="msgedit">
                             <input type="hidden" name="msg_id" value="'.$e->msg_id.'">
-                            <input type="submit" value="'.$lng->getTrn('secs/home/submit').'">
+                            <input type="submit" value="'.$lng->getTrn('common/submit').'">
                         </form>';
                         echo "</div>";
                     }
@@ -325,16 +226,16 @@ function sec_main() {
 
     </div>
 
-    <div class='main_rcol'>
+    <div class='main_rightColumn'>
 
         <?php
         if ($settings['entries_standings'] != 0) {
             foreach ($standings as $sta) {
                 ?>
-                <div class='main_rcolBox'>
-                    <h3 class='boxTitle1'><?php echo $sta['name'];?> <?php echo $lng->getTrn('global/misc/stn');?></h3>
+                <div class='main_rightColumn_box'>
+                    <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $sta['name'];?></h3>
                     <div class='boxBody'>
-                        <table class="boxTable" style='width:100%;'>
+                        <table class="boxTable">
                             <tr>
                                 <td style='width:100%;'><b>Team</b></td>
                                 <?php if ($sta['wpoints']) {echo "<td><b>PTS</b></td>\n";}?>
@@ -347,7 +248,7 @@ function sec_main() {
                             <?php
                             foreach ($sta['teams'] as $t) {
                                 echo "<tr>\n";
-                                echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;team_id=$t->team_id'>$t->name</a>" : $t->name)."</td>\n";
+                                echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_OBJ_TEAM, $t->team_id)."'>$t->name</a>" : $t->name)."</td>\n";
                                 if ($sta['wpoints']) {echo '<td>'.((is_float($t->points)) ? sprintf('%1.2f', $t->points) : $t->points)."</td>\n";}
                                 echo "<td>$t->cas</td>\n";
                                 echo "<td>$t->won</td>\n";
@@ -365,8 +266,8 @@ function sec_main() {
         }
         if ($settings['entries_latest'] != 0) {
             ?>
-            <div class="main_rcolBox">
-                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/recent');?></h3>
+            <div class="main_rightColumn_box">
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('common/recentgames');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -391,7 +292,7 @@ function sec_main() {
                             echo "<td style='text-align: right;'>" . $m->$home_name . "</td>\n";
                             echo "<td><nobr>" . $m->$home_score . "&mdash;" . $m->$guest_score . "</nobr></td>\n";
                             echo "<td style='text-align: left;'>" . $m->$guest_name . "</td>\n";
-                            echo "<td><a href='index.php?section=fixturelist&amp;match_id=$m->match_id'>Show</a></td>";
+                            echo "<td><a href='".urlcompile(T_NODE_MATCH,$m->match_id)."'>Show</a></td>";
                             echo "</tr>";
                         }
                         ?>
@@ -403,7 +304,7 @@ function sec_main() {
         if ($settings['entries_casualties'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/cas');?></h3>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('common/cas');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -414,7 +315,7 @@ function sec_main() {
                         <?php
                         foreach ($casualties as $p) {
                             echo "<tr>\n";
-                            echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>" : $p->name)."</td>\n";
+                            echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_OBJ_PLAYER,$p->player_id)."'>$p->name</a>" : $p->name)."</td>\n";
                             echo "<td>$p->cas</td>\n";
                             echo "<td>" . $p->value/1000 . "k</td>\n";
                             echo "</tr>";
@@ -428,7 +329,7 @@ function sec_main() {
         if ($settings['entries_touchdown'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/td');?></h3>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('common/td');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -439,7 +340,7 @@ function sec_main() {
                         <?php
                         foreach ($touchdowns as $p) {
                             echo "<tr>\n";
-                            echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>" : $p->name)."</td>\n";
+                            echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_OBJ_PLAYER,$p->player_id)."'>$p->name</a>" : $p->name)."</td>\n";
                             echo "<td>$p->td</td>\n";
                             echo "<td>" . $p->value/1000 . "k</td>\n";
                             echo "</tr>";
@@ -453,7 +354,7 @@ function sec_main() {
         if ($settings['entries_completions'] != 0) {
             ?>
             <div class="main_rcolBox">
-                <h3 class='boxTitle1'><?php echo $lng->getTrn('secs/home/cp');?></h3>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('common/cp');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -464,7 +365,7 @@ function sec_main() {
                         <?php
                         foreach ($completions as $p) {
                             echo "<tr>\n";
-                            echo "<td>".(($settings['fp_links']) ? "<a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>" : $p->name)."</td>\n";
+                            echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_OBJ_PLAYER,$p->player_id)."'>$p->name</a>" : $p->name)."</td>\n";
                             echo "<td>$p->cp</td>\n";
                             echo "<td>" . $p->value/1000 . "k</td>\n";
                             echo "</tr>";
@@ -478,7 +379,7 @@ function sec_main() {
         ?>
 
     </div>
-    <div class="main_cpy">
+    <div class="main_foot">
         <a href="http://nicholasmr.dk/index.php?sec=obblm">OBBLM official website</a>
         <br><br>
         This web site is completely unofficial and in no way endorsed by Games Workshop Limited.
@@ -486,6 +387,31 @@ function sec_main() {
         Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either (R), TM and/or (C) Games Workshop Ltd 2000-2006, variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
     </div>
     <?php
+}
+
+function sec_standings() {
+    
+    switch ($t = $_GET['type']) 
+    {
+        case T_NODE_MATCH: match_form($_GET['id']); break;
+        
+#        case T_NODE_DIVISION: 
+#            title(get_alt_col($relations[$t]['tbl'], $relations[$t]['id'], (int) $_GET['id'], 'name'));
+#            HTMLOUT::standings(STATS_TEAM, STATS_DIVISION, (int) $_GET['did'], array('url' => "index.php?section=fixturelist&amp;did=$_GET[did]", 'hidemenu' => true));
+#            break;
+        
+    }
+}
+
+function sec_profile() {
+    switch ($_GET['type'])
+    {
+        case T_OBJ_PLAYER: $player = new Player_HTMLOUT($_GET['id']); $player->playerPage(); break;
+        case T_OBJ_TEAM:   $team = new Team_HTMLOUT($_GET['id']);     $team->teamPage();     break;
+        case T_OBJ_COACH:  $coach = new Coach_HTMLOUT($_GET['id']);   $coach->coachPage();   break;
+        case T_OBJ_STAR:   $star = new Star_HTMLOUT($_GET['id']);     $star->starPage();     break;
+        case T_OBJ_RACE:   $race = new Race_HTMLOUT($_GET['id']);     $race->racePage();     break;
+    }
 }
 
 /*************************
@@ -554,8 +480,6 @@ function sec_fixturelist() {
 
     // Division standings?
     if (isset($_GET['did']) && !preg_match("/[^0-9]/", $_GET['did'])) {
-        title(get_alt_col('divisions', 'did', $_GET['did'], 'name'));
-        HTMLOUT::standings(STATS_TEAM, STATS_DIVISION, (int) $_GET['did'], array('url' => "index.php?section=fixturelist&amp;did=$_GET[did]", 'hidemenu' => true));
         return;
     }
     // League standings?

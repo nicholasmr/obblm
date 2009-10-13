@@ -1,4 +1,13 @@
 
+
+.boxTitle1 {background-color: #6699FF; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Blue.   Used for: Team/player/coach/match/etc. info, news, etc. */
+.boxTitle2 {background-color: #99CC99; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Green.  Used for: Management/actions/more box for ordinary coaches */
+.boxTitle3 {background-color: #FFBB33; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Yellow. Used for: Management/actions/more box for ordinary admins */
+.boxTitle4 {background-color: #6699FF; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Green.  Used for: Statistics */
+.boxTitle5 {background-color: #C0C0C0; padding: 6px; font-size: 13px; font-weight: bold;} /* Color: Grey.   Used for: Other type */
+.boxBody   {border-top: 1px solid #545454; padding: 10px;}
+table.boxTable {border-spacing: 5px; width: 100%;}
+
 .helpBox {
 	color: #FFFFFF;
 	border: 2px solid #CC6633;
@@ -15,3 +24,16 @@
 	line-height:1.4em;
 }
 
+
+
+div.login {padding-top: 20px; text-align: center;}
+
+
+div.main_head       {clear: both; padding-left: 20px; padding-top: 20px; padding-bottom: 5px; font-size: 18px; background-color: inherit;}
+div.main_foot       {clear: both; font-size: 10px; padding: 30px; padding-top: 20px; background-color: inherit;}
+div.main_rightColumn {float: right; width: 450px; background-color: inherit;}
+    div.main_rightColumn_box {margin: 10px; border: 1px solid #545454;}
+div.main_leftColumn {float: left; width: 500px; background-color: inherit;}
+    div.main_leftColumn_head     {clear: both; text-align: right; padding-right: 20px; background-color: inherit;} /* Padding should be the same as lcolBox padding. */
+        div.main_leftColumn_welcome  {clear: both; padding-left: 20px; padding-top: 3px; padding-bottom: 3px; background-color: inherit; text-align: left;}
+    div.main_leftColumn_box      {margin: 20px; border: 1px solid #545454;} 

@@ -37,7 +37,7 @@
  */ 
 
 define('RSS_SIZE', 20); // Number of entries in feed.
-define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, 'HOF', 'Wanted', T_TEXT_MSMR, T_TEXT_TNEWS))); // Create feeds from the text types.
+define('RSS_FEEDS', implode(',', array(T_TEXT_MSG, 'HOF', 'Wanted', T_TEXT_MATCH_SUMMARY, T_TEXT_TNEWS))); // Create feeds from the text types.
 
 class RSSfeed implements ModuleInterface
 {
@@ -149,8 +149,8 @@ class RSSfeed implements ModuleInterface
                     }
                     break;
                 
-                case T_TEXT_MSMR:
-                    foreach (Match::getReports(RSS_SIZE) as $item) {
+                case T_TEXT_MATCH_SUMMARY:
+                    foreach (MatchSummary::getSummaries(RSS_SIZE) as $item) {
                         $m = new Match($item->match_id);
                         $entries[] = (object) array(
                             'title' => "Match: $m->team1_name ($m->team1_score) vs. $m->team2_name ($m->team2_score)", 
@@ -163,7 +163,7 @@ class RSSfeed implements ModuleInterface
                     break;
                 
                 case T_TEXT_TNEWS:
-                    foreach (TNews::getNews(false, RSS_SIZE) as $item) {
+                    foreach (TeamNews::getNews(false, RSS_SIZE) as $item) {
                         $entries[] = (object) array('title' => "Team news by ".get_alt_col('teams', 'team_id', $item->f_id, 'name'), 'desc' => $item->txt, 'date' => $item->date);
                     }
                     break;

@@ -515,30 +515,30 @@ class Match
     
     public function saveText($str) {
         
-        $txt = new MSMR($this->match_id);
+        $txt = new MatchSummary($this->match_id);
         return $txt->save($str);
     }
 
     public function getText() {
 
-        $txt = new MSMR($this->match_id);
+        $txt = new MatchSummary($this->match_id);
         return $txt->txt;
     }
     
     public function hasComments() {
-        return MSMRC::matchHasComments($this->match_id);
+        return MatchComment::matchHasComments($this->match_id);
     }
 
     public function getComments() {
-        return MSMRC::getComments($this->match_id, '-');
+        return MatchComment::getComments($this->match_id, '-');
     }
     
     public function newComment($sid, $txt) {
-        return MSMRC::create($this->match_id, $sid, $txt);
+        return MatchComment::create($this->match_id, $sid, $txt);
     }
     
     public function deleteComment($cid) {
-        $cmt = new MSMRC($cid);
+        $cmt = new MatchComment($cid);
         return $cmt->delete();
     }
     
@@ -575,34 +575,6 @@ class Match
         return $m;
     }
     
-    public static function getReports($n = false) {
-        
-        /*
-            Get matches for those match reports which have a summary entered.
-        */
-        
-        $r = array();
-        
-        $query = "SELECT match_id, txt FROM matches, texts WHERE 
-                match_id = f_id 
-            AND type = ".T_TEXT_MSMR." 
-            AND date_played IS NOT NULL 
-            AND txt IS NOT NULL 
-            AND txt != '' 
-            ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
-        
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                if (!empty($row['txt'])) {
-                    array_push($r, new Match($row['match_id']));
-                }
-            }
-        }
-
-        return $r;
-    }
-     
     public static function fakeEntry(array $input) {
         
         /*

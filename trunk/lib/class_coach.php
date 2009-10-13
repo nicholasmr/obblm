@@ -217,13 +217,13 @@ class Coach
     
     public function saveText($str) {
         
-        $desc = new TDesc(T_TEXT_COACH, $this->coach_id);
+        $desc = new ObjDescriptions(T_TEXT_COACH, $this->coach_id);
         return $desc->save($str);
     }
 
     public function getText() {
 
-        $desc = new TDesc(T_TEXT_COACH, $this->coach_id);
+        $desc = new ObjDescriptions(T_TEXT_COACH, $this->coach_id);
         return $desc->txt;
     }
     

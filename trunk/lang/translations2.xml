@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<en-GB>
+
+<!-- Commonly used strings -->
+<common>
+    <notitle>Enter title here</notitle>
+    <nobody>--Empty body--</nobody>
+    
+    <submit>Submit</submit>
+    <save>Save</save>
+    <delete>Delete</delete>
+    <edit>Edit</edit>
+    <view>View</view>
+    
+    <recentgames>Recent games</recentgames>
+    
+    <td>Touchdowns</td>
+    <intcpt>Interceptions</intcpt>
+    <cp>Completions</cp>
+    <ki>Kills</ki>
+    <bh>Badly hurt</bh>
+    <si>Seriously injured</si>
+    <cas>Cacualties</cas>
+    <mvp>Most valuable players</mvp>
+    
+</common>
+
+<!-- Link names for menu elements -->
+<menu>
+    <login>Login</login>
+</menu>
+
+<!-- Section translations -->
+<login>
+    <name>Login</name>
+    
+    <loginname>Coach name</loginname>
+    <passwd>Password</passwd>
+    <remember>Remember me</remember>
+    <loginbutton>Login</loginbutton>
+</login>
+
+<main>
+    <!-- has no <name> tag! -->
+    <newmsg>New message</newmsg>
+    <more>more</more>
+    <comments>Comments</comments>
+    <posted>Posted</posted>
+    <by>by</by>
+    <lastedit>last edited</lastedit>
+</main>
+
+<games>
+</games>
+
+
+
+
+</en-GB>
