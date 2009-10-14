@@ -92,10 +92,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $team_away = new Team( $this->awayteam_id );
         $this->tv_away = $team_away->value;
 
+        $this->checkSpiralingExpenses();
+
         if ( !$this->matchEntry ( $this->hometeam_id, $this->homeplayers ) ) return false;
         if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
 
-        $this->checkSpiralingExpenses();
         if ( !$this->updateMatch () )
         {
             $this->error = "Failed to update the match.";
