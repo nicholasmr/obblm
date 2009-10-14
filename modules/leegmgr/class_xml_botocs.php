@@ -33,6 +33,7 @@ class XML_BOTOCS implements ModuleInterface
     //team
     public $roster = '';
     public $team_id = 0;
+    public $games = 0;
     public $name = '';
     public $race = '';
     public $coach_name = '';
@@ -56,6 +57,7 @@ class XML_BOTOCS implements ModuleInterface
         $this->jm = $jm;
 
         $team = new Team ( $_GET["teamid"] );
+            $this->games = $team->won + $team->lost + $team->draw;
             $this->players = $team->getPlayers();
             $this->name = $team->name;
             $this->race = $team->race;
@@ -153,6 +155,12 @@ class XML_BOTOCS implements ModuleInterface
             }
         }
 	
+        if ( ($this->exist_journeyman && $this->games == 0) || ($this->noninjplayercount < 11 && $this->games == 0) )
+        {
+            Print "You have an illegal starting roster.";
+            return false;
+        }
+
         if ( !$this->jm && $this->noninjplayercount < 11 )
         {
             Print "You may have forgotten to hire a journeyman for the next match.  Please hire a player as a journeyman or hire a player.<br>";
@@ -191,7 +199,7 @@ class XML_BOTOCS implements ModuleInterface
 
         $teams = array();
         
-        $result = mysql_query( "SELECT team_id FROM teams WHERE owned_by_coach_id = $coach_id and name LIKE '%[P]' ORDER BY name ASC" );
+        $result = mysql_query( "SELECT team_id FROM teams WHERE owned_by_coach_id = $coach_id AND name LIKE '%[P]' AND RETIRED = 0 ORDER BY name ASC" );
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 $teams[] = $row['team_id'];
