@@ -205,14 +205,19 @@ function fmtprint($str) {
 define('T_URL_PROFILE',   1);
 define('T_URL_STANDINGS', 2);
 
-function urlcompile($type, $obj, $id, $extraGETs = array()) {
-    return 'index.php?section='.(($profile = ($type == T_URL_PROFILE)) ? 'profile' : 'standings')."&amp;type=$type".(($profile) ? "&amp;id=$id" : '').
-    implode("\n", array_map(create_function('$key,$val', 'return "$key=&amp;$val";'),array_keys($fields),array_values($fields)));
+function urlcompile($type, $obj, $obj_id, $node, $node_id, $extraGETs = array()) {
+    return 'index.php?section=objhandler&amp;type='.$type.
+        (($obj)     ? "&amp;obj=$obj" : '').
+        (($obj_id)  ? "&amp;obj_id=$obj_id" : '').
+        (($node)    ? "&amp;node=$node" : '').
+        (($node_id) ? "&amp;node_id=$node_id" : '').
+        implode("\n", array_map(create_function('$key,$val', 'return "$key=&amp;$val";'),array_keys($extraGETs),array_values($extraGETs)));
 }
 
-function inlineform($fields, $formName, $buttonText) {
-    echo "<form method='POST' name='$formName' style='display:inline; margin:0px;'>".
-          implode("\n", array_map(create_function('$key,$val', 'return "<input type=\'hidden\' name=\'$key\' value=\'$val\'>";'),array_keys($fields),array_values($fields)))
-          ."<a href='javascript:void(0);' onClick='document.$formName.submit();'>$buttonText</a></form>";
+function inlineform($fields, $formName, $buttonText, $myFormElements = array()) {
+    return "<form method='POST' name='$formName' style='display:inline; margin:0px;'>".
+          implode("\n", array_map(create_function('$key,$val', 'return "<input type=\'hidden\' name=\'$key\' value=\'$val\'>";'),array_keys($fields),array_values($fields))).
+          implode("\n", $myFormElements).
+          "<a href='javascript:void(0);' onClick='document.$formName.submit();'>$buttonText</a></form>";
 }
 ?>

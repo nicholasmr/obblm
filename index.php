@@ -62,20 +62,12 @@ switch ($_GET['section'])
     case 'login':        sec_login();           break;
     case 'admin':        sec_admin();           break;
     case 'coachcorner':  sec_coachcorner();     break;
-    case 'fixturelist':  sec_fixturelist();     break; // Tournaments
-    case 'standings':    sec_standings();       break; // All-time team standings
-    case 'teams':        sec_teams();           break; // Teams list.
-    case 'players':      sec_players();         break;
-    case 'coaches':      sec_coaches();         break;
-    case 'races':        sec_races();           break;
-    case 'stars':        sec_stars();           break;
-    case 'records':      sec_records();         break;
+    case 'teamlist':     sec_teamlist();        break;
     case 'rules':        sec_rules();           break;
     case 'gallery':      sec_gallery();         break;
-    case 'about':        sec_about();           break;
-    case 'recent':       sec_recentmatches();   break;
-    case 'upcomming':    sec_upcommingmatches();break;
-    case 'comparison':   sec_comparison();      break;
+    case 'about':        sec_about();           break;    
+    case 'matches':      sec_matcheshandler();  break; // Tournaments, matches, match reports, recent matches, upcomming matches etc.
+    case 'objhandler':   sec_objhandler();      break; // Object profiles, object standings.
     default:             sec_main();
 }
 

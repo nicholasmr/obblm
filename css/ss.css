@@ -24,6 +24,14 @@ table.boxTable {border-spacing: 5px; width: 100%;}
 	line-height:1.4em;
 }
 
+table.common {
+    border: none; 
+    width: 100%;
+    background-color: inherit; 
+}
+tr.commonhead {
+    background-color: #CCCCCC;
+}
 
 
 div.login {padding-top: 20px; text-align: center;}

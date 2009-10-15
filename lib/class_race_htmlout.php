@@ -24,7 +24,7 @@
 class Race_HTMLOUT extends Race
 {
 
-public function racePage() 
+public function profile() 
 {
     $race = $this;
     $roster = $race->getRoster();

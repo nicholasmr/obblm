@@ -161,7 +161,7 @@ class Match
             tv1 = 0, tv2 = 0, 
             income1 = NULL, income2 = NULL,
             ffactor1 = NULL, ffactor2 = NULL, 
-            fans = 0, gate = NULL, stadium = NULL, submitter_id = NULL, locked = NULL, hash_botocs = NULL
+            fans = 0, gate = NULL, stadium = NULL, submitter_id = NULL, locked = NULL
             WHERE match_id = $this->match_id";
             
         $status = true;
