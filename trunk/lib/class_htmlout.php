@@ -482,29 +482,12 @@ private static function make_menu()
     ?>
     <ul id="nav" class="dropdown dropdown-horizontal">
         <?php
-        if (isset($_SESSION['logged_in'])) { ?><li><a href="index.php?logout=1">     <?php echo $lng->getTrn('global/secLinks/logout');?></a></li><?php }
-        else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('global/secLinks/login');?></a></li><?php }
+        if (isset($_SESSION['logged_in'])) { ?><li><a href="index.php?logout=1">     <?php echo $lng->getTrn('menu/logout');?></a></li><?php }
+        else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('menu/login');?></a></li><?php }
+
         if (isset($_SESSION['logged_in'])) {
-            ?>
-            <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/cc');?></span>
-                <ul>
-                    <li><a href='index.php?section=coachcorner'><?php echo $lng->getTrn('global/secLinks/coachcorner');?></a></li>
-                    <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/myteams');?></span>
-                        <ul>
-                            <?php
-                            foreach ($coach->getTeams() as $t) {
-                                echo "<li><a href='index.php?section=coachcorner&amp;team_id=$t->team_id'>$t->name</a></li>\n";
-                            }
-                            echo "<li><a style='font-style: italic;' href='index.php?section=coachcorner&amp;team_id=new'>".$lng->getTrn('secs/cc/main/start_new')."</a></li>\n";
-                            ?>
-                        </ul>
-                    </li>
-                    <li><a href='index.php?section=coaches&amp;coach_id=<?php echo $coach->coach_id;?>'><?php echo $lng->getTrn('global/secLinks/myprofile');?></a></li>
-                </ul>
-            </li>
-            <?php
-        }
-        if (isset($_SESSION['logged_in'])) {
+            echo '<li><a href="index.php?section=coachcorner">'.$lng->getTrn('menu/cc').'</a></li>';
+            
             $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'ldm' => $lng->getTrn('secs/admin/ldm'), 'chtr' => $lng->getTrn('secs/admin/th'), 'import' => $lng->getTrn('secs/admin/import'), 'ctman' => $lng->getTrn('secs/admin/delete'));
             $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('name', 'LogSubSys'));
             if (is_object($coach) && $coach->ring <= RING_COM) {
@@ -527,10 +510,10 @@ private static function make_menu()
             }
         }
         ?>
-        <li><a href="index.php?section=main"><?php echo $lng->getTrn('global/secLinks/home');?></a></li>
-        <li><a href="index.php?section=teams"><?php echo $lng->getTrn('global/secLinks/teams');?></a></li>
+        <li><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a></li>
+        <li><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
         <li><a href="index.php?section=fixturelist"><?php echo $lng->getTrn('global/secLinks/fixtures');?></a></li>
-        <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/statistics');?></span>
+        <li><span class="dir"><?php echo $lng->getTrn('menu/statistics');?></span>
             <ul>
                 <li><a href="index.php?section=recent"><?php echo $lng->getTrn('global/secLinks/recent');?></a></li>
                 <li><a href="index.php?section=upcomming"><?php echo $lng->getTrn('global/secLinks/upcomming');?></a></li>
@@ -572,23 +555,23 @@ private static function make_menu()
                 ?>
             </ul>
         </li>
-        <li><span class="dir"><?php echo 'Plugins';#$lng->getTrn('global/secLinks/records');?></span>
+        <li><span class="dir"><?php echo $lng->getTrn('menu/plugins');?></span>
             <ul>
-                <?php if (Module::isRegistered('HOF'))   { ?><li><a href="index.php?section=records&amp;subsec=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Wanted')){ ?><li><a href="index.php?section=records&amp;subsec=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Prize')) { ?><li><a href="index.php?section=records&amp;subsec=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('HOF'))   { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Wanted')){ ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Prize')) { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('name', 'Comparison');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
             </ul>
         </li>
 
-        <li><a href="index.php?section=rules"><?php echo $lng->getTrn('global/secLinks/rules');?></a></li>
-        <li><a href="index.php?section=gallery"><?php echo $lng->getTrn('global/secLinks/gallery');?></a></li>
+        <li><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
+        <li><a href="index.php?section=gallery"><?php echo $lng->getTrn('menu/gallery');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>
         <?php
         if (!empty($settings['forum_url'])) {
-            ?><li><a href="<?php echo $settings['forum_url'];?>"><?php echo $lng->getTrn('global/secLinks/forum');?></a></li><?php
+            ?><li><a href="<?php echo $settings['forum_url'];?>"><?php echo $lng->getTrn('menu/forum');?></a></li><?php
         }
         ?>
     </ul>
@@ -713,7 +696,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                     if (array_key_exists('color', $a) && $a['color'])
                         $cpy = "<font color='$a[color]'>".$cpy."</font>\n";
                     if (array_key_exists('href', $a) && $a['href'])
-                        $cpy  = "<a href='" . $a['href']['link'] . "&amp;" . $a['href']['field'] . "=" . $o->{$a['href']['value']} . "'>". $cpy . "</a>";
+                        $cpy  = "<a href='" . $a['href']['link'] . ((isset($a['href']['field'])) ? '&amp;'.$a['href']['field'].'='.$o->{$a['href']['value']} : '') . "'>". $cpy . "</a>";
 
                     if (isset($o->{"${f}_color"})) {
                         echo "<td style='background-color: ".$o->{"${f}_color"}."; color: black;'>".$cpy."</td>\n";
@@ -856,70 +839,6 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
         sort_rule('star_HH'),
         (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
         $extra
-    );
-}
-
-public static function dispTeamList($obj, $obj_id)
-{
-    // Prints a list of teams owned by $obj (STATS_*) with ID = $obj_id.
-
-    global $settings;
-
-    $teams = array();
-    switch ($obj) {
-        case STATS_COACH:
-            $c = new Coach($obj_id);
-            $teams = $c->getTeams();
-            break;
-
-        case STATS_RACE:
-            $r = new Race($obj_id);
-            $teams = $r->getTeams();
-            break;
-
-        case false:
-        default:
-            $teams = Team::getTeams();
-            break;
-    }
-    // OPTIONALLY hide retired teams.
-    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
-    objsort($teams, array('+name'));
-    foreach ($teams as $t) {
-        $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');
-        $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that HTMLOUT::sort_table does not create the team link on coach name too.
-        $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
-        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath()."'>";
-        $t->retired = ($t->is_retired) ? '<b>Yes</b>' : 'No';
-        $lt = $t->getLatestTour();
-        $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
-        if (Module::isRegistered('Prize')) {
-            $prizes = Module::run('Prize', array('getPrizesString', $t->team_id));
-        }
-        $t->prizes = (empty($prizes)) ? '<i>None</i>' : $prizes;
-        $t->rdy = ($t->rdy) ? '<font color="green">Yes</font>' : '<font color="red">No</font>';
-    }
-    $fields = array(
-        'logo'      => array('desc' => 'Logo', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id'), 'nosort' => true),
-        'name'      => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
-        'rdy'       => array('desc' => 'Ready', 'nosort' => true),
-        'race'      => array('desc' => 'Race'),
-        'latest_tour' => array('desc' => 'Latest tour'),
-        'prizes'      => array('desc' => 'Prizes', 'nosort' => true),
-        'played'    => array('desc' => 'Games'),
-        'value'     => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
-    );
-    if (!Module::isRegistered('Prize')) {
-        unset($fields['prizes']);
-    }
-    HTMLOUT::sort_table(
-        "Teams",
-        "index.php?section=".(($obj == STATS_COACH) ? 'coachcorner' : 'teams'),
-        $teams,
-        $fields,
-        array('+name'),
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-        array('doNr' => false, 'noHelp' => true)
     );
 }
 

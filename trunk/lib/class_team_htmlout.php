@@ -24,6 +24,65 @@
 class Team_HTMLOUT extends Team
 {
 
+public static function dispTeamList($obj, $obj_id)
+{
+    // Prints a list of teams owned by $obj (STATS_*) with ID = $obj_id.
+
+    global $settings, $lng;
+
+    $teams = array();
+    switch ($obj) {
+        case STATS_COACH:
+            $c = new Coach($obj_id);
+            $teams = $c->getTeams();
+            break;
+
+        case false:
+        default:
+            $teams = Team::getTeams();
+            break;
+    }
+    // OPTIONALLY hide retired teams.
+    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
+    objsort($teams, array('+name'));
+    foreach ($teams as $t) {
+        $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');
+        $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that HTMLOUT::sort_table does not create the team link on coach name too.
+        $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
+        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath()."'>";
+        $t->retired = ($t->is_retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
+        $lt = $t->getLatestTour();
+        $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
+        if (Module::isRegistered('Prize')) {
+            $prizes = Module::run('Prize', array('getPrizesString', $t->team_id));
+        }
+        $t->prizes = (empty($prizes)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $prizes;
+        $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
+    }
+    $fields = array(
+        'logo'          => array('desc' => 'Logo', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id'), 'nosort' => true),
+        'name'          => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+        'rdy'           => array('desc' => 'Ready', 'nosort' => true),
+        'race'          => array('desc' => 'Race'),
+        'latest_tour'   => array('desc' => 'Latest tour'),
+        'prizes'        => array('desc' => 'Prizes', 'nosort' => true),
+        'played'        => array('desc' => 'Games'),
+        'value'         => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
+    );
+    if (!Module::isRegistered('Prize')) {
+        unset($fields['prizes']);
+    }
+    HTMLOUT::sort_table(
+        "Teams",
+        "index.php?section=".(($obj == STATS_COACH) ? 'coachcorner' : 'teamlist'),
+        $teams,
+        $fields,
+        array('+name'),
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+        array('doNr' => false, 'noHelp' => true)
+    );
+}
+
 public static function standings($node = false, $node_id = false)
 {
     global $lng, $settings;
@@ -56,25 +115,26 @@ public static function standings($node = false, $node_id = false)
     );
 }
 
-public function teamPage()
+public static function profile($cid)
 {
     global $coach, $settings;
+    $t = new self($cid);
     
     /* Argument(s) passed to generating functions. */
-    $ALLOW_EDIT = (is_object($coach) && ($this->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$this->is_retired); # Show team action boxes?
+    $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$t->is_retired); # Show team action boxes?
     $DETAILED   = (isset($_GET['detailed']) && $_GET['detailed'] == 1);# Detailed roster view?
 
     /* Team pages consist of the output of these generating functions. */
-    $this->_handleActions($ALLOW_EDIT); # Handles any actions/request sent.
-    list($players, $players_backup) = $this->_loadPlayers($DETAILED); # Should come after _handleActions().
-    $this->_roster($ALLOW_EDIT, $DETAILED, $players);
+    $t->_handleActions($ALLOW_EDIT); # Handles any actions/request sent.
+    list($players, $players_backup) = $t->_loadPlayers($DETAILED); # Should come after _handleActions().
+    $t->_roster($ALLOW_EDIT, $DETAILED, $players);
     $players = $players_backup; # Restore the $players array (_roster() manipulates the passed $players array).
-    $this->_menu($ALLOW_EDIT, $DETAILED);
-    $this->_starMercHH($DETAILED);
-    $this->_actionBoxes($ALLOW_EDIT, $players);
-    $this->_about($ALLOW_EDIT);
-    $this->_news($ALLOW_EDIT);
-    $this->_recentGames();
+    $t->_menu($ALLOW_EDIT, $DETAILED);
+    $t->_starMercHH($DETAILED);
+    $t->_actionBoxes($ALLOW_EDIT, $players);
+    $t->_about($ALLOW_EDIT);
+    $t->_news($ALLOW_EDIT);
+    $t->_recentGames();
 
     // Default folded out sub-section.
     if (isset($_POST['type']) && ($_POST['type'] == 'news' || $_POST['type'] == 'newsedit' || $_POST['type'] == 'newsdel')) $activeDiv = 'tp_news';

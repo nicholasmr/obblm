@@ -23,14 +23,11 @@ $settings['show_sort_rule'] = true;         // Default is true. Print in table f
 $settings['entries_messageboard']   = 5;  // Number of entries on the main page messageboard in normal view mode. Note: A value of 0 shows all messages.
 $settings['entries_standings']      = 5;  // Number of entries in the main page table(s) "standings".
 $settings['entries_latest']         = 5;  // Number of entries in the main page table "latest games".
-$settings['entries_casualties']     = 5;  // Number of entries in the main page table "casualties".
-$settings['entries_touchdown']      = 5;  // Number of entries in the main page table "touchdowns".
-$settings['entries_completions']    = 5;  // Number of entries in the main page table "completions".
+$settings['entries_leaders']        = 5;  // Number of entries on the main page leaders tables.
 $settings['entries_players']        = 20; // Number of entries in the players standings table. Note: A value of 0 shows all players.
 
 $settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
 $settings['show_stars_mercs']      = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.
-$settings['show_active_tours']     = true;  // Default is true. Show not only the overall team standings table on the front page, but show also standings tables for active tournaments?
 $settings['fp_team_news']          = true;  // Default is true. Show team news on front page.
 $settings['fp_links']              = false; // Default is false. Generate coach, team and player links on the front page?
 $settings['force_tour_foldout']    = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.

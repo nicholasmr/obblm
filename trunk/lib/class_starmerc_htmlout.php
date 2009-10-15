@@ -24,7 +24,7 @@
 class Star_HTMLOUT extends Star
 {
 
-public function starPage() 
+public function profile() 
 {
     title($lng->getTrn('secs/stars/hh').' '.$this->name);
     echo '<center><a href="'.urlcompile(1,1).'">['.$lng->getTrn('global/misc/back').']</a></center><br><br>';

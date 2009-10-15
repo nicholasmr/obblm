@@ -26,6 +26,8 @@ require('header.php'); // Includes and constants.
 if (!isset($_GET['type']))
     fatal("Sorry. Don't know what to do. Please specify 'type' via GET.");
 
+$COACH_IS_ADMIN = (is_object($coach) && $coach->admin);
+
 switch ($_GET['type'])
 {
     /* PDF-roster */
@@ -77,6 +79,21 @@ switch ($_GET['type'])
    	case 'registration':
    		Module::run('Registration', array());
    		break;
+
+    /* Hall of fame */
+    case 'hof':    
+        Module::run('HOF', array('makeList', $COACH_IS_ADMIN)); 
+        break;
+        
+    /* Wanted */
+    case 'wanted': 
+        Module::run('Wanted', array('makeList', $COACH_IS_ADMIN)); 
+        break;
+        
+    /* Prizes */
+    case 'prize':  
+        Module::run('Prize', array('makeList', $COACH_IS_ADMIN)); 
+        break;
 
     /* Cyanide match import */
     case 'cyanide_match_import':

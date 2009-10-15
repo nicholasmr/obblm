@@ -38,7 +38,7 @@ public static function stadings()
     <?php
 }
 
-public function playerPage() 
+public function profile() 
 {
     global $lng, $coach;
     $team = new Team($this->owned_by_team_id);
