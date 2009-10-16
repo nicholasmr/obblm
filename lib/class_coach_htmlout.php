@@ -29,10 +29,10 @@ public static function profile($cid)
     global $lng, $coach;
     
     $c = new self($cid);
-    title("Coach $c->name");
+    title($c->name);
     
     echo "<center>";
-    echo "<a href='index.php?section=coaches'>[".$lng->getTrn('common/back')."]</a>";
+    echo "<a href='".urlcompile(T_URL_STANDINGS,T_OBJ_COACH,false,false,false)."'>[".$lng->getTrn('common/back')."]</a>";
     if (Module::isRegistered('SGraph')) {
         echo "&nbsp; | &nbsp;<a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$c->coach_id''>[Vis. stats]</a>\n";
     }
@@ -97,7 +97,8 @@ public static function profile($cid)
 
 public static function standings()
 {
-    title($lng->getTrn('global/secLinks/coaches'));
+    global $lng;
+    title($lng->getTrn('menu/statistics_menu/coach_stn'));
     HTMLOUT::standings(STATS_COACH, false, false, array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_COACH,false,false,false)));
 }
 

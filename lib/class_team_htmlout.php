@@ -87,16 +87,16 @@ public static function standings($node = false, $node_id = false)
 {
     global $lng, $settings;
 
-    title($lng->getTrn('global/secLinks/standings'));
-    echo $lng->getTrn('global/sortTbl/simul')."<br><br>\n";
+    title($lng->getTrn('menu/statistics_menu/team_stn'));
+    echo $lng->getTrn('common/notice_simul')."<br><br>\n";
 
-    $teams = HTMLOUT::standings(STATS_TEAM,$node,$node_id,array('url' => 'index.php?section=standings', 'hidemenu' => false, 'return_objects' => true));
+    $teams = HTMLOUT::standings(STATS_TEAM,$node,$node_id,array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false), 'hidemenu' => false, 'return_objects' => true));
 
     if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
     $fields = array(
-        'name'         => array('desc' => 'Team', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'team_id', 'value' => 'team_id')),
-        'race'         => array('desc' => 'Race', 'href' => array('link' => 'index.php?section=races', 'field' => 'race', 'value' => 'f_race_id')),
-        'coach_name'   => array('desc' => 'Coach', 'href' => array('link' => 'index.php?section=coaches', 'field' => 'coach_id', 'value' => 'owned_by_coach_id')),
+        'name'         => array('desc' => 'Team', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+        'race'         => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
+        'coach_name'   => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
         'fan_factor'   => array('desc' => 'FF'),
         'rerolls'      => array('desc' => 'RR'),
         'ass_coaches'  => array('desc' => 'Ass. coaches'),
@@ -106,19 +106,20 @@ public static function standings($node = false, $node_id = false)
     );
 
     HTMLOUT::sort_table(
-        $lng->getTrn('secs/standings/tblTitle2'),
-        'index.php?section=standings',
+        $lng->getTrn('standings/team/tblTitle2'),
+        urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false),
         $teams,
         $fields,
         sort_rule('team'),
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array()
+        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
+        array('noHelp' => true)
     );
 }
 
-public static function profile($cid)
+public static function profile($tid)
 {
     global $coach, $settings;
-    $t = new self($cid);
+    $t = new self($tid);
     
     /* Argument(s) passed to generating functions. */
     $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$t->is_retired); # Show team action boxes?
@@ -441,7 +442,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
     
     $fields = array(
         'nr'        => array('desc' => 'Nr.'), 
-        'name'      => array('desc' => 'Name', 'href' => array('link' => 'index.php?section=coachcorner', 'field' => 'player_id', 'value' => 'player_id')),
+        'name'      => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
         'position'  => array('desc' => 'Position', 'nosort' => true), 
         'ma'        => array('desc' => 'Ma'), 
         'st'        => array('desc' => 'St'), 
@@ -459,8 +460,8 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
     );
 
     HTMLOUT::sort_table(
-        $lng->getTrn('secs/teams/playersof').' '.$team->name, 
-        "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+        $team->name.' roster', 
+        urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
         $players, 
         $fields, 
         ($DETAILED) ? array('+is_dead', '+is_sold', '+is_mng', '+is_journeyman', '+nr', '+name') : sort_rule('player'), 
@@ -498,18 +499,18 @@ private function _menu($ALLOW_EDIT, $DETAILED)
     ?>
     <br>
     <ul id="nav" class="dropdown dropdown-horizontal">
-        <li><a href="<?php echo "index.php?section=coachcorner&amp;team_id=$_GET[team_id]&amp;detailed=".(($DETAILED) ? 0 : 1);?>"><?php echo $lng->getTrn('secs/teams/viewtoggle');?></a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_actionboxes');?>>Team Management</a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_news');?>>News</a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_about');?>>About</a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_recent');?>>Recent games</a></li>
+        <li><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$this->team_id,false,false)."&amp;detailed=".(($DETAILED) ? 0 : 1);?>"><?php echo $lng->getTrn('profile/team/viewtoggle');?></a></li>
+        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_actionboxes');?>><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
+        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_news');?>><?php echo $lng->getTrn('profile/team/news');?></a></li>
+        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_about');?>><?php echo $lng->getTrn('common/about');?></a></li>
+        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_recent');?>><?php echo $lng->getTrn('common/recentmatches');?></a></li>
         <?php
         echo "<li><a href='javascript:void(0)' ".$this->_makeOnClick('tp_shh')." title='Show/hide star hire history'>Star HH</a></li>\n";
         echo "<li><a href='javascript:void(0)' ".$this->_makeOnClick('tp_mhh')." title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
         
-        $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=".($DETAILED ? '1' : '0') : '';
-        $xml    = (Module::isRegistered('Team_export')) ? "handler.php?type=xmlexport&amp;tid=$_GET[team_id]" : '';
-        $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_enabled']) ? "handler.php?type=botocsxml&amp;teamid=$_GET[team_id]" : '';
+        $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$this->team_id&amp;detailed=".($DETAILED ? '1' : '0') : '';
+        $xml    = (Module::isRegistered('Team_export')) ? "handler.php?type=xmlexport&amp;tid=$this->team_id" : '';
+        $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_enabled']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id" : '';
         if ($pdf || $xml || $botocs) {
         ?>
         <li><span class="dir">Roster</span>
@@ -522,7 +523,7 @@ private function _menu($ALLOW_EDIT, $DETAILED)
         <?php
         }
         if (Module::isRegistered('IndcPage')) {
-            echo "<li><a href='handler.php?type=inducements&amp;team_id=$team->team_id'>".$lng->getTrn('secs/teams/indctry')."</a></li>\n";
+            echo "<li><a href='handler.php?type=inducements&amp;team_id=$team->team_id'>Induce. try-out</a></li>\n";
         }
         if (Module::isRegistered('SGraph')) {
             echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''>Vis. stats</a></li>\n";
@@ -556,15 +557,15 @@ private function _starMercHH($DETAILED)
         Show color descriptions in detailed view and links to special team page actions. 
     */
 
-    global $lng, $rules, $settings;
+    global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
 
     ?>
     <div id='tp_shh' style='clear:both;'>
         <?php
-        title('Star hire history');
-        HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
-            'url' => "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+        title($lng->getTrn('common/starhh'));
+        Star_HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
+            'url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
             'GET_SS' => 'tp_shh', 
             'anchor' => 'tp_shhanc')
         );
@@ -573,7 +574,7 @@ private function _starMercHH($DETAILED)
     
     <div id='tp_mhh' style='clear:both;'>
         <?php
-        title('Mercenary hire history');
+        title($lng->getTrn('common/merchh'));
         $mdat = array();
         foreach (Mercenary::getMercsHiredByTeam($team->team_id, false) as $merc) {
             $o = (object) array();
@@ -613,11 +614,11 @@ private function _starMercHH($DETAILED)
             'mvp'    => array('desc' => 'MVP'), 
             'score'  => array('desc' => 'Score', 'nosort' => true),
             'result' => array('desc' => 'Result', 'nosort' => true),
-            'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+            'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true), 
         );
         HTMLOUT::sort_table(
-            "<a name='tp_mhhanc'>Mercenary hiring history</a>", 
-            "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+            "<a name='tp_mhhanc'>".$lng->getTrn('common/merchh')."</a>", 
+            urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
             $mdat, 
             $fields, 
             sort_rule('star_HH'), 
@@ -646,30 +647,30 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     echo "<div id='tp_actionboxes'>\n";
     ?>
     <div class="tpageBox">
-        <div class="boxTitle1"><a name='aanc'><?php echo $lng->getTrn('secs/teams/box_info/title');?></a></div>
+        <div class="boxTitle1"><a name='aanc'><?php echo $lng->getTrn('profile/team/box_info/title');?></a></div>
         <div class="boxBody">
             <table width="100%">
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/coach');?></td>
-                    <td><a href="index.php?section=coaches&amp;coach_id=<?php echo $team->owned_by_coach_id;?>"><?php echo $team->coach_name; ?></a></td>
+                    <td><?php echo $lng->getTrn('common/coach');?></td>
+                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team->owned_by_coach_id,false,false);?>"><?php echo $team->coach_name; ?></a></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/race');?></td>
-                    <td><a href='index.php?section=races&amp;race=<?php echo $team->f_race_id; ?>'><?php echo $team->race; ?></a></td>
+                    <td><?php echo $lng->getTrn('common/race');?></td>
+                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?php echo $team->race; ?></a></td>
                 </tr>
                 <?php
                 if ($settings['relate_team_to_league']) {
                     ?>
                     <tr>
-                        <td><?php echo $lng->getTrn('secs/teams/box_info/league');?></td>
+                        <td><?php echo $lng->getTrn('profile/team/box_info/inleague');?></td>
                         <td><?php echo get_alt_col('leagues', 'lid', $team->f_lid, 'name');?></td>
                     </tr>
                     <?php
                 }
                 ?>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/ready');?></td>
-                    <td><?php echo ($team->rdy) ? $lng->getTrn('secs/teams/yes') : $lng->getTrn('secs/teams/no'); ?></td>
+                    <td><?php echo $lng->getTrn('common/ready');?></td>
+                    <td><?php echo ($team->rdy) ? $lng->getTrn('common/yes') : $lng->getTrn('common/no'); ?></td>
                 </tr>                
                 <tr>
                     <td>TV</td>
@@ -689,7 +690,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 }
                 elseif ($team->race != 'Khemri' && $team->race != 'Nurgle') {
                     echo "<td>Apothecary</td>\n";
-                    echo "<td>" . ($team->apothecary ? $lng->getTrn('secs/teams/yes') : $lng->getTrn('secs/teams/no')) . "</td>\n";
+                    echo "<td>" . ($team->apothecary ? $lng->getTrn('common/yes') : $lng->getTrn('common/no')) . "</td>\n";
                 }
                 ?>
                 </tr>
@@ -713,43 +714,43 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td colspan=2><hr></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/gp');?></td>
+                    <td><?php echo $lng->getTrn('profile/team/box_info/gp');?></td>
                     <td><?php echo $team->played; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/pct_won');?></td>
+                    <td><?php echo $lng->getTrn('profile/team/box_info/pct_won');?></td>
                     <td><?php echo sprintf("%1.1f", $team->win_percentage).'%'; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/tours_won');?></td>
+                    <td><?php echo $lng->getTrn('profile/team/box_info/tours_won');?></td>
                     <td><?php echo $team->won_tours; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/ws');?></td>
+                    <td><?php echo $lng->getTrn('profile/team/box_info/ws');?></td>
                     <td><?php echo $team->row_won; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/ls');?></td>
+                    <td><?php echo $lng->getTrn('profile/team/box_info/ls');?></td>
                     <td><?php echo $team->row_lost; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/ds');?></td>
+                    <td><?php echo $lng->getTrn('profile/team/box_info/ds');?></td>
                     <td><?php echo $team->row_draw; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/ltour');?></td>
-                    <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>'.$lng->getTrn('secs/teams/none').'</i>'; ?></td>
+                    <td><?php echo $lng->getTrn('profile/team/box_info/ltour');?></td>
+                    <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>'.$lng->getTrn('common/none').'</i>'; ?></td>
                 </tr>
                 <tr valign="top">
-                    <td><?php echo $lng->getTrn('secs/teams/box_info/toursplayed');?></td>
-                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>'.$lng->getTrn('secs/teams/none').'</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
+                    <td><?php echo $lng->getTrn('profile/team/box_info/toursplayed');?></td>
+                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>'.$lng->getTrn('common/none').'</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
                 </tr>
                 <?php
                 if (Module::isRegistered('Prize')) {
                     ?>
                     <tr valign="top">
-                        <td><?php echo $lng->getTrn('secs/teams/box_info/prizes');?></td>
-                        <td><small><?php $prizes = Module::run('Prize', array('getPrizesString', $team->team_id)); echo (empty($prizes)) ? '<i>'.$lng->getTrn('secs/teams/none').'</i>' : $prizes; ?></small></td>
+                        <td>Prizes</td>
+                        <td><small><?php $prizes = Module::run('Prize', array('getPrizesString', $team->team_id)); echo (empty($prizes)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $prizes; ?></small></td>
                     </tr>
                     <?php
                 }
@@ -762,23 +763,24 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     if ($ALLOW_EDIT) {
         ?>
         <div class="tpageBox">
-            <div class="boxTitle2"><?php echo $lng->getTrn('secs/teams/box_tm/title');?></div>
+            <div class="boxTitle2"><?php echo $lng->getTrn('profile/team/box_tm/title');?></div>
             <div class="boxBody">
                 <?php
                 
+                $base = 'profile/team';
                 $tmanage = array(
-                    'hire_player'       => $lng->getTrn('secs/teams/box_tm/hire_player'),
-                    'hire_journeyman'   => $lng->getTrn('secs/teams/box_tm/hire_journeyman'),
-                    'fire_player'       => $lng->getTrn('secs/teams/box_tm/fire_player'),
-                    'unbuy_player'      => $lng->getTrn('secs/teams/box_tm/unbuy_player'),
-                    'rename_player'     => $lng->getTrn('secs/teams/box_tm/rename_player'),
-                    'renumber_player'   => $lng->getTrn('secs/teams/box_tm/renumber_player'),
-                    'rename_team'       => $lng->getTrn('secs/teams/box_tm/rename_team'),
-                    'buy_goods'         => $lng->getTrn('secs/teams/box_tm/buy_goods'),
-                    'drop_goods'        => $lng->getTrn('secs/teams/box_tm/drop_goods'),
-                    'ready_state'       => $lng->getTrn('secs/teams/box_tm/ready_state'),
-                    'retire'            => $lng->getTrn('secs/teams/box_tm/retire'),
-                    'delete'            => $lng->getTrn('secs/teams/box_tm/delete'),
+                    'hire_player'       => $lng->getTrn($base.'/box_tm/hire_player'),
+                    'hire_journeyman'   => $lng->getTrn($base.'/box_tm/hire_journeyman'),
+                    'fire_player'       => $lng->getTrn($base.'/box_tm/fire_player'),
+                    'unbuy_player'      => $lng->getTrn($base.'/box_tm/unbuy_player'),
+                    'rename_player'     => $lng->getTrn($base.'/box_tm/rename_player'),
+                    'renumber_player'   => $lng->getTrn($base.'/box_tm/renumber_player'),
+                    'rename_team'       => $lng->getTrn($base.'/box_tm/rename_team'),
+                    'buy_goods'         => $lng->getTrn($base.'/box_tm/buy_goods'),
+                    'drop_goods'        => $lng->getTrn($base.'/box_tm/drop_goods'),
+                    'ready_state'       => $lng->getTrn($base.'/box_tm/ready_state'),
+                    'retire'            => $lng->getTrn($base.'/box_tm/retire'),
+                    'delete'            => $lng->getTrn($base.'/box_tm/delete'),
                 );
                 
                 # If one of these are selected from the menu, a JavaScript confirm prompt is displayed before submitting.
@@ -806,7 +808,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <input type="submit" name="tmanage" value="OK">
                 </form>
 
-                <br><i><?php echo $lng->getTrn('secs/teams/desc');?>:</i><br><br>
+                <br><i><?php echo $lng->getTrn('common/desc');?>:</i><br><br>
                 <form name="form_tmanage" method="POST" enctype="multipart/form-data">
                 <?php
                 $DISABLE = false;
@@ -818,7 +820,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'hire_player':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/hire_player');
+                        echo $lng->getTrn('profile/team/box_tm/desc/hire_player');
                         ?>
                         <hr><br>
                         Player:<br>
@@ -864,7 +866,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                     
                     case 'hire_journeyman':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/hire_journeyman');
+                        echo $lng->getTrn('profile/team/box_tm/desc/hire_journeyman');
                         ?>
                         <hr><br>
                         Player:<br>
@@ -892,7 +894,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'fire_player':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/fire_player').' '.$rules['player_refund']*100 . "%.\n";
+                        echo $lng->getTrn('profile/team/box_tm/desc/fire_player').' '.$rules['player_refund']*100 . "%.\n";
                         ?>
                         <hr><br>
                         Player:<br>
@@ -917,7 +919,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'unbuy_player':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/unbuy_player');
+                        echo $lng->getTrn('profile/team/box_tm/desc/unbuy_player');
                         ?>
                         <hr><br>
                         Player:<br>
@@ -941,7 +943,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'rename_player':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/rename_player');
+                        echo $lng->getTrn('profile/team/box_tm/desc/rename_player');
                         ?>
                         <hr><br>
                         Player:<br>
@@ -972,7 +974,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'renumber_player':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/renumber_player');
+                        echo $lng->getTrn('profile/team/box_tm/desc/renumber_player');
                         ?>
                         <hr><br>
                         Player:<br>
@@ -1009,7 +1011,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'rename_team':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/rename_team');
+                        echo $lng->getTrn('profile/team/box_tm/desc/rename_team');
                         ?>
                         <hr><br>
                         New name:<br>
@@ -1023,10 +1025,10 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'buy_goods':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/buy_goods');
+                        echo $lng->getTrn('profile/team/box_tm/desc/buy_goods');
                         $goods_temp = $team->getGoods();
                         if ($DEA[$team->race]['other']['RerollCost'] != $goods_temp['rerolls']['cost']) {
-                            echo $lng->getTrn('secs/teams/box_tm/desc/buy_goods_warn');
+                            echo $lng->getTrn('profile/team/box_tm/desc/buy_goods_warn');
                         }
                         ?>
                         <hr><br>
@@ -1053,7 +1055,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'drop_goods':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/drop_goods');
+                        echo $lng->getTrn('profile/team/box_tm/desc/drop_goods');
                         ?>
                         <hr><br>
                         Thing:<br>
@@ -1079,7 +1081,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'ready_state':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/ready_state');
+                        echo $lng->getTrn('profile/team/box_tm/desc/ready_state');
                         ?>
                         <hr><br>
                         Team ready? 
@@ -1093,7 +1095,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'retire':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/retire');
+                        echo $lng->getTrn('profile/team/box_tm/desc/retire');
                         ?>
                         <hr><br>
                         Retire?
@@ -1107,7 +1109,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                      **************/
                         
                     case 'delete':
-                        echo $lng->getTrn('secs/teams/box_tm/desc/delete');
+                        echo $lng->getTrn('profile/team/box_tm/desc/delete');
                         if (!$this->isDeletable()) {
                             $DISABLE = true;
                         }
@@ -1132,21 +1134,21 @@ private function _actionBoxes($ALLOW_EDIT, $players)
         if ($coach->admin) {
             ?>
             <div class="tpageBox">
-                <div class="boxTitle3"><?php echo $lng->getTrn('secs/teams/box_admin/title');?></div>
+                <div class="boxTitle3"><?php echo $lng->getTrn('profile/team/box_admin/title');?></div>
                 <div class="boxBody">
                     <?php
-
+                    $base = 'profile/team';
                     $admin_tools = array(
-                        'unhire_journeyman' => $lng->getTrn('secs/teams/box_admin/unhire_journeyman'),
-                        'unsell_player'     => $lng->getTrn('secs/teams/box_admin/unsell_player'),
-                        'unbuy_goods'       => $lng->getTrn('secs/teams/box_admin/unbuy_goods'),
-                        'bank'              => $lng->getTrn('secs/teams/box_admin/bank'),
-                        'chown'             => $lng->getTrn('secs/teams/box_admin/chown'),
-                        'chlid'             => $lng->getTrn('secs/teams/box_admin/chlid'),
-                        'spp'               => $lng->getTrn('secs/teams/box_admin/spp'),
-                        'dval'              => $lng->getTrn('secs/teams/box_admin/dval'),
-                        'extra_skills'      => $lng->getTrn('secs/teams/box_admin/extra_skills'),
-                        'ach_skills'        => $lng->getTrn('secs/teams/box_admin/ach_skills'),
+                        'unhire_journeyman' => $lng->getTrn($base.'/box_admin/unhire_journeyman'),
+                        'unsell_player'     => $lng->getTrn($base.'/box_admin/unsell_player'),
+                        'unbuy_goods'       => $lng->getTrn($base.'/box_admin/unbuy_goods'),
+                        'bank'              => $lng->getTrn($base.'/box_admin/bank'),
+                        'chown'             => $lng->getTrn($base.'/box_admin/chown'),
+                        'chlid'             => $lng->getTrn($base.'/box_admin/chlid'),
+                        'spp'               => $lng->getTrn($base.'/box_admin/spp'),
+                        'dval'              => $lng->getTrn($base.'/box_admin/dval'),
+                        'extra_skills'      => $lng->getTrn($base.'/box_admin/extra_skills'),
+                        'ach_skills'        => $lng->getTrn($base.'/box_admin/ach_skills'),
                     );
                     
                     if (!$settings['relate_team_to_league']) {
@@ -1175,7 +1177,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="submit" name="admintools" value="OK">
                     </form>
 
-                    <br><i><?php echo $lng->getTrn('secs/teams/desc');?>:</i><br><br>
+                    <br><i><?php echo $lng->getTrn('common/desc');?>:</i><br><br>
                     <form name='form_admintools' method='POST'>
                         <?php
                         $DISABLE = false;
@@ -1187,7 +1189,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
 
                             case 'unhire_journeyman':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/unhire_journeyman');
+                                echo $lng->getTrn('profile/team/box_admin/desc/unhire_journeyman');
                                 ?>
                                 <hr><br>
                                 Player:<br>
@@ -1212,7 +1214,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'unsell_player':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/unsell_player');
+                                echo $lng->getTrn('profile/team/box_admin/desc/unsell_player');
                                 ?>
                                 <hr><br>
                                 Player:<br>
@@ -1236,7 +1238,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'unbuy_goods':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/unbuy_goods');
+                                echo $lng->getTrn('profile/team/box_admin/desc/unbuy_goods');
                                 ?>
                                 <hr><br>
                                 <select name="thing">
@@ -1259,7 +1261,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'bank':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/bank');
+                                echo $lng->getTrn('profile/team/box_admin/desc/bank');
                                 ?>
                                 <hr><br>
                                 &Delta; team treasury:<br>
@@ -1275,7 +1277,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'chown':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/chown');
+                                echo $lng->getTrn('profile/team/box_admin/desc/chown');
                                 ?>
                                 <hr><br>
                                 New owner:<br>
@@ -1295,7 +1297,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'chlid':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/chlid');
+                                echo $lng->getTrn('profile/team/box_admin/desc/chlid');
                                 ?>
                                 <hr><br>
                                 League:<br>
@@ -1317,7 +1319,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'spp':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/spp');
+                                echo $lng->getTrn('profile/team/box_admin/desc/spp');
                                 ?>
                                 <hr><br>
                                 Player:<br>
@@ -1347,7 +1349,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'dval':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/dval');
+                                echo $lng->getTrn('profile/team/box_admin/desc/dval');
                                 ?>
                                 <hr><br>
                                 Player:<br>
@@ -1378,7 +1380,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'extra_skills':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/extra_skills');
+                                echo $lng->getTrn('profile/team/box_admin/desc/extra_skills');
                                 ?>
                                 <hr><br>
                                 Player:<br>
@@ -1422,7 +1424,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                              **************/
                                 
                             case 'ach_skills':
-                                echo $lng->getTrn('secs/teams/box_admin/desc/ach_skills');
+                                echo $lng->getTrn('profile/team/box_admin/desc/ach_skills');
                                 ?>
                                 <hr><br>
                                 Player:<br>
@@ -1489,13 +1491,13 @@ private function _about($ALLOW_EDIT)
     $team = $this; // Copy. Used instead of $this for readability.
     
     echo "<div id='tp_about'>\n";
-    title("<a name='anc_about'>".$lng->getTrn('secs/teams/about')." $team->name</a>");
+    title("<a name='anc_about'>".$lng->getTrn('common/about')." $team->name</a>");
     ?>
     <table class='picAndText'>
         <tr>
-            <td class='light'><b><?php echo $lng->getTrn('secs/teams/logo');?></b></td>
-            <td class='light'><b><?php echo $lng->getTrn('secs/teams/stad');?></b></td>
-            <td class='light'><b><?php echo $lng->getTrn('secs/teams/about');?></b></td>
+            <td class='light'><b><?php echo $lng->getTrn('profile/team/logo');?></b></td>
+            <td class='light'><b><?php echo $lng->getTrn('profile/team/stad');?></b></td>
+            <td class='light'><b><?php echo $lng->getTrn('common/about');?></b></td>
         </tr>
         <tr>
             <td>
@@ -1512,7 +1514,7 @@ private function _about($ALLOW_EDIT)
                 <?php
                 $txt = $team->getText();
                 if (empty($txt)) {
-                    $txt = $lng->getTrn('secs/teams/nowrite')." $team->name."; 
+                    $txt = $lng->getTrn('common/nobody')." $team->name."; 
                 }
                 
                 if ($ALLOW_EDIT) {
@@ -1522,7 +1524,7 @@ private function _about($ALLOW_EDIT)
                         <br><br>
                         <input type="hidden" name="type" value="teamtext">
                         <center>
-                        <input type="submit" name='Save' value='<?php echo $lng->getTrn('secs/teams/save');?>'>
+                        <input type="submit" name='Save' value='<?php echo $lng->getTrn('common/save');?>'>
                         </center>
                     </form>
                     <?php
@@ -1544,12 +1546,12 @@ private function _news($ALLOW_EDIT)
     $team = $this; // Copy. Used instead of $this for readability.
     
     echo "<div id='tp_news'>\n";
-    title("<a name='anc_news'>".$lng->getTrn('secs/teams/news')."</a>");
+    title("<a name='anc_news'>".$lng->getTrn('profile/team/news')."</a>");
     $news = $team->getNews(MAX_TNEWS);
     ?>
     <div class="row">
         <div class="tnewsBox">
-            <div class="boxTitle1"><?php echo $lng->getTrn('secs/teams/tnews');?></div>
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('profile/team/tnews');?></div>
             <div class="boxBody">
             <?php
             $news_2 = array();
@@ -1560,34 +1562,30 @@ private function _news($ALLOW_EDIT)
                     <input type="hidden" name="type" value="newsedit">
                     <input type="hidden" name="news_id" value="'.$n->news_id.'">
                     <br><br>
-                    <input type="submit" value="'.$lng->getTrn('secs/teams/submitnews').'">
+                    <input type="submit" value="'.$lng->getTrn('common/submit').'">
                 </form></div>
                 <div style="text-align: right;"><p style="display: inline;">'.textdate($n->date, true).
                 (($ALLOW_EDIT) 
-                    ? " | <form method='POST' name='newsForm$n->news_id' style='display:inline; margin:0px;'>
-                        <input type='hidden' name='type' value='newsdel'>
-                        <input type='hidden' name='news_id' value='$n->news_id'>
-                        <a href='javascript:void(0);' onClick='document.newsForm$n->news_id.submit();'>[".$lng->getTrn('secs/teams/delete')."]</a>
-                        </form>".
-                        "| <a href='javascript:void(0);' onClick=\"document.getElementById('newsedit".$n->news_id."').style.display='block';\">[".$lng->getTrn('secs/teams/edit')."]</a>"
+                    ? '&nbsp;'.inlineform(array('type' => 'newsdel', 'news_id' => $n->news_id), "newsForm$n->news_id", $lng->getTrn('common/delete')).
+                        "&nbsp; <a href='javascript:void(0);' onClick=\"slideToggle('newsedit".$n->news_id."');\">".$lng->getTrn('common/edit')."</a>"
                     : '')
                 .'</p></div><br></p>';
             }
             echo implode("<hr>\n", $news_2);
             if (empty($news)) {
-                echo '<i>'.$lng->getTrn('secs/teams/nonews').'</i>';
+                echo '<i>'.$lng->getTrn('profile/team/nonews').'</i>';
             }
 
             if ($ALLOW_EDIT) {
                 ?>
                 <hr>
                 <br>
-                <b><?php echo $lng->getTrn('secs/teams/wnews');?></b>
+                <b><?php echo $lng->getTrn('profile/team/wnews');?></b>
                 <form method="POST">
                     <textarea name='txt' cols='60' rows='4'></textarea>
                     <br><br>
                     <input type="hidden" name="type" value="news">
-                    <input type='submit' value="<?php echo $lng->getTrn('secs/teams/submitnews');?>">
+                    <input type='submit' value="<?php echo $lng->getTrn('common/submit');?>">
                 </form>
                 <?php
             }
@@ -1605,8 +1603,8 @@ private function _recentGames()
     $team = $this; // Copy. Used instead of $this for readability.
 
     echo "<div id='tp_recent'>\n";
-    title("<a name='gp'>".$lng->getTrn('secs/teams/gamesplayed')."</a>");
-    HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => "index.php?section=coachcorner&amp;team_id=$team->team_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
+    title("<a name='gp'>".$lng->getTrn('common/recentmatches')."</a>");
+    HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false), 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
     echo "</div> <!-- Container end -->\n";
 }
 

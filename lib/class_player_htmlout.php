@@ -24,13 +24,13 @@
 class Player_HTMLOUT extends Player
 {
 
-public static function stadings()
+public static function standings()
 {
     global $lng;
-    title($lng->getTrn('global/secLinks/players'));
-    HTMLOUT::standings(STATS_PLAYER,false,false,array('url' => 'index.php?section=players'));
+    title($lng->getTrn('menu/statistics_menu/player_stn'));
+    HTMLOUT::standings(STATS_PLAYER,false,false,array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false)));
     ?>
-    <?php echo $lng->getTrn('secs/players/colors');?>:
+    <?php echo $lng->getTrn('standings/player/colors');?>:
     <ul>
         <li style='width: 4em;background-color:<?php echo COLOR_HTML_DEAD;?>;'>Dead</li>
         <li style='width: 4em;background-color:<?php echo COLOR_HTML_SOLD;?>;'>Sold</li>
@@ -38,21 +38,22 @@ public static function stadings()
     <?php
 }
 
-public function profile() 
+public static function profile($pid) 
 {
     global $lng, $coach;
-    $team = new Team($this->owned_by_team_id);
+    $p = new self($pid);
+    $team = new Team($p->owned_by_team_id);
 
     /* Argument(s) passed to generating functions. */
     $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$team->is_retired);
     
     /* Player pages consist of the output of these generating functions. */
-    $this->_handleActions($ALLOW_EDIT); # Handles any actions/request sent.
-    $this->_head($team);
-    $this->_about($ALLOW_EDIT);
-    $this->_achievements();
-    $this->_matchBest();
-    $this->_recentGames();
+    $p->_handleActions($ALLOW_EDIT); # Handles any actions/request sent.
+    $p->_head($team);
+    $p->_about($ALLOW_EDIT);
+    $p->_achievements();
+    $p->_matchBest();
+    $p->_recentGames();
 }
 
 private function _handleActions($ALLOW_EDIT)
@@ -105,7 +106,7 @@ private function _head($team)
         $i++;
     }
     if (count($players) > 1) {
-        echo "<center><a href='index.php?section=coachcorner&amp;player_id=".$players[$prev]->player_id."'>[".$lng->getTrn('secs/playerprofile/prev')."]</a> &nbsp;|&nbsp; <a href='index.php?section=coachcorner&amp;player_id=".$players[$next]->player_id."'>[".$lng->getTrn('secs/playerprofile/next')."]</a></center><br>";
+        echo "<center><a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$players[$prev]->player_id,false,false)."'>[".$lng->getTrn('common/previous')."]</a> &nbsp;|&nbsp; <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$players[$next]->player_id,false,false)."'>[".$lng->getTrn('common/next')."]</a></center><br>";
     }
 }
 
@@ -120,27 +121,27 @@ private function _about($ALLOW_EDIT)
     ?>
     <div class="row">
         <div class="pboxShort">
-            <div class="boxTitle2"><?php echo $lng->getTrn('secs/playerprofile/about');?></div>
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('profile/player/about');?></div>
             <div class="boxBody">
                 <table class="pbox">
                     <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/name');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/name');?></b></td>
                         <td><?php echo "$p->name (#$p->nr)"; ?></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/pos');?></b></td>
+                        <td><b><?php echo $lng->getTrn('profile/player/pos');?></b></td>
                         <td><?php echo $p->position; ?></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/team');?></b></td>
-                        <td><a href="index.php?section=coachcorner&amp;team_id=<?php echo $p->owned_by_team_id; ?>"><?php echo $p->team_name; ?></a></td>
+                        <td><b><?php echo $lng->getTrn('common/team');?></b></td>
+                        <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$p->owned_by_team_id,false,false);?>"><?php echo $p->team_name; ?></a></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/bought');?></b></td>
+                        <td><b><?php echo $lng->getTrn('profile/player/bought');?></b></td>
                         <td><?php echo $p->date_bought; ?></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng->getTrn('secs/playerprofile/status');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/status');?></b></td>
                         <td>
                         <?php 
                             if ($p->is_dead) {
@@ -199,7 +200,7 @@ private function _about($ALLOW_EDIT)
                         ?>
                         <tr>
                             <td><b>Vis. stats</b></td>
-                            <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''><b>View</b></a>\n";; ?></td>
+                            <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''><b>".$lng->getTrn('common/view')."</b></a>\n";?></td>
                         </tr>
                         <?php                    
                     }
@@ -225,11 +226,11 @@ private function _about($ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td><b>Skills</b></td>
-                        <td><?php echo (empty($p->skills)) ? '<i>None</i>' : $p->skills; ?></td>
+                        <td><?php echo (empty($p->skills)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $p->skills; ?></td>
                     </tr>
                     <tr>
                         <td><b>Injuries</b></td>
-                        <td><?php echo (empty($p->injs)) ? '<i>None</i>' : $p->injs; ?></td>
+                        <td><?php echo (empty($p->injs)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $p->injs; ?></td>
                     </tr>
                     <tr>
                         <td><b>Cp</b></td>
@@ -259,18 +260,18 @@ private function _about($ALLOW_EDIT)
             </div>
         </div>
         <div class="pboxShort">
-            <div class="boxTitle2"><?php echo $lng->getTrn('secs/playerprofile/profile');?></div>
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('profile/player/profile');?></div>
             <div class="boxBody">
-                <i><?php echo $lng->getTrn('secs/playerprofile/pic');?></i><hr>
+                <i><?php echo $lng->getTrn('common/picof');?></i><hr>
                 <?php
                 ImageSubSys::makeBox(IMGTYPE_PLAYER, $p->player_id, $ALLOW_EDIT, false);
                 ?>
                 <br><br>
-                <i><?php echo $lng->getTrn('secs/playerprofile/pic');?></i><hr>
+                <i><?php echo $lng->getTrn('common/about');?></i><hr>
                 <?php
                 $txt = $p->getText(); 
                 if (empty($txt)) {
-                    $txt = $lng->getTrn('secs/playerprofile/nowrite').' '.$p->name; 
+                    $txt = $lng->getTrn('common/nobody').' '.$p->name; 
                 }
                 if ($ALLOW_EDIT) {
                     ?>
@@ -278,7 +279,7 @@ private function _about($ALLOW_EDIT)
                         <textarea name='playertext' rows='8' cols='45'><?php echo $txt;?></textarea>
                         <br><br>
                         <input type="hidden" name="type" value="playertext">
-                        <input type="submit" name='Save' value='<?php echo $lng->getTrn('secs/playerprofile/save');?>'>
+                        <input type="submit" name='Save' value='<?php echo $lng->getTrn('common/save');?>'>
                     </form>
                     <?php
                 }
@@ -300,8 +301,8 @@ private function _achievements()
     ?>
     <div class="row">
         <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('ach'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/ach');?></div>
-            <div class="boxBody" id="ach">
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ach');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/ach');?></div>
+            <div class="boxBody" id="ach" style='display:none;'>
                 <table class="pbox">
                     <tr>
                         <td><b>Type</b></td>
@@ -334,7 +335,7 @@ private function _achievements()
                                     $been_there = true;
                                 }
                                 ?>
-                                <td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name'); ?></td>
+                                <td><?php echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT);?></td>
                                 <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
                                 <td><?php echo $entry['mvp']; ?></td>
                                 <td><?php echo $entry['cp']; ?></td>
@@ -343,7 +344,7 @@ private function _achievements()
                                 <td><?php echo $entry['bh']+$entry['si']+$entry['ki']; ?></td>
                                 <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
                                 <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
-                                <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
+                                <td><a href='javascript:void(0)' onClick="window.open('index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>');"><?php echo $lng->getTrn('common/view');?></a></td>
                             </tr>
                             <?php
                         }
@@ -353,13 +354,6 @@ private function _achievements()
             </div>
         </div>
     </div>
-    <?php
-    
-    ?>
-    <!-- Default open/close values for box -->
-    <script language="JavaScript" type="text/javascript">
-        document.getElementById('ach').style.display    = 'none';
-    </script>
     <?php
 }
 
@@ -371,8 +365,8 @@ private function _matchBest()
     ?>   
     <div class="row">
         <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('mbest'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/best');?></div>
-            <div class="boxBody" id="mbest">
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('mbest');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/best');?></div>
+            <div class="boxBody" id="mbest" style='display:none;'>
                 <table class="pbox">
                     <tr>
                         <td><b>Type</b></td>
@@ -409,7 +403,7 @@ private function _matchBest()
                                 <td><?php echo $entry['ki']; ?></td>
                                 <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
                                 <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
-                                <td><a href='javascript:void(0)' onClick="window.open('index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>');">[view]</a></td>
+                                <td><a href='javascript:void(0)' onClick="window.open('index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>');"><?php echo $lng->getTrn('common/view');?></a></td>
                             </tr>
                             <?php
                         }
@@ -420,13 +414,6 @@ private function _matchBest()
         </div>
     </div>
     <?php  
-    
-    ?>
-    <!-- Default open/close values for box -->
-    <script language="JavaScript" type="text/javascript">
-        document.getElementById('mbest').style.display  = 'none';
-    </script>
-    <?php
 }
 
 private function _recentGames()
@@ -437,24 +424,16 @@ private function _recentGames()
     ?>
     <div class="row">
         <div class="pboxLong">
-            <div class="boxTitle3"><a href='javascript:void(0);' onClick="obj=document.getElementById('played'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('secs/playerprofile/playedmatches');?></div>
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('played');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/playedmatches');?></div>
             <div class="boxBody" id="played">
                 <?php
-                HTMLOUT::recentGames(STATS_PLAYER, $p->player_id, false, false, false, false, array('n' => MAX_RECENT_GAMES, 'url' => "index.php?section=coachcorner&player_id=$p->player_id"));
+                HTMLOUT::recentGames(STATS_PLAYER, $p->player_id, false, false, false, false, array('n' => MAX_RECENT_GAMES, 'url' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)));
                 ?>
             </div>
         </div>
     </div>
     <?php
-    
-    ?>
-    <!-- Default open/close values for box -->
-    <script language="JavaScript" type="text/javascript">
-        document.getElementById('played').style.display = 'block';
-    </script>
-    <?php
 }
 
 }
-
 ?>

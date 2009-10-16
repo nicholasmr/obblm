@@ -81,11 +81,11 @@ public static function tourMatches()
         <tr><td colspan='7' class="seperator"></td></tr>
         <tr>
             <td width="100"></td>
-            <td class="light" width="250"><?php echo $round; ?></td>
-            <td class="white" width="25"></td>
-            <td class="white" width="50"></td>
-            <td class="white" width="25"></td>
-            <td class="white" width="250"></td>
+            <td class="round" width="250"><?php echo $round; ?></td>
+            <td width="25"></td>
+            <td width="50"></td>
+            <td width="25"></td>
+            <td width="250"></td>
             <td width="260"></td>
         </tr>
         <?php
@@ -102,7 +102,7 @@ public static function tourMatches()
             // Does the user have edit or view rights?
             $matchURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$tr->tour_id&amp;mid=$m->match_id";
             ?>
-            <td class="white">
+            <td>
                 &nbsp;
                 <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>">
                 <?php

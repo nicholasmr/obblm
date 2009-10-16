@@ -35,8 +35,7 @@
     
     <!-- Notifications for sortable tables -->
     <sortTbl>
-        <simul><![CDATA[<i>Note</i>: Both tables below are sorted simultaneously.]]></simul>
-        <spp><![CDATA[<i>Note</i>: <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.]]></spp>
+
     </sortTbl>
     
     <!-- Bits and pieces -->
@@ -690,24 +689,7 @@
         
         <prefixes>the prefixes + and - specify least of and most of</prefixes>
         
-        <!-- Subsec: Schedule matches -->
-        <multiple_schedule><![CDATA[<i>Note:</i> You are free to schedule multiple tournaments running concurrently.]]></multiple_schedule>
-        <create_leag_div><![CDATA[<i>Note:</i> You must first create a league with one or more divisions before being able to create matches.]]></create_leag_div>
-        <div_name>Division</div_name>            
-        <tour_name>Tournament name</tour_name>
-        <rank_sys>Ranking system</rank_sys>
-        <tour_type>Tournament type</tour_type>
-        <participants>Participating teams</participants>
-        <create>Create</create>
-        <!-- RR -->
-            <RR_settings>Round-Robin settings</RR_settings>
-            <rrobin_rnds><![CDATA[<b>Seed the bracket N times:</b>]]></rrobin_rnds>
-        <!-- FFA -->
-            <FFA_settings>FFA settings</FFA_settings>
-            <add_match>Add the match to...</add_match>
-                <new_tour>A new FFA tournament</new_tour>
-            <as_type>As type...</as_type>
-            <as_reverse>Reverse home/away pair-up?</as_reverse>
+
         
         <!-- Subsec: User management -->
         <access>
