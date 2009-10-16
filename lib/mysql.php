@@ -280,6 +280,12 @@ function get_parent_id($type, $id, $parent_type) {
     return $row['parent_id'];
 }
 
+function get_parent_name($type, $id, $parent_type) {
+    global $relations_node, $relations_obj;
+    $relations = in_array($type, array_keys($relations_node)) ? $relations_node : $relations_obj;
+    return get_alt_col($relations[$parent_type]['tbl'], $relations[$parent_type]['id'], get_parent_id($type,$id,$parent_type), 'name');
+}
+
 function get_list($table, $col, $val, $new_col) {
     $result = mysql_query("SELECT $new_col FROM $table WHERE $col = '$val'");
     if (mysql_num_rows($result) <= 0)
