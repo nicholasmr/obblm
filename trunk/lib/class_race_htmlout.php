@@ -24,9 +24,10 @@
 class Race_HTMLOUT extends Race
 {
 
-public function profile() 
+public static function profile($rid) 
 {
-    $race = $this;
+    global $lng;
+    $race = new Race($rid);
     $roster = $race->getRoster();
     title($race->race);
     ?>
@@ -56,25 +57,27 @@ public function profile()
         'qty'       => array('desc' => 'Max.'),
     );
     HTMLOUT::sort_table(
-        $race->race.' '.$lng->getTrn('secs/races/players'),
-        "index.php?section=races&amp;race=$race->race",
+        'Roster',
+        urlcompile(T_URL_PROFILE,T_OBJ_RACE,$race->race_id,false,false),
         $players,
         $fields,
         sort_rule('race_page'),
         (isset($_GET['sortpl'])) ? array((($_GET['dirpl'] == 'a') ? '+' : '-') . $_GET['sortpl']) : array(),
-        array('GETsuffix' => 'pl')
+        array('GETsuffix' => 'pl', 'noHelp' => true)
     );
 
     // Teams of the chosen race.
-    HTMLOUT::standings(STATS_TEAM,false,false,array('url' => "index.php?section=races&amp;race=$race->race_id", 'teams_from' => STATS_RACE, 'teams_from_id' => $race->race_id));
+    $url = urlcompile(T_URL_PROFILE,T_OBJ_RACE,$race->race_id,false,false);
+    HTMLOUT::standings(STATS_TEAM,false,false,array('url' => $url, 'teams_from' => STATS_RACE, 'teams_from_id' => $race->race_id));
     echo '<br>';
-    HTMLOUT::recentGames(STATS_RACE, $race->race_id, false, false, false, false, array('url' => "index.php?section=races&amp;race=$race->race_id", 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
+    HTMLOUT::recentGames(STATS_RACE, $race->race_id, false, false, false, false, array('url' => $url, 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
 }
 
 public static function standings()
-{
-    title($lng->getTrn('global/secLinks/races'));
-    HTMLOUT::standings(STATS_RACE,false,false,array('url' => 'index.php?section=races'));
+{  
+    global $lng;
+    title($lng->getTrn('menu/statistics_menu/race_stn'));
+    HTMLOUT::standings(STATS_RACE,false,false,array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_RACE,false,false,false)));
 }
 
 }

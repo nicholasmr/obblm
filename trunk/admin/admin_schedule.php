@@ -69,7 +69,7 @@ if (isset($_POST['button'])) {
     }
 }
 
-title($lng->getTrn('secs/admin/schedule'));
+title($lng->getTrn('menu/admin_menu/schedule'));
 ?>
 <script language="JavaScript" type="text/javascript">
 
@@ -124,8 +124,8 @@ title($lng->getTrn('secs/admin/schedule'));
 </script>
 
 <?php
-echo $lng->getTrn('secs/admin/create_leag_div').'<br>';
-echo $lng->getTrn('secs/admin/multiple_schedule');
+echo $lng->getTrn('admin/schedule/create_leag_div').'<br>';
+echo $lng->getTrn('admin/schedule/multiple_schedule');
 $divisions = Division::getDivisions();
 foreach ($divisions as $d) {
     $d->dispName = "$d->league_name: $d->name";
@@ -133,15 +133,15 @@ foreach ($divisions as $d) {
 objsort($divisions, array('+dispName'));
 ?><br><br>
 
-<form method="POST" name="tourForm" action="index.php?section=admin&amp;subsec=tournament">
-    <b><?php echo $lng->getTrn('secs/admin/tour_type');?>:</b><br>
+<form method="POST" name="tourForm">
+    <b><?php echo $lng->getTrn('admin/schedule/tour_type');?>:</b><br>
     <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA match <i>(Free For All a.k.a. "open league format" - creates a single match)</i><br>
     <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
     <br>
     <table>
     <tr>
     <td valign='top'>
-        <b><?php echo $lng->getTrn('secs/admin/div_name');?>:</b><br>
+        <b><?php echo $lng->getTrn('common/division');?>:</b><br>
         <select name='did'>
             <?php
             foreach ($divisions as $d) {
@@ -152,10 +152,10 @@ objsort($divisions, array('+dispName'));
             ?>
         </select>
         <br><br>
-        <b><?php echo $lng->getTrn('secs/admin/tour_name');?>:</b><br>
+        <b><?php echo $lng->getTrn('admin/schedule/tour_name');?>:</b><br>
         <input type="text" name="name" size="30" maxlength="50">
         <br><br>
-        <b><?php echo $lng->getTrn('secs/admin/rank_sys');?>:</b> (<?php echo $lng->getTrn('secs/admin/prefixes');?>)<br>
+        <b><?php echo $lng->getTrn('admin/schedule/rank_sys');?>:</b> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
         <select name='rs'>
         <?php
         foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
@@ -171,11 +171,11 @@ objsort($divisions, array('+dispName'));
         <?php
         $body = '';
         // FFA settings.
-        $body .= '<b>'.$lng->getTrn('secs/admin/FFA_settings').'</b><br><hr><br>';
-        $body .= '<b>'.$lng->getTrn('secs/admin/add_match').'</b><br>';
+        $body .= '<b>'.$lng->getTrn('admin/schedule/FFA_settings').'</b><br><hr><br>';
+        $body .= '<b>'.$lng->getTrn('admin/schedule/add_match').'</b><br>';
         $body .= '<select name="existTour" onChange="chFFATour(this.options[this.selectedIndex].value);">';
         $body .= '<optgroup label="New FFA">';
-        $body .= "<option value='-1'>".$lng->getTrn('secs/admin/new_tour').'</option>';
+        $body .= "<option value='-1'>".$lng->getTrn('admin/schedule/new_tour').'</option>';
         $body .= '</optgroup>';
         $body .= '<optgroup label="Existing FFA">';
         foreach (Tour::getTours() as $t)
@@ -184,7 +184,7 @@ objsort($divisions, array('+dispName'));
         $body .= '</optgroup>';
         $body .= '</select>';
         $body .= '<br><br>';
-        $body .= '<b>'.$lng->getTrn('secs/admin/as_type').'</b><br>';
+        $body .= '<b>'.$lng->getTrn('admin/schedule/as_type').'</b><br>';
         $body .= '<select name="round">';
         foreach (array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') as $r => $d) {
             $body .= "<option value='$r'>$d</option>\n";
@@ -196,14 +196,14 @@ objsort($divisions, array('+dispName'));
         }
         $body .= '</select>';
         $body .= '<br><br>';
-        $body .= '<b>'.$lng->getTrn('secs/admin/as_reverse').'</b><br>';
+        $body .= '<b>'.$lng->getTrn('admin/schedule/as_reverse').'</b><br>';
         $body .= '<input type="checkbox" name="reverse" value="1">';
         $BOX_FFA = HTMLOUT::assistantBox($body);
         
         // Round robin seed multiplier.
         $body = '';
-        $body .= '<b>'.$lng->getTrn('secs/admin/RR_settings').'</b><br><hr><br>';
-        $body .= $lng->getTrn('secs/admin/rrobin_rnds')."<br>N = <select name='rounds'>";
+        $body .= '<b>'.$lng->getTrn('admin/schedule/RR_settings').'</b><br><hr><br>';
+        $body .= $lng->getTrn('admin/schedule/rrobin_rnds')."<br>N = <select name='rounds'>";
         foreach (range(1, 10) as $i) $body .= "<option value='$i'>$i</option>\n";
         $body .= "</select></div>\n";
         $BOX_RR = HTMLOUT::assistantBox($body, 'display:none;');
@@ -212,7 +212,7 @@ objsort($divisions, array('+dispName'));
     </tr>
     </table>
     <br>
-    <b><?php echo $lng->getTrn('secs/admin/participants');?>:</b><br>
+    <b><?php echo $lng->getTrn('admin/schedule/participants');?>:</b><br>
     <?php
     $teams = Team::getTeams();
     $entriesToPrint = array();
@@ -232,7 +232,7 @@ objsort($divisions, array('+dispName'));
     ?>
     <br>
     <hr align="left" width="200px">
-    <input type="submit" name="button" value="<?php echo $lng->getTrn('secs/admin/create');?>" <?php echo (empty($divisions) ? 'DISABLED' : '');?>>
+    <input type="submit" name="button" value="<?php echo $lng->getTrn('common/create');?>" <?php echo (empty($divisions) ? 'DISABLED' : '');?>>
 </form>
 
 <script language="JavaScript" type="text/javascript">

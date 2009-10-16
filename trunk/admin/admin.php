@@ -29,38 +29,26 @@
 
 function sec_admin() {
 
-    global $rules, $settings, $DEA, $coach, $lng;
+    global $rules, $settings, $DEA, $coach, $lng, $ring_sys_access, $ring_com_access;
 
     // Quit if coach does not has administrator privileges.
 
     if (!is_object($coach) || $coach->ring > RING_COM)
         fatal("Sorry. Only site administrators and commissioners are allowed to access this section.");
 
-    $ring_sys_access = array('usrman' => $lng->getTrn('secs/admin/um'), 'ldm' => $lng->getTrn('secs/admin/ldm'), 'import' => $lng->getTrn('secs/admin/import'), 'chtr' => $lng->getTrn('secs/admin/th'), 'ctman' => $lng->getTrn('secs/admin/delete'));
-    $ring_com_access = array('tournament' => $lng->getTrn('secs/admin/schedule'), 'log' => $lng->getTrn('name', 'LogSubSys'));
-
     if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
         fatal("Sorry. Your access level does not allow you opening the requested page.");
 
-    $coaches = Coach::getCoaches(); // Used by multiple sub-sections.
-
-    // If an admin section was requested then call it, else show admin main page.
-    if (!isset($_GET['subsec'])) {
-        ?>
-        <div style="height: 400px;" id="admin_everything">
-        <?php echo $lng->getTrn('secs/admin/pick'); ?>
-        </div>
-        <?php
-    }
     switch ($_GET['subsec']) 
     {
-        case 'usrman':      include('admin/admin_coachman.php'); break;
-        case 'tournament':  include('admin/admin_schedule.php'); break;
+        case 'usr_man':     include('admin/admin_coachman.php'); break;
+        case 'tour_man':    include('admin/admin_tourman.php'); break;
+        case 'ct_man':      include('admin/admin_team_coach_retire_del.php'); break;
+        case 'ld_man':      include('admin/admin_league_division_man.php'); break;
+        case 'schedule':    include('admin/admin_schedule.php'); break;
         case 'import':      include('admin/admin_teamimport.php'); break;
-        case 'chtr':        include('admin/admin_tourman.php'); break;
-        case 'ctman':       include('admin/admin_team_coach_retire_del.php'); break;
-        case 'ldm':         include('admin/admin_league_division_man.php'); break;
         case 'log':         Module::run('LogSubSys', array('logViewPage')); break;
+        default:            fatal('The requested admin page does not exist.');
     }
 }
 

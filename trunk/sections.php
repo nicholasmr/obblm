@@ -146,7 +146,7 @@ function sec_main() {
                         {
                             case T_TEXT_MATCH_SUMMARY:
                                 echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." " . (isset($e->date_mod) ? "(".$lng->getTrn('main/lastedit')." ".textdate($e->date_mod).") " : '') .$lng->getTrn('main/by')." $e->author</td>\n";
-                                echo "<td align='right'><a href='index.php?section=matches&amp;type=report&amp;id=$e->match_id'>".$lng->getTrn('common/view')."</a></td>\n";
+                                echo "<td align='right'><a href='index.php?section=matches&amp;type=report&amp;mid=$e->match_id'>".$lng->getTrn('common/view')."</a></td>\n";
                                 if (!empty($e->comments)) {
                                     echo "<td align='right'><a href='javascript:void(0)' onclick=\"slideToggle('comment$e->match_id');\">".$lng->getTrn('main/comments')."</a></td>\n";
                                 }
@@ -249,7 +249,7 @@ function sec_main() {
         if ($settings['entries_latest'] != 0) {
             ?>
             <div class="main_rightColumn_box">
-                <h3 class='boxTitle1'><?php echo $lng->getTrn('common/recentgames');?></h3>
+                <h3 class='boxTitle1'><?php echo $lng->getTrn('common/recentmatches');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -282,7 +282,7 @@ function sec_main() {
             );
             foreach ($leaders as $attr => $l) {
                 ?>
-                <div class="main_rcolBox">
+                <div class="main_rightColumn_box">
                     <h3 class='boxTitle1'><?php echo $lng->getTrn($l['translation']);?></h3>
                     <div class='boxBody'>
                         <table class="boxTable">

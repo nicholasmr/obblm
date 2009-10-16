@@ -170,6 +170,18 @@ function textdate($mysqldate, $noTime = false) {
     return date("D M j Y".(($noTime) ? '' : ' G:i:s'), strtotime($mysqldate));
 }
 
+/* 
+    From http://us3.php.net/manual/en/function.lcfirst.php 
+*/
+if ( false === function_exists('lcfirst') ):
+    function lcfirst( $str )
+    { return (string)(strtolower(substr($str,0,1)).substr($str,1));}
+endif; 
+if ( false === function_exists('ucfirst') ):
+    function lcfirst( $str )
+    { return (string)(strtoupper(substr($str,0,1)).substr($str,1));}
+endif; 
+
 // Returns HTML to show an icon with the result of a game
 function matchresult_icon($result) {
 
@@ -180,19 +192,19 @@ function matchresult_icon($result) {
     switch ($result){
         case "W":
             $class = "won";
-            $title = $lng->getTrn('global/misc/gamewon');
+            $title = 'Won';
             break;
         case "L":
             $class = "lost";
-            $title = $lng->getTrn('global/misc/gamelost');
+            $title = 'Lost';
             break;
         case "D":
             $class = "draw";
-            $title = $lng->getTrn('global/misc/gamedraw');
+            $title = 'Draw';
             break;
         default:
             $class = "";
-            $title = $lng->getTrn('global/misc/gameunknown');
+            $title = 'Unknown';
     }
     return "<div class='match_icon ". $class ."' title='". $title ."'></div>";
 }

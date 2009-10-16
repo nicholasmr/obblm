@@ -23,17 +23,32 @@
     <unlock>Unlock</unlock>
     <add>Add</add>
     <remove>Remove</remove>
+    <next>Next</next>
+    <previous>Previous</previous>
+    <name>Name</name>
+    <status>Status</status>
+    <desc>Description</desc>
+    <ready>Ready</ready>
     
     <needhelp>Need help?</needhelp>
     <picof>Picture of</picof>
     <about>About</about>
-    <recentgames>Recent games</recentgames>
+    <recentmatches>Recent matches</recentmatches>
+    <upcommingmatches>Upcomming matches</upcommingmatches>
     <dateplayed>Date played</dateplayed>
+    <starhh>Star Hire History</starhh>
+    <merchh>Mercenary Hire History</merchh>
     
     <match>Match</match>
     <tournament>Tournament</tournament>
     <division>Division</division>
     <league>League</league>
+    
+    <player>Player</player>
+    <team>Team</team>
+    <coach>Coach</coach>
+    <race>Race</race>
+    <star>Star</star>
     
     <td>Touchdowns</td>
     <intcpt>Interceptions</intcpt>
@@ -44,6 +59,10 @@
     <cas>Cacualties</cas>
     <mvp>Most valuable players</mvp>
     
+    <pms>Display match average stats</pms>
+    <ats>Display all-time stats </ats>
+    <notice_simul><![CDATA[<i>Note</i>: Both tables below are sorted simultaneously.]]></notice_simul>
+    <notice_spp><![CDATA[<i>Note</i>: <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.]]></notice_spp>
 </common>
 
 <!-- Link names for menu elements -->
@@ -67,6 +86,15 @@
         <race_stn>Race standings</race_stn>
         <star_stn>Star standings</star_stn>
     </statistics_menu>
+    <admin_menu>
+        <name>Admin</name> <!-- top level button text -->
+        <ld_man>Management: League &amp; division</ld_man>
+        <ct_man>Delete+retire coach or team</ct_man>
+        <usr_man>Management: Coach</usr_man>
+        <tour_man>Management: Tournament</tour_man>
+        <import>Import team</import>
+        <schedule>Schedule matches</schedule>
+    </admin_menu>
     <plugins>Plugins</plugins>
     
     <gallery>Gallery</gallery>
@@ -136,7 +164,225 @@
     <coach>
         <contact>Contact information</contact>
     </coach>
+    <player>
+        <about>About player</about>
+            <pos>Position</pos>
+            <bought>Bought</bought>
+        
+        <profile>Player profile</profile>
+        
+        <ach>Achievements</ach>
+        <best>Match best</best>
+        <playedmatches>Played matches</playedmatches>
+    </player>
+    
+    <team>
+        <!-- sub secs. -->
+        
+        <viewtoggle>Toggle roster view</viewtoggle>
+        
+        <!-- Team management sec. -->
+        <tmanage>Team management</tmanage>
+        
+        <!-- About sec. -->
+            <logo>Team's logo</logo>
+            <stad>Team's stadium</stad>
+
+        <!-- News sec. -->            
+        <news>News</news>
+            <tnews>Team news</tnews>
+            <wnews>Write news</wnews>
+            <nonews>No entries exist</nonews>
+        
+        <!-- Recent games sec. -->
+        
+        <!-- Star/merc HH secs. -->
+        
+        <!-- For the three team page boxes -->
+
+        <box_info>
+            <title>Team info and statistics</title>
+            <inleague>In league</inleague>
+            
+            <gp><![CDATA[Games&nbsp;played]]></gp>
+            <pct_won><![CDATA[PCT&nbsp;won]]></pct_won>
+            <tours_won><![CDATA[Tours&nbsp;won]]></tours_won>
+            <ws><![CDATA[Win&nbsp;streak]]></ws>
+            <ls><![CDATA[Lose&nbsp;streak]]></ls>
+            <ds><![CDATA[Draw&nbsp;streak]]></ds>
+            <ltour><![CDATA[Latest&nbsp;tour]]></ltour>
+            <toursplayed><![CDATA[Tours&nbsp;played]]></toursplayed>
+        </box_info>
+        
+        <box_tm>
+            <title>Team management</title>
+
+            <hire_player>Hire player</hire_player>
+            <hire_journeyman>Hire journeymen</hire_journeyman>
+            <fire_player>Fire player</fire_player>
+            <unbuy_player>Un-hire player</unbuy_player>
+            <rename_player>Rename player</rename_player>
+            <renumber_player>Renumber player</renumber_player>
+            <rename_team>Rename team</rename_team>
+            <buy_goods>Buy team goods</buy_goods>
+            <drop_goods>Let go of team goods</drop_goods>
+            <ready_state>Set ready state</ready_state>
+            <retire>Retire team</retire>
+            <delete>Delete team</delete>
+
+            <desc>
+                <hire_player>
+                <![CDATA[
+                Hire a new player.<br>
+                Hiring a player as a journeyman is free, but only players from a 0-16 allowed position on your team's roster are hire-able as journeymen.
+                ]]>
+                </hire_player>
+                <hire_journeyman>
+                <![CDATA[
+                Hire one of your journeymen to permanently play on your team.
+                ]]>
+                </hire_journeyman>
+                <fire_player>
+                <![CDATA[
+                Fire a player. Refund rate:
+                ]]>
+                </fire_player>
+                <unbuy_player>
+                <![CDATA[
+                Regret hiring a player. 100% refund.<br>
+                This is only possible for players which have not participated in any matches.
+                ]]>
+                </unbuy_player>
+                <rename_player>
+                <![CDATA[
+                Rename a player.
+                ]]>
+                </rename_player>
+                <renumber_player>
+                <![CDATA[
+                Renumber a player.
+                ]]>
+                </renumber_player>
+                <rename_team>
+                <![CDATA[
+                Rename your team.
+                ]]>
+                </rename_team>
+                <buy_goods>
+                <![CDATA[
+                Buy team goods.
+                ]]>
+                </buy_goods>
+                <buy_goods_warn>
+                <![CDATA[
+                <br><br>Please note that re-roll prices are currently <font color='red'><b>doubled</b></font>.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert the overcharged amount.
+                ]]>
+                </buy_goods_warn>
+                <drop_goods>
+                <![CDATA[
+                Let go/drop of team goods for no refund.
+                ]]>
+                </drop_goods>
+                <ready_state>
+                <![CDATA[
+                This team attribute allows coaches to signal other coaches/teams whether or not this team is interested in playing any matches.
+                ]]>
+                </ready_state>
+                <retire>
+                <![CDATA[
+                Retire team.<br>Once retired the team is no longer manageable.<br>Admins can un-retire teams. The retirement takes effect immediately, but will first be visible on <b>next page reload</b>.
+                ]]>
+                </retire>
+                <delete>
+                <![CDATA[
+                Delete team.<br>For the sake of keeping league statistics intact you are not allowed to delete teams which have played matches. The deletion takes effect immediately, but will first be visible on <b>next page reload</b>.
+                ]]>
+                </delete>
+            </desc>
+        </box_tm>
+        
+        <box_admin>
+            <title>Admin tools</title>
+
+            <unhire_journeyman>Un-hire journeymen</unhire_journeyman>
+            <unsell_player>Un-fire player</unsell_player>
+            <unbuy_goods>Un-buy team goods</unbuy_goods>
+            <bank>Gold bank</bank>
+            <chown>Change ownership</chown>
+            <chlid>Change league association</chlid>
+            <spp>Manage extra player SPP</spp>
+            <dval>Manage extra player value</dval>
+            <extra_skills>Manage extra player skills</extra_skills>
+            <ach_skills>Remove ach. player skills</ach_skills>
+
+            <desc>
+                <unhire_journeyman>
+                <![CDATA[
+                Regret permanently hiring a journeyman.<br>
+                This only works on players from a 0-16 allowed position on your team's roster.
+                ]]>
+                </unhire_journeyman>
+                <unsell_player>
+                <![CDATA[
+                Regret firing a player.
+                ]]>
+                </unsell_player>
+                <unbuy_goods>
+                <![CDATA[
+                Regret buying team goods.
+                ]]>
+                </unbuy_goods>
+                <bank>
+                <![CDATA[
+                Make changes to team's treasury.
+                ]]>
+                </bank>
+                <chown>
+                <![CDATA[
+                Change this team's ownership.
+                ]]>
+                </chown>
+                <chlid>
+                <![CDATA[
+                Change this team's league association.
+                ]]>
+                </chlid>
+                <spp>
+                <![CDATA[
+                Manage a player's extra SPP.
+                ]]>
+                </spp>
+                <dval>
+                <![CDATA[
+                Change a player's value by a certain amount.
+                ]]>
+                </dval>
+                <extra_skills>
+                <![CDATA[
+                Manage a player's extra skills.
+                ]]>
+                </extra_skills>
+                <ach_skills>
+                <![CDATA[
+                Remove a players achieved skills. This makes the player able to rechoose a skill.
+                ]]>
+                </ach_skills>
+            </desc>
+        </box_admin>
+    </team>
 </profile>
+
+<standings>
+    <player>
+        <colors>Color descriptions</colors>
+    </player>
+    <star>
+        <tblTitle2>Star standings (2 of 2)</tblTitle2>
+    </star>
+    <team>
+        <tblTitle2>All-time standings continued (team details)</tblTitle2>
+    </team>
+</standings>
 
 <matches>
     <tours>    
@@ -227,9 +473,6 @@
             <newCmt>New comment</newCmt>
     </report>
 </matches>
-
-<standings>
-</standings>
 
 <rules>
     <intro>
@@ -373,5 +616,33 @@
     ]]>
     </faq_txt>
 </about>
+
+<admin>
+    <!-- Common -->
+    <prefixes>the prefixes + and - specify least of and most of</prefixes>
+    
+    <!-- 
+        Subsecs 
+    -->
+
+    <!-- Subsec: Schedule matches -->
+    <schedule>
+        <multiple_schedule><![CDATA[<i>Note:</i> You are free to schedule multiple tournaments running concurrently.]]></multiple_schedule>
+        <create_leag_div><![CDATA[<i>Note:</i> You must first create a league with one or more divisions before being able to create matches.]]></create_leag_div>
+        <tour_name>Tournament name</tour_name>
+        <rank_sys>Ranking system</rank_sys>
+        <tour_type>Tournament type</tour_type>
+        <participants>Participating teams</participants>
+        <!-- RR -->
+            <RR_settings>Round-Robin settings</RR_settings>
+            <rrobin_rnds><![CDATA[<b>Seed the bracket N times:</b>]]></rrobin_rnds>
+        <!-- FFA -->
+            <FFA_settings>FFA settings</FFA_settings>
+            <add_match>Add the match to...</add_match>
+                <new_tour>A new FFA tournament</new_tour>
+            <as_type>As type...</as_type>
+            <as_reverse>Reverse home/away pair-up?</as_reverse>
+    </schedule>
+</admin>
 
 </en-GB>
