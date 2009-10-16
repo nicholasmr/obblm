@@ -380,7 +380,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
     
     /* If enabled add stars and summed mercenaries entries to the roster */
     
-    if ($DETAILED && $settings['show_stars_mercs'] && $rules['enable_stars_mercs']) {
+    if ($DETAILED && $settings['show_stars_mercs']) {
     
         $stars = array();
         foreach (Star::getStars(STATS_TEAM, $team->team_id, false, false) as $s) {
@@ -504,10 +504,8 @@ private function _menu($ALLOW_EDIT, $DETAILED)
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_about');?>>About</a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_recent');?>>Recent games</a></li>
         <?php
-        if ($rules['enable_stars_mercs']) {
-            echo "<li><a href='javascript:void(0)' ".$this->_makeOnClick('tp_shh')." title='Show/hide star hire history'>Star HH</a></li>\n";
-            echo "<li><a href='javascript:void(0)' ".$this->_makeOnClick('tp_mhh')." title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
-        }
+        echo "<li><a href='javascript:void(0)' ".$this->_makeOnClick('tp_shh')." title='Show/hide star hire history'>Star HH</a></li>\n";
+        echo "<li><a href='javascript:void(0)' ".$this->_makeOnClick('tp_mhh')." title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
         
         $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$_GET[team_id]&amp;detailed=".($DETAILED ? '1' : '0') : '';
         $xml    = (Module::isRegistered('Team_export')) ? "handler.php?type=xmlexport&amp;tid=$_GET[team_id]" : '';
@@ -564,72 +562,68 @@ private function _starMercHH($DETAILED)
     ?>
     <div id='tp_shh' style='clear:both;'>
         <?php
-        if ($rules['enable_stars_mercs']) {
-            title('Star hire history');
-            HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
-                'url' => "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
-                'GET_SS' => 'tp_shh', 
-                'anchor' => 'tp_shhanc')
-            );
-        }
+        title('Star hire history');
+        HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
+            'url' => "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+            'GET_SS' => 'tp_shh', 
+            'anchor' => 'tp_shhanc')
+        );
         ?>
     </div> 
     
     <div id='tp_mhh' style='clear:both;'>
         <?php
-        if ($rules['enable_stars_mercs']) {
-            title('Mercenary hire history');
-            $mdat = array();
-            foreach (Mercenary::getMercsHiredByTeam($team->team_id, false) as $merc) {
-                $o = (object) array();
-                $m = new Match($merc->match_id);
-                $o->date_played = $m->date_played;
-                $o->opponent = ($m->team1_id == $team->team_id) ? $m->team1_name : $m->team2_name;
-                foreach (array('match_id', 'skills', 'mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
-                    $o->$f = $merc->$f;
-                }
-                $o->cas = $o->bh+$o->ki+$o->si;
-                $o->match = '[view]';
-                $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
-                $o->score = "$m->team1_score - $m->team2_score";
-                $o->result = matchresult_icon(
-                    (
-                    ($m->team1_id == $team->team_id && $m->team1_score > $m->team2_score) ||
-                    ($m->team2_id == $team->team_id && $m->team1_score < $m->team2_score)
-                    ) 
-                        ? 'W'
-                        : (($m->team1_score == $m->team2_score) ? 'D' : 'L')
-                );
-                
-                array_push($mdat, $o);
+        title('Mercenary hire history');
+        $mdat = array();
+        foreach (Mercenary::getMercsHiredByTeam($team->team_id, false) as $merc) {
+            $o = (object) array();
+            $m = new Match($merc->match_id);
+            $o->date_played = $m->date_played;
+            $o->opponent = ($m->team1_id == $team->team_id) ? $m->team1_name : $m->team2_name;
+            foreach (array('match_id', 'skills', 'mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
+                $o->$f = $merc->$f;
             }
-            $fields = array(
-                'date_played'   => array('desc' => 'Hire date'), 
-                'tour'          => array('desc' => 'Tournament'),
-                'opponent'      => array('desc' => 'Opponent team'), 
-                'skills' => array('desc' => 'Add. skills'), 
-                'cp'     => array('desc' => 'Cp'), 
-                'td'     => array('desc' => 'Td'), 
-                'intcpt' => array('desc' => 'Int'), 
-                'cas'    => array('desc' => 'Cas'), 
-                'bh'     => array('desc' => 'BH'), 
-                'si'     => array('desc' => 'Si'), 
-                'ki'     => array('desc' => 'Ki'), 
-                'mvp'    => array('desc' => 'MVP'), 
-                'score'  => array('desc' => 'Score', 'nosort' => true),
-                'result' => array('desc' => 'Result', 'nosort' => true),
-                'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+            $o->cas = $o->bh+$o->ki+$o->si;
+            $o->match = '[view]';
+            $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+            $o->score = "$m->team1_score - $m->team2_score";
+            $o->result = matchresult_icon(
+                (
+                ($m->team1_id == $team->team_id && $m->team1_score > $m->team2_score) ||
+                ($m->team2_id == $team->team_id && $m->team1_score < $m->team2_score)
+                ) 
+                    ? 'W'
+                    : (($m->team1_score == $m->team2_score) ? 'D' : 'L')
             );
-            HTMLOUT::sort_table(
-                "<a name='tp_mhhanc'>Mercenary hiring history</a>", 
-                "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
-                $mdat, 
-                $fields, 
-                sort_rule('star_HH'), 
-                (isset($_GET['sorttp_mhh'])) ? array((($_GET['dirtp_mhh'] == 'a') ? '+' : '-') . $_GET['sorttp_mhh']) : array(),
-                array('GETsuffix' => 'tp_mhh', 'doNr' => false, 'anchor' => 'tp_mhhanc')
-            );
+            
+            array_push($mdat, $o);
         }
+        $fields = array(
+            'date_played'   => array('desc' => 'Hire date'), 
+            'tour'          => array('desc' => 'Tournament'),
+            'opponent'      => array('desc' => 'Opponent team'), 
+            'skills' => array('desc' => 'Add. skills'), 
+            'cp'     => array('desc' => 'Cp'), 
+            'td'     => array('desc' => 'Td'), 
+            'intcpt' => array('desc' => 'Int'), 
+            'cas'    => array('desc' => 'Cas'), 
+            'bh'     => array('desc' => 'BH'), 
+            'si'     => array('desc' => 'Si'), 
+            'ki'     => array('desc' => 'Ki'), 
+            'mvp'    => array('desc' => 'MVP'), 
+            'score'  => array('desc' => 'Score', 'nosort' => true),
+            'result' => array('desc' => 'Result', 'nosort' => true),
+            'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=fixturelist', 'field' => 'match_id', 'value' => 'match_id'), 'nosort' => true), 
+        );
+        HTMLOUT::sort_table(
+            "<a name='tp_mhhanc'>Mercenary hiring history</a>", 
+            "index.php?section=coachcorner&amp;team_id=$team->team_id".(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+            $mdat, 
+            $fields, 
+            sort_rule('star_HH'), 
+            (isset($_GET['sorttp_mhh'])) ? array((($_GET['dirtp_mhh'] == 'a') ? '+' : '-') . $_GET['sorttp_mhh']) : array(),
+            array('GETsuffix' => 'tp_mhh', 'doNr' => false, 'anchor' => 'tp_mhhanc')
+        );
         ?>
     </div>
     <?php

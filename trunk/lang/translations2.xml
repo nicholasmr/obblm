@@ -16,11 +16,24 @@
     <yes>Yes</yes>
     <no>No</no>
     <none>None</none>
+    <reset>Reset</reset>
+    <lock>Lock</lock>
+    <locked>Locked</locked>
+    <finished>Finished</finished>
+    <unlock>Unlock</unlock>
+    <add>Add</add>
+    <remove>Remove</remove>
     
     <needhelp>Need help?</needhelp>
     <picof>Picture of</picof>
     <about>About</about>
     <recentgames>Recent games</recentgames>
+    <dateplayed>Date played</dateplayed>
+    
+    <match>Match</match>
+    <tournament>Tournament</tournament>
+    <division>Division</division>
+    <league>League</league>
     
     <td>Touchdowns</td>
     <intcpt>Interceptions</intcpt>
@@ -40,7 +53,20 @@
     <home>Home</home>
     <cc>Coach corner</cc>
     <teams>Teams</teams>
-    <statistics>Statistics</statistics>
+    <matches_menu>
+        <name>Matches</name> <!-- top level button text -->
+        <tours>Tournaments</tours>
+        <recent>Recent matches</recent>
+        <upcomming>Upcomming matches</upcomming>
+    </matches_menu>
+    <statistics_menu>
+        <name>Statistics</name> <!-- top level button text -->
+        <player_stn>Player standings</player_stn>
+        <team_stn>Team standings</team_stn>
+        <coach_stn>Coach standings</coach_stn>
+        <race_stn>Race standings</race_stn>
+        <star_stn>Star standings</star_stn>
+    </statistics_menu>
     <plugins>Plugins</plugins>
     
     <gallery>Gallery</gallery>
@@ -66,9 +92,6 @@
     <by>by</by>
     <lastedit>last edited</lastedit>
 </main>
-
-<games>
-</games>
 
 <gallery>
     <note>Please select one of the below options.</note>
@@ -115,6 +138,99 @@
     </coach>
 </profile>
 
+<matches>
+    <tours>    
+        <!-- none used - all are in "common". -->
+    </tours>
+    <tourmatches>
+        <roundtypes>
+            <final>Final</final>
+            <thirdPlayoff>3rd place playoff</thirdPlayoff>
+            <semi>Semi-finals</semi>
+            <quarter>Quarter-finals</quarter>
+            <rnd16>Round of 16</rnd16>
+            <rnd>Round</rnd>
+        </roundtypes>
+        
+        <matchdelete><![CDATA[Are you sure you want to delete the match?\n\nPLEASE NOTE:\nUnless the match has not yet been played this action is not reversible and will affect the contents of the subsequent match reports for both teams.\nIt is advised against deleting non-test matches unless you know what you are doing.]]></matchdelete>
+        <reset_notice><![CDATA[Are you sure you want to reset the match?\n\nPLEASE NOTE:\nResetting a match clears all match data.\nResetting a match in which one, or both, of the competing teams have played subsequent matches may result in incorrect player states in the match reports of the subsequent matches.]]></reset_notice>
+    </tourmatches>
+
+    <!-- Subsection: match report(s) -->
+    <report>
+        
+        <!-- General -->
+        <clickforhelp>Need help?</clickforhelp>
+        <notplayed>Not yet played</notplayed>
+        <report>report</report>
+        
+        <help>
+        <![CDATA[
+        <b>Preliminary info</b><br>
+        First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
+        Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
+        <br>
+        <b>Game information fields</b><br>
+        The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
+        <br>
+        <b>Sportsmanship points</b><br>
+        Yelling, screaming, cursing at the dice, disturbing the opponent in his turn and not turning up on gaming night may be punished by giving negative sportsmanship points. Acting like a gentleman and taking a defeat with a smile may be embraced by giving positive sportsmanship points.
+        If your league on the other hand makes the needle on the evil-o-meter jump into the red area constantly, it may be more natural applying the sportsmanship points system the other way around - embracing bad manners with positive sportsmanship points.<br>
+        <br>
+        <b>Casualties in general</b><br>
+        OBBLM can keep track of <i>team casualties</i>, which is the sum of the individual player casualties, opponent self-inflicted injuries, die on a fumble in sprints and crowd killings (and possibly other things of your leagues' choice).
+        Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
+        <br>
+        <b>Player skills</b><br>
+        Once the match report has been submitted OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
+        <br>
+        <b>Player injuries</b><br>
+        If a player sustains multiple injuries simply utilize the second and third injury columns "ageing 1" and "ageing 2". 
+        The <i>only</i> difference between the ordinary "inj" column and the ageing columns is that injuries recorded as ageing injuries do not imply a MNG.<br>
+        <br>
+        <b>Incomes</b><br>
+        A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
+        If you spended more than you made in a match then simply prefix - (minus).
+        <br><br>
+        Remember these factors when you calculate:<br>
+        <ul>
+            <li>Spiraling expenses</i>
+            <li>Treasury spend on inducements</li>
+            <li>Hiring costs of star players and mercenaries</li>
+            <li>Team winnings</li>
+            <li>Tournament winnings, if the game was a final</li>
+            <li>Sponsorship deal from Bloodweiser</li>
+        </ul>
+        ]]>
+        </help>
+
+        <!-- Subsecs of team page -->
+        <info>Game information</info>
+            <stadium>Stadium</stadium>
+            <gate>Gate</gate>
+            <fans>Fans (RL spectators)</fans>
+            
+        <results>Game results</results>
+            <teams>Teams</teams>
+            <score>Score</score>
+            <treas>Treasury</treas>
+            <ff>Fan factor</ff>
+            <smp>Sportsmanship points</smp>
+                <pts>points</pts>
+            <tcas>Total team CAS</tcas>
+            <fame>FAME</fame>
+            <tv>TVs</tv>
+            
+        <summary>Game summary</summary>
+        <comments>Match comment(s)</comments>
+            <existCmt>Existing comment(s)</existCmt>
+            <newCmt>New comment</newCmt>
+    </report>
+</matches>
+
+<standings>
+</standings>
+
 <rules>
     <intro>
     <![CDATA[
@@ -149,7 +265,6 @@
     <max_jm>Journeymen limit</max_jm>
     <max_pl>Maximum players on team</max_pl>
     <refund>Player refund (on firing/selling)</refund>
-    <enable_starmerc>Enable star players and mercenaries</enable_starmerc>
     <enable_lrb6>Enable LRB6 extensions</enable_lrb6>
     <enable_post_ff>Allow post first game FF purchase</enable_post_ff>
     

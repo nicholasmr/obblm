@@ -25,9 +25,9 @@
  THIS FILE is used for HTML-helper routines.
  */
  
-define('T_BOX_ADMIN', 1);
-define('T_BOX_USER',  2);
-define('T_BOX_OTHER', 3);
+#define('T_BOX_ADMIN', 1);
+#define('T_BOX_USER',  2);
+#define('T_BOX_OTHER', 3);
  
 class HTMLOUT
 {
@@ -512,47 +512,20 @@ private static function make_menu()
         ?>
         <li><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a></li>
         <li><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
-        <li><a href="index.php?section=fixturelist"><?php echo $lng->getTrn('global/secLinks/fixtures');?></a></li>
-        <li><span class="dir"><?php echo $lng->getTrn('menu/statistics');?></span>
+        <li><span class="dir"><?php echo $lng->getTrn('menu/matches_menu/name');?></span>
             <ul>
-                <li><a href="index.php?section=recent"><?php echo $lng->getTrn('global/secLinks/recent');?></a></li>
-                <li><a href="index.php?section=upcomming"><?php echo $lng->getTrn('global/secLinks/upcomming');?></a></li>
-                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/tourstn');?></span>
-                    <ul>
-                        <?php
-                        foreach (Tour::getTours() as $t) {
-                            echo "<li><a href='index.php?section=fixturelist&amp;tour_id=$t->tour_id'>$t->name&nbsp;&nbsp;<i>(".get_alt_col('leagues', 'lid', get_alt_col('divisions', 'did', $t->f_did, 'f_lid'), 'name').")</i></a></li>\n";
-                        }
-                        ?>
-                    </ul>
-                </li>
-                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/divstn');?></span>
-                    <ul>
-                        <?php
-                        foreach (Division::getDivisions() as $d) {
-                            echo "<li><a href='index.php?section=fixturelist&amp;did=$d->did'>$d->name&nbsp;&nbsp;<i>($d->league_name)</i></a></li>\n";
-                        }
-                        ?>
-                    </ul>
-                </li>
-                <li><span class="dir"><?php echo $lng->getTrn('global/secLinks/leaguestn');?></span>
-                    <ul>
-                        <?php
-                        foreach (League::getLeagues() as $l) {
-                            echo "<li><a href='index.php?section=fixturelist&amp;lid=$l->lid'>$l->name</a></li>\n";
-                        }
-                        ?>
-                    </ul>
-                </li>
-                <li><a href="index.php?section=standings"><?php echo $lng->getTrn('global/secLinks/standings');?></a></li>
-                <li><a href="index.php?section=players"><?php echo $lng->getTrn('global/secLinks/players');?></a></li>
-                <li><a href="index.php?section=coaches"><?php echo $lng->getTrn('global/secLinks/coaches');?></a></li>
-                <li><a href="index.php?section=races"><?php echo $lng->getTrn('global/secLinks/races');?></a></li>
-                <?php
-                if ($rules['enable_stars_mercs']) {
-                    ?><li><a href="index.php?section=stars"><?php echo $lng->getTrn('global/secLinks/stars');?></a></li><?php
-                }
-                ?>
+                <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
+                <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
+                <li><a href="index.php?section=matches&amp;type=upcomming"><?php echo $lng->getTrn('menu/matches_menu/upcomming');?></a></li>
+            </ul>
+        </li>
+        <li><span class="dir"><?php echo $lng->getTrn('menu/statistics_menu/name');?></span>
+            <ul>
+                <li><a href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/team_stn');?></a></li>
+                <li><a href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/player_stn');?></a></li>
+                <li><a href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_COACH,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/coach_stn');?></a></li>
+                <li><a href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_RACE,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/race_stn');?></a></li>
+                <li><a href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
             </ul>
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/plugins');?></span>

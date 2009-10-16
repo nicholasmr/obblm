@@ -33,6 +33,18 @@ tr.commonhead {
     background-color: #CCCCCC;
 }
 
+table.tours {
+    border: none; 
+    width: 100%; 
+    background-color: inherit; 
+    padding-left: 5px;
+}
+
+tr.leauges   {background-color: #659EC7;}
+tr.divisions {background-color: #8BB381;}
+tr.tours     {background-color: #BBBBBB;}
+td.match     {background-color: #DDDDDD;}
+td.seperator {height:15px;}
 
 div.login {padding-top: 20px; text-align: center;}
 

@@ -30,7 +30,6 @@ $settings['show_sold_journeymen']  = true;  // Default is true. Show sold journe
 $settings['show_stars_mercs']      = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.
 $settings['fp_team_news']          = true;  // Default is true. Show team news on front page.
 $settings['fp_links']              = false; // Default is false. Generate coach, team and player links on the front page?
-$settings['force_tour_foldout']    = false; // Default is false. Force each tournament block in tournaments section to be displayed as folded out, and not folded up.
 $settings['hide_retired']		   = false; // Defailt is false. Hides retired coaches and teams from standings tables.
 $settings['relate_team_to_league'] = false; // Default is false. Associate teams with leagues. Teams from different leagues can not schedule matches against each other. 
 
@@ -76,8 +75,6 @@ $rules['val_reduc_ma'] = 0; // Default is 0 (disabled).
 $rules['val_reduc_st'] = 0; // Default is 0 (disabled).
 $rules['val_reduc_av'] = 0; // Default is 0 (disabled).
 $rules['val_reduc_ag'] = 0; // Default is 0 (disabled).
-
-$rules['enable_stars_mercs'] = true; // Default is true. Enable star players and mercenaries.
 
 /*
     Enable the partial implementation of the LRB6 experimental rule set.

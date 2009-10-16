@@ -318,4 +318,5 @@ function fadeOut(id)        { return $('#'+id).fadeOut('slow');}
 function slideDown(id)      { return $('#'+id).slideDown('slow');}
 function slideUp(id)        { return $('#'+id).slideUp('slow');}
 function slideToggle(id)    { return $('#'+id).slideToggle("slow");}
+function slideToggleFast(id){ return $('#'+id).slideToggle("fast");}
 function toggle(id)         { return $('#'+id).toggle("slow");}

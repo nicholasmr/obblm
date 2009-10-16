@@ -335,7 +335,8 @@ function sec_matcheshandler() {
     switch ($_GET['type'])
     {
         # Save all these subroutines in class_match_htmlout.php
-        case 'tours': # "TOURNAMENTS" section.
+        case 'tours':       Match_HTMLOUT::tours(); break;
+        case 'tourmatches': Match_HTMLOUT::tourMatches(); break;
         case 'report':      Match_HTMLOUT::report(); break;
         case 'recent':      Match_HTMLOUT::recentMatches(); break;
         case 'upcomming':   Match_HTMLOUT::upcommingMatches(); break;
@@ -475,11 +476,6 @@ function sec_rules() {
         <tr>
             <td><?php echo $lng->getTrn('rules/cl_price');?></td>
             <td><?php echo $rules['cost_cheerleaders']; ?> gp</td>
-        </tr>
-
-        <tr>
-            <td><?php echo $lng->getTrn('rules/enable_starmerc');?></td>
-            <td><?php echo $rules['enable_stars_mercs'] ? $lng->getTrn('common/yes') : $lng->getTrn('common/no'); ?></td>
         </tr>
 
         <tr>

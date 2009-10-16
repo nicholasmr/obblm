@@ -23,116 +23,131 @@
 
 class Match_HTMLOUT extends Match
 {
-/*************************
- *
- *  RECENT MATCHES
- *
- *************************/
 
 function recentMatches() {
 
     global $lng;
-    title($lng->getTrn('global/secLinks/recent'));
+    title($lng->getTrn('menu/matches_menu/recent'));
     list($node, $node_id) = HTMLOUT::nodeSelector(false,false,false,'');
     echo '<br>';
-    HTMLOUT::recentGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=recent', 'n' => MAX_RECENT_GAMES));
+    HTMLOUT::recentGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=recent', 'n' => MAX_RECENT_GAMES));
 }
-
-/*************************
- *
- *  UPCOMMING MATCHES
- *
- *************************/
 
 function upcommingMatches() {
 
     global $lng;
-    title($lng->getTrn('global/secLinks/upcomming'));
+    title($lng->getTrn('menu/matches_menu/upcomming'));
     list($node, $node_id) = HTMLOUT::nodeSelector(false,false,false,'');
     echo '<br>';
-    HTMLOUT::upcommingGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=upcomming', 'n' => MAX_RECENT_GAMES));
+    HTMLOUT::upcommingGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=upcomming', 'n' => MAX_RECENT_GAMES));
 }
 
-/*************************
- *
- *  FIXTURE LIST
- *
- *************************/
-
-function sec_fixturelist() {
-
-    global $rules, $settings, $coach, $lng;
-    $KEEP_TOUR_OPEN = false;
-
+public static function tourMatches() 
+{
+    global $lng, $coach;
+    
     // Admin actions made?
-    if (is_object($coach) && $coach->admin) {
-        if (isset($_GET['lock']) && ($state = 1) || isset($_GET['unlock']) && ($state = 2)) {
-            $match = new Match(($state == 1) ? $_GET['lock'] : $_GET['unlock']);
-            $KEEP_TOUR_OPEN = $match->f_tour_id;
-            status($match->setLocked(($state == 1) ? true : false));
-        }
-        elseif (isset($_GET['mdel']) && !preg_match('/[^0-9]$/', $_GET['mdel'])) {
-            $match = new Match($_GET['mdel']);
-            $KEEP_TOUR_OPEN = $match->f_tour_id;
-            status($match->delete());
-        }
-        elseif (isset($_GET['reset']) && !preg_match('/[^0-9]$/', $_GET['reset'])) {
-            $match = new Match($_GET['reset']);
-            $KEEP_TOUR_OPEN = $match->f_tour_id;
-            status($match->reset());
-        }
-    }
-
-    // Was a match chosen for edit/view?
-    if (isset($_GET['match_id']) && !preg_match("/[^0-9]/", $_GET['match_id'])) {
-        match_form($_GET['match_id']);
-        return;
-    }
-
-    // Show tournament standings?
-    if (isset($_GET['tour_id']) && !preg_match("/[^0-9]/", $_GET['tour_id'])) {
-        if (!is_object($tour = new Tour($_GET['tour_id'])) || empty($tour->date_created))
-            fatal('Sorry. Invalid tournament ID specified.');
-
-        /* Table printing */
-
-        switch ($tour->type)
+    if (isset($_GET['action']) && is_object($coach) && $coach->admin) {
+        $match = new Match($_GET['mid']);
+        switch ($_GET['action'])
         {
-            case TT_RROBIN: $type = 'Round-Robin'; break;
-            case TT_FFA:    $type = 'FFA tournament'; break;
+            case 'lock':   status($match->setLocked(true)); break;
+            case 'unlock': status($match->setLocked(false)); break;
+            case 'delete': status($match->delete()); break;
+            case 'reset':  status($match->reset()); break;            
         }
+    }
+    
+    $tr = new Tour($_GET['trid']);
+    title($tr->name);
+    $matches = array();
+    foreach ($tr->getMatches() as $m) {
+        $matches[$m->round][] = $m;
+    }
+    ksort($matches);
 
-        title($tour->name);
-        echo "<center><a href='index.php?section=fixturelist'>[".$lng->getTrn('global/misc/back')."]</a></center><br>\n";
+    foreach ($matches as $round => $matches) {
+        echo "<table class='tours'>\n";
+        // Determine what to write in "round" field.
+        $org_round = $round; # Copy for later use.
+        if     ($round == RT_FINAL)         $round = $lng->getTrn('matches/tourmatches/roundtypes/final');
+        elseif ($round == RT_3RD_PLAYOFF)   $round = $lng->getTrn('matches/tourmatches/roundtypes/thirdPlayoff');
+        elseif ($round == RT_SEMI)          $round = $lng->getTrn('matches/tourmatches/roundtypes/semi');
+        elseif ($round == RT_QUARTER)       $round = $lng->getTrn('matches/tourmatches/roundtypes/quarter');
+        elseif ($round == RT_ROUND16)       $round = $lng->getTrn('matches/tourmatches/roundtypes/rnd16');
+        else                                $round = $lng->getTrn('matches/tourmatches/roundtypes/rnd').": $round";
 
-        echo "<b>".$lng->getTrn('secs/fixtures/stn/type')."</b>: $type<br>\n";
-        echo "<b>".$lng->getTrn('secs/fixtures/stn/rs')."</b>: $tour->rs = ".$tour->getRSSortRule(true)
-            .((is_object($coach) && $coach->admin) ? "&nbsp;&nbsp;&nbsp;<a href='index.php?section=admin&amp;subsec=chtr'>[".$lng->getTrn('global/misc/change')."]</a>" : '').
-            "<br><br>\n";
-
-        HTMLOUT::standings(STATS_TEAM, STATS_TOUR, $tour->tour_id, array('url' => "index.php?section=fixturelist&amp;tour_id=$tour->tour_id", 'hidemenu' => true));
-        if (Module::isRegistered('Prize')) {
-            Module::run('Prize', array('printList', $tour->tour_id, false));
+        ?>
+        <tr><td colspan='7' class="seperator"></td></tr>
+        <tr>
+            <td width="100"></td>
+            <td class="light" width="250"><?php echo $round; ?></td>
+            <td class="white" width="25"></td>
+            <td class="white" width="50"></td>
+            <td class="white" width="25"></td>
+            <td class="white" width="250"></td>
+            <td width="260"></td>
+        </tr>
+        <?php
+        foreach ($matches as $m) {
+            ?>
+            <tr>
+            <td></td>
+            <td class="match" style="text-align: right;"><?php echo $m->team1_name;?></td>
+            <td class="match" style="text-align: center;"><?php echo ($m->is_played) ? $m->team1_score : '';?></td>
+            <td class="match" style="text-align: center;">-</td>
+            <td class="match" style="text-align: center;"><?php echo ($m->is_played) ? $m->team2_score : '';?></td>
+            <td class="match" style="text-align: left;"><?php echo $m->team2_name;?></td>
+            <?php
+            // Does the user have edit or view rights?
+            $matchURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$tr->tour_id&amp;mid=$m->match_id";
+            ?>
+            <td class="white">
+                &nbsp;
+                <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>">
+                <?php
+                if (is_object($coach)) {
+                    echo (($coach->isInMatch($m->match_id) || $coach->admin) ? $lng->getTrn('common/edit') : $lng->getTrn('common/view')) . "</a>&nbsp;\n";
+                    if ($coach->admin) {
+                        echo "<a onclick=\"if(!confirm('".$lng->getTrn('matches/tourmatches/reset_notice')."')){return false;}\" href='$matchURL&amp;action=reset'>".$lng->getTrn('common/reset')."</a>&nbsp;\n";
+                        echo "<a onclick=\"if(!confirm('".$lng->getTrn('matches/tourmatches/matchdelete')."')){return false;}\" href='$matchURL&amp;action=delete' style='color:".(($m->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('common/delete')."</a>&nbsp;\n";
+                        echo "<a href='$matchURL&amp;action=".(($m->locked) ? 'unlock' : 'lock')."'>" . ($m->locked ? $lng->getTrn('common/unlock') : $lng->getTrn('common/lock')) . "</a>&nbsp;\n";
+                    }
+                }
+                else {
+                    echo $lng->getTrn('common/view')."</a>\n";
+                }
+                ?>
+            </td>
+            </tr>
+            <?php
         }
-        return;
     }
 
-    // Division standings?
-    if (isset($_GET['did']) && !preg_match("/[^0-9]/", $_GET['did'])) {
-        return;
+    if ($tr->is_finished && isset($tr->winner)) { # If tournament is finished.
+        echo "<tr><td colspan='7' class='seperator'></td></tr>";
+        $team = new Team($tr->winner);
+        echo "<tr>  <td colspan='1'></td>
+                    <td colspan='1' class='light'><i>".$lng->getTrn('secs/fixtures/winner').":</i> $team->name </td>
+                    <td colspan='5'></td>
+                </tr>\n";
     }
-    // League standings?
-    if (isset($_GET['lid']) && !preg_match("/[^0-9]/", $_GET['lid'])) {
-        title(get_alt_col('leagues', 'lid', $_GET['lid'], 'name'));
-        HTMLOUT::standings(STATS_TEAM, STATS_LEAGUE, (int) $_GET['lid'], array('url' => "index.php?section=fixturelist&amp;lid=$_GET[lid]", 'hidemenu' => true));
-        return;
-    }
+    ?>
+    <tr><td colspan='7' class='seperator'></td></tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <?php
+}
 
-    /*
-        Show fixture list.
-    */
+public static function tours() 
+{
 
-    title($lng->getTrn('global/secLinks/fixtures'));
+    global $rules, $settings, $lng;
+
+    title($lng->getTrn('menu/matches_menu/tours'));
 
     if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) {
 		?>
@@ -154,196 +169,64 @@ function sec_fixturelist() {
 		<?php
     }
 
-    $flist = array( # The fixture list
-// $flist MODEL:
-#        'league1' => array(
-#            'l_obj' => $league_obj
-#            'division1' => array(
-#                'd_obj' => $division_obj
-#                'tour1' => array(
-#                    'tour_obj' => $tour_obj,
-#                    'round1' => array('match1_id' => $match1_obj, 'match2_id' => $match2_obj),
-#                    'round2' => array('match3_id' => $match3_obj, 'match4_id' => $match4_obj)
-#                )
-#            )
-#        )
-    );
-
-    // Generate fixture list.
-    $leagues = League::getLeagues();
-    objsort($leagues, array('+date'));
-    foreach ($leagues as $l) {
-        $divisions = $l->getDivisions();
-        objsort($divisions, array('+did'));
-        foreach ($divisions as $d) {
-            $tours = $d->getTours();
-            objsort($tours, array('+date_created'));
-            foreach ($tours as $t) {
-                $flist[$l->name][$d->name][$t->name] = array(); # Prevent ksort() errors for empty tournaments.
-                foreach ($t->getMatches() as $m) {
-                    $flist[$l->name][$d->name][$t->name][$m->round][$m->match_id] = $m; # Copy match object.
-                }
-                // Sort rounds
-                ksort($flist[$l->name][$d->name][$t->name]); # Sort rounds.
-                foreach ($flist[$l->name][$d->name][$t->name] as $round => $matches) {
-                    if (is_object($flist[$l->name][$d->name][$t->name][$round]))
-                        continue;
-                    else
-                        ksort($flist[$l->name][$d->name][$t->name][$round]); # Sort matches in round by match_id.
-                }
-                // Objects.
-                $flist[$l->name][$d->name][$t->name]['tour_obj'] = $t; # Copy tour object.
-                $flist[$l->name][$d->name]['d_obj'] = $d; # Copy tour object.
-                $flist[$l->name]['l_obj'] = $l; # Copy tour object.
-            }
-        }
+    $query = "SELECT lid,did,tour_id,locked,
+        tours.name AS 'tours.name',divisions.name AS 'divisions.name',leagues.name AS 'leagues.name'
+        FROM tours,divisions,leagues WHERE tours.f_did = divisions.did AND divisions.f_lid = leagues.lid
+        ORDER BY leagues.lid ASC, divisions.did ASC, tours.tour_id ASC";
+    $result = mysql_query($query);
+    $flist = array();
+    while ($row = mysql_fetch_object($result)) {
+        $flist[$row->lid][$row->did][$row->tour_id] = $row;
+        $flist[$row->lid]['info']            = array('name' => $row->{'leagues.name'});
+        $flist[$row->lid][$row->did]['info'] = array('name' => $row->{'divisions.name'});
     }
 
     // Print fixture list.
-    echo "<table style='width:100%;'>\n";
-    foreach ($flist as $l => $divs) {
+    echo "<table class='tours'>\n";
+    foreach ($flist as $lid => $divs) {
         echo "<tr class='leauges'><td><b>
-        <a href='javascript:void(0);' onClick=\"obj=document.getElementById('lid_".$divs['l_obj']->lid."'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\"><b>[+/-]</b></a>&nbsp;
-        $l
+        <a href='javascript:void(0);' onClick=\"slideToggleFast('lid_$lid');\"><b>[+/-]</b></a>&nbsp;
+        ".$flist[$lid]['info']['name']."
         </b></td></tr>";
-        echo "<tr><td><div id='lid_".$divs['l_obj']->lid."'>";
-    foreach ($divs as $d => $flist) {
-        if (is_object($flist)) continue;
-        echo "<table class='fixtures' style='width:100%;'>\n";
+        echo "<tr><td><div id='lid_$lid'>";
+    foreach ($divs as $did => $tours) {
+        if ($did == 'info') continue;
+        echo "<table class='tours'>\n";
         echo "<tr class='divisions'><td><b>
-        <a href='javascript:void(0);' onClick=\"obj=document.getElementById('did_".$flist['d_obj']->did."'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};\"><b>[+/-]</b></a>&nbsp;
-        $d
+        <a href='javascript:void(0);' onClick=\"slideToggleFast('did_$did');\"><b>[+/-]</b></a>&nbsp;
+        ".$flist[$lid][$did]['info']['name']."
         </b></td></tr>";
-        echo "<tr><td><div id='did_".$flist['d_obj']->did."'>";
-    foreach ($flist as $tour => $rounds) {
-
-        if (is_object($rounds)) continue;
-
-        // Skip tournaments which have no rounds/matches
-//        if ($flist[$tour]['tour_obj']->is_empty)
-//            continue;
-
-        $t = $flist[$tour]['tour_obj'];
-
+        echo "<tr><td><div id='did_$did'>";
+    foreach ($tours as $trid => $mergedObj) {
+        if ($trid == 'info') continue;
         ?>
-        <table style='width:100%;'>
-            <tr class='dark'>
+        <table class='tours'>
+            <tr class='tours'>
                 <td>
-                    <a href='javascript:void(0);' onClick="obj=document.getElementById('trid_<?php echo $t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};"><b>[+/-]</b></a>&nbsp;
+                    &nbsp;&nbsp;<a href='index.php?section=matches&amp;type=tourmatches&amp;trid=<?php echo $trid;?>'><b><?php echo $mergedObj->{'tours.name'};?></b></a>
                     <?php
-                    echo "<b>$tour</b>";
+                    $tr = new Tour($trid);
                     $suffix = '';
-                    if ($t->is_finished) { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('secs/fixtures/fin').'</i>&nbsp;&nbsp;';}
-                    if ($t->locked)      { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('secs/fixtures/locked').'</i>&nbsp;&nbsp;';}
+                    if ($tr->is_finished) { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/finished').'</i>&nbsp;&nbsp;';}
+                    if ($tr->locked)      { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/locked').'</i>&nbsp;&nbsp;';}
                     if (!empty($suffix)) { echo '&nbsp;&nbsp;'.$suffix;}
                     ?>
-                </td>
-                <td style='width:25%; text-align:right;'>
-                    <a href='index.php?section=fixturelist&amp;tour_id=<?php echo $t->tour_id;?>'><b><?php echo $lng->getTrn('secs/fixtures/standings');?></b></a>&nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td colspan='2'>
-                    <div id='trid_<?php echo $t->tour_id;?>'>
-                        <table class='fixtures'>
-        <?php
-        foreach ($rounds as $round => $matches) {
-
-            // Skip the tour object in fixturelist data structure.
-            if (is_object($matches))
-                continue;
-
-            // Determine what to write in "round" field.
-            $org_round = $round; # Copy for later use.
-            if     ($round == RT_FINAL)         $round = $lng->getTrn('secs/fixtures/mtypes/final');
-            elseif ($round == RT_3RD_PLAYOFF)   $round = $lng->getTrn('secs/fixtures/mtypes/thirdPlayoff');
-            elseif ($round == RT_SEMI)          $round = $lng->getTrn('secs/fixtures/mtypes/semi');
-            elseif ($round == RT_QUARTER)       $round = $lng->getTrn('secs/fixtures/mtypes/quarter');
-            elseif ($round == RT_ROUND16)       $round = $lng->getTrn('secs/fixtures/mtypes/rnd16');
-            else                                $round = $lng->getTrn('secs/fixtures/mtypes/rnd').": $round";
-
-            ?>
-            <tr><td colspan='7' class="seperator"></td></tr>
-            <tr>
-                <td width="100"></td>
-                <td class="light" width="250"><?php echo $round; ?></td>
-                <td class="white" width="25"></td>
-                <td class="white" width="50"></td>
-                <td class="white" width="25"></td>
-                <td class="white" width="250"></td>
-                <td width="260"></td>
-            </tr>
-            <?php
-
-            foreach ($matches as $match_id => $match) { # $match is an object.
-                // Some K.O. matches have competitors with team IDs = 0, which are stand-by placeholders (undecided).
-                ?>
-                <tr>
-                <td></td>
-                <td class="lightest" style="text-align: right;"><?php echo ($match->team1_id > 0) ? $match->team1_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>';?></td>
-                <td class="lightest" style="text-align: center;"><?php echo ($match->is_played) ? $match->team1_score : '';?></td>
-                <td class="lightest" style="text-align: center;">-</td>
-                <td class="lightest" style="text-align: center;"><?php echo ($match->is_played) ? $match->team2_score : '';?></td>
-                <td class="lightest" style="text-align: left;"><?php echo ($match->team2_id > 0) ? $match->team2_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>';?></td>
-                <?php
-                // Does the user have edit or view rights?
-                ?>
-                <td class="white">
-                    &nbsp;
-                    <a href="?section=fixturelist&amp;match_id=<?php echo $match->match_id; ?>">
-                    <?php
-                    if (is_object($coach)) {
-                        echo (($coach->isInMatch($match->match_id) || $coach->admin) ? $lng->getTrn('secs/fixtures/edit') : $lng->getTrn('secs/fixtures/view')) . "</a>&nbsp;\n";
-                        if ($coach->admin) {
-                            echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/reset_notice')."')){return false;}\" href='?section=fixturelist&amp;reset=$match->match_id'>".$lng->getTrn('secs/fixtures/reset')."</a>&nbsp;\n";
-                            echo "<a onclick=\"if(!confirm('".$lng->getTrn('secs/fixtures/mdel')."')){return false;}\" href='?section=fixturelist&amp;mdel=$match->match_id' style='color:".(($match->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('secs/fixtures/del')."</a>&nbsp;\n";
-                            echo "<a href='?section=fixturelist&amp;".(($match->locked) ? 'unlock' : 'lock')."=$match->match_id'>" . ($match->locked ? $lng->getTrn('secs/fixtures/unlock') : $lng->getTrn('secs/fixtures/lock')) . "</a>&nbsp;\n";
-                        }
-                    }
-                    else {
-                        echo $lng->getTrn('secs/fixtures/view')."</a>\n";
-                    }
-                    ?>
-                </td>
-                </tr>
-                <?php
-            }
-        }
-
-        if ($t->is_finished && isset($t->winner)) { # If tournament is finished.
-            echo "<tr><td colspan='7' class='seperator'></td></tr>";
-            $team = new Team($t->winner);
-            echo "<tr>  <td colspan='1'></td>
-                        <td colspan='1' class='light'><i>".$lng->getTrn('secs/fixtures/winner').":</i> $team->name </td>
-                        <td colspan='5'></td>
-                    </tr>\n";
-        }
-        ?>
-        <tr><td colspan='7' class='seperator'></td></tr>
-                        </table>
-                    </div>
                 </td>
             </tr>
         </table>
         <?php
-        if (!$settings['force_tour_foldout'] && count($flist) > 1 && !($KEEP_TOUR_OPEN == $t->tour_id)) {
-            ?>
-            <script language="JavaScript" type="text/javascript">
-                document.getElementById('trid_'+<?php echo $t->tour_id;?>).style.display = 'none';
-            </script>
-            <?php
-        }
     }
     echo "</div></td></tr></table>\n";
     }
-    echo "</div></td></tr><tr><td class='seperator'></td></tr>\n";
+    echo "</div></td></tr>\n";
     }
     echo "</table>\n";
 }
 
-function match_form($match_id) {
+function report() {
 
     // Is $match_id valid?
+    $match_id = $_GET['mid'];
     if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
         fatal("Invalid match ID.");
     
@@ -416,7 +299,7 @@ function match_form($match_id) {
         
             foreach ($t->getPlayers() as $p) {
             
-                if (!player_validation($p, $m))
+                if (!self::player_validation($p, $m))
                     continue;
                 
                 // Set zero entry for MNG player(s).
@@ -528,34 +411,31 @@ function match_form($match_id) {
      *
      ****************/
 
-    title((($m->team1_id) ? $m->team1_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>') . " - " . (($m->team2_id) ? $m->team2_name : '<i>'.$lng->getTrn('secs/fixtures/undecided').'</i>'));
+    title("$m->team1_name - $m->team2_name");
     $CP = 8; // Colspan.
 
-    $did = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'f_did'); // For below match relations (league, division etc.) table.
-
-    if ( Module::isRegistered('UPLOAD_BOTOCS') )  #&& isset($settings['leegmgr_enabled']) && $settings['leegmgr_enabled']
-    {
+    if (Module::isRegistered('UPLOAD_BOTOCS')) {
         Print "<center><a href='http://".$_SERVER["SERVER_NAME"]."/handler.php?type=leegmgr&replay=".$m->match_id."'>view replay</a></center>";
     }
 
     ?>
     <table>
-    <tr><td><b>League</b>:</td><td><?php echo get_alt_col('leagues', 'lid', get_alt_col('divisions', 'did', $did, 'f_lid'), 'name');?></td></tr>
-    <tr><td><b>Division</b>:</td><td><?php echo get_alt_col('divisions', 'did', $did, 'name');?></td></tr>
-    <tr><td><b>Tournament</b>:</td><td><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?></td></tr>
-    <tr><td><b>Date played</b>:</td><td><?php echo ($m->is_played) ? textdate($m->date_played) : '<i>Not yet played</i>';?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td><?php       echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE);?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td><?php     echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION);?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td><?php   echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT);?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     </table>
     <br>
-    <?php HTMLOUT::helpBox($lng->getTrn('secs/fixtures/report/help'), $lng->getTrn('secs/fixtures/report/clickforhelp')); ?>
+    <?php HTMLOUT::helpBox($lng->getTrn('matches/report/help'), $lng->getTrn('common/needhelp')); ?>
     <form method="POST" enctype="multipart/form-data">
         <table class="match_form">
             <tr>
-                <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/info');?></b></td>
+                <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('matches/report/info');?></b></td>
             </tr>
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
             <tr>
                 <td colspan='<?php echo $CP;?>'>
-                    <b><?php echo $lng->getTrn('secs/fixtures/report/stad');?></b>&nbsp;
+                    <b><?php echo $lng->getTrn('matches/report/stadium');?></b>&nbsp;
                     <select name="stadium" <?php echo $DIS;?>>
                         <?php
                         $teams = Team::getTeams();
@@ -570,13 +450,13 @@ function match_form($match_id) {
             </tr>
             <tr>
                 <td colspan='<?php echo $CP;?>'>
-                    <b><?php echo $lng->getTrn('secs/fixtures/report/gate');?></b>&nbsp;
+                    <b><?php echo $lng->getTrn('matches/report/gate');?></b>&nbsp;
                     <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
                 </td>
             </tr>
             <tr>
                 <td colspan='<?php echo $CP;?>'>
-                    <b><?php echo $lng->getTrn('secs/fixtures/report/fans');?></b>&nbsp;
+                    <b><?php echo $lng->getTrn('matches/report/fans');?></b>&nbsp;
                     <input type="text" name="fans" value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
                 </td>
             </tr>
@@ -584,14 +464,14 @@ function match_form($match_id) {
             <tr><td class="seperator" colspan='<?php echo $CP;?>'></td></tr>
 
             <tr>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/teams');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/score');?></b></td>
-                <td class="dark"><b>&Delta; <?php echo $lng->getTrn('secs/fixtures/report/treas');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/ff');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/smp');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/tcas');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/fame');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('secs/fixtures/report/tv');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('matches/report/teams');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('matches/report/score');?></b></td>
+                <td class="dark"><b>&Delta; <?php echo $lng->getTrn('matches/report/treas');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('matches/report/ff');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('matches/report/smp');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('matches/report/tcas');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('matches/report/fame');?></b></td>
+                <td class="dark"><b><?php echo $lng->getTrn('matches/report/tv');?></b></td>
             </tr>
             
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
@@ -610,7 +490,7 @@ function match_form($match_id) {
                     <input <?php echo $DIS;?> type='radio' name='ff_1' value='-1' <?php echo ($m->ffactor1 == -1) ? 'CHECKED' : '';?>><font color='red'><b>-1</b></font>
                 </td>
                 <td>
-                    <input type="text" name="smp1" value="<?php echo $m->smp1;?>" size="1" maxlength="2" <?php echo $DIS;?>> <?php echo $lng->getTrn('secs/fixtures/report/pts');?>
+                    <input type="text" name="smp1" value="<?php echo $m->smp1;?>" size="1" maxlength="2" <?php echo $DIS;?>> <?php echo $lng->getTrn('matches/report/pts');?>
                 </td>
                 <td>
                     <input type="text" name="tcas1" value="<?php echo $m->tcas1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
@@ -658,7 +538,7 @@ function match_form($match_id) {
             <table class='match_form'>
             <tr><td class='seperator' colspan='13'></td></tr>
             <tr><td colspan='13' class='dark'>
-                <b><a href="index.php?section=coachcorner&amp;team_id=<?php echo $t->team_id;?>"><?php echo $t->name;?></a> <?php echo $lng->getTrn('secs/fixtures/report/report');?></b>
+                <b><a href="index.php?section=coachcorner&amp;team_id=<?php echo $t->team_id;?>"><?php echo $t->name;?></a> <?php echo $lng->getTrn('matches/report/report');?></b>
             </td></tr>
             <tr><td class='seperator' colspan='13'></td></tr>
 
@@ -681,7 +561,7 @@ function match_form($match_id) {
             
             foreach ($t->getPlayers() as $p) {
 
-                if (!player_validation($p, $m))
+                if (!self::player_validation($p, $m))
                     continue;
             
                 // Fetch player data from match
@@ -746,35 +626,32 @@ function match_form($match_id) {
             }
             ?>
             </table>
+
+            <table style='border-spacing: 10px;'>
+                <tr>
+                    <td align="left" valign="top">
+                        <b>Star Players</b>: 
+                        <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" 
+                        onClick="stars = document.getElementById('stars_<?php echo $id;?>'); addStarMerc(<?php echo $id;?>, stars.options[stars.selectedIndex].value);" <?php echo $DIS; ?>>
+                        <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
+                            <?php
+                            foreach ($stars as $s => $d) {
+                                echo "<option ".((in_array($t->race, $d['teams'])) ? 'style="background-color: '.COLOR_HTML_READY.';"' : '')." value='$d[id]'>$s</option>\n";
+                            }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" valign="top">
+                        <b>Mercenaries</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
+                    </td>
+                </tr>
+            </table>
+            
+            <table class='match_form' id='<?php echo "starsmercs_$id";?>'>
+            </table>
             <?php
-            if ($rules['enable_stars_mercs']) {
-                ?>
-                <table style='border-spacing: 10px;'>
-                    <tr>
-                        <td align="left" valign="top">
-                            <b>Star Players</b>: 
-                            <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('secs/fixtures/report/add');?>" 
-                            onClick="stars = document.getElementById('stars_<?php echo $id;?>'); addStarMerc(<?php echo $id;?>, stars.options[stars.selectedIndex].value);" <?php echo $DIS; ?>>
-                            <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
-                                <?php
-                                foreach ($stars as $s => $d) {
-                                    echo "<option ".((in_array($t->race, $d['teams'])) ? 'style="background-color: '.COLOR_HTML_READY.';"' : '')." value='$d[id]'>$s</option>\n";
-                                }
-                                ?>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left" valign="top">
-                            <b>Mercenaries</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('secs/fixtures/report/add');?>" onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
-                        </td>
-                    </tr>
-                </table>
-                
-                <table class='match_form' id='<?php echo "starsmercs_$id";?>'>
-                </table>
-                <?php
-            }
         }
         ?>
         <table class='match_form'>
@@ -782,7 +659,7 @@ function match_form($match_id) {
                 <td class='seperator' colspan='13'></td>
             </tr>
             <tr>
-                <td colspan='13' class='dark'><b><?php echo $lng->getTrn('secs/fixtures/report/summary');?></b></td>
+                <td colspan='13' class='dark'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td>
             </tr>
             <tr>
                 <td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->comment; ?></textarea></td>
@@ -790,7 +667,7 @@ function match_form($match_id) {
         </table>
         <br>
         <center>
-            <input type="submit" name='button' value="<?php echo $lng->getTrn('secs/fixtures/report/save');?>" <?php echo $DIS; ?>>
+            <input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>>
         </center>
     </form>
     <br><br>
@@ -799,7 +676,7 @@ function match_form($match_id) {
     ?>
     <table class="match_form">
         <tr>
-            <td colspan='13' class='dark'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('secs/fixtures/report/msmrc');?></b></td>
+            <td colspan='13' class='dark'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('matches/report/comments');?></b></td>
         </tr>
         <tr>
             <td class='seperator'></td>
@@ -807,14 +684,14 @@ function match_form($match_id) {
         <tr>
             <td>
                 <div id="msmrc">
-                    <?php echo $lng->getTrn('secs/fixtures/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('secs/fixtures/report/none').'</i>';?><br><br>
+                    <?php echo $lng->getTrn('matches/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('common/none').'</i>';?><br><br>
                     <?php
                     foreach ($m->getComments() as $c) {
                         echo "Posted $c->date by <b>$c->sname</b> 
                             <form method='POST' name='cmt$c->cid' style='display:inline; margin:0px;'>
                             <input type='hidden' name='type' value='cmtdel'>
                             <input type='hidden' name='cid' value='$c->cid'>
-                            <a href='javascript:void(0);' onClick='document.cmt$c->cid.submit();'>[".$lng->getTrn('secs/fixtures/report/delete')."]</a>
+                            <a href='javascript:void(0);' onClick='document.cmt$c->cid.submit();'>".$lng->getTrn('common/delete')."</a>
                             </form>
                             :<br>".$c->txt."<br><br>\n";
                     }
@@ -825,10 +702,10 @@ function match_form($match_id) {
         <tr>
             <td>
                 <form method="POST">
-                <?php echo $lng->getTrn('secs/fixtures/report/newCmt');?>:<br>
-                <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('secs/fixtures/report/writeNewCmt');?></textarea>
+                <?php echo $lng->getTrn('matches/report/newCmt');?>:<br>
+                <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('common/nobody');?></textarea>
                 <br>
-                <input type="submit" value="<?php echo $lng->getTrn('secs/fixtures/report/postCmt');?>" name="new_msmrc" <?php echo $CDIS;?>>
+                <input type="submit" value="<?php echo $lng->getTrn('common/submit');?>" name="new_msmrc" <?php echo $CDIS;?>>
                 </form>
             </td>
         </tr>
@@ -869,7 +746,7 @@ function match_form($match_id) {
     }
 }
 
-function player_validation($p, $m) {
+private static function player_validation($p, $m) {
 
     if (!is_object($p) || !is_object($m))
         return false;
