@@ -406,6 +406,8 @@
             <rnd>Round</rnd>
         </roundtypes>
         
+        <winner>Winner</winner>
+        
         <matchdelete><![CDATA[Are you sure you want to delete the match?\n\nPLEASE NOTE:\nUnless the match has not yet been played this action is not reversible and will affect the contents of the subsequent match reports for both teams.\nIt is advised against deleting non-test matches unless you know what you are doing.]]></matchdelete>
         <reset_notice><![CDATA[Are you sure you want to reset the match?\n\nPLEASE NOTE:\nResetting a match clears all match data.\nResetting a match in which one, or both, of the competing teams have played subsequent matches may result in incorrect player states in the match reports of the subsequent matches.]]></reset_notice>
     </tourmatches>
