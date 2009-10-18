@@ -20,6 +20,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+ 
+// Maximum player-number a player can be assigned.
+define("MAX_PLAYER_NR", 100);
+
+// Stars and mercenaries.
+define('ID_MERCS',       -1); // Mercenaries player_id.
+define('ID_STARS_BEGIN', -5); // First star's player_id, second id is one smaller and so on.
+
+// Player types.
+define('PLAYER_TYPE_NORMAL',  1);
+define('PLAYER_TYPE_JOURNEY', 2);
 
 class Player
 {

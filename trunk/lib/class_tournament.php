@@ -21,6 +21,10 @@
  *
  */
 
+// Tournament Types for MySQL tournament "type" column:
+define('TT_FFA', 1);    # Free For All/manual tournament scheduling.
+define('TT_RROBIN', 2); # Round-Robin
+
 class Tour
 {
 

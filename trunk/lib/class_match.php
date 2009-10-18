@@ -21,6 +21,41 @@
  *
  */
 
+// Injury/status constants:
+define('NONE',  1);
+define('MNG',   2);
+define('NI',    3);
+define('MA',    4);
+define('AV',    5);
+define('AG',    6);
+define('ST',    7);
+define('DEAD',  8);
+define('SOLD',  9);
+
+$STATUS_TRANS = array(
+    NONE => 'NONE',
+    MNG  => 'MNG',
+    NI   => 'NI',
+    MA   => 'MA',
+    AV   => 'AV',
+    AG   => 'AG',
+    ST   => 'ST',
+    DEAD => 'DEAD',
+    SOLD => 'SOLD',
+);
+
+// Round types
+define('RT_FINAL', 255);
+define('RT_3RD_PLAYOFF', 254); # 3rd place playoff: The two knock-out matches between the final four teams with the winners progressing to the grand final. The losers are knocked-out, though take part in a third place play-off.
+define('RT_SEMI', 253); # Semi-finals.
+define('RT_QUARTER', 252); # Quarter-finals.
+define('RT_ROUND16', 251); # Round of 16.
+
+define('MAX_ROUNDNR', RT_ROUND16); # This should have the value of the smallest reserved round number.
+
+// Reserved (non-real) matches:
+define('MATCH_ID_IMPORT', -1);
+
 class Match
 {
     /***************
