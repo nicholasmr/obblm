@@ -532,11 +532,11 @@ private static function make_menu()
                 <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('name', 'Comparison');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Gallery'))    { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
             </ul>
         </li>
 
         <li><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
-        <li><a href="index.php?section=gallery"><?php echo $lng->getTrn('menu/gallery');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>
         <?php
         if (!empty($settings['forum_url'])) {

@@ -64,7 +64,6 @@ switch ($_GET['section'])
     case 'coachcorner':  sec_coachcorner();     break;
     case 'teamlist':     sec_teamlist();        break;
     case 'rules':        sec_rules();           break;
-    case 'gallery':      sec_gallery();         break;
     case 'about':        sec_about();           break;    
     case 'matches':      sec_matcheshandler();  break; // Tournaments, matches, match reports, recent matches, upcomming matches etc.
     case 'objhandler':   sec_objhandler();      break; // Object profiles, object standings.

@@ -105,7 +105,6 @@
     </admin_menu>
     <plugins>Plugins</plugins>
     
-    <gallery>Gallery</gallery>
     <rules>Rules</rules>
     <forum>Forum</forum>
 </menu>
@@ -128,18 +127,6 @@
     <by>by</by>
     <lastedit>last edited</lastedit>
 </main>
-
-<gallery>
-    <note>Please select one of the below options.</note>
-    <none>None selected</none>
-
-    <players>Players from team</players>
-    <stads>Team stadiums</stads>
-    <coaches>Coaches</coaches>
-    
-    <playersof>Players of</playersof>
-</gallery>
-
 
 <cc>
     <main>
