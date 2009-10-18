@@ -128,7 +128,7 @@ public static function tourMatches()
         echo "<tr><td colspan='7' class='seperator'></td></tr>";
         $team = new Team($tr->winner);
         echo "<tr>  <td colspan='1'></td>
-                    <td colspan='1' class='light'><i>".$lng->getTrn('secs/fixtures/winner').":</i> $team->name </td>
+                    <td colspan='1' class='match'><i>".$lng->getTrn('matches/tourmatches/winner').":</i> $team->name </td>
                     <td colspan='5'></td>
                 </tr>\n";
     }
