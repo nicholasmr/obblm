@@ -538,7 +538,7 @@ function report() {
             <table class='common'>
             <tr><td class='seperator' colspan='13'></td></tr>
             <tr class='commonhead'><td colspan='13'>
-                <b><a href="index.php?section=coachcorner&amp;team_id=<?php echo $t->team_id;?>"><?php echo $t->name;?></a> <?php echo $lng->getTrn('matches/report/report');?></b>
+                <b><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t->team_id,false,false);?>"><?php echo $t->name;?></a> <?php echo $lng->getTrn('matches/report/report');?></b>
             </td></tr>
             <tr><td class='seperator' colspan='13'></td></tr>
 

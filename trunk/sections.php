@@ -212,7 +212,7 @@ function sec_main() {
                     $t->setStats(STATS_TOUR, $tour->tour_id);
                 }
                 objsort($teams, $tour->getRSSortRule());
-                array_slice($teams, 0, $settings['entries_standings']);
+                $teams = array_slice($teams, 0, $settings['entries_standings']);
                 ?>
                 <div class='boxWide'>
                     <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $tour->name;?></h3>
