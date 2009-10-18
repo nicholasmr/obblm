@@ -239,8 +239,13 @@ echo $easyconvert->output_all();
 if ($err && $inputType == XML)
     $err = false;
 
-title($lng->getTrn('secs/admin/import'));
-echo $lng->getTrn('secs/admin/import_notice1');
+title($lng->getTrn('menu/admin_menu/import'));
+?>
+This page allows you to create a customized team for an existing coach.<br> 
+This is useful if you and your league wish to avoid starting from scratch in order to use OBBLM.<br>
+<u>Note</u>: If you discover errors after having imported your team, you can either repair the errors<br> 
+via the admin tools in the coach corner, or simply delete the team and import a new.<br>
+<?php
 
 if (Module::isRegistered('cyanide_team_import')) {
     ?>
@@ -256,7 +261,7 @@ if (Module::isRegistered('cyanide_team_import')) {
 ?>
 <hr align="left" width="200px">
 <br>
-<?php echo $lng->getTrn('secs/admin/method1');?><br>
+<i>Method 1:</i> Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right click on link --> save as) and uploading it.<br>
 <br>
 <form enctype="multipart/form-data" action="index.php?section=admin&amp;subsec=import" method="POST">
     <b>XML file:</b><br>
@@ -267,7 +272,7 @@ if (Module::isRegistered('cyanide_team_import')) {
 <br>
 <hr align="left" width="200px">
 <br>
-<?php echo $lng->getTrn('secs/admin/method2');?><br>
+<i>Method 2:</i> Import a team by filling in the below formular.<br>
 <br>
 <form method="POST" action="index.php?section=admin&amp;subsec=import" name="importForm">
 
@@ -382,11 +387,11 @@ if (Module::isRegistered('cyanide_team_import')) {
     <br>
     <b>Players:</b>
     <br><br>
-    <u><?php echo $lng->getTrn('secs/admin/import_notice2/note');?></u>
+    <u>Please note:</u>
     <ul>
-        <li><?php echo $lng->getTrn('secs/admin/import_notice2/e1');?></li>
-        <li><?php echo $lng->getTrn('secs/admin/import_notice2/e2');?></li>
-        <li><?php echo $lng->getTrn('secs/admin/import_notice2/e3');?></li>
+        <li>Player entries are ignored if player name is empty.</li>
+        <li>Player skills and characteristics are chosen via coach corner.</li>
+        <li>Empty cells are equal to zero.</li>
     </ul>
 
     <table id="playerTable">

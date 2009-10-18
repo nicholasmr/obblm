@@ -55,7 +55,7 @@ foreach ($coaches as $c) {
         $c->mail = substr($c->mail, 0, 24) . '...';
 }
 
-title($lng->getTrn('secs/admin/um'));
+title($lng->getTrn('menu/admin_menu/usr_man'));
 objsort($coaches, array('+name'));
 $com_coaches = array_filter($coaches, create_function('$c', 'return ($c->ring == '.RING_COM.');'));
 $rings = array(
@@ -65,17 +65,17 @@ $rings = array(
 );
 
 ?>
-<form method="POST" action="?section=admin&amp;subsec=usrman">
+<form method="POST" action="?section=admin&amp;subsec=usr_man">
 
     <b>OBBLM access levels:</b>
     <ul>
-        <li><?php echo $lng->getTrn('secs/admin/access/r2');?></li>
-        <li><?php echo $lng->getTrn('secs/admin/access/r1');?></li>
-        <li><?php echo $lng->getTrn('secs/admin/access/r0');?></li>
+        <li>Ring 2: Ordinary coaches: May manage own teams and submit match reports in which own teams play.</li>
+        <li>Ring 1: League commissioners: Same as ring 2, but may also schedule matches, view the site log and post messages on the front page board.</li>
+        <li>Ring 0: Site administrators: Same as ring 1, but has access to the whole administrators section, and may also manage other teams + submit their match reports.</li>
     </ul>
 
-    <div class="adminBox">
-        <div class="boxTitle3">
+    <div class="boxCommon">
+        <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">
             Create new coach
         </div>
         <div class="boxBody">
@@ -102,8 +102,8 @@ $rings = array(
     <div style='float:left;'> <!-- Outer -->
     <div class="row"> <!-- Inner row 1 -->
     
-    <div class="adminBox">
-        <div class="boxTitle3">
+    <div class="boxCommon">
+        <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">
             Change coach access level
         </div>
         <div class="boxBody">
@@ -130,8 +130,8 @@ $rings = array(
         </div>
     </div>
 
-    <div class="adminBox">
-        <div class="boxTitle3">
+    <div class="boxCommon">
+        <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">
             Change coach password
         </div>
         <div class="boxBody">
@@ -153,8 +153,8 @@ $rings = array(
     </div> <!-- END row 1 -->
     <div class="row"> <!-- Intter row 2 -->
     
-    <div class="adminBox">
-        <div class="boxTitle3">
+    <div class="boxCommon">
+        <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">
             Change commissioner's league
         </div>
         <div class="boxBody">
@@ -185,8 +185,8 @@ $rings = array(
     </div> <!-- END row 1 -->
     </div> <!-- END Outer -->
 
-    <div class="adminBox" style="clear: both;">
-        <div class="boxTitle4">
+    <div class="boxCommon" style="clear: both;">
+        <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>">
             Coaches
         </div>
         <div class="boxBody">

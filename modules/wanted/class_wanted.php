@@ -164,6 +164,7 @@ public static function makeList($ALLOW_EDIT)
 {
     
     global $lng;
+    HTMLOUT::frame_begin();
     title($lng->getTrn('name', __CLASS__));
     
     /* A new entry was sent. Add it to system */
@@ -260,7 +261,7 @@ public static function makeList($ALLOW_EDIT)
     /* Print the wanted players */
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
     if ($ALLOW_EDIT) {
-        echo "<a href='index.php?section=records&amp;subsec=wanted&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
+        echo "<a href='handler.php?type=wanted&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
     $wanted = Wanted::getWanted();
@@ -270,10 +271,10 @@ public static function makeList($ALLOW_EDIT)
         $p = $x['player'];
     
         ?>    
-        <div class="recBox">
-            <div class="boxTitle2"><?php echo $lng->getTrn('wanted', __CLASS__).": <a href='index.php?section=coachcorner&amp;player_id=$p->player_id'>$p->name</a>";?></div>
+        <div style="clear: both; width: 70%; border: 1px solid #545454; margin: 20px auto 20px auto;">
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('wanted', __CLASS__).": <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)."'>$p->name</a>";?></div>
             <div class="boxBody">
-                <table class="recBoxTable">
+                <table class="common">
                     <tr>
                         <td colspan="2" align="left" valign="top">
                             <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
@@ -307,9 +308,9 @@ public static function makeList($ALLOW_EDIT)
                         <?php
                         if ($ALLOW_EDIT) {
                             ?> 
-                            <a href="index.php?section=records&amp;subsec=wanted&amp;action=edit&amp;wanted_id=<?php echo $w->wanted_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
+                            <a href="handler.php?type=wanted&amp;action=edit&amp;wanted_id=<?php echo $w->wanted_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
                             &nbsp;
-                            <a href="index.php?section=records&amp;subsec=wanted&amp;action=delete&amp;wanted_id=<?php echo $w->wanted_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
+                            <a href="handler.php?type=wanted&amp;action=delete&amp;wanted_id=<?php echo $w->wanted_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
                             <?php
                         }
                         ?>
@@ -320,6 +321,7 @@ public static function makeList($ALLOW_EDIT)
         </div>
         <?php
     }
+    HTMLOUT::frame_end();
 }
 }
 

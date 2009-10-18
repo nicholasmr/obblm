@@ -135,7 +135,7 @@ function sec_main() {
         */
         $j = 1;
         foreach (TextSubSys::getMainBoardMessages($settings['entries_messageboard']) as $e) {
-            echo "<div class='main_leftColumn_box'>\n";
+            echo "<div class='boxWide'>\n";
                 echo "<h3 class='boxTitle$e->cssidx'>$e->title</h3>\n";
                 echo "<div class='boxBody'>\n";
                     $fmtMsg = fmtprint($e->message); # Basic supported syntax: linebreaks.
@@ -214,7 +214,7 @@ function sec_main() {
                 objsort($teams, $tour->getRSSortRule());
                 array_slice($teams, 0, $settings['entries_standings']);
                 ?>
-                <div class='main_rightColumn_box'>
+                <div class='boxWide'>
                     <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $tour->name;?></h3>
                     <div class='boxBody'>
                         <table class="boxTable">
@@ -248,7 +248,7 @@ function sec_main() {
         }
         if ($settings['entries_latest'] != 0) {
             ?>
-            <div class="main_rightColumn_box">
+            <div class="boxWide">
                 <h3 class='boxTitle1'><?php echo $lng->getTrn('common/recentmatches');?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
@@ -264,7 +264,7 @@ function sec_main() {
                             echo "<td style='text-align: right;'>" . $m->{"{$home}_name"} . "</td>\n";
                             echo "<td><nobr>" . $m->{"${home}_score"} . "&mdash;" . $m->{"${guest}_score"} . "</nobr></td>\n";
                             echo "<td style='text-align: left;'>" . $m->{"${guest}_name"} . "</td>\n";
-                            echo "<td><a href='index.php?section=matches&amp;type=report&amp;id=$m->match_id'>Show</a></td>";
+                            echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
                             echo "</tr>";
                         }
                         ?>
@@ -282,7 +282,7 @@ function sec_main() {
             );
             foreach ($leaders as $attr => $l) {
                 ?>
-                <div class="main_rightColumn_box">
+                <div class="boxWide">
                     <h3 class='boxTitle1'><?php echo $lng->getTrn($l['translation']);?></h3>
                     <div class='boxBody'>
                         <table class="boxTable">

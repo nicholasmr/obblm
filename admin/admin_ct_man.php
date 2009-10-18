@@ -1,6 +1,6 @@
 <?php
 
-title($lng->getTrn('secs/admin/delete'));
+title($lng->getTrn('menu/admin_menu/ct_man'));
 
 if (isset($_POST['type'])) {
     switch ($_POST['type'])
@@ -36,17 +36,17 @@ objsort($coaches, array('+name'));
 <table>
     <tr>
         <td colspan='2'>
-            <b><?php echo $lng->getTrn('secs/admin/retire/note');?></b>
+            <b>Please note:</b>
             <ul>
-                <li><?php echo $lng->getTrn('secs/admin/retire/e1');?></li>
-                <li><?php echo $lng->getTrn('secs/admin/retire/e2');?></li>
+                <li>For the sake of keeping league statistics intact you are not allowed to delete teams or coaches which have played matches.</li>
+                <li>Once retired a coach cannot login and teams are no longer manageable/editable from their team pages.</li>
             </ul>
         </td>
     </tr>
     <tr>
         <td valign='top'>
-            <div class="adminBox">
-                <div class="boxTitle3">Retire team</div>
+            <div class="boxCommon">
+                <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Retire team</div>
                 <div class="boxBody">
                 <form method="POST">
                 <select name='id'>
@@ -56,7 +56,7 @@ objsort($coaches, array('+name'));
                     }
                     ?>
                 </select><br><br>
-                <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
+                Un-retire (ie. regret retiring) instead of retiring? <input type='checkbox' name='unretire' value='1'><br><br>
                 <input type='submit' value='Retire/unretire'>
                 <input type='hidden' name='type' value='rt'>
                 </form>
@@ -64,8 +64,8 @@ objsort($coaches, array('+name'));
             </div>
         </td>
         <td valign='top'>
-            <div class="adminBox">
-                <div class="boxTitle3">Delete team</div>
+            <div class="boxCommon">
+                <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Delete team</div>
                 <div class="boxBody">
                 <form method="POST">
                 <select name='id'>
@@ -87,8 +87,8 @@ objsort($coaches, array('+name'));
     <tr><td colspan="2"><hr></td></tr>
     <tr>
         <td valign='top'>
-            <div class="adminBox">
-                <div class="boxTitle3">Retire coach</div>
+            <div class="boxCommon">
+                <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Retire coach</div>
                 <div class="boxBody">
                 <form method="POST">
                 <select name='id'>
@@ -98,7 +98,7 @@ objsort($coaches, array('+name'));
                     }
                     ?>
                 </select><br><br>
-                <?php echo $lng->getTrn('secs/admin/retire/unretire');?> <input type='checkbox' name='unretire' value='1'><br><br>
+                Un-retire (ie. regret retiring) instead of retiring? <input type='checkbox' name='unretire' value='1'><br><br>
                 <input type='submit' value='Retire/unretire'>
                 <input type='hidden' name='type' value='rc'>
                 </form>
@@ -106,8 +106,8 @@ objsort($coaches, array('+name'));
             </div>
         </td>
         <td valign='top'>
-            <div class="adminBox">
-                <div class="boxTitle3">Delete coach</div>
+            <div class="boxCommon">
+                <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Delete coach</div>
                 <div class="boxBody">
                 <form method="POST">
                 <select name='id'>

@@ -40,6 +40,9 @@ public static function standings()
 
 public static function profile($pid) 
 {
+    if ($pid < 0)
+        fatal('Sorry, star players to do have regular player profiles.');
+    
     global $lng, $coach;
     $p = new self($pid);
     $team = new Team($p->owned_by_team_id);
@@ -120,7 +123,7 @@ private function _about($ALLOW_EDIT)
 
     ?>
     <div class="row">
-        <div class="pboxShort">
+        <div class="boxPlayerPageInfo">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('profile/player/about');?></div>
             <div class="boxBody">
                 <table class="pbox">
@@ -259,7 +262,7 @@ private function _about($ALLOW_EDIT)
                 </table>
             </div>
         </div>
-        <div class="pboxShort">
+        <div class="boxCommon">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('profile/player/profile');?></div>
             <div class="boxBody">
                 <i><?php echo $lng->getTrn('common/picof');?></i><hr>
@@ -271,7 +274,7 @@ private function _about($ALLOW_EDIT)
                 <?php
                 $txt = $p->getText(); 
                 if (empty($txt)) {
-                    $txt = $lng->getTrn('common/nobody').' '.$p->name; 
+                    $txt = $lng->getTrn('common/nobody');
                 }
                 if ($ALLOW_EDIT) {
                     ?>
@@ -300,10 +303,10 @@ private function _achievements()
     
     ?>
     <div class="row">
-        <div class="pboxLong">
+        <div class="boxWide">
             <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ach');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/ach');?></div>
             <div class="boxBody" id="ach" style='display:none;'>
-                <table class="pbox">
+                <table class="common">
                     <tr>
                         <td><b>Type</b></td>
                         <td><b>Tournament</b></td>
@@ -364,10 +367,10 @@ private function _matchBest()
   
     ?>   
     <div class="row">
-        <div class="pboxLong">
+        <div class="boxWide">
             <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('mbest');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/best');?></div>
             <div class="boxBody" id="mbest" style='display:none;'>
-                <table class="pbox">
+                <table class="common">
                     <tr>
                         <td><b>Type</b></td>
                         <td><b>Tournament</b></td>
@@ -423,7 +426,7 @@ private function _recentGames()
 
     ?>
     <div class="row">
-        <div class="pboxLong">
+        <div class="boxWide">
             <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('played');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/playedmatches');?></div>
             <div class="boxBody" id="played">
                 <?php

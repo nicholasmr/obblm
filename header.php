@@ -266,7 +266,7 @@ require_once('modules/modsheader.php'); # Registration of modules.
  ********************/
 
 // Ring access allowances.
-$ring_sys_access = array('usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 'ld_man' => $lng->getTrn('menu/admin_menu/ld_man'), 'tour_man' => $lng->getTrn('menu/admin_menu/tour_man'), 'import' => $lng->getTrn('menu/admin_menu/import'), 'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'));
+$ring_sys_access = array('usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'), 'ld_man' => $lng->getTrn('menu/admin_menu/ld_man'), 'tour_man' => $lng->getTrn('menu/admin_menu/tour_man'), 'import' => $lng->getTrn('menu/admin_menu/import'));
 $ring_com_access = array('schedule' => $lng->getTrn('menu/admin_menu/schedule'), 'log' => $lng->getTrn('name', 'LogSubSys'));
 
 ?>

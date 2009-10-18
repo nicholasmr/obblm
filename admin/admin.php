@@ -39,14 +39,16 @@ function sec_admin() {
     if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
         fatal("Sorry. Your access level does not allow you opening the requested page.");
 
+    $coaches = Coach::getCoaches(); // Used by multiple sub-sections.
+
     switch ($_GET['subsec']) 
     {
-        case 'usr_man':     include('admin/admin_coachman.php'); break;
-        case 'tour_man':    include('admin/admin_tourman.php'); break;
-        case 'ct_man':      include('admin/admin_team_coach_retire_del.php'); break;
-        case 'ld_man':      include('admin/admin_league_division_man.php'); break;
+        case 'usr_man':     include('admin/admin_usr_man.php'); break;
+        case 'tour_man':    include('admin/admin_tour_man.php'); break;
+        case 'ct_man':      include('admin/admin_ct_man.php'); break;
+        case 'ld_man':      include('admin/admin_ld_man.php'); break;
         case 'schedule':    include('admin/admin_schedule.php'); break;
-        case 'import':      include('admin/admin_teamimport.php'); break;
+        case 'import':      include('admin/admin_import.php'); break;
         case 'log':         Module::run('LogSubSys', array('logViewPage')); break;
         default:            fatal('The requested admin page does not exist.');
     }

@@ -236,6 +236,7 @@ public static function makeList($ALLOW_EDIT)
 {
     
     global $lng;
+    HTMLOUT::frame_begin();
     title($lng->getTrn('name', 'Prize'));
     
     /* A new entry was sent. Add it to system */
@@ -326,7 +327,7 @@ public static function makeList($ALLOW_EDIT)
     /* Print the prizes */
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
     if ($ALLOW_EDIT) {
-        echo "<a href='index.php?section=records&amp;subsec=prize&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
+        echo "<a href='handler.php?type=prize&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
     Prize::printList(false, $ALLOW_EDIT);
@@ -347,11 +348,11 @@ public static function printList($trid, $ALLOW_EDIT)
     foreach ($tours as $t) {
     
         ?>    
-        <div class="recBox">
-            <div class="boxTitle2"><?php echo "$t->name prizes";?> <a href='javascript:void(0);' onClick="obj=document.getElementById('<?php echo 'trpr'.$t->tour_id;?>'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a></div>
+        <div style="clear: both; width: 70%; border: 1px solid #545454; margin: 20px auto 20px auto;">
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo "$t->name prizes";?> <a href='javascript:void(0);' onClick="slideToggleFast('<?php echo 'trpr'.$t->tour_id;?>');">[+/-]</a></div>
             <div id="trpr<?php echo $t->tour_id;?>">
             <div class="boxBody">
-                <table class="recBoxTable" style='border-spacing: 10px;'>
+                <table class="common" style='border-spacing: 10px;'>
                     <tr>
                         <td><b>Prize&nbsp;type</b></td>
                         <td align='center'><b>Team</b></td>
@@ -362,7 +363,7 @@ public static function printList($trid, $ALLOW_EDIT)
                     foreach ($t->prizes as $idx => $probj) {
                         echo "<tr><td colspan='4'><hr></td></td>";
                         echo "<tr>\n";
-                        $delete = ($ALLOW_EDIT) ? '<a href="index.php?section=records&amp;subsec=prize&amp;action=delete&amp;prid='.$probj->prize_id.'">[X]</a>' : '';
+                        $delete = ($ALLOW_EDIT) ? '<a href="handler.php?type=prize&amp;action=delete&amp;prid='.$probj->prize_id.'">'.$lng->getTrn('common/delete').'</a>' : '';
                         echo "<td valign='top'><i>".preg_replace('/\s/', '&nbsp;', $ptypes[$idx])."</i>&nbsp;$delete</td>\n";
                         echo "<td valign='top'><b>".preg_replace('/\s/', '&nbsp;', get_alt_col('teams', 'team_id', $probj->team_id, 'name'))."</b></td>\n";
                         echo "<td valign='top'>".$probj->title."<br><br><i>".$probj->txt."</i></td>\n";
@@ -382,8 +383,8 @@ public static function printList($trid, $ALLOW_EDIT)
             <?php
         }
     }
+    HTMLOUT::frame_end();
 }
-
 }
 
 ?>
