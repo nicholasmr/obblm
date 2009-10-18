@@ -24,6 +24,13 @@
 define('LOGIN_COOKIE_COACHID', 'obblmuserid');
 define('LOGIN_COOKIE_PASSWD', 'obblmpasswd');
 
+// Privilege rings (ie. coach access level)
+define('RING_SYS',   0); // Admins
+define('RING_COM',   1); // Commissioners.
+define('RING_COACH', 2); // Coach/ordinary user
+
+define('RING_COM_NOLEAGUE', 0); // Value of commisioner's league ID reference if the commisioner is NOT assinged to any league.
+
 class Coach
 {
     /***************

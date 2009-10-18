@@ -43,9 +43,9 @@ define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 
 /*********************
- *   Node and object types
+ *   Node and object types.
  *********************/
-
+// DO NOT CHANGE THESE!
 define('T_OBJ_PLAYER',  1);
 define('T_OBJ_TEAM',    2);
 define('T_OBJ_COACH',   3);
@@ -121,79 +121,6 @@ define('T_HTMLBOX_COACH', 2);
 define('T_HTMLBOX_ADMIN', 3);
 define('T_HTMLBOX_STATS', 4);
 define('T_HTMLBOX_OTHER', 5);
-
-/*********************
- *   For players
- *********************/
-
-// Maximum player-number a player can be assigned.
-define("MAX_PLAYER_NR", 100);
-
-// Stars and mercenaries.
-define('ID_MERCS',       -1); // Mercenaries player_id.
-define('ID_STARS_BEGIN', -5); // First star's player_id, second id is one smaller and so on.
-
-// Player types.
-define('PLAYER_TYPE_NORMAL',  1);
-define('PLAYER_TYPE_JOURNEY', 2);
-
-/*********************
- *   For tournaments
- *********************/
-
-// Tournament Types for MySQL tournament "type" column:
-define('TT_FFA', 1);    # Free For All/manual tournament scheduling.
-define('TT_RROBIN', 2); # Round-Robin
-
-/********************
- *   For matches
- ********************/
-
-// Injury/status constants:
-define('NONE',  1);
-define('MNG',   2);
-define('NI',    3);
-define('MA',    4);
-define('AV',    5);
-define('AG',    6);
-define('ST',    7);
-define('DEAD',  8);
-define('SOLD',  9);
-
-$STATUS_TRANS = array(
-    NONE => 'NONE',
-    MNG  => 'MNG',
-    NI   => 'NI',
-    MA   => 'MA',
-    AV   => 'AV',
-    AG   => 'AG',
-    ST   => 'ST',
-    DEAD => 'DEAD',
-    SOLD => 'SOLD',
-);
-
-// Round types
-define('RT_FINAL', 255);
-define('RT_3RD_PLAYOFF', 254); # 3rd place playoff: The two knock-out matches between the final four teams with the winners progressing to the grand final. The losers are knocked-out, though take part in a third place play-off.
-define('RT_SEMI', 253); # Semi-finals.
-define('RT_QUARTER', 252); # Quarter-finals.
-define('RT_ROUND16', 251); # Round of 16.
-
-define('MAX_ROUNDNR', RT_ROUND16); # This should have the value of the smallest reserved round number.
-
-// Reserved (non-real) matches:
-define('MATCH_ID_IMPORT', -1);
-
-/********************
- *   Security
- ********************/
-
-// Privilege rings (ie. coach access level)
-define('RING_SYS',   0); // Admins
-define('RING_COM',   1); // Commissioners.
-define('RING_COACH', 2); // Coach/ordinary user
-
-define('RING_COM_NOLEAGUE', 0); // Value of commisioner's league ID reference if the commisioner is NOT assinged to any league.
 
 /********************
  *  Dependencies
