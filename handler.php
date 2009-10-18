@@ -94,6 +94,11 @@ switch ($_GET['type'])
     case 'prize':  
         Module::run('Prize', array('makeList', $COACH_IS_ADMIN)); 
         break;
+        
+    /* Gallery */
+    case 'gallery':  
+        Module::run('Gallery', array()); 
+        break;
 
     /* Cyanide match import */
     case 'cyanide_match_import':

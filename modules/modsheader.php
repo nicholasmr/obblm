@@ -122,6 +122,12 @@ Module::register(array(
     'filesLoadTime' => array('log/class_log.php', 'log/header.php')
 ));
 
+Module::register(array(
+    'class'         => 'Gallery', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('gallery/class_gallery.php')
+));
+
 /*
     NOTE to Grégory: Please wrap your code into a class that implements "ModuleInterface". Sorry for the inconvenience.
 */
