@@ -133,6 +133,7 @@ class ImageSubSys
     
     public static function makeBox($obj, $obj_id, $showUploadForm = false, $suffix = false) 
     {
+        global $lng;
         // Prints a nice picture box.    
         $height = $width = 250; # Picture dimensions.
         $img = new self($obj, $obj_id);
@@ -145,9 +146,9 @@ class ImageSubSys
             ?>
             <form method='POST' enctype="multipart/form-data">
                 <input type="hidden" name="type" value="pic">
-                Upload new image (preferably <?php echo "${width}x${height}";?>): <br>
+                <?php echo $lng->getTrn('common/uploadnew');?> (<?php echo "${width}x${height}";?>): <br>
                 <input name="<?php echo self::$defaultHTMLUploadName.(($suffix) ? $suffix : '')?>" type="file"><br>
-                <input type="submit" name="pic_upload" value="Upload">
+                <input type="submit" name="pic_upload" value="<?php echo $lng->getTrn('common/upload');?>">
             </form>
             <?php
         }

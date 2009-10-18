@@ -56,10 +56,10 @@ public static function main($argv) {
     list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(false,false,false,'memm');
     foreach (self::getMemMatches($sel_node, $sel_node_id) as $d => $matches) {
         ?>
-        <div class="recBox" style="width:60%;">
-            <div class="boxTitle2"><?php echo $lng->getTrn($d, __CLASS__); ?></div>
+        <div style="clear: both; width: 60%; border: 1px solid #545454; margin: 20px auto 20px auto;">
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn($d, __CLASS__); ?></div>
             <div class="boxBody">
-                <table class="recBoxTable">
+                <table class="common">
                 <?php
                 if (empty($matches)) {
                     ?><tr><td align="center"><br><br><?php echo preg_replace('/\sX\s/', ' '.MAX_MEM_MATCHES.' ', $lng->getTrn('filled', __CLASS__));?><br><br></td></tr><?php
@@ -101,7 +101,7 @@ public static function main($argv) {
                         <td align="right" colspan="3">
                         <small>
                         <i><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?>, <?php echo textdate($m->date_played, true);?></i>, 
-                        <a href="index.php?section=fixturelist&amp;match_id=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('view', __CLASS__);?></a> 
+                        <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('view', __CLASS__);?></a> 
                         </small>
                         </td>
                     </tr>

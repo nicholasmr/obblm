@@ -92,8 +92,8 @@ title($lng->getTrn('menu/admin_menu/schedule'));
         if (t == TT_FFA) {
             n.disabled = false;
             r.disabled = true;
-            slideDown(BOX_FFA);
             slideUp(BOX_RR);
+            slideDown(BOX_FFA);
             
             et2 = document.tourForm['existTour'];
             chFFATour(et2.options[et2.selectedIndex].value); // Re-load state of fields.
@@ -101,8 +101,8 @@ title($lng->getTrn('menu/admin_menu/schedule'));
         else if (t == TT_RROBIN) {
             n.disabled = false;
             r.disabled = false;
-            slideDown(BOX_RR);
             slideUp(BOX_FFA);
+            slideDown(BOX_RR);
             
             chFFATour(-1); // Re-load state of fields.
         }
@@ -134,13 +134,13 @@ objsort($divisions, array('+dispName'));
 ?><br><br>
 
 <form method="POST" name="tourForm">
-    <b><?php echo $lng->getTrn('admin/schedule/tour_type');?>:</b><br>
-    <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA match <i>(Free For All a.k.a. "open league format" - creates a single match)</i><br>
-    <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
-    <br>
     <table>
     <tr>
     <td valign='top'>
+        <b><?php echo $lng->getTrn('admin/schedule/tour_type');?>:</b><br>
+        <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA match <i>(Free For All a.k.a. "open league format" - creates a single match)</i><br>
+        <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
+        <br>
         <b><?php echo $lng->getTrn('common/division');?>:</b><br>
         <select name='did'>
             <?php
@@ -196,7 +196,7 @@ objsort($divisions, array('+dispName'));
         }
         $body .= '</select>';
         $body .= '<br><br>';
-        $body .= '<b>'.$lng->getTrn('admin/schedule/as_reverse').'</b><br>';
+        $body .= '<b>'.$lng->getTrn('admin/schedule/as_reverse').'</b>&nbsp;';
         $body .= '<input type="checkbox" name="reverse" value="1">';
         $BOX_FFA = HTMLOUT::assistantBox($body);
         

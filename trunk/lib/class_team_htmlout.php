@@ -459,6 +459,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         'value'     => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),  
     );
 
+    echo "<a href=".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$this->team_id,false,false)."&amp;detailed=".(($DETAILED) ? 0 : 1).">".$lng->getTrn('profile/team/viewtoggle')."</a><br><br>\n";
     HTMLOUT::sort_table(
         $team->name.' roster', 
         urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
@@ -499,7 +500,6 @@ private function _menu($ALLOW_EDIT, $DETAILED)
     ?>
     <br>
     <ul id="nav" class="dropdown dropdown-horizontal">
-        <li><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$this->team_id,false,false)."&amp;detailed=".(($DETAILED) ? 0 : 1);?>"><?php echo $lng->getTrn('profile/team/viewtoggle');?></a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_actionboxes');?>><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_news');?>><?php echo $lng->getTrn('profile/team/news');?></a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_about');?>><?php echo $lng->getTrn('common/about');?></a></li>
@@ -646,8 +646,8 @@ private function _actionBoxes($ALLOW_EDIT, $players)
      
     echo "<div id='tp_actionboxes'>\n";
     ?>
-    <div class="tpageBox">
-        <div class="boxTitle1"><a name='aanc'><?php echo $lng->getTrn('profile/team/box_info/title');?></a></div>
+    <div class="boxTeamPage">
+        <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><a name='aanc'><?php echo $lng->getTrn('profile/team/box_info/title');?></a></div>
         <div class="boxBody">
             <table width="100%">
                 <tr>
@@ -762,8 +762,8 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     <?php
     if ($ALLOW_EDIT) {
         ?>
-        <div class="tpageBox">
-            <div class="boxTitle2"><?php echo $lng->getTrn('profile/team/box_tm/title');?></div>
+        <div class="boxTeamPage">
+            <div class="boxTitle<?php echo T_HTMLBOX_COACH;?>"><?php echo $lng->getTrn('profile/team/box_tm/title');?></div>
             <div class="boxBody">
                 <?php
                 
@@ -1133,8 +1133,8 @@ private function _actionBoxes($ALLOW_EDIT, $players)
         <?php
         if ($coach->admin) {
             ?>
-            <div class="tpageBox">
-                <div class="boxTitle3"><?php echo $lng->getTrn('profile/team/box_admin/title');?></div>
+            <div class="boxTeamPage">
+                <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>"><?php echo $lng->getTrn('profile/team/box_admin/title');?></div>
                 <div class="boxBody">
                     <?php
                     $base = 'profile/team';
@@ -1493,11 +1493,11 @@ private function _about($ALLOW_EDIT)
     echo "<div id='tp_about'>\n";
     title("<a name='anc_about'>".$lng->getTrn('common/about')." $team->name</a>");
     ?>
-    <table class='picAndText'>
-        <tr>
-            <td class='light'><b><?php echo $lng->getTrn('profile/team/logo');?></b></td>
-            <td class='light'><b><?php echo $lng->getTrn('profile/team/stad');?></b></td>
-            <td class='light'><b><?php echo $lng->getTrn('common/about');?></b></td>
+    <table class='common'>
+        <tr class='commonhead'>
+            <td><b><?php echo $lng->getTrn('profile/team/logo');?></b></td>
+            <td><b><?php echo $lng->getTrn('profile/team/stad');?></b></td>
+            <td><b><?php echo $lng->getTrn('common/about');?></b></td>
         </tr>
         <tr>
             <td>
@@ -1550,7 +1550,7 @@ private function _news($ALLOW_EDIT)
     $news = $team->getNews(MAX_TNEWS);
     ?>
     <div class="row">
-        <div class="tnewsBox">
+        <div class="boxWide">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('profile/team/tnews');?></div>
             <div class="boxBody">
             <?php

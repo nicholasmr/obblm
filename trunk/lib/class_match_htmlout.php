@@ -428,9 +428,9 @@ function report() {
     <br>
     <?php HTMLOUT::helpBox($lng->getTrn('matches/report/help'), $lng->getTrn('common/needhelp')); ?>
     <form method="POST" enctype="multipart/form-data">
-        <table class="match_form">
-            <tr>
-                <td colspan="<?php echo $CP;?>" class="dark"><b><?php echo $lng->getTrn('matches/report/info');?></b></td>
+        <table class="common">
+            <tr class='commonhead'>
+                <td colspan="<?php echo $CP;?>"><b><?php echo $lng->getTrn('matches/report/info');?></b></td>
             </tr>
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
             <tr>
@@ -463,15 +463,15 @@ function report() {
             
             <tr><td class="seperator" colspan='<?php echo $CP;?>'></td></tr>
 
-            <tr>
-                <td class="dark"><b><?php echo $lng->getTrn('matches/report/teams');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('matches/report/score');?></b></td>
-                <td class="dark"><b>&Delta; <?php echo $lng->getTrn('matches/report/treas');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('matches/report/ff');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('matches/report/smp');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('matches/report/tcas');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('matches/report/fame');?></b></td>
-                <td class="dark"><b><?php echo $lng->getTrn('matches/report/tv');?></b></td>
+            <tr class='commonhead'>
+                <td><b><?php echo $lng->getTrn('matches/report/teams');?></b></td>
+                <td><b><?php echo $lng->getTrn('matches/report/score');?></b></td>
+                <td><b>&Delta; <?php echo $lng->getTrn('matches/report/treas');?></b></td>
+                <td><b><?php echo $lng->getTrn('matches/report/ff');?></b></td>
+                <td><b><?php echo $lng->getTrn('matches/report/smp');?></b></td>
+                <td><b><?php echo $lng->getTrn('matches/report/tcas');?></b></td>
+                <td><b><?php echo $lng->getTrn('matches/report/fame');?></b></td>
+                <td><b><?php echo $lng->getTrn('matches/report/tv');?></b></td>
             </tr>
             
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
@@ -535,9 +535,9 @@ function report() {
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
 
             ?>
-            <table class='match_form'>
+            <table class='common'>
             <tr><td class='seperator' colspan='13'></td></tr>
-            <tr><td colspan='13' class='dark'>
+            <tr class='commonhead'><td colspan='13'>
                 <b><a href="index.php?section=coachcorner&amp;team_id=<?php echo $t->team_id;?>"><?php echo $t->name;?></a> <?php echo $lng->getTrn('matches/report/report');?></b>
             </td></tr>
             <tr><td class='seperator' colspan='13'></td></tr>
@@ -649,17 +649,17 @@ function report() {
                 </tr>
             </table>
             
-            <table class='match_form' id='<?php echo "starsmercs_$id";?>'>
+            <table class='common' id='<?php echo "starsmercs_$id";?>'>
             </table>
             <?php
         }
         ?>
-        <table class='match_form'>
+        <table class='common'>
             <tr>
                 <td class='seperator' colspan='13'></td>
             </tr>
-            <tr>
-                <td colspan='13' class='dark'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td>
+            <tr class='commonhead'>
+                <td colspan='13'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td>
             </tr>
             <tr>
                 <td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->comment; ?></textarea></td>
@@ -674,9 +674,9 @@ function report() {
     <?php
     $CDIS = (!is_object($coach)) ? 'DISABLED' : '';
     ?>
-    <table class="match_form">
-        <tr>
-            <td colspan='13' class='dark'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('matches/report/comments');?></b></td>
+    <table class="common">
+        <tr class='commonhead'>
+            <td colspan='13'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('matches/report/comments');?></b></td>
         </tr>
         <tr>
             <td class='seperator'></td>

@@ -18,7 +18,7 @@ if (isset($_POST['type'])) {
     }
 }
 
-title($lng->getTrn('secs/admin/ldm'));
+title($lng->getTrn('menu/admin_menu/ld_man'));
 $leagues = League::getLeagues();
 $divisions = Division::getDivisions();
 
@@ -26,8 +26,8 @@ $divisions = Division::getDivisions();
 <table>
     <tr>
         <td valign='top'>
-        <div class="adminBox">
-            <div class="boxTitle3">Create division</div>
+        <div class="boxCommon">
+            <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Create division</div>
             <div class="boxBody">
             <form method="POST">
             In league:<br>
@@ -47,8 +47,8 @@ $divisions = Division::getDivisions();
         </div>
         </td>
         <td valign='top'>
-        <div class="adminBox">
-            <div class="boxTitle3">Modify division</div>
+        <div class="boxCommon">
+            <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Modify division</div>
             <div class="boxBody">
             <form method="POST">
             Division:<br>
@@ -76,8 +76,8 @@ $divisions = Division::getDivisions();
         </div>
         </td>
         <td valign='top'>
-        <div class="adminBox">
-            <div class="boxTitle3">Delete division</div>
+        <div class="boxCommon">
+            <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Delete division</div>
             <div class="boxBody">
             <form method="POST">
             Division:<br>
@@ -98,8 +98,8 @@ $divisions = Division::getDivisions();
     <tr><td colspan="3"><hr></td></tr>
     <tr>
         <td valign='top'>
-        <div class="adminBox">
-            <div class="boxTitle3">Create league</div>
+        <div class="boxCommon">
+            <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Create league</div>
             <div class="boxBody">
             <form method="POST">
             Name:<br>
@@ -113,8 +113,8 @@ $divisions = Division::getDivisions();
         </div>
         </td>
         <td valign='top'>
-        <div class="adminBox">
-            <div class="boxTitle3">Modify league</div>
+        <div class="boxCommon">
+            <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Modify league</div>
             <div class="boxBody">
             <form method="POST">
             League:<br>
@@ -136,8 +136,8 @@ $divisions = Division::getDivisions();
         </div>
         </td>
         <td valign='top'>
-        <div class="adminBox">
-            <div class="boxTitle3">Delete league</div>
+        <div class="boxCommon">
+            <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Delete league</div>
             <div class="boxBody">
             <form method="POST">
             League:<br>

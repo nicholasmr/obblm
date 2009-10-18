@@ -54,7 +54,7 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
 
     foreach ($matches as $m) {
         $m->score = "$m->team1_score&mdash;$m->team2_score";
-        $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>[".$lng->getTrn('common/view')."]</a>";
+        $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>";
         $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
         if ($FOR_OBJ) {
             $m->result = matchresult_icon($m->result);
@@ -108,7 +108,7 @@ public static function upcommingGames($obj, $obj_id, $node, $node_id, $opp_obj, 
         : Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, true);
 
     foreach ($matches as $m) {
-        $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>[".$lng->getTrn('common/view')."]</a>";
+        $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>";
         $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
     }
 
@@ -331,6 +331,8 @@ public static function standings($obj, $node, $node_id, array $opts)
 
 public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $prefix = '')
 {
+    global $lng;
+    
     // Set defaults
     $s_node     = "${prefix}_node";     # _SESSION index
     $s_node_id  = "${prefix}_node_id";  # _SESSION index
@@ -350,7 +352,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
 
     ?>
     <form method="POST">
-    Display from
+    <?php echo $lng->getTrn('common/displayfrom');?>
     <select name="node" onChange="
         selConst = Number(this.options[this.selectedIndex].value);
         disableall();
@@ -362,7 +364,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         }
     ">
         <?php
-        foreach (array(STATS_LEAGUE => 'League', STATS_DIVISION => 'Division', STATS_TOUR => 'Tournament') as $const => $name) {
+        foreach (array(STATS_LEAGUE => $lng->getTrn('common/league'), STATS_DIVISION => $lng->getTrn('common/division'), STATS_TOUR => $lng->getTrn('common/tournament')) as $const => $name) {
             echo "<option value='$const' ".(($_SESSION[$s_node] == $const) ? 'SELECTED' : '').">$name</option>\n";
         }
         ?>
@@ -388,7 +390,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
     </select>
     <select style='display:none;' name="league_in" id="league_in">
         <?php
-        echo "<option value='0'>-All-</option>\n";
+        echo "<option value='0'>-".$lng->getTrn('common/all')."-</option>\n";
         foreach (League::getLeagues() as $l) {
             echo "<option value='$l->lid'".
                 (($_SESSION[$s_node] == STATS_LEAGUE && $_SESSION[$s_node_id] == $l->lid) ? 'SELECTED' : '')
@@ -396,7 +398,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         }
         ?>
     </select> &nbsp;
-    <input type="submit" name="select" value="Select">
+    <input type="submit" name="select" value="<?php echo $lng->getTrn('common/select');?>">
     </form>
     <script language="JavaScript" type="text/javascript">
         <?php
@@ -434,7 +436,7 @@ public static function frame_begin($stylesheet = false)
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <title><?php echo $settings['site_name']; ?> Blood Bowl League</title>
-        <link type="text/css" href="css/ss.css" rel="stylesheet">
+        <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
@@ -693,49 +695,6 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
         }
     echo "</table>\n";
 }
-
-#public static function sort_rule($w) {
-#    
-#    $rules = array(
-#        'coach'             => array('-win_percentage', '-won_tours', '-cas', '+name'),         // Coach standings.
-#        'team'              => array('-won', '-draw', '+lost', '-score_diff', '-cas', '+name'), // Team standings.
-#        'player'            => array('-value', '-td', '-cas', '-spp', '+name'),                 // Player standings.
-#        'team_roster'       => array('+nr', '+name'),               // Team roster.
-#        'star'              => array('-played', '+name'),           // Star standings.
-#        'starmerc_HH'       => array('-date_played'),               // Star & Merc hire history (HH) tables.
-#        'race_roster'       => array('+cost', '-position'),         // Race roster
-#        'race'              => array('-win_percentage', '+race'),   // Race standings.
-#        'matcherecent'      => array('-date_played'),               // Recent matches table.
-#        'matcheupcomming'   => array('-date_played'),               // Upcomming matches table.
-#    );
-
-#    return $rules[$w];
-#}
-
-#public static function rule_dict(array $rule) {
-#    
-#    /* Translates sort rules. */
-#    
-#    $d = array(
-#        'win_percentage'    => 'win percentage',
-#        'date_played'       => 'date played',
-#        'won_tours'         => 'won tours',
-#        'score_diff'        => 'score diff.',
-#        'tdcas'             => '{td+cas}',
-#        'row_won'           => 'won in row',
-#        'row_lost'          => 'lost in row',
-#        'row_draw'          => 'draw in row',
-#    );
-#    
-#    foreach ($rule as &$r) {
-#        $r = preg_replace('/_tour$/', '', $r);
-#        foreach ($d as $idx => $rpl) {
-#            $r = preg_replace("/$idx/", $rpl, $r);
-#        }
-#    }
-#    
-#    return $rule;
-#}
 
 private static $helpBoxIdx = 0;
 public static function helpBox($body, $link = '', $style = '')
