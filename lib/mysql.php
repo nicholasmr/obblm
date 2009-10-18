@@ -386,7 +386,7 @@ function upgrade_database($version)
                 SQLUpgrade::runIfColumnNotExists('teams', 'f_lid',      'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id'),
                 SQLUpgrade::runIfColumnNotExists('coaches', 'com_lid',  'ALTER TABLE coaches ADD COLUMN com_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER retired'),
                 'DELETE FROM texts WHERE type = 8',
-                'ALTER TABLE matches DROP hash_botocs', 
+                SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 'ALTER TABLE matches DROP hash_botocs'),
             );
             break;
 
@@ -427,6 +427,15 @@ class SQLUpgrade
         $result = mysql_query($colCheck);
         $row = mysql_fetch_assoc($result);
         return ((int) $row['exists']) ? 'SELECT \'1\'' : $query;
+    }
+    
+    // EXACTLY like runIfColumnNotExists(), but has the logic reversed at the return statement.
+    public static function runIfColumnExists($tbl, $col, $query)
+    {
+        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
+        $result = mysql_query($colCheck);
+        $row = mysql_fetch_assoc($result);
+        return ((int) $row['exists']) ? $query : 'SELECT \'1\'';
     }
     
     public static function runIfTrue($evalQuery, $query)
