@@ -401,6 +401,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
     <input type="submit" name="select" value="<?php echo $lng->getTrn('common/select');?>">
     </form>
     <script language="JavaScript" type="text/javascript">
+        var open;
         <?php
         echo '
             switch('.$_SESSION[$s_node].')
@@ -585,7 +586,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
     $ANCHOR = (array_key_exists('anchor', $extra)) ? $extra['anchor'] : false;
 
     if ($DONR) {
-        $fields = array_merge(array('nr' => array('desc' => 'Nr.')), $fields);
+        $fields = array_merge(array('nr' => array('desc' => '#')), $fields);
         array_push($no_print_fields, 'nr');
     }
 
