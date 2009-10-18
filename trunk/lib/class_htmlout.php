@@ -155,7 +155,7 @@ public static function standings($obj, $node, $node_id, array $opts)
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
     
-    $extra['noHelp'] = true;
+    $extra['noHelp'] = false;
     
     $hidemenu = (array_key_exists('hidemenu', $opts) && $opts['hidemenu']);
     echo '<div ' . (($hidemenu) ? "style='display:none;'" : '').'>';
@@ -598,7 +598,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             <?php echo $title;?>&nbsp;
             <?php
             if (!array_key_exists('noHelp', $extra) || !$extra['noHelp']) {
-                ?><a href="javascript:void(0);" onclick="window.open('html/table_desc.html','tableColumnDescriptions','width=600,height=400')">[?]</a><?php
+                ?><a TARGET="_blank" href="html/table_desc.html">[?]</a><?php
             }
             ?>
             </b></td>
