@@ -332,8 +332,10 @@ class Match
         $did  = get_alt_col('tours', 'tour_id', $trid, 'f_did');
         $lid  = get_alt_col('divisions', 'did', $did, 'f_lid');
         // Match data.
-        foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki') as $inj) {
-            ${$inj} = ($input[$inj]) ? $input[$inj] : 0;
+        
+        $MG = (int) (getPlayerStatus($pid,$mid) == MNG); // Missed (this) Game (ie. had a MNG from previous match)?
+        foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki') as $a) {
+            ${$a} = ($input[$a] && !$MG) ? $input[$a] : 0;
         }
         // Injs
         $inj = $agn1 = $agn2 = NONE;
@@ -434,7 +436,8 @@ class Match
                                 ki      = 0,
                                 inj     = " . NONE . ",
                                 agn1    = " . NONE . ",
-                                agn2    = " . NONE . "
+                                agn2    = " . NONE . ",
+                                mg      = 1
                             
                                 WHERE f_match_id = $row[match_id] AND f_player_id = $pid");
                         }
@@ -473,7 +476,8 @@ class Match
                         ki      = $ki,
                         inj     = $inj,
                         agn1    = $agn1,
-                        agn2    = $agn2
+                        agn2    = $agn2,
+                        mg      = $MG
 
                         WHERE f_player_id = $pid AND f_match_id = $mid";
         }
@@ -500,7 +504,8 @@ class Match
                 ki,
                 inj,
                 agn1,
-                agn2
+                agn2,
+                mg
             )
             VALUES
             (
@@ -523,7 +528,8 @@ class Match
                 $ki,
                 $inj,
                 $agn1,
-                $agn2
+                $agn2,
+                $MG
             )";
         }
 

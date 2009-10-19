@@ -576,48 +576,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
     }
     
     public function getStatus($match_id) {
-
-        /**
-         * Returns player status for specific $match_id, or current status if $match_id == -1 (latest match).
-         **/
-
-        // Determine from what match to pull status from.
-        $query = '';
-        
-        if ($match_id == -1) {
-            $query = "SELECT inj FROM match_data, matches WHERE 
-                            f_player_id = $this->player_id AND
-                            match_id = f_match_id AND
-                            date_played IS NOT NULL
-                       ORDER BY date_played DESC LIMIT 1";
-        }
-        else {
-            $match = new Match($match_id); # Assume that $match_id is valid.
-            if (!$match->is_played) # If not is played, then date_played is not valid -> return current player status instead.
-                return $this->getStatus(-1);
-                
-            $query = "SELECT inj FROM match_data, matches WHERE 
-                            f_player_id = $this->player_id AND
-                            match_id = f_match_id AND
-                            date_played IS NOT NULL AND
-                            date_played < '$match->date_played'
-                       ORDER BY date_played DESC LIMIT 1";
-        }
-
-        // Determine what status is.
-        $result = mysql_query($query);
-        if (is_resource($result) && mysql_num_rows($result) > 0) {
-            $row = mysql_fetch_assoc($result);
-            switch ($row['inj'])
-            {
-                case NONE: return NONE;
-                case DEAD: return DEAD;
-                default:   return MNG;
-            }
-        }
-        else {
-            return NONE;
-        }
+        return self::getPlayerStatus($this->player_id, $match_id);
     }
     
     public function getDateDied() {
@@ -802,7 +761,52 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
     /***************
      * Statics
      ***************/
-     
+
+    public static function getPlayerStatus($player_id, $match_id) {
+
+        /**
+         * Returns player status for specific $match_id, or current status if $match_id == -1 (latest match).
+         **/
+
+        // Determine from what match to pull status from.
+        $query = '';
+        
+        if ($match_id == -1) {
+            $query = "SELECT inj FROM match_data, matches WHERE 
+                            f_player_id = $player_id AND
+                            match_id = f_match_id AND
+                            date_played IS NOT NULL
+                       ORDER BY date_played DESC LIMIT 1";
+        }
+        else {
+            $match = new Match($match_id); # Assume that $match_id is valid.
+            if (!$match->is_played) # If not is played, then date_played is not valid -> return current player status instead.
+                return self::getPlayerStatus($player_id, -1);
+                
+            $query = "SELECT inj FROM match_data, matches WHERE 
+                            f_player_id = $player_id AND
+                            match_id = f_match_id AND
+                            date_played IS NOT NULL AND
+                            date_played < '$match->date_played'
+                       ORDER BY date_played DESC LIMIT 1";
+        }
+
+        // Determine what status is.
+        $result = mysql_query($query);
+        if (is_resource($result) && mysql_num_rows($result) > 0) {
+            $row = mysql_fetch_assoc($result);
+            switch ($row['inj'])
+            {
+                case NONE: return NONE;
+                case DEAD: return DEAD;
+                default:   return MNG;
+            }
+        }
+        else {
+            return NONE;
+        }
+    }
+
     public static function getPlayers() {
         
         /**

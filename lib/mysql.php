@@ -134,7 +134,6 @@ $core_tables = array(
         'fame2'         => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
         'tv1'           => 'MEDIUMINT UNSIGNED NOT NULL DEFAULT 0',
         'tv2'           => 'MEDIUMINT UNSIGNED NOT NULL DEFAULT 0',
-        'hash_botocs'   => 'VARCHAR(32)',
     ),
     'match_data' => array(
         'f_coach_id'    => 'MEDIUMINT UNSIGNED',
@@ -155,6 +154,7 @@ $core_tables = array(
         'inj'           => 'TINYINT UNSIGNED',
         'agn1'          => 'TINYINT UNSIGNED',
         'agn2'          => 'TINYINT UNSIGNED',
+        'mg'            => 'BOOLEAN NOT NULL DEFAULT FALSE',
     ),
     'texts' => array(
         'txt_id'    => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -387,6 +387,17 @@ function upgrade_database($version)
                 SQLUpgrade::runIfColumnNotExists('coaches', 'com_lid',  'ALTER TABLE coaches ADD COLUMN com_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER retired'),
                 'DELETE FROM texts WHERE type = 8',
                 SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 'ALTER TABLE matches DROP hash_botocs'),
+                # Add mg (miss game) indicator in player's match data.
+                SQLUpgrade::runIfColumnNotExists('match_data', 'mg', 'ALTER TABLE match_data ADD COLUMN mg BOOLEAN NOT NULL DEFAULT FALSE'),
+                SQLUpgrade::runIfTrue('SELECT COUNT(*) FROM match_data', 
+                    'UPDATE match_data, (
+                    '.implode(' UNION ', array_map(
+                        create_function('$o','return "(SELECT $o->f_player_id AS \'f_player_id\', $o->f_match_id AS \'f_match_id\', ".((int) (Player::getPlayerStatus($o->f_player_id,$o->f_match_id) == '.MNG.'))." AS \'mg\')";'), 
+                        get_rows('match_data', array('f_match_id', 'f_player_id'))
+                    )).'
+                    ) AS tmpTbl 
+                    SET match_data.mg = tmpTbl.mg WHERE match_data.f_match_id = tmpTbl.f_match_id AND match_data.f_player_id = tmpTbl.f_player_id'
+                ),
             );
             break;
 

@@ -467,7 +467,7 @@ private static function buildQueryComponents($obj, $obj_id, $node, $node_id, $TT
             array_push($where, "players$TTS.player_id = $obj_id", "players$TTS.owned_by_team_id = $tid");
             
             // We must add the below, else above is equivalent to the player's team match stats. Ie. matches this player did not compete in will be counted as played!
-            $from[]    = "(SELECT DISTINCT(f_match_id) AS 'p_mid' FROM match_data WHERE f_player_id = $obj_id) AS pmatches$TTS"; # Also use $TTL here, same reason as above for players table.
+            $from[]    = "(SELECT DISTINCT(f_match_id) AS 'p_mid' FROM match_data WHERE f_player_id = $obj_id AND mg IS FALSE) AS pmatches$TTS"; # Also use $TTL here, same reason as above for players table.
             $where[]   = "match_id = pmatches$TTS.p_mid";
             break;
             
