@@ -302,28 +302,11 @@ function report() {
                 if (!self::player_validation($p, $m))
                     continue;
                 
-                // Set zero entry for MNG player(s).
-                if ($p->getStatus($m->match_id) == MNG) {
-                    $_POST['mvp_' . $p->player_id]      = 0;
-                    $_POST['cp_' . $p->player_id]       = 0;
-                    $_POST['td_' . $p->player_id]       = 0;
-                    $_POST['intcpt_' . $p->player_id]   = 0;
-                    $_POST['bh_' . $p->player_id]       = 0;
-                    $_POST['si_' . $p->player_id]       = 0;
-                    $_POST['ki_' . $p->player_id]       = 0;
-                    $_POST['inj_' . $p->player_id]      = NONE;
-                    $_POST['agn1_' . $p->player_id]     = NONE;
-                    $_POST['agn2_' . $p->player_id]     = NONE;
-                }
-                
                 $m->entry(array(
                     'player_id' => $p->player_id,
                     'team_id'   => $t->team_id,
-                    /* 
-                        Regarding MVP: We must check for isset() since checkboxes are not sent at all when not checked! 
-                        We must also test for truth since the MNG-status exception above defines the MNG status, and thereby passing isset() here!
-                    */
-                    'mvp'     => (isset($_POST['mvp_' . $p->player_id]) && $_POST['mvp_' . $p->player_id]) ? 1 : 0,
+                    // Regarding MVP: We must check for isset() since checkboxes are not sent at all when not checked! 
+                    'mvp'     => (isset($_POST['mvp_' . $p->player_id])) ? 1 : 0,
                     'cp'      => $_POST['cp_' . $p->player_id],
                     'td'      => $_POST['td_' . $p->player_id],
                     'intcpt'  => $_POST['intcpt_' . $p->player_id],

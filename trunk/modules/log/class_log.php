@@ -47,7 +47,7 @@ public static function getModuleTables()
         'log' => array(
             # Column name => column definition
             'log_id'   => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
-            'cid'      => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+            'cid'      => 'MEDIUMINT UNSIGNED NOT NULL',
             'category' => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
             'msg'      => 'TEXT',
             'date'     => 'DATETIME',
@@ -61,7 +61,7 @@ public static function getModuleUpgradeSQL()
         '075-080' => array(
             'CREATE TABLE IF NOT EXISTS log (
                 log_id   MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                cid      MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                cid      MEDIUMINT UNSIGNED NOT NULL,
                 category TINYINT UNSIGNED NOT NULL DEFAULT 0,
                 msg      TEXT,
                 date     DATETIME
