@@ -45,7 +45,7 @@ define('MAX_TNEWS', 3); // This number of entries are shown on the team news boa
 /*********************
  *   Node and object types.
  *********************/
-// DO NOT CHANGE THESE!
+// DO NOT CHANGE THESE EVER!!!
 define('T_OBJ_PLAYER',  1);
 define('T_OBJ_TEAM',    2);
 define('T_OBJ_COACH',   3);
@@ -57,34 +57,6 @@ define('T_NODE_MATCH',      11);
 define('T_NODE_TOURNAMENT', 12);
 define('T_NODE_DIVISION',   13);
 define('T_NODE_LEAGUE',     14);
-
-/*********************
- *   Stats types. Used by Stats class.
- *********************/
-// Repalce these by the T_[OBJ|NODE]_* constants.
-define('STATS_PLAYER', 1);
-define('STATS_TEAM',   2);
-define('STATS_COACH',  3);
-define('STATS_RACE',   4);
-define('STATS_STAR',   5);
-# Match groupings (nodes):
-define('STATS_MATCH',    11);
-define('STATS_TOUR',     12);
-define('STATS_DIVISION', 13);
-define('STATS_LEAGUE',   14);
-
-// Translation between MySQL column match data references in the match_data table to PHP STATS_* constants.
-$STATS_TRANS = array(
-    STATS_PLAYER    => 'match_data.f_player_id',
-    STATS_TEAM      => 'match_data.f_team_id',
-    STATS_COACH     => 'match_data.f_coach_id',
-    STATS_RACE      => 'match_data.f_race_id',
-
-    STATS_MATCH     => 'match_data.f_match_id',
-    STATS_TOUR      => 'match_data.f_tour_id',
-    STATS_DIVISION  => 'match_data.f_did',
-    STATS_LEAGUE    => 'match_data.f_lid',
-);
 
 /*********************
  *   Images
