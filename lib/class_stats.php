@@ -21,6 +21,35 @@
  *
  */
 
+/*
+    DEV NOTE: 
+        These constants really should be replaced by the T_[OBJ|NODE]_* constants,
+        but this poses in no way any problems and thus the priority to change these is virtually none.
+*/
+define('STATS_PLAYER', T_OBJ_PLAYER);
+define('STATS_TEAM',   T_OBJ_TEAM);
+define('STATS_COACH',  T_OBJ_COACH);
+define('STATS_RACE',   T_OBJ_RACE);
+define('STATS_STAR',   T_OBJ_STAR);
+# Match groupings (nodes):
+define('STATS_MATCH',    T_NODE_MATCH);
+define('STATS_TOUR',     T_NODE_TOURNAMENT);
+define('STATS_DIVISION', T_NODE_DIVISION);
+define('STATS_LEAGUE',   T_NODE_LEAGUE);
+
+// Translation between MySQL column match data references in the match_data table to PHP STATS_* constants.
+$STATS_TRANS = array(
+    STATS_PLAYER    => 'match_data.f_player_id',
+    STATS_TEAM      => 'match_data.f_team_id',
+    STATS_COACH     => 'match_data.f_coach_id',
+    STATS_RACE      => 'match_data.f_race_id',
+
+    STATS_MATCH     => 'match_data.f_match_id',
+    STATS_TOUR      => 'match_data.f_tour_id',
+    STATS_DIVISION  => 'match_data.f_did',
+    STATS_LEAGUE    => 'match_data.f_lid',
+);
+
 class Stats
 {
 
@@ -423,10 +452,21 @@ public static function getStreaks($obj, $obj_id, $node, $node_id, $opp_obj, $opp
 
 public static function getTeamsCnt($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
 {
-    if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
-    else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
+    /* 
+        Calling this function only makes sense for $obj = race OR coach.
+    */
     
-    $query = 'SELECT COUNT(DISTINCT(team_id)) AS \'teams_cnt\' FROM '.implode(',',$from).' WHERE '.implode(' AND ', $where);
+    // Simply find teams owned by the $obj with ID $obj_id ?
+    if (!$node && !$opp_obj) {
+        $query = 'SELECT COUNT(*) AS \'teams_cnt\' FROM teams WHERE '.(($obj == STATS_RACE) ? 'f_race_id' : 'owned_by_coach_id')." = $obj_id";
+    }
+    // Find the teams played in $node (optionally) against $opp_obj?
+    else {
+        if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
+        else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
+        $query = 'SELECT COUNT(DISTINCT(teams.team_id)) AS \'teams_cnt\' FROM '.implode(',',$from).' WHERE '.implode(' AND ', $where);
+    }
+    
     $result = mysql_query($query);
     return mysql_fetch_assoc($result);
 }
