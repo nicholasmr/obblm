@@ -149,26 +149,6 @@ public static function tours()
 
     title($lng->getTrn('menu/matches_menu/tours'));
 
-    if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) {
-		?>
-		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
-		<b>BOTOCS match report upload</b>:
-		<a href='handler.php?type=leegmgr'>Click here</a>
-		</div>
-		<br>
-		<?php
-    }
-
-    if (isset($settings['cyanide_enabled']) && $settings['cyanide_enabled']) {
-		?>
-		<div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
-		<b>Cyanide match report upload</b>:
-		<a href='handler.php?type=cyanide_match_import'>Click here</a>
-		</div>
-		<br>
-		<?php
-    }
-
     $query = "SELECT lid,did,tour_id,locked,
         tours.name AS 'tours.name',divisions.name AS 'divisions.name',leagues.name AS 'leagues.name'
         FROM tours,divisions,leagues WHERE tours.f_did = divisions.did AND divisions.f_lid = leagues.lid
