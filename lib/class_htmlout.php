@@ -526,6 +526,8 @@ private static function make_menu()
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/plugins');?></span>
             <ul>
+                <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">BOTOCS match report upload</a></li><?php } ?>
+                <?php if (isset($settings['cyanide_enabled']) && $settings['cyanide_enabled'])   { ?><li><a href="handler.php?type=cyanide_match_import">Cyanide match report upload</a></li><?php } ?>
                 <?php if (Module::isRegistered('HOF'))   { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Wanted')){ ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Prize')) { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
