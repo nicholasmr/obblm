@@ -355,9 +355,34 @@ function setup_database() {
             $status &= mysql_query($query);
         }
     }
-    echo ($tblStat)
+    echo ($status)
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
+
+    // Add MySQL functions/procedures.
+    $functions = array(
+        'CREATE FUNCTION getPlayerStatus(pid MEDIUMINT UNSIGNED, mid MEDIUMINT SIGNED) 
+            RETURNS TINYINT UNSIGNED 
+            NOT DETERMINISTIC
+            READS SQL DATA
+        BEGIN
+            DECLARE status TINYINT UNSIGNED DEFAULT NULL;
+            SELECT inj INTO status FROM match_data, matches WHERE 
+                    match_data.f_player_id = pid AND
+                    matches.match_id = match_data.f_match_id AND
+                    matches.date_played IS NOT NULL AND
+                    matches.date_played < (SELECT date_played FROM matches WHERE matches.match_id = mid)
+                    ORDER BY date_played DESC LIMIT 1;
+            RETURN IF(status IS NULL, 1, status);
+        END',
+    );
+    $status = true;
+    foreach ($functions as $f) {
+        $status &= mysql_query($query);
+    }
+    echo ($status)
+        ? "<font color='green'>OK &mdash; created MySQL functions/procedures</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
 
     // Create root user and leave welcome message on messageboard
     echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => RING_SYS, 'mail' => 'None', 'phone' => ''))) 
@@ -383,21 +408,31 @@ function upgrade_database($version)
     {
         case '075-080':
             $core_SQLs = array(
+                # Add league relations.
                 SQLUpgrade::runIfColumnNotExists('teams', 'f_lid',      'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id'),
                 SQLUpgrade::runIfColumnNotExists('coaches', 'com_lid',  'ALTER TABLE coaches ADD COLUMN com_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER retired'),
+                # Delete, now modulized, type from texts.
                 'DELETE FROM texts WHERE type = 8',
                 SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 'ALTER TABLE matches DROP hash_botocs'),
+                # Add MySQL function getPlayerStatus(pid, mid).
+                'DROP FUNCTION IF EXISTS getPlayerStatus',
+                'CREATE FUNCTION getPlayerStatus(pid MEDIUMINT UNSIGNED, mid MEDIUMINT SIGNED) 
+                    RETURNS TINYINT UNSIGNED 
+                    NOT DETERMINISTIC
+                    READS SQL DATA
+                BEGIN
+                    DECLARE status TINYINT UNSIGNED DEFAULT NULL;
+                    SELECT inj INTO status FROM match_data, matches WHERE 
+                            match_data.f_player_id = pid AND
+                            matches.match_id = match_data.f_match_id AND
+                            matches.date_played IS NOT NULL AND
+                            matches.date_played < (SELECT date_played FROM matches WHERE matches.match_id = mid)
+                            ORDER BY date_played DESC LIMIT 1;
+                   RETURN IF(status IS NULL, 1, status);
+                END',
                 # Add mg (miss game) indicator in player's match data.
                 SQLUpgrade::runIfColumnNotExists('match_data', 'mg', 'ALTER TABLE match_data ADD COLUMN mg BOOLEAN NOT NULL DEFAULT FALSE'),
-                SQLUpgrade::runIfTrue('SELECT COUNT(*) FROM match_data', 
-                    'UPDATE match_data, (
-                    '.implode(' UNION ', array_map(
-                        create_function('$o','return "(SELECT $o->f_player_id AS \'f_player_id\', $o->f_match_id AS \'f_match_id\', ".((int) (Player::getPlayerStatus($o->f_player_id,$o->f_match_id) == '.MNG.'))." AS \'mg\')";'), 
-                        get_rows('match_data', array('f_match_id', 'f_player_id'))
-                    )).'
-                    ) AS tmpTbl 
-                    SET match_data.mg = tmpTbl.mg WHERE match_data.f_match_id = tmpTbl.f_match_id AND match_data.f_player_id = tmpTbl.f_player_id'
-                ),
+                'UPDATE match_data SET mg = IF(f_player_id < 0, FALSE, IF(getPlayerStatus(f_player_id, f_match_id) = '.NONE.', FALSE, TRUE))',
             );
             break;
 

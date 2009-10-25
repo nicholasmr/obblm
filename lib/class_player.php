@@ -779,16 +779,11 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
                        ORDER BY date_played DESC LIMIT 1";
         }
         else {
-            $match = new Match($match_id); # Assume that $match_id is valid.
-            if (!$match->is_played) # If not is played, then date_played is not valid -> return current player status instead.
+            $date_played = get_alt_col('matches', 'match_id', $match_id, 'date_played'); # Assume that $match_id is valid.
+            if (empty($date_played)) # If not is played, then date_played is not valid -> return current player status instead.
                 return self::getPlayerStatus($player_id, -1);
                 
-            $query = "SELECT inj FROM match_data, matches WHERE 
-                            f_player_id = $player_id AND
-                            match_id = f_match_id AND
-                            date_played IS NOT NULL AND
-                            date_played < '$match->date_played'
-                       ORDER BY date_played DESC LIMIT 1";
+            $query = "SELECT getPlayerStatus($player_id,$match_id) AS 'inj'";
         }
 
         // Determine what status is.
