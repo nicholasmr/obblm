@@ -434,10 +434,10 @@ class Match
                                 bh      = 0,
                                 si      = 0,
                                 ki      = 0,
-                                inj     = " . NONE . ",
-                                agn1    = " . NONE . ",
-                                agn2    = " . NONE . ",
-                                mg      = 1
+                                inj     = ".NONE.",
+                                agn1    = ".NONE.",
+                                agn2    = ".NONE.",
+                                mg      = TRUE
                             
                                 WHERE f_match_id = $row[match_id] AND f_player_id = $pid");
                         }
@@ -674,7 +674,8 @@ class Match
             ki,
             inj,
             agn1,
-            agn2
+            agn2,
+            mg
         )
         VALUES
         (
@@ -696,7 +697,8 @@ class Match
             $ki,
             $inj,
             $agn1,
-            $agn2
+            $agn2,
+            FALSE
         )";
         
         return mysql_query($query);
