@@ -796,16 +796,17 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 )',
                 // In case of people having used the 0.80 revisions we must save their exisitng leegmgr data:
                 'DROP TABLE IF EXISTS leegmgr_matches_temp',
-                'CREATE TABLE leegmgr_matches_temp (
-                    mid     MEDIUMINT,
-                    replay  MEDIUMBLOB,
-                    hash    VARCHAR(32)
-                )
-                ',
+                SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 
+                    'CREATE TABLE leegmgr_matches_temp (
+                        mid     MEDIUMINT,
+                        replay  MEDIUMBLOB,
+                        hash    VARCHAR(32)
+                    )
+                '),
                 SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 'INSERT INTO leegmgr_matches_temp (mid, hash) SELECT match_id, hash_botocs FROM matches'),
-                'UPDATE leegmgr_matches_temp, leegmgr_matches SET leegmgr_matches_temp.replay = leegmgr_matches.replay WHERE leegmgr_matches_temp.mid = leegmgr_matches.mid',
-                'DROP TABLE leegmgr_matches',
-                'ALTER TABLE leegmgr_matches_temp RENAME TO leegmgr_matches',
+                SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 'UPDATE leegmgr_matches_temp, leegmgr_matches SET leegmgr_matches_temp.replay = leegmgr_matches.replay WHERE leegmgr_matches_temp.mid = leegmgr_matches.mid'),
+                SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 'DROP TABLE leegmgr_matches'),
+                SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 'ALTER TABLE leegmgr_matches_temp RENAME TO leegmgr_matches'),
             ),
         );
     }
