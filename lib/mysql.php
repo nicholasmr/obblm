@@ -164,6 +164,35 @@ $core_tables = array(
         'txt2'      => 'TEXT',
         'txt'       => 'TEXT',
     ),
+#    'mv_tour_data' => array(
+#        # Object references
+#        'f_cid'  => 'MEDIUMINT UNSIGNED',
+#        'f_tid'  => 'MEDIUMINT UNSIGNED',
+#        'f_pid'  => 'MEDIUMINT SIGNED',
+#        'f_rid'  => 'TINYINT UNSIGNED',
+#        # Node references
+#        'f_trid' => 'MEDIUMINT UNSIGNED',
+#        'f_did'  => 'MEDIUMINT UNSIGNED',
+#        'f_lid'  => 'MEDIUMINT UNSIGNED',
+#        # Stats
+#        'mvp'       => 'SMALLINT UNSIGNED',
+#        'cp'        => 'SMALLINT UNSIGNED',
+#        'td'        => 'SMALLINT UNSIGNED',
+#        'intcpt'    => 'SMALLINT UNSIGNED',
+#        'bh'        => 'SMALLINT UNSIGNED',
+#        'ki'        => 'SMALLINT UNSIGNED',
+#        'si'        => 'SMALLINT UNSIGNED',
+#        'won'       => 'SMALLINT UNSIGNED',
+#        'lost'      => 'SMALLINT UNSIGNED',
+#        'draw'      => 'SMALLINT UNSIGNED',
+#        'played'    => 'SMALLINT UNSIGNED',
+#        'win_pct'   => 'FLOAT UNSIGNED',
+#        'swon'      => 'SMALLINT UNSIGNED',
+#        'slost'     => 'SMALLINT UNSIGNED',
+#        'sdraw'     => 'SMALLINT UNSIGNED',
+#        'ga'        => 'SMALLINT UNSIGNED',
+#        'gf'        => 'SMALLINT UNSIGNED',
+#    ),
 );
 
 function mysql_up($do_table_check = false) {
@@ -432,7 +461,7 @@ function upgrade_database($version)
                 END',
                 # Add mg (miss game) indicator in player's match data.
                 SQLUpgrade::runIfColumnNotExists('match_data', 'mg', 'ALTER TABLE match_data ADD COLUMN mg BOOLEAN NOT NULL DEFAULT FALSE'),
-                'UPDATE match_data SET mg = IF(f_player_id < 0, FALSE, IF(getPlayerStatus(f_player_id, f_match_id) = '.NONE.', FALSE, TRUE))',
+                'UPDATE match_data SET mg = IF(f_player_id < 0, FALSE, IF(getPlayerStatus(f_player_id, f_match_id) = 1, FALSE, TRUE))',
             );
             break;
 

@@ -333,7 +333,7 @@ class Match
         $lid  = get_alt_col('divisions', 'did', $did, 'f_lid');
         // Match data.
         
-        $MG = (int) (getPlayerStatus($pid,$mid) == MNG); // Missed (this) Game (ie. had a MNG from previous match)?
+        $MG = (int) (Player::getPlayerStatus($pid,$mid) == MNG); // Missed (this) Game (ie. had a MNG from previous match)?
         foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki') as $a) {
             ${$a} = ($input[$a] && !$MG) ? $input[$a] : 0;
         }
