@@ -83,7 +83,7 @@ $rules['val_reduc_ag'] = 0; // Default is 0 (disabled).
     IMPORTANT: This setting must not be changed while using OBBLM. Please enable/disable it and leave it that way throughout the use of this software.
  */
 
-$rules['enable_lrb6x'] = true; // Default is false.
+$rules['enable_lrb6x'] = false; // Default is false.
 
 /*****************
  * House ranking systems

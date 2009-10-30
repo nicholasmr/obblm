@@ -67,7 +67,7 @@ public function getGoods($double_rr_price = false)
 
     global $DEA, $rules;
 
-    $rr_price = (array_key_exists($this->race, $DEA) ? $DEA[$this->race]['other']['RerollCost'] : 0) * (($double_rr_price && !$rules['static_rerolls_prices']) ? 2 : 1);
+    $rr_price = (array_key_exists($this->race, $DEA) ? $DEA[$this->race]['other']['rr_cost'] : 0) * (($double_rr_price && !$rules['static_rerolls_prices']) ? 2 : 1);
     $apoth = !in_array($this->race, array('Khemri', 'Necromantic', 'Nurgle', 'Undead'));
 
     return array(

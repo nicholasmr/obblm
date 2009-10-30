@@ -249,6 +249,9 @@ function report() {
         if (get_magic_quotes_gpc())
             $_POST['summary'] =  stripslashes($_POST['summary']);
         
+        echo "<!-- Match report submit started -->";
+        $time_start = microtime(true);
+        
         // Update general match data
         status($m->update(array(
             'submitter_id'  => $_SESSION['coach_id'],
@@ -351,6 +354,8 @@ function report() {
                 }
             }
         }
+
+        echo '<!-- Match report submit ended: '.(microtime(true)-$time_start).' seconds -->';
 
         // Refresh objects used to display form.
         $m = new Match($match_id);
