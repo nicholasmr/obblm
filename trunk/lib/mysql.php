@@ -164,36 +164,88 @@ $core_tables = array(
         'txt2'      => 'TEXT',
         'txt'       => 'TEXT',
     ),
-#    'mv_tour_data' => array(
-#        # Object references
-#        'f_cid'  => 'MEDIUMINT UNSIGNED',
-#        'f_tid'  => 'MEDIUMINT UNSIGNED',
-#        'f_pid'  => 'MEDIUMINT SIGNED',
-#        'f_rid'  => 'TINYINT UNSIGNED',
-#        # Node references
-#        'f_trid' => 'MEDIUMINT UNSIGNED',
-#        'f_did'  => 'MEDIUMINT UNSIGNED',
-#        'f_lid'  => 'MEDIUMINT UNSIGNED',
-#        # Stats
-#        'mvp'       => 'SMALLINT UNSIGNED',
-#        'cp'        => 'SMALLINT UNSIGNED',
-#        'td'        => 'SMALLINT UNSIGNED',
-#        'intcpt'    => 'SMALLINT UNSIGNED',
-#        'bh'        => 'SMALLINT UNSIGNED',
-#        'ki'        => 'SMALLINT UNSIGNED',
-#        'si'        => 'SMALLINT UNSIGNED',
-#        'won'       => 'SMALLINT UNSIGNED',
-#        'lost'      => 'SMALLINT UNSIGNED',
-#        'draw'      => 'SMALLINT UNSIGNED',
-#        'played'    => 'SMALLINT UNSIGNED',
-#        'win_pct'   => 'FLOAT UNSIGNED',
-#        'swon'      => 'SMALLINT UNSIGNED',
-#        'slost'     => 'SMALLINT UNSIGNED',
-#        'sdraw'     => 'SMALLINT UNSIGNED',
-#        'ga'        => 'SMALLINT UNSIGNED',
-#        'gf'        => 'SMALLINT UNSIGNED',
-#    ),
+    'game_data_players' => array(
+        'pos_id'    => 'SMALLINT UNSIGNED',
+        'f_race_id' => 'TINYINT UNSIGNED',
+        'pos'    => 'VARCHAR(60)',
+        'cost'   => 'MEDIUMINT UNSIGNED',
+        'qty'    => 'TINYINT UNSIGNED',
+        'ma'     => 'TINYINT UNSIGNED',
+        'st'     => 'TINYINT UNSIGNED',
+        'ag'     => 'TINYINT UNSIGNED',
+        'av'     => 'TINYINT UNSIGNED',
+        'skills' => 'VARCHAR('.(19+20*3).')', # Set limit to 20 skills, ie. chars = 19 commas + 20*3 (max 20 integers of 3 decimals (assumed upper limit)).
+        'norm'   => 'VARCHAR(6)', # Max used is 4 chars, but set to 6 to be sure.
+        'doub'   => 'VARCHAR(6)', # Max used is 4 chars, but set to 6 to be sure.
+    ),
+    'game_data_stars' => array(
+        'star_id'=> 'SMALLINT SIGNED',
+        'name'   => 'VARCHAR(60)',
+        'cost'   => 'MEDIUMINT UNSIGNED',
+        'races'  => 'VARCHAR('.(29+30*2).')', # Race IDs that may hire star. Total of (less than) 30 races of each two digit race ID + 29 commas = 29+30*2
+        'ma'     => 'TINYINT UNSIGNED',
+        'st'     => 'TINYINT UNSIGNED',
+        'ag'     => 'TINYINT UNSIGNED',
+        'av'     => 'TINYINT UNSIGNED',
+        'skills' => 'VARCHAR('.(19+20*3).')', # Set limit to 20 skills, ie. chars = 19 commas + 20*3 (max 20 integers of 3 decimals (assumed upper limit)).
+    ),
+    'game_data_races' => array(
+        'race_id' => 'TINYINT UNSIGNED',
+        'name'    => 'VARCHAR(50)',
+        'cost_rr' => 'MEDIUMINT UNSIGNED',
+    ),
 );
+
+/*
+    MV tables
+*/
+
+// Common:
+$mv_commoncols = array(
+    # Node references
+    'f_trid' => $core_tables['match_data']['f_tour_id'],
+    'f_did'  => $core_tables['match_data']['f_did'],
+    'f_lid'  => $core_tables['match_data']['f_lid'],
+    # Stats
+    'mvp'       => 'SMALLINT UNSIGNED',
+    'cp'        => 'SMALLINT UNSIGNED',
+    'td'        => 'SMALLINT UNSIGNED',
+    'intcpt'    => 'SMALLINT UNSIGNED',
+    'bh'        => 'SMALLINT UNSIGNED',
+    'ki'        => 'SMALLINT UNSIGNED',
+    'si'        => 'SMALLINT UNSIGNED',
+    'cas'       => 'SMALLINT UNSIGNED',
+    'tdcas'     => 'SMALLINT UNSIGNED',
+    'spp'       => 'SMALLINT UNSIGNED',
+    'won'       => 'SMALLINT UNSIGNED',
+    'lost'      => 'SMALLINT UNSIGNED',
+    'draw'      => 'SMALLINT UNSIGNED',
+    'played'    => 'SMALLINT UNSIGNED',
+    'win_pct'   => 'FLOAT UNSIGNED',
+    'ga'        => 'SMALLINT UNSIGNED',
+    'gf'        => 'SMALLINT UNSIGNED',
+);
+$core_tables['mv_players'] = array(
+    'f_pid' => $core_tables['match_data']['f_player_id'],
+    'f_tid' => $core_tables['match_data']['f_team_id'],
+    'f_cid' => $core_tables['match_data']['f_coach_id'],
+    'f_rid' => $core_tables['match_data']['f_race_id'],
+);
+$core_tables['mv_teams'] = array(
+    'f_tid' => $core_tables['match_data']['f_team_id'],
+    'f_cid' => $core_tables['match_data']['f_coach_id'],
+    'f_rid' => $core_tables['match_data']['f_race_id'],
+);
+$core_tables['mv_coaches'] = array(
+    'f_cid' => $core_tables['match_data']['f_coach_id'],
+);
+$core_tables['mv_races'] = array(
+    'f_rid' => $core_tables['match_data']['f_race_id'],
+);
+foreach (array('players', 'teams', 'coaches', 'races') as $mv_tbl) {
+    $idx = "mv_$mv_tbl";
+    $core_tables[$idx] = array_merge($core_tables[$idx], $mv_commoncols);
+}
 
 function mysql_up($do_table_check = false) {
 
@@ -357,61 +409,21 @@ function setup_database() {
 
     echo "<b>Other tasks...</b><br>\n";
     
-    // Add tables indexes/keys.
-    $indexes = "
-        ALTER TABLE texts       ADD INDEX idx_f_id                  (f_id);
-        ALTER TABLE texts       ADD INDEX idx_type                  (type);
-        ALTER TABLE players     ADD INDEX idx_owned_by_team_id      (owned_by_team_id);
-        ALTER TABLE teams       ADD INDEX idx_owned_by_coach_id     (owned_by_coach_id);
-        ALTER TABLE matches     ADD INDEX idx_f_tour_id             (f_tour_id);
-        ALTER TABLE matches     ADD INDEX idx_team1_id_team2_id     (team1_id,team2_id);
-        ALTER TABLE matches     ADD INDEX idx_team2_id              (team2_id);
-        ALTER TABLE match_data  ADD INDEX idx_m                     (f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_tr                    (f_tour_id);
-        ALTER TABLE match_data  ADD INDEX idx_p_m                   (f_player_id,f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_t_m                   (f_team_id,  f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_r_m                   (f_race_id,  f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_c_m                   (f_coach_id, f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_p_tr                  (f_player_id,f_tour_id);
-        ALTER TABLE match_data  ADD INDEX idx_t_tr                  (f_team_id,  f_tour_id);
-        ALTER TABLE match_data  ADD INDEX idx_r_tr                  (f_race_id,  f_tour_id);
-        ALTER TABLE match_data  ADD INDEX idx_c_tr                  (f_coach_id, f_tour_id);
-    ";
-    $status = true;
-    foreach (explode(';', $indexes) as $query) {
-        $query = trim($query);
-        if (!empty($query)) {
-            $status &= mysql_query($query);
-        }
-    }
-    echo ($status)
+    echo (SQLCore::syncGameData()) 
+        ? "<font color='green'>OK &mdash; Synchronize game data with database</font><br>\n" 
+        : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
+    
+    echo (SQLCore::installTableIndexes(true))
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
 
-    // Add MySQL functions/procedures.
-    $functions = array(
-        'CREATE FUNCTION getPlayerStatus(pid MEDIUMINT UNSIGNED, mid MEDIUMINT SIGNED) 
-            RETURNS TINYINT UNSIGNED 
-            NOT DETERMINISTIC
-            READS SQL DATA
-        BEGIN
-            DECLARE status TINYINT UNSIGNED DEFAULT NULL;
-            SELECT inj INTO status FROM match_data, matches WHERE 
-                    match_data.f_player_id = pid AND
-                    matches.match_id = match_data.f_match_id AND
-                    matches.date_played IS NOT NULL AND
-                    matches.date_played < (SELECT date_played FROM matches WHERE matches.match_id = mid)
-                    ORDER BY date_played DESC LIMIT 1;
-            RETURN IF(status IS NULL, 1, status);
-        END',
-    );
-    $status = true;
-    foreach ($functions as $f) {
-        $status &= mysql_query($query);
-    }
-    echo ($status)
+    echo (SQLCore::installProcsAndFuncs(true))
         ? "<font color='green'>OK &mdash; created MySQL functions/procedures</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
+
+    echo (SQLCore::setTriggers(true))
+        ? "<font color='green'>OK &mdash; created MySQL triggers</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not create MySQL triggers</font><br>\n";
 
     // Create root user and leave welcome message on messageboard
     echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => RING_SYS, 'mail' => 'None', 'phone' => ''))) 
@@ -489,36 +501,13 @@ function upgrade_database($version)
     }
     echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
     
+    echo (syncgamedata()) 
+        ? "<font color='green'>OK &mdash; Synchronize game data with database</font><br>\n" 
+        : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
+    
     // Done!
     mysql_close($conn);
     return true;
-}
-
-class SQLUpgrade
-{
-    public static function runIfColumnNotExists($tbl, $col, $query)
-    {
-        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
-        $result = mysql_query($colCheck);
-        $row = mysql_fetch_assoc($result);
-        return ((int) $row['exists']) ? 'SELECT \'1\'' : $query;
-    }
-    
-    // EXACTLY like runIfColumnNotExists(), but has the logic reversed at the return statement.
-    public static function runIfColumnExists($tbl, $col, $query)
-    {
-        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
-        $result = mysql_query($colCheck);
-        $row = mysql_fetch_assoc($result);
-        return ((int) $row['exists']) ? $query : 'SELECT \'1\'';
-    }
-    
-    public static function runIfTrue($evalQuery, $query)
-    {
-        $result = mysql_query($evalQuery);
-        $row = mysql_fetch_row($result);
-        return ((int) $row[0]) ? $query : 'SELECT \'1\'';
-    }
 }
 
 ?>

@@ -53,30 +53,73 @@ $STATS_TRANS = array(
 class Stats
 {
 
+
+public static function getMV($table, array $filter, $grp, $n, array $sortRule)
+{
+    global $mv_commoncols;
+    
+    $mv_keys = array(
+        T_OBJ_PLAYER => 'f_pid',
+        T_OBJ_TEAM   => 'f_tid',
+        T_OBJ_COACH  => 'f_cid',
+        T_OBJ_RACE   => 'f_rid',
+        T_NODE_TOURNAMENT => 'f_trid',
+        T_NODE_DIVISION   => 'f_did',
+        T_NODE_LEAGUE     => 'f_lid',
+    );
+    $mv_tables = array(
+        T_OBJ_PLAYER => 'mv_players',
+        T_OBJ_TEAM   => 'mv_teams',
+        T_OBJ_COACH  => 'mv_coaches',
+        T_OBJ_RACE   => 'mv_races',
+    );
+
+    $grp = $mv_keys[$grp];
+    $table = $mv_tables[$table];
+    $cols = array_filter(array_keys($mv_commoncols), create_function('$c', 'return !preg_match(\'/^f_/\', $c);'));
+    
+    if (!empty($sortRule)) {
+        for ($i = 0; $i < count($sortRule); $i++) {
+            $str = $sortRule[$i];
+            $sortRule[$i] = 'SUM('.substr($str, 1, strlen($str)) .') '. (($str[0] == '+') ? 'ASC' : 'DESC');
+        }
+    }
+    
+    $query = "SELECT $grp, ".implode(',', array_map(create_function('$c', 'return "SUM($c) AS \'$c\'";'), $cols)).' FROM '.$table;
+
+    $and = false;
+    if (!empty($filter)) {
+        $query .= " WHERE ";
+        foreach ($filter as $filter_key => $id) {
+            if (is_numeric($id)) {
+                $query .= (($and) ? ' AND ' : ' ').$mv_keys[$filter_key]." = $id ";
+                $and = true;
+            }
+        }
+    }
+
+    $query .= " 
+        ".((!empty($grp))       ? " GROUP BY $grp" : '')." 
+        ".((!empty($sortRule))  ? ' ORDER BY '.implode(', ', $sortRule) : '')." 
+        ".((is_numeric($n))     ? " LIMIT $n" : '')." 
+    ";
+
+    $ret = array();
+    if (($result = mysql_query($query)) && is_resource($result) && mysql_num_rows($result) > 0) {
+        while ($r = mysql_fetch_object($result)) {
+            array_push($ret, $r);
+        }
+    }
+
+    return $ret;
+}
+
 /***************
  *   Pull out leaders of a specific stat (or multiple).
  ***************/
-public static function getLeaders($grp = false, $n = false, $sortRule = array(), $mkObjs = false)
+public static function getLeaders($obj, $node, $node_id, array $stats, $N)
 {
-    $leaders = Stats::getStatsNaked(array(), $grp, $n ,$sortRule);
-    $objs = array();
-
-    if ($mkObjs) {
-        foreach ($leaders as $l) {
-            switch ($grp)
-            {
-                case STATS_PLAYER:  array_push($objs, new Player($l[STATS_PLAYER])); break;
-                case STATS_TEAM:    array_push($objs, new Team($l[STATS_TEAM])); break;
-                case STATS_COACH:   array_push($objs, new Coach($l[STATS_COACH])); break;
-                default: continue;
-            }
-        }
-        
-        return $objs;
-    }
-    else {
-        return $leaders;
-    }
+    return self::getMV($obj, ($node) ? array($node => $node_id) : array(), $obj, $N, $stats);
 }
 
 /***************

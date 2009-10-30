@@ -276,9 +276,9 @@ function sec_main() {
         
         if ($settings['entries_leaders'] != 0) {
             $leaders = array(
-                'td'  => array('translation' => 'common/td',  'players' => Stats::getLeaders(STATS_PLAYER, $settings['entries_leaders'], array('-td'), true)),
-                'cas' => array('translation' => 'common/cas', 'players' => Stats::getLeaders(STATS_PLAYER, $settings['entries_leaders'], array('-bh+ki+si'), true)),
-                'cp'  => array('translation' => 'common/cp',  'players' => Stats::getLeaders(STATS_PLAYER, $settings['entries_leaders'], array('-cp'), true)),            
+                'td'  => array('translation' => 'common/td',  'players' => Stats::getLeaders(T_OBJ_PLAYER,false,false,array('-td'),$settings['entries_leaders'])),
+                'cas' => array('translation' => 'common/cas', 'players' => Stats::getLeaders(T_OBJ_PLAYER,false,false,array('-cas'),$settings['entries_leaders'])),
+                'cp'  => array('translation' => 'common/cp',  'players' => Stats::getLeaders(T_OBJ_PLAYER,false,false,array('-cp'),$settings['entries_leaders'])),
             );
             foreach ($leaders as $attr => $l) {
                 ?>
@@ -293,6 +293,7 @@ function sec_main() {
                             </tr>
                             <?php
                             foreach ($l['players'] as $p) {
+                                $p->name = get_alt_col('players', 'player_id', $p->f_pid, 'name');
                                 echo "<tr>\n";
                                 echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)."'>$p->name</a>" : $p->name)."</td>\n";
                                 echo "<td>".$p->$attr."</td>\n";
