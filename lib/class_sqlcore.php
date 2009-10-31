@@ -1,28 +1,77 @@
 <?php 
 
+/*
+    Load only this file on demand.
+*/
+
 class SQLCore
 {
+
 public static function setTriggers($set = true)
 {
+    global $CT_cols;
+    
+    // Shortcuts
+    $trig_MV_sync_block = '
+        BEGIN 
+            DECLARE retval BOOLEAN; 
+            DECLARE tid '.$CT_cols[T_OBJ_PLAYER].' DEFAULT NULL;
+            DECLARE cid '.$CT_cols[T_OBJ_PLAYER].' DEFAULT NULL;
+            DECLARE rid '.$CT_cols[T_OBJ_PLAYER].' DEFAULT NULL;
+            CALL getObjParents('.T_OBJ_PLAYER.', REGEX_REPLACE.f_player_id, tid, cid, rid);
+            SET retval = syncMVplayer(REGEX_REPLACE.f_player_id, REGEX_REPLACE.f_tour_id);
+            SET retval = syncMVteam(tid, REGEX_REPLACE.f_tour_id);
+            SET retval = syncMVcoach(cid, REGEX_REPLACE.f_tour_id);
+            SET retval = syncMVrace(rid, REGEX_REPLACE.f_tour_id);
+        END';
+    $trig_DPROPS_player_b_block = '
+        BEGIN
+            CALL getPlayerDProps(NEW.player_id, NEW.inj_ma,NEW.inj_av,NEW.inj_ag,NEW.inj_st,NEW.inj_ni, NEW.ma,NEW.av,NEW.ag,NEW.st, NEW.value, NEW.status, NEW.date_died);
+        END';
+    $run_DPROPS_team_trigger = 'UPDATE teams SET teams.name = teams.name WHERE teams.team_id = REGEX_REPLACE.owned_by_team_id';
+    $trig_DPROPS_player_a_conditional_block = '
+        BEGIN
+            IF OLD.value != NEW.value THEN
+                '.$run_DPROPS_team_trigger.';
+            END IF;
+        END';
+    $trig_DPROPS_player_a_block = '
+        BEGIN
+            '.$run_DPROPS_team_trigger.';
+        END';
+    $trig_DPROPS_team_block = '
+        BEGIN
+            CALL getTeamDProps(NEW.team_id, NEW.tv);
+        END';
+        
+    $triggers = array(
+        // These sync the MV tables
+        'CREATE TRIGGER MV_sync_insert AFTER INSERT ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_MV_sync_block),
+        'CREATE TRIGGER MV_sync_update AFTER UPDATE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_MV_sync_block),
+        'CREATE TRIGGER MV_sync_delete AFTER DELETE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_MV_sync_block),
+        // These sync dynamic team and player properties (team+player values, current player inj count, current player status etc.).
+            # Player DPROPS
+        'CREATE TRIGGER DPROPS_player_b_update BEFORE UPDATE ON players FOR EACH ROW '.$trig_DPROPS_player_b_block,
+        'CREATE TRIGGER DPROPS_player_b_insert BEFORE INSERT ON players FOR EACH ROW '.$trig_DPROPS_player_b_block,
+            # Team DPROPS
+        'CREATE TRIGGER DPROPS_player_a_delete AFTER DELETE ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_DPROPS_player_a_block),
+        'CREATE TRIGGER DPROPS_player_a_update AFTER UPDATE ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_DPROPS_player_a_conditional_block),
+        'CREATE TRIGGER DPROPS_player_a_insert AFTER INSERT ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_DPROPS_player_a_block),
+        'CREATE TRIGGER DPROPS_team_update BEFORE UPDATE ON teams FOR EACH ROW '.$trig_DPROPS_team_block,
+        'CREATE TRIGGER DPROPS_team_insert BEFORE INSERT ON teams FOR EACH ROW '.$trig_DPROPS_team_block,
+    );
+    
     $status = true;
-    foreach (array('MD_insert', 'MD_update', 'MD_delete') as $t)
-        $status &= mysql_query('DROP TRIGGER IF EXISTS '.$t);
+    foreach ($triggers as $t) {
+        $matches = array();
+        preg_match('/^CREATE TRIGGER (\w*) /', $t, $matches);
+        $status &= mysql_query('DROP TRIGGER IF EXISTS '.$matches[1]);
+    }
         
     if (!$set) {
         return $status;
     }
-
-    # Shortcut
-    $trig_MD_body = '
-        BEGIN
-            DECLARE retval BOOLEAN;
-            SET retval = syncMVplayer(REGEX_REPLACE.f_player_id, REGEX_REPLACE.f_tour_id);
-        END';
-    $triggers = array(
-        'CREATE TRIGGER MD_insert AFTER INSERT ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_MD_body),
-        'CREATE TRIGGER MD_update AFTER UPDATE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_MD_body),
-        'CREATE TRIGGER MD_delete AFTER DELETE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_MD_body),
-    );
+    
     foreach ($triggers as $t) {
         $status &= (mysql_query($t) or die(mysql_error()));
     }
@@ -74,10 +123,14 @@ public static function syncGameData()
 
 public static function installProcsAndFuncs($install = true)
 {
+    global $CT_cols, $core_tables, $rules;
+    
     $status = true;
+    
     foreach (array('getPlayerStatus', 'syncMVplayer', 'syncMVteam', 'syncMVcoach', 'syncMVrace') as $f)
         $status &= mysql_query('DROP FUNCTION IF EXISTS '.$f);
-    foreach (array('getTourParentNodes', 'getObjParents', 'syncMVall') as $p)
+        
+    foreach (array('getTourParentNodes', 'getObjParents', 'syncMVall', 'getTeamDProps', 'getPlayerDProps') as $p)
         $status &= mysql_query('DROP PROCEDURE IF EXISTS '.$p);
         
     if (!$install) {
@@ -116,23 +169,23 @@ public static function installProcsAndFuncs($install = true)
          */
          
         // Returns status of player in match and latest/current status on mid = -1 or unplayed mid.
-        'CREATE FUNCTION getPlayerStatus(pid MEDIUMINT UNSIGNED, mid MEDIUMINT SIGNED) 
-            RETURNS TINYINT UNSIGNED 
+        'CREATE FUNCTION getPlayerStatus(pid '.$CT_cols[T_OBJ_PLAYER].', mid '.$CT_cols[T_NODE_MATCH].') 
+            RETURNS '.$core_tables['players']['status'].' 
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
-            IF EXISTS(SELECT match_id FROM matches WHERE match_id = mid AND date_played IS NULL)
+            DECLARE status '.$core_tables['players']['status'].' DEFAULT NULL;
+
+            IF mid != -1 AND EXISTS(SELECT match_id FROM matches WHERE match_id = mid AND date_played IS NULL) THEN 
                 RETURN getPlayerStatus(pid, -1);
             END IF;
-            
-            DECLARE status TINYINT UNSIGNED DEFAULT NULL;
-            IF mid = -1
-            THEN
+
+            IF mid = -1 THEN
                 SELECT inj INTO status FROM match_data, matches WHERE 
                     f_player_id = pid AND
                     match_id = f_match_id AND
                     date_played IS NOT NULL
-                    ORDER BY date_played DESC LIMIT 1
+                    ORDER BY date_played DESC LIMIT 1;
             ELSE
                 SELECT inj INTO status FROM match_data, matches WHERE 
                     match_data.f_player_id = pid AND
@@ -144,14 +197,14 @@ public static function installProcsAndFuncs($install = true)
             RETURN IF(status IS NULL, '.NONE.', status);
         END',
         
-        'CREATE PROCEDURE getTourParentNodes(IN trid MEDIUMINT UNSIGNED, OUT did MEDIUMINT UNSIGNED, OUT lid MEDIUMINT UNSIGNED)
+        'CREATE PROCEDURE getTourParentNodes(IN trid '.$CT_cols[T_NODE_TOURNAMENT].', OUT did '.$CT_cols[T_NODE_DIVISION].', OUT lid '.$CT_cols[T_NODE_LEAGUE].')
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
             SELECT divisions.did,divisions.f_lid INTO did,lid FROM tours,divisions WHERE tours.tour_id = trid AND tours.f_did = divisions.did;
         END',
 
-        'CREATE PROCEDURE getObjParents(IN obj MEDIUMINT UNSIGNED, IN pid MEDIUMINT SIGNED, INOUT tid MEDIUMINT UNSIGNED, OUT cid MEDIUMINT UNSIGNED, OUT rid TINYINT UNSIGNED)
+        'CREATE PROCEDURE getObjParents(IN obj TINYINT UNSIGNED, IN pid '.$CT_cols[T_OBJ_PLAYER].', INOUT tid '.$CT_cols[T_OBJ_TEAM].', OUT cid '.$CT_cols[T_OBJ_COACH].', OUT rid '.$CT_cols[T_OBJ_RACE].')
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
@@ -165,13 +218,16 @@ public static function installProcsAndFuncs($install = true)
          *  MV syncs
          */
                  
-        'CREATE FUNCTION syncMVplayer(pid MEDIUMINT SIGNED, trid MEDIUMINT UNSIGNED)
+        'CREATE FUNCTION syncMVplayer(pid '.$CT_cols[T_OBJ_PLAYER].', trid '.$CT_cols[T_NODE_TOURNAMENT].')
             RETURNS BOOLEAN
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            DECLARE did,lid, tid,cid MEDIUMINT UNSIGNED DEFAULT NULL;
-            DECLARE rid TINYINT UNSIGNED DEFAULT NULL;
+            DECLARE did '.$CT_cols[T_NODE_DIVISION].' DEFAULT NULL;
+            DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
+            DECLARE tid '.$CT_cols[T_OBJ_TEAM].' DEFAULT NULL;
+            DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
+            DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
             CALL getTourParentNodes(trid, did, lid);
             CALL getObjParents('.T_OBJ_PLAYER.', pid,tid,cid,rid);
             
@@ -187,13 +243,15 @@ public static function installProcsAndFuncs($install = true)
             RETURN EXISTS(SELECT COUNT(*) FROM mv_players WHERE f_pid = pid AND f_trid = trid);
         END',
         
-        'CREATE FUNCTION syncMVteam(tid MEDIUMINT UNSIGNED, trid MEDIUMINT UNSIGNED)
+        'CREATE FUNCTION syncMVteam(tid '.$CT_cols[T_OBJ_TEAM].', trid '.$CT_cols[T_NODE_TOURNAMENT].')
             RETURNS BOOLEAN
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            DECLARE did,lid, cid MEDIUMINT UNSIGNED DEFAULT NULL;
-            DECLARE rid TINYINT UNSIGNED DEFAULT NULL;
+            DECLARE did '.$CT_cols[T_NODE_DIVISION].' DEFAULT NULL;
+            DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
+            DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
+            DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
             CALL getTourParentNodes(trid, did, lid);
             CALL getObjParents('.T_OBJ_TEAM.', NULL,tid,cid,rid);
             
@@ -209,12 +267,13 @@ public static function installProcsAndFuncs($install = true)
             RETURN EXISTS(SELECT COUNT(*) FROM mv_teams WHERE f_tid = tid AND f_trid = trid);
         END',
         
-        'CREATE FUNCTION syncMVcoach(cid MEDIUMINT UNSIGNED, trid MEDIUMINT UNSIGNED)
+        'CREATE FUNCTION syncMVcoach(cid '.$CT_cols[T_OBJ_COACH].', trid '.$CT_cols[T_NODE_TOURNAMENT].')
             RETURNS BOOLEAN
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            DECLARE did,lid MEDIUMINT UNSIGNED DEFAULT NULL;
+            DECLARE did '.$CT_cols[T_NODE_DIVISION].' DEFAULT NULL;
+            DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
             CALL getTourParentNodes(trid, did, lid);
             
             DELETE FROM mv_coaches WHERE f_cid = cid AND f_trid = trid;
@@ -229,12 +288,13 @@ public static function installProcsAndFuncs($install = true)
             RETURN EXISTS(SELECT COUNT(*) FROM mv_coaches WHERE f_cid = cid AND f_trid = trid);
         END',
 
-        'CREATE FUNCTION syncMVrace(rid TINYINT UNSIGNED, trid MEDIUMINT UNSIGNED)
+        'CREATE FUNCTION syncMVrace(rid '.$CT_cols[T_OBJ_RACE].', trid '.$CT_cols[T_NODE_TOURNAMENT].')
             RETURNS BOOLEAN
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            DECLARE did,lid MEDIUMINT UNSIGNED DEFAULT NULL;
+            DECLARE did '.$CT_cols[T_NODE_DIVISION].' DEFAULT NULL;
+            DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
             CALL getTourParentNodes(trid, did, lid);
             
             DELETE FROM mv_races WHERE f_rid = rid AND f_trid = trid;
@@ -260,63 +320,93 @@ public static function installProcsAndFuncs($install = true)
         END',
         
         /* 
-         *  Other syncs
+         *  Dynamic (object) properties calculators
          */
          
-        'CREATE TRIGGER syncPlayer
-            BEFORE INSERT ON players
-            FOR EACH ROW
+        'CREATE PROCEDURE getPlayerDProps(
+            IN pid '.$CT_cols[T_OBJ_PLAYER].',
+            OUT inj_ma '.$CT_cols['chr'].', OUT inj_av '.$CT_cols['chr'].', OUT inj_ag '.$CT_cols['chr'].', OUT inj_st '.$CT_cols['chr'].', OUT inj_ni '.$CT_cols['chr'].',
+            OUT ma '.$CT_cols['chr'].',     OUT av '.$CT_cols['chr'].',     OUT ag '.$CT_cols['chr'].',     OUT st '.$CT_cols['chr'].',
+            OUT value '.$CT_cols['pv'].', OUT status '.$core_tables['players']['status'].', OUT date_died '.$core_tables['players']['date_died'].'
+        )
+            NOT DETERMINISTIC
+            READS SQL DATA
         BEGIN
-            DECLARE inj_ni,inj_ma,inj_av,inj_ag,inj_st SMALLINT UNSIGNED DEFAULT 0;
+            DECLARE ach_ma,ach_st,ach_ag,ach_av '.$CT_cols['chr'].';
+            DECLARE ach_nor_skills, ach_dob_skills '.$CT_cols['skills'].';
+            DECLARE cnt_ach_nor_skills, cnt_ach_dob_skills TINYINT UNSIGNED;
+            DECLARE extra_val '.$CT_cols['pv'].';
+            DECLARE pos_id '.$CT_cols['pos_id'].';
+
+            SELECT 
+                players.pos_id, players.extra_val, players.ach_nor_skills, players.ach_dob_skills, players.ach_ma, players.ach_st, players.ach_ag, players.ach_av,
+                (LENGTH(players.ach_nor_skills) - LENGTH(REPLACE(players.ach_nor_skills, ",", "")) + IF(LENGTH(players.ach_nor_skills) = 0, 0, 1)),
+                (LENGTH(players.ach_dob_skills) - LENGTH(REPLACE(players.ach_dob_skills, ",", "")) + IF(LENGTH(players.ach_dob_skills) = 0, 0, 1))
+            INTO
+                pos_id, extra_val, ach_nor_skills, ach_dob_skills, ach_ma, ach_st, ach_ag, ach_av,
+                cnt_ach_nor_skills, cnt_ach_dob_skills
+            FROM players WHERE player_id = pid;
+        
             SELECT 
                 IFNULL(SUM(IF(inj = '.NI.', 1, 0) + IF(agn1 = '.NI.', 1, 0) + IF(agn2 = '.NI.', 1, 0)), 0), 
                 IFNULL(SUM(IF(inj = '.MA.', 1, 0) + IF(agn1 = '.MA.', 1, 0) + IF(agn2 = '.MA.', 1, 0)), 0), 
                 IFNULL(SUM(IF(inj = '.AV.', 1, 0) + IF(agn1 = '.AV.', 1, 0) + IF(agn2 = '.AV.', 1, 0)), 0), 
                 IFNULL(SUM(IF(inj = '.AG.', 1, 0) + IF(agn1 = '.AG.', 1, 0) + IF(agn2 = '.AG.', 1, 0)), 0), 
                 IFNULL(SUM(IF(inj = '.ST.', 1, 0) + IF(agn1 = '.ST.', 1, 0) + IF(agn2 = '.ST.', 1, 0)), 0)
-                INTO inj_ni,inj_ma,inj_av,inj_ag,inj_st
-                FROM match_data WHERE f_player_id = NEW.player_id;
-                
-            DECLARE cnt_ach_nor_skills,cnt_ach_dob_skills TINYINT UNSIGNED DEFAULT 0;
-            SET cnt_ach_nor_skills = LENGTH(NEW.ach_nor_skills) - LENGTH(REPLACE(NEW.ach_nor_skills, ",", "")) + IF(LENGTH(NEW.ach_nor_skills) = 0, 0, 1);
-            SET cnt_ach_dob_skills = LENGTH(NEW.ach_dob_skills) - LENGTH(REPLACE(NEW.ach_dob_skills, ",", "")) + IF(LENGTH(NEW.ach_dob_skills) = 0, 0, 1);
-            SET NEW.value = (SELECT cost FROM game_data_players WHERE game_data_players.pos_id = NEW.pos_id)
-                + (NEW.ach_ma + NEW.ach_av) * 30000
-                + NEW.ach_ag                * 40000
-                + NEW.ach_st                * 50000
-                + cnt_ach_nor_skills        * 20000
-                + cnt_ach_dob_skills        * 30000
-                + NEW.extra_val;
+            INTO 
+                inj_ni,inj_ma,inj_av,inj_ag,inj_st
+            FROM match_data WHERE f_player_id = pid;
 
-            SET NEW.ma = NEW.ach_ma - NEW.inj_ma + (SELECT ma FROM game_data_players WHERE game_data_players.pos_id = NEW.pos_id);
-            SET NEW.st = NEW.ach_st - NEW.inj_st + (SELECT st FROM game_data_players WHERE game_data_players.pos_id = NEW.pos_id);
-            SET NEW.ag = NEW.ach_ag - NEW.inj_ag + (SELECT ag FROM game_data_players WHERE game_data_players.pos_id = NEW.pos_id);
-            SET NEW.av = NEW.ach_av - NEW.inj_av + (SELECT av FROM game_data_players WHERE game_data_players.pos_id = NEW.pos_id);
+            SET value = (SELECT cost FROM game_data_players WHERE game_data_players.pos_id = pos_id)
+                + (ach_ma + ach_av)  * 30000
+                + ach_ag             * 40000
+                + ach_st             * 50000
+                + cnt_ach_nor_skills * 20000
+                + cnt_ach_dob_skills * 30000
+                + extra_val;
+
+            SET ma = ach_ma + (SELECT ma FROM game_data_players WHERE game_data_players.pos_id = pos_id) - inj_ma;
+            SET st = ach_st + (SELECT st FROM game_data_players WHERE game_data_players.pos_id = pos_id) - inj_st;
+            SET ag = ach_ag + (SELECT ag FROM game_data_players WHERE game_data_players.pos_id = pos_id) - inj_ag;
+            SET av = ach_av + (SELECT av FROM game_data_players WHERE game_data_players.pos_id = pos_id) - inj_av;
                 
-            SET NEW.status = getPlayerStats(NEW.player_id, -1);
+            SET status = getPlayerStats(pid, -1);
             
-            IF NEW.status = '.DEAD.' THEN
-                NEW.date_died = (SELECT date_played FROM matches, match_data WHERE f_match_id = match_id AND f_player_id = NEW.player_id AND inj = '.DEAD.');
+            IF status = '.DEAD.' THEN
+                SET date_died = (SELECT date_played FROM matches, match_data WHERE f_match_id = match_id AND f_player_id = pid AND inj = '.DEAD.');
             ELSE
-                NEW.date_died = NULL;
+                SET date_died = NULL;
             END IF;
         END',
         
-        'CREATE TRIGGER syncTeam
-            BEFORE INSERT ON teams
-            FOR EACH ROW
+        'CREATE PROCEDURE getTeamDProps(IN tid '.$CT_cols[T_OBJ_TEAM].', OUT tv '.$CT_cols['tv'].')
+            NOT DETERMINISTIC
+            READS SQL DATA
         BEGIN
-            SET NEW.tv = (SELECT SUM(value) FROM players WHERE owned_by_team_id = NEW.team_id AND players.status != '.MNG.')
-                + NEW.rerolls      * (SELECT cost_rr FROM game_data_races WHERE NEW.f_race_id = game_data_race.race_id)
-                + NEW.fan_factor   * '.$rules['cost_fan_factor'].'
-                + NEW.cheerleaders * '.$rules['cost_cheerleaders'].'
-                + NEW.apothecary   * '.$rules['cost_apothecary'].'
-                + NEW.ass_coaches  * '.$rules['cost_ass_coaches'].';
+            DECLARE f_race_id '.$CT_cols[T_OBJ_RACE].';
+            DECLARE rerolls '.$core_tables['teams']['rerolls'].';
+            DECLARE fan_factor '.$core_tables['teams']['fan_factor'].';
+            DECLARE cheerleaders '.$core_tables['teams']['cheerleaders'].';
+            DECLARE apothecary '.$core_tables['teams']['apothecary'].';
+            DECLARE ass_coaches '.$core_tables['teams']['ass_coaches'].';
+
+            SELECT 
+                teams.f_race_id, teams.rerolls, teams.fan_factor, teams.cheerleaders, teams.apothecary, teams.ass_coaches
+            INTO 
+                f_race_id, rerolls, fan_factor, cheerleaders, apothecary, ass_coaches
+            FROM teams WHERE team_id = tid;
+            
+            SET tv = (SELECT SUM(value) FROM players WHERE owned_by_team_id = tid AND players.status != '.MNG.')
+                + rerolls      * (SELECT cost_rr FROM game_data_races WHERE game_data_race.race_id = f_race_id)
+                + fan_factor   * '.$rules['cost_fan_factor'].'
+                + cheerleaders * '.$rules['cost_cheerleaders'].'
+                + apothecary   * '.$rules['cost_apothecary'].'
+                + ass_coaches  * '.$rules['cost_ass_coaches'].';
         END',
     );
 
     foreach ($functions as $f) {
-        $status &= (mysql_query($f) or die(mysql_error()));
+        $status &= (mysql_query($f) or die(mysql_error()."\nCODE:\n-----\n\n".$f));
     }
     
     return $status;
@@ -359,37 +449,6 @@ public static function installTableIndexes($install = true)
     return $status;
 }
 
-}
-
-/*
-    Helper routines for writing upgrade SQL code.
-*/
-
-class SQLUpgrade
-{
-    public static function runIfColumnNotExists($tbl, $col, $query)
-    {
-        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
-        $result = mysql_query($colCheck);
-        $row = mysql_fetch_assoc($result);
-        return ((int) $row['exists']) ? 'SELECT \'1\'' : $query;
-    }
-    
-    // EXACTLY like runIfColumnNotExists(), but has the logic reversed at the return statement.
-    public static function runIfColumnExists($tbl, $col, $query)
-    {
-        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
-        $result = mysql_query($colCheck);
-        $row = mysql_fetch_assoc($result);
-        return ((int) $row['exists']) ? $query : 'SELECT \'1\'';
-    }
-    
-    public static function runIfTrue($evalQuery, $query)
-    {
-        $result = mysql_query($evalQuery);
-        $row = mysql_fetch_row($result);
-        return ((int) $row[0]) ? $query : 'SELECT \'1\'';
-    }
 }
 
 ?>
