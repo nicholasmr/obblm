@@ -1902,7 +1902,7 @@ $skillarray	= array (
 		11 => 'Strip Ball',
 		12 => 'Sure Hands',
 		13 => 'Tackle',
-		14 => 'Wrestle'	
+		14 => 'Wrestle',
 	),
 	'A'	=> array (
 		20 => 'Catch',
@@ -1914,7 +1914,7 @@ $skillarray	= array (
 		26 => 'Side Step',
 		27 => 'Sneaky Git',
 		28 => 'Sprint',
-		29 => 'Sure Feet'
+		29 => 'Sure Feet',
 	),
 	'P'	=> array (
 		40 => 'Accurate',
@@ -1935,7 +1935,7 @@ $skillarray	= array (
 		56 => 'Piling On',
 		57 => 'Stand Firm',
 		58 => 'Strong Arm',
-		59 => 'Thick Skull'
+		59 => 'Thick Skull',
 	),
 	'M'	=> array (
 		70 => 'Big Hand',
@@ -1947,7 +1947,7 @@ $skillarray	= array (
 		76 => 'Prehensile Tail',
 		77 => 'Tentacles',
 		78 => 'Two Heads',
-		79 => 'Very Long Legs'
+		79 => 'Very Long Legs',
 	),
 	# Extraordinay
 	'E'	=> array (
@@ -1973,7 +1973,7 @@ $skillarray	= array (
 		109 => 'Take Root',
 		110 => 'Throw Team-Mate',
 		111 => 'Titchy',
-		112 => 'Wild Animal'
+		112 => 'Wild Animal',
 	),
 );
 

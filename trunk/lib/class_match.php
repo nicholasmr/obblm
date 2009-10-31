@@ -533,11 +533,7 @@ class Match
             )";
         }
 
-        return (mysql_query($query) && 
-            mysql_query("SELECT syncMVteam($tid, $trid)") && 
-            mysql_query("SELECT syncMVcoach($cid, $trid)") && 
-            mysql_query("SELECT syncMVrace($rid, $trid)")
-        );
+        return mysql_query($query);
     }
     
     public function getSummedAch($s) {
