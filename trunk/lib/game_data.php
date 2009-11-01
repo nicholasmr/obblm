@@ -1977,6 +1977,13 @@ $skillarray	= array (
 	),
 );
 
+// Create skill ID index (key:val = id:skill_name).
+$skillididx = array();
+foreach ($skillarray as $grp => $skills) {
+    foreach ($skills as $id => $name)
+        $skillididx[$id] = $name;
+}
+
 $IllegalSkillCombinations = array(
     /*
         Syntax:

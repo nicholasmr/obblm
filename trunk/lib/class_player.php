@@ -44,6 +44,7 @@ class Player
     public $name = '';
     public $owned_by_team_id = 0;
     public $nr = 0;
+    public $f_pos_id = 0;
     public $position = ''; public $pos = ''; // $position duplicate. $position may be edited for display purposes (=not actual position string used in $DEA). This is though.
     public $date_bought = '';
     public $date_sold   = '';
@@ -57,8 +58,8 @@ class Player
     public $extra_spp = 0;
     public $extra_val = 0;
     
-    public $ach_nor_skills_cnt = 0;
-    public $ach_dob_skills_cnt = 0;    
+    public $value = 0;
+    public $date_died = '';
 
     // Characteristics
     public $ma = 0;
@@ -87,10 +88,8 @@ class Player
     public $is_journeyman = false;
 
     // Others
-    public $value = 0;
     public $icon = "";
     public $qty = 0;
-    public $date_died = '';
     public $choosable_skills = array('N skills' => array(), 'D skills' => array());
     
     // Relations
@@ -111,60 +110,55 @@ class Player
         /* 
             MySQL stored player data
         */
+        
         $result = mysql_query("SELECT 
-            player_id, type, name, owned_by_team_id, nr, position, date_bought, date_sold, 
+            player_id, type, name, owned_by_team_id, nr, f_pos_id, date_bought, date_sold, 
             ach_ma, ach_st, ach_ag, ach_av, extra_spp, extra_val,
-            LENGTH(ach_nor_skills) - LENGTH(REPLACE(ach_nor_skills, ',', '')) + IF(LENGTH(ach_nor_skills) = 0, 0, 1) AS 'ach_nor_skills_cnt', 
-            LENGTH(ach_dob_skills) - LENGTH(REPLACE(ach_dob_skills, ',', '')) + IF(LENGTH(ach_dob_skills) = 0, 0, 1) AS 'ach_dob_skills_cnt'
-            FROM players WHERE player_id = $player_id");
+            ach_nor_skills, ach_dob_skills, extra_skills,
+            value, status, date_died, inj_ni, inj_ma, inj_st, inj_ag, inj_av, players.ma, players.st, players.ag, players.av,
+            qty, pos, skills AS 'def_skills', game_data_players.ma AS 'def_ma', game_data_players.st AS 'def_st', game_data_players.ag AS 'def_ag', game_data_players.av AS 'def_av'
+            FROM players, game_data_players WHERE player_id = $player_id AND f_pos_id = pos_id");
         foreach (mysql_fetch_assoc($result) as $col => $val) {
             $this->$col = ($val) ? $val : 0;
         }
-        $this->pos = $this->position;
+        $this->position = $this->pos;
+        
         $this->setRelations();
-        
-        /* 
-            Player value 
-        */
-        $this->value = $DEA[$this->race]['players'][$this->pos]['cost']
-            + ($this->ach_ma + $this->ach_av) * 30000
-            + $this->ach_ag                   * 40000
-            + $this->ach_st                   * 50000
-            + $this->ach_nor_skills_cnt       * 20000
-            + $this->ach_dob_skills_cnt       * 30000
-            + $this->extra_val;
-        
-        // Custom value reduction.
-        $this->value -= 
-            $this->inj_ma*$rules['val_reduc_ma'] + 
-            $this->inj_st*$rules['val_reduc_st'] + 
-            $this->inj_ag*$rules['val_reduc_ag'] + 
-            $this->inj_av*$rules['val_reduc_av'];
-        
+
         /* 
             Set general stats.
         */
-        $this->setChrs();
-        $this->setSkills();
-        $this->setStatusses();
+        
+        foreach (array('ach_nor_skills', 'ach_dob_skills', 'extra_skills', 'def_skills') as $grp) {
+            $this->$grp = explode(',', $this->$grp);
+        }
+        
+        $this->is_dead       = ($this->status == DEAD);
+        $this->is_mng        = ($this->status == MNG);
+        $this->is_sold       = (bool) $this->date_sold;
+        $this->is_journeyman = ($this->type == PLAYER_TYPE_JOURNEY);
+        
         $this->setStats(false,false,false);
                        
         /*
             Misc
         */
+        
         $this->icon = PLAYER_ICONS.'/' . $DEA[$this->race]['players'][$this->pos]['icon'] . '.gif';
-        $this->qty = $DEA[$this->race]['players'][$this->pos]['qty'];
+        
         if (empty($this->name)) {
             $this->name = 'Unnamed';
         }
+        
         if ($this->type == PLAYER_TYPE_JOURNEY) { # Check if player is journeyman like this - don't assume setStatusses() has ben called setting $this->is_journeyman.
             $this->position .= ' [J]';
+            $this->def_skills[] = 99; # Loner.
         }
     }
     
     public function setStats($node, $node_id, $set_avg = false)
     {
-        foreach (Stats::getAllStats(STATS_PLAYER, $this->player_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
+        foreach (Stats::getAllStats(T_OBJ_PLAYER, $this->player_id, $node, $node_id, $set_avg) as $key => $val) {
             $this->$key = $val;
         }
         
@@ -176,52 +170,26 @@ class Player
         return true;
     }
     
-    private function setChrs() {
-        
-        global $DEA;
-        
-        // Injuries
-        $NI = NI; $MA = MA; $AV = AV; $AG = AG; $ST = ST;
-        $query = "SELECT 
-            SUM(IF(inj = $NI, 1, 0) + IF(agn1 = $NI, 1, 0) + IF(agn2 = $NI, 1, 0)) AS 'inj_ni', 
-            SUM(IF(inj = $MA, 1, 0) + IF(agn1 = $MA, 1, 0) + IF(agn2 = $MA, 1, 0)) AS 'inj_ma', 
-            SUM(IF(inj = $AV, 1, 0) + IF(agn1 = $AV, 1, 0) + IF(agn2 = $AV, 1, 0)) AS 'inj_av', 
-            SUM(IF(inj = $AG, 1, 0) + IF(agn1 = $AG, 1, 0) + IF(agn2 = $AG, 1, 0)) AS 'inj_ag', 
-            SUM(IF(inj = $ST, 1, 0) + IF(agn1 = $ST, 1, 0) + IF(agn2 = $ST, 1, 0)) AS 'inj_st' 
-            FROM match_data WHERE f_player_id = $this->player_id";
-        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0 && ($row = mysql_fetch_assoc($result))) {
-            foreach ($row as $k => $v) {
-                $this->$k = ($v) ? $v : 0;
-            }
-        }
-        
-        // Current characteristics
-        foreach (array('ma', 'st', 'ag', 'av') as $chr) {
-            $this->{"def_$chr"} = $DEA[$this->race]['players'][$this->pos][$chr];
-            $this->$chr = $this->{"def_$chr"} + $this->{"ach_$chr"} - $this->{"inj_$chr"};        
-        }
-    }
-    
     public function setChoosableSkills() {
 
         global $DEA;
         global $skillarray;
         
         $this->setSkills();
-        $n_skills = $DEA[$this->race]['players'][$this->pos]['N skills'];
-        $d_skills = $DEA[$this->race]['players'][$this->pos]['D skills'];
+        $n_skills = $DEA[$this->race]['players'][$this->pos]['norm'];
+        $d_skills = $DEA[$this->race]['players'][$this->pos]['doub'];
         
         foreach ($n_skills as $category) {
             foreach ($skillarray[$category] as $skill) {
                 if (!in_array($skill, $this->ach_nor_skills) && !in_array($skill, $this->def_skills)) {
-                    array_push($this->choosable_skills['N skills'], $skill);
+                    array_push($this->choosable_skills['norm'], $skill);
                 }
             }
         }
         foreach ($d_skills as $category) {
             foreach ($skillarray[$category] as $skill) {
                 if (!in_array($skill, $this->ach_dob_skills) && !in_array($skill, $this->def_skills)) {
-                    array_push($this->choosable_skills['D skills'], $skill);
+                    array_push($this->choosable_skills['doub'], $skill);
                 }
             }
         }
@@ -231,38 +199,13 @@ class Player
         global $IllegalSkillCombinations;
         foreach ($IllegalSkillCombinations as $hasSkill => $dropSkills) {
             if (in_array($hasSkill, $all_skills)) {
-                foreach (array('N', 'D') as $type) {
-                    $this->choosable_skills["$type skills"] = array_filter($this->choosable_skills["$type skills"], create_function('$skill', "return !in_array(\$skill, array('".implode("','",$dropSkills)."'));"));
+                foreach (array('norm', 'doub') as $type) {
+                    $this->choosable_skills[$type] = array_filter($this->choosable_skills[$type], create_function('$skill', "return !in_array(\$skill, array('".implode("','",$dropSkills)."'));"));
                 }
             }
         }
         
         return true;
-    }
-
-    private function setSkills() {
-
-        // Skills
-        global $DEA;        
-        $result = mysql_query("SELECT ach_nor_skills, ach_dob_skills, extra_skills FROM players WHERE player_id = $this->player_id");
-        $row = mysql_fetch_assoc($result);
-        $this->ach_nor_skills = (!empty($row['ach_nor_skills'])) ? explode(',', $row['ach_nor_skills']) : array();
-        $this->ach_dob_skills = (!empty($row['ach_dob_skills'])) ? explode(',', $row['ach_dob_skills']) : array();
-        $this->extra_skills   = (!empty($row['extra_skills']))   ? explode(',', $row['extra_skills'])   : array();
-        $this->def_skills     = $DEA[$this->race]['players'][$this->pos]['Def skills'];
-        if ($this->type == PLAYER_TYPE_JOURNEY) { # Check if player is journeyman like this - don't assume setStatusses() has ben called setting $this->is_journeyman.
-            array_push($this->def_skills, 'Loner');
-        }
-    }
-    
-    private function setStatusses() {
-
-        // Status
-        $status = $this->getStatus(-1);
-        $this->is_dead       = ($status == DEAD);
-        $this->is_mng        = ($status == MNG);
-        $this->is_sold       = (bool) $this->date_sold;
-        $this->is_journeyman = ($this->type == PLAYER_TYPE_JOURNEY);
     }
     
     private function setRelations() {
@@ -283,8 +226,8 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
 
         global $sparray;
 
-        $skill_count =   $this->ach_nor_skills_cnt
-                       + $this->ach_dob_skills_cnt
+        $skill_count =   count($this->ach_nor_skills)
+                       + count($this->ach_dob_skills)
                        + $this->ach_ma
                        + $this->ach_st
                        + $this->ach_ag
