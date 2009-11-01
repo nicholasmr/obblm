@@ -124,13 +124,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         $results =  simplexml_load_string( $this->xmlresults );
 
-        $this->winner = $results->winner;
+        $this->winner = strval($results->winner);
         $this->concession = $results->winner->attributes()->concession;
 
         $this->gate = $results->team[0]->fans + $results->team[1]->fans;
 
-        $this->hometeam = $results->team[0]->attributes()->name;
-        $this->homescore = $results->team[0]->score;
+        $this->hometeam = strval($results->team[0]->attributes()->name);
+        $this->homescore = intval($results->team[0]->score);
         $this->homewinnings = $results->team[0]->winnings - $results->team[0]->transferedGold;
         $this->homeff = $results->team[0]->fanfactor;
         $this->homefame = $results->team[0]->fame;
@@ -153,8 +153,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         }
 
-        $this->awayteam = $results->team[1]->attributes()->name;
-        $this->awayscore = $results->team[1]->score;
+        $this->awayteam = strval($results->team[1]->attributes()->name);
+        $this->awayscore = intval($results->team[1]->score);
         $this->awaywinnings = $results->team[1]->winnings - $results->team[1]->transferedGold;
         $this->awayff = $results->team[1]->fanfactor;
         $this->awayfame = $results->team[1]->fame;
