@@ -41,7 +41,9 @@ class Team
     public $rdy               = 1; // Ready bool.
     public $imported          = false;
     public $is_retired        = 0;
-
+    
+    public $value = 0; public $tv = 0; # Identical.
+    
     public $race              = "";
     public $coach_name        = '';
     private $_bought_fan_factor = 0;
@@ -60,9 +62,6 @@ class Team
     public $tcas_0 = 0;
 
     // Non-constructor filled fields.
-
-        // By setValue().
-        public $value  = 0;
 
         // By getPlayers().
         private $_players = array();
@@ -90,16 +89,16 @@ class Team
         $this->coach_name = get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'name');
         $this->_bought_fan_factor = $this->fan_factor;
         $this->imported = ($this->imported == 1); // Make boolean.
+        $this->value = $this->tv;
         $this->race = $raceididx[$this->f_race_id];
         $this->setStats(false,false,false);
-        $this->setValue();
 
         return true;
     }
 
     public function setStats($node, $node_id, $set_avg = false)
     {
-        foreach (Stats::getAllStats(STATS_TEAM, $this->team_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
+        foreach (Stats::getAllStats(STATS_TEAM, $this->team_id, $node, $node_id, $set_avg) as $key => $val) {
             $this->$key = $val;
         }
 
@@ -123,157 +122,6 @@ class Team
             $this->win_percentage = ($this->played == 0) ? 0 : 100*$this->won/$this->played;
         }
 
-
-        return true;
-    }
-
-    private function setValue() {
-
-        global $rules;
-
-        /*
-            Sets team value without creating all team's player objects to get each player's value.
-
-            NOTE: This is an awfully ugly MySQL query, which has been broken down into several pseudo tables !!!
-        */
-
-        $this->value = 0;
-
-        /* Start compiling the query ... */
-
-        // For each player_id on this team, this tables contains the date of the most recent played match by each player.
-        $latestMatchDate = "
-            (
-                SELECT
-                    f_player_id AS 'pid',
-                    MAX(date_played) AS 'date'
-                FROM
-                    match_data,
-                    matches
-                WHERE
-                        f_match_id = match_id
-                    AND date_played IS NOT NULL
-                    AND f_team_id = $this->team_id
-                GROUP BY f_player_id
-            ) AS latestMatchDate
-        ";
-
-        // For each player_id on this team, this tables contains the current player injury (sustained in the most recent match played by player).
-        /*
-            Note: Why "GROUP BY"? Because imported players with multiple injs take up +1 match_data rows thus
-                making it falsly look like the one player is acutally X (the number of rows) players.
-                The effect is that team value contribution form that player will be X times the single player value instead of 1 times the value, as it should be.
-        */
-        $currentInj = "
-            (
-                SELECT
-                    latestMatchDate.pid AS 'pid',
-                    inj
-                FROM
-                    match_data,
-                    matches,
-                    $latestMatchDate
-                WHERE
-                        match_data.f_match_id   = matches.match_id
-                    AND match_data.f_player_id  = latestMatchDate.pid
-                    AND matches.date_played     = latestMatchDate.date
-                    AND f_team_id               = $this->team_id
-                GROUP BY
-                    match_data.f_player_id
-            ) AS currentInj
-        ";
-
-        // Contains this team's race's player positions' prices.
-        global $DEA;
-        $sqlUnions = array();
-        foreach ($DEA[$this->race]['players'] as $pos => $desc) {
-            array_push($sqlUnions, "SELECT '".mysql_real_escape_string($pos)."' AS 'position', $desc[cost] AS 'cost'");
-        }
-        $prices = "
-            (
-                ".implode(' UNION ', $sqlUnions)."
-            ) AS prices
-        ";
-
-        // Contains all the required parts to calculate each player's values.
-        $valueParts = "
-            (
-                SELECT
-                    players.player_id AS 'pid',
-                    ach_ma,
-                    ach_av,
-                    ach_ag,
-                    ach_st,
-                    LENGTH(ach_nor_skills) - LENGTH(REPLACE(ach_nor_skills, ',', '')) + IF(LENGTH(ach_nor_skills) = 0, 0, 1) AS 'nor',
-                    LENGTH(ach_dob_skills) - LENGTH(REPLACE(ach_dob_skills, ',', '')) + IF(LENGTH(ach_dob_skills) = 0, 0, 1) AS 'dob',
-                    cost,
-                    extra_val
-                FROM
-                    $prices,
-                    (
-                        players
-                        LEFT JOIN
-                            $currentInj
-                        ON
-                            players.player_id = currentInj.pid
-                    )
-                WHERE
-                        players.position = prices.position
-                    AND (inj IS NULL OR inj = ".NONE.")
-                    AND date_sold IS NULL
-                    AND owned_by_team_id = $this->team_id
-            ) AS valueParts
-        ";
-
-        // If player injury value reduction is used, then compile an extra needed table.
-        $valReducInjs = false;
-        if ($rules['val_reduc_ma'] || $rules['val_reduc_st'] || $rules['val_reduc_av'] || $rules['val_reduc_ag']) {
-            $NI = NI; $MA = MA; $AV = AV; $AG = AG; $ST = ST;
-            $valReducInjs = "
-                (
-                    SELECT
-                        f_player_id as 'pid',
-                        SUM(IF(inj = $MA, 1, 0) + IF(agn1 = $MA, 1, 0) + IF(agn2 = $MA, 1, 0)) AS 'inj_ma',
-                        SUM(IF(inj = $AV, 1, 0) + IF(agn1 = $AV, 1, 0) + IF(agn2 = $AV, 1, 0)) AS 'inj_av',
-                        SUM(IF(inj = $AG, 1, 0) + IF(agn1 = $AG, 1, 0) + IF(agn2 = $AG, 1, 0)) AS 'inj_ag',
-                        SUM(IF(inj = $ST, 1, 0) + IF(agn1 = $ST, 1, 0) + IF(agn2 = $ST, 1, 0)) AS 'inj_st'
-                    FROM match_data
-                    WHERE f_team_id = $this->team_id AND f_player_id > 0
-                    GROUP BY f_player_id
-                ) AS valReducInjs
-            ";
-            $subtract = "(
-                IF(inj_ma IS NULL, 0, inj_ma*$rules[val_reduc_ma]) +
-                IF(inj_av IS NULL, 0, inj_av*$rules[val_reduc_av]) +
-                IF(inj_ag IS NULL, 0, inj_ag*$rules[val_reduc_ag]) +
-                IF(inj_st IS NULL, 0, inj_st*$rules[val_reduc_st]))";
-        }
-
-        // Final master query.
-        $query = "
-            SELECT
-                SUM(cost + extra_val + (ach_ma + ach_av)*30000 + ach_ag*40000 + ach_st*50000 + nor*20000 + dob*30000 ".(($valReducInjs) ? " - $subtract" : '').") AS 'playerValueSum'
-            FROM
-                $valueParts
-                ".(($valReducInjs) ? " LEFT JOIN $valReducInjs ON valueParts.pid = valReducInjs.pid" : '')."
-        ";
-
-        /*
-            Compile finished! Phew!
-            Lets get that player value sum.
-        */
-
-        $result = mysql_query($query);
-        if (mysql_num_rows($result) > 0) {
-            $row = mysql_fetch_assoc($result);
-            $this->value = $row['playerValueSum'];
-        }
-
-        /* Finally we add goods values */
-
-        foreach ($this->getGoods(false) as $thing => $details) { # "false" arg. = force normal "un-doubled" re-roll prices.
-            $this->value += $this->$thing * $details['cost'];
-        }
 
         return true;
     }

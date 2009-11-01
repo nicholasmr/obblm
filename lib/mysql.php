@@ -28,7 +28,7 @@
 
 # Commonly used col. defs.
 $CT_cols = array(
-    T_OBJ_PLAYER => 'MEDIUMINT UNSIGNED',
+    T_OBJ_PLAYER => 'MEDIUMINT SIGNED', # Negative IDs are stars.
     T_OBJ_TEAM   => 'MEDIUMINT UNSIGNED',
     T_OBJ_COACH  => 'MEDIUMINT UNSIGNED',
     T_OBJ_RACE   => 'TINYINT UNSIGNED',
@@ -42,6 +42,9 @@ $CT_cols = array(
     'tv' => 'MEDIUMINT UNSIGNED', # Team value
     'pv' => 'MEDIUMINT UNSIGNED', # Player value
     'chr' => 'TINYINT UNSIGNED', # ma, st, ag, av (inj, def and ach)
+    'elo' => 'FLOAT',
+    'team_cnt' => 'TINYINT UNSIGNED', # Teams count for races and coaches.
+    'streak' => 'SMALLINT UNSIGNED',
     'skills' => 'VARCHAR('.(19+20*3).')', # Set limit to 20 skills, ie. chars = 19 commas + 20*3 (max 20 integers of 3 decimals (assumed upper limit)).
 );
 
@@ -57,6 +60,12 @@ $core_tables = array(
         'settings'  => 'VARCHAR(320) NOT NULL',
         'retired'   => 'BOOLEAN NOT NULL DEFAULT 0',
         'com_lid'   => $CT_cols[T_NODE_LEAGUE].' NOT NULL DEFAULT 0',
+        // Dynamic properties (DPROPS)
+        'elo'   => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
+        'swon'  => $CT_cols['streak'],
+        'sdraw' => $CT_cols['streak'],
+        'slost' => $CT_cols['streak'],
+        'team_cnt' => $CT_cols['team_cnt'],
     ),
     'teams' => array(
         'team_id'           => $CT_cols[T_OBJ_TEAM].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -83,10 +92,13 @@ $core_tables = array(
         'gf_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'ga_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'tcas_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
-        'elo_0'     => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'elo_0'     => $CT_cols['elo'].' NOT NULL DEFAULT 0',
         // Dynamic properties (DPROPS)
-        'tv'        => $CT_cols['tv'],
-        'ELO'       => 'SMALLINT SIGNED DEFAULT NULL', # All-time ELO (across all matches).
+        'tv'    => $CT_cols['tv'],
+        'elo'   => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
+        'swon'  => $CT_cols['streak'],
+        'sdraw' => $CT_cols['streak'],
+        'slost' => $CT_cols['streak'],
     ),
     'players' => array(
         'player_id'         => $CT_cols[T_OBJ_PLAYER].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -95,6 +107,7 @@ $core_tables = array(
         'owned_by_team_id'  => $CT_cols[T_OBJ_TEAM],
         'nr'                => 'MEDIUMINT UNSIGNED',
         'f_pos_id'          => $CT_cols['pos_id'],
+        'position'          => 'VARCHAR(30)',# DEPRECATED!!!
         'date_bought'       => 'DATETIME',
         'date_sold'         => 'DATETIME',
         'ach_ma'            => $CT_cols['chr'],
@@ -229,6 +242,8 @@ $core_tables = array(
         'race_id' => $CT_cols[T_OBJ_RACE],
         'name'    => 'VARCHAR(50)',
         'cost_rr' => 'MEDIUMINT UNSIGNED',
+        // Dynamic properties (DPROPS)
+        'team_cnt' => $CT_cols['team_cnt'],
     ),
 );
 
@@ -271,13 +286,25 @@ $core_tables['mv_teams'] = array(
     'f_tid' => $CT_cols[T_OBJ_TEAM],
     'f_cid' => $CT_cols[T_OBJ_COACH],
     'f_rid' => $CT_cols[T_OBJ_RACE],
-    'ELO'   => $core_tables['teams']['ELO'],
+
+    'elo'   => $CT_cols['elo'],
+    'swon'  => $CT_cols['streak'],
+    'sdraw' => $CT_cols['streak'],
+    'slost' => $CT_cols['streak'],
 );
 $core_tables['mv_coaches'] = array(
     'f_cid' => $CT_cols[T_OBJ_COACH],
+
+    'elo'   => $CT_cols['elo'],
+    'swon'  => $CT_cols['streak'],
+    'sdraw' => $CT_cols['streak'],
+    'slost' => $CT_cols['streak'],
+    'team_cnt' => $CT_cols['team_cnt'],
 );
 $core_tables['mv_races'] = array(
     'f_rid' => $CT_cols[T_OBJ_RACE],
+    
+    'team_cnt' => $CT_cols['team_cnt'],
 );
 foreach (array('players', 'teams', 'coaches', 'races') as $mv_tbl) {
     $idx = "mv_$mv_tbl";
