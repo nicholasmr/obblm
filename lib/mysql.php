@@ -44,6 +44,7 @@ $CT_cols = array(
     'chr' => 'TINYINT UNSIGNED', # ma, st, ag, av (inj, def and ach)
     'elo' => 'FLOAT',
     'team_cnt' => 'TINYINT UNSIGNED', # Teams count for races and coaches.
+    'wt_cnt'   => 'SMALLINT UNSIGNED', # Won tours count.
     'streak' => 'SMALLINT UNSIGNED',
     'skills' => 'VARCHAR('.(19+20*3).')', # Set limit to 20 skills, ie. chars = 19 commas + 20*3 (max 20 integers of 3 decimals (assumed upper limit)).
 );
@@ -66,6 +67,7 @@ $core_tables = array(
         'sdraw' => $CT_cols['streak'],
         'slost' => $CT_cols['streak'],
         'team_cnt' => $CT_cols['team_cnt'],
+        'wt_cnt' => $CT_cols['wt_cnt'],
     ),
     'teams' => array(
         'team_id'           => $CT_cols[T_OBJ_TEAM].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -99,6 +101,7 @@ $core_tables = array(
         'swon'  => $CT_cols['streak'],
         'sdraw' => $CT_cols['streak'],
         'slost' => $CT_cols['streak'],
+        'wt_cnt' => $CT_cols['wt_cnt'],
     ),
     'players' => array(
         'player_id'         => $CT_cols[T_OBJ_PLAYER].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -132,6 +135,14 @@ $core_tables = array(
         'inj_ag'            => $CT_cols['chr'],
         'inj_av'            => $CT_cols['chr'],
         'inj_ni'            => $CT_cols['chr'],
+    ),
+    'races' => array(
+        'race_id' => $CT_cols[T_OBJ_RACE].' NOT NULL PRIMARY KEY',
+        'name'    => 'VARCHAR(50)',
+        'cost_rr' => 'MEDIUMINT UNSIGNED',
+        // Dynamic properties (DPROPS)
+        'team_cnt' => $CT_cols['team_cnt'],
+        'wt_cnt' => $CT_cols['wt_cnt'],
     ),
     'leagues' => array(
         'lid'       => $CT_cols[T_NODE_LEAGUE].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -213,6 +224,7 @@ $core_tables = array(
         'txt2'      => 'TEXT',
         'txt'       => 'TEXT',
     ),
+    // Game data tables. These are synced with the PHP-stored game data.
     'game_data_players' => array(
         'pos_id'    => $CT_cols['pos_id'],
         'f_race_id' => $CT_cols[T_OBJ_RACE],
@@ -238,13 +250,6 @@ $core_tables = array(
         'av'     => $CT_cols['chr'],
         'skills' => $CT_cols['skills'],
     ),
-    'game_data_races' => array(
-        'race_id' => $CT_cols[T_OBJ_RACE],
-        'name'    => 'VARCHAR(50)',
-        'cost_rr' => 'MEDIUMINT UNSIGNED',
-        // Dynamic properties (DPROPS)
-        'team_cnt' => $CT_cols['team_cnt'],
-    ),
 );
 
 /*
@@ -267,6 +272,7 @@ $mv_commoncols = array(
     'si'        => 'SMALLINT UNSIGNED',
     'cas'       => 'SMALLINT UNSIGNED',
     'tdcas'     => 'SMALLINT UNSIGNED',
+    'tcas'      => 'SMALLINT UNSIGNED',
     'spp'       => 'SMALLINT UNSIGNED',
     'won'       => 'SMALLINT UNSIGNED',
     'lost'      => 'SMALLINT UNSIGNED',

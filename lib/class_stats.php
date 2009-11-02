@@ -306,27 +306,6 @@ public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp
     return $matches;
 }
 
-public static function getTeamsCnt($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
-{
-    /* 
-        Calling this function only makes sense for $obj = race OR coach.
-    */
-    
-    // Simply find teams owned by the $obj with ID $obj_id ?
-    if (!$node && !$opp_obj) {
-        $query = 'SELECT COUNT(*) AS \'teams_cnt\' FROM teams WHERE '.(($obj == STATS_RACE) ? 'f_race_id' : 'owned_by_coach_id')." = $obj_id";
-    }
-    // Find the teams played in $node (optionally) against $opp_obj?
-    else {
-        if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
-        else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
-        $query = 'SELECT COUNT(DISTINCT(teams.team_id)) AS \'teams_cnt\' FROM '.implode(',',$from).' WHERE '.implode(' AND ', $where);
-    }
-    
-    $result = mysql_query($query);
-    return mysql_fetch_assoc($result);
-}
-
 /***************
  *   Below are query builder helper functions.
  ***************/

@@ -171,13 +171,13 @@ public static function standings($obj, $node, $node_id, array $opts)
         'lost'              => array('desc' => 'L'),
         'draw'              => array('desc' => 'D'),
         'played'            => array('desc' => 'GP'),
-        'win_percentage'    => array('desc' => 'WIN%'),
-#        'row_won'           => array('desc' => 'SW'),
-#        'row_lost'          => array('desc' => 'SL'),
-#        'row_draw'          => array('desc' => 'SD'),
-        'score_team'        => array('desc' => 'GF'.(($set_avg) ? '*' : '')),
-        'score_opponent'    => array('desc' => 'GA'.(($set_avg) ? '*' : '')),
-        'won_tours'         => array('desc' => 'WT'),
+        'win_pct'           => array('desc' => 'WIN%'),
+        'swon'              => array('desc' => 'SW'),
+        'slost'             => array('desc' => 'SL'),
+        'sdraw'             => array('desc' => 'SD'),
+        'gf'                => array('desc' => 'GF'.(($set_avg) ? '*' : '')),
+        'ga'                => array('desc' => 'GA'.(($set_avg) ? '*' : '')),
+        'wt_cnt'            => array('desc' => 'WT'),
         'td'                => array('desc' => 'Td'.(($set_avg) ? '*' : '')),
         'cp'                => array('desc' => 'Cp'.(($set_avg) ? '*' : '')),
         'intcpt'            => array('desc' => 'Int'.(($set_avg) ? '*' : '')),
@@ -258,9 +258,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             	unset($fields_after['value']);
             }
 
-            if ($USE_ELO) {$ELORanks = ELO::getRanks(($sel_node == STATS_TOUR) ? $sel_node_id : false);}
             foreach ($objs as $o) {
-                if ($USE_ELO) {$o->elo = $ELORanks[$o->team_id] + (($ALL_TIME) ? $o->elo_0 : 0);}
             	$o->setStats($sel_node, $sel_node_id, $set_avg);
             }
             break;
@@ -270,9 +268,9 @@ public static function standings($obj, $node, $node_id, array $opts)
             $tblSortRule = 'race';
             $fields_before = array(
                 'name'      => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'race_id')),
-                'teams_cnt' => array('desc' => 'Teams'),
+                'team_cnt' => array('desc' => 'Teams'),
             );
-            $extra['dashed'] = array('condField' => 'teams_cnt', 'fieldVal' => 0, 'noDashFields' => array('name'));
+            $extra['dashed'] = array('condField' => 'team_cnt', 'fieldVal' => 0, 'noDashFields' => array('name'));
 
             $objs = Race::getRaces(true);
             foreach ($objs as $o) {
@@ -286,7 +284,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             $tblSortRule = 'coach';
             $fields_before = array(
                 'name'      => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
-                'teams_cnt' => array('desc' => 'Teams'),
+                'team_cnt' => array('desc' => 'Teams'),
             );
             $objs = Coach::getCoaches();
             // OPTIONALLY hide retired coaches.
