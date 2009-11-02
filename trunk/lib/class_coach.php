@@ -85,7 +85,7 @@ class Coach
     
     public function setStats($node, $node_id, $set_avg = false)
     {
-        foreach (Stats::getAllStats(STATS_COACH, $this->coach_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
+        foreach (Stats::getAllStats(STATS_COACH, $this->coach_id, $node, $node_id, $set_avg) as $key => $val) {
             $this->$key = $val;
         }
         return true;

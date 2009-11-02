@@ -73,7 +73,7 @@ function sort_rule($w) {
             break;
             
         case 'race': // "All races"-table
-            $rule = array('-win_percentage', '+race');
+            $rule = array('-win_pct', '+race');
             break;
             
         case 'match': // Games played tables.
@@ -81,7 +81,7 @@ function sort_rule($w) {
             break;
     
         case 'coach': // "All coaches"-table
-            $rule = array('-win_percentage', '-won_tours', '-cas', '+name');
+            $rule = array('-win_pct', '-wt_cnt', '-cas', '+name');
             break;
             
         case 'team': // Overall team standings.
@@ -114,9 +114,9 @@ function rule_dict(array $rule) {
     /* Translates sort rules. */
     
     $d = array(
-        'win_percentage'    => 'win percentage',
+        'win_pct'           => 'win percentage',
         'date_played'       => 'date played',
-        'won_tours'         => 'won tours',
+        'wt_cnt'            => 'won tours',
         'score_diff'        => 'score diff.',
         'tdcas'             => '{td+cas}',
         'row_won'           => 'won in row',

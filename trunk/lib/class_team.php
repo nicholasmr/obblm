@@ -101,7 +101,7 @@ class Team
         foreach (Stats::getAllStats(STATS_TEAM, $this->team_id, $node, $node_id, $set_avg) as $key => $val) {
             $this->$key = $val;
         }
-
+$this->score_diff = 0; #DEV: REMOVE!! Used for debugging.
         $this->fan_factor += $this->_bought_fan_factor;
 
         // Import fields
@@ -114,11 +114,12 @@ class Team
             $this->score_team     += $this->gf_0;
             $this->score_opponent += $this->ga_0;
             $this->tcas           += $this->tcas_0;
-            if ($this->row_won < $this->sw_0)  $this->row_won  = $this->sw_0;
-            if ($this->row_lost < $this->sl_0) $this->row_lost = $this->sl_0;
-            if ($this->row_draw < $this->sd_0) $this->row_draw = $this->sd_0;
+#            if ($this->row_won < $this->sw_0)  $this->row_won  = $this->sw_0;
+#            if ($this->row_lost < $this->sl_0) $this->row_lost = $this->sl_0;
+#            if ($this->row_draw < $this->sd_0) $this->row_draw = $this->sd_0;
             # Corrections:
-            $this->score_diff     = $this->score_team - $this->score_opponent;
+#            $this->score_diff     = $this->score_team - $this->score_opponent;
+            $this->score_diff     = $this->gf - $this->ga;
             $this->win_percentage = ($this->played == 0) ? 0 : 100*$this->won/$this->played;
         }
 

@@ -32,6 +32,10 @@ public $race = '';
 public $name = ''; // = $this->race, used for conventional reasons.
 public $race_id = 0;
 
+public $team_cnt = 0;
+public $wt_cnt = 0;
+public $cost_rr = 0;
+
 /***************
  * Methods 
  ***************/
@@ -42,12 +46,19 @@ function __construct($race_id)
     
     $this->race_id = $race_id;
     $this->race = $this->name = $raceididx[$this->race_id];
+
+    // MySQL stored information
+    $result = mysql_query("SELECT * FROM races WHERE race_id = $this->race_id");
+    $row = mysql_fetch_assoc($result);
+    foreach ($row as $col => $val)
+        $this->$col = $val ? $val : 0;
+        
     $this->setStats(false,false,false);
 }
 
 public function setStats($node, $node_id, $set_avg = false)
 {
-    foreach (Stats::getAllStats(STATS_RACE, $this->race_id, $node, $node_id, false, false, $set_avg) as $key => $val) {
+    foreach (Stats::getAllStats(STATS_RACE, $this->race_id, $node, $node_id, $set_avg) as $key => $val) {
         $this->$key = $val;
     }
     return true;
