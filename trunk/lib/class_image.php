@@ -83,7 +83,7 @@ class ImageSubSys
         if ($this->obj == IMGTYPE_TEAMLOGO) {
             $r = new Race(get_alt_col('teams', 'team_id', $this->obj_id, 'f_race_id'));
             $roster = $r->getRoster();
-            return $roster['other']['icon'];
+            return RACE_ICONS.'/'.$roster['other']['icon'];
         }
         else {
             return NO_PIC;

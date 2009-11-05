@@ -64,43 +64,43 @@ function sort_rule($w) {
     
     switch ($w)
     {
-        case 'streaks': // For streaks table.
-            $rule = array('-row_won', '-row_draw', '+row_lost', '+name');
+        # - Summable values from the MV tables must always be referenced by using the "mv_" prefix.
+        # - Non-summable values (ie. steaks, win pct's etc.) are referenced by the "rg_" prefix.
+        # - Static and dynamic properties (ie. name, treasury, skills etc.) need no prefix.
+        
+        case T_OBJ_RACE: // "All races"-table
+            $rule = array('-rg_win_pct', '+name');
             break;
-    
-        case 'race_page': // Race's players table.
-            $rule = array('+cost', '+position');
-            break;
-            
-        case 'race': // "All races"-table
-            $rule = array('-win_pct', '+race');
-            break;
-            
-        case 'match': // Games played tables.
-            $rule = array('-date_played');
-            break;
-    
-        case 'coach': // "All coaches"-table
-            $rule = array('-win_pct', '-wt_cnt', '-cas', '+name');
+
+        case T_OBJ_COACH: // "All coaches"-table
+            $rule = array('-rg_win_pct', '-wt_cnt', '-mv_cas', '+name');
             break;
             
-        case 'team': // Overall team standings.
-            $rule = array('-won', '-draw', '+lost', '-score_diff', '-cas', '+name');
+        case T_OBJ_TEAM: // "All teams"-table
+            $rule = array('-mv_won', '-mv_draw', '+mv_lost', '-mv_sdiff', '-mv_cas', '+name');
+            break;
+
+        case T_OBJ_PLAYER: // "All players"-table
+            $rule = array('-value', '-mv_td', '-mv_cas', '-mv_spp', '+name');
+            break;
+            
+        case T_OBJ_STAR: // Stars table.
+            $rule = array('-mv_played', '+name');
             break;
             
         case 'player': // For team roaster player list.
             $rule = array('+nr', '+name');
             break;
             
-        case 'player_overall': // "All players"-table
-            $rule = array('-value', '-td', '-cas', '-spp', '+name');
-            break;
-            
-        case 'star': // Stars table.
-            $rule = array('-played', '+name');
+        case 'race_page': // Race's players table.
+            $rule = array('+cost', '+position');
             break;
             
         case 'star_HH': // Stars hire history table.
+            $rule = array('-date_played');
+            break;
+            
+        case 'match': // Games played tables.
             $rule = array('-date_played');
             break;
     }
@@ -109,29 +109,41 @@ function sort_rule($w) {
 }
 
 
-function rule_dict(array $rule) {
+function rule_dict(array $sortRule) {
     
     /* Translates sort rules. */
     
-    $d = array(
-        'win_pct'           => 'win percentage',
-        'date_played'       => 'date played',
-        'wt_cnt'            => 'won tours',
-        'score_diff'        => 'score diff.',
-        'tdcas'             => '{td+cas}',
-        'row_won'           => 'won in row',
-        'row_lost'          => 'lost in row',
-        'row_draw'          => 'draw in row',
+    $sortRule = preg_replace('/(mv\_|rg\_)/', '', $sortRule);
+    
+    $ruleDict = array(
+        'win_pct'     => 'WIN%',
+        'date_played' => 'date played',
+        'wt_cnt'      => 'WT',
+        'sdiff'       => 'score diff.',
+        'tdcas'       => '{td+cas}',
+        'swon'        => 'SW',
+        'slost'       => 'SL',
+        'sdraw'       => 'SD',
     );
     
-    foreach ($rule as &$r) {
-        $r = preg_replace('/_tour$/', '', $r);
-        foreach ($d as $idx => $rpl) {
-            $r = preg_replace("/$idx/", $rpl, $r);
+    foreach ($sortRule as &$r) {
+        $idx = substr($r,1);
+        if (array_key_exists($idx, $ruleDict)) {
+            $r = substr($r,0,1).$ruleDict[$idx];
         }
     }
     
-    return $rule;
+    return $sortRule;
+}
+
+function skillsTrans($str) {
+    // Translates a commaseperated string of skill IDs to a comma (plus space) seperated skill name string.
+    return implode(', ', array_map(create_function('$s', 'global $skillididx; return $skillididx[$s];'), is_array($str) ? $str : explode(',', $str)));
+}
+
+function racesTrans($str) {
+    // Translates a commaseperated string of race IDs to a comma (plus space) seperated race name string.
+    return implode(', ', array_map(create_function('$r', 'global $raceididx; return $raceididx[$r];'), is_array($str) ? $str : explode(',', $str)));
 }
 
 // Prints page title for main section pages.

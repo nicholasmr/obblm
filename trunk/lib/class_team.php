@@ -29,9 +29,11 @@ class Team
 
     // MySQL stored information
     public $team_id           = 0;
-    public $name              = "";
+    public $name              = '';
     public $owned_by_coach_id = 0;
     public $f_race_id         = 0;
+    public $f_rname           = '';
+    public $f_cname           = '';
     public $f_lid             = 0;
     public $treasury          = 0;
     public $apothecary        = 0;
@@ -44,8 +46,6 @@ class Team
     
     public $value = 0; public $tv = 0; # Identical.
     
-    public $race              = "";
-    public $coach_name        = '';
     private $_bought_fan_factor = 0;
 
     // MySQL stored initials for imported teams
@@ -90,7 +90,7 @@ class Team
         $this->_bought_fan_factor = $this->fan_factor;
         $this->imported = ($this->imported == 1); // Make boolean.
         $this->value = $this->tv;
-        $this->race = $raceididx[$this->f_race_id];
+#        $this->race = $raceididx[$this->f_race_id];
         $this->setStats(false,false,false);
 
         return true;

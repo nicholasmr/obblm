@@ -45,8 +45,10 @@ $CT_cols = array(
     'elo' => 'FLOAT',
     'team_cnt' => 'TINYINT UNSIGNED', # Teams count for races and coaches.
     'wt_cnt'   => 'SMALLINT UNSIGNED', # Won tours count.
+    'win_pct'  => 'FLOAT UNSIGNED',
     'streak' => 'SMALLINT UNSIGNED',
     'skills' => 'VARCHAR('.(19+20*3).')', # Set limit to 20 skills, ie. chars = 19 commas + 20*3 (max 20 integers of 3 decimals (assumed upper limit)).
+    'pts'   => 'FLOAT SIGNED',
 );
 
 $core_tables = array(
@@ -68,6 +70,7 @@ $core_tables = array(
         'slost' => $CT_cols['streak'],
         'team_cnt' => $CT_cols['team_cnt'],
         'wt_cnt' => $CT_cols['wt_cnt'],
+        'win_pct' => $CT_cols['win_pct'],
     ),
     'teams' => array(
         'team_id'           => $CT_cols[T_OBJ_TEAM].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -95,6 +98,9 @@ $core_tables = array(
         'ga_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'tcas_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'elo_0'     => $CT_cols['elo'].' NOT NULL DEFAULT 0',
+        // Relations
+        'f_rname' => 'VARCHAR(50)',
+        'f_cname' => 'VARCHAR(50)',
         // Dynamic properties (DPROPS)
         'tv'    => $CT_cols['tv'],
         'elo'   => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
@@ -102,6 +108,7 @@ $core_tables = array(
         'sdraw' => $CT_cols['streak'],
         'slost' => $CT_cols['streak'],
         'wt_cnt' => $CT_cols['wt_cnt'],
+        'win_pct' => $CT_cols['win_pct'], # All-time win pct (across all matches).
     ),
     'players' => array(
         'player_id'         => $CT_cols[T_OBJ_PLAYER].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -122,19 +129,26 @@ $core_tables = array(
         'extra_skills'      => $CT_cols['skills'],
         'extra_spp'         => 'MEDIUMINT SIGNED',
         'extra_val'         => $CT_cols['pv'].' NOT NULL DEFAULT 0',
+        // Relations
+        'f_rid' => $CT_cols[T_OBJ_RACE],
+        'f_cid' => $CT_cols[T_OBJ_COACH],
+        'f_tname' => 'VARCHAR(50)',
+        'f_rname' => 'VARCHAR(50)',
+        'f_cname' => 'VARCHAR(50)',
         // Dynamic properties (DPROPS)
-        'value'             => $CT_cols['pv'],
-        'status'            => 'TINYINT UNSIGNED',
-        'date_died'         => 'DATETIME',
-        'ma'                => $CT_cols['chr'],
-        'st'                => $CT_cols['chr'],
-        'ag'                => $CT_cols['chr'],
-        'av'                => $CT_cols['chr'],
-        'inj_ma'            => $CT_cols['chr'],
-        'inj_st'            => $CT_cols['chr'],
-        'inj_ag'            => $CT_cols['chr'],
-        'inj_av'            => $CT_cols['chr'],
-        'inj_ni'            => $CT_cols['chr'],
+        'value'     => $CT_cols['pv'],
+        'status'    => 'TINYINT UNSIGNED',
+        'date_died' => 'DATETIME',
+        'ma'        => $CT_cols['chr'],
+        'st'        => $CT_cols['chr'],
+        'ag'        => $CT_cols['chr'],
+        'av'        => $CT_cols['chr'],
+        'inj_ma'    => $CT_cols['chr'],
+        'inj_st'    => $CT_cols['chr'],
+        'inj_ag'    => $CT_cols['chr'],
+        'inj_av'    => $CT_cols['chr'],
+        'inj_ni'    => $CT_cols['chr'],
+        'win_pct' => $CT_cols['win_pct'], # All-time win pct (across all matches).
     ),
     'races' => array(
         'race_id' => $CT_cols[T_OBJ_RACE].' NOT NULL PRIMARY KEY',
@@ -143,6 +157,7 @@ $core_tables = array(
         // Dynamic properties (DPROPS)
         'team_cnt' => $CT_cols['team_cnt'],
         'wt_cnt' => $CT_cols['wt_cnt'],
+        'win_pct' => $CT_cols['win_pct'], # All-time win pct (across all matches).
     ),
     'leagues' => array(
         'lid'       => $CT_cols[T_NODE_LEAGUE].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -273,14 +288,16 @@ $mv_commoncols = array(
     'cas'       => 'SMALLINT UNSIGNED',
     'tdcas'     => 'SMALLINT UNSIGNED',
     'tcas'      => 'SMALLINT UNSIGNED',
+    'smp'       => 'SMALLINT SIGNED',
     'spp'       => 'SMALLINT UNSIGNED',
     'won'       => 'SMALLINT UNSIGNED',
     'lost'      => 'SMALLINT UNSIGNED',
     'draw'      => 'SMALLINT UNSIGNED',
     'played'    => 'SMALLINT UNSIGNED',
-    'win_pct'   => 'FLOAT UNSIGNED',
+    'win_pct'   => $CT_cols['win_pct'],
     'ga'        => 'SMALLINT UNSIGNED',
     'gf'        => 'SMALLINT UNSIGNED',
+    'sdiff'     => 'SMALLINT SIGNED',
 );
 $core_tables['mv_players'] = array(
     'f_pid' => $CT_cols[T_OBJ_PLAYER],
@@ -297,6 +314,7 @@ $core_tables['mv_teams'] = array(
     'swon'  => $CT_cols['streak'],
     'sdraw' => $CT_cols['streak'],
     'slost' => $CT_cols['streak'],
+    'pts'   => $CT_cols['pts'],
 );
 $core_tables['mv_coaches'] = array(
     'f_cid' => $CT_cols[T_OBJ_COACH],
@@ -316,6 +334,34 @@ foreach (array('players', 'teams', 'coaches', 'races') as $mv_tbl) {
     $idx = "mv_$mv_tbl";
     $core_tables[$idx] = array_merge($core_tables[$idx], $mv_commoncols);
 }
+
+// Table structure references.
+$relations_node = array(
+    T_NODE_MATCH        => array('id' => 'match_id', 'parent_id' => 'f_tour_id', 'tbl' => 'matches'),
+    T_NODE_TOURNAMENT   => array('id' => 'tour_id',  'parent_id' => 'f_did',     'tbl' => 'tours'),
+    T_NODE_DIVISION     => array('id' => 'did',      'parent_id' => 'f_lid',     'tbl' => 'divisions'),
+    T_NODE_LEAGUE       => array('id' => 'lid',      'parent_id' => null,        'tbl' => 'leagues'),
+);
+$relations_obj = array(
+    T_OBJ_PLAYER => array('id' => 'player_id', 'parent_id' => 'owned_by_team_id',   'tbl' => 'players'),
+    T_OBJ_STAR   => array('id' => 'star_id',   'parent_id' => null,                 'tbl' => 'game_data_stars'),
+    T_OBJ_TEAM   => array('id' => 'team_id',   'parent_id' => 'owned_by_coach_id',  'tbl' => 'teams'),
+    T_OBJ_COACH  => array('id' => 'coach_id',  'parent_id' => null,                 'tbl' => 'coaches'),
+    T_OBJ_RACE   => array('id' => 'race_id',   'parent_id' => null,                 'tbl' => 'races'),
+);
+
+// Initial values of object properties
+$objValues_init = array(
+    T_OBJ_TEAM => array(
+        'won' => 'won_0', 'lost' => 'lost_0', 'draw' => 'draw_0', 
+        'swon' => 'sw_0', 'slost' => 'sl_0', 'sdraw' => 'sd_0',
+        'wt_cnt' => 'wt_0', 'gf' => 'gf_0', 'ga' => 'ga_0', 'tcas' => 'tcas_0'
+    ),
+);
+// Object property extra (addition) fields
+$objValues_extra = array(
+    T_OBJ_PLAYER => array('value' => 'extra_val', 'spp' => 'extra_spp'), # We don't include extra_skills since it's a string field.
+);
 
 function mysql_up($do_table_check = false) {
 
@@ -401,17 +447,6 @@ function get_rows($tbl, array $getFields) {
     return $ret;
 }
 
-$relations_node = array(
-    T_NODE_MATCH        => array('id' => 'match_id', 'parent_id' => 'f_tour_id', 'tbl' => 'matches'),
-    T_NODE_TOURNAMENT   => array('id' => 'tour_id',  'parent_id' => 'f_did',     'tbl' => 'tours'),
-    T_NODE_DIVISION     => array('id' => 'did',      'parent_id' => 'f_lid',     'tbl' => 'divisions'),
-    T_NODE_LEAGUE       => array('id' => 'lid',      'parent_id' => null,        'tbl' => 'leagues'),
-);
-$relations_obj = array(
-    T_OBJ_PLAYER => array('id' => 'player_id', 'parent_id' => 'owned_by_team_id',   'tbl' => 'players'),
-    T_OBJ_TEAM   => array('id' => 'team_id',   'parent_id' => 'owned_by_coach_id',  'tbl' => 'teams'),
-    T_OBJ_COACH  => array('id' => 'coach_id',  'parent_id' => null,                 'tbl' => 'coaches'),
-);
 function get_parent_id($type, $id, $parent_type) {
     global $relations_node, $relations_obj;
     $relations = in_array($type, array_keys($relations_node)) ? $relations_node : $relations_obj;

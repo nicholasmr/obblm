@@ -128,9 +128,11 @@ class Player
         /* 
             Set general stats.
         */
+
+        $this->setStats(false,false,false);
         
         foreach (array('ach_nor_skills', 'ach_dob_skills', 'extra_skills', 'def_skills') as $grp) {
-            $this->$grp = explode(',', $this->$grp);
+            $this->$grp = (empty($this->$grp)) ? array() : explode(',', $this->$grp);
         }
         
         $this->is_dead       = ($this->status == DEAD);
@@ -138,8 +140,6 @@ class Player
         $this->is_sold       = (bool) $this->date_sold;
         $this->is_journeyman = ($this->type == PLAYER_TYPE_JOURNEY);
         
-        $this->setStats(false,false,false);
-                       
         /*
             Misc
         */
@@ -661,7 +661,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
     
         $chrs = array();
         $extras = $this->extra_skills;
-        
+
         // First italic-ize extra skills
         if ($HTML) {
             array_walk($extras, create_function('&$val,$key', '$val = "<i>$val</i>";'));
@@ -676,6 +676,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
         if ($this->ach_av > 0) array_push($chrs, "+$this->ach_av Av");
         
         return implode(', ', array_merge($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills, $extras, $chrs));
+#        return skillsTrans(array_merge($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills, $extras, $chrs));
     }
     
     public function getInjsStr($HTML = false) 

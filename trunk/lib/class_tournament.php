@@ -131,14 +131,15 @@ class Tour
         return $teams;
     }
 
-    public function getRSSortRule($mkStr = false) {
-        // Returns this tournament's sort rule for determining standings.
-        return Tour::getRSSortRules($this->rs, $mkStr); // rule 0 = array().
+    public function getRSSortRule() {
+        global $hrs;
+        return $hrs[$this->rs]['rule'];
     }
     
     public function isRSWithPoints() {
-        //Returns bool for wheter or not this tournament's ranking system uses points.
-        return ($this->rs != 1); // RS 1 is currently the only RS that does not use points.
+        // Returns bool for wheter or not this tournament's ranking system uses points.
+        global $hrs;
+        return !empty($hrs[$this->rs]['points']);
     }
 
     public function delete($force = false) {
@@ -232,49 +233,6 @@ class Tour
 
     }
     
-    public static function getRSSortRules($rs = false, $mkStr = false) {
-        
-        /**
-         * Returns all possible sort rules for tournaments - unless else specified by arguments.
-         **/
-        
-        $rules = $points = array();
-        
-        $rules[0] = array();
-        $rules[1] = array('-won', '-draw', '+lost', '-score_diff', '-cas', '+name');
-        $rules[2] = array('-points', '-td', '+name');
-        $rules[3] = array('-points', '-tdcas', '+name');
-        $rules[4] = array('-points', '-td', '+name');
-        
-        // String descriptions of how points are calculated. Only used when $mkStr is true.
-        $pts[0] = '{}';
-        $pts[1] = '{}';
-        $pts[2] = '{3*[won] + [draw]}';
-        $pts[3] = '{[won]/[played] + 0.5*[draw]/[played]}';
-        $pts[4] = '{10*[won] + 5*[draw] + TDs + CAS | TDs & CAS max 3 per match}';
-        
-        // Add house ranking systems.
-        global $hrs;
-        foreach ($hrs as $i) {
-            $rules[] = $i['rule'];
-            $pts[] = '{'.$i['points_desc'].'}';
-        }
-        
-        // Substitue points field with string definition?
-        if ($mkStr) {
-            foreach ($rules as $i => &$rule) {
-                $rule = implode(', ', rule_dict($rule));
-                $rule = preg_replace('/points/', $pts[$i], $rule);
-            }
-        }
-        
-        // Delete fake zero entry.
-        unset($rules[0]);
-        unset($pts[0]);
-        
-        return ($rs) ? $rules[$rs] : $rules;    
-    }
-
     public static function create(array $input) {
     
         /**

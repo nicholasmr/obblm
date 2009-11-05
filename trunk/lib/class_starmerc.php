@@ -29,68 +29,43 @@ class Star
 
     // General
     public $star_id = 0;
-    public $ma = 0;
-    public $st = 0;
-    public $ag = 0;
-    public $av = 0;
-    public $skills = array();
-    public $name    = '';
     public $icon    = '';
-    public $cost    = 0;
-    public $teams   = array(); // The teams that may hire this star.
     
     /***************
      * Methods
      ***************/
 
-    public function __construct($star_id)
+    public function __construct($sid)
     {
         /* 
             Creates a star object with up-to-date fields/stats reflecting the star's participation in every match.
         */
-        
+
+        $this->setStats(T_OBJ_STAR, $sid, false, false, false);
         global $stars;
-        
-        $this->star_id = $star_id;
-        
-        foreach ($stars as $s => $d) {
-            if ($d['id'] == $this->star_id) {
-                $this->name = $s;
-                break;
-            }
-        }
-
-        $this->skills = $stars[$this->name]['Def skills'];
-        $this->cost   = $stars[$this->name]['cost'];
-        $this->teams  = $stars[$this->name]['teams'];
-        $this->ma     = $stars[$this->name]['ma'];
-        $this->st     = $stars[$this->name]['st'];
-        $this->ag     = $stars[$this->name]['ag'];
-        $this->av     = $stars[$this->name]['av'];
-        $this->icon   = PLAYER_ICONS.'/'.$stars[$this->name]['icon'].'.png';
-        $this->setStats(false,false,false,false);
-
-        return true;
+        $this->icon = PLAYER_ICONS.'/'.$stars[$this->name]['icon'].'.png';
     }
     
     public function setStats($obj, $obj_id, $node, $node_id, $setAvg = false)
     {
-        // Match stats.
-        $this->played = $this->won = $this->lost = $this->draw = $this->win_percentage = 0;
-        foreach ($this->getHireHistory($obj, $obj_id, $node, $node_id) as $m) {
-            $this->played++;
-            if ($m->is_draw)                    {$this->draw++;}
-            elseif ($m->winner == $m->hiredBy)  {$this->won++;}
-            else                                {$this->lost++;}
+        foreach (Stats::getAllStats(T_OBJ_STAR, $obj_id, $node, $node_id, $setAvg) as $key => $val) {
+            $this->$key = $val;
         }
-        $this->win_percentage = ($this->played == 0) ? 0 : 100*$this->won/$this->played;
-
-        // Set achievements
-        foreach (Star::getStats($this->star_id, $obj, $obj_id, $node, $node_id) as $field => $val) {
-            $this->$field = ($val) ? (($setAvg) ? $val/$this->played : $val) : 0;
+    }
+    
+    public function getStats($type, $type_id) 
+    {
+        global $STATS_TRANS;
+        $fields = array('cp','td','intcpt','mvp','bh+ki+si', 'bh','si','ki');
+        $query = "SELECT ".implode(',', array_map(create_function('$f', 'return "SUM($f) AS \'$f\'";'), $fields))." FROM match_data WHERE f_player_id = $this->star_id AND ".$STATS_TRANS[$type].'='.$type_id;
+        $result = mysql_query($query);
+        $ret = array();
+        foreach (mysql_fetch_assoc($result) as $col => $val) {
+            $ret[$col] = ($val) ? $val : 0;
         }
-        
-        return true;
+        $ret['cas'] = $ret['bh+ki+si'];
+        unset($ret['bh+ki+si']);
+        return $ret;
     }
     
     public function getHireHistory($obj, $obj_id, $node, $node_id)
@@ -112,7 +87,7 @@ class Star
             AND f_player_id = $this->star_id 
                 ".(($obj)  ? ' AND '.$STATS_TRANS[$obj]. " = $obj_id "  : '').'
                 '.(($node) ? ' AND '.$STATS_TRANS[$node]." = $node_id " : '').'
-            ORDER BY date_played DESC';
+            ORDER BY date_played DESC LIMIT '.MAX_RECENT_GAMES;
             
         if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -137,18 +112,6 @@ class Star
         
         $query = "DELETE FROM match_data WHERE f_player_id = $this->star_id AND f_match_id = $match_id" . (($team_id) ? " AND f_team_id = $team_id" : '');
         return mysql_query($query);
-    }
-    
-    /***************
-     * Statics
-     ***************/
-
-    public static function getStats($star_id, $obj, $obj_id, $node, $node_id)
-    {   
-        $filter = array(STATS_PLAYER => $star_id);
-        if ($obj)  {$filter[$obj]  = $obj_id;}
-        if ($node) {$filter[$node] = $node_id;}
-        return array_shift(Stats::getStatsNaked($filter,false,false,false));
     }
     
     public static function getStars($obj, $obj_id, $node, $node_id)

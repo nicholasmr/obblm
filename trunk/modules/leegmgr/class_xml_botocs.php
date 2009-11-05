@@ -57,10 +57,10 @@ class XML_BOTOCS implements ModuleInterface
         $this->jm = $jm;
 
         $team = new Team ( $_GET["teamid"] );
-            $this->games = $team->won + $team->lost + $team->draw;
+            $this->games = $team->mv_won + $team->mv_lost + $team->mv_draw;
             $this->players = $team->getPlayers();
             $this->name = $team->name;
-            $this->race = $team->race;
+            $this->race = $team->f_rname;
             $this->coach_name = $team->coach_name;
             $this->rerolls = $team->rerolls;
             $this->fan_factor = $team->fan_factor;

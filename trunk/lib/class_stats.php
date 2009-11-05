@@ -54,12 +54,13 @@ class Stats
 {
 
 
-public static function getMV($table, array $filter, $grp, $n, array $sortRule)
+public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $setAvg)
 {
-    global $mv_commoncols;
+    global $core_tables, $relations_obj;
     
     $mv_keys = array(
         T_OBJ_PLAYER => 'f_pid',
+        T_OBJ_STAR   => 'f_pid',
         T_OBJ_TEAM   => 'f_tid',
         T_OBJ_COACH  => 'f_cid',
         T_OBJ_RACE   => 'f_rid',
@@ -69,37 +70,46 @@ public static function getMV($table, array $filter, $grp, $n, array $sortRule)
     );
     $mv_tables = array(
         T_OBJ_PLAYER => 'mv_players',
+        T_OBJ_STAR   => 'mv_players',
         T_OBJ_TEAM   => 'mv_teams',
         T_OBJ_COACH  => 'mv_coaches',
         T_OBJ_RACE   => 'mv_races',
     );
 
-    $grp = ($grp) ? $mv_keys[$grp] : false;
-    $table = $mv_tables[$table];
-    $cols = array_filter(array_keys($mv_commoncols), create_function('$c', 'return !preg_match(\'/^f_/\', $c);'));
+    $devisor = ($setAvg) ? '' : false; # TODO: integrate averages.
+
+    global $cols_mv; # Bad practice creating this variable globally from within a function, but it's effecient!
+    $tbl_name_norm = $relations_obj[$obj]['tbl'];
+    $tbl_name_mv   = $mv_tables[$obj];
+    $cols_norm = array_keys($core_tables[$tbl_name_norm]);
+    $cols_mv   = array_filter(array_keys($core_tables[$tbl_name_mv]), create_function('$c', 'return !preg_match(\'/^f_/\', $c);'));
+    $cols_norm_sqlsel = implode(',', array_map(create_function('$c', 'global $cols_mv; return "'.$tbl_name_norm.'.$c AS \'".((in_array($c,$cols_mv))?"rg_":"")."$c\'\n";'), $cols_norm));
+    $cols_mv_sqlsel   = implode(',', array_map(create_function('$c', 'return "IFNULL(SUM('.$tbl_name_mv.'.$c),0) AS \'mv_$c\'\n";'), $cols_mv));
     
     if (!empty($sortRule)) {
         for ($i = 0; $i < count($sortRule); $i++) {
             $str = $sortRule[$i];
+            $str = preg_replace('/mv\_/', $tbl_name_mv.'.', $str); # MV fields.
+            $str = preg_replace('/rg\_/', $tbl_name_norm.'.', $str); # Regular/all-time fields
             $sortRule[$i] = 'SUM('.substr($str, 1, strlen($str)) .') '. (($str[0] == '+') ? 'ASC' : 'DESC');
         }
     }
     
-    $query = "SELECT ".(($grp) ? "$grp," : '').implode(',', array_map(create_function('$c', 'return "IFNULL(SUM($c),0) AS \'$c\'";'), $cols)).' FROM '.$table;
+    $query = "SELECT $cols_mv_sqlsel,$cols_norm_sqlsel FROM $tbl_name_norm LEFT JOIN $tbl_name_mv ON ".$mv_keys[$obj].'='.$relations_obj[$obj]['id'];
 
     $and = false;
     if (!empty($filter)) {
         $query .= " WHERE ";
         foreach ($filter as $filter_key => $id) {
             if (is_numeric($id) && is_numeric($filter_key)) {
-                $query .= (($and) ? ' AND ' : ' ').$mv_keys[$filter_key]." = $id ";
+                $query .= (($and) ? ' AND ' : ' ').(($obj == $filter_key) ? $relations_obj[$filter_key]['id'] : $mv_keys[$filter_key])." = $id ";
                 $and = true;
             }
         }
     }
 
     $query .= " 
-        ".((!empty($grp))       ? " GROUP BY $grp" : '')." 
+        ".((!empty($grp))       ? " GROUP BY ".$relations_obj[$grp]['id'] : '')." 
         ".((!empty($sortRule))  ? ' ORDER BY '.implode(', ', $sortRule) : '')." 
         ".((is_numeric($n))     ? " LIMIT $n" : '')." 
     ";
@@ -110,7 +120,7 @@ public static function getMV($table, array $filter, $grp, $n, array $sortRule)
             array_push($ret, $r);
         }
     }
-
+#    echo $query;
     return $ret;
 }
 
@@ -119,14 +129,7 @@ public static function getMV($table, array $filter, $grp, $n, array $sortRule)
  ***************/
 public static function getLeaders($obj, $node, $node_id, array $stats, $N)
 {
-    return self::getMV($obj, ($node) ? array($node => $node_id) : array(), $obj, $N, $stats);
-}
-
-/***************
- *   Fetches summed data from match_data by applying the filter specifications in $filter and optionally groups data around the specified column $grp.
- ***************/
-public static function getStatsNaked(array $filter, $grp = false, $n = false, $sortRule = array())
-{
+    return self::getRaw($obj, ($node) ? array($node => $node_id) : array(), $obj, $N, $stats, false);
 }
 
 /*
@@ -137,139 +140,24 @@ public static function getStatsNaked(array $filter, $grp = false, $n = false, $s
  */
 
 /***************
- *   Returns object (team, coach, player and race) stats in array form ready to be assigned as respective object properties/fields.
+ *   Fetches summed data from match_data by applying the filter specifications.
  ***************/
-public static function getAllStats($obj, $obj_id, $node, $node_id, $set_avg = false)
+public static function getStats($obj, $obj_id, $node, $node_id, $setAvg)
 {
-    list($ach) = Stats::getStats($obj, $obj_id, $node, $node_id);
-    $stats = array_merge(
-        $ach,        array()
-#        Stats::getStreaks(   $obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id),
-#        ($obj == STATS_COACH || $obj == STATS_RACE) ? Stats::getTeamsCnt($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id) : array()
-    );
-    
-    if ($set_avg) {
-        foreach (array('td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'mvp', 'spp', 'tdcas', 'gf', 'ga') as $key) {
-            $stats[$key] = ($stats['played'] == 0) ? 0 : $stats[$key]/$stats['played'];
-        }
-    }
-    
-    return $stats;
+    return self::getRaw($obj, array($obj => $obj_id, $node => $node_id), false,false,array(),$setAvg);
 }
 
 /***************
- *   Fetches summed data from match_data by applying the filter specifications.
+ *   Returns object (team, coach, player and race) stats in array form ready to be assigned as respective object properties/fields.
  ***************/
-public static function getStats($obj, $obj_id, $node, $node_id)
+public static function getAllStats($obj, $obj_id, $node, $node_id, $setAvg = false)
 {
-    return self::getMV($obj, array($obj => $obj_id, $node => $node_id), false,false,array());
-}
-
-public static function getMatchStats($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id)
-{
-    $s = array(); // Stats array to be returned.
-
-    if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
-    else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
-    
-    // Match result stats
-    $query  = "SELECT 
-                SUM(IF(team1_id = $tid, 1, IF(team2_id = $tid, 1, 0))) AS 'played', 
-                SUM(
-                    IF(team1_id = $tid, 
-                        IF(team1_score > team2_score, 1, 0), 
-                    IF(team2_id = $tid, 
-                        IF(team2_score > team1_score, 1, 0), 0))
-                ) AS 'won', 
-                SUM(
-                    IF(team1_id = $tid, 
-                        IF(team1_score < team2_score, 1, 0), 
-                    IF(team2_id = $tid, 
-                        IF(team2_score < team1_score, 1, 0), 0))
-                ) AS 'lost', 
-                SUM(IF(round = ".RT_FINAL." AND (team1_id = $tid AND team1_score > team2_score OR team2_id = $tid AND team1_score < team2_score), 1, 0)) AS 'won_tours',
-                SUM(IF(team1_id = $tid, ffactor1, IF(team2_id = $tid, ffactor2, 0))) AS 'fan_factor', 
-                SUM(IF(team1_id = $tid, smp1, IF(team2_id = $tid, smp2, 0))) AS 'smp', 
-                SUM(IF(team1_id = $tid, tcas1, IF(team2_id = $tid, tcas2, 0))) AS 'tcas', 
-                SUM(IF(team1_id = $tid, team1_score, IF(team2_id = $tid, team2_score, 0))) AS 'score_team', 
-                SUM(IF(team1_id = $tid, team2_score, IF(team2_id = $tid, team1_score, 0))) AS 'score_opponent' 
-                FROM ".implode(',', $from)." WHERE date_played IS NOT NULL AND ".implode(' AND ', $where);
-
-    $result = mysql_query($query);
-    $row    = mysql_fetch_assoc($result);
-    foreach ($row as $col => $val) $s[$col] = $val ? $val : 0;
-    $s['draw']       = $s['played'] - ($s['won'] + $s['lost']);
-    $s['score_diff'] = $s['score_team'] - $s['score_opponent'];
-    $s['win_percentage'] = ($s['played'] == 0) ? 0 : 100*$s['won']/$s['played'];
-
-    /******************** 
-     * Points definitions depending on ranking system.
-     ********************/
-     
-    $s['points'] = 0;
-    if ($node == STATS_TOUR) {
-
-        // First we need to investigate if the RS's points def. requires fields not yet loaded, and if so load them.
-        
-        global $hrs; // All house RSs
-        $rs_all  = Tour::getRSSortRules(false, false); // All RSs.
-        $hrs_nr  = 0; // Current HRS nr.
-        $rs_nr   = get_alt_col('tours', 'tour_id', $node_id, 'rs'); // Current RS nr.
-        $fields  = array('mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki', 'cas', 'tdcas');
-        $limit   = count($rs_all) - count($hrs); // If rs_nr is larger than this value, then the RS for this tournament is a house RS -> set extra fields.
-        
-        
-        // Is the ranking system a house ranking system? If not then don't load extra fields since non-house RSs don't use the extra fields at all.
-        if (($hrs_nr = $rs_nr - $limit) > 0 && preg_match('/'.implode('|', $fields).'/', $hrs[$hrs_nr]['points'])) {
-            $s = array_merge($s, Stats::getStats($obj, $obj_id, STATS_TOUR, $node_id, false, false));
-        }
-
-        switch ($rs_nr)
-        {
-            case '2': $s['points'] = $s['won']*3 + $s['draw']; break;
-            case '3': $s['points'] = ($s['played'] == 0) ? 0 : $s['won']/$s['played'] + $s['draw']/(2*$s['played']); break;
-            case '4':
-                /* 
-                    Although none of the points definitions make sense for other $obj types than = STATS_TEAM, it 
-                    is anyway necessary for this case to only be executed if $obj = team.
-                    
-                    pts += Win 10p, Draw 5p, Loss 0p, 1p per TD up to 3p, 1p per (player, not team) CAS up to 3p.
-                */
-                if ($obj == STATS_TEAM) {
-                    $query = "
-                        SELECT SUM(td) AS 'td', SUM(cas) AS 'cas' FROM 
-                        (
-                        SELECT 
-                            f_match_id, 
-                            IF(SUM(td) > 3, 3, SUM(td)) AS 'td', 
-                            IF(SUM(bh+ki+si) > 3, 3, SUM(bh+ki+si)) AS 'cas'
-                        FROM match_data WHERE f_team_id = $obj_id AND f_tour_id = $node_id GROUP BY f_match_id
-                        ) AS tmpTable
-                        ";
-                    $result = mysql_query($query);
-                    $row = mysql_fetch_assoc($result);
-                    $s['points'] = $s['won']*10 + $s['draw']*5 + $row['td'] + $row['cas'];
-                }
-                break;
-                
-            default:
-                // Only for house RS.
-                if ($hrs_nr < 1) {
-                    break;
-                }
-                $fields = array_merge($fields, array('played', 'won', 'lost', 'draw', 'fan_factor', 'smp', 'cas', 'score_team', 'score_opponent', 'score_diff', 'win_percentage'));
-                eval("\$s['points'] = ".
-                    preg_replace(
-                        array_map(create_function('$val', 'return "/\[$val\]/";'), $fields), 
-                        array_map(create_function('$val', 'return "\$s[\'$val\']";'), $fields),
-                        $hrs[$hrs_nr]['points']
-                    )
-                .";");
-                break;
-        }
-    }
-
-    return $s;
+    list($ach) = Stats::getStats($obj, $obj_id, $node, $node_id, $setAvg);
+    $stats = array_merge(
+        $ach,        array()
+    );
+   
+    return $stats;
 }
 
 public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $n = false, $mkObjs = false, $getUpcomming = false)

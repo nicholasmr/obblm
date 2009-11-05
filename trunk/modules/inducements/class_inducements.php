@@ -74,7 +74,7 @@ $t = new Team($team_id);
 
 $star_list[0] = '      <option value="0">-No Induced Stars-</option>' . "\n";
 foreach ($stars as $s => $d) {
-  $star_list[0] .= "      <option ".((in_array($t->race, $d['teams'])) ? 'style="background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
+  $star_list[0] .= "      <option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
 }
 
 ?>
@@ -131,7 +131,7 @@ while ($i <= MAX_STARS) {
     if ($sid != 0) {
       $s = new Star($sid);
 
-      $s->setStats(false, false, false, false);
+#      $s->setStats(false, false, false, false);
       $star_list[$i] = $star_list[0];
       if ($sid == "-6" || $sid == "-7") { // Select Brick as selected and add row for Grotty later
         $brick_n_grotty = true;
@@ -139,7 +139,7 @@ while ($i <= MAX_STARS) {
         $star_list[$i] = str_replace('option style="background-color: '.COLOR_HTML_READY.';" value="-6"', 'option selected style="background-color: '.COLOR_HTML_READY.';" value="-6"', $star_list[$i]);
         $sid = -6;
         $s = new Star($sid); // Making sure to switch from Grotty to Brick
-        $s->setStats(false, false, false, false);
+#        $s->setStats(false, false, false, false);
         $star_list[0] = str_replace('      <option value="-6">Brick Far\'th (+ Grotty)</option>'."\n",'',$star_list[0]); // Removing Brick from second row
         $star_list[0] = str_replace('      <option style="background-color: '.COLOR_HTML_READY.';" value="-6">Brick Far\'th (+ Grotty)</option>'."\n", '', $star_list[0]);
         $star_list[0] = str_replace('      <option value="-7">Grotty (included in Brick Far\'th)</option>'."\n",'',$star_list[0]); // Removing Grotty from second row
@@ -155,7 +155,7 @@ while ($i <= MAX_STARS) {
       print $star_list[$i];
       print '    </SELECT></td>' . "\n";
       print '<td class="cent">'.str_replace('000','',$s->cost)."k</td>\n<td class=\"cent\">".
-            $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".implode(' ',$s->skills)."</small></td>\n";
+            $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".skillsTrans($s->skills)."</small></td>\n";
 //      print "<td>".$s->cp."</td>\n<td>".$s->td."</td>\n<td>".$s->intcpt."</td>\n<td>".$s->cas."</td>\n<td>".$s->bh."</td>\n<td>".$s->si."</td>\n<td>".$s->ki."</td>\n<td>".$s->mvp."</td>\n<td>".$s->spp."</td>\n<td>";
       print "</tr>\n";
       $ind_cost+=$s->cost;
@@ -173,12 +173,12 @@ while ($i <= MAX_STARS) {
 if ($brick_n_grotty) { // Print Grotty and add hidden input field
   $sid = -7;  // ID for Grotty hardcoded :-P
   $s = new Star($sid);
-  $s->setStats(false, false, false, false);
+#  $s->setStats(false, false, false, false);
   echo '<tr>';
   $grotty_nr = MAX_STARS + 1;
   echo '<td>'.$s->name.'<input type="hidden" name="Star' . $grotty_nr . '" value="-7"></td>';
   print "<td class=\"cent\">".str_replace('000','',$s->cost)."k</td>\n<td class=\"cent\">".
-        $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".implode(' ',$s->skills)."</small></td>\n";
+        $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".skillsTrans($s->skills)."</small></td>\n";
 //  print "<td>".$s->cp."</td>\n<td>".$s->td."</td>\n<td>".$s->intcpt."</td>\n<td>".$s->cas."</td>\n<td>".$s->bh."</td>\n<td>".$s->si."</td>\n<td>".$s->ki."</td>\n<td>".$s->mvp."</td>\n<td>".$s->spp."</td>\n<td>";
   print "</tr>\n";
 }
@@ -201,7 +201,7 @@ if ($brick_n_grotty) { // Print Grotty and add hidden input field
 $merc_list[0] = '            <option value="0">-No Induced Mercs-</option>' . "\n";
 $merc = array(0=>'No Merc');
 $i=0;
-foreach ($DEA[$t->race]["players"] as $p => $m) {
+foreach ($DEA[$t->f_rname]["players"] as $p => $m) {
   $i++;
   $merc_list[0] .= '            <option value="'."$i".'">'."Merc $p".'</option>' . "\n";
   array_push($merc, $m);
@@ -222,12 +222,12 @@ while (isset($_POST["Merc$i"])) {
     }
 
     // Fill skill list from what normal skills positional has to chose from
-    $n_skills = $DEA[$t->race]['players'][str_replace('Merc ','',$pos[$mid])]['N skills'];
+    $n_skills = $DEA[$t->f_rname]['players'][str_replace('Merc ','',$pos[$mid])]['norm'];
     $extra_list[$i] = "            <option>-No Extra Skill-</option>\n";
     foreach ($n_skills as $category) {
-      foreach ($skillarray[$category] as $skill) {
-        if (!in_array($skill, $merc[$mid]["Def skills"])) {
-          $extra_list[$i] .= '            <option>'.$skill.'</option>'."\n";
+      foreach ($skillarray[$category] as $id => $skill) {
+        if (!in_array($id, $merc[$mid]["def"])) {
+          $extra_list[$i] .= '<option>'.skillsTrans($id).'</option>'."\n";
         }
       }
     }
@@ -236,9 +236,9 @@ while (isset($_POST["Merc$i"])) {
     print $merc_list[$i];
     $cost[$i] = (int) $merc[$mid]["cost"] + MERC_EXTRA_COST + $extra_skill_cost;
     echo "        </SELECT></td>\n";
-		if (!in_array('Loner', $merc[$mid]["Def skills"]))
-    	array_unshift($merc[$mid]["Def skills"], 'Loner');  // Adding Loner to default skills if Merc does not have Loner already
-    $def_skills = implode(', ', $merc[$mid]["Def skills"]);
+		if (!in_array('Loner', $merc[$mid]["def"]))
+    	array_unshift($merc[$mid]["def"], 99);  // Adding Loner to default skills if Merc does not have Loner already
+    $def_skills = skillsTrans($merc[$mid]["def"]);
     if ($def_skills == '') $def_skills = '&nbsp;';
     print "        <td>$pos[$mid]</td><td>".str_replace('000','',$cost[$i])."k</td><td class=\"cent\">".$merc[$mid]["ma"]."</td><td class=\"cent\">".$merc[$mid]["st"]."</td>";
     print "<td class=\"cent\">".$merc[$mid]["ag"]."</td><td class=\"cent\">".$merc[$mid]["av"]."</td><td><small>".$def_skills."</small></td>\n";
@@ -281,7 +281,7 @@ echo "    </tr>\n";
 
 // Regular inducements
 
-$r=$t->race;
+$r=$t->f_rname;
 // Checking if team can hire Igor or Wandering Apo
 if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Undead')) unset($inducements['Wandering Apothecaries']);
 else unset($inducements['Igor']);
@@ -337,7 +337,7 @@ echo '</tr>';
 ?>
 <tr>
 <td class="right" colspan="6"><br><input type="submit" name="Submit" value="Create PDF roster" onclick="return SendToPDF();"></td></tr>
-<tr><td><a href="<?php echo 'index.php?section=coachcorner&team_id=' . $team_id ?>"> <- Back to team page</a></td></tr>
+<tr><td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team_id,false,false); ?>"> <- Back to team page</a></td></tr>
 </table>
 </td><td class="cent2">
 <table>
