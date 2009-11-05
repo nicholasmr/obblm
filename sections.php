@@ -207,12 +207,7 @@ function sec_main() {
                 if (!($tour->is_begun && !$tour->is_finished)) {
                     continue;
                 }
-                $teams = $tour->getTeams();
-                foreach ($teams as $t) {
-                    $t->setStats(STATS_TOUR, $tour->tour_id);
-                }
-                objsort($teams, $tour->getRSSortRule());
-                $teams = array_slice($teams, 0, $settings['entries_standings']);
+                $teams = Stats::getLeaders(T_OBJ_TEAM, T_NODE_TOURNAMENT, $tour->tour_id, $tour->getRSSortRule(), $settings['entries_standings']);
                 ?>
                 <div class='boxWide'>
                     <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $tour->name;?></h3>
@@ -230,13 +225,13 @@ function sec_main() {
                             <?php
                             foreach ($teams as $t) {
                                 echo "<tr>\n";
-                                echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t->team_id,false,false)."'>$t->name</a>" : $t->name)."</td>\n";
-                                if ($tour->isRSWithPoints()) {echo '<td>'.((is_float($t->points)) ? sprintf('%1.2f', $t->points) : $t->points)."</td>\n";}
-                                echo "<td>$t->cas</td>\n";
-                                echo "<td>$t->won</td>\n";
-                                echo "<td>$t->lost</td>\n";
-                                echo "<td>$t->draw</td>\n";
-                                echo "<td><nobr>$t->score_team&mdash;$t->score_opponent<nobr></td>\n";
+                                echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t->team_id,false,false)."'>$t[name]</a>" : $t['name'])."</td>\n";
+                                if ($tour->isRSWithPoints()) {echo '<td>'.((is_numeric($t['mv_pts']) && !ctype_digit($t['mv_pts'])) ? sprintf('%1.2f', $t['mv_pts']) : $t['mv_pts'])."</td>\n";}
+                                echo "<td>$t[mv_cas]</td>\n";
+                                echo "<td>$t[mv_won]</td>\n";
+                                echo "<td>$t[mv_lost]</td>\n";
+                                echo "<td>$t[mv_draw]</td>\n";
+                                echo "<td><nobr>$t[mv_gf]&mdash;$t[mv_ga]<nobr></td>\n";
                                 echo "</tr>\n";
                             }
                             ?>
@@ -246,6 +241,7 @@ function sec_main() {
                 <?php
             }
         }
+
         if ($settings['entries_latest'] != 0) {
             ?>
             <div class="boxWide">
@@ -273,7 +269,7 @@ function sec_main() {
             </div>
             <?php
         }
-        
+
         if ($settings['entries_leaders'] != 0) {
             $leaders = array(
                 'td'  => array('translation' => 'common/td',  'players' => Stats::getLeaders(T_OBJ_PLAYER,false,false,array('-td'),$settings['entries_leaders'])),
@@ -293,11 +289,10 @@ function sec_main() {
                             </tr>
                             <?php
                             foreach ($l['players'] as $p) {
-                                $p->name = get_alt_col('players', 'player_id', $p->f_pid, 'name');
                                 echo "<tr>\n";
-                                echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)."'>$p->name</a>" : $p->name)."</td>\n";
-                                echo "<td>".$p->$attr."</td>\n";
-                                echo "<td>" . $p->value/1000 . "k</td>\n";
+                                echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)."'>$p[name]</a>" : $p['name'])."</td>\n";
+                                echo "<td>".$p["mv_$attr"]."</td>\n";
+                                echo "<td>".$p['value']/1000 ."k</td>\n";
                                 echo "</tr>";
                             }
                             ?>

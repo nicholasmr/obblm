@@ -166,7 +166,7 @@ private function _about($ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td><b>SPP/extra</b></td>
-                        <td><?php echo "$p->spp/$p->extra_spp" ?></td>
+                        <td><?php echo "$p->mv_spp/$p->extra_spp" ?></td>
                     </tr>
                     <?php
                     if (Module::isRegistered('Wanted')) {
@@ -186,18 +186,6 @@ private function _about($ALLOW_EDIT)
                         <?php
                     }
                     ?>
-                    <tr>
-                        <td><b>Won</b></td>
-                        <td><?php echo "$p->won ($p->row_won streaks)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Lost</b></td>
-                        <td><?php echo "$p->lost ($p->row_lost streaks)"; ?></td>
-                    </tr>
-                    <tr>
-                        <td><b>Draw</b></td>
-                        <td><?php echo "$p->draw ($p->row_draw streaks)"; ?></td>
-                    </tr>
                     <?php
                     if (Module::isRegistered('SGraph')) {
                         ?>
@@ -237,27 +225,27 @@ private function _about($ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td><b>Cp</b></td>
-                        <td><?php echo $p->cp; ?></td>
+                        <td><?php echo $p->mv_cp; ?></td>
                     </tr>
                     <tr>
                         <td><b>Td</b></td>
-                        <td><?php echo $p->td; ?></td>
+                        <td><?php echo $p->mv_td; ?></td>
                     </tr>
                     <tr>
                         <td><b>Int</b></td>
-                        <td><?php echo $p->intcpt; ?></td>
+                        <td><?php echo $p->mv_intcpt; ?></td>
                     </tr>
                     <tr>
                         <td><b>BH/SI/Ki</b></td>
-                        <td><?php echo "$p->bh/$p->si/$p->ki"; ?></td>
+                        <td><?php echo "$p->mv_bh/$p->mv_si/$p->mv_ki"; ?></td>
                     </tr>
                     <tr>
                         <td><b>Cas</b></td>
-                        <td><?php echo $p->cas; ?></td>
+                        <td><?php echo $p->mv_cas; ?></td>
                     </tr>
                     <tr>
                         <td><b>MVP</b></td>
-                        <td><?php echo $p->mvp; ?></td>
+                        <td><?php echo $p->mv_mvp; ?></td>
                     </tr>
                 </table>
             </div>
@@ -334,7 +322,7 @@ private function _achievements()
                                     echo '<td></td>'; 
                                 }
                                 else {
-                                    echo "<td><i>$desc: " . (($desc == 'Cas') ? $p->cas : $p->$s) . "</i></td>";
+                                    echo "<td><i>$desc: " . (($desc == 'Cas') ? $p->{"mv_cas"} : $p->{"mv_$s"}) . "</i></td>";
                                     $been_there = true;
                                 }
                                 ?>

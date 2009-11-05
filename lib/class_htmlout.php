@@ -150,7 +150,6 @@ public static function standings($obj, $node, $node_id, array $opts)
     $tblTitle = $tblSortRule = '';
     $objs = $fields = $extra = array();
     $fields_before = $fields_after = array(); // To be merged with $fields.
-    $CUSTOM_SORT = false;
 
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
@@ -162,165 +161,200 @@ public static function standings($obj, $node, $node_id, array $opts)
     list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector($node, $node_id, $hidemenu, '');
     echo '</div>';
 
+    $manualSort = isset($_GET["sort$opts[GET_SS]"]);
+    $sortRule = array_merge(
+        ($manualSort) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(), 
+        sort_rule($obj)
+    );
+
     $set_avg = (isset($_GET['pms']) && $_GET['pms']); // Per match stats?
     echo '<br><a href="'.$opts['url'].'&amp;pms='.(($set_avg) ? 0 : 1).'"><b>'.$lng->getTrn('common/'.(($set_avg) ? 'ats' : 'pms'))."</b></a><br><br>\n";
 
     // Common $obj type fields.
+    # mv_ fields are accumulated stats from MV tables. rg_ (regular) are regular/static/all-time fields from non mv-tables (players, teams, coaches etc.)
     $fields = array(
-        'won'               => array('desc' => 'W'),
-        'lost'              => array('desc' => 'L'),
-        'draw'              => array('desc' => 'D'),
-        'played'            => array('desc' => 'GP'),
-        'win_pct'           => array('desc' => 'WIN%'),
-        'swon'              => array('desc' => 'SW'),
-        'slost'             => array('desc' => 'SL'),
-        'sdraw'             => array('desc' => 'SD'),
-        'gf'                => array('desc' => 'GF'.(($set_avg) ? '*' : '')),
-        'ga'                => array('desc' => 'GA'.(($set_avg) ? '*' : '')),
-        'wt_cnt'            => array('desc' => 'WT'),
-        'td'                => array('desc' => 'Td'.(($set_avg) ? '*' : '')),
-        'cp'                => array('desc' => 'Cp'.(($set_avg) ? '*' : '')),
-        'intcpt'            => array('desc' => 'Int'.(($set_avg) ? '*' : '')),
-        'cas'               => array('desc' => 'Cas'.(($set_avg) ? '*' : '')),
-        'bh'                => array('desc' => 'BH'.(($set_avg) ? '*' : '')),
-        'si'                => array('desc' => 'Si'.(($set_avg) ? '*' : '')),
-        'ki'                => array('desc' => 'Ki'.(($set_avg) ? '*' : '')),
+        'mv_won'               => array('desc' => 'W'),
+        'mv_lost'              => array('desc' => 'L'),
+        'mv_draw'              => array('desc' => 'D'),
+        'mv_played'            => array('desc' => 'GP'),
+        'rg_win_pct'           => array('desc' => 'WIN%'),
+        'rg_swon'              => array('desc' => 'SW'),
+        'rg_slost'             => array('desc' => 'SL'),
+        'rg_sdraw'             => array('desc' => 'SD'),
+        'mv_gf'                => array('desc' => 'GF'.(($set_avg) ? '*' : '')),
+        'mv_ga'                => array('desc' => 'GA'.(($set_avg) ? '*' : '')),
+        'mv_td'                => array('desc' => 'Td'.(($set_avg) ? '*' : '')),
+        'mv_cp'                => array('desc' => 'Cp'.(($set_avg) ? '*' : '')),
+        'mv_intcpt'            => array('desc' => 'Int'.(($set_avg) ? '*' : '')),
+        'mv_cas'               => array('desc' => 'Cas'.(($set_avg) ? '*' : '')),
+        'mv_bh'                => array('desc' => 'BH'.(($set_avg) ? '*' : '')),
+        'mv_si'                => array('desc' => 'Si'.(($set_avg) ? '*' : '')),
+        'mv_ki'                => array('desc' => 'Ki'.(($set_avg) ? '*' : '')),
     );
+    // These fields are not summable!!! ie. you dont get the division/league value of these fields by summing over the related/underlying tournaments field's values.
+    $NOT_SUMMABLE_FIELDS = array('win_pct', 'swon', 'sdraw', 'slost');
+        # Look non-summable field and remove them.
+    $ALL_TIME = ($sel_node == false && ($sel_node_id == 0 || $sel_node_id === false));       
+    if (!$ALL_TIME) {
+        if ($sel_node == T_NODE_TOURNAMENT) {
+            $new_fields = array();
+            foreach ($fields as $fname => $fcont) {
+                $new_fields[in_array($fname, $NOT_SUMMABLE_FIELDS) ? "mv_$fname" : $fname] = $fcont;
+            }
+            $fields = $new_fields;
+        }
+        foreach ($NOT_SUMMABLE_FIELDS as $f) {
+            unset($fields[$f]);
+        }
+    }   
 
     switch ($obj)
     {
         case STATS_PLAYER:
             $tblTitle = 'Player standings';
-            $tblSortRule = 'player_overall';
-            $DIS_VAL = !($sel_node == false && $sel_node_id == false);
             $fields_before = array(
                 'name'      => array('desc' => 'Player', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
-                'team_name' => array('desc' => 'Team',   'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_team_id')),
+                'f_tname' => array('desc' => 'Team',   'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_team_id')),
             );
             $fields_after = array(
-                'mvp'   => array('desc' => 'MVP'.(($set_avg) ? '*' : '')),
-                'spp'   => array('desc' => 'SPP'.(($set_avg) ? '*' : '')),
-                'value' => array('desc' => 'Value', 'nosort' => $DIS_VAL, 'kilo' => !$DIS_VAL, 'suffix' => (!$DIS_VAL) ? 'k' : ''),
+                'mv_mvp'   => array('desc' => 'MVP'.(($set_avg) ? '*' : '')),
+                'mv_spp'   => array('desc' => 'SPP'.(($set_avg) ? '*' : '')),
+                'value'    => array('desc' => 'Value', 'nosort' => !$ALL_TIME, 'kilo' => true, 'suffix' => 'k'),
             );
-            global $settings;
-            $extra['limit'] = $settings['entries_players'];
-            $extra['color'] = true;
-            $objs = Player::getPlayers();
-            foreach ($objs as $o) {
-                if     ($o->is_sold) $o->HTMLbcolor = COLOR_HTML_SOLD;
-                elseif ($o->is_dead) $o->HTMLbcolor = COLOR_HTML_DEAD;
-                if ($DIS_VAL) $o->value = '-';
-                $o->setStats($sel_node, $sel_node_id, $set_avg);
+            foreach (array('won', 'lost', 'draw') as $f) {
+                unset($fields["rg_s$f"]);
+                unset($fields["mv_s$f"]);
             }
+            global $settings;
+            $objs = Stats::getLeaders(T_OBJ_PLAYER, $sel_node, $sel_node_id, $sortRule, $settings['entries_players']);
             break;
 
         case STATS_TEAM:
             $tblTitle = 'Team standings';
-            $tblSortRule = 'team';
             $fields_before = array('name' => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')));
-            $fields_after = array('tcas'  => array('desc' => 'tcas'), 'value' => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'));
-            $ALL_TIME = ($sel_node == false && ($sel_node_id == 0 || $sel_node_id === false));            
-            if ($USE_ELO = ($sel_node == STATS_TOUR || $ALL_TIME)) {
-                $fields_after['elo'] = array('desc' => 'ELO');
+            $fields_after = array(
+                'mv_tcas' => array('desc' => 'tcas'), 
+            	'mv_smp' => array('desc' => 'SMP'),
+                'tv' => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),
+            );
+            if ($sel_node == STATS_TOUR) { 
+                $fields_after['wt_cnt'] = array('desc' => 'WT');
+                $fields_after['mv_elo'] = array('desc' => 'ELO');
+            }
+            elseif ($ALL_TIME) { 
+                $fields_after['rg_elo'] = array('desc' => 'ELO');
+            }
+            if ($sel_node == STATS_TOUR) {
+                $tr = new Tour($sel_node_id);
+                $sortRule = array_merge(($manualSort) ? array_slice($sortRule, 0, 1) : array(), array_map(create_function('$e', 'return substr($e,0,1).\'mv_\'.substr($e,1);'),$tr->getRSSortRule()));
+                if ($tr->isRSWithPoints()) {
+                    $fields_after['mv_pts'] = array('desc' => 'PTS');
+                }
+
+            	unset($fields_after['tv']);
             }
             // Show teams standings list only for teams owned by... ?
             switch ((array_key_exists('teams_from', $opts)) ? $opts['teams_from'] : false)
             {
                 case STATS_COACH:
-                    $fields_before['race'] = array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
-                    $c = new Coach($opts['teams_from_id']);
-                    $objs = $c->getTeams();
+                    $fields_before['f_rname'] = array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
+                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_COACH => $opts['teams_from_id']), T_OBJ_TEAM, false, $sortRule, false);
                     break;
 
                 case STATS_RACE:
-                    $fields_before['coach_name'] = array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
-                    $r = new Race($opts['teams_from_id']);
-                    $objs = $r->getTeams();
+                    $fields_before['f_cname'] = array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
+                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_RACE => $opts['teams_from_id']), T_OBJ_TEAM, false, $sortRule, false);
                     break;
 
                 // All teams
                 default:
-                    $objs = Team::getTeams();
+                    $objs = Stats::getLeaders(T_OBJ_TEAM, $sel_node, $sel_node_id, $sortRule, false);
             }
             // OPTIONALLY hide retired teams.
-            if ($ALL_TIME && $settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj->is_retired;'));}
-            // Unless all-time team standings is wanted, then don't print teams who have not played in (for example) the tournament.
-            if (!$ALL_TIME) {
-                $extra['remove'] = array('condField' => 'played', 'fieldVal' => 0);
-            }
-            if ($node == STATS_TOUR) {
-                $tr = new Tour($node_id);
-                $CUSTOM_SORT = $tr->getRSSortRule(false);
-                if ($tr->isRSWithPoints()) {
-                    $fields_after['points'] = array('desc' => 'PTS');
-                }
-            	$fields_after['smp'] = array('desc' => 'SMP');
-            	unset($fields_after['value']);
-            }
+            if ($ALL_TIME && $settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
 
-            foreach ($objs as $o) {
-            	$o->setStats($sel_node, $sel_node_id, $set_avg);
-            }
             break;
 
         case STATS_RACE:
             $tblTitle = 'Race standings';
-            $tblSortRule = 'race';
             $fields_before = array(
-                'name'      => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'race_id')),
-                'team_cnt' => array('desc' => 'Teams'),
+                'name' => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'race_id')),
             );
-            $extra['dashed'] = array('condField' => 'team_cnt', 'fieldVal' => 0, 'noDashFields' => array('name'));
-
-            $objs = Race::getRaces(true);
-            foreach ($objs as $o) {
-                $o->setStats($sel_node, $sel_node_id, $set_avg);
+            $dash_empty = false;
+            if ($sel_node == T_NODE_TOURNAMENT) {
+                $fields_before['mv_team_cnt'] = array('desc' => 'Teams');
+                $dash_empty = 'mv_team_cnt';
             }
+            else if ($ALL_TIME) {
+                $fields_before['rg_team_cnt'] = array('desc' => 'Teams');
+                $dash_empty = 'rg_team_cnt';
+            }
+            if ($dash_empty) {
+                $extra['dashed'] = array('condField' => $dash_empty, 'fieldVal' => 0, 'noDashFields' => array('name'));
+            }
+            foreach (array('won', 'lost', 'draw') as $f) {
+                unset($fields["rg_s$f"]);
+                unset($fields["mv_s$f"]);
+            }
+            $objs = Stats::getLeaders(T_OBJ_RACE,$sel_node,$sel_node_id,sort_rule($tblSortRule),false);
 
             break;
 
         case STATS_COACH:
             $tblTitle = 'Coaches standings';
-            $tblSortRule = 'coach';
             $fields_before = array(
-                'name'      => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
-                'team_cnt' => array('desc' => 'Teams'),
+                'name' => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
             );
-            $objs = Coach::getCoaches();
-            // OPTIONALLY hide retired coaches.
-            if ($settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj->retired;'));}
-            foreach ($objs as $o) {
-                $o->setStats($sel_node, $sel_node_id, $set_avg);
+            $fields_after = array(
+            	'mv_smp' => array('desc' => 'SMP'),
+            );
+            if ($sel_node == T_NODE_TOURNAMENT) {
+                $fields_before['mv_team_cnt'] = array('desc' => 'Teams');            
             }
+            else if ($ALL_TIME) {
+                $fields_before['rg_team_cnt'] = array('desc' => 'Teams');
+            }
+            $objs = Stats::getLeaders(T_OBJ_COACH,$sel_node,$sel_node_id,sort_rule($tblSortRule),false);
+            // OPTIONALLY hide retired coaches.
+            if ($settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
             break;
 
         case STATS_STAR:
             $tblTitle = 'Star standings';
-            $tblSortRule = 'star';
             $fields_before = array(
                 'name' => array('desc' => 'Star', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_STAR,false,false,false), 'field' => 'obj_id', 'value' => 'star_id')),
+                // Statics
+                'cost'   => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'),
+                'ma'     => array('desc' => 'Ma'),
+                'st'     => array('desc' => 'St'),
+                'ag'     => array('desc' => 'Ag'),
+                'av'     => array('desc' => 'Av'),
             );
-            $fields_after = array('mvp' => array('desc' => 'MVP'), 'spp' => array('desc' => 'SPP'));
-            unset($fields['score_team']); unset($fields['score_opponent']); unset($fields['won_tours']);
-            unset($fields['row_won']); unset($fields['row_lost']); unset($fields['row_draw']);
-            $extra['dashed'] = array('condField' => 'played', 'fieldVal' => 0, 'noDashFields' => array('name'));
-
-            $objs = Star::getStars(false,false,false,false);
-            foreach ($objs as $o) {
-                $o->setStats(false, false, $sel_node, $sel_node_id, $set_avg);
-                $o->name = preg_replace('/\s/', '&nbsp;', $o->name);
+            $fields_after = array(
+                'mv_mvp' => array('desc' => 'MVP'), 
+                'mv_spp' => array('desc' => 'SPP'),
+            );
+            foreach (array('won', 'lost', 'draw', 'ga', 'gf') as $f) {
+                unset($fields["rg_s$f"]);
+                unset($fields["mv_s$f"]);
             }
+            unset($fields["rg_win_pct"]);
+            
+            $extra['dashed'] = array('condField' => 'mv_played', 'fieldVal' => 0, 'noDashFields' => array('name'));
+            $objs = Stats::getLeaders(T_OBJ_STAR,$sel_node,$sel_node_id,sort_rule($tblSortRule),false);
+
             break;
     }
 
+    foreach ($objs as $idx => $obj) {$objs[$idx] = (object) $obj;}
     $fields = array_merge($fields_before, $fields, $fields_after);
     HTMLOUT::sort_table(
        $tblTitle,
        $opts['url'].(($set_avg) ? '&amp;pms=1' : ''),
        $objs,
        $fields,
-       (empty($CUSTOM_SORT)) ? sort_rule($tblSortRule) : $CUSTOM_SORT,
-       (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
+       $sortRule,
+       array(),
        $extra
     );
 
@@ -658,7 +692,8 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                     $cpy = $o->$f; // Don't change the objects themselves! Make copies!
                     if (array_key_exists('kilo', $a) && $a['kilo'])
                         $cpy /= 1000;
-                    if (is_float($cpy))
+                        $cpy = (string) $cpy;
+                    if (is_numeric($cpy) && !ctype_digit($cpy))
                         $cpy = sprintf("%1.2f", $cpy);
                     if (array_key_exists('suffix', $a) && $a['suffix'])
                         $cpy .= $a['suffix'];

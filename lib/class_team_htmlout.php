@@ -63,11 +63,11 @@ public static function dispTeamList($obj, $obj_id)
         'logo'          => array('desc' => 'Logo', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id'), 'nosort' => true),
         'name'          => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
         'rdy'           => array('desc' => 'Ready', 'nosort' => true),
-        'race'          => array('desc' => 'Race'),
+        'f_rname'       => array('desc' => 'Race'),
         'latest_tour'   => array('desc' => 'Latest tour'),
         'prizes'        => array('desc' => 'Prizes', 'nosort' => true),
-        'played'        => array('desc' => 'Games'),
-        'value'         => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
+        'mv_played'     => array('desc' => 'Games'),
+        'tv'            => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
     );
     if (!Module::isRegistered('Prize')) {
         unset($fields['prizes']);
@@ -92,17 +92,16 @@ public static function standings($node = false, $node_id = false)
 
     $teams = HTMLOUT::standings(STATS_TEAM,$node,$node_id,array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false), 'hidemenu' => false, 'return_objects' => true));
 
-    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
     $fields = array(
         'name'         => array('desc' => 'Team', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
-        'race'         => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
-        'coach_name'   => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
+        'f_rname'      => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
+        'f_cname'      => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
         'fan_factor'   => array('desc' => 'FF'),
         'rerolls'      => array('desc' => 'RR'),
         'ass_coaches'  => array('desc' => 'Ass. coaches'),
         'cheerleaders' => array('desc' => 'Cheerleaders'),
         'treasury'     => array('desc' => 'Treasury', 'kilo' => true, 'suffix' => 'k'),
-        'value'        => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
+        'tv'           => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
     );
 
     HTMLOUT::sort_table(
@@ -110,7 +109,7 @@ public static function standings($node = false, $node_id = false)
         urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false),
         $teams,
         $fields,
-        sort_rule('team'),
+        sort_rule(T_OBJ_TEAM),
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
         array('noHelp' => true)
     );
@@ -321,8 +320,8 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         $p->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$p->icon' alt='player avatar'></td><td>$p->position</td></tr></table>";
 
         if ($DETAILED) {
-            $p->cas = "$p->bh/$p->si/$p->ki";
-            $p->spp = "$p->spp/$p->extra_spp";
+            $p->cas = "$p->mv_bh/$p->mv_si/$p->mv_ki";
+            $p->spp = "$p->mv_spp/$p->extra_spp";
         }
         
         // Characteristic's colors
@@ -389,11 +388,12 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             $s->player_id = $s->star_id;
             $s->nr = 0;
             $s->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$s->icon' alt='player avatar'></td><td><i>Star&nbsp;player</i></td></tr></table>";
-            $s->skills = '<small>'.implode(', ', $s->skills).'</small>';
+            $s->skills = '<small>'.skillsTrans($s->skills).'</small>';
             $s->injs = '';
             $s->value = 0;
-            $s->setStats(STATS_TEAM, $team->team_id, false, false);
-            $s->cas = "$s->bh/$s->si/$s->ki"; // Must come after setStats(), since it else would be overwrited.
+            foreach ($s->getStats(T_OBJ_TEAM,$team->team_id) as $k => $v) {
+                $s->$k = $v;
+            }
             $s->is_dead = $s->is_sold = $s->is_mng = $s->is_journeyman = false;
             $s->HTMLbcolor = COLOR_HTML_STARMERC;
             array_push($stars, $s);
@@ -401,29 +401,29 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         $players = array_merge($players, $stars);
         
         $smerc = (object) null;
-        $smerc->mvp = $smerc->td = $smerc->cp = $smerc->intcpt = $smerc->bh = $smerc->si = $smerc->ki = $smerc->skills = 0;
+        $smerc->mv_mvp = $smerc->mv_td = $smerc->mv_cp = $smerc->mv_intcpt = $smerc->mv_bh = $smerc->mv_si = $smerc->mv_ki = $smerc->skills = 0;
         foreach (Mercenary::getMercsHiredByTeam($team->team_id) as $merc) {
-            $smerc->mvp += $merc->mvp;
-            $smerc->td += $merc->td;
-            $smerc->cp += $merc->cp;
-            $smerc->intcpt += $merc->intcpt;
-            $smerc->bh += $merc->bh;
-            $smerc->si += $merc->si;
-            $smerc->ki += $merc->ki;
+            $smerc->mv_mvp += $merc->mvp;
+            $smerc->mv_td += $merc->td;
+            $smerc->mv_cp += $merc->cp;
+            $smerc->mv_intcpt += $merc->intcpt;
+            $smerc->mv_bh += $merc->bh;
+            $smerc->mv_si += $merc->si;
+            $smerc->mv_ki += $merc->ki;
             $smerc->skills += $merc->skills;
         }
         $smerc->player_id = ID_MERCS;
         $smerc->nr = 0;
         $smerc->name = 'All&nbsp;mercenary&nbsp;hirings';
         $smerc->position = "<i>Mercenaries</i>";
-        $smerc->cas = "$smerc->bh/$smerc->si/$smerc->ki";
+        $smerc->mv_cas = "$smerc->mv_bh/$smerc->mv_si/$smerc->mv_ki";
         $smerc->ma = '-';
         $smerc->st = '-';
         $smerc->ag = '-';
         $smerc->av = '-';
         $smerc->skills = 'Total bought extra skills: '.$smerc->skills;
         $smerc->injs = '';
-        $smerc->spp = '-';
+        $smerc->mv_spp = '-';
         $smerc->value = 0;
         $smerc->is_dead = $smerc->is_sold = $smerc->is_mng = $smerc->is_journeyman = false;
         $smerc->HTMLbcolor = COLOR_HTML_STARMERC;
@@ -450,12 +450,12 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         'av'        => array('desc' => 'Av'), 
         'skills'    => array('desc' => 'Skills', 'nosort' => true),
         'injs'      => array('desc' => 'Injuries', 'nosort' => true),
-        'cp'        => array('desc' => 'Cp'), 
-        'td'        => array('desc' => 'Td'), 
-        'intcpt'    => array('desc' => 'Int'), 
-        'cas'       => array('desc' => ($DETAILED) ? 'BH/SI/Ki' : 'Cas', 'nosort' => ($DETAILED) ? true : false),
-        'mvp'       => array('desc' => 'MVP'), 
-        'spp'       => array('desc' => ($DETAILED) ? 'SPP/extra' : 'SPP', 'nosort' => ($DETAILED) ? true : false),
+        'mv_cp'     => array('desc' => 'Cp'), 
+        'mv_td'     => array('desc' => 'Td'), 
+        'mv_intcpt' => array('desc' => 'Int'), 
+        'mv_cas'    => array('desc' => ($DETAILED) ? 'BH/SI/Ki' : 'Cas', 'nosort' => ($DETAILED) ? true : false),
+        'mv_mvp'    => array('desc' => 'MVP'), 
+        'mv_spp'    => array('desc' => ($DETAILED) ? 'SPP/extra' : 'SPP', 'nosort' => ($DETAILED) ? true : false),
         'value'     => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),  
     );
 
@@ -652,11 +652,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
             <table width="100%">
                 <tr>
                     <td><?php echo $lng->getTrn('common/coach');?></td>
-                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team->owned_by_coach_id,false,false);?>"><?php echo $team->coach_name; ?></a></td>
+                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team->owned_by_coach_id,false,false);?>"><?php echo $team->f_cname; ?></a></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('common/race');?></td>
-                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?php echo $team->race; ?></a></td>
+                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?php echo $team->f_rname; ?></a></td>
                 </tr>
                 <?php
                 if ($settings['relate_team_to_league']) {
@@ -682,13 +682,13 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                 <?php
-                if ($team->race == 'Necromantic' || $team->race == 'Undead') {
+                if ($team->f_race_id == 13 || $team->f_race_id == 17) {
                     ?>
                     <td>Necromancer</td>
                     <td>Yes</td>
                     <?php
                 }
-                elseif ($team->race != 'Khemri' && $team->race != 'Nurgle') {
+                elseif ($team->f_race_id != 10 && $team->f_race_id != 15) {
                     echo "<td>Apothecary</td>\n";
                     echo "<td>" . ($team->apothecary ? $lng->getTrn('common/yes') : $lng->getTrn('common/no')) . "</td>\n";
                 }
@@ -715,27 +715,27 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/gp');?></td>
-                    <td><?php echo $team->played; ?></td>
+                    <td><?php echo $team->mv_played; ?></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/pct_won');?></td>
-                    <td><?php echo sprintf("%1.1f", $team->win_percentage).'%'; ?></td>
+                    <td><?php echo sprintf("%1.1f", $team->rg_win_pct).'%'; ?></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/tours_won');?></td>
-                    <td><?php echo $team->won_tours; ?></td>
+                    <td><?php echo $team->wt_cnt; ?></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/ws');?></td>
-                    <td><?php echo $team->row_won; ?></td>
+                    <td><?php echo $team->rg_swon; ?></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/ls');?></td>
-                    <td><?php echo $team->row_lost; ?></td>
+                    <td><?php echo $team->rg_slost; ?></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/ds');?></td>
-                    <td><?php echo $team->row_draw; ?></td>
+                    <td><?php echo $team->rg_sdraw; ?></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/ltour');?></td>
@@ -1514,7 +1514,7 @@ private function _about($ALLOW_EDIT)
                 <?php
                 $txt = $team->getText();
                 if (empty($txt)) {
-                    $txt = $lng->getTrn('common/nobody')." $team->name."; 
+                    $txt = $lng->getTrn('common/nobody'); 
                 }
                 
                 if ($ALLOW_EDIT) {

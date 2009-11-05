@@ -71,10 +71,10 @@ $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
 
 // Player values are decreased by the below multipliers for each type of injury sustained.
 // Example: If you wish player values to go down by 15.000 for each MA, you would set the "val_reduc_ma" variable equal to 15000.
-$rules['val_reduc_ma'] = 0; // Default is 0 (disabled).
-$rules['val_reduc_st'] = 0; // Default is 0 (disabled).
-$rules['val_reduc_av'] = 0; // Default is 0 (disabled).
-$rules['val_reduc_ag'] = 0; // Default is 0 (disabled).
+#$rules['val_reduc_ma'] = 0; // Default is 0 (disabled).
+#$rules['val_reduc_st'] = 0; // Default is 0 (disabled).
+#$rules['val_reduc_av'] = 0; // Default is 0 (disabled).
+#$rules['val_reduc_ag'] = 0; // Default is 0 (disabled).
 
 /*
     Enable the partial implementation of the LRB6 experimental rule set.
@@ -93,9 +93,9 @@ $rules['enable_lrb6x'] = true; // Default is false.
     In the case of the already implemented ranking systems not fitting the needs of your league, you may define house ranking systems.
     The fields/properties which you may sort teams against are:
     
-        name, mvp, cp, td, intcpt, bh, si, ki, cas (sum of player cas), tcas (total team cas), tdcas (td + player cas),
-        played, won, lost, draw, win_percentage, score_team (total score made by this team), score_against (total score made against this team),
-        score_diff (equals to the arithmetic value of score_team - score_against), fan_factor, smp (sportsmanship points), points
+        mvp, cp, td, intcpt, bh, si, ki, cas (sum of player cas), tcas (total team cas), tdcas (td + player cas),
+        played, won, lost, draw, win_pct, gf (total score made by this team), ga (total score made against this team),
+        sdiff (equals to the arithmetic value of gf - ga), smp (sportsmanship points), pts (points)
         
     The last field, points, is a special field which is defined to be the value of some arithmetical combination of other fields.
     For example, a typical points field could be constructed as so: points = '3*[won] + 2*[draw] + 1*[lost]'
@@ -133,18 +133,20 @@ $rules['enable_lrb6x'] = true; // Default is false.
     
 */
 
+#$s['won']*3 + $s['draw']
+#$s['points'] = ($s['played'] == 0) ? 0 : $s['won']/$s['played'] + $s['draw']/(2*$s['played'])
 // Example 1
-$hrs[1]['rule']        = array('-points', '-td', '+smp'); // Sort teams against: most points, then most TDs and then least sportsmanship points.
+$hrs[1]['rule']        = array('-pts', '-td', '+smp');    // Sort teams against: most points, then most TDs and then least sportsmanship points.
 $hrs[1]['points']      = '3*[won] + 2*[draw] + 1*[lost]'; // The definition of points.
 $hrs[1]['points_desc'] = $hrs[1]['points'];               // Set the description of the points to be just the same as the actual definition.
 
 // Example 2
-$hrs[2]['rule']        = array('-points', '-ki', '-mvp');                   // Sort teams against: most points, then most killed and then by most MVPs.
-$hrs[2]['points']      = '2*[score_team] - 1*[score_opponent]';             // The definition of points.
+$hrs[2]['rule']        = array('-pts', '-ki', '-mvp');                      // Sort teams against: most points, then most killed and then by most MVPs.
+$hrs[2]['points']      = '2*[gf] - 1*[ga]';                                 // The definition of points.
 $hrs[2]['points_desc'] = '2 pts for team score, -1 pts for opponent score'; // Set the description of the points to be this string.
 
 // Example 3
-$hrs[3]['rule']        = array('-score_diff', '-smp');  // Sort teams against: largest score difference, then most sportsmanship points.
+$hrs[3]['rule']        = array('-sdiff', '-smp');       // Sort teams against: largest score difference, then most sportsmanship points.
 $hrs[3]['points']      = '';                            // Points not used.
 $hrs[3]['points_desc'] = '';                            // Points not used.
 

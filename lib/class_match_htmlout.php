@@ -690,11 +690,11 @@ function report() {
     $i = 0; // Counter. Used to pass PHP-data to Javascript.
     foreach (array(1 => $team1->team_id, 2 => $team2->team_id) as $id => $t) {
         foreach (Star::getStars(STATS_TEAM, $t, STATS_MATCH, $m->match_id) as $s) {
-            $s->setStats(false,false, STATS_MATCH, $m->match_id); // Set the star's stats fields to the saved values in the database for this match.
             echo "<script language='JavaScript' type='text/javascript'>\n";
             echo "var mdat$i = [];\n";
+            $mdat = $s->getStats(T_NODE_MATCH,$m->match_id);
             foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
-                echo "mdat${i}['$f'] = ".$s->$f.";\n";
+                echo "mdat${i}['$f'] = ".$mdat[$f].";\n";
             }
             echo "existingStarMerc($id, $s->star_id, mdat$i);\n";
             echo "</script>\n";

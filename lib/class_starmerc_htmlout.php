@@ -30,6 +30,8 @@ public function profile($sid)
     $s = new self($sid);
     title($s->name);
     echo '<center><a href="'.urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false).'">'.$lng->getTrn('common/back').'</a></center><br><br>';
+    echo "<b>Skills:</b> ".skillsTrans($s->skills)."<br><br>";
+    echo "<b>Races:</b> ".racesTrans($s->races)."<br><br>";
     self::starHireHistory(false, false, false, false, $s->star_id, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_STAR, $s->star_id,false,false)));
 }
 
@@ -40,32 +42,7 @@ public static function standings()
     title($lng->getTrn('menu/statistics_menu/star_stn'));
     echo $lng->getTrn('common/notice_simul')."<br>\n";
     echo $lng->getTrn('common/notice_spp')."<br><br>\n";
-    HTMLOUT::standings(STATS_STAR, false, false, array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false)));
-    $stars = Star::getStars(false,false,false,false);
-    foreach ($stars as $s) {
-        $s->skills = '<small>'.implode(', ', $s->skills).'</small>';
-        $s->teams = '<small>'.implode(', ', $s->teams).'</small>';
-        $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
-    }
-    $fields = array(
-        'name'   => array('desc' => 'Star', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_STAR,false,false,false), 'field' => 'obj_id', 'value' => 'star_id')),
-        'cost'   => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'),
-        'ma'     => array('desc' => 'Ma'),
-        'st'     => array('desc' => 'St'),
-        'ag'     => array('desc' => 'Ag'),
-        'av'     => array('desc' => 'Av'),
-        'teams'  => array('desc' => 'Teams', 'nosort' => true),
-        'skills' => array('desc' => 'Skills', 'nosort' => true),
-    );
-    HTMLOUT::sort_table(
-        '<a name="s2">'.$lng->getTrn('standings/star/tblTitle2').'</a>',
-        'index.php?section=stars',
-        $stars,
-        $fields,
-        sort_rule('star'),
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-        array('anchor' => 's2', 'noHelp' => true)
-    );
+    HTMLOUT::standings(STATS_STAR, false, false, array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false),));
 }
 
 public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id = false, $opts = array())
@@ -90,9 +67,8 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
             foreach (array('match_id', 'date_played', 'hiredBy', 'hiredAgainst', 'hiredByName', 'hiredAgainstName') as $k) {
                 $o->$k = $m->$k;
             }
-            $s->setStats(false, false, STATS_MATCH, $m->match_id);
-            foreach (array('td', 'cp', 'intcpt', 'cas', 'bh', 'si', 'ki', 'mvp', 'spp') as $k) {
-                $o->$k = $s->$k;
+            foreach ($s->getStats(T_NODE_MATCH,$m->match_id) as $k => $v) {
+                $o->$k = $v;
             }
             $o->match = '[view]';
             $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');

@@ -114,7 +114,7 @@ $players = $tmp_players;
 
 // Team specific data
 
-$rerollcost = $DEA[$team->race]['other']['RerollCost'];
+$rerollcost = $DEA[$team->f_rname]['other']['rr_cost'];
 
 $pdf=new BB_PDF('L','pt','A4'); // Creating a new PDF doc. Landscape, scale=pixels, size A4
 $pdf->SetAutoPageBreak(false, 20); // No auto page break to mess up layout
@@ -142,8 +142,8 @@ $pdf->SetXY($currentx+30,$currenty);
 $pdf->Cell(310, 20, utf8_decode($team->name), 0, 0, 'L', false, '');
 $pdf->SetFont('Tahoma','',12);
 $pdf->Cell(60, 20, "Race:", 0, 0, 'R', false, '');
-$pdf->Cell(70, 20, ($team->race), 0, 0, 'L', false, '');
-$pdf->Cell(300, 20, ("Head Coach: " . utf8_decode($team->coach_name)), 0, 0, 'R', false, '');
+$pdf->Cell(70, 20, ($team->f_rname), 0, 0, 'L', false, '');
+$pdf->Cell(300, 20, ("Head Coach: " . utf8_decode($team->f_cname)), 0, 0, 'R', false, '');
 
 $currenty+=25;
 $currentx+=6;
@@ -245,15 +245,15 @@ foreach ($players as $p) {
   }
 
   $pp = array('nr'=>$p->nr, 'name'=>utf8_decode($p->name), 'pos'=>$p->position, 'ma'=>$p->ma, 'st'=>$p->st, 'ag'=>$p->ag, 'av'=>$p->av, 'skills'=>$skills_injuries, 'inj'=>$inj,
-     'cp'=>$p->cp, 'td'=>$p->td, 'int'=>$p->intcpt, 'cas'=>$p->cas, 'mvp'=>$p->mvp, 'spp'=>$p->spp, 'value'=>$pdf->Mf($p->value));
-  $sum_spp+=$p->spp;
+     'cp'=>$p->mv_cp, 'td'=>$p->mv_td, 'int'=>$p->mv_intcpt, 'cas'=>$p->mv_cas, 'mvp'=>$p->mv_mvp, 'spp'=>$p->mv_spp, 'value'=>$pdf->Mf($p->value));
+  $sum_spp+=$p->mv_spp;
   $sum_pvalue+=$p->value;
   $sum_players++;
-  $sum_cp+=$p->cp;
-  $sum_td+=$p->td;
-  $sum_int+=$p->intcpt;
-  $sum_cas+=$p->cas;
-  $sum_mvp+=$p->mvp;
+  $sum_cp+=$p->mv_cp;
+  $sum_td+=$p->mv_td;
+  $sum_int+=$p->mv_intcpt;
+  $sum_cas+=$p->mv_cas;
+  $sum_mvp+=$p->mv_mvp;
   
   // Printing player row
   $currenty+=$pdf->print_prow($pp, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8, $p->ma_color, $p->st_color, $p->ag_color, $p->av_color);
@@ -414,7 +414,7 @@ $pdf->print_box(($currentx += 170), $currenty, 120, $h, COLOR_ROSTER_NORMAL, DEF
 $pdf->print_box(($currentx = 630), $currenty, 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Team Goods'); // 156 to margin
 
 // Checking if Wandering Apothecary should be replaced with Igor
-$r=$team->race;
+$r=$team->f_rname;
 if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Undead')) {
   $apo_igor = 'Igor (0-1):';
   unset($inducements['Wandering Apothecaries']);

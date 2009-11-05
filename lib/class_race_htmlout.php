@@ -31,17 +31,15 @@ public static function profile($rid)
     $roster = $race->getRoster();
     title($race->race);
     ?>
-    <center><img src="<?php echo $roster['other']['icon'];?>" alt="Race icon"></center>
-    <ul><li>Re-roll cost: <?php echo $roster['other']['RerollCost']/1000;?>k</li></ul><br>
+    <center><img src="<?php echo RACE_ICONS.'/'.$roster['other']['icon'];?>" alt="Race icon"></center>
+    <ul><li>Re-roll cost: <?php echo $roster['other']['rr_cost']/1000;?>k</li></ul><br>
     <?php
     $players = array();
     foreach ($roster['players'] as $player => $d) {
         $p = (object) array_merge(array('position' => $player), $d);
-        $p->skills = implode(', ', $p->{'Def skills'});
-        foreach (array('N', 'D') as $s) {
-            array_walk($p->{"$s skills"}, create_function('&$val', '$val = substr($val,0,1);'));
-            $p->$s = implode('', $p->{"$s skills"});
-        }
+        $p->skills = skillsTrans($p->def);
+        $p->N = implode('',$p->norm);
+        $p->D = implode('',$p->doub);
         $players[] = $p;
     }
     $fields = array(
@@ -63,7 +61,7 @@ public static function profile($rid)
         $fields,
         sort_rule('race_page'),
         (isset($_GET['sortpl'])) ? array((($_GET['dirpl'] == 'a') ? '+' : '-') . $_GET['sortpl']) : array(),
-        array('GETsuffix' => 'pl', 'noHelp' => true)
+        array('GETsuffix' => 'pl', 'noHelp' => true, 'doNr' => false)
     );
 
     // Teams of the chosen race.
