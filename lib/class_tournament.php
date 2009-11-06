@@ -198,6 +198,11 @@ class Tour
      * Statics
      ***************/
 
+    public static function getRSstr($idx) {
+        global $hrs;
+        return preg_replace('/pts/', '{'.$hrs[$idx]['points'].'}', implode(', ',$hrs[$idx]['rule']));
+    }
+
     public static function getTours() {
 
         /**

@@ -179,17 +179,19 @@ public static function setTriggers($set = true)
 */
 public static function syncGameData() 
 {
-    global $core_tables, $DEA, $stars;
+    global $core_tables, $DEA, $stars, $skillarray;
     
-    $players  = 'game_data_players';
-    $races    = 'races';
-    $starstbl = 'game_data_stars';
+    $players   = 'game_data_players';
+    $races     = 'races';
+    $starstbl  = 'game_data_stars';
+    $skillstbl = 'game_data_skills';
     
     $status = true;
     // Drop and re-create game data tables.
-    $status &= Table::createTable($players, $core_tables[$players]);
-    $status &= Table::createTable($races,   $core_tables[$races]);
-    $status &= Table::createTable($starstbl,   $core_tables[$starstbl]);
+    $status &= Table::createTable($players,  $core_tables[$players]);
+    $status &= Table::createTable($races,    $core_tables[$races]);
+    $status &= Table::createTable($starstbl, $core_tables[$starstbl]);
+    $status &= Table::createTable($skillstbl,$core_tables[$skillstbl]);
 
     foreach ($DEA as $race_name => $race_details) {
         $query = "INSERT INTO $races(race_id, name, cost_rr) VALUES (".$race_details['other']['race_id'].", '".mysql_real_escape_string($race_name)."', ".$race_details['other']['rr_cost'].")";
@@ -210,6 +212,12 @@ public static function syncGameData()
             $SD[id], '".mysql_real_escape_string($star_name)."', $SD[cost], '".implode(',', $SD['races'])."', $SD[ma],$SD[st],$SD[ag],$SD[av], '".implode(',', $SD['def'])."'
         )";
         $status = mysql_query($query);
+    }
+
+    foreach ($skillarray as $grp => $skills) {
+        foreach ($skills as $id => $s) {
+            $status &= mysql_query("INSERT INTO $skillstbl(skill_id, name, cat) VALUES ($id, '".mysql_real_escape_string($s)."', '$grp')");
+        }
     }
     
     return $status;

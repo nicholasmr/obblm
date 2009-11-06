@@ -69,13 +69,6 @@ $rules['cost_fan_factor']       = 10000;    // Default is 10000.
 $rules['cost_ass_coaches']      = 10000;    // Default is 10000.
 $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
 
-// Player values are decreased by the below multipliers for each type of injury sustained.
-// Example: If you wish player values to go down by 15.000 for each MA, you would set the "val_reduc_ma" variable equal to 15000.
-#$rules['val_reduc_ma'] = 0; // Default is 0 (disabled).
-#$rules['val_reduc_st'] = 0; // Default is 0 (disabled).
-#$rules['val_reduc_av'] = 0; // Default is 0 (disabled).
-#$rules['val_reduc_ag'] = 0; // Default is 0 (disabled).
-
 /*
     Enable the partial implementation of the LRB6 experimental rule set.
     This implies acknowledging the differences between the LRB5 and 6 with respect to the initial properties of teams, players and their skills.
@@ -119,36 +112,25 @@ $rules['enable_lrb6x'] = true; // Default is false.
             Where X and Y may by either integers, floating point numbers or another fields. 
             A points definition does not have to be a linear combination of fields, points = '[field1]/([field2]*[field3])' is 100% valid.
             Note: non-numeric fields may of course not be used in the points definition.
-            
-        points_desc:
-            This is the text string shown in OBBLM when describing the points definition. 
-            Usually the points definition is best described by setting this field to the same value as the points definition, that is:
-                points_desc = points
-            But, if you, for example, find it more describing writing:
-                points_desc = 'Win = 3 points, draw = 2 points and losing = 1 point'
-            then this too is 100% valid.
         
     PLEASE NOTE: If you do not need the points field, because it is not included in the rule field of your ranking system, 
-    then simply leave both the "points" and "points_desc" definitions be equal to '' (that's two single quotes only).
+    then simply leave the "points" definition be equal to '' (that's two single quotes only).
     
 */
 
-#$s['won']*3 + $s['draw']
-#$s['points'] = ($s['played'] == 0) ? 0 : $s['won']/$s['played'] + $s['draw']/(2*$s['played'])
-// Example 1
-$hrs[1]['rule']        = array('-pts', '-td', '+smp');    // Sort teams against: most points, then most TDs and then least sportsmanship points.
-$hrs[1]['points']      = '3*[won] + 2*[draw] + 1*[lost]'; // The definition of points.
-$hrs[1]['points_desc'] = $hrs[1]['points'];               // Set the description of the points to be just the same as the actual definition.
+// Rule 1
+$hrs[1]['rule']   = array('-pts', '-td', '+smp');    // Sort teams against: most points, then most TDs and then least sportsmanship points.
+$hrs[1]['points'] = '3*[won] + 2*[draw] + 1*[lost]'; // The definition of points.
 
-// Example 2
-$hrs[2]['rule']        = array('-pts', '-ki', '-mvp');                      // Sort teams against: most points, then most killed and then by most MVPs.
-$hrs[2]['points']      = '2*[gf] - 1*[ga]';                                 // The definition of points.
-$hrs[2]['points_desc'] = '2 pts for team score, -1 pts for opponent score'; // Set the description of the points to be this string.
+// Rule 2
+$hrs[2]['rule']   = array('-pts', '-ki', '-mvp'); // Sort teams against: most points, then most killed and then by most MVPs.
+$hrs[2]['points'] = '2*[gf] - 1*[ga]';            // The definition of points.
 
-// Example 3
-$hrs[3]['rule']        = array('-sdiff', '-smp');       // Sort teams against: largest score difference, then most sportsmanship points.
-$hrs[3]['points']      = '';                            // Points not used.
-$hrs[3]['points_desc'] = '';                            // Points not used.
+// Rule 3
+$hrs[3]['rule']   = array('-sdiff', '-smp'); // Sort teams against: largest score difference, then most sportsmanship points.
+$hrs[3]['points'] = '';                      // Points not used.
+
+// Add you own rules here...
 
 /*****************
  * Enable/disable modules
@@ -162,7 +144,6 @@ $settings['modules_enabled'] = array(
     'SGraph'        => true, # Graphical statistics
     'Team_export'   => true, # Standard XML export of team
     'Memmatches'    => true, # Memorable matches viewer
-    'Comparison'    => true, # Cross compare stats between coaches, teams, races, players.
     'Wanted'        => true, # Wanted list
     'HOF'           => true, # Hall of fame
     'Prize'         => true, # Tournament prizes list

@@ -76,7 +76,7 @@ public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $s
         T_OBJ_RACE   => 'mv_races',
     );
 
-    $devisor = ($setAvg) ? '' : false; # TODO: integrate averages.
+    $devisor = ($setAvg) ? 'SUM(mv_played)' : false; # TODO: integrate averages.
 
     global $cols_mv; # Bad practice creating this variable globally from within a function, but it's effecient!
     $tbl_name_norm = $relations_obj[$obj]['tbl'];

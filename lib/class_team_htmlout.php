@@ -31,47 +31,37 @@ public static function dispTeamList($obj, $obj_id)
     global $settings, $lng;
 
     $teams = array();
+    $get_row_fields = array('team_id', 'name', 'owned_by_coach_id', 'f_cname', 'f_rname', 'rdy', 'tv', 'retired');
     switch ($obj) {
         case STATS_COACH:
-            $c = new Coach($obj_id);
-            $teams = $c->getTeams();
+            $teams = get_rows('teams', $get_row_fields, array("owned_by_coach_id = $obj_id"));
             break;
 
         case false:
         default:
-            $teams = Team::getTeams();
+            $teams = get_rows('teams', $get_row_fields);
             break;
     }
     // OPTIONALLY hide retired teams.
-    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->is_retired;'));}
+    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->retired;'));}
     objsort($teams, array('+name'));
     foreach ($teams as $t) {
-        $retired = (($t->is_retired) ? '<b><font color="red">[R]</font></b>' : '');
-        $t->name .= "</a>&nbsp;$retired<br><small>$t->coach_name</small><a>"; // The <a> tags are a little hack so that HTMLOUT::sort_table does not create the team link on coach name too.
+        $retired = (($t->retired) ? '<b><font color="red">[R]</font></b>' : '');
+        $t->name .= "</a>&nbsp;$retired";
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
         $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath()."'>";
-        $t->retired = ($t->is_retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
-        $lt = $t->getLatestTour();
-        $t->latest_tour = ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '-';
-        if (Module::isRegistered('Prize')) {
-            $prizes = Module::run('Prize', array('getPrizesString', $t->team_id));
-        }
-        $t->prizes = (empty($prizes)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $prizes;
+        $t->retired = ($t->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
         $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
     }
     $fields = array(
-        'logo'          => array('desc' => 'Logo', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id'), 'nosort' => true),
-        'name'          => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
-        'rdy'           => array('desc' => 'Ready', 'nosort' => true),
-        'f_rname'       => array('desc' => 'Race'),
-        'latest_tour'   => array('desc' => 'Latest tour'),
-        'prizes'        => array('desc' => 'Prizes', 'nosort' => true),
-        'mv_played'     => array('desc' => 'Games'),
-        'tv'            => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
+        'logo'    => array('desc' => 'Logo', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id'), 'nosort' => true),
+        'name'    => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+        'f_cname' => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
+        'rdy'     => array('desc' => 'Ready', 'nosort' => true),
+        'f_rname' => array('desc' => 'Race'),
+        'tv'      => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
     );
-    if (!Module::isRegistered('Prize')) {
-        unset($fields['prizes']);
-    }
+
     HTMLOUT::sort_table(
         "Teams",
         "index.php?section=".(($obj == STATS_COACH) ? 'coachcorner' : 'teamlist'),

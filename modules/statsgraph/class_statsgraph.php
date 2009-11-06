@@ -372,8 +372,8 @@ class SGraph implements ModuleInterface
              *  Current CAS
              ********************/
             
-            if (!$cmp_id && $o->bh+$o->si+$o->ki != 0) {
-                $data = array("BH ($o->bh)" => $o->bh, "SI ($o->si)" => $o->si, "Ki ($o->ki)" => $o->ki);
+            if (!$cmp_id && $o->mv_cas != 0) {
+                $data = array("BH ($o->mv_bh)" => $o->mv_bh, "SI ($o->mv_si)" => $o->mv_si, "Ki ($o->mv_ki)" => $o->mv_ki);
                 $graph = new PieGraph($opts['xdim'],$opts['ydim'],"auto");
                 $graph->SetShadow();
                 $graph->title->Set('Current CAS distribution');
