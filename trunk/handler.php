@@ -71,9 +71,10 @@ switch ($_GET['type'])
    		break;
 
     /* Comparison */
-   	case 'comparison':
-   		Module::run('Comparison', array());
-   		break;
+// Currently not maintained.
+#   	case 'comparison':
+#   		Module::run('Comparison', array());
+#   		break;
 
     /* Register */
    	case 'registration':

@@ -158,8 +158,9 @@ objsort($divisions, array('+dispName'));
         <b><?php echo $lng->getTrn('admin/schedule/rank_sys');?>:</b> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
         <select name='rs'>
         <?php
-        foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
-            echo "<option value='$idx'>RS #$idx | $r</option>\n";
+        global $hrs;
+        foreach ($hrs as $idx => $r) {
+            echo "<option value='$idx'>#$idx: ".Tour::getRSstr($idx)."</option>\n";
         }
         ?>
         </select>
@@ -214,18 +215,18 @@ objsort($divisions, array('+dispName'));
     <br>
     <b><?php echo $lng->getTrn('admin/schedule/participants');?>:</b><br>
     <?php
-    $teams = Team::getTeams();
+    $teams = get_rows('teams', array('team_id', 'name', 'f_cname'));
     $entriesToPrint = array();
     switch ($settings['scheduling_list_style'])
     {
         case 2:
             objsort($teams, array('+name'));
-            $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'><b>$t->name</b> ($t->coach_name)";'), $teams);
+            $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'><b>$t->name</b> ($t->f_cname)";'), $teams);
             break;
         # case 1:
         default: 
-            objsort($teams, array('+coach_name', '+name'));
-            $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'>$t->coach_name\'s $t->name";'), $teams);
+            objsort($teams, array('+f_cname', '+name'));
+            $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'>$t->f_cname\'s $t->name";'), $teams);
             break;
     }
     print implode("<br\n", $entriesToPrint);

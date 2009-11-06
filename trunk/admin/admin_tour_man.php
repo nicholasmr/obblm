@@ -111,8 +111,9 @@ $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value =
         <b>New ranking system:</b> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
         <select name='rs'>
         <?php
-        foreach (Tour::getRSSortRules(false, true) as $idx => $r) {
-            echo "<option value='$idx'>RS #$idx | $r</option>\n";
+        global $hrs;
+        foreach ($hrs as $idx => $r) {
+            echo "<option value='$idx'>#$idx: ".Tour::getRSstr($idx)."</option>\n";
         }
         ?>
         </select>

@@ -56,9 +56,7 @@ $DEA['Wood Elf']['players']['Catcher']['def'] = array (20, 23, 28);
 // Only used in the three new teams
 //
 
-$skillarray['E'][113] = 'Animosity';
-sort($skillarray['E'], SORT_STRING);
-$skillididx[113] = 'Animosity';
+$skillarray['E'][113] = $skillididx[113] = 'Animosity';
 
 //
 // Three new teams in LRB5b.

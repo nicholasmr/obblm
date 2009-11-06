@@ -68,11 +68,12 @@ Module::register(array(
     'filesLoadTime' => array('memmatches/class_memmatches.php')
 ));
 
-Module::register(array(
-    'class'         => 'Comparison', 
-    'filesRunTime'  => array(),
-    'filesLoadTime' => array('comparison/class_comparison.php')
-));
+// Currently not maintained.
+#Module::register(array(
+#    'class'         => 'Comparison', 
+#    'filesRunTime'  => array(),
+#    'filesLoadTime' => array('comparison/class_comparison.php')
+#));
 
 Module::register(array(
     'class'         => 'Wanted',
