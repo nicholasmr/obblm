@@ -229,7 +229,7 @@ objsort($divisions, array('+dispName'));
             $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'>$t->f_cname\'s $t->name";'), $teams);
             break;
     }
-    print implode("<br\n", $entriesToPrint);
+    print implode("<br>\n", $entriesToPrint);
     ?>
     <br>
     <hr align="left" width="200px">
