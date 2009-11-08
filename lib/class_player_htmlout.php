@@ -137,7 +137,7 @@ private function _about($ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td><b><?php echo $lng->getTrn('common/team');?></b></td>
-                        <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$p->owned_by_team_id,false,false);?>"><?php echo $p->team_name; ?></a></td>
+                        <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$p->owned_by_team_id,false,false);?>"><?php echo $p->f_tname; ?></a></td>
                     </tr>
                     <tr>
                         <td><b><?php echo $lng->getTrn('profile/player/bought');?></b></td>
@@ -148,14 +148,13 @@ private function _about($ALLOW_EDIT)
                         <td>
                         <?php 
                             if ($p->is_dead) {
-                                $p->getDateDied();
                                 echo "<b><font color='red'>DEAD</font></b> ($p->date_died)";
                             }
                             elseif ($p->is_sold) {
                                 echo "<b>SOLD</b> ($p->date_sold)";
                             }
                             else {
-                                echo (($status = Player::theDoctor($p->getStatus(-1))) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
+                                echo (($status = Player::theDoctor($p->status)) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
                             }
                         ?>
                         </td>

@@ -29,6 +29,11 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNOTExists('teams', 'played_0', 'ALTER TABLE teams ADD COLUMN played_0 SMALLINT UNSIGNED NOT NULL DEFAULT 0'),
         'UPDATE teams SET played_0 = won_0 + draw_0 + lost_0',
         'ALTER TABLE players MODIFY player_id MEDIUMINT SIGNED',
+            # New FF col system.
+        SQLUpgrade::runIfColumnNOTExists('players', 'ff_bought', 'ALTER TABLE players ADD COLUMN ff_bought TINYINT UNSIGNED AFTER rerolls'),
+        SQLUpgrade::runIfColumnNOTExists('players', 'ff', 'ALTER TABLE players ADD COLUMN ff TINYINT UNSIGNED'),
+        SQLUpgrade::runIfColumnExists('players', 'fan_factor', 'UPDATE players SET ff_bought = fan_factor'),
+        SQLUpgrade::runIfColumnExists('players', 'fan_factor', 'ALTER TABLE players DROP fan_factor'),
         
         // Add DPROPS fields
         SQLUpgrade::runIfColumnNotExists('teams', 'swon', 'ALTER TABLE teams ADD COLUMN swon SMALLINT UNSIGNED'),
@@ -50,6 +55,10 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNotExists('players', 'date_died', 'ALTER TABLE players ADD COLUMN date_died DATETIME'),
         SQLUpgrade::runIfColumnNotExists('players', 'ma', 'ALTER TABLE players ADD COLUMN ('.implode(', ', array_map(create_function('$f','return "$f TINYINT UNSIGNED";'), array('ma','st','ag','av','inj_ma','inj_st','inj_ag','inj_av','inj_ni'))).')'),
         SQLUpgrade::runIfColumnNotExists('players', 'win_pct', 'ALTER TABLE players ADD COLUMN win_pct FLOAT UNSIGNED'),
+        SQLUpgrade::runIfColumnNotExists('tours', 'begun', 'ALTER TABLE tours ADD COLUMN begun BOOLEAN'),
+        SQLUpgrade::runIfColumnNotExists('tours', 'empty', 'ALTER TABLE tours ADD COLUMN empty BOOLEAN'),
+        SQLUpgrade::runIfColumnNotExists('tours', 'finished', 'ALTER TABLE tours ADD COLUMN finished BOOLEAN'),
+        SQLUpgrade::runIfColumnNotExists('tours', 'winner', 'ALTER TABLE tours ADD COLUMN winner MEDIUMINT UNSIGNED'),
 
         // Add relation fields
         SQLUpgrade::runIfColumnNotExists('players', 'f_cid', 'ALTER TABLE players ADD COLUMN f_cid MEDIUMINT UNSIGNED'),

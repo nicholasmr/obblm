@@ -59,17 +59,15 @@ class Coach
     function __construct($coach_id) {
     
         // MySQL stored information
-        $result = mysql_query("SELECT * FROM coaches WHERE coach_id = $coach_id");
-        foreach (mysql_fetch_assoc($result) as $col => $val)
-            $this->$col = ($val) ? $val : 0;
+        $this->coach_id = $coach_id;
+        $this->setStats(false,false,false);
             
         $this->admin = ($this->ring == RING_SYS);
         if (empty($this->mail)) $this->mail = '';           # Re-define as empty string, and not numeric zero.
         if (empty($this->phone)) $this->phone = '';         # Re-define as empty string, and not numeric zero.
         if (empty($this->realname)) $this->realname = '';   # Re-define as empty string, and not numeric zero.
         
-        $this->setStats(false,false,false);
-        
+       
         // Coach's site settings.
         $this->settings = array(); // Is overwriten to type = string when loading MySQL data into this object.
         foreach (get_list('coaches', 'coach_id', $this->coach_id, 'settings') as $set) {

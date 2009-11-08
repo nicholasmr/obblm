@@ -19,7 +19,7 @@ define('UNLIMITED', 20); // Used for limiting the allowed amount of team items/t
 // Input sent?
 if (isset($_POST['button'])) {
 
-    $in = array('coach', 'name', 'race', 'treasury', 'apothecary', 'rerolls', 'fan_factor', 'ass_coaches', 'cheerleaders', 'players',
+    $in = array('coach', 'name', 'race', 'treasury', 'apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders', 'players',
         'won_0', 'lost_0', 'draw_0', 'sw_0', 'sl_0', 'sd_0', 'wt_0', 'gf_0', 'ga_0', 'tcas_0', 'elo_0');
     $inputType = (isset($_FILES['xmlfile'])) ? XML : HTML;
 
@@ -81,7 +81,7 @@ if (isset($_POST['button'])) {
             status(false, "Treasury amount must be numeric.");
             $err = true;
         }
-        foreach (array('apothecary', 'rerolls', 'fan_factor', 'ass_coaches', 'cheerleaders') as $a) {
+        foreach (array('apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders') as $a) {
             if (!is_numeric($_POST[$a])) {
                 status(false, "Field '$a' must be numeric.");
                 $err = true;
@@ -324,10 +324,10 @@ if (Module::isRegistered('cyanide_team_import')) {
                 </select>
             </td>
             <td>
-                <select name="fan_factor">
+                <select name="ff_bought">
                     <?php
                     foreach (range(0, ($rules['max_fan_factor'] == -1) ? UNLIMITED : $rules['max_fan_factor']) as $i)
-                        echo "<option value='$i' ".(($err && $_POST['fan_factor'] == $i) ? 'SELECTED' : '').">$i</option>\n";
+                        echo "<option value='$i' ".(($err && $_POST['ff_bought'] == $i) ? 'SELECTED' : '').">$i</option>\n";
                     ?>
                 </select>
             </td>

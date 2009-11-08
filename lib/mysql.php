@@ -83,7 +83,7 @@ $core_tables = array(
         'treasury'          => 'BIGINT SIGNED',
         'apothecary'        => 'BOOLEAN',
         'rerolls'           => 'MEDIUMINT UNSIGNED',
-        'fan_factor'        => 'MEDIUMINT UNSIGNED',
+        'ff_bought'         => 'TINYINT UNSIGNED',
         'ass_coaches'       => 'MEDIUMINT UNSIGNED',
         'cheerleaders'      => 'MEDIUMINT UNSIGNED',
         'rdy'               => 'BOOLEAN NOT NULL DEFAULT 1',
@@ -104,12 +104,13 @@ $core_tables = array(
         'f_rname' => $CT_cols['name'],
         'f_cname' => $CT_cols['name'],
         // Dynamic properties (DPROPS)
-        'tv'    => $CT_cols['tv'],
-        'elo'   => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
-        'swon'  => $CT_cols['streak'],
-        'sdraw' => $CT_cols['streak'],
-        'slost' => $CT_cols['streak'],
-        'wt_cnt' => $CT_cols['wt_cnt'],
+        'ff'      => 'TINYINT UNSIGNED', # Total: sum of match FF (ff, from MV table) and bought (ff_bought).
+        'tv'      => $CT_cols['tv'],
+        'elo'     => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
+        'swon'    => $CT_cols['streak'],
+        'sdraw'   => $CT_cols['streak'],
+        'slost'   => $CT_cols['streak'],
+        'wt_cnt'  => $CT_cols['wt_cnt'],
         'win_pct' => $CT_cols['win_pct'], # All-time win pct (across all matches).
     ),
     'players' => array(
@@ -168,13 +169,11 @@ $core_tables = array(
         'name'      => $CT_cols['name'],
         'location'  => $CT_cols['name'],
         'date'      => 'DATETIME',
-
     ),
     'divisions' => array(
         'did'   => $CT_cols[T_NODE_DIVISION].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'f_lid' => $CT_cols[T_NODE_LEAGUE],
         'name'  => $CT_cols['name'],
-
     ),
     'tours' => array(
         'tour_id'       => $CT_cols[T_NODE_TOURNAMENT].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -184,6 +183,11 @@ $core_tables = array(
         'date_created'  => 'DATETIME',
         'rs'            => 'TINYINT UNSIGNED DEFAULT 1',
         'locked'        => 'BOOLEAN',
+        // Dynamic properties (DPROPS)
+        'empty'    => 'BOOLEAN',
+        'begun'    => 'BOOLEAN',
+        'finished' => 'BOOLEAN',
+        'winner'   => $CT_cols[T_OBJ_TEAM],
     ),
     'matches' => array(
         'match_id'      => $CT_cols[T_NODE_MATCH].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -299,6 +303,7 @@ $mv_commoncols = array(
     'tcas'      => 'SMALLINT UNSIGNED',
     'smp'       => 'SMALLINT SIGNED',
     'spp'       => 'SMALLINT UNSIGNED',
+    'ff'        => 'SMALLINT SIGNED',
     'won'       => 'SMALLINT UNSIGNED',
     'lost'      => 'SMALLINT UNSIGNED',
     'draw'      => 'SMALLINT UNSIGNED',
@@ -535,7 +540,7 @@ function setup_database() {
         ? "<font color='green'>OK &mdash; Synchronize game data with database</font><br>\n" 
         : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
     
-    echo (SQLCore::installTableIndexes(true))
+    echo (SQLCore::installTableIndexes())
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
 
@@ -606,6 +611,10 @@ function upgrade_database($version)
     echo (SQLCore::installMVs(false))
         ? "<font color='green'>OK &mdash; created MV tables</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not create MV tables</font><br>\n";
+   
+    echo (SQLCore::installTableIndexes())
+        ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
    
     echo (SQLCore::setTriggers(true))
         ? "<font color='green'>OK &mdash; created MySQL triggers</font><br>\n"

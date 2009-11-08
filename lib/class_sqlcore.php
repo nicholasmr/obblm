@@ -48,7 +48,7 @@ public static function setTriggers($set = true)
         END';
     $trig_DPROPS_team_block = '
         BEGIN
-            CALL getTeamDProps(NEW.team_id, NEW.tv);
+            CALL getTeamDProps(NEW.team_id, NEW.tv, NEW.ff);
         END';
     $trig_Team_cnt_block = '
         BEGIN
@@ -281,7 +281,8 @@ public static function installProcsAndFuncs($install = true)
             gf     = IFNULL((SELECT SUM(IF(team1_id = tid, team1_score, IF(team2_id = tid, team2_score, 0))) REGEX_REPLACE_HERE), 0), 
             ga     = IFNULL((SELECT SUM(IF(team1_id = tid, team2_score, IF(team2_id = tid, team1_score, 0))) REGEX_REPLACE_HERE), 0),  
             tcas   = IFNULL((SELECT SUM(IF(team1_id = tid, tcas1, IF(team2_id = tid, tcas2, 0))) REGEX_REPLACE_HERE), 0), 
-            smp    = IFNULL((SELECT SUM(IF(team1_id = tid, smp1, IF(team2_id = tid, smp2, 0))) REGEX_REPLACE_HERE), 0)
+            smp    = IFNULL((SELECT SUM(IF(team1_id = tid, smp1, IF(team2_id = tid, smp2, 0))) REGEX_REPLACE_HERE), 0),
+            ff     = IFNULL((SELECT SUM(IF(team1_id = tid, ffactor1, IF(team2_id = tid, ffactor2, 0))) REGEX_REPLACE_HERE), 0)
     ';
     $mstat_fields_player = preg_replace('/REGEX_REPLACE_HERE/', $mstat_fields_suffix_player, $mstat_fields);
     $mstat_fields_team   = preg_replace('/REGEX_REPLACE_HERE/', $mstat_fields_suffix_team,   $mstat_fields);
@@ -647,7 +648,7 @@ public static function installProcsAndFuncs($install = true)
         END',
 
         /* 
-         *  Won tours count
+         *  Sync won tours count (wt_cnt)
          */
 
         'CREATE PROCEDURE syncAllWTCnts()
@@ -674,7 +675,9 @@ public static function installProcsAndFuncs($install = true)
         END',
         
         /* 
-         *  Sync all-time win percentages.
+         *  Sync ALL-TIME win percentages. 
+         *  
+         *  Note: Tour win pcts are set in MV sync routines.
          */        
         
         'CREATE PROCEDURE syncAllWinPcts()
@@ -687,7 +690,7 @@ public static function installProcsAndFuncs($install = true)
             UPDATE players SET win_pct = getWinPct('.T_OBJ_PLAYER.', player_id);
         END',
          
-        'CREATE FUNCTION getWinPct(obj TINYINT UNSIGNED, obj_id '.$CT_cols[T_OBJ_TEAM].')
+        'CREATE FUNCTION getWinPct(obj TINYINT UNSIGNED, obj_id '.$CT_cols[T_OBJ_PLAYER].')
             RETURNS '.$CT_cols['win_pct'].'
             NOT DETERMINISTIC
             READS SQL DATA
@@ -698,21 +701,10 @@ public static function installProcsAndFuncs($install = true)
                 RETURN (SELECT 100*IFNULL(SUM(won)/SUM(played),0) FROM mv_coaches WHERE f_cid = obj_id);
             ELSEIF obj = '.T_OBJ_RACE.' THEN 
                 RETURN (SELECT 100*IFNULL(SUM(won)/SUM(played),0) FROM mv_races WHERE f_rid = obj_id);
-            ELSEIF obj = '.T_OBJ_PLAYER.' THEN 
+            ELSEIF (obj = '.T_OBJ_PLAYER.' OR obj = '.T_OBJ_STAR.') THEN 
                 RETURN (SELECT 100*IFNULL(SUM(won)/SUM(played),0) FROM mv_players WHERE f_pid = obj_id);
             END IF;
         END',        
-
-        /* 
-         *  Sync ranking system points.
-         */
-         
-        'CREATE PROCEDURE syncAllPTS()
-            NOT DETERMINISTIC
-            CONTAINS SQL
-        BEGIN
-            UPDATE mv_teams SET pts = getPTS(f_tid, f_trid);
-        END',
 
         /* 
          *  Object relations
@@ -801,6 +793,7 @@ public static function installProcsAndFuncs($install = true)
                 WHERE match_data.f_team_id = tid AND match_data.f_tour_id = trid;
             UPDATE mv_teams '.$mstat_fields_team.' WHERE f_tid = tid AND f_trid = trid;
             UPDATE mv_teams SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_tid = tid AND f_trid = trid;
+            UPDATE mv_teams SET pts = getPTS(f_tid, f_trid) WHERE f_tid = tid AND f_trid = trid;
 
             RETURN EXISTS(SELECT COUNT(*) FROM mv_teams WHERE f_tid = tid AND f_trid = trid);
         END',
@@ -855,8 +848,62 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            UPDATE players SET players.name = players.name;
-            UPDATE teams SET teams.name = teams.name;
+            DECLARE done INT DEFAULT 0;
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+            
+            DECLARE cur_tr CURSOR FOR SELECT tour_id FROM tours;
+            DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].';
+            DECALRE empty,begun,finished BOOLEAN;
+            DECLARE winner '.$CT_cols[T_OBJ_TEAM].';
+
+            DECLARE cur_p  CURSOR FOR SELECT player_id FROM players;            
+            DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
+            DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
+            DECLARE value '.$CT_cols['pv'].';
+            DECLARE status '.$core_tables['players']['status'].';
+            DECLARE date_died '.$core_tables['players']['date_died'].';
+
+            DECLARE cur_t  CURSOR FOR SELECT team_id FROM teams;
+            DECLARE tid '.$CT_cols[T_OBJ_TEAM].';
+            DECLARE tv '.$CT_cols['tv'].';
+            DECLARE ff '.$core_tables['teams']['ff'].';
+            
+            OPEN cur_tr;
+            REPEAT
+                FETCH cur_tr INTO trid;
+                IF NOT done THEN
+                    CALL getTourDProps(trid, empty, begun, finished, winner);
+                    UPDATE tours SET tours.empty = empty, tours.begun = begun, tours.finished = finished, tours.winner = winner WHERE tours.tour_id = trid;
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_tr;
+            SET done = 0;
+
+            OPEN cur_p;
+            REPEAT
+                FETCH cur_p INTO pid;
+                IF NOT done THEN
+                    CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, value,status,date_died);
+                    UPDATE players 
+                        SET players.inj_ma = inj_ma, players.inj_av = inj_av, players.inj_ag = inj_ag, players.inj_st = inj_st, players.inj_ni = inj_ni,
+                            players.ma = ma, players.av = av, players.ag = ag, players.st = st, 
+                            players.value = value, players.status = status, players.date_died = date_died
+                        WHERE players.player_id = pid; 
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_p;
+            SET done = 0;
+            
+            OPEN cur_t;
+            REPEAT
+                FETCH cur_t INTO tid;
+                IF NOT done THEN
+                    CALL getTourDProps(tid, tv, ff);
+                    UPDATE teams SET teams.tv = tv, teams.ff = ff WHERE teams.team_id = tid;
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_t;
+            SET done = 0;
         END',
         
         'CREATE PROCEDURE getPlayerDProps(
@@ -920,29 +967,44 @@ public static function installProcsAndFuncs($install = true)
             END IF;
         END',
         
-        'CREATE PROCEDURE getTeamDProps(IN tid '.$CT_cols[T_OBJ_TEAM].', OUT tv '.$CT_cols['tv'].')
+        'CREATE PROCEDURE getTeamDProps(IN tid '.$CT_cols[T_OBJ_TEAM].', OUT tv '.$CT_cols['tv'].', OUT ff '.$core_tables['teams']['ff'].')
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
             DECLARE f_race_id '.$CT_cols[T_OBJ_RACE].';
             DECLARE rerolls '.$core_tables['teams']['rerolls'].';
-            DECLARE fan_factor '.$core_tables['teams']['fan_factor'].';
+            DECLARE ff_bought '.$core_tables['teams']['ff_bought'].';
             DECLARE cheerleaders '.$core_tables['teams']['cheerleaders'].';
             DECLARE apothecary '.$core_tables['teams']['apothecary'].';
             DECLARE ass_coaches '.$core_tables['teams']['ass_coaches'].';
 
             SELECT 
-                teams.f_race_id, teams.rerolls, teams.fan_factor, teams.cheerleaders, teams.apothecary, teams.ass_coaches
+                teams.f_race_id, teams.rerolls, teams.ff_bought, teams.cheerleaders, teams.apothecary, teams.ass_coaches
             INTO 
-                f_race_id, rerolls, fan_factor, cheerleaders, apothecary, ass_coaches
+                f_race_id, rerolls, ff_bought, cheerleaders, apothecary, ass_coaches
             FROM teams WHERE team_id = tid;
-            
+
+            SET ff = ff_bought + (SELECT SUM(ff) FROM mv_teams WHERE f_tid = tid);            
             SET tv = (SELECT IFNULL(SUM(value),0) FROM players WHERE owned_by_team_id = tid AND players.status != '.MNG.')
                 + rerolls      * (SELECT cost_rr FROM races WHERE races.race_id = f_race_id)
-                + fan_factor   * '.$rules['cost_fan_factor'].'
+                + ff           * '.$rules['cost_fan_factor'].'
                 + cheerleaders * '.$rules['cost_cheerleaders'].'
                 + apothecary   * '.$rules['cost_apothecary'].'
                 + ass_coaches  * '.$rules['cost_ass_coaches'].';
+                
+        END',
+        
+        'CREATE PROCEDURE getTourDProps(IN trid '.$CT_cols[T_NODE_TOURNAMENT].', OUT empty BOOLEAN, OUT begun BOOLEAN, OUT finished BOOLEAN, OUT winner '.$CT_cols[T_OBJ_TEAM].')
+            NOT DETERMINISTIC
+            READS SQL DATA
+        BEGIN
+            DECLARE type '.$core_tables['tours']['type'].';
+            SELECT tours.type INTO type FROM tours WHERE tour_id = trid;
+            
+            SET empty = (SELECT (COUNT(*) < 1) FROM matches WHERE f_tour_id = trid);
+            SET begun = (SELECT (COUNT(*) > 0) FROM matches WHERE f_tour_id = trid AND date_played IS NOT NULL);
+            SET winner = (SELECT IF(team1_score > team2_score, team1_id, team2_id) FROM matches WHERE f_tour_id = trid AND round = '.RT_FINAL.' AND date_played IS NOT NULL AND team1_score != team2_score);
+            SET finished = (SELECT (type = '.TT_RROBIN.' AND COUNT(*) = 0 OR type = '.TT_FFA.' AND winner IS NOT NULL) FROM matches WHERE f_tour_id = trid AND date_played IS NULL);
         END',
         
         // Sync all
@@ -953,7 +1015,6 @@ public static function installProcsAndFuncs($install = true)
             CALL syncAllMVs();
             CALL syncAllDPROPS();
             CALL syncAllRels();
-            CALL syncAllPTS();
             CALL syncAllWinPcts();
             CALL syncAllWTCnts();
             CALL syncAllTeamCnts();
@@ -988,40 +1049,35 @@ public static function installProcsAndFuncs($install = true)
     return $status;
 }
 
-public static function installTableIndexes($install = true)
+public static function installTableIndexes()
 {
-    // Drop indicies
-    $status = true;
-    #....
-
     // Add tables indicies/keys.
-    $indexes = "
-        ALTER TABLE texts       ADD INDEX idx_f_id                  (f_id);
-        ALTER TABLE texts       ADD INDEX idx_type                  (type);
-        ALTER TABLE players     ADD INDEX idx_owned_by_team_id      (owned_by_team_id);
-        ALTER TABLE teams       ADD INDEX idx_owned_by_coach_id     (owned_by_coach_id);
-        ALTER TABLE matches     ADD INDEX idx_f_tour_id             (f_tour_id);
-        ALTER TABLE matches     ADD INDEX idx_team1_id_team2_id     (team1_id,team2_id);
-        ALTER TABLE matches     ADD INDEX idx_team2_id              (team2_id);
-        ALTER TABLE match_data  ADD INDEX idx_m                     (f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_tr                    (f_tour_id);
-        ALTER TABLE match_data  ADD INDEX idx_p_m                   (f_player_id,f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_t_m                   (f_team_id,  f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_r_m                   (f_race_id,  f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_c_m                   (f_coach_id, f_match_id);
-        ALTER TABLE match_data  ADD INDEX idx_p_tr                  (f_player_id,f_tour_id);
-        ALTER TABLE match_data  ADD INDEX idx_t_tr                  (f_team_id,  f_tour_id);
-        ALTER TABLE match_data  ADD INDEX idx_r_tr                  (f_race_id,  f_tour_id);
-        ALTER TABLE match_data  ADD INDEX idx_c_tr                  (f_coach_id, f_tour_id);
-    ";
+    $indicies = array(
+        "idx_f_id"              => array("tbl" => "texts",      "idx" =>  "(f_id)"),
+        "idx_type"              => array("tbl" => "texts",      "idx" =>  "(type)"),
+        "idx_owned_by_team_id"  => array("tbl" => "players",    "idx" =>  "(owned_by_team_id)"),
+        "idx_owned_by_coach_id" => array("tbl" => "teams",      "idx" =>  "(owned_by_coach_id)"),
+        "idx_f_tour_id"         => array("tbl" => "matches",    "idx" =>  "(f_tour_id)"),
+        "idx_team1_id_team2_id" => array("tbl" => "matches",    "idx" =>  "(team1_id,team2_id)"),
+        "idx_team2_id"          => array("tbl" => "matches",    "idx" =>  "(team2_id)"),
+        "idx_m"                 => array("tbl" => "match_data", "idx" =>  "(f_match_id)"),
+        "idx_tr"                => array("tbl" => "match_data", "idx" =>  "(f_tour_id)"),
+        "idx_p_m"               => array("tbl" => "match_data", "idx" =>  "(f_player_id,f_match_id)"),
+        "idx_t_m"               => array("tbl" => "match_data", "idx" =>  "(f_team_id,  f_match_id)"),
+        "idx_r_m"               => array("tbl" => "match_data", "idx" =>  "(f_race_id,  f_match_id)"),
+        "idx_c_m"               => array("tbl" => "match_data", "idx" =>  "(f_coach_id, f_match_id)"),
+        "idx_p_tr"              => array("tbl" => "match_data", "idx" =>  "(f_player_id,f_tour_id)"),
+        "idx_t_tr"              => array("tbl" => "match_data", "idx" =>  "(f_team_id,  f_tour_id)"),
+        "idx_r_tr"              => array("tbl" => "match_data", "idx" =>  "(f_race_id,  f_tour_id)"),
+        "idx_c_tr"              => array("tbl" => "match_data", "idx" =>  "(f_coach_id, f_tour_id)"),
+        "idx_winner"            => array("tbl" => "tours",      "idx" =>  "(winner)"),
+    );
 
-    foreach (explode(';', $indexes) as $query) {
-        $query = trim($query);
-        if (!empty($query)) {
-            $status &= mysql_query($query);
-        }
+    $status = true;
+    foreach ($indicies as $name => $def) {
+        @mysql_query("DROP INDEX $name ON $def[tbl]");
+        $status &= mysql_query("ALTER TABLE $def[tbl] ADD INDEX $name $def[idx]");
     }
-    
     return $status;
 }
 

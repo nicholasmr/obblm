@@ -48,11 +48,6 @@ function __construct($race_id)
     $this->race = $this->name = $raceididx[$this->race_id];
 
     // MySQL stored information
-    $result = mysql_query("SELECT * FROM races WHERE race_id = $this->race_id");
-    $row = mysql_fetch_assoc($result);
-    foreach ($row as $col => $val)
-        $this->$col = $val ? $val : 0;
-        
     $this->setStats(false,false,false);
 }
 
@@ -79,13 +74,13 @@ public function getGoods($double_rr_price = false)
     global $DEA, $rules;
 
     $rr_price = (array_key_exists($this->race, $DEA) ? $DEA[$this->race]['other']['rr_cost'] : 0) * (($double_rr_price && !$rules['static_rerolls_prices']) ? 2 : 1);
-    $apoth = !in_array($this->race, array('Khemri', 'Necromantic', 'Nurgle', 'Undead'));
+    $apoth = !in_array($this->race_id, array(10, 13, 15, 17));
 
     return array(
             // MySQL column names as keys
             'apothecary'    => array('cost' => $rules['cost_apothecary'],   'max' => ($apoth ? 1 : 0),              'item' => 'Apothecary'),
             'rerolls'       => array('cost' => $rr_price,                   'max' => $rules['max_rerolls'],         'item' => 'Reroll'),
-            'fan_factor'    => array('cost' => $rules['cost_fan_factor'],   'max' => $rules['max_fan_factor'],      'item' => 'Fan Factor'),
+            'ff_bought'     => array('cost' => $rules['cost_fan_factor'],   'max' => $rules['max_fan_factor'],      'item' => 'Fan Factor'),
             'ass_coaches'   => array('cost' => $rules['cost_ass_coaches'],  'max' => $rules['max_ass_coaches'],     'item' => 'Assistant Coach'),
             'cheerleaders'  => array('cost' => $rules['cost_cheerleaders'], 'max' => $rules['max_cheerleaders'],    'item' => 'Cheerleader'),
     );

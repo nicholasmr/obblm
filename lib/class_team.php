@@ -45,20 +45,21 @@ class Team
     public $is_retired        = 0;
     
     public $value = 0; public $tv = 0; # Identical.
-    
-    private $_bought_fan_factor = 0;
+    public $ff_bought = 0;
+    public $ff_game = 0;
+    public $ff = 0;
 
     // MySQL stored initials for imported teams
     public $won_0  = 0;
     public $lost_0 = 0;
     public $draw_0 = 0;
+    public $played_0 = 0;
     public $sw_0   = 0;
     public $sl_0   = 0;
     public $sd_0   = 0;
     public $wt_0   = 0;
     public $gf_0   = 0;
     public $ga_0   = 0;
-    public $elo_0  = 0;
     public $tcas_0 = 0;
 
     // Non-constructor filled fields.
@@ -72,26 +73,13 @@ class Team
 
     function __construct($team_id) {
 
-        global $raceididx;
-
-        // MySQL stored information
-        $result = mysql_query("SELECT * FROM teams WHERE team_id = $team_id");
-
-        if (mysql_num_rows($result) <= 0)
-            return false;
-
-        $row = mysql_fetch_assoc($result);
-        foreach ($row as $col => $val)
-            $this->$col = $val ? $val : 0;
+         // MySQL stored information
+        $this->setStats(false,false,false);
 
         $this->is_retired = ($this->retired || get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'retired'));
         unset($this->retired); // We use $this->is_retired instead.
-        $this->coach_name = get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'name');
-        $this->_bought_fan_factor = $this->fan_factor;
         $this->imported = ($this->imported == 1); // Make boolean.
         $this->value = $this->tv;
-#        $this->race = $raceididx[$this->f_race_id];
-        $this->setStats(false,false,false);
 
         return true;
     }
@@ -101,46 +89,27 @@ class Team
         foreach (Stats::getAllStats(STATS_TEAM, $this->team_id, $node, $node_id, $set_avg) as $key => $val) {
             $this->$key = $val;
         }
-        $this->fan_factor += $this->_bought_fan_factor;
-
         return true;
     }
 
     public function setOwnership($cid) {
-
-        /**
-         * Changes team ownership to the coach ID $cid.
-         **/
-
         $query = "UPDATE teams SET owned_by_coach_id = $cid WHERE team_id = $this->team_id";
         return (mysql_query($query) && ($this->owned_by_coach_id = $cid));
     }
     
     public function setLeagueID($lid) {
-
-        /**
-         * Changes team's league association.
-         **/
-
         $query = "UPDATE teams SET f_lid = $lid WHERE team_id = $this->team_id";
         return (mysql_query($query) && ($this->f_lid = $lid));
     }
 
     public function getPlayers() {
-
-        /**
-         * Returns an array of player objects for those players owned by this team.
-         **/
-
         $this->_players = array();
-
         $result = mysql_query("SELECT player_id FROM players WHERE owned_by_team_id = $this->team_id ORDER BY nr ASC, name ASC");
         if (mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($this->_players, new Player($row['player_id']));
             }
         }
-
         return $this->_players;
     }
 
@@ -246,7 +215,7 @@ class Team
             return false;
 
         // Is post game FF purchaseable? Note: Only counts for when teams are not newly imported ie. $this->played = $this-> "played_0".
-        if ($thing == 'fan_factor' && !$rules['post_game_ff'] && $this->played > 0 && $this->played != $this->won_0 + $this->lost_0 + $this->draw_0)
+        if ($thing == 'ff_bought' && !$rules['post_game_ff'] && $this->played > 0 && $this->played != $this->won_0 + $this->lost_0 + $this->draw_0)
             return false;
 
         // Enough money?
@@ -282,7 +251,7 @@ class Team
             return false;
 
         // Have more than 0 of item?
-        if ($this->$thing <= 0 || ($thing == 'fan_factor' && $this->_bought_fan_factor <= 0))
+        if ($this->$thing <= 0 || ($thing == 'ff_bought' && $this->ff_bought <= 0))
             return false;
 
         // Un-buy!
@@ -308,7 +277,7 @@ class Team
         $price = null;
 
         // May drop post FF?
-        if ($thing == 'fan_factor' && !$rules['post_game_ff'] && $this->played > 0)
+        if ($thing == 'ff_bought' && !$rules['post_game_ff'] && $this->played > 0)
             return false;
 
         if (array_key_exists($thing, $goods))
@@ -522,7 +491,7 @@ class Team
                         treasury,
                         apothecary,
                         rerolls,
-                        fan_factor,
+                        ff_bought,
                         ass_coaches,
                         cheerleaders
                         ".((!empty($init))

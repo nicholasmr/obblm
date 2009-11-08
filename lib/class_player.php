@@ -99,11 +99,11 @@ class Player
     public $choosable_skills = array('norm' => array(), 'doub' => array());
     
     // Relations
-    public $team_name = "";
-    public $coach_id = 0;
-    public $coach_name = "";
-    public $f_race_id = 0;
-    public $race = ""; # Race name
+    public $f_tname = "";
+    public $f_cid = 0;
+    public $f_cname = "";
+    public $f_rid = 0;
+    public $f_rname = "";
         
     /***************
      * Methods 
@@ -111,18 +111,12 @@ class Player
 
     function __construct($player_id) {
 
-        global $DEA, $rules;
+        global $DEA;
 
-        /* 
-            MySQL stored player data
-        */
-        
-        $result = mysql_query("SELECT 
-            player_id, type, name, owned_by_team_id, nr, f_pos_id, date_bought, date_sold, 
-            f_cid, f_rid, f_cname, f_rname, f_tname
-            ach_ma, ach_st, ach_ag, ach_av, extra_spp, extra_val,
-            value, status, date_died, inj_ni, inj_ma, inj_st, inj_ag, inj_av, players.ma, players.st, players.ag, players.av,
-            qty, pos, skills AS 'def_skills', game_data_players.ma AS 'def_ma', game_data_players.st AS 'def_st', game_data_players.ag AS 'def_ag', game_data_players.av AS 'def_av'
+        // Get relaveant store game data.
+        $result = mysql_query("SELECT player_id,
+            game_data_players.qty AS 'qty', game_data_players.pos AS 'pos', game_data_players.skills AS 'def_skills', 
+            game_data_players.ma AS 'def_ma', game_data_players.st AS 'def_st', game_data_players.ag AS 'def_ag', game_data_players.av AS 'def_av'
             FROM players, game_data_players WHERE player_id = $player_id AND f_pos_id = pos_id");
         foreach (mysql_fetch_assoc($result) as $col => $val) {
             $this->$col = ($val) ? $val : 0;
@@ -375,39 +369,19 @@ class Player
     }
 
     public function rename($new_name) {
-    
-        /**
-         * Rename player.
-         **/
-    
         return mysql_query("UPDATE players SET name = '" . mysql_real_escape_string($new_name) . "' WHERE player_id = $this->player_id");
     }
     
     public function renumber($number) {
-
-        /**
-         * Renumber player.
-         **/
-    
         return ($number <= MAX_PLAYER_NR && mysql_query("UPDATE players SET nr = $number WHERE player_id = $this->player_id"));
     }
 
     public function dspp($delta) {
-    
-        /**
-         * Add a delta to player's extra SPP.
-         **/
-        
         $query = "UPDATE players SET extra_spp = IF(extra_spp IS NULL, $delta, extra_spp + ($delta)) WHERE player_id = $this->player_id";
         return mysql_query($query);
     }
 
     public function dval($val = 0) {
-    
-        /**
-         * Add a delta to player's value.
-         **/
-        
         $query = "UPDATE players SET extra_val = $val WHERE player_id = $this->player_id";
         return mysql_query($query);
     }
@@ -458,7 +432,7 @@ class Player
          **/
          
         global $skillcats;
-        
+
         if (in_array($type, array_keys($skillcats))) {
             return mysql_query("DELETE FROM players_skills WHERE f_pid = $this->player_id AND type = '$type' AND f_skill_id = $skill");
         }
@@ -471,11 +445,6 @@ class Player
     
     public function getStatus($match_id) {
         return self::getPlayerStatus($this->player_id, $match_id);
-    }
-    
-    public function getDateDied() {
-        $query = "SELECT date_played FROM matches, match_data WHERE f_match_id = match_id AND f_player_id = $this->player_id AND inj = " . DEAD;
-        return (($result = mysql_query($query)) && mysql_num_rows($result) > 0 && ($row = mysql_fetch_assoc($result))) ? ($this->date_died = $row['date_played']) : false;
     }
     
     public function chrLimits($type, $char) {
@@ -627,7 +596,7 @@ class Player
         if ($this->ach_ag > 0) array_push($chrs, "+$this->ach_ag Ag");
         if ($this->ach_av > 0) array_push($chrs, "+$this->ach_av Av");
         
-        return implode(', ', array_merge(array(skillsTrans($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills)),$extras,$chrs));
+        return implode(', ', array_merge(array(skillsTrans(array_merge($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills))),$extras,$chrs));
     }
     
     public function getInjsStr($HTML = false) 
@@ -681,25 +650,6 @@ class Player
         }
     }
 
-    public static function getPlayers() {
-        
-        /**
-         * Returns an array of all player objects.
-         **/
-         
-        $players = array();
-        
-        $query  = "SELECT player_id FROM players";
-        $result = mysql_query($query);
-        if (mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                array_push($players, new Player($row['player_id']));
-            }
-        }
-        
-        return $players;
-    }
-    
     public static function price(array $input) {
     
         /**
