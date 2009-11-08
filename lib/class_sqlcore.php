@@ -16,46 +16,121 @@ class SQLCore
 
 public static function setTriggers($set = true)
 {
-    global $CT_cols;
+    global $CT_cols, $core_tables;
     
-    // Shortcuts
-    $trig_MV_sync_block = '
+    /* 
+     *  Re-useable code-chunks for triggers.
+     */
+     
+    // Match data
+    $match_data_after = '
         BEGIN 
+            /* General and MV related */
             DECLARE retval BOOLEAN; 
-            DECLARE tid '.$CT_cols[T_OBJ_PLAYER].' DEFAULT NULL;
-            DECLARE cid '.$CT_cols[T_OBJ_PLAYER].' DEFAULT NULL;
-            DECLARE rid '.$CT_cols[T_OBJ_PLAYER].' DEFAULT NULL;
-            CALL getObjParents('.T_OBJ_PLAYER.', REGEX_REPLACE.f_player_id, tid, cid, rid);
-            SET retval = syncMVplayer(REGEX_REPLACE.f_player_id, REGEX_REPLACE.f_tour_id);
-            SET retval = syncMVteam(tid, REGEX_REPLACE.f_tour_id);
-            SET retval = syncMVcoach(cid, REGEX_REPLACE.f_tour_id);
-            SET retval = syncMVrace(rid, REGEX_REPLACE.f_tour_id);
+            DECLARE pid '.$CT_cols[T_OBJ_PLAYER].' DEFAULT NULL;
+            DECLARE tid '.$CT_cols[T_OBJ_TEAM].' DEFAULT NULL;
+            DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
+            DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
+            DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].' DEFAULT NULL;
+            
+            /* Player DPROPS */
+            DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
+            DECLARE value '.$CT_cols['pv'].';
+            DECLARE status '.$core_tables['players']['status'].';
+            DECLARE date_died '.$core_tables['players']['date_died'].'; 
+
+            /* Common used fields */
+            SET pid = REGEX_REPLACE.f_player_id;
+            SET trid = REGEX_REPLACE.f_tour_id;
+            CALL getObjParents('.T_OBJ_PLAYER.', pid, tid, cid, rid);
+
+            /* Update MVs */
+            SET retval = syncMVplayer(pid, trid);
+            SET retval = syncMVteam(tid, trid);
+            SET retval = syncMVcoach(cid, trid);
+            SET retval = syncMVrace(rid, trid);
+            
+            /* Update player DPROPS */            
+            CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, value,status,date_died);
+            UPDATE players 
+                SET players.inj_ma = inj_ma, players.inj_av = inj_av, players.inj_ag = inj_ag, players.inj_st = inj_st, players.inj_ni = inj_ni,
+                    players.ma = ma, players.av = av, players.ag = ag, players.st = st, 
+                    players.value = value, players.status = status, players.date_died = date_died
+                WHERE players.player_id = pid;
         END';
-    $trig_DPROPS_player_b_block = '
-        BEGIN
-            CALL getPlayerDProps(NEW.player_id, NEW.inj_ma,NEW.inj_av,NEW.inj_ag,NEW.inj_st,NEW.inj_ni, NEW.ma,NEW.av,NEW.ag,NEW.st, NEW.value, NEW.status, NEW.date_died);
-        END';
-    $run_DPROPS_team_trigger = 'UPDATE teams SET teams.name = teams.name WHERE teams.team_id = REGEX_REPLACE.owned_by_team_id';
-    $trig_DPROPS_player_a_conditional_block = '
-        BEGIN
-            IF OLD.value != NEW.value THEN
-                '.$run_DPROPS_team_trigger.';
+        
+    // Players
+    $_players_relations = 'CALL getPlayerRels(NEW.player_id, NEW.f_cid, NEW.f_rid, NEW.f_cname, NEW.f_rname, NEW.f_tname, NEW.f_pos_name);';
+    $_players_p_DPROPS = 'CALL getPlayerDProps(NEW.player_id, NEW.inj_ma,NEW.inj_av,NEW.inj_ag,NEW.inj_st,NEW.inj_ni, NEW.ma,NEW.av,NEW.ag,NEW.st, NEW.value, NEW.status, NEW.date_died);';
+    $_players_t_DPROPS = '
+        DECLARE tv '.$CT_cols['tv'].'; 
+        DECLARE ff '.$core_tables['teams']['ff'].';
+        CALL getTeamDProps(REGEX_REPLACE.owned_by_team_id, tv, ff); 
+        UPDATE teams SET teams.tv = tv WHERE team_id = REGEX_REPLACE.owned_by_team_id;';
+    $players_before = "BEGIN $_players_relations $_players_p_DPROPS END";
+    $players_after = "BEGIN $_players_t_DPROPS END";
+    
+    // Teams
+    $_teams_relations = 'CALL getTeamRels(NEW.team_id, NEW.f_cname, NEW.f_rname);';
+    $_teams_t_DPROPS = 'CALL getTeamDProps(NEW.team_id, NEW.tv, NEW.ff);';
+    $_teams_initvals = 'SET NEW.ff = NEW.ff_bought;'; # Not really needed since getTeamDProps() sets ff to ff_bought+ff_game.
+    $_teams_team_cnt = '
+        UPDATE races   SET team_cnt = getTeamCnt('.T_OBJ_RACE.',  REGEX_REPLACE.f_race_id, NULL)         WHERE race_id = REGEX_REPLACE.f_race_id;
+        UPDATE coaches SET team_cnt = getTeamCnt('.T_OBJ_COACH.', REGEX_REPLACE.owned_by_coach_id, NULL) WHERE coach_id = REGEX_REPLACE.owned_by_coach_id;';
+    $_teams_rels_team = '
+    ';
+        # Only for team updates on change og team's relations.
+    $_teams_update_rels = '
+        SET @changed_owner = (NEW.owned_by_coach_id != OLD.owned_by_coach_id);
+        IF (NEW.name != OLD.name OR @changed_owner) THEN
+            UPDATE players SET 
+            players.f_cid = NEW.owned_by_coach_id, players.f_cname = NEW.f_cname, players.f_tname = NEW.name
+            WHERE owned_by_team_id = OLD.team_id
+            IF (@changed_owner) THEN
+                UPDATE mv_players SET f_cid = NEW.owned_by_coach_id WHERE f_tid = OLD.team_id;
+                UPDATE mv_teams SET f_cid = NEW.owned_by_coach_id WHERE f_tid = OLD.team_id;
             END IF;
-        END';
-    $trig_DPROPS_player_a_block = '
+        END IF;';
+    $teams_before_ins = "BEGIN $_teams_relations $_teams_t_DPROPS $_teams_initvals END";
+    $teams_before_upd = "BEGIN $_teams_relations $_teams_t_DPROPS END";
+    $teams_after_ins = "BEGIN $_teams_team_cnt END";
+    $teams_after_upd = "BEGIN $_teams_team_cnt $_teams_update_rels END";
+    $teams_after_del = "BEGIN $_teams_team_cnt END";
+    
+    // Coaches
+    $_coaches_update_rels = '
+        IF (NEW.name != OLD.name) THEN
+            UPDATE players SET f_cname = NEW.name WHERE f_cid = OLD.coach_id;
+            UPDATE teams SET f_cname = NEW.name WHERE owned_by_coach_id = OLD.coach_id;
+        END IF;';
+    $coaches_after_upd = "BEGIN $_coaches_update_rels END";
+
+    // Players skills
+    $players_skills_after = '
         BEGIN
-            '.$run_DPROPS_team_trigger.';
+           /* Dirt trick to trigger DPROP refreshes */
+           UPDATE players SET value = 0 WHERE player_id = REGEX_REPLACE.f_pid;
+           UPDATE teams SET tv = 0 WHERE team_id = (SELECT owned_by_team_id FROM players WHERE player_id = REGEX_REPLACE.f_pid);
         END';
-    $trig_DPROPS_team_block = '
-        BEGIN
-            CALL getTeamDProps(NEW.team_id, NEW.tv, NEW.ff);
-        END';
-    $trig_Team_cnt_block = '
-        BEGIN
-            UPDATE races   SET team_cnt = getTeamCnt('.T_OBJ_RACE.',  REGEX_REPLACE.f_race_id, NULL)         WHERE race_id = REGEX_REPLACE.f_race_id;
-            UPDATE coaches SET team_cnt = getTeamCnt('.T_OBJ_COACH.', REGEX_REPLACE.owned_by_coach_id, NULL) WHERE coach_id = REGEX_REPLACE.owned_by_coach_id;
-        END';
-    $trig_match_getRelations = '
+
+    // Matches
+    $matches_setup_rels = '
+        /* Tour DPROPS */
+        DECLARE empty,begun,finished BOOLEAN;
+        DECLARE winner '.$CT_cols[T_OBJ_TEAM].';
+        
+        /* Streaks */
+        DECLARE swon,sdraw,slost '.$CT_cols['streak'].';
+        
+        /* MVs */
+        DECLARE done INT DEFAULT 0;
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        DECLARE pid '.$CT_cols[T_NODE_TOURNAMENT].';
+        DECLARE cur_p1 CURSOR FOR SELECT f_pid FROM mv_players WHERE f_tid = REGEX_REPLACE.team1_id AND f_trid = REGEX_REPLACE.f_tour_id;
+        DECLARE cur_p1 CURSOR FOR SELECT f_pid FROM mv_players WHERE f_tid = REGEX_REPLACE.team2_id AND f_trid = REGEX_REPLACE.f_tour_id;
+        
+        /* GENERAL */
+        DECLARE ret BOOLEAN;
         DECLARE rid1, rid2 '.$CT_cols[T_OBJ_RACE].';
         DECLARE cid1, cid2 '.$CT_cols[T_OBJ_COACH].';
         DECLARE tid1, tid2 '.$CT_cols[T_OBJ_TEAM].';
@@ -67,26 +142,35 @@ public static function setTriggers($set = true)
         INTO rid1, rid2, cid1, cid2, tid1, tid2
         FROM teams AS t1, teams AS t2 WHERE t1.team_id = REGEX_REPLACE.team1_id AND t2.team_id = REGEX_REPLACE.team2_id;
     ';
-    # Needs $trig_match_getRelations.
-    $trig_match_sync_team_cnt = '
+        # Needs $matches_setup_rels.
+    $matches_tourDProps = '
+        CALL getTourDProps(trid, empty, begun, finished, winner);
+        UPDATE tours SET tours.empty = empty, tours.begun = begun, tours.finished, tours.winner = winner WHERE tour_id = trid;
+    ';
+        # Needs $matches_setup_rels.
+    $matches_team_cnt = '
         UPDATE mv_races   SET team_cnt = getTeamCnt('.T_OBJ_RACE.', rid1, trid) WHERE f_trid = trid AND f_rid = rid1;
         UPDATE mv_races   SET team_cnt = getTeamCnt('.T_OBJ_RACE.', rid2, trid) WHERE f_trid = trid AND f_rid = rid2;
-        UPDATE mv_coaches SET team_cnt = getTeamCnt('.T_OBJ_RACE.', cid1, trid) WHERE f_trid = trid AND f_cid = cid1;
-        UPDATE mv_coaches SET team_cnt = getTeamCnt('.T_OBJ_RACE.', cid2, trid) WHERE f_trid = trid AND f_cid = cid2;
+        UPDATE mv_coaches SET team_cnt = getTeamCnt('.T_OBJ_COACH.', cid1, trid) WHERE f_trid = trid AND f_cid = cid1;
+        UPDATE mv_coaches SET team_cnt = getTeamCnt('.T_OBJ_COACH.', cid2, trid) WHERE f_trid = trid AND f_cid = cid2;
     ';
-    # Needs $trig_match_getRelations.
-    $trig_match_sync_wt_cnt = '
-        IF REGEX_REPLACE.round = '.RT_FINAL.' THEN
-            UPDATE races SET wt_cnt = getWTCnt('.T_OBJ_RACE.', rid1) WHERE race_id = rid1;
-            UPDATE races SET wt_cnt = getWTCnt('.T_OBJ_RACE.', rid2) WHERE race_id = rid2;
-            UPDATE teams SET wt_cnt = getWTCnt('.T_OBJ_TEAM.', tid1) WHERE team_id = tid1;
-            UPDATE teams SET wt_cnt = getWTCnt('.T_OBJ_TEAM.', tid2) WHERE team_id = tid2;
-            UPDATE coaches SET wt_cnt = getWTCnt('.T_OBJ_COACH.', cid1) WHERE coach_id = cid1;
-            UPDATE coaches SET wt_cnt = getWTCnt('.T_OBJ_COACH.', cid2) WHERE coach_id = cid2;
-        END IF;
+        # Needs $matches_setup_rels.
+    $matches_pts = '
+        UPDATE mv_teams SET pts = getPTS(tid1, trid) WHERE team_id = tid1;
+        UPDATE mv_teams SET pts = getPTS(tid2, trid) WHERE team_id = tid2;
     ';
-    # Needs $trig_match_getRelations.
-    $trig_match_sync_win_pct = '
+    
+        # Needs $matches_setup_rels.
+    $matches_wt_cnt = '
+        UPDATE races SET wt_cnt = getWTCnt('.T_OBJ_RACE.', rid1) WHERE race_id = rid1;
+        UPDATE races SET wt_cnt = getWTCnt('.T_OBJ_RACE.', rid2) WHERE race_id = rid2;
+        UPDATE teams SET wt_cnt = getWTCnt('.T_OBJ_TEAM.', tid1) WHERE team_id = tid1;
+        UPDATE teams SET wt_cnt = getWTCnt('.T_OBJ_TEAM.', tid2) WHERE team_id = tid2;
+        UPDATE coaches SET wt_cnt = getWTCnt('.T_OBJ_COACH.', cid1) WHERE coach_id = cid1;
+        UPDATE coaches SET wt_cnt = getWTCnt('.T_OBJ_COACH.', cid2) WHERE coach_id = cid2;
+    ';
+        # Needs $matches_setup_rels.
+    $matches_win_pct = '
         UPDATE races SET win_pct = getWinPct('.T_OBJ_RACE.', rid1) WHERE race_id = rid1;
         UPDATE races SET win_pct = getWinPct('.T_OBJ_RACE.', rid2) WHERE race_id = rid2;
         UPDATE teams SET win_pct = getWinPct('.T_OBJ_TEAM.', tid1) WHERE team_id = tid1;
@@ -94,65 +178,124 @@ public static function setTriggers($set = true)
         UPDATE coaches SET win_pct = getWinPct('.T_OBJ_COACH.', cid1) WHERE coach_id = cid1;
         UPDATE coaches SET win_pct = getWinPct('.T_OBJ_COACH.', cid2) WHERE coach_id = cid2;
     ';
-    # Needs $trig_match_getRelations.
-    $trig_match_sync_setPTS = '
-        UPDATE mv_teams SET pts = getPTS(tid1, trid) WHERE team_id = tid1;
-        UPDATE mv_teams SET pts = getPTS(tid2, trid) WHERE team_id = tid2;
+        # Needs $matches_setup_rels.
+    $matches_streaks = '
+        CALL getStreaks('.T_OBJ_TEAM.', tid1, NULL, swon,sdraw,slost);
+        UPDATE teams SET teams.swon = swon, teams.sdraw = sdraw, teams.slost = slost WHERE teams.team_id = tid1;
+        CALL getStreaks('.T_OBJ_TEAM.', tid2, NULL, swon,sdraw,slost);
+        UPDATE teams SET teams.swon = swon, teams.sdraw = sdraw, teams.slost = slost WHERE teams.team_id = tid2;
+
+        CALL getStreaks('.T_OBJ_TEAM.', tid1, trid, swon,sdraw,slost);
+        UPDATE mv_teams SET mv_teams.swon = swon, mv_teams.sdraw = sdraw, mv_teams.slost = slost WHERE mv_teams.f_tid = tid1;
+        CALL getStreaks('.T_OBJ_TEAM.', tid2, trid, swon,sdraw,slost);
+        UPDATE mv_teams SET mv_teams.swon = swon, mv_teams.sdraw = sdraw, mv_teams.slost = slost WHERE mv_teams.f_tid = tid2;
+        
+        CALL getStreaks('.T_OBJ_COACH.', cid1, NULL, swon,sdraw,slost);
+        UPDATE coaches SET coaches.swon = swon, coaches.sdraw = sdraw, coaches.slost = slost WHERE coaches.coach_id = cid1;
+        CALL getStreaks('.T_OBJ_COACH.', cid2, NULL, swon,sdraw,slost);
+        UPDATE coaches SET coaches.swon = swon, coaches.sdraw = sdraw, coaches.slost = slost WHERE coaches.coach_id = cid2;
+
+        CALL getStreaks('.T_OBJ_COACH.', cid1, trid, swon,sdraw,slost);
+        UPDATE mv_coaches SET mv_coaches.swon = swon, mv_coaches.sdraw = sdraw, mv_coaches.slost = slost WHERE mv_coaches.f_cid = cid1;
+        CALL getStreaks('.T_OBJ_COACH.', cid2, trid, swon,sdraw,slost);
+        UPDATE mv_coaches SET mv_coaches.swon = swon, mv_coaches.sdraw = sdraw, mv_coaches.slost = slost WHERE mv_coaches.f_cid = cid2;
+    ';
+        # Needs $matches_setup_rels.
+    $matches_MVs = '
+        OPEN cur_p1;
+        REPEAT
+            FETCH cur_p1 INTO pid;
+            IF NOT done THEN
+                SET retval = syncMVplayer(pid, trid);
+            END IF;
+        UNTIL done END REPEAT;
+        CLOSE cur_p1;
+        SET done = 0;
+
+        OPEN cur_p2;
+        REPEAT
+            FETCH cur_p2 INTO pid;
+            IF NOT done THEN
+                SET retval = syncMVplayer(pid, trid);
+            END IF;
+        UNTIL done END REPEAT;
+        CLOSE cur_p2;
+        SET done = 0;
+            
+        SET retval = syncMVteam(tid1, trid);
+        SET retval = syncMVteam(tid2, trid);
+        SET retval = syncMVcoach(cid1, trid);
+        SET retval = syncMVcoach(cid2, trid);
+        SET retval = syncMVrace(rid1, trid);
+        SET retval = syncMVrace(rid2, trid);
     ';
     
     $triggers = array(
-        // These sync the MV tables
-        'CREATE TRIGGER MV_sync_insert AFTER INSERT ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_MV_sync_block),
-        'CREATE TRIGGER MV_sync_update AFTER UPDATE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_MV_sync_block),
-        'CREATE TRIGGER MV_sync_delete AFTER DELETE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_MV_sync_block),
-        // These sync dynamic team and player properties (team+player values, current player inj count, current player status etc.).
-            # Player DPROPS
-        'CREATE TRIGGER DPROPS_player_b_update BEFORE UPDATE ON players FOR EACH ROW '.$trig_DPROPS_player_b_block,
-        'CREATE TRIGGER DPROPS_player_b_insert BEFORE INSERT ON players FOR EACH ROW '.$trig_DPROPS_player_b_block,
-            # Team DPROPS
-        'CREATE TRIGGER DPROPS_player_a_delete AFTER DELETE ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_DPROPS_player_a_block),
-        'CREATE TRIGGER DPROPS_player_a_update AFTER UPDATE ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_DPROPS_player_a_conditional_block),
-        'CREATE TRIGGER DPROPS_player_a_insert AFTER INSERT ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_DPROPS_player_a_block),
-        'CREATE TRIGGER DPROPS_team_update BEFORE UPDATE ON teams FOR EACH ROW '.$trig_DPROPS_team_block,
-        'CREATE TRIGGER DPROPS_team_insert BEFORE INSERT ON teams FOR EACH ROW '.$trig_DPROPS_team_block,
-            # DPROPS, team count
-        'CREATE TRIGGER Team_cnt_delete AFTER DELETE ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_Team_cnt_block),
-#        'CREATE TRIGGER Team_cnt_update AFTER UPDATE ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_Team_cnt_block),
-        'CREATE TRIGGER Team_cnt_insert AFTER INSERT ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_Team_cnt_block),
-            # Match syncs
-        'CREATE TRIGGER Match_sync_update AFTER UPDATE ON matches FOR EACH ROW 
+    
+        // Match data
+        'CREATE TRIGGER match_data_a_ins AFTER INSERT ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $match_data_after),
+        'CREATE TRIGGER match_data_a_upd AFTER UPDATE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $match_data_after),
+        'CREATE TRIGGER match_data_a_del AFTER DELETE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $match_data_after),
+        
+        // Players
+        'CREATE TRIGGER player_b_ins BEFORE INSERT ON players FOR EACH ROW '.$players_before,
+        'CREATE TRIGGER player_b_upd BEFORE UPDATE ON players FOR EACH ROW '.$players_before,
+        'CREATE TRIGGER player_a_ins AFTER INSERT ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $players_after),
+        'CREATE TRIGGER player_a_upd AFTER UPDATE ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $players_after),
+        'CREATE TRIGGER player_a_del AFTER DELETE ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $players_after),
+
+        // Teams
+        'CREATE TRIGGER teams_b_ins BEFORE INSERT ON teams FOR EACH ROW '.$teams_before_ins,
+        'CREATE TRIGGER teams_b_upd BEFORE UPDATE ON teams FOR EACH ROW '.$teams_before_upd,
+        'CREATE TRIGGER teams_a_ins AFTER INSERT ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $teams_after_ins),
+        'CREATE TRIGGER teams_a_upd AFTER UPDATE ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $teams_after_upd),
+        'CREATE TRIGGER teams_a_del AFTER DELETE ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $teams_after_del),
+        
+        // Coaches
+        'CREATE TRIGGER teams_a_upd AFTER UPDATE ON coaches FOR EACH ROW '.$coaches_after_upd,
+        
+        // Players skills
+        # This changes the player value and also the team value!
+        'CREATE TRIGGER players_skills_a_ins AFTER INSERT ON players_skills FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $players_skills_after),
+        'CREATE TRIGGER players_skills_a_upd AFTER UPDATE ON players_skills FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $players_skills_after),
+        'CREATE TRIGGER players_skills_a_del AFTER DELETE ON players_skills FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $players_skills_after),
+        
+        // Matches
+        'CREATE TRIGGER match_a_upd AFTER UPDATE ON matches FOR EACH ROW 
         BEGIN
-            DECLARE ret BOOLEAN;
-            '.preg_replace('/REGEX_REPLACE/', 'NEW', $trig_match_getRelations).'
-            '.$trig_match_sync_team_cnt.'
-            '.$trig_match_sync_setPTS.'
+            '.preg_replace('/REGEX_REPLACE/', 'NEW', $matches_setup_rels).'
+            '.$matches_tourDProps.'
+            '.$matches_team_cnt.'
+            '.$matches_pts.'
             IF NEW.round = '.RT_FINAL.' THEN
-                '.$trig_match_sync_wt_cnt.'
+                '.$matches_wt_cnt.'
             END IF;
             IF (NEW.team1_score != OLD.team1_score OR NEW.team2_score != OLD.team2_score) THEN
                 SET ret = syncELOMatch(NULL, OLD.match_id);
                 SET ret = syncELOMatch(OLD.f_tour_id, OLD.match_id);
-                CALL syncStreaksMatch(OLD.match_id);
-                '.$trig_match_sync_win_pct.'
+                '.$matches_streaks.'
+                '.$matches_win_pct.'
+                '.$matches_MVs.'
             END IF;
-        END
-        ',
-        'CREATE TRIGGER Match_sync_delete AFTER DELETE ON matches FOR EACH ROW 
+        END',
+        
+        'CREATE TRIGGER match_a_del AFTER DELETE ON matches FOR EACH ROW 
         BEGIN
-            '.preg_replace('/REGEX_REPLACE/', 'OLD', $trig_match_getRelations).'
-            '.$trig_match_sync_team_cnt.'
-            '.$trig_match_sync_setPTS.'
+            '.preg_replace('/REGEX_REPLACE/', 'OLD', $matches_setup_rels).'
+            '.$matches_tourDProps.'            
+            '.$matches_team_cnt.'
+            '.$matches_pts.'
             IF OLD.round = '.RT_FINAL.' THEN
-                '.$trig_match_sync_wt_cnt.'
+                '.$matches_wt_cnt.'
             END IF;
             IF OLD.date_played IS NOT NULL THEN
                 CALL syncELOTour(NULL);
                 CALL syncELOTour(OLD.f_tour_id);
-                CALL syncStreaksMatch(OLD.match_id);
-                '.$trig_match_sync_win_pct.'
+                '.$matches_streaks.'
+                '.$matches_win_pct.'
+                '.$matches_MVs.'
             END IF;
-        END
-        ',
+        END',
     );
     
     $status = true;
@@ -264,15 +407,17 @@ public static function installProcsAndFuncs($install = true)
 {
     global $CT_cols, $core_tables, $rules;
 
-        # Shortcuts:
+    /* 
+     *  Re-useable code-chunks for routines.
+     */
+    
+    // MV syncs 
     $common_fields_keys = 'td,cp,intcpt,bh,si,ki,mvp,cas,tdcas,spp';
     $common_fields = 'SUM(td),SUM(cp),SUM(intcpt),SUM(bh),SUM(si),SUM(ki),SUM(mvp),SUM(bh+si+ki),SUM(bh+si+ki+td),SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5)';
-    #$mstat_fields_keys = 'played,won,lost,draw,gf,ga';
     $mstat_fields_suffix_player = 'FROM matches,match_data WHERE matches.match_id = match_data.f_match_id AND match_data.f_player_id = pid AND match_data.mg IS FALSE AND matches.f_tour_id = trid';
     $mstat_fields_suffix_team   = 'FROM matches WHERE f_tour_id = trid AND (team1_id = tid OR team2_id = tid)';
     $mstat_fields_suffix_coach  = 'FROM matches,teams WHERE f_tour_id = trid AND (team1_id = tid OR team2_id = tid) AND teams.owned_by_coach_id = cid';
     $mstat_fields_suffix_race   = 'FROM matches,teams WHERE f_tour_id = trid AND (team1_id = tid OR team2_id = tid) AND teams.f_race_id = rid';
-#    f_tour_id = trid AND (team1_id = teams.team_id OR team2_id = teams.team_id) AND teams.owned_by_coach_id = cid;
     $mstat_fields = '
         SET played = IFNULL((SELECT SUM(IF(team1_id = tid OR team2_id = tid, 1, 0)) REGEX_REPLACE_HERE), 0), 
             won    = IFNULL((SELECT SUM(IF((team1_id = tid AND team1_score > team2_score) OR (team2_id = tid AND team2_score > team1_score), 1, 0)) REGEX_REPLACE_HERE), 0), 
@@ -292,7 +437,7 @@ public static function installProcsAndFuncs($install = true)
     $mstat_fields_race  = preg_replace('/tid/', 'teams.team_id', $mstat_fields_race);
     $mstat_fields_stars = preg_replace('/tid/', 'match_data.f_team_id', $mstat_fields_player);
 
-        # ELO
+    // ELO
     $elo_matchsync_R0 = '
         SELECT IF(IFNULL((SELECT SUM(played) FROM mv_teams   WHERE f_tid = tid1 REGEX_REPLACE_HERE),FALSE) AND IFNULL(teams.elo,FALSE),   teams.elo, '.T_ELO_R_0.')   INTO Rt1_0 FROM teams   WHERE team_id = tid1;
         SELECT IF(IFNULL((SELECT SUM(played) FROM mv_teams   WHERE f_tid = tid2 REGEX_REPLACE_HERE),FALSE) AND IFNULL(teams.elo,FALSE),   teams.elo, '.T_ELO_R_0.')   INTO Rt2_0 FROM teams   WHERE team_id = tid2;
@@ -302,7 +447,7 @@ public static function installProcsAndFuncs($install = true)
     $elo_matchsync_R0_alltime = preg_replace('/REGEX_REPLACE_HERE/', '', $elo_matchsync_R0);
     $elo_matchsync_R0_tour    = preg_replace('/REGEX_REPLACE_HERE/', 'AND f_trid = trid', $elo_matchsync_R0);
     
-        # Streaks
+    // Streak pseudo-table components
     $streaks_TBL1_team = '
         SELECT 
             date_played, 
@@ -348,6 +493,10 @@ public static function installProcsAndFuncs($install = true)
     $streaks_coach = preg_replace('/REGEX_REPLACE_TBL2/', $streaks_TBL2, $streaks_coach);
     $streaks_coach = preg_replace('/REGEX_REPLACE_TBL1/', $streaks_TBL1_coach, $streaks_coach);
     
+    /* 
+     *  All routines
+     */
+     
     $routines = array(
     
         /* 
@@ -428,10 +577,12 @@ public static function installProcsAndFuncs($install = true)
             CONTAINS SQL
         BEGIN
             IF trid IS NULL THEN
-                UPDATE teams SET elo = NULL;
+                UPDATE teams   SET elo = NULL;
+                UPDATE coaches SET elo = NULL;
                 SELECT syncELOMatch(NULL, matches.match_id) FROM matches WHERE matches.date_played IS NOT NULL ORDER BY matches.date_played ASC;
             ELSE
-                UPDATE mv_teams SET elo = NULL WHERE f_trid = trid;
+                UPDATE mv_teams   SET elo = NULL WHERE f_trid = trid;
+                UPDATE mv_coaches SET elo = NULL WHERE f_trid = trid;
                 SELECT syncELOMatch(trid, matches.match_id) FROM matches WHERE matches.date_played IS NOT NULL AND matches.f_tour_id = trid ORDER BY matches.date_played ASC;
             END IF;
         END',
@@ -564,40 +715,7 @@ public static function installProcsAndFuncs($install = true)
             SET done = 0;
         END',         
          
-        'CREATE PROCEDURE syncStreaksMatch(IN mid '.$CT_cols[T_NODE_MATCH].')
-            NOT DETERMINISTIC
-            CONTAINS SQL
-        BEGIN
-            DECLARE tid1, tid2 '.$CT_cols[T_OBJ_TEAM].';
-            DECLARE cid1, cid2 '.$CT_cols[T_OBJ_COACH].';
-            DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].';
-            DECLARE swon,sdraw,slost '.$CT_cols['streak'].';
-            SELECT team1_id, team2_id, t1.owned_by_coach_id,t2.owned_by_coach_id, f_tour_id 
-            INTO tid1,tid2, cid1,cid2, trid 
-            FROM matches,teams AS t1, teams AS t2 WHERE matches.match_id = mid AND matches.team1_id = t1.team_id AND matches.team2_id = t2.team_id;
-            
-            CALL getStreaks('.T_OBJ_TEAM.', tid1, NULL, swon,sdraw,slost);
-            UPDATE teams SET teams.swon = swon, teams.sdraw = sdraw, teams.slost = slost WHERE teams.team_id = tid1;
-            CALL getStreaks('.T_OBJ_TEAM.', tid2, NULL, swon,sdraw,slost);
-            UPDATE teams SET teams.swon = swon, teams.sdraw = sdraw, teams.slost = slost WHERE teams.team_id = tid2;
-
-            CALL getStreaks('.T_OBJ_TEAM.', tid1, trid, swon,sdraw,slost);
-            UPDATE mv_teams SET mv_teams.swon = swon, mv_teams.sdraw = sdraw, mv_teams.slost = slost WHERE mv_teams.f_tid = tid1;
-            CALL getStreaks('.T_OBJ_TEAM.', tid2, trid, swon,sdraw,slost);
-            UPDATE mv_teams SET mv_teams.swon = swon, mv_teams.sdraw = sdraw, mv_teams.slost = slost WHERE mv_teams.f_tid = tid2;
-            
-            CALL getStreaks('.T_OBJ_COACH.', cid1, NULL, swon,sdraw,slost);
-            UPDATE coaches SET coaches.swon = swon, coaches.sdraw = sdraw, coaches.slost = slost WHERE coaches.coach_id = cid1;
-            CALL getStreaks('.T_OBJ_COACH.', cid2, NULL, swon,sdraw,slost);
-            UPDATE coaches SET coaches.swon = swon, coaches.sdraw = sdraw, coaches.slost = slost WHERE coaches.coach_id = cid2;
-
-            CALL getStreaks('.T_OBJ_COACH.', cid1, trid, swon,sdraw,slost);
-            UPDATE mv_coaches SET mv_coaches.swon = swon, mv_coaches.sdraw = sdraw, mv_coaches.slost = slost WHERE mv_coaches.f_cid = cid1;
-            CALL getStreaks('.T_OBJ_COACH.', cid2, trid, swon,sdraw,slost);
-            UPDATE mv_coaches SET mv_coaches.swon = swon, mv_coaches.sdraw = sdraw, mv_coaches.slost = slost WHERE mv_coaches.f_cid = cid2;
-        END',
-        
-        // If trid is NULL returns all-time streaks (across all leagues).
+        # If trid is NULL returns all-time streaks (across all leagues).
         'CREATE PROCEDURE getStreaks(IN obj TINYINT UNSIGNED, IN obj_id '.$CT_cols[T_OBJ_TEAM].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].',
         OUT swon '.$CT_cols['streak'].', OUT sdraw '.$CT_cols['streak'].', OUT slost '.$CT_cols['streak'].'
         )
@@ -612,7 +730,7 @@ public static function installProcsAndFuncs($install = true)
         END',
 
         /* 
-         *  Team count sync
+         *  Team count 
          */
          
         'CREATE PROCEDURE syncAllTeamCnts()
@@ -631,24 +749,14 @@ public static function installProcsAndFuncs($install = true)
             READS SQL DATA
         BEGIN
             IF obj = '.T_OBJ_RACE.' THEN 
-                IF trid IS NULL THEN
-                    RETURN (SELECT COUNT(*) FROM teams WHERE f_race_id = obj_id);
-                ELSE
-                    RETURN (SELECT COUNT(*) FROM teams WHERE f_race_id = obj_id AND 
-                        0 < (SELECT COUNT(*) FROM matches WHERE f_tour_id = trid AND (team1_id = team_id OR team2_id = team_id) LIMIT 1));
-                END IF;
+                RETURN (SELECT COUNT(*) FROM teams WHERE f_race_id = obj_id AND IF(trid,0 < (SELECT COUNT(*) FROM matches WHERE f_tour_id = trid AND (team1_id = team_id OR team2_id = team_id) LIMIT 1),TRUE));
             ELSEIF obj = '.T_OBJ_COACH.' THEN 
-                IF trid IS NULL THEN
-                    RETURN (SELECT COUNT(*) FROM teams WHERE owned_by_coach_id = obj_id);
-                ELSE
-                    RETURN (SELECT COUNT(*) FROM teams WHERE owned_by_coach_id = obj_id AND 
-                        0 < (SELECT COUNT(*) FROM matches WHERE f_tour_id = trid AND (team1_id = team_id OR team2_id = team_id) LIMIT 1));
-                END IF;
+                RETURN (SELECT COUNT(*) FROM teams WHERE owned_by_coach_id = obj_id AND IF(trid,0 < (SELECT COUNT(*) FROM matches WHERE f_tour_id = trid AND (team1_id = team_id OR team2_id = team_id) LIMIT 1),TRUE));
             END IF;
         END',
 
         /* 
-         *  Sync won tours count (wt_cnt)
+         *  Won tours count (wt_cnt)
          */
 
         'CREATE PROCEDURE syncAllWTCnts()
@@ -666,16 +774,16 @@ public static function installProcsAndFuncs($install = true)
             READS SQL DATA
         BEGIN
             IF obj = '.T_OBJ_TEAM.' THEN 
-                RETURN (SELECT COUNT(*) FROM matches WHERE round = '.RT_FINAL.' AND (team1_id = obj_id OR team2_id = obj_id));
+                RETURN (SELECT COUNT(*) FROM tours WHERE winner = obj_id);
             ELSEIF obj = '.T_OBJ_COACH.' THEN 
-                RETURN (SELECT COUNT(*) FROM matches,teams WHERE round = '.RT_FINAL.' AND (team1_id = teams.team_id OR team2_id = teams.team_id) AND owned_by_coach_id = obj_id);
+                RETURN (SELECT COUNT(*) FROM tours,teams WHERE teams.owned_by_coach_id = obj_id AND winner = teams.team_id);
             ELSEIF obj = '.T_OBJ_RACE.' THEN 
-                RETURN (SELECT COUNT(*) FROM matches,teams WHERE round = '.RT_FINAL.' AND (team1_id = teams.team_id OR team2_id = teams.team_id) AND f_race_id = obj_id);
+                RETURN (SELECT COUNT(*) FROM tours,teams WHERE teams.r_race_id = obj_id AND winner = teams.team_id);
             END IF;
         END',
         
         /* 
-         *  Sync ALL-TIME win percentages. 
+         *  ALL-TIME win percentages. 
          *  
          *  Note: Tour win pcts are set in MV sync routines.
          */        
@@ -714,20 +822,70 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            CALL setRels('.T_OBJ_PLAYER.', NULL);
-            CALL setRels('.T_OBJ_TEAM.', NULL);
+            DECLARE done INT DEFAULT 0;
+            DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
+            DECLARE tid '.$CT_cols[T_OBJ_TEAM].';
+            DECLARE cid '.$CT_cols[T_OBJ_COACH].';
+            DECLARE rid '.$CT_cols[T_OBJ_RACE].';
+            DECLARE f_rname, f_cname, f_tname, f_pos_name '.$CT_cols['name'].';
+            DECLARE cur_p CURSOR FOR SELECT player_id FROM players;
+            DECLARE cur_t CURSOR FOR SELECT team_id FROM teams;
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+            
+            OPEN cur_p;
+            REPEAT
+                FETCH cur_p INTO pid;
+                IF NOT done THEN
+                    CALL getPlayerRels(pid, f_cid,f_rid, f_cname,f_rname, f_tname, f_pos_name);
+                    UPDATE players SET 
+                        players.f_cid = f_cid, players.f_rid = f_rid, 
+                        players.f_cname = f_cname, players.f_rname = f_rname, 
+                        players.f_tname = f_tname, players.f_pos_name = f_pos_name
+                    WHERE players.player_id = pid;
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_p;
+            SET done = 0;
+
+            OPEN cur_t;
+            REPEAT
+                FETCH cur_t INTO tid;
+                IF NOT done THEN
+                    CALL getTeamRels(tid, f_cname,f_rname);
+                    UPDATE teams SET 
+                        teams.f_cname = f_cname, teams.f_rname = f_rname
+                    WHERE teams.team_id = tid;
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_t;
+            SET done = 0;
+
         END',
-        'CREATE PROCEDURE setRels(IN obj TINYINT UNSIGNED, IN obj_id '.$CT_cols[T_OBJ_PLAYER].')
+        
+        'CREATE PROCEDURE getPlayerRels(IN pid '.$CT_cols[T_OBJ_PLAYER].', 
+            OUT f_cid '.$CT_cols[T_OBJ_COACH].', OUT f_rid '.$CT_cols[T_OBJ_RACE].',
+            OUT f_cname '.$CT_cols['name'].', OUT f_rname '.$CT_cols['name'].', 
+            OUT f_tname '.$CT_cols['name'].', OUT f_pos_name '.$CT_cols['name'].'
+        )
             NOT DETERMINISTIC
-            CONTAINS SQL
+            READS SQL DATA
         BEGIN
-            IF obj = '.T_OBJ_PLAYER.' THEN
-                UPDATE players,teams,coaches,races SET players.f_rname = races.name, players.f_tname = teams.name, players.f_cname = coaches.name, f_rid = races.race_id, f_cid = coaches.coach_id 
-                WHERE owned_by_team_id = team_id AND owned_by_coach_id = coach_id AND f_race_id = race_id AND IF(obj_id,player_id = obj_id,TRUE);
-            ELSEIF obj = '.T_OBJ_TEAM.' THEN
-                UPDATE teams,coaches,races SET teams.f_rname = races.name, teams.f_cname = coaches.name
-                WHERE owned_by_coach_id = coach_id AND f_race_id = race_id AND IF(obj_id,team_id = obj_id,TRUE);
-            END IF;
+            SELECT coaches.coach_id, races.race_id, coaches.name, races.name, teams.name, game_data_played.pos
+            INTO f_cid, f_rid, f_cname, f_rname, f_tname, f_pos_name
+            FROM players,teams,coaches,races,game_data_players
+            WHERE player_id = pid AND owned_by_team_id = team_id AND owned_by_coach_id = coach_id AND f_race_id = race_id AND f_pos_id = pos_id;
+        END',
+        
+        'CREATE PROCEDURE getTeamRels(IN tid '.$CT_cols[T_OBJ_TEAM].',
+            OUT f_cname '.$CT_cols['name'].', OUT f_rname '.$CT_cols['name'].'
+        )
+            NOT DETERMINISTIC
+            READS SQL DATA
+        BEGIN
+            SELECT coaches.name, races.name
+            INTO f_cname, f_rname
+            FROM teams,coaches,races,game_data_players
+            WHERE team_id = tid AND owned_by_coach_id = coach_id AND f_race_id = race_id;
         END',
 
         /* 
@@ -849,24 +1007,25 @@ public static function installProcsAndFuncs($install = true)
             CONTAINS SQL
         BEGIN
             DECLARE done INT DEFAULT 0;
-            DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
             
-            DECLARE cur_tr CURSOR FOR SELECT tour_id FROM tours;
             DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].';
-            DECALRE empty,begun,finished BOOLEAN;
+            DECLARE empty,begun,finished BOOLEAN;
             DECLARE winner '.$CT_cols[T_OBJ_TEAM].';
 
-            DECLARE cur_p  CURSOR FOR SELECT player_id FROM players;            
             DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
             DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
             DECLARE value '.$CT_cols['pv'].';
             DECLARE status '.$core_tables['players']['status'].';
             DECLARE date_died '.$core_tables['players']['date_died'].';
 
-            DECLARE cur_t  CURSOR FOR SELECT team_id FROM teams;
             DECLARE tid '.$CT_cols[T_OBJ_TEAM].';
             DECLARE tv '.$CT_cols['tv'].';
             DECLARE ff '.$core_tables['teams']['ff'].';
+
+            DECLARE cur_tr CURSOR FOR SELECT tour_id FROM tours;            
+            DECLARE cur_p  CURSOR FOR SELECT player_id FROM players;
+            DECLARE cur_t  CURSOR FOR SELECT team_id FROM teams;
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
             
             OPEN cur_tr;
             REPEAT
@@ -1007,7 +1166,9 @@ public static function installProcsAndFuncs($install = true)
             SET finished = (SELECT (type = '.TT_RROBIN.' AND COUNT(*) = 0 OR type = '.TT_FFA.' AND winner IS NOT NULL) FROM matches WHERE f_tour_id = trid AND date_played IS NULL);
         END',
         
-        // Sync all
+        /*
+            Sync ALL
+        */
         'CREATE PROCEDURE syncAll()
             NOT DETERMINISTIC
             CONTAINS SQL
