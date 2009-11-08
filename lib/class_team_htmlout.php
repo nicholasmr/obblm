@@ -186,9 +186,9 @@ private function _handleActions($ALLOW_EDIT)
         case 'skill':        
             $type = null;
             $p->setChoosableSkills();
-            if     (in_array($_POST['skill'], $p->choosable_skills['N skills'])) $type = 'N';
-            elseif (in_array($_POST['skill'], $p->choosable_skills['D skills'])) $type = 'D';
-            elseif (preg_match('/^ach_/', $_POST['skill']))                      $type = 'C';
+            if     (in_array($_POST['skill'], $p->choosable_skills['norm'])) $type = 'N';
+            elseif (in_array($_POST['skill'], $p->choosable_skills['doub'])) $type = 'D';
+            elseif (preg_match('/^ach_/', $_POST['skill']))                  $type = 'C';
             status($p->addSkill($type, $_POST['skill']));
             break;
 
@@ -273,7 +273,7 @@ private function _loadPlayers($DETAILED)
 
 private function _roster($ALLOW_EDIT, $DETAILED, $players)
 {
-    global $rules, $settings, $lng;
+    global $rules, $settings, $lng, $skillididx;
     $team = $this; // Copy. Used instead of $this for readability.
 
     /******************************
@@ -333,19 +333,19 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         $x = '';
         if ($ALLOW_EDIT && $p->mayHaveNewSkill()) {
             $p->setChoosableSkills();
-            
+
             $x .= "<form method='POST'>\n";
             $x .= "<select name='skill'>\n";
 
             $x .= "<optgroup label='Normal skills'>\n";
-            foreach ($p->choosable_skills['N skills'] as $s) {
-                $x .= "<option value='$s'>$s</option>\n";
+            foreach ($p->choosable_skills['norm'] as $s) {
+                $x .= "<option value='$s'>".$skillididx[$s]."</option>\n";
             }
             $x .= "</optgroup>\n";
 
             $x .= "<optgroup label='Double skills'>\n";
-            foreach ($p->choosable_skills['D skills'] as $s) {
-                $x .= "<option value='$s'>$s</option>\n";
+            foreach ($p->choosable_skills['doub'] as $s) {
+                $x .= "<option value='$s'>".$skillididx[$s]."</option>\n";
             }
             $x .= "</optgroup>\n";
             
@@ -1390,12 +1390,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 <select name="skill">
                                 <?php
                                 foreach ($skillarray as $cat => $skills) {
-                                    if ($cat == 'Achieved characteristics')
-                                        continue;
-                                        
                                     echo "<OPTGROUP LABEL='$cat'>";
-                                    foreach ($skills as $skill) {
-                                        echo "<option value='$skill'>$skill</option>";
+                                    foreach ($skills as $id => $skill) {
+                                        echo "<option value='$id'>$skill</option>";
                                     }
                                     echo "</OPTGROUP>";
                                 }

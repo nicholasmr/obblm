@@ -145,7 +145,7 @@ public static function standings($obj, $node, $node_id, array $opts)
          );
      */
 
-    global $lng, $settings;
+    global $lng, $settings, $objFields_avg;
 
     $tblTitle = $tblSortRule = '';
     $objs = $fields = $extra = array();
@@ -173,38 +173,40 @@ public static function standings($obj, $node, $node_id, array $opts)
     // Common $obj type fields.
     # mv_ fields are accumulated stats from MV tables. rg_ (regular) are regular/static/all-time fields from non mv-tables (players, teams, coaches etc.)
     $fields = array(
-        'mv_won'               => array('desc' => 'W'),
-        'mv_lost'              => array('desc' => 'L'),
-        'mv_draw'              => array('desc' => 'D'),
-        'mv_played'            => array('desc' => 'GP'),
-        'rg_win_pct'           => array('desc' => 'WIN%'),
-        'rg_swon'              => array('desc' => 'SW'),
-        'rg_slost'             => array('desc' => 'SL'),
-        'rg_sdraw'             => array('desc' => 'SD'),
-        'mv_gf'                => array('desc' => 'GF'.(($set_avg) ? '*' : '')),
-        'mv_ga'                => array('desc' => 'GA'.(($set_avg) ? '*' : '')),
-        'mv_td'                => array('desc' => 'Td'.(($set_avg) ? '*' : '')),
-        'mv_cp'                => array('desc' => 'Cp'.(($set_avg) ? '*' : '')),
-        'mv_intcpt'            => array('desc' => 'Int'.(($set_avg) ? '*' : '')),
-        'mv_cas'               => array('desc' => 'Cas'.(($set_avg) ? '*' : '')),
-        'mv_bh'                => array('desc' => 'BH'.(($set_avg) ? '*' : '')),
-        'mv_si'                => array('desc' => 'Si'.(($set_avg) ? '*' : '')),
-        'mv_ki'                => array('desc' => 'Ki'.(($set_avg) ? '*' : '')),
+        'mv_won'     => array('desc' => 'W'),
+        'mv_lost'    => array('desc' => 'L'),
+        'mv_draw'    => array('desc' => 'D'),
+        'mv_played'  => array('desc' => 'GP'),
+        'rg_win_pct' => array('desc' => 'WIN%'),
+        'rg_swon'    => array('desc' => 'SW'),
+        'rg_slost'   => array('desc' => 'SL'),
+        'rg_sdraw'   => array('desc' => 'SD'),
+        'mv_gf'      => array('desc' => 'GF'),
+        'mv_ga'      => array('desc' => 'GA'),
+        'mv_td'      => array('desc' => 'Td'),
+        'mv_cp'      => array('desc' => 'Cp'),
+        'mv_intcpt'  => array('desc' => 'Int'),
+        'mv_cas'     => array('desc' => 'Cas'),
+        'mv_bh'      => array('desc' => 'BH'),
+        'mv_si'      => array('desc' => 'Si'),
+        'mv_ki'      => array('desc' => 'Ki'),
     );
-    // These fields are not summable!!! ie. you dont get the division/league value of these fields by summing over the related/underlying tournaments field's values.
-    $NOT_SUMMABLE_FIELDS = array('win_pct', 'swon', 'sdraw', 'slost');
+    // These fields are not summable!!! 
+    //ie. you dont get the division/league value of these fields by summing over the related/underlying tournaments field's values.
+    global $objFields_notsum;
         # Look non-summable field and remove them.
     $ALL_TIME = ($sel_node == false && ($sel_node_id == 0 || $sel_node_id === false));       
     if (!$ALL_TIME) {
         if ($sel_node == T_NODE_TOURNAMENT) {
             $new_fields = array();
             foreach ($fields as $fname => $fcont) {
-                $new_fields[in_array($fname, $NOT_SUMMABLE_FIELDS) ? "mv_$fname" : $fname] = $fcont;
+                $f = preg_replace('/^\w\w\_/', '', $fname);
+                $new_fields[in_array($f, $objFields_notsum) ? "mv_$f" : $fname] = $fcont;
             }
             $fields = $new_fields;
         }
-        foreach ($NOT_SUMMABLE_FIELDS as $f) {
-            unset($fields[$f]);
+        foreach ($objFields_notsum as $f) {
+            unset($fields["rg_$f"]);
         }
     }   
 
@@ -213,20 +215,19 @@ public static function standings($obj, $node, $node_id, array $opts)
         case STATS_PLAYER:
             $tblTitle = 'Player standings';
             $fields_before = array(
-                'name'      => array('desc' => 'Player', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
+                'name'    => array('desc' => 'Player', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
                 'f_tname' => array('desc' => 'Team',   'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_team_id')),
             );
             $fields_after = array(
-                'mv_mvp'   => array('desc' => 'MVP'.(($set_avg) ? '*' : '')),
-                'mv_spp'   => array('desc' => 'SPP'.(($set_avg) ? '*' : '')),
-                'value'    => array('desc' => 'Value', 'nosort' => !$ALL_TIME, 'kilo' => true, 'suffix' => 'k'),
+                'mv_mvp' => array('desc' => 'MVP'),
+                'mv_spp' => array('desc' => 'SPP'),
+                'value'  => array('desc' => 'Value', 'nosort' => !$ALL_TIME, 'kilo' => true, 'suffix' => 'k'),
             );
             foreach (array('won', 'lost', 'draw') as $f) {
                 unset($fields["rg_s$f"]);
                 unset($fields["mv_s$f"]);
             }
-            global $settings;
-            $objs = Stats::getLeaders(T_OBJ_PLAYER, $sel_node, $sel_node_id, $sortRule, $settings['entries_players']);
+            $objs = Stats::getLeaders(T_OBJ_PLAYER, $sel_node, $sel_node_id, $sortRule, $settings['entries_players'],$set_avg);
             break;
 
         case STATS_TEAM:
@@ -258,17 +259,17 @@ public static function standings($obj, $node, $node_id, array $opts)
             {
                 case STATS_COACH:
                     $fields_before['f_rname'] = array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_COACH => $opts['teams_from_id']), T_OBJ_TEAM, false, $sortRule, false);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_COACH => $opts['teams_from_id']), T_OBJ_TEAM, false, $sortRule, $set_avg);
                     break;
 
                 case STATS_RACE:
                     $fields_before['f_cname'] = array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_RACE => $opts['teams_from_id']), T_OBJ_TEAM, false, $sortRule, false);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_RACE => $opts['teams_from_id']), T_OBJ_TEAM, false, $sortRule, $set_avg);
                     break;
 
                 // All teams
                 default:
-                    $objs = Stats::getLeaders(T_OBJ_TEAM, $sel_node, $sel_node_id, $sortRule, false);
+                    $objs = Stats::getLeaders(T_OBJ_TEAM, $sel_node, $sel_node_id, $sortRule, false,$set_avg);
             }
             // OPTIONALLY hide retired teams.
             if ($ALL_TIME && $settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
@@ -296,7 +297,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 unset($fields["rg_s$f"]);
                 unset($fields["mv_s$f"]);
             }
-            $objs = Stats::getLeaders(T_OBJ_RACE,$sel_node,$sel_node_id,sort_rule($tblSortRule),false);
+            $objs = Stats::getLeaders(T_OBJ_RACE,$sel_node,$sel_node_id,sort_rule($tblSortRule),false,$set_avg);
 
             break;
 
@@ -314,7 +315,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             else if ($ALL_TIME) {
                 $fields_before['rg_team_cnt'] = array('desc' => 'Teams');
             }
-            $objs = Stats::getLeaders(T_OBJ_COACH,$sel_node,$sel_node_id,sort_rule($tblSortRule),false);
+            $objs = Stats::getLeaders(T_OBJ_COACH,$sel_node,$sel_node_id,sort_rule($tblSortRule),false,$set_avg);
             // OPTIONALLY hide retired coaches.
             if ($settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
             break;
@@ -341,13 +342,22 @@ public static function standings($obj, $node, $node_id, array $opts)
             unset($fields["rg_win_pct"]);
             
             $extra['dashed'] = array('condField' => 'mv_played', 'fieldVal' => 0, 'noDashFields' => array('name'));
-            $objs = Stats::getLeaders(T_OBJ_STAR,$sel_node,$sel_node_id,sort_rule($tblSortRule),false);
+            $objs = Stats::getLeaders(T_OBJ_STAR,$sel_node,$sel_node_id,sort_rule($tblSortRule),false,$set_avg);
 
             break;
     }
 
     foreach ($objs as $idx => $obj) {$objs[$idx] = (object) $obj;}
     $fields = array_merge($fields_before, $fields, $fields_after);
+    // Add average marker on fields (*).
+    if ($set_avg) {
+        foreach (array_keys($fields) as $f) {
+            $f_cut = preg_replace('/^\w\w\_/', '', $f);
+            if (in_array($f_cut, $objFields_avg)) {
+                $fields[$f]['desc'] .= '*';
+            }
+        }
+    }
     HTMLOUT::sort_table(
        $tblTitle,
        $opts['url'].(($set_avg) ? '&amp;pms=1' : ''),
@@ -679,14 +689,14 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             else {
                 $td = '<td>';
             }
-            echo "<tr>\n";
+            echo "<tr>";
             if ($DONR) {
-                echo $td.$i."</td>\n";
+                echo $td.$i."</td>";
             }
             foreach ($fields as $f => $a) { // Field => attributes
                 if (!in_array($f, $no_print_fields)) {
                     if ($DASH && !in_array($f, $extra['dashed']['noDashFields'])) {
-                        echo $td."-</td>\n";
+                        echo $td."-</td>";
                         continue;
                     }
                     $cpy = $o->$f; // Don't change the objects themselves! Make copies!
@@ -698,15 +708,15 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                     if (array_key_exists('suffix', $a) && $a['suffix'])
                         $cpy .= $a['suffix'];
                     if (array_key_exists('color', $a) && $a['color'])
-                        $cpy = "<font color='$a[color]'>".$cpy."</font>\n";
+                        $cpy = "<font color='$a[color]'>".$cpy."</font>";
                     if (array_key_exists('href', $a) && $a['href'])
                         $cpy  = "<a href='" . $a['href']['link'] . ((isset($a['href']['field'])) ? '&amp;'.$a['href']['field'].'='.$o->{$a['href']['value']} : '') . "'>". $cpy . "</a>";
 
                     if (isset($o->{"${f}_color"})) {
-                        echo "<td style='background-color: ".$o->{"${f}_color"}."; color: black;'>".$cpy."</td>\n";
+                        echo "<td style='background-color: ".$o->{"${f}_color"}."; color: black;'>".$cpy."</td>";
                     }
                     else {
-                        echo $td.$cpy."</td>\n";
+                        echo $td.$cpy."</td>";
                     }
                 }
             }

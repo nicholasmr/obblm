@@ -21,6 +21,8 @@
  *   
  */
 
+$time_start = microtime(true); # Used by MTS().
+
 /* 
     Includes, constants, error_reporting() level, session_start(), OBBLM run requirements, MySQL connection, language load.
 */
@@ -55,6 +57,7 @@ if (isset($_GET['logout'])) {
 
 $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
 HTMLOUT::frame_begin(isset($_SESSION['logged_in']) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
+MTS('Header loaded, login auth, html frame generated');
 
 // Check if a menu-link was picked, and execute section code from sections.php accordingly.
 switch ($_GET['section']) 
@@ -72,5 +75,5 @@ switch ($_GET['section'])
 
 HTMLOUT::frame_end(); // Spit out all the end-tags.
 mysql_close($conn);
-
+MTS('END OF SCRIPT');
 ?>

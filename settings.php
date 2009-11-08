@@ -21,10 +21,24 @@ $settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS styleshee
 $settings['show_sort_rule'] = true;         // Default is true. Print in table footers what tables are sorted against?
 
 $settings['entries_messageboard']   = 5;  // Number of entries on the main page messageboard in normal view mode. Note: A value of 0 shows all messages.
-$settings['entries_standings']      = 5;  // Number of entries in the main page table(s) "standings".
 $settings['entries_latest']         = 5;  // Number of entries in the main page table "latest games".
-$settings['entries_leaders']        = 5;  // Number of entries on the main page leaders tables.
 $settings['entries_players']        = 20; // Number of entries in the players standings table. Note: A value of 0 shows all players.
+$settings['fp_standings'] = array(
+    # This would display a standings box of the top 6 teams in tournament with ID=1.
+    1 => array(
+        'length' => 6,
+        'fields' => array(
+            'Name' => 'name', 'PTS' => 'mv_pts', 'CAS' => 'mv_cas', 
+            'W' => 'mv_won', 'L' => 'mv_lost', 'D' => 'mv_draw', 'GF' => 'mv_gf', 'GA' => 'mv_ga'
+        ),
+    ),
+);
+$settings['fp_leaders'] = array(
+    'mv_cas' => array('title' => 'Most casualties',    'length' => 5),
+    'mv_td'  => array('title' => 'Most touchdowns',    'length' => 5),
+    'mv_cp'  => array('title' => 'Most completions',   'length' => 5),
+    'mv_ki'  => array('title' => 'Most killed',        'length' => 5),
+);
 
 $settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
 $settings['show_stars_mercs']      = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.

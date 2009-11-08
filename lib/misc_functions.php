@@ -182,6 +182,12 @@ function textdate($mysqldate, $noTime = false) {
     return date("D M j Y".(($noTime) ? '' : ' G:i:s'), strtotime($mysqldate));
 }
 
+# Micro Time Stamp.
+function MTS($str) {
+    global $time_start;
+    echo "\n<!-- $str: ".(microtime(true)-$time_start)." -->\n";
+}
+
 /* 
     From http://us3.php.net/manual/en/function.lcfirst.php 
 */
