@@ -71,7 +71,7 @@ class Team_export extends Team implements ModuleInterface
         $el_root->appendChild($dom->createElement('treasury', $this->treasury));
         $el_root->appendChild($dom->createElement('apothecary', $this->apothecary));
         $el_root->appendChild($dom->createElement('rerolls', $this->rerolls));
-        $el_root->appendChild($dom->createElement('fan_factor', $this->fan_factor));
+        $el_root->appendChild($dom->createElement('fan_factor', $this->ff));
         $el_root->appendChild($dom->createElement('ass_coaches', $this->ass_coaches));
         $el_root->appendChild($dom->createElement('cheerleaders', $this->cheerleaders));
         

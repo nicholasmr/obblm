@@ -259,8 +259,8 @@ class Match
         // Determine if team fan-factors are within the "> 0" limit. If not, don't save the negative fan-factor.
         $team1 = new Team($this->team1_id);
         $team2 = new Team($this->team2_id);
-        if ($team1->fan_factor - $this->ffactor1 + $input['ffactor1'] < 0) $input['ffactor1'] = $this->ffactor1;
-        if ($team2->fan_factor - $this->ffactor2 + $input['ffactor2'] < 0) $input['ffactor2'] = $this->ffactor2;
+        if ($team1->ff - $this->ffactor1 + $input['ffactor1'] < 0) $input['ffactor1'] = $this->ffactor1;
+        if ($team2->ff - $this->ffactor2 + $input['ffactor2'] < 0) $input['ffactor2'] = $this->ffactor2;
 
         // Update match entry.
         $query = "UPDATE matches SET 

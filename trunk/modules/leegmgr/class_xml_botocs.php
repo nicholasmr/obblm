@@ -63,7 +63,7 @@ class XML_BOTOCS implements ModuleInterface
             $this->race = $team->f_rname;
             $this->coach_name = $team->coach_name;
             $this->rerolls = $team->rerolls;
-            $this->fan_factor = $team->fan_factor;
+            $this->fan_factor = $team->ff;
             $this->ass_coaches = $team->ass_coaches;
             $this->cheerleaders = $team->cheerleaders;
             $this->apothecary = $team->apothecary;

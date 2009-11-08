@@ -12,7 +12,7 @@
     <treasury>0</treasury>
     <apothecary>0</apothecary>
     <rerolls>0</rerolls>
-    <fan_factor>0</fan_factor>
+    <ff_bought>0</ff_bought> <!-- Use your current total FF count -->
     <ass_coaches>0</ass_coaches>
     <cheerleaders>0</cheerleaders>
     

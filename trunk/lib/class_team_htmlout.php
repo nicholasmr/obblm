@@ -86,7 +86,7 @@ public static function standings($node = false, $node_id = false)
         'name'         => array('desc' => 'Team', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
         'f_rname'      => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
         'f_cname'      => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
-        'fan_factor'   => array('desc' => 'FF'),
+        'ff'           => array('desc' => 'FF'),
         'rerolls'      => array('desc' => 'RR'),
         'ass_coaches'  => array('desc' => 'Ass. coaches'),
         'cheerleaders' => array('desc' => 'Cheerleaders'),
@@ -690,7 +690,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                     <td>Fan&nbsp;Factor</td>
-                    <td><?php echo $team->fan_factor; ?></td>
+                    <td><?php echo $team->ff; ?></td>
                 </tr>
                 <tr>
                     <td>Ass.&nbsp;Coaches</td>
@@ -1027,7 +1027,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <?php
                         $DISABLE = true;
                         foreach ($team->getGoods() as $name => $details) {
-                            if ($name == 'fan_factor' && !$rules['post_game_ff'] && $team->played > 0)
+                            if ($name == 'ff_bought' && !$rules['post_game_ff'] && $team->played > 0)
                                 continue;
                             if (($team->$name < $details['max'] || $details['max'] == -1) && $team->treasury >= $details['cost']) {
                                 echo "<option value='$name'>" . $details['cost']/1000 . "k | $details[item]</option>\n";
@@ -1053,7 +1053,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <?php
                         $DISABLE = true;
                         foreach ($team->getGoods() as $name => $details) {
-                            if ($name == 'fan_factor' && !$rules['post_game_ff'] && $team->played > 0)
+                            if ($name == 'ff_bought' && !$rules['post_game_ff'] && $team->played > 0)
                                 continue;
                             if ($team->$name > 0) {
                                 echo "<option value='$name'>$details[item]</option>\n";
@@ -1431,12 +1431,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 <select name="skill">
                                 <?php
                                 foreach ($skillarray as $cat => $skills) {
-                                    if ($cat == 'Achieved characteristics')
-                                        continue;
-                                        
                                     echo "<OPTGROUP LABEL='$cat'>";
-                                    foreach ($skills as $skill) {
-                                        echo "<option value='$skill'>$skill</option>";
+                                    foreach ($skills as $id => $skill) {
+                                        echo "<option value='$id'>$skill</option>";
                                     }
                                     echo "</OPTGROUP>";
                                 }
