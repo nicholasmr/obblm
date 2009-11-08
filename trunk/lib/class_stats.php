@@ -56,7 +56,7 @@ class Stats
 
 public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $setAvg)
 {
-    global $core_tables, $relations_obj;
+    global $core_tables, $relations_obj, $relations_node, $objFields_extra, $objFields_init;
     
     $mv_keys = array(
         T_OBJ_PLAYER => 'f_pid',
@@ -76,22 +76,41 @@ public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $s
         T_OBJ_RACE   => 'mv_races',
     );
 
-    $devisor = ($setAvg) ? 'SUM(mv_played)' : false; # TODO: integrate averages.
-
-    global $cols_mv; # Bad practice creating this variable globally from within a function, but it's effecient!
+    $ALL_TIME = (count(array_intersect(array_keys($filter),array_keys($relations_node))) == 0);
+    
+    global $cols_mv, $objFields_val0, $val0; # Dirty but efficient trick to make global from within function.
     $tbl_name_norm = $relations_obj[$obj]['tbl'];
     $tbl_name_mv   = $mv_tables[$obj];
     $cols_norm = array_keys($core_tables[$tbl_name_norm]);
     $cols_mv   = array_filter(array_keys($core_tables[$tbl_name_mv]), create_function('$c', 'return !preg_match(\'/^f_/\', $c);'));
-    $cols_norm_sqlsel = implode(',', array_map(create_function('$c', 'global $cols_mv; return "'.$tbl_name_norm.'.$c AS \'".((in_array($c,$cols_mv))?"rg_":"")."$c\'\n";'), $cols_norm));
-    $cols_mv_sqlsel   = implode(',', array_map(create_function('$c', 'return "IFNULL(SUM('.$tbl_name_mv.'.$c),0) AS \'mv_$c\'\n";'), $cols_mv));
-    
+    ###
+    $objFields_val0 = array_merge(
+        array_key_exists($obj, $objFields_init) ? $objFields_init[$obj] : array(),
+        array_key_exists($obj, $objFields_extra) ? $objFields_extra[$obj] : array()
+    );
+    $val0 = ($ALL_TIME && !empty($objFields_val0)) ? '(in_array($c,array_keys($objFields_val0)) ? "'.$tbl_name_norm.'.".$objFields_val0[$c]."+" : "")' : '""';
+    ###
+    $cols_norm_sqlsel = implode(',', array_map(
+        create_function('$c', $f1='
+            global $cols_mv, $objFields_val0; 
+            return '.$val0.'."'.$tbl_name_norm.'.$c AS \'".((in_array($c,$cols_mv))?"rg_":"")."$c\'\\n";'
+        ), 
+        $cols_norm)
+    );
+    $cols_mv_sqlsel = implode(',', array_map(
+        create_function('$c', $f2='
+            global $objFields_avg, $objFields_val0; 
+            return "IFNULL(".'.$val0.'."SUM('.$tbl_name_mv.'.$c)'.(($setAvg) ? '".(in_array($c,$objFields_avg) ? "/SUM('.$tbl_name_mv.'.played)" : "")."' : "").',0) AS \'mv_$c\'\\n";'
+        ), 
+        $cols_mv)
+    );
+  
     if (!empty($sortRule)) {
         for ($i = 0; $i < count($sortRule); $i++) {
             $str = $sortRule[$i];
-            $str = preg_replace('/mv\_/', $tbl_name_mv.'.', $str); # MV fields.
-            $str = preg_replace('/rg\_/', $tbl_name_norm.'.', $str); # Regular/all-time fields
-            $sortRule[$i] = 'SUM('.substr($str, 1, strlen($str)) .') '. (($str[0] == '+') ? 'ASC' : 'DESC');
+#            $str = preg_replace('/mv\_/', $tbl_name_mv.'.', $str); # MV fields.
+#            $str = preg_replace('/rg\_/', $tbl_name_norm.'.', $str); # Regular/all-time fields
+            $sortRule[$i] = substr($str, 1, strlen($str)) .' '. (($str[0] == '+') ? 'ASC' : 'DESC');
         }
     }
     
@@ -127,17 +146,10 @@ public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $s
 /***************
  *   Pull out leaders of a specific stat (or multiple).
  ***************/
-public static function getLeaders($obj, $node, $node_id, array $stats, $N)
+public static function getLeaders($obj, $node, $node_id, array $stats, $N, $setAvg = false)
 {
-    return self::getRaw($obj, ($node) ? array($node => $node_id) : array(), $obj, $N, $stats, false);
+    return self::getRaw($obj, ($node) ? array($node => $node_id) : array(), $obj, $N, $stats, $setAvg);
 }
-
-/*
- *
- *  The below methods use the by ($obj, $obj_id) against ($opp_obj, $opp_obj_id) in ($node, $node_id) format for fetching data.
- *  $obj and $obj_id are required!
- *
- */
 
 /***************
  *   Fetches summed data from match_data by applying the filter specifications.
@@ -153,12 +165,16 @@ public static function getStats($obj, $obj_id, $node, $node_id, $setAvg)
 public static function getAllStats($obj, $obj_id, $node, $node_id, $setAvg = false)
 {
     list($ach) = Stats::getStats($obj, $obj_id, $node, $node_id, $setAvg);
-    $stats = array_merge(
-        $ach,        array()
-    );
-   
+    $stats = array_merge($ach, array());
     return $stats;
 }
+
+/*
+ *
+ *  The below methods use the by ($obj, $obj_id) against ($opp_obj, $opp_obj_id) in ($node, $node_id) format for fetching data.
+ *  $obj and $obj_id are required!
+ *
+ */
 
 public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $n = false, $mkObjs = false, $getUpcomming = false)
 {

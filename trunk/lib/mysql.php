@@ -34,11 +34,13 @@ $CT_cols = array(
     T_OBJ_RACE   => 'TINYINT UNSIGNED',
     T_OBJ_STAR   => 'SMALLINT SIGNED', # All star IDs are negative.
     'pos_id'     => 'SMALLINT UNSIGNED', # Position ID/"name ID" of player on race roster.
+    'skill_id'   => 'SMALLINT UNSIGNED',
     T_NODE_MATCH      => 'MEDIUMINT SIGNED',
     T_NODE_TOURNAMENT => 'MEDIUMINT UNSIGNED',
     T_NODE_DIVISION   => 'MEDIUMINT UNSIGNED',
     T_NODE_LEAGUE     => 'MEDIUMINT UNSIGNED',
     
+    'name' => 'VARCHAR(60)', # Widely used for name fields etc.
     'tv' => 'MEDIUMINT UNSIGNED', # Team value
     'pv' => 'MEDIUMINT UNSIGNED', # Player value
     'chr' => 'TINYINT UNSIGNED', # ma, st, ag, av (inj, def and ach)
@@ -54,8 +56,8 @@ $CT_cols = array(
 $core_tables = array(
     'coaches' => array(
         'coach_id'  => $CT_cols[T_OBJ_COACH].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
-        'name'      => 'VARCHAR(50)',
-        'realname'  => 'VARCHAR(50)',
+        'name'      => $CT_cols['name'],
+        'realname'  => $CT_cols['name'],
         'passwd'    => 'VARCHAR(32)',
         'mail'      => 'VARCHAR(129)',
         'phone'     => 'VARCHAR(25) NOT NULL',
@@ -74,7 +76,7 @@ $core_tables = array(
     ),
     'teams' => array(
         'team_id'           => $CT_cols[T_OBJ_TEAM].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
-        'name'              => 'VARCHAR(50)',
+        'name'              => $CT_cols['name'],
         'owned_by_coach_id' => $CT_cols[T_OBJ_COACH],
         'f_race_id'         => $CT_cols[T_OBJ_RACE].' NOT NULL DEFAULT 0',
         'f_lid'             => $CT_cols[T_NODE_LEAGUE].' NOT NULL DEFAULT 0',
@@ -90,6 +92,7 @@ $core_tables = array(
         'won_0'     => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'lost_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'draw_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
+        'played_0'  => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'sw_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'sl_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'sd_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
@@ -97,10 +100,9 @@ $core_tables = array(
         'gf_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'ga_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'tcas_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
-        'elo_0'     => $CT_cols['elo'].' NOT NULL DEFAULT 0',
         // Relations
-        'f_rname' => 'VARCHAR(50)',
-        'f_cname' => 'VARCHAR(50)',
+        'f_rname' => $CT_cols['name'],
+        'f_cname' => $CT_cols['name'],
         // Dynamic properties (DPROPS)
         'tv'    => $CT_cols['tv'],
         'elo'   => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
@@ -113,28 +115,25 @@ $core_tables = array(
     'players' => array(
         'player_id'         => $CT_cols[T_OBJ_PLAYER].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'type'              => 'TINYINT UNSIGNED DEFAULT 1',
-        'name'              => 'VARCHAR(50)',
+        'name'              => $CT_cols['name'],
         'owned_by_team_id'  => $CT_cols[T_OBJ_TEAM],
         'nr'                => 'MEDIUMINT UNSIGNED',
         'f_pos_id'          => $CT_cols['pos_id'],
-        'position'          => 'VARCHAR(30)',# DEPRECATED!!!
         'date_bought'       => 'DATETIME',
         'date_sold'         => 'DATETIME',
         'ach_ma'            => $CT_cols['chr'],
         'ach_st'            => $CT_cols['chr'],
         'ach_ag'            => $CT_cols['chr'],
         'ach_av'            => $CT_cols['chr'],
-        'ach_nor_skills'    => $CT_cols['skills'],
-        'ach_dob_skills'    => $CT_cols['skills'],
-        'extra_skills'      => $CT_cols['skills'],
         'extra_spp'         => 'MEDIUMINT SIGNED',
         'extra_val'         => $CT_cols['pv'].' NOT NULL DEFAULT 0',
         // Relations
         'f_rid' => $CT_cols[T_OBJ_RACE],
         'f_cid' => $CT_cols[T_OBJ_COACH],
-        'f_tname' => 'VARCHAR(50)',
-        'f_rname' => 'VARCHAR(50)',
-        'f_cname' => 'VARCHAR(50)',
+        'f_tname' => $CT_cols['name'],
+        'f_rname' => $CT_cols['name'],
+        'f_cname' => $CT_cols['name'],
+        'f_pos_name' => $CT_cols['name'],
         // Dynamic properties (DPROPS)
         'value'     => $CT_cols['pv'],
         'status'    => 'TINYINT UNSIGNED',
@@ -150,9 +149,14 @@ $core_tables = array(
         'inj_ni'    => $CT_cols['chr'],
         'win_pct' => $CT_cols['win_pct'], # All-time win pct (across all matches).
     ),
+    'players_skills' => array(
+        'f_pid'      => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
+        'f_skill_id' => $CT_cols['skill_id'].' NOT NULL',
+        'type' => 'VARCHAR(1)', # N, D or E
+    ),
     'races' => array(
         'race_id' => $CT_cols[T_OBJ_RACE].' NOT NULL PRIMARY KEY',
-        'name'    => 'VARCHAR(50)',
+        'name'    => $CT_cols['name'],
         'cost_rr' => 'MEDIUMINT UNSIGNED',
         // Dynamic properties (DPROPS)
         'team_cnt' => $CT_cols['team_cnt'],
@@ -161,21 +165,21 @@ $core_tables = array(
     ),
     'leagues' => array(
         'lid'       => $CT_cols[T_NODE_LEAGUE].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
-        'name'      => 'VARCHAR(50)',
-        'location'  => 'VARCHAR(50)',
+        'name'      => $CT_cols['name'],
+        'location'  => $CT_cols['name'],
         'date'      => 'DATETIME',
 
     ),
     'divisions' => array(
         'did'   => $CT_cols[T_NODE_DIVISION].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'f_lid' => $CT_cols[T_NODE_LEAGUE],
-        'name'  => 'VARCHAR(50)',
+        'name'  => $CT_cols['name'],
 
     ),
     'tours' => array(
         'tour_id'       => $CT_cols[T_NODE_TOURNAMENT].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'f_did'         => $CT_cols[T_NODE_DIVISION],
-        'name'          => 'VARCHAR(50)',
+        'name'          => $CT_cols['name'],
         'type'          => 'TINYINT UNSIGNED',
         'date_created'  => 'DATETIME',
         'rs'            => 'TINYINT UNSIGNED DEFAULT 1',
@@ -241,9 +245,9 @@ $core_tables = array(
     ),
     // Game data tables. These are synced with the PHP-stored game data.
     'game_data_players' => array(
-        'pos_id'    => $CT_cols['pos_id'],
+        'pos_id'    => $CT_cols['pos_id'].' NOT NULL PRIMARY KEY',
         'f_race_id' => $CT_cols[T_OBJ_RACE],
-        'pos'    => 'VARCHAR(60)',
+        'pos'    => $CT_cols['name'],
         'cost'   => 'MEDIUMINT UNSIGNED',
         'qty'    => 'TINYINT UNSIGNED',
         'ma'     => $CT_cols['chr'],
@@ -255,8 +259,8 @@ $core_tables = array(
         'doub'   => 'VARCHAR(6)', # Max used is 4 chars, but set to 6 to be sure.
     ),
     'game_data_stars' => array(
-        'star_id'=> $CT_cols[T_OBJ_STAR],
-        'name'   => 'VARCHAR(60)',
+        'star_id'=> $CT_cols[T_OBJ_STAR].' NOT NULL PRIMARY KEY',
+        'name'   => $CT_cols['name'],
         'cost'   => 'MEDIUMINT UNSIGNED',
         'races'  => 'VARCHAR('.(29+30*2).')', # Race IDs that may hire star. Total of (less than) 30 races of each two digit race ID + 29 commas = 29+30*2
         'ma'     => $CT_cols['chr'],
@@ -266,8 +270,8 @@ $core_tables = array(
         'skills' => $CT_cols['skills'],
     ),
     'game_data_skills' => array(
-        'skill_id' => 'SMALLINT UNSIGNED',
-        'name' => 'VARCHAR(50)',
+        'skill_id' => $CT_cols['skill_id'].' NOT NULL PRIMARY KEY',
+        'name' => $CT_cols['name'],
         'cat' => 'VARCHAR(1)',
     ),
 );
@@ -305,13 +309,13 @@ $mv_commoncols = array(
     'sdiff'     => 'SMALLINT SIGNED',
 );
 $core_tables['mv_players'] = array(
-    'f_pid' => $CT_cols[T_OBJ_PLAYER],
+    'f_pid' => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
     'f_tid' => $CT_cols[T_OBJ_TEAM],
     'f_cid' => $CT_cols[T_OBJ_COACH],
     'f_rid' => $CT_cols[T_OBJ_RACE],
 );
 $core_tables['mv_teams'] = array(
-    'f_tid' => $CT_cols[T_OBJ_TEAM],
+    'f_tid' => $CT_cols[T_OBJ_TEAM].' NOT NULL',
     'f_cid' => $CT_cols[T_OBJ_COACH],
     'f_rid' => $CT_cols[T_OBJ_RACE],
 
@@ -322,7 +326,7 @@ $core_tables['mv_teams'] = array(
     'pts'   => $CT_cols['pts'],
 );
 $core_tables['mv_coaches'] = array(
-    'f_cid' => $CT_cols[T_OBJ_COACH],
+    'f_cid' => $CT_cols[T_OBJ_COACH].' NOT NULL',
 
     'elo'   => $CT_cols['elo'],
     'swon'  => $CT_cols['streak'],
@@ -331,7 +335,7 @@ $core_tables['mv_coaches'] = array(
     'team_cnt' => $CT_cols['team_cnt'],
 );
 $core_tables['mv_races'] = array(
-    'f_rid' => $CT_cols[T_OBJ_RACE],
+    'f_rid' => $CT_cols[T_OBJ_RACE].' NOT NULL',
     
     'team_cnt' => $CT_cols['team_cnt'],
 );
@@ -356,7 +360,7 @@ $relations_obj = array(
 );
 
 // Initial values of object properties
-$objValues_init = array(
+$objFields_init = array(
     T_OBJ_TEAM => array(
         'won' => 'won_0', 'lost' => 'lost_0', 'draw' => 'draw_0', 
         'swon' => 'sw_0', 'slost' => 'sl_0', 'sdraw' => 'sd_0',
@@ -364,9 +368,16 @@ $objValues_init = array(
     ),
 );
 // Object property extra (addition) fields
-$objValues_extra = array(
+$objFields_extra = array(
     T_OBJ_PLAYER => array('value' => 'extra_val', 'spp' => 'extra_spp'), # We don't include extra_skills since it's a string field.
 );
+
+// These object fields are averageable
+$objFields_avg = array_keys(array_diff_key($mv_commoncols, array('f_trid'=>null,'f_did'=>null,'f_lid'=>null,'won'=>null,'lost'=>null,'draw'=>null,'played'=>null,'win_pct'=>null)));
+
+// These fields are not summable!
+// ie. you dont get the division/league value of these fields by summing over the related/underlying tournaments field's values.
+$objFields_notsum = array('win_pct', 'swon', 'sdraw', 'slost');
 
 function mysql_up($do_table_check = false) {
 
@@ -555,7 +566,7 @@ function upgrade_database($version)
 {
     $conn = mysql_up();
     require_once('lib/class_sqlcore.php');
-    require_once('lib/mysql_upgrade_queries');
+    require_once('lib/mysql_upgrade_queries.php');
         
     // Modules
     echo "<b>Running SQLs for modules upgrade...</b><br>\n";
@@ -570,18 +581,35 @@ function upgrade_database($version)
     }
 
     // Core
-    $core_SQLs = $upgradeSQLs[$version];
     echo "<b>Running SQLs for core system upgrade...</b><br>\n";
-    $status = true;
-    foreach ($core_SQLs as $query) {
-        $status &= (mysql_query($query) or die(mysql_error()));
-    }
-    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
-    
-    // Sync game data
+        
+    SQLCore::setTriggers(false); # Disable triggers when upgrading (we are doing a lot of table writes, prsumeably.
+
     echo (SQLCore::syncGameData()) 
         ? "<font color='green'>OK &mdash; Synchronized game data with database</font><br>\n" 
         : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
+    
+    echo (SQLCore::installProcsAndFuncs(true))
+        ? "<font color='green'>OK &mdash; created MySQL functions/procedures</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
+
+    $core_SQLs = $upgradeSQLs[$version];
+    $status = true;
+    foreach ($core_SQLs as $query) { $status &= (mysql_query($query) or die(mysql_error()."\n<br>SQL:\n<br>---\n<br>".$query));}
+    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
+
+    $core_Funcs = $upgradeFuncs[$version];
+    $status = true;
+    foreach ($core_Funcs as $func) { $status &= call_user_func($func);}
+    echo ($status) ? "<font color='green'>OK &mdash; Custom PHP upgrade code (<i>".implode(', ',$core_Funcs)."</i>)</font><br>\n" : "<font color='red'>FAILED &mdash; Custom PHP upgrade code</font><br>\n";
+
+    echo (SQLCore::installMVs(false))
+        ? "<font color='green'>OK &mdash; created MV tables</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not create MV tables</font><br>\n";
+   
+    echo (SQLCore::setTriggers(true))
+        ? "<font color='green'>OK &mdash; created MySQL triggers</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not create MySQL triggers</font><br>\n";
     
     // Done!
     mysql_close($conn);
@@ -594,28 +622,32 @@ function upgrade_database($version)
 
 class SQLUpgrade
 {
-    public static function runIfColumnNotExists($tbl, $col, $query)
+    const NONE = 'SELECT \'1\'';
+    
+    public static function doesColExist($tbl, $col)
     {
         $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
         $result = mysql_query($colCheck);
         $row = mysql_fetch_assoc($result);
-        return ((int) $row['exists']) ? 'SELECT \'1\'' : $query;
+        return (bool) $row['exists'];
+    }
+    
+    public static function runIfColumnNotExists($tbl, $col, $query)
+    {
+        return self::doesColExist($tbl, $col) ? self::NONE : $query;
     }
     
     // EXACTLY like runIfColumnNotExists(), but has the logic reversed at the return statement.
     public static function runIfColumnExists($tbl, $col, $query)
     {
-        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
-        $result = mysql_query($colCheck);
-        $row = mysql_fetch_assoc($result);
-        return ((int) $row['exists']) ? $query : 'SELECT \'1\'';
+        return self::doesColExist($tbl, $col) ? $query : self::NONE;
     }
     
     public static function runIfTrue($evalQuery, $query)
     {
         $result = mysql_query($evalQuery);
         $row = mysql_fetch_row($result);
-        return ((int) $row[0]) ? $query : 'SELECT \'1\'';
+        return ((int) $row[0]) ? $query : self::NONE;
     }
 }
 

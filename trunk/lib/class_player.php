@@ -32,6 +32,12 @@ define('ID_STARS_BEGIN', -5); // First star's player_id, second id is one smalle
 define('PLAYER_TYPE_NORMAL',  1);
 define('PLAYER_TYPE_JOURNEY', 2);
 
+$skillcats = array(
+    'N' => array('DEA_idx' => 'norm', 'obj_idx' => 'ach_nor_skills'), 
+    'D' => array('DEA_idx' => 'doub', 'obj_idx' => 'ach_dob_skills'), 
+    'E' => array('DEA_idx' => null,   'obj_idx' => 'extra_skills'),
+);
+
 class Player
 {
     /***************
@@ -90,7 +96,7 @@ class Player
     // Others
     public $icon = "";
     public $qty = 0;
-    public $choosable_skills = array('N skills' => array(), 'D skills' => array());
+    public $choosable_skills = array('norm' => array(), 'doub' => array());
     
     // Relations
     public $team_name = "";
@@ -113,8 +119,8 @@ class Player
         
         $result = mysql_query("SELECT 
             player_id, type, name, owned_by_team_id, nr, f_pos_id, date_bought, date_sold, 
+            f_cid, f_rid, f_cname, f_rname, f_tname
             ach_ma, ach_st, ach_ag, ach_av, extra_spp, extra_val,
-            ach_nor_skills, ach_dob_skills, extra_skills,
             value, status, date_died, inj_ni, inj_ma, inj_st, inj_ag, inj_av, players.ma, players.st, players.ag, players.av,
             qty, pos, skills AS 'def_skills', game_data_players.ma AS 'def_ma', game_data_players.st AS 'def_st', game_data_players.ag AS 'def_ag', game_data_players.av AS 'def_av'
             FROM players, game_data_players WHERE player_id = $player_id AND f_pos_id = pos_id");
@@ -123,17 +129,14 @@ class Player
         }
         $this->position = $this->pos;
         
-        $this->setRelations();
-
         /* 
             Set general stats.
         */
 
         $this->setStats(false,false,false);
         
-        foreach (array('ach_nor_skills', 'ach_dob_skills', 'extra_skills', 'def_skills') as $grp) {
-            $this->$grp = (empty($this->$grp)) ? array() : explode(',', $this->$grp);
-        }
+        $this->def_skills = empty($this->def_skills) ? array() : explode(',', $this->def_skills);
+        $this->setSkills();
         
         $this->is_dead       = ($this->status == DEAD);
         $this->is_mng        = ($this->status == MNG);
@@ -144,7 +147,7 @@ class Player
             Misc
         */
         
-        $this->icon = PLAYER_ICONS.'/' . $DEA[$this->race]['players'][$this->pos]['icon'] . '.gif';
+        $this->icon = PLAYER_ICONS.'/' . $DEA[$this->f_rname]['players'][$this->pos]['icon'] . '.gif';
         
         if (empty($this->name)) {
             $this->name = 'Unnamed';
@@ -162,34 +165,37 @@ class Player
             $this->$key = $val;
         }
         
-        // Corrections
-        if (!$node) {
-            $this->spp += $this->extra_spp;
-        }
-        
         return true;
+    }
+    
+    public function setSkills() {
+        global $skillcats;
+        foreach ($skillcats as $t => $grp) {
+            $result = mysql_query("SELECT GROUP_CONCAT(f_skill_id) FROM players_skills WHERE f_pid = $this->player_id AND type = '$t'");
+            $row = mysql_fetch_row($result);
+            $this->{$grp['obj_idx']} = empty($row[0]) ? array() : explode(',', $row[0]);
+        }
     }
     
     public function setChoosableSkills() {
 
-        global $DEA;
-        global $skillarray;
+        global $DEA, $skillarray, $skillcats;
         
         $this->setSkills();
-        $n_skills = $DEA[$this->race]['players'][$this->pos]['norm'];
-        $d_skills = $DEA[$this->race]['players'][$this->pos]['doub'];
+        $n_skills = $DEA[$this->f_rname]['players'][$this->pos]['norm'];
+        $d_skills = $DEA[$this->f_rname]['players'][$this->pos]['doub'];
         
         foreach ($n_skills as $category) {
-            foreach ($skillarray[$category] as $skill) {
-                if (!in_array($skill, $this->ach_nor_skills) && !in_array($skill, $this->def_skills)) {
-                    array_push($this->choosable_skills['norm'], $skill);
+            foreach ($skillarray[$category] as $id => $skill) {
+                if (!in_array($id, $this->ach_nor_skills) && !in_array($id, $this->def_skills)) {
+                    array_push($this->choosable_skills[ $skillcats['N']['DEA_idx'] ], $id);
                 }
             }
         }
         foreach ($d_skills as $category) {
-            foreach ($skillarray[$category] as $skill) {
-                if (!in_array($skill, $this->ach_dob_skills) && !in_array($skill, $this->def_skills)) {
-                    array_push($this->choosable_skills['doub'], $skill);
+            foreach ($skillarray[$category] as $id => $skill) {
+                if (!in_array($id, $this->ach_dob_skills) && !in_array($id, $this->def_skills)) {
+                    array_push($this->choosable_skills[ $skillcats['D']['DEA_idx'] ], $id);
                 }
             }
         }
@@ -199,8 +205,8 @@ class Player
         global $IllegalSkillCombinations;
         foreach ($IllegalSkillCombinations as $hasSkill => $dropSkills) {
             if (in_array($hasSkill, $all_skills)) {
-                foreach (array('norm', 'doub') as $type) {
-                    $this->choosable_skills[$type] = array_filter($this->choosable_skills[$type], create_function('$skill', "return !in_array(\$skill, array('".implode("','",$dropSkills)."'));"));
+                foreach (array($skillcats['N']['DEA_idx'], $skillcats['D']['DEA_idx']) as $type) {
+                    $this->choosable_skills[$type] = array_filter($this->choosable_skills[$type], create_function('$skill', "return !in_array(\$skill, array(".implode(",",$dropSkills)."));"));
                 }
             }
         }
@@ -208,24 +214,12 @@ class Player
         return true;
     }
     
-    private function setRelations() {
-
-        // Player relations
-        global $raceididx;
-        $query = "SELECT coaches.name AS 'coach_name', coach_id, teams.name AS 'team_name', f_race_id
-FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.team_id = $this->owned_by_team_id";
-        if (($result = mysql_query($query)) && ($row = mysql_fetch_assoc($result))) {
-            foreach ($row as $key => $val) {
-                $this->$key = $val;
-            }
-        }
-        $this->race = $raceididx[$this->f_race_id];
-    }
-    
     public function mayHaveNewSkill() {
 
         global $sparray;
-
+        
+        $this->setSkills();
+        
         $skill_count =   count($this->ach_nor_skills)
                        + count($this->ach_dob_skills)
                        + $this->ach_ma
@@ -236,7 +230,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
         $allowable_skills = 0; # Allowable skills = player level = SPR
 
         foreach (array_reverse($sparray) as $rank => $details) { # Loop through $sparray reversed so highest ranks come first.
-            if ($this->spp >= $details['SPP']) {
+            if ($this->mv_spp >= $details['SPP']) {
                 $allowable_skills = $details['SPR'];
                 break;
             }
@@ -309,7 +303,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
         if (!$this->is_unbuyable() || $this->is_sold)
             return false;
             
-        $price = ($this->is_journeyman) ? 0 : Player::price(array('race' => $this->race, 'position' => $this->pos));
+        $price = ($this->is_journeyman) ? 0 : Player::price(array('race' => $this->f_rname, 'position' => $this->pos));
         $team = new Team($this->owned_by_team_id);
 
         if (!$team->dtreasury($price))
@@ -331,7 +325,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
             return false;
             
         $team = new Team($this->owned_by_team_id);
-        $price = Player::price(array('race' => $team->race, 'position' => $this->pos));
+        $price = Player::price(array('race' => $team->f_rname, 'position' => $this->pos));
         
         if ($team->isFull() || !$team->isPlayerBuyable($this->pos) || $team->treasury < $price || !$team->dtreasury(-1 * $price))
             return false;
@@ -360,7 +354,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
         global $DEA;
 
         $team = new Team($this->owned_by_team_id);
-        $price = Player::price(array('race' => $team->race, 'position' => $this->pos));
+        $price = Player::price(array('race' => $team->f_rname, 'position' => $this->pos));
 
         if ($this->qty != 16) # Journeymen are players from a 0-16 buyable position.
             return false;
@@ -431,54 +425,27 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
          *  "C" = Characteristics
          **/
 
-        global $skillarray;
-        global $DEA;
+        global $DEA, $skillididx, $skillcats;
         
+        $this->setSkills();        
         $this->setChoosableSkills();
 
         // Don't allow new skill if not enough SPP, unless it is an extra skill.
         if ($type != 'E' && !$this->mayHaveNewSkill())
             return false;
 
+        // Statuses
+        $IS_REGULAR = (in_array($type, array('N', 'D')) && in_array($skill, $this->choosable_skills[$skillcats[$type]['DEA_idx']]));
+        $IS_EXTRA   = ($type == 'E' && in_array($skill, array_keys($skillididx)));
+
         // Determine skill type.
         if ($type == "C" && preg_match("/^ach_\w{2}$/", $skill)) { # ach_XX ?
-            if ($this->chrLimits('ach', preg_replace('/^ach_/', '', $skill)) && mysql_query("UPDATE players SET $skill = $skill + 1 WHERE player_id = $this->player_id"))
-                return true;
+            if ($this->chrLimits('ach', preg_replace('/^ach_/', '', $skill)))
+                return mysql_query("UPDATE players SET $skill = $skill + 1 WHERE player_id = $this->player_id");
         }
-        else {
-
-            // Valid skill?
-            if ($type == "N" || $type == "D") {
-                if (!in_array($skill, $this->choosable_skills[$type . ' skills']))
-                    return false;
-            }
-            else { # Type = Extra
-                $valid = false;
-                foreach ($skillarray as $scat) {
-                    foreach ($scat as $s) {
-                        if ($skill == $s) {
-                            $valid = true;
-                            break 2;
-                        }
-                    }
-                }
-                
-                if (!$valid)
-                    return false;
-            }
-
-            $mysql_type = '';
-            switch ($type) {
-                case 'N': $mysql_type = 'ach_nor_skills'; break;
-                case 'D': $mysql_type = 'ach_dob_skills'; break;
-                case 'E': $mysql_type = 'extra_skills';   break;
-            }
-
-            if (!in_array($skill, $this->$mysql_type)) {
-                array_push($this->$mysql_type, $skill);
-                if (set_list('players', 'player_id', $this->player_id, $mysql_type, $this->$mysql_type))
-                    return true;
-            }
+        elseif ($IS_REGULAR || $IS_EXTRA) {
+            $this->{$skillcats[$type]['obj_idx']}[] = $skill;
+            return mysql_query("INSERT INTO players_skills(f_pid, f_skill_id, type) VALUES ($this->player_id, $skill, '$type')");
         }
 
         return false; # Unknown $type or other fall-through error.
@@ -489,30 +456,14 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
         /**
          * Remove existing player skill.
          **/
-
-        if ($type == 'N' || $type == 'D' || $type == 'E') {
-            $mysql_type = '';
-            switch ($type) {
-                case 'N': $mysql_type = 'ach_nor_skills'; break;
-                case 'D': $mysql_type = 'ach_dob_skills'; break;
-                case 'E': $mysql_type = 'extra_skills';   break;                
-            }
-
-            if (!in_array($skill, $this->$mysql_type)) { # Quit if trying to remove a skill the player does not have!
-                return false;
-            }
-            
-            $new_skills = array_filter($this->$mysql_type, create_function('$xskill', "return (\$xskill == '$skill') ? false : true;"));
-            if (set_list('players', 'player_id', $this->player_id, $mysql_type, $new_skills)) {
-                return true;
-            }
+         
+        global $skillcats;
+        
+        if (in_array($type, array_keys($skillcats))) {
+            return mysql_query("DELETE FROM players_skills WHERE f_pid = $this->player_id AND type = '$type' AND f_skill_id = $skill");
         }
         elseif ($type == "C" && preg_match("/^ach_\w{2}$/", $skill)) {
-            if ($this->$skill == 0) # Don't allow MySQL type overflowing to 255.
-                return false;
-                
-            if (mysql_query("UPDATE players SET $skill = $skill - 1 WHERE player_id = $this->player_id"))
-                return true;
+            return mysql_query("UPDATE players SET $skill = $skill - 1 WHERE player_id = $this->player_id");
         }
 
         return false; # Unknown $type or other fall-through error.
@@ -659,8 +610,9 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
          * Compiles skills string.
          **/
     
+        $this->setSkills();
         $chrs = array();
-        $extras = $this->extra_skills;
+        $extras = empty($this->extra_skills) ? array() : explode(', ', skillsTrans($this->extra_skills));
 
         // First italic-ize extra skills
         if ($HTML) {
@@ -675,8 +627,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
         if ($this->ach_ag > 0) array_push($chrs, "+$this->ach_ag Ag");
         if ($this->ach_av > 0) array_push($chrs, "+$this->ach_av Av");
         
-        return implode(', ', array_merge($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills, $extras, $chrs));
-#        return skillsTrans(array_merge($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills, $extras, $chrs));
+        return implode(', ', array_merge(array(skillsTrans($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills)),$extras,$chrs));
     }
     
     public function getInjsStr($HTML = false) 
@@ -712,23 +663,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
          * Returns player status for specific $match_id, or current status if $match_id == -1 (latest match).
          **/
 
-        // Determine from what match to pull status from.
-        $query = '';
-        
-        if ($match_id == -1) {
-            $query = "SELECT inj FROM match_data, matches WHERE 
-                            f_player_id = $player_id AND
-                            match_id = f_match_id AND
-                            date_played IS NOT NULL
-                       ORDER BY date_played DESC LIMIT 1";
-        }
-        else {
-            $date_played = get_alt_col('matches', 'match_id', $match_id, 'date_played'); # Assume that $match_id is valid.
-            if (empty($date_played)) # If not is played, then date_played is not valid -> return current player status instead.
-                return self::getPlayerStatus($player_id, -1);
-                
-            $query = "SELECT getPlayerStatus($player_id,$match_id) AS 'inj'";
-        }
+        $query = "SELECT getPlayerStatus($player_id,$match_id) AS 'inj'";
 
         // Determine what status is.
         $result = mysql_query($query);
@@ -804,7 +739,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
              
         $team    = new Team($input['team_id']);
         $players = $team->getPlayers();
-        $price   = $journeyman ? 0 : Player::price(array('race' => $team->race, 'position' => $input['position']));
+        $price   = $journeyman ? 0 : Player::price(array('race' => $team->f_rname, 'position' => $input['position']));
         
         // Ignore errors and force creation (used when importing teams)?
         if (!array_key_exists('forceCreate', $input) || !$input['forceCreate']) {
@@ -816,7 +751,7 @@ FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id AND teams.t
 
                 // Is position valid to make a journeyman? 
                 // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
-                if ($DEA[$team->race]['players'][$input['position']]['qty'] < (($rules['enable_lrb6x']) ? 12 : 16))
+                if ($DEA[$team->f_rname]['players'][$input['position']]['qty'] < (($rules['enable_lrb6x']) ? 12 : 16))
                     return array(false, 'May not make a journeyman from that player position.');       
             }
             else {

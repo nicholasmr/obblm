@@ -869,19 +869,18 @@ public static function installProcsAndFuncs($install = true)
             READS SQL DATA
         BEGIN
             DECLARE ach_ma,ach_st,ach_ag,ach_av, def_ma,def_st,def_ag,def_av '.$CT_cols['chr'].';
-            DECLARE ach_nor_skills, ach_dob_skills '.$CT_cols['skills'].';
-            DECLARE cnt_ach_nor_skills, cnt_ach_dob_skills TINYINT UNSIGNED;
+            DECLARE cnt_skills_norm, cnt_skills_doub TINYINT UNSIGNED;
             DECLARE extra_val '.$CT_cols['pv'].';
             DECLARE f_pos_id '.$CT_cols['pos_id'].';
 
             SELECT 
-                players.f_pos_id, players.extra_val, players.ach_nor_skills, players.ach_dob_skills, players.ach_ma, players.ach_st, players.ach_ag, players.ach_av,
-                (LENGTH(players.ach_nor_skills) - LENGTH(REPLACE(players.ach_nor_skills, ",", "")) + IF(LENGTH(players.ach_nor_skills) = 0, 0, 1)),
-                (LENGTH(players.ach_dob_skills) - LENGTH(REPLACE(players.ach_dob_skills, ",", "")) + IF(LENGTH(players.ach_dob_skills) = 0, 0, 1))
+                players.f_pos_id, players.extra_val, players.ach_ma, players.ach_st, players.ach_ag, players.ach_av
             INTO
-                f_pos_id, extra_val, ach_nor_skills, ach_dob_skills, ach_ma, ach_st, ach_ag, ach_av,
-                cnt_ach_nor_skills, cnt_ach_dob_skills
+                f_pos_id, extra_val, ach_ma, ach_st, ach_ag, ach_av
             FROM players WHERE player_id = pid;
+            
+            SET cnt_skills_norm = (SELECT COUNT(*) FROM players_skills WHERE f_pid = pid AND type = "N");
+            SET cnt_skills_doub = (SELECT COUNT(*) FROM players_skills WHERE f_pid = pid AND type = "D");
         
             SELECT 
                 IFNULL(SUM(IF(inj = '.NI.', 1, 0) + IF(agn1 = '.NI.', 1, 0) + IF(agn2 = '.NI.', 1, 0)), 0), 
@@ -894,11 +893,11 @@ public static function installProcsAndFuncs($install = true)
             FROM match_data WHERE f_player_id = pid;
 
             SET value = (SELECT cost FROM game_data_players WHERE game_data_players.pos_id = f_pos_id)
-                + (ach_ma + ach_av)  * 30000
-                + ach_ag             * 40000
-                + ach_st             * 50000
-                + cnt_ach_nor_skills * 20000
-                + cnt_ach_dob_skills * 30000
+                + (ach_ma + ach_av) * 30000
+                + ach_ag            * 40000
+                + ach_st            * 50000
+                + cnt_skills_norm   * 20000
+                + cnt_skills_doub   * 30000
                 + extra_val;
 
 
@@ -944,6 +943,22 @@ public static function installProcsAndFuncs($install = true)
                 + cheerleaders * '.$rules['cost_cheerleaders'].'
                 + apothecary   * '.$rules['cost_apothecary'].'
                 + ass_coaches  * '.$rules['cost_ass_coaches'].';
+        END',
+        
+        // Sync all
+        'CREATE PROCEDURE syncAll()
+            NOT DETERMINISTIC
+            CONTAINS SQL
+        BEGIN
+            CALL syncAllMVs();
+            CALL syncAllDPROPS();
+            CALL syncAllRels();
+            CALL syncAllPTS();
+            CALL syncAllWinPcts();
+            CALL syncAllWTCnts();
+            CALL syncAllTeamCnts();
+            CALL syncAllStreaks();
+            CALL syncAllELOs();
         END',
     );
     global $hrs;
@@ -1005,6 +1020,36 @@ public static function installTableIndexes($install = true)
         if (!empty($query)) {
             $status &= mysql_query($query);
         }
+    }
+    
+    return $status;
+}
+
+public static function installMVs($delIfExists) {
+    
+    global $core_tables;
+    $status = true;
+    foreach ($core_tables as $name => $tbl) {
+        if (!preg_match('/^mv\_/', $name))
+            continue;
+            
+        if ($delIfExists) {
+            $status &= mysql_query("DROP TABLE IF EXISTS $name");
+        }
+        $status &= Table::createTable($name,$core_tables[$name]);
+    }
+    
+    // Add indicies
+    $indicies = array(
+        'idx_p_tr' => array('tbl' => 'mv_players',  'idx' => '(f_pid,f_trid)'),
+        'idx_t_tr' => array('tbl' => 'mv_teams',    'idx' => '(f_tid,f_trid)'),
+        'idx_c_tr' => array('tbl' => 'mv_coaches',  'idx' => '(f_cid,f_trid)'),
+        'idx_r_tr' => array('tbl' => 'mv_races',    'idx' => '(f_rid,f_trid)'),
+        
+    );
+    foreach ($indicies as $name => $def) {
+        @mysql_query("DROP INDEX $name ON $def[tbl]");
+        $status &= mysql_query("ALTER TABLE $def[tbl] ADD INDEX $name $def[idx]");
     }
     
     return $status;
