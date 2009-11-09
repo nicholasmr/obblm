@@ -39,7 +39,7 @@ function sec_admin() {
     if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
         fatal("Sorry. Your access level does not allow you opening the requested page.");
 
-    $coaches = Coach::getCoaches(); // Used by multiple sub-sections.
+    $coaches = get_rows('coaches', array()); // Used by multiple sub-sections.
 
     switch ($_GET['subsec']) 
     {

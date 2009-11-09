@@ -249,8 +249,7 @@ function report() {
         if (get_magic_quotes_gpc())
             $_POST['summary'] =  stripslashes($_POST['summary']);
         
-        echo "<!-- Match report submit started -->";
-        $time_start = microtime(true);
+        MTS('Report submit STARTED');
         
         // Update general match data
         status($m->update(array(
@@ -274,6 +273,7 @@ function report() {
             'tv2'           => (int) $_POST['tv2']*1000,
             'comment'       => $_POST['summary'] ? $_POST['summary'] : '',
         )));
+        MTS('matches entry submitted');
 
         // Update match's player data
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
@@ -284,6 +284,20 @@ function report() {
             
                 if (!self::player_validation($p, $m))
                     continue;
+                
+                // We create zero entries for MNG player(s). This is required!
+                if ($p->getStatus($m->match_id) == MNG) {
+                    $_POST['mvp_' . $p->player_id]      = 0;
+                    $_POST['cp_' . $p->player_id]       = 0;
+                    $_POST['td_' . $p->player_id]       = 0;
+                    $_POST['intcpt_' . $p->player_id]   = 0;
+                    $_POST['bh_' . $p->player_id]       = 0;
+                    $_POST['si_' . $p->player_id]       = 0;
+                    $_POST['ki_' . $p->player_id]       = 0;
+                    $_POST['inj_' . $p->player_id]      = NONE;
+                    $_POST['agn1_' . $p->player_id]     = NONE;
+                    $_POST['agn2_' . $p->player_id]     = NONE;
+                }
                 
                 $m->entry(array(
                     'player_id' => $p->player_id,
@@ -301,6 +315,7 @@ function report() {
                     'agn2'    => $_POST['agn2_' . $p->player_id],
                 ));
             }
+            MTS('Saved all REGULAR player entries in match_data for team '.$id);
             
             /* 
                 Save stars entries. 
@@ -328,6 +343,7 @@ function report() {
                     $s->rmMatchEntry($m->match_id, $t->team_id);
                 }
             }
+            MTS('Saved all STAR player entries in match_data for team '.$id);
             
             /* 
                 Save mercenary entries. 
@@ -353,9 +369,10 @@ function report() {
                     ));
                 }
             }
+            MTS('Saved all STAR player entries in match_data for team '.$id);
         }
 
-        echo '<!-- Match report submit ended: '.(microtime(true)-$time_start).' seconds -->';
+        MTS('Report submit ENDED');
 
         // Refresh objects used to display form.
         $m = new Match($match_id);
@@ -715,6 +732,8 @@ function report() {
 }
 
 private static function player_validation($p, $m) {
+
+    // NOTE: we allow MNG players!
 
     if (!is_object($p) || !is_object($m))
         return false;

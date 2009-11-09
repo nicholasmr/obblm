@@ -100,7 +100,7 @@ public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $s
     $cols_mv_sqlsel = implode(',', array_map(
         create_function('$c', $f2='
             global $objFields_avg, $objFields_val0; 
-            return "IFNULL(".'.$val0.'."SUM('.$tbl_name_mv.'.$c)'.(($setAvg) ? '".(in_array($c,$objFields_avg) ? "/SUM('.$tbl_name_mv.'.played)" : "")."' : "").',0) AS \'mv_$c\'\\n";'
+            return '.$val0.'."IFNULL(SUM('.$tbl_name_mv.'.$c)'.(($setAvg) ? '".(in_array($c,$objFields_avg) ? "/SUM('.$tbl_name_mv.'.played)" : "")."' : "").',0) AS \'mv_$c\'\\n";'
         ), 
         $cols_mv)
     );

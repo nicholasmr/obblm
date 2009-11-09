@@ -104,7 +104,7 @@ public static function standings()
 
 public static function coachCorner($cid) {
 
-    global $lng, $settings;
+    global $lng, $settings, $coach;
 
     /*
      *  Main actions:
@@ -114,8 +114,6 @@ public static function coachCorner($cid) {
      *  3.  Change coach settings (passwd & mail)
      *
      */
-
-    $coach = new self($cid);
 
     /* 
         New team page 

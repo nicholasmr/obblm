@@ -57,21 +57,18 @@ class Team_export extends Team implements ModuleInterface
             Exports a team by the using the same fields as the import XML schema uses.
         */
         
-        $ELORanks = ELO::getRanks(false);
-        $this->elo = $ELORanks[$this->team_id] + $this->elo_0;
-        
         $dom = new DOMDocument();
         $dom->formatOutput = true;
 
         $el_root = $dom->appendChild($dom->createElement('xmlimport'));
         
-        $el_root->appendChild($dom->createElement('coach', htmlspecialchars($this->coach_name, ENT_NOQUOTES, "UTF-8")));
+        $el_root->appendChild($dom->createElement('coach', htmlspecialchars($this->f_cname, ENT_NOQUOTES, "UTF-8")));
         $el_root->appendChild($dom->createElement('name', htmlspecialchars($this->name, ENT_NOQUOTES, "UTF-8")));
         $el_root->appendChild($dom->createElement('race', $this->f_rname));
         $el_root->appendChild($dom->createElement('treasury', $this->treasury));
         $el_root->appendChild($dom->createElement('apothecary', $this->apothecary));
         $el_root->appendChild($dom->createElement('rerolls', $this->rerolls));
-        $el_root->appendChild($dom->createElement('fan_factor', $this->ff));
+        $el_root->appendChild($dom->createElement('fan_factor', $this->rg_ff));
         $el_root->appendChild($dom->createElement('ass_coaches', $this->ass_coaches));
         $el_root->appendChild($dom->createElement('cheerleaders', $this->cheerleaders));
         

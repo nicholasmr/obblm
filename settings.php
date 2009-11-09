@@ -20,9 +20,14 @@ $settings['site_name'] = 'UNNAMED BBL';     // Name of the site or the league na
 $settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
 $settings['show_sort_rule'] = true;         // Default is true. Print in table footers what tables are sorted against?
 
-$settings['entries_messageboard']   = 5;  // Number of entries on the main page messageboard in normal view mode. Note: A value of 0 shows all messages.
-$settings['entries_latest']         = 5;  // Number of entries in the main page table "latest games".
-$settings['entries_players']        = 20; // Number of entries in the players standings table. Note: A value of 0 shows all players.
+$settings['entries'] = array(
+    'messageboard'      => 5,   // Number of entries on the main page messageboard.
+    'latestgames'       => 5,   // Number of entries in the main page table "latest games".
+    'standings_players' => 30,  // Number of entries on the general players stadings table.
+    'standings_teams'   => 30,  // Number of entries on the general teams   stadings table.
+    'standings_coaches' => 30,  // Number of entries on the general coaches stadings table.
+);
+
 $settings['fp_standings'] = array(
     # This would display a standings box of the top 6 teams in tournament with ID=1.
     1 => array(
@@ -33,6 +38,7 @@ $settings['fp_standings'] = array(
         ),
     ),
 );
+
 $settings['fp_leaders'] = array(
     'mv_cas' => array('title' => 'Most casualties',    'length' => 5),
     'mv_td'  => array('title' => 'Most touchdowns',    'length' => 5),

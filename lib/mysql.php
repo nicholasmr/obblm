@@ -459,7 +459,7 @@ function get_rows($tbl, array $getFields, $where = array()) {
             get_rows('teams', array('team_id', 'name'));
         ...will return an (unsorted) array of objects with the attributes 'team_id' and 'name', found in the teams table.
     */
-    $query = 'SELECT '.implode(',', $getFields)." FROM $tbl ".(empty($where) ? '' : 'WHERE '.implode(' AND ', $where));
+    $query = 'SELECT '.(empty($getFields) ? '*' : implode(',', $getFields))." FROM $tbl ".(empty($where) ? '' : 'WHERE '.implode(' AND ', $where));
     $result = mysql_query($query);
     $ret = array();
     while ($row = mysql_fetch_object($result)) {

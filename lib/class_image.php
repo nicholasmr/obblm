@@ -71,7 +71,7 @@ class ImageSubSys
         $this->obj_id = $obj_id;
     }
 
-    public function getPath() 
+    public function getPath($rid = false) 
     {
         foreach (self::$supportedExtensions as $ext) {
             if (file_exists($filePath = self::$typeToPathMappings[$this->obj].'/'.$this->obj_id.'.'.$ext)) {
@@ -81,9 +81,9 @@ class ImageSubSys
         
         // Else return default image.
         if ($this->obj == IMGTYPE_TEAMLOGO) {
-            $r = new Race(get_alt_col('teams', 'team_id', $this->obj_id, 'f_race_id'));
-            $roster = $r->getRoster();
-            return RACE_ICONS.'/'.$roster['other']['icon'];
+            global $DEA, $raceididx;
+            $race = $raceididx[($rid) ? $rid : get_alt_col('teams', 'team_id', $this->obj_id, 'f_race_id')];
+            return RACE_ICONS.'/'.$DEA[$race]['other']['icon'];
         }
         else {
             return NO_PIC;

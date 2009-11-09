@@ -46,8 +46,6 @@ class Team
     
     public $value = 0; public $tv = 0; # Identical.
     public $ff_bought = 0;
-    public $ff_game = 0;
-    public $ff = 0;
 
     // MySQL stored initials for imported teams
     public $won_0  = 0;
@@ -150,7 +148,7 @@ class Team
          **/
 
         $race = new Race($this->f_race_id);
-        return $race->getGoods($allow_double_rr_price && $this->played > 0);
+        return $race->getGoods($allow_double_rr_price && $this->mv_played > 0);
     }
 
     public function delete() {
@@ -225,6 +223,7 @@ class Team
         // Buy that thing!
         $price = $team_goods[$thing]['cost'];
         if (mysql_query("UPDATE teams SET treasury = treasury - $price, $thing = $thing + 1 WHERE team_id = $this->team_id")) {
+            self::forceUpdTrigger($this->team_id); # Update TV.
             $this->$thing++;
             $this->treasury -= $price;
             return true;
@@ -253,6 +252,7 @@ class Team
         // Un-buy!
         $price = $team_goods[$thing]['cost'];
         if (mysql_query("UPDATE teams SET treasury = treasury + $price, $thing = $thing - 1 WHERE team_id = $this->team_id")) {
+            self::forceUpdTrigger($this->team_id); # Update TV.
             $this->$thing--;
             $this->treasury += $price;
             return true;
@@ -282,8 +282,10 @@ class Team
             return false;
 
         if ($this->unbuy($thing)) {
-            if ($this->dtreasury(-1 * $price))
+            if ($this->dtreasury(-1 * $price)) {
+                self::forceUpdTrigger($this->team_id); # Update TV.
                 return true;
+            }
             else
                 $this->buy($thing); # Do not allow a situation, where we have removed the team "thing", and were not able to throw the refund away.
         }
@@ -335,7 +337,7 @@ class Team
         global $rules;
 
         $query = "SELECT (COUNT(*) >= ".$rules['max_team_players'].") FROM players
-            WHERE owned_by_team_id = $this->team_id AND status NOT IN (".DEAD.",".SOLD.")";
+            WHERE owned_by_team_id = $this->team_id AND date_sold IS NOT NULL AND status NOT IN (".DEAD.",".SOLD.")";
         $result = mysql_query($query);
         $row = mysql_fetch_row($result);
         return (bool) $row[0];
@@ -509,7 +511,13 @@ class Team
                         )."
                     )";
 
-        return mysql_query($query);
+        $ret = mysql_query($query);
+        self::forceUpdTrigger((int) mysql_insert_id());
+        return $ret;
+    }
+    
+    public static function forceUpdTrigger($tid) {
+        return mysql_query("UPDATE teams SET tv = 0 WHERE team_id = $tid"); # Force update trigger to sync properties.
     }
 }
 ?>

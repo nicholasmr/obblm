@@ -60,6 +60,7 @@ public static function setTriggers($set = true)
         END';
         
     // Players
+    # Win pcts, streaks etc. are default = 0 by column definitions.
     $_players_relations = 'CALL getPlayerRels(NEW.player_id, NEW.f_cid, NEW.f_rid, NEW.f_cname, NEW.f_rname, NEW.f_tname, NEW.f_pos_name);';
     $_players_p_DPROPS = 'CALL getPlayerDProps(NEW.player_id, NEW.inj_ma,NEW.inj_av,NEW.inj_ag,NEW.inj_st,NEW.inj_ni, NEW.ma,NEW.av,NEW.ag,NEW.st, NEW.value, NEW.status, NEW.date_died);';
     $_players_t_DPROPS = '
@@ -71,9 +72,9 @@ public static function setTriggers($set = true)
     $players_after = "BEGIN $_players_t_DPROPS END";
     
     // Teams
+    # Win pcts, streaks etc. are default = 0 by column definitions.
     $_teams_relations = 'CALL getTeamRels(NEW.team_id, NEW.f_cname, NEW.f_rname);';
     $_teams_t_DPROPS = 'CALL getTeamDProps(NEW.team_id, NEW.tv, NEW.ff);';
-    $_teams_initvals = 'SET NEW.ff = NEW.ff_bought;'; # Not really needed since getTeamDProps() sets ff to ff_bought+ff_game.
     $_teams_team_cnt = '
         UPDATE races   SET team_cnt = getTeamCnt('.T_OBJ_RACE.',  REGEX_REPLACE.f_race_id, NULL)         WHERE race_id = REGEX_REPLACE.f_race_id;
         UPDATE coaches SET team_cnt = getTeamCnt('.T_OBJ_COACH.', REGEX_REPLACE.owned_by_coach_id, NULL) WHERE coach_id = REGEX_REPLACE.owned_by_coach_id;';
@@ -91,8 +92,7 @@ public static function setTriggers($set = true)
                 UPDATE mv_teams SET f_cid = NEW.owned_by_coach_id WHERE f_tid = OLD.team_id;
             END IF;
         END IF;';
-    $teams_before_ins = "BEGIN $_teams_relations $_teams_t_DPROPS $_teams_initvals END";
-    $teams_before_upd = "BEGIN $_teams_relations $_teams_t_DPROPS END";
+    $teams_before = "BEGIN $_teams_relations $_teams_t_DPROPS END";
     $teams_after_ins = "BEGIN $_teams_team_cnt END";
     $teams_after_upd = "BEGIN $_teams_team_cnt $_teams_update_rels END";
     $teams_after_del = "BEGIN $_teams_team_cnt END";
@@ -155,8 +155,8 @@ public static function setTriggers($set = true)
     ';
         # Needs $matches_setup_rels.
     $matches_pts = '
-        UPDATE mv_teams SET pts = getPTS(tid1, trid) WHERE team_id = tid1;
-        UPDATE mv_teams SET pts = getPTS(tid2, trid) WHERE team_id = tid2;
+        UPDATE mv_teams SET pts = getPTS(tid1, trid) WHERE f_tid = tid1;
+        UPDATE mv_teams SET pts = getPTS(tid2, trid) WHERE f_tid = tid2;
     ';
     
         # Needs $matches_setup_rels.
@@ -237,15 +237,13 @@ public static function setTriggers($set = true)
         'CREATE TRIGGER match_data_a_del AFTER DELETE ON match_data FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $match_data_after),
         
         // Players
-        'CREATE TRIGGER player_b_ins BEFORE INSERT ON players FOR EACH ROW '.$players_before,
         'CREATE TRIGGER player_b_upd BEFORE UPDATE ON players FOR EACH ROW '.$players_before,
         'CREATE TRIGGER player_a_ins AFTER INSERT ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $players_after),
         'CREATE TRIGGER player_a_upd AFTER UPDATE ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $players_after),
         'CREATE TRIGGER player_a_del AFTER DELETE ON players FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $players_after),
 
         // Teams
-        'CREATE TRIGGER teams_b_ins BEFORE INSERT ON teams FOR EACH ROW '.$teams_before_ins,
-        'CREATE TRIGGER teams_b_upd BEFORE UPDATE ON teams FOR EACH ROW '.$teams_before_upd,
+        'CREATE TRIGGER teams_b_upd BEFORE UPDATE ON teams FOR EACH ROW '.$teams_before,
         'CREATE TRIGGER teams_a_ins AFTER INSERT ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $teams_after_ins),
         'CREATE TRIGGER teams_a_upd AFTER UPDATE ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'NEW', $teams_after_upd),
         'CREATE TRIGGER teams_a_del AFTER DELETE ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $teams_after_del),
@@ -1214,7 +1212,7 @@ public static function installProcsAndFuncs($install = true)
 
             SET ff = ff_bought + (SELECT IFNULL(SUM(mv_teams.ff),0) FROM mv_teams WHERE mv_teams.f_tid = tid);
 
-            SET tv = (SELECT IFNULL(SUM(value),0) FROM players WHERE owned_by_team_id = tid AND players.status != '.MNG.')
+            SET tv = (SELECT IFNULL(SUM(value),0) FROM players WHERE owned_by_team_id = tid AND players.status NOT IN ('.MNG.','.DEAD.') AND players.date_sold IS NULL)
                 + rerolls      * (SELECT cost_rr FROM races WHERE races.race_id = f_race_id)
                 + ff           * '.$rules['cost_fan_factor'].'
                 + cheerleaders * '.$rules['cost_cheerleaders'].'

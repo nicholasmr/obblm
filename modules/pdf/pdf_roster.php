@@ -470,7 +470,7 @@ $currenty=435;
 $currentx=630;
 // print_team_goods($x, $y, $h, $bgcol, $linecol, $perm_name, $perm_nr, $perm_value, $perm_total_value, $bold=false)
 $pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Rerolls:', ($team->rerolls), $pdf->Mf($rerollcost), $pdf->Mf($team->rerolls * $rerollcost), false);
-$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Fan Factor:', ($team->ff), $pdf->Mf($rules['cost_fan_factor']), $pdf->Mf($team->ff * $rules['cost_fan_factor']), false);
+$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Fan Factor:', ($team->rg_ff), $pdf->Mf($rules['cost_fan_factor']), $pdf->Mf($team->rg_ff * $rules['cost_fan_factor']), false);
 $pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Assistant Coaches:', ($team->ass_coaches), $pdf->Mf($rules['cost_ass_coaches']), $pdf->Mf($team->ass_coaches * $rules['cost_ass_coaches']), false);
 $pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Cheerleaders:', ($team->cheerleaders), $pdf->Mf($rules['cost_cheerleaders']), $pdf->Mf($team->cheerleaders * $rules['cost_cheerleaders']), false);
 if ($r == 'Undead' || $r == 'Necromantic') // Swap Apothecary for Necromancer

@@ -136,7 +136,7 @@ function sec_main() {
             To generate this table we create a general array holding the content of both.
         */
         $j = 1;
-        foreach (TextSubSys::getMainBoardMessages($settings['entries_messageboard']) as $e) {
+        foreach (TextSubSys::getMainBoardMessages($settings['entries']['messageboard']) as $e) {
             echo "<div class='boxWide'>\n";
                 echo "<h3 class='boxTitle$e->cssidx'>$e->title</h3>\n";
                 echo "<div class='boxBody'>\n";
@@ -245,7 +245,7 @@ function sec_main() {
 
         MTS('Standings tables generated');
     
-        if ($settings['entries_latest'] != 0) {
+        if ($settings['entries']['latestgames'] != 0) {
             ?>
             <div class="boxWide">
                 <h3 class='boxTitle1'><?php echo $lng->getTrn('common/recentmatches');?></h3>
@@ -256,7 +256,7 @@ function sec_main() {
                             <td style="text-align: left;" width="50%"><i>Guest</i></td><td> </td>
                         </tr>
                         <?php
-                        foreach (Match::getMatches($settings['entries_latest']) as $m) {
+                        foreach (Match::getMatches($settings['entries']['latestgames']) as $m) {
                             $home   = ($m->stadium == $m->team1_id) ? 'team1' : 'team2';
                             $guest  = ($home == 'team1') ? 'team2' : 'team1';
                             echo "<tr>\n";
