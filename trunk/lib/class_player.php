@@ -741,7 +741,7 @@ class Player
                         type,
                         owned_by_team_id,
                         nr,
-                        position,
+                        f_pos_id,
                         date_bought,
                         ach_ma,
                         ach_st,
@@ -758,7 +758,7 @@ class Player
                         " . ($journeyman ? PLAYER_TYPE_JOURNEY : PLAYER_TYPE_NORMAL ) . ",
                         $input[team_id], 
                         $input[nr], 
-                        '$input[position]', 
+                        '$input[f_pos_id]', 
                         NOW(), 
 
                         0, 0, 0, 0,

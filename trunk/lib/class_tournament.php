@@ -69,21 +69,9 @@ class Tour
         }
         $this->locked = (bool) $this->locked;
         
-        // Empty tournament (all matches have been deleted)?
-        $query = "SELECT COUNT(*) AS 'count' FROM matches WHERE f_tour_id = $this->tour_id"; $result = mysql_query($query); $row = mysql_fetch_assoc($result);
-        $this->is_empty = ($row['count'] < 1);
-        // Determine if tournament has begun (one or more matches have been played).
-        $query = "SELECT COUNT(*) AS 'count' FROM matches WHERE f_tour_id = $this->tour_id AND date_played IS NOT NULL"; $result = mysql_query($query); $row = mysql_fetch_assoc($result);
-        $this->is_begun = ($row['count'] > 0);
-        // Determine tournament winner.
-        $query = "SELECT IF(team1_score > team2_score, team1_id, team2_id) AS 'team_id' FROM matches WHERE f_tour_id = $this->tour_id AND round = ".RT_FINAL." AND date_played IS NOT NULL AND team1_score != team2_score";
-        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
-            $row = mysql_fetch_assoc($result);
-            $this->winner = $row['team_id'];
-        }
-        // Determine tournament status.
-        $query = "SELECT COUNT(*) AS 'count' FROM matches WHERE f_tour_id = $this->tour_id AND date_played IS NULL"; $result = mysql_query($query); $row = mysql_fetch_assoc($result);
-        $this->is_finished = ($this->type == TT_RROBIN && $row['count'] == 0 || $this->type == TT_FFA && (bool) $this->winner);
+        $this->is_empty = $this->empty;
+        $this->is_begun = $this->begun;
+        $this->is_finished = $this->finished;
     }
 
     public function getMatches() {

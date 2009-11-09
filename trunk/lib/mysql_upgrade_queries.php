@@ -30,10 +30,10 @@ $upgradeSQLs = array(
         'UPDATE teams SET played_0 = won_0 + draw_0 + lost_0',
         'ALTER TABLE players MODIFY player_id MEDIUMINT SIGNED',
             # New FF col system.
-        SQLUpgrade::runIfColumnNOTExists('players', 'ff_bought', 'ALTER TABLE players ADD COLUMN ff_bought TINYINT UNSIGNED AFTER rerolls'),
-        SQLUpgrade::runIfColumnNOTExists('players', 'ff', 'ALTER TABLE players ADD COLUMN ff TINYINT UNSIGNED'),
-        SQLUpgrade::runIfColumnExists('players', 'fan_factor', 'UPDATE players SET ff_bought = fan_factor'),
-        SQLUpgrade::runIfColumnExists('players', 'fan_factor', 'ALTER TABLE players DROP fan_factor'),
+        SQLUpgrade::runIfColumnNOTExists('teams', 'ff_bought', 'ALTER TABLE teams ADD COLUMN ff_bought TINYINT UNSIGNED AFTER rerolls'),
+        SQLUpgrade::runIfColumnNOTExists('teams', 'ff', 'ALTER TABLE teams ADD COLUMN ff TINYINT UNSIGNED'),
+        SQLUpgrade::runIfColumnExists('teams', 'fan_factor', 'UPDATE teams SET ff_bought = fan_factor'),
+        SQLUpgrade::runIfColumnExists('teams', 'fan_factor', 'ALTER TABLE teams DROP fan_factor'),
         
         // Add DPROPS fields
         SQLUpgrade::runIfColumnNotExists('teams', 'swon', 'ALTER TABLE teams ADD COLUMN swon SMALLINT UNSIGNED DEFAULT 0'),

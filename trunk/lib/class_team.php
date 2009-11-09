@@ -74,6 +74,7 @@ class Team
     function __construct($team_id) {
 
          // MySQL stored information
+        $this->team_id = $team_id;
         $this->setStats(false,false,false);
 
         $this->is_retired = ($this->retired || get_alt_col('coaches', 'coach_id', $this->owned_by_coach_id, 'retired'));
