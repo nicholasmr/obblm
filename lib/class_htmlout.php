@@ -478,7 +478,7 @@ public static function frame_begin($stylesheet = false)
     <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-        <title><?php echo $settings['site_name']; ?> Blood Bowl League</title>
+        <title><?php echo $settings['site_name']; ?></title>
         <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml" />
         <script type="text/javascript" src="lib/misc_functions.js"></script>
