@@ -84,8 +84,8 @@ public static function setTriggers($set = true)
         SET @changed_owner = (NEW.owned_by_coach_id != OLD.owned_by_coach_id);
         IF (NEW.name != OLD.name OR @changed_owner) THEN
             UPDATE players SET 
-            players.f_cid = NEW.owned_by_coach_id, players.f_cname = NEW.f_cname, players.f_tname = NEW.name
-            WHERE owned_by_team_id = OLD.team_id
+                players.f_cid = NEW.owned_by_coach_id, players.f_cname = NEW.f_cname, players.f_tname = NEW.name
+            WHERE owned_by_team_id = OLD.team_id;
             IF (@changed_owner) THEN
                 UPDATE mv_players SET f_cid = NEW.owned_by_coach_id WHERE f_tid = OLD.team_id;
                 UPDATE mv_teams SET f_cid = NEW.owned_by_coach_id WHERE f_tid = OLD.team_id;
@@ -115,6 +115,13 @@ public static function setTriggers($set = true)
 
     // Matches
     $matches_setup_rels = '
+        /* GENERAL */
+        DECLARE ret BOOLEAN;
+        DECLARE rid1, rid2 '.$CT_cols[T_OBJ_RACE].';
+        DECLARE cid1, cid2 '.$CT_cols[T_OBJ_COACH].';
+        DECLARE tid1, tid2 '.$CT_cols[T_OBJ_TEAM].';
+        DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].';
+
         /* Tour DPROPS */
         DECLARE empty,begun,finished BOOLEAN;
         DECLARE winner '.$CT_cols[T_OBJ_TEAM].';
@@ -124,20 +131,12 @@ public static function setTriggers($set = true)
         
         /* MVs */
         DECLARE done INT DEFAULT 0;
-        DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
         DECLARE pid '.$CT_cols[T_NODE_TOURNAMENT].';
         DECLARE cur_p1 CURSOR FOR SELECT f_pid FROM mv_players WHERE f_tid = REGEX_REPLACE.team1_id AND f_trid = REGEX_REPLACE.f_tour_id;
-        DECLARE cur_p1 CURSOR FOR SELECT f_pid FROM mv_players WHERE f_tid = REGEX_REPLACE.team2_id AND f_trid = REGEX_REPLACE.f_tour_id;
+        DECLARE cur_p2 CURSOR FOR SELECT f_pid FROM mv_players WHERE f_tid = REGEX_REPLACE.team2_id AND f_trid = REGEX_REPLACE.f_tour_id;
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
         
-        /* GENERAL */
-        DECLARE ret BOOLEAN;
-        DECLARE rid1, rid2 '.$CT_cols[T_OBJ_RACE].';
-        DECLARE cid1, cid2 '.$CT_cols[T_OBJ_COACH].';
-        DECLARE tid1, tid2 '.$CT_cols[T_OBJ_TEAM].';
-        DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].';
-
         SET trid = REGEX_REPLACE.f_tour_id;
-
         SELECT t1.f_race_id, t2.f_race_id, t1.owned_by_coach_id, t2.owned_by_coach_id, t1.team_id, t2.team_id
         INTO rid1, rid2, cid1, cid2, tid1, tid2
         FROM teams AS t1, teams AS t2 WHERE t1.team_id = REGEX_REPLACE.team1_id AND t2.team_id = REGEX_REPLACE.team2_id;
@@ -145,7 +144,7 @@ public static function setTriggers($set = true)
         # Needs $matches_setup_rels.
     $matches_tourDProps = '
         CALL getTourDProps(trid, empty, begun, finished, winner);
-        UPDATE tours SET tours.empty = empty, tours.begun = begun, tours.finished, tours.winner = winner WHERE tour_id = trid;
+        UPDATE tours SET tours.empty = empty, tours.begun = begun, tours.finished = finished, tours.winner = winner WHERE tour_id = trid;
     ';
         # Needs $matches_setup_rels.
     $matches_team_cnt = '
@@ -206,7 +205,7 @@ public static function setTriggers($set = true)
         REPEAT
             FETCH cur_p1 INTO pid;
             IF NOT done THEN
-                SET retval = syncMVplayer(pid, trid);
+                SET ret = syncMVplayer(pid, trid);
             END IF;
         UNTIL done END REPEAT;
         CLOSE cur_p1;
@@ -216,18 +215,18 @@ public static function setTriggers($set = true)
         REPEAT
             FETCH cur_p2 INTO pid;
             IF NOT done THEN
-                SET retval = syncMVplayer(pid, trid);
+                SET ret = syncMVplayer(pid, trid);
             END IF;
         UNTIL done END REPEAT;
         CLOSE cur_p2;
         SET done = 0;
             
-        SET retval = syncMVteam(tid1, trid);
-        SET retval = syncMVteam(tid2, trid);
-        SET retval = syncMVcoach(cid1, trid);
-        SET retval = syncMVcoach(cid2, trid);
-        SET retval = syncMVrace(rid1, trid);
-        SET retval = syncMVrace(rid2, trid);
+        SET ret = syncMVteam(tid1, trid);
+        SET ret = syncMVteam(tid2, trid);
+        SET ret = syncMVcoach(cid1, trid);
+        SET ret = syncMVcoach(cid2, trid);
+        SET ret = syncMVrace(rid1, trid);
+        SET ret = syncMVrace(rid2, trid);
     ';
     
     $triggers = array(
@@ -252,7 +251,7 @@ public static function setTriggers($set = true)
         'CREATE TRIGGER teams_a_del AFTER DELETE ON teams FOR EACH ROW '.preg_replace('/REGEX_REPLACE/', 'OLD', $teams_after_del),
         
         // Coaches
-        'CREATE TRIGGER teams_a_upd AFTER UPDATE ON coaches FOR EACH ROW '.$coaches_after_upd,
+        'CREATE TRIGGER coaches_a_upd AFTER UPDATE ON coaches FOR EACH ROW '.$coaches_after_upd,
         
         // Players skills
         # This changes the player value and also the team value!
@@ -576,14 +575,35 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
+            DECLARE ret INT;
+            DECLARE done INT DEFAULT 0;
+            DECLARE mid '.$CT_cols[T_NODE_MATCH].';
+            DECLARE curA CURSOR FOR SELECT matches.match_id FROM matches WHERE matches.date_played IS NOT NULL ORDER BY matches.date_played ASC;
+            DECLARE curB CURSOR FOR SELECT matches.match_id FROM matches WHERE matches.date_played IS NOT NULL AND matches.f_tour_id = trid ORDER BY matches.date_played ASC;
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
             IF trid IS NULL THEN
                 UPDATE teams   SET elo = NULL;
                 UPDATE coaches SET elo = NULL;
-                SELECT syncELOMatch(NULL, matches.match_id) FROM matches WHERE matches.date_played IS NOT NULL ORDER BY matches.date_played ASC;
+                OPEN curA;
+                REPEAT
+                    FETCH curA INTO mid;
+                    IF NOT done THEN
+                        SET ret = syncELOMatch(NULL, mid);
+                    END IF;
+                UNTIL done END REPEAT;
+                CLOSE curA;
             ELSE
                 UPDATE mv_teams   SET elo = NULL WHERE f_trid = trid;
                 UPDATE mv_coaches SET elo = NULL WHERE f_trid = trid;
-                SELECT syncELOMatch(trid, matches.match_id) FROM matches WHERE matches.date_played IS NOT NULL AND matches.f_tour_id = trid ORDER BY matches.date_played ASC;
+                OPEN curB;
+                REPEAT
+                    FETCH curB INTO mid;
+                    IF NOT done THEN
+                        SET ret = syncELOMatch(trid, mid);
+                    END IF;
+                UNTIL done END REPEAT;
+                CLOSE curB;
             END IF;
         END',
 
@@ -778,7 +798,7 @@ public static function installProcsAndFuncs($install = true)
             ELSEIF obj = '.T_OBJ_COACH.' THEN 
                 RETURN (SELECT COUNT(*) FROM tours,teams WHERE teams.owned_by_coach_id = obj_id AND winner = teams.team_id);
             ELSEIF obj = '.T_OBJ_RACE.' THEN 
-                RETURN (SELECT COUNT(*) FROM tours,teams WHERE teams.r_race_id = obj_id AND winner = teams.team_id);
+                RETURN (SELECT COUNT(*) FROM tours,teams WHERE teams.f_race_id = obj_id AND winner = teams.team_id);
             END IF;
         END',
         
@@ -825,8 +845,8 @@ public static function installProcsAndFuncs($install = true)
             DECLARE done INT DEFAULT 0;
             DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
             DECLARE tid '.$CT_cols[T_OBJ_TEAM].';
-            DECLARE cid '.$CT_cols[T_OBJ_COACH].';
-            DECLARE rid '.$CT_cols[T_OBJ_RACE].';
+            DECLARE f_cid '.$CT_cols[T_OBJ_COACH].';
+            DECLARE f_rid '.$CT_cols[T_OBJ_RACE].';
             DECLARE f_rname, f_cname, f_tname, f_pos_name '.$CT_cols['name'].';
             DECLARE cur_p CURSOR FOR SELECT player_id FROM players;
             DECLARE cur_t CURSOR FOR SELECT team_id FROM teams;
@@ -870,10 +890,10 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
-            SELECT coaches.coach_id, races.race_id, coaches.name, races.name, teams.name, game_data_played.pos
+            SELECT coaches.coach_id, races.race_id, coaches.name, races.name, teams.name, game_data_players.pos
             INTO f_cid, f_rid, f_cname, f_rname, f_tname, f_pos_name
             FROM players,teams,coaches,races,game_data_players
-            WHERE player_id = pid AND owned_by_team_id = team_id AND owned_by_coach_id = coach_id AND f_race_id = race_id AND f_pos_id = pos_id;
+            WHERE player_id = pid AND owned_by_team_id = team_id AND owned_by_coach_id = coach_id AND teams.f_race_id = race_id AND f_pos_id = pos_id;
         END',
         
         'CREATE PROCEDURE getTeamRels(IN tid '.$CT_cols[T_OBJ_TEAM].',
@@ -884,7 +904,7 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             SELECT coaches.name, races.name
             INTO f_cname, f_rname
-            FROM teams,coaches,races,game_data_players
+            FROM teams,coaches,races
             WHERE team_id = tid AND owned_by_coach_id = coach_id AND f_race_id = race_id;
         END',
 
@@ -896,10 +916,59 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            SELECT syncMVplayer(f_player_id, f_tour_id) FROM (SELECT f_player_id,f_tour_id FROM match_data GROUP BY f_player_id,f_tour_id) AS tmpTbl;
-            SELECT syncMVteam(f_team_id,     f_tour_id) FROM (SELECT f_team_id,  f_tour_id FROM match_data GROUP BY f_team_id,  f_tour_id) AS tmpTbl;
-            SELECT syncMVcoach(f_coach_id,   f_tour_id) FROM (SELECT f_coach_id, f_tour_id FROM match_data GROUP BY f_coach_id, f_tour_id) AS tmpTbl;
-            SELECT syncMVrace(f_race_id,     f_tour_id) FROM (SELECT f_race_id,  f_tour_id FROM match_data GROUP BY f_race_id,  f_tour_id) AS tmpTbl;
+            DECLARE ret INT;
+            DECLARE done INT DEFAULT 0;
+            DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
+            DECLARE tid '.$CT_cols[T_OBJ_TEAM].';
+            DECLARE cid '.$CT_cols[T_OBJ_COACH].';
+            DECLARE rid '.$CT_cols[T_OBJ_RACE].';
+            DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].';
+            DECLARE cur_p CURSOR FOR SELECT f_player_id,f_tour_id FROM match_data GROUP BY f_player_id,f_tour_id;
+            DECLARE cur_t CURSOR FOR SELECT f_team_id,  f_tour_id FROM match_data GROUP BY f_team_id,  f_tour_id;
+            DECLARE cur_c CURSOR FOR SELECT f_coach_id, f_tour_id FROM match_data GROUP BY f_coach_id, f_tour_id;
+            DECLARE cur_r CURSOR FOR SELECT f_race_id,  f_tour_id FROM match_data GROUP BY f_race_id,  f_tour_id;
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+            OPEN cur_p;
+            REPEAT
+                FETCH cur_p INTO pid, trid;
+                IF NOT done THEN
+                    SET ret = syncMVplayer(pid,trid);
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_p;
+            SET done = 0;
+            
+            OPEN cur_t;
+            REPEAT
+                FETCH cur_t INTO tid, trid;
+                IF NOT done THEN
+                    SET ret = syncMVteam(tid,trid);
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_t;
+            SET done = 0;
+            
+            OPEN cur_c;
+            REPEAT
+                FETCH cur_c INTO cid, trid;
+                IF NOT done THEN
+                    SET ret = syncMVcoach(cid,trid);
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_c;
+            SET done = 0;
+            
+            OPEN cur_r;
+            REPEAT
+                FETCH cur_r INTO rid, trid;
+                IF NOT done THEN
+                    SET ret = syncMVrace(rid,trid);
+                END IF;
+            UNTIL done END REPEAT;
+            CLOSE cur_r;
+            SET done = 0;
+            
         END',
 
         'CREATE FUNCTION syncMVplayer(pid '.$CT_cols[T_OBJ_PLAYER].', trid '.$CT_cols[T_NODE_TOURNAMENT].')
@@ -1026,7 +1095,7 @@ public static function installProcsAndFuncs($install = true)
             DECLARE cur_p  CURSOR FOR SELECT player_id FROM players;
             DECLARE cur_t  CURSOR FOR SELECT team_id FROM teams;
             DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-            
+
             OPEN cur_tr;
             REPEAT
                 FETCH cur_tr INTO trid;
@@ -1052,12 +1121,12 @@ public static function installProcsAndFuncs($install = true)
             UNTIL done END REPEAT;
             CLOSE cur_p;
             SET done = 0;
-            
+
             OPEN cur_t;
             REPEAT
                 FETCH cur_t INTO tid;
                 IF NOT done THEN
-                    CALL getTourDProps(tid, tv, ff);
+                    CALL getTeamDProps(tid, tv, ff);
                     UPDATE teams SET teams.tv = tv, teams.ff = ff WHERE teams.team_id = tid;
                 END IF;
             UNTIL done END REPEAT;
@@ -1143,14 +1212,14 @@ public static function installProcsAndFuncs($install = true)
                 f_race_id, rerolls, ff_bought, cheerleaders, apothecary, ass_coaches
             FROM teams WHERE team_id = tid;
 
-            SET ff = ff_bought + (SELECT SUM(ff) FROM mv_teams WHERE f_tid = tid);            
+            SET ff = ff_bought + (SELECT IFNULL(SUM(mv_teams.ff),0) FROM mv_teams WHERE mv_teams.f_tid = tid);
+
             SET tv = (SELECT IFNULL(SUM(value),0) FROM players WHERE owned_by_team_id = tid AND players.status != '.MNG.')
                 + rerolls      * (SELECT cost_rr FROM races WHERE races.race_id = f_race_id)
                 + ff           * '.$rules['cost_fan_factor'].'
                 + cheerleaders * '.$rules['cost_cheerleaders'].'
                 + apothecary   * '.$rules['cost_apothecary'].'
                 + ass_coaches  * '.$rules['cost_ass_coaches'].';
-                
         END',
         
         'CREATE PROCEDURE getTourDProps(IN trid '.$CT_cols[T_NODE_TOURNAMENT].', OUT empty BOOLEAN, OUT begun BOOLEAN, OUT finished BOOLEAN, OUT winner '.$CT_cols[T_OBJ_TEAM].')
@@ -1173,14 +1242,14 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            CALL syncAllMVs();
-            CALL syncAllDPROPS();
-            CALL syncAllRels();
-            CALL syncAllWinPcts();
-            CALL syncAllWTCnts();
-            CALL syncAllTeamCnts();
-            CALL syncAllStreaks();
-            CALL syncAllELOs();
+            CALL syncAllMVs();      #SELECT "MVs done";
+            CALL syncAllDPROPS();   #SELECT "DPROPS done";
+            CALL syncAllRels();     #SELECT "Relations done";
+            CALL syncAllWinPcts();  #SELECT "Win pcts done";
+            CALL syncAllWTCnts();   #SELECT "WT cnts done";
+            CALL syncAllTeamCnts(); #SELECT "Team cnts done";
+            CALL syncAllStreaks();  #SELECT "Streaks done";
+            CALL syncAllELOs();     #SELECT "ELO done";
         END',
     );
     global $hrs;
