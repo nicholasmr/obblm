@@ -61,7 +61,7 @@ class XML_BOTOCS implements ModuleInterface
             $this->players = $team->getPlayers();
             $this->name = $team->name;
             $this->race = $team->f_rname;
-            $this->coach_name = $team->coach_name;
+            $this->coach_name = $team->f_cname;
             $this->rerolls = $team->rerolls;
             $this->fan_factor = $team->ff;
             $this->ass_coaches = $team->ass_coaches;
@@ -73,7 +73,7 @@ class XML_BOTOCS implements ModuleInterface
         if ( !$this->checkJourneymen() ) return false;
 
         $this->name = $team->name;
-        $this->coach_name = $team->coach_name;
+        $this->coach_name = $team->f_cname;
         $this->createRoster();
 
     }
@@ -124,7 +124,7 @@ class XML_BOTOCS implements ModuleInterface
                     }
                 $injured = ( $p->is_mng ) ? "true" : "false";
                 $this->roster .= "            </skills>\n";
-                $this->roster .= "            <spp>".$p->spp."</spp>\n";
+                $this->roster .= "            <spp>".$p->mv_spp."</spp>\n";
                 $this->roster .= "            <nigglings>".$p->inj_ni."</nigglings>\n";
                 $this->roster .= "            <injured>".$injured."</injured>\n";
                 $this->roster .= "            <value>".$p->value."</value>\n";
@@ -143,7 +143,7 @@ class XML_BOTOCS implements ModuleInterface
 
         foreach ( $this->players as $p )
         {
-            if ( !$p->is_dead && !$p->is_sold && $p->is_journeyman && $p->spp > 0 )
+            if ( !$p->is_dead && !$p->is_sold && $p->is_journeyman && $p->mv_spp > 0 )
             {
                 Print "You have a journeyman with star players points.  Please hire or fire him.";
                 return false;
