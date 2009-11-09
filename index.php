@@ -55,6 +55,9 @@ if (isset($_GET['logout'])) {
     Coach::logout();
 }
 
+if (!isset($coach) && isset($_SESSION['logged_in']))  # Create global coach object if just logged in now.
+    $coach = new Coach($_SESSION['coach_id']); 
+    
 HTMLOUT::frame_begin(isset($_SESSION['logged_in']) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
 MTS('Header loaded, login auth, html frame generated');
 

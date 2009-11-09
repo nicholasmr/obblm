@@ -108,19 +108,9 @@ class Team
     }
 
     public function getWonTours() {
-
-        /**
-         * Returns an array of tournament objects for those tournaments this team has won.
-         **/
-
-        $tours = array();
-
-        foreach (Tour::getTours() as $t) {
-            if ($t->winner == $this->team_id)
-                array_push($tours, $t);
-        }
-
-        return $tours;
+    
+        // Returns an array of tournament objects for those tournaments this team has won.
+        return array_map(create_function('$t', 'return new Tour($t->tour_id);'), get_rows('tours', array('tour_id'), array("winner = $this->team_id")));
     }
 
     public function getLatestTour() {
