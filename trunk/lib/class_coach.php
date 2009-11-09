@@ -120,18 +120,12 @@ class Coach
 
     public function getWonTours() {
 
-        /**
-         * Returns an array of tournament objects for those tournaments the coach's teams have won.
-         **/
-        
+        // Returns an array of tournament objects for those tournaments the coach's teams have won.
         $tours = array();
-        
-        foreach ($this->getTeams() as $t) {
-            foreach ($t->getWonTours() as $tour) {
-                array_push($tours, $tour);
-            }
+        $result = mysql_query("SELECT tour_id FROM tours,teams WHERE winner = team_id AND owned_by_coach_id = $this->coach_id");
+        while ($row = mysql_fetch_assoc($result)) {
+            array_push($tours, new Tour($row['tour_id']));
         }
-        
         return $tours;
     }
 

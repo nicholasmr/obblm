@@ -74,7 +74,7 @@ public function getGoods($double_rr_price = false)
     global $DEA, $rules;
 
     $rr_price = (array_key_exists($this->race, $DEA) ? $DEA[$this->race]['other']['rr_cost'] : 0) * (($double_rr_price && !$rules['static_rerolls_prices']) ? 2 : 1);
-    $apoth = !in_array($this->race_id, array(10, 13, 15, 17));
+    $apoth = !in_array($this->race_id, array(10, 13, 15, 17)); # Teams that may not have apothecary.
 
     return array(
             // MySQL column names as keys

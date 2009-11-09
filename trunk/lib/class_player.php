@@ -600,8 +600,9 @@ class Player
         if ($this->ach_st > 0) array_push($chrs, "+$this->ach_st St");
         if ($this->ach_ag > 0) array_push($chrs, "+$this->ach_ag Ag");
         if ($this->ach_av > 0) array_push($chrs, "+$this->ach_av Av");
-        
-        return implode(', ', array_merge(array(skillsTrans(array_merge($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills))),$extras,$chrs));
+
+        $skillstr = skillsTrans(array_merge($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills));
+        return implode(', ', array_merge(empty($skillstr) ? array() : array($skillstr), $extras, $chrs));
     }
     
     public function getInjsStr($HTML = false) 
