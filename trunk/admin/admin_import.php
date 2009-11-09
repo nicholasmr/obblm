@@ -132,7 +132,7 @@ if (isset($_POST['button'])) {
                 }
             }
 
-            if (!Player::price(array('race' => $_POST['race'], 'position' => $_POST[$i.'position']))) {
+            if (!Player::price($_POST[$i.'position'])) {
                 // If we are able to find a price for the player at the specified position, then the position must be valid!
                 status(false, "The player position of player #$i is invalid.");
                 continue;
@@ -157,7 +157,7 @@ if (isset($_POST['button'])) {
                 continue;
 
             // Create the player.
-            $t->dtreasury(Player::price(array('race' => $t->race, 'position' => $_POST[$i.'position']))); // Make sure we have enough money to buy player.
+            $t->dtreasury(Player::price($_POST[$i.'position'])); // Make sure we have enough money to buy player.
             $ret = Player::create(array('nr' => $i, 'position' => $_POST[$i.'position'], 'name' => $_POST[$i.'name'], 'team_id' => $t->team_id, 'forceCreate' => true));
 
             if ($ret[0]) {

@@ -650,21 +650,15 @@ class Player
         }
     }
 
-    public static function price(array $input) {
+    public static function price($pos_id) {
     
         /**
          * Get the price of a specific player.
-         *
-         * Arguments: race, position
          **/
         
-        global $DEA;
-
-        // Check if race is valid.
-        if (array_key_exists($input['race'], $DEA) && array_key_exists($input['position'], $DEA[$input['race']]['players']))
-            return $DEA[$input['race']]['players'][$input['position']]['cost'];
-        else
-            return null;
+        $result = mysql_query("SELECT cost FROM game_data_players WHERE pos_id = $pos_id");
+        $row = mysql_fetch_row($result);
+        return (int) $row[0];
     }
     
     public static function theDoctor($const) {
@@ -680,7 +674,7 @@ class Player
         /**
          * Creates a new player.
          *
-         * Input: nr, position, name, team_id, (optional) forceCreate
+         * Input: nr, f_pos_id, name, team_id, (optional) forceCreate
          * Output: Returns array. First element: True/false, if false second element holds string containing error explanation.
          **/
 
@@ -689,7 +683,7 @@ class Player
              
         $team    = new Team($input['team_id']);
         $players = $team->getPlayers();
-        $price   = $journeyman ? 0 : Player::price(array('race' => $team->f_rname, 'position' => $input['position']));
+        $price   = $journeyman ? 0 : Player::price($input['f_pos_id']);
         
         // Ignore errors and force creation (used when importing teams)?
         if (!array_key_exists('forceCreate', $input) || !$input['forceCreate']) {
@@ -701,7 +695,7 @@ class Player
 
                 // Is position valid to make a journeyman? 
                 // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
-                if ($DEA[$team->f_rname]['players'][$input['position']]['qty'] < (($rules['enable_lrb6x']) ? 12 : 16))
+                if ($DEA[$team->f_rname]['players'][get_alt_col('game_data_players', 'pos_id', $input['f_pos_id'], 'name')]['qty'] < (($rules['enable_lrb6x']) ? 12 : 16))
                     return array(false, 'May not make a journeyman from that player position.');       
             }
             else {
@@ -714,7 +708,7 @@ class Player
                     return array(false, 'Not enough money.');
 
                 // Reached max quantity of player position?
-                if (!$team->isPlayerBuyable($input['position']))
+                if (!$team->isPlayerBuyable($input['f_pos_id']))
                     return array(false, 'Maximum quantity of player position is reached.');        
             }
         }
@@ -747,9 +741,6 @@ class Player
                         ach_st,
                         ach_ag,
                         ach_av,
-                        ach_nor_skills,
-                        ach_dob_skills,
-                        extra_skills,
                         extra_spp
                     )
                     VALUES
@@ -758,11 +749,10 @@ class Player
                         " . ($journeyman ? PLAYER_TYPE_JOURNEY : PLAYER_TYPE_NORMAL ) . ",
                         $input[team_id], 
                         $input[nr], 
-                        '$input[f_pos_id]', 
+                        $input[f_pos_id], 
                         NOW(), 
 
                         0, 0, 0, 0,
-                        '', '', '',
                         0
                     )";
 

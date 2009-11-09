@@ -62,11 +62,6 @@ class Team
     public $ga_0   = 0;
     public $tcas_0 = 0;
 
-    // Non-constructor filled fields.
-
-        // By getPlayers().
-        private $_players = array();
-
     /***************
      * Methods
      ***************/
@@ -339,48 +334,20 @@ class Team
 
         global $rules;
 
-        // Determine subtraction value.
-        $DOS = 0; # Dead Or Sold
-
-        if (empty($this->_players))
-            $this->getPlayers(); # Fills $this->_players.
-
-        foreach ($this->_players as $p) {
-            if ($p->is_dead || $p->is_sold)
-                $DOS++;
-        }
-
-        if (count($this->_players) - $DOS >= $rules['max_team_players'])
-            return true;
-        else
-            return false;
+        $query = "SELECT (COUNT(*) >= ".$rules['max_team_players'].") FROM players
+            WHERE owned_by_team_id = $this->team_id AND status NOT IN (".DEAD.",".SOLD.")";
+        $result = mysql_query($query);
+        $row = mysql_fetch_row($result);
+        return (bool) $row[0];
     }
 
-    public function isPlayerBuyable($position) {
+    public function isPlayerBuyable($pos_id) {
 
-        /**
-         * Checks if team has reach player quantity limit for specific player position.
-         * Note: Player quantity limits are defined in $DEA
-         **/
-
-        global $DEA;
-
-        if (empty($this->_players))
-            $this->getPlayers(); # Fills $this->_players.
-
-        // Determine subtraction value.
-        $DOS = 0; # Dead Or Sold
-        foreach ($this->_players as $p) {
-                if ($p->pos == $position && ($p->is_dead || $p->is_sold))
-                    $DOS++;
-        }
-
-        // Find current count of position.
-        $query   = "SELECT COUNT(player_id) as 'number' FROM players WHERE owned_by_team_id = $this->team_id AND position = '$position'";
-        $result  = mysql_query($query);
-        $row     = mysql_fetch_assoc($result);
-
-        return (array_key_exists($position, $DEA[$this->race]['players']) && ($row['number'] - $DOS) < $DEA[$this->race]['players'][$position]['qty']);
+        $query = "SELECT (COUNT(*) < qty) FROM players, game_data_players 
+            WHERE f_pos_id = pos_id AND owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND status NOT IN (".DEAD.",".SOLD.")";
+        $result = mysql_query($query);
+        $row = mysql_fetch_row($result);
+        return (bool) $row[0];
     }
 
     public function getToursPlayedIn($ids_only = false)
