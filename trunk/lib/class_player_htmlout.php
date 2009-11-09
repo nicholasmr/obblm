@@ -29,13 +29,6 @@ public static function standings()
     global $lng;
     title($lng->getTrn('menu/statistics_menu/player_stn'));
     HTMLOUT::standings(STATS_PLAYER,false,false,array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false)));
-    ?>
-    <?php echo $lng->getTrn('standings/player/colors');?>:
-    <ul>
-        <li style='width: 4em;background-color:<?php echo COLOR_HTML_DEAD;?>;'>Dead</li>
-        <li style='width: 4em;background-color:<?php echo COLOR_HTML_SOLD;?>;'>Sold</li>
-    </ul>
-    <?php
 }
 
 public static function profile($pid) 
@@ -185,6 +178,18 @@ private function _about($ALLOW_EDIT)
                         <?php
                     }
                     ?>
+                    <tr>
+                        <td><b>Won</b></td>
+                        <td><?php echo "$p->mv_won"; ?></td>
+                    </tr>
+                    <tr>
+                        <td><b>Lost</b></td>
+                        <td><?php echo "$p->mv_lost"; ?></td>
+                    </tr>
+                    <tr>
+                        <td><b>Draw</b></td>
+                        <td><?php echo "$p->mv_draw"; ?></td>
+                    </tr>
                     <?php
                     if (Module::isRegistered('SGraph')) {
                         ?>

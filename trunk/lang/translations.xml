@@ -369,12 +369,6 @@
 </profile>
 
 <standings>
-    <player>
-        <colors>Color descriptions</colors>
-    </player>
-    <star>
-        <tblTitle2>Star standings (2 of 2)</tblTitle2>
-    </star>
     <team>
         <tblTitle2>All-time standings continued (team details)</tblTitle2>
     </team>

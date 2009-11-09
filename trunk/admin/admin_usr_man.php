@@ -44,7 +44,7 @@ if (isset($_POST['type'])) {
     }
 
     // Reload coaches objects.
-    $coaches = Coach::getCoaches();
+    $coaches = get_rows('coaches', array());
 }
 
 // Interface related correction to make long coach names not break visual layout.

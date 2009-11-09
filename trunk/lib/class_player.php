@@ -383,7 +383,7 @@ class Player
 
     public function dval($val = 0) {
         $query = "UPDATE players SET extra_val = $val WHERE player_id = $this->player_id";
-        return mysql_query($query);
+        return mysql_query($query) && self::forceUpdTrigger($this->player_id);
     }
 
     public function addSkill($type, $skill) {
@@ -413,16 +413,19 @@ class Player
         $IS_EXTRA   = ($type == 'E' && in_array($skill, array_keys($skillididx)));
 
         // Determine skill type.
+        $query = '';
         if ($type == "C" && preg_match("/^ach_\w{2}$/", $skill)) { # ach_XX ?
             if ($this->chrLimits('ach', preg_replace('/^ach_/', '', $skill)))
-                return mysql_query("UPDATE players SET $skill = $skill + 1 WHERE player_id = $this->player_id");
+                $query = "UPDATE players SET $skill = $skill + 1 WHERE player_id = $this->player_id";
         }
         elseif ($IS_REGULAR || $IS_EXTRA) {
             $this->{$skillcats[$type]['obj_idx']}[] = $skill;
-            return mysql_query("INSERT INTO players_skills(f_pid, f_skill_id, type) VALUES ($this->player_id, $skill, '$type')");
+            $query = "INSERT INTO players_skills(f_pid, f_skill_id, type) VALUES ($this->player_id, $skill, '$type')";
         }
 
-        return false; # Unknown $type or other fall-through error.
+        $ret = mysql_query($query);
+        self::forceUpdTrigger($this->player_id); # Update player value.
+        return $ret;
     }
 
     public function rmSkill($type, $skill) {
@@ -433,14 +436,16 @@ class Player
          
         global $skillcats;
 
+        $query = '';
         if (in_array($type, array_keys($skillcats))) {
-            return mysql_query("DELETE FROM players_skills WHERE f_pid = $this->player_id AND type = '$type' AND f_skill_id = $skill");
+            $query = "DELETE FROM players_skills WHERE f_pid = $this->player_id AND type = '$type' AND f_skill_id = $skill";
         }
         elseif ($type == "C" && preg_match("/^ach_\w{2}$/", $skill)) {
-            return mysql_query("UPDATE players SET $skill = $skill - 1 WHERE player_id = $this->player_id");
+            $query = "UPDATE players SET $skill = $skill - 1 WHERE player_id = $this->player_id";
         }
-
-        return false; # Unknown $type or other fall-through error.
+        $ret = mysql_query($query);
+        self::forceUpdTrigger($this->player_id); # Update player value.
+        return $ret;
     }
     
     public function getStatus($match_id) {
@@ -764,13 +769,15 @@ class Player
 
             return array(false, 'MySQL error: Could not add new player to team.'); // Gold was returned to team's treasury.
         }
-
+        
         // Return player ID if successful.
-        $query = "SELECT MAX(player_id) AS 'player_id' FROM players WHERE owned_by_team_id = $input[team_id] AND nr = $input[nr]";
-        $result = mysql_query($query);
-        $row = mysql_fetch_assoc($result);
-
-        return array(true, $row['player_id']);
+        $pid = (int) mysql_insert_id();
+        self::forceUpdTrigger($pid);
+        return array(true, $pid);
+    }
+    
+    public static function forceUpdTrigger($pid) {
+        return mysql_query("UPDATE players SET value = 0 WHERE player_id = $pid"); # Force update trigger to sync properties.
     }
 }
 

@@ -31,7 +31,7 @@ public static function dispTeamList($obj, $obj_id)
     global $settings, $lng;
 
     $teams = array();
-    $get_row_fields = array('team_id', 'name', 'owned_by_coach_id', 'f_cname', 'f_rname', 'rdy', 'tv', 'retired');
+    $get_row_fields = array('team_id', 'name', 'owned_by_coach_id', 'f_race_id', 'f_cname', 'f_rname', 'rdy', 'tv', 'retired');
     switch ($obj) {
         case STATS_COACH:
             $teams = get_rows('teams', $get_row_fields, array("owned_by_coach_id = $obj_id"));
@@ -42,14 +42,14 @@ public static function dispTeamList($obj, $obj_id)
             $teams = get_rows('teams', $get_row_fields);
             break;
     }
+
     // OPTIONALLY hide retired teams.
     if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->retired;'));}
-    objsort($teams, array('+name'));
     foreach ($teams as $t) {
         $retired = (($t->retired) ? '<b><font color="red">[R]</font></b>' : '');
         $t->name .= "</a>&nbsp;$retired";
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
-        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath()."'>";
+        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
         $t->retired = ($t->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
         $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
     }
@@ -86,7 +86,7 @@ public static function standings($node = false, $node_id = false)
         'name'         => array('desc' => 'Team', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
         'f_rname'      => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
         'f_cname'      => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
-        'ff'           => array('desc' => 'FF'),
+        'rg_ff'        => array('desc' => 'FF'),
         'rerolls'      => array('desc' => 'RR'),
         'ass_coaches'  => array('desc' => 'Ass. coaches'),
         'cheerleaders' => array('desc' => 'Cheerleaders'),
@@ -238,6 +238,8 @@ private function _handleActions($ALLOW_EDIT)
                 break;
         }
     }
+    
+    $team->setStats(false,false,false); # Reload fields in case they changed after team actions made.
 }
 
 private function _loadPlayers($DETAILED)
@@ -248,8 +250,6 @@ private function _loadPlayers($DETAILED)
     global $settings;
     $team = $this; // Copy. Used instead of $this for readability.
     $players = $players_org = array();
-    
-    $team = new Team($this->team_id); # Update team object in case of changes to team were made by requested actions (_handleActions()).
     $players_org = $team->getPlayers(); 
     // Make two copies: We will be overwriting $players later when the roster has been printed, so that the team actions boxes have the correct untempered player data to work with.
     foreach ($players_org as $p) {
@@ -310,8 +310,8 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         $p->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$p->icon' alt='player avatar'></td><td>$p->position</td></tr></table>";
 
         if ($DETAILED) {
-            $p->cas = "$p->mv_bh/$p->mv_si/$p->mv_ki";
-            $p->spp = "$p->mv_spp/$p->extra_spp";
+            $p->mv_cas = "$p->mv_bh/$p->mv_si/$p->mv_ki";
+            $p->mv_spp = "$p->mv_spp/$p->extra_spp";
         }
         
         // Characteristic's colors
@@ -664,7 +664,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>                
                 <tr>
                     <td>TV</td>
-                    <td><?php echo $team->value/1000 . 'k'; ?></td>
+                    <td><?php echo $team->tv/1000 . 'k'; ?></td>
                 </tr>
                 <tr>
                     <td>Treasury</td>
@@ -690,7 +690,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                     <td>Fan&nbsp;Factor</td>
-                    <td><?php echo $team->ff; ?></td>
+                    <td><?php echo $team->rg_ff; ?></td>
                 </tr>
                 <tr>
                     <td>Ass.&nbsp;Coaches</td>
@@ -864,9 +864,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <?php
                         $DISABLE = true;
                         foreach ($players as $p) {
-                            $price = $DEA[$team->race]['players'][$p->pos]['cost'];
+                            $price = $DEA[$team->f_rname]['players'][$p->pos]['cost'];
                             if (!$p->is_journeyman || $p->is_sold || $p->is_dead || 
-                                $team->treasury < $price || !$team->isPlayerBuyable($p->pos) || $team->isFull()) {
+                                $team->treasury < $price || !$team->isPlayerBuyable($p->f_pos_id) || $team->isFull()) {
                                 continue;
                             }
 
@@ -1017,7 +1017,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     case 'buy_goods':
                         echo $lng->getTrn('profile/team/box_tm/desc/buy_goods');
                         $goods_temp = $team->getGoods();
-                        if ($DEA[$team->race]['other']['RerollCost'] != $goods_temp['rerolls']['cost']) {
+                        if ($DEA[$team->f_rname]['other']['rr_cost'] != $goods_temp['rerolls']['cost']) {
                             echo $lng->getTrn('profile/team/box_tm/desc/buy_goods_warn');
                         }
                         ?>

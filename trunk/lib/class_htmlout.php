@@ -227,7 +227,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 unset($fields["rg_s$f"]);
                 unset($fields["mv_s$f"]);
             }
-            $objs = Stats::getLeaders(T_OBJ_PLAYER, $sel_node, $sel_node_id, $sortRule, $settings['entries_players'],$set_avg);
+            $objs = Stats::getLeaders(T_OBJ_PLAYER, $sel_node, $sel_node_id, $sortRule, $settings['entries']['standings_players'],$set_avg);
             break;
 
         case STATS_TEAM:
@@ -259,17 +259,17 @@ public static function standings($obj, $node, $node_id, array $opts)
             {
                 case STATS_COACH:
                     $fields_before['f_rname'] = array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_COACH => $opts['teams_from_id']), T_OBJ_TEAM, false, $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_COACH => $opts['teams_from_id']), T_OBJ_TEAM, $settings['entries']['standings_teams'], $sortRule, $set_avg);
                     break;
 
                 case STATS_RACE:
                     $fields_before['f_cname'] = array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_RACE => $opts['teams_from_id']), T_OBJ_TEAM, false, $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_RACE => $opts['teams_from_id']), T_OBJ_TEAM, $settings['entries']['standings_teams'], $sortRule, $set_avg);
                     break;
 
                 // All teams
                 default:
-                    $objs = Stats::getLeaders(T_OBJ_TEAM, $sel_node, $sel_node_id, $sortRule, false,$set_avg);
+                    $objs = Stats::getLeaders(T_OBJ_TEAM, $sel_node, $sel_node_id, $sortRule, $settings['entries']['standings_teams'],$set_avg);
             }
             // OPTIONALLY hide retired teams.
             if ($ALL_TIME && $settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
@@ -315,7 +315,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             else if ($ALL_TIME) {
                 $fields_before['rg_team_cnt'] = array('desc' => 'Teams');
             }
-            $objs = Stats::getLeaders(T_OBJ_COACH,$sel_node,$sel_node_id,sort_rule($tblSortRule),false,$set_avg);
+            $objs = Stats::getLeaders(T_OBJ_COACH,$sel_node,$sel_node_id,sort_rule($tblSortRule),$settings['entries']['standings_coaches'],$set_avg);
             // OPTIONALLY hide retired coaches.
             if ($settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
             break;

@@ -28,7 +28,7 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnExists('teams', 'elo_0', 'ALTER TABLE teams DROP elo_0'),
         SQLUpgrade::runIfColumnNOTExists('teams', 'played_0', 'ALTER TABLE teams ADD COLUMN played_0 SMALLINT UNSIGNED NOT NULL DEFAULT 0'),
         'UPDATE teams SET played_0 = won_0 + draw_0 + lost_0',
-        'ALTER TABLE players MODIFY player_id MEDIUMINT SIGNED',
+        'ALTER TABLE players MODIFY player_id MEDIUMINT SIGNED NOT NULL AUTO_INCREMENT',
             # New FF col system.
         SQLUpgrade::runIfColumnNOTExists('teams', 'ff_bought', 'ALTER TABLE teams ADD COLUMN ff_bought TINYINT UNSIGNED AFTER rerolls'),
         SQLUpgrade::runIfColumnNOTExists('teams', 'ff', 'ALTER TABLE teams ADD COLUMN ff TINYINT UNSIGNED'),

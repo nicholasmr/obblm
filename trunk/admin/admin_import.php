@@ -1,4 +1,5 @@
 <?php
+fatal('Out of order');
 define('HTML', 1);
 define('XML', 2);
 $inputType = null;
