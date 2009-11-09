@@ -164,7 +164,7 @@ private function _handleActions($ALLOW_EDIT)
         case 'hire_player':
             $status = Player::create(array(
                 'nr'        => $_POST['number'], 
-                'position'  => $_POST['player'], 
+                'f_pos_id'  => $_POST['player'], 
                 'team_id'   => $team->team_id, 
                 'name'      => $_POST['name']),
                 (isset($_POST['as_journeyman']) && $_POST['as_journeyman']) ? true : false);
@@ -818,12 +818,12 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <?php
                         $active_players = array_filter($players, create_function('$p', "return (\$p->is_sold || \$p->is_dead || \$p->is_mng) ? false : true;"));
                         $DISABLE = true;
-                        foreach ($DEA[$team->race]['players'] as $pos => $details) {
+                        foreach ($DEA[$team->f_rname]['players'] as $pos => $details) {
                         
                             // Show players on the select list if buyable, or if player is a potential journeyman AND team has not reached journeymen limit.
-                            if (($team->isPlayerBuyable($pos) && $team->treasury >= $details['cost']) || 
+                            if (($team->isPlayerBuyable($details['pos_id']) && $team->treasury >= $details['cost']) || 
                                 (($details['qty'] == 16 || (($rules['enable_lrb6x']) ? ($details['qty'] == 12) : false)) && count($active_players) < $rules['journeymen_limit'])) {
-                                echo "<option value='$pos'>" . $details['cost']/1000 . "k | $pos</option>\n";
+                                echo "<option value='$details[pos_id]'>" . $details['cost']/1000 . "k | $pos</option>\n";
                                 $DISABLE = false;
                             }
                         }
