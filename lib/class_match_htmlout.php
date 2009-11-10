@@ -21,6 +21,8 @@
  *
  */
 
+define('T_HTML_MATCHES_PER_PAGE', 100);
+
 class Match_HTMLOUT extends Match
 {
 
@@ -58,88 +60,80 @@ public static function tourMatches()
         }
     }
     
-    $tr = new Tour($_GET['trid']);
-    title($tr->name);
-    $matches = array();
-    foreach ($tr->getMatches() as $m) {
-        $matches[$m->round][] = $m;
-    }
-    ksort($matches);
-
-    foreach ($matches as $round => $matches) {
-        echo "<table class='tours'>\n";
-        // Determine what to write in "round" field.
-        $org_round = $round; # Copy for later use.
-        if     ($round == RT_FINAL)         $round = $lng->getTrn('matches/tourmatches/roundtypes/final');
-        elseif ($round == RT_3RD_PLAYOFF)   $round = $lng->getTrn('matches/tourmatches/roundtypes/thirdPlayoff');
-        elseif ($round == RT_SEMI)          $round = $lng->getTrn('matches/tourmatches/roundtypes/semi');
-        elseif ($round == RT_QUARTER)       $round = $lng->getTrn('matches/tourmatches/roundtypes/quarter');
-        elseif ($round == RT_ROUND16)       $round = $lng->getTrn('matches/tourmatches/roundtypes/rnd16');
-        else                                $round = $lng->getTrn('matches/tourmatches/roundtypes/rnd').": $round";
-
+    ?>
+    <script language="JavaScript" type="text/javascript">
+        function match_delete() {
+            return confirm('<?php echo $lng->getTrn('matches/tourmatches/matchdelete'); ?>');
+        }
+        function match_reset() {
+            return confirm('<?php echo $lng->getTrn('matches/tourmatches/reset_notice'); ?>');
+        }
+    </script>
+    <?php
+    
+    $trid = $_GET['trid']; # Shortcut for string interpolation.
+    $query = "SELECT COUNT(*) FROM matches WHERE f_tour_id = $trid";
+    $result = mysql_query($query);
+    list($cnt) = mysql_fetch_row($result);
+    $pages = ceil($cnt/T_HTML_MATCHES_PER_PAGE);
+    global $page;
+    $page = isset($_GET['page']) ? $_GET['page'] : 1; # Page 1 is default, of course.    
+    $_url = "?section=matches&amp;type=tourmatches&amp;trid=$trid&amp;";
+    title(get_alt_col('tours', 'tour_id', $trid, 'name'));
+    echo '<center><table>';
+    echo '<tr><td>';
+    echo 'Page: '.implode(', ', array_map(create_function('$nr', 'global $page; return ($nr == $page) ? $nr : "<a href=\''.$_url.'page=$nr\'>$nr</a>";'), range(1,$pages)));
+    echo '</td></td>';
+    echo "<tr><td>    Matches: $cnt</td></td>";
+    echo '</table></center>';
+    
+    $rnd = 0; # Initial round number must be lower than possible round numbers.    
+    $cols = 7; # Common columns counter.
+    $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score 
+        FROM matches, teams AS t1, teams AS t2 WHERE f_tour_id = $trid AND team1_id = t1.team_id AND team2_id = t2.team_id 
+        ORDER BY round DESC, date_played DESC, date_created ASC LIMIT ".(($page-1)*T_HTML_MATCHES_PER_PAGE).', '.(($page)*T_HTML_MATCHES_PER_PAGE);
+    $result = mysql_query($query);
+    echo "<table class='tours'>\n";
+    while ($m = mysql_fetch_object($result)) {
+        if ($m->round != $rnd) {
+            $rnd = $m->round;
+            $round = '';
+            if     ($rnd == RT_FINAL)         $round = $lng->getTrn('matches/tourmatches/roundtypes/final');
+            elseif ($rnd == RT_3RD_PLAYOFF)   $round = $lng->getTrn('matches/tourmatches/roundtypes/thirdPlayoff');
+            elseif ($rnd == RT_SEMI)          $round = $lng->getTrn('matches/tourmatches/roundtypes/semi');
+            elseif ($rnd == RT_QUARTER)       $round = $lng->getTrn('matches/tourmatches/roundtypes/quarter');
+            elseif ($rnd == RT_ROUND16)       $round = $lng->getTrn('matches/tourmatches/roundtypes/rnd16');
+            else                              $round = $lng->getTrn('matches/tourmatches/roundtypes/rnd').": $rnd";
+            echo "<tr><td colspan='$cols' class='seperator'></td></tr>";
+            echo "<tr><td colspan='$cols' class='round'><center><b>$round</b></center></td></tr>";
+            echo "<tr><td colspan='$cols' class='seperator'></td></tr>";
+        }
         ?>
-        <tr><td colspan='7' class="seperator"></td></tr>
         <tr>
-            <td width="100"></td>
-            <td class="round" width="250"><?php echo $round; ?></td>
-            <td width="25"></td>
-            <td width="50"></td>
-            <td width="25"></td>
-            <td width="250"></td>
-            <td width="260"></td>
-        </tr>
-        <?php
-        foreach ($matches as $m) {
-            ?>
-            <tr>
-            <td></td>
-            <td class="match" style="text-align: right;"><?php echo $m->team1_name;?></td>
-            <td class="match" style="text-align: center;"><?php echo ($m->is_played) ? $m->team1_score : '';?></td>
+            <td><?php echo textdate($m->date_played, true); ?></td>
+            <td class="match" style="text-align: right;"><?php echo $m->t1_name;?></td>
+            <td class="match" style="text-align: center;"><?php echo !empty($m->date_played) ? $m->team1_score : '';?></td>
             <td class="match" style="text-align: center;">-</td>
-            <td class="match" style="text-align: center;"><?php echo ($m->is_played) ? $m->team2_score : '';?></td>
-            <td class="match" style="text-align: left;"><?php echo $m->team2_name;?></td>
+            <td class="match" style="text-align: center;"><?php echo !empty($m->date_played) ? $m->team2_score : '';?></td>
+            <td class="match" style="text-align: left;"><?php echo $m->t2_name;?></td>
             <?php
             // Does the user have edit or view rights?
-            $matchURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$tr->tour_id&amp;mid=$m->match_id";
+            $matchURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$trid&amp;mid=$m->match_id";
             ?>
             <td>
-                &nbsp;
-                <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>">
-                <?php
-                if (is_object($coach)) {
-                    echo (($coach->isInMatch($m->match_id) || $coach->admin) ? $lng->getTrn('common/edit') : $lng->getTrn('common/view')) . "</a>&nbsp;\n";
-                    if ($coach->admin) {
-                        echo "<a onclick=\"if(!confirm('".$lng->getTrn('matches/tourmatches/reset_notice')."')){return false;}\" href='$matchURL&amp;action=reset'>".$lng->getTrn('common/reset')."</a>&nbsp;\n";
-                        echo "<a onclick=\"if(!confirm('".$lng->getTrn('matches/tourmatches/matchdelete')."')){return false;}\" href='$matchURL&amp;action=delete' style='color:".(($m->is_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('common/delete')."</a>&nbsp;\n";
-                        echo "<a href='$matchURL&amp;action=".(($m->locked) ? 'unlock' : 'lock')."'>" . ($m->locked ? $lng->getTrn('common/unlock') : $lng->getTrn('common/lock')) . "</a>&nbsp;\n";
-                    }
-                }
-                else {
-                    echo $lng->getTrn('common/view')."</a>\n";
-                }
-                ?>
-            </td>
-            </tr>
             <?php
-        }
-    }
-
-    if ($tr->is_finished && isset($tr->winner)) { # If tournament is finished.
-        echo "<tr><td colspan='7' class='seperator'></td></tr>";
-        $team = new Team($tr->winner);
-        echo "<tr>  <td colspan='1'></td>
-                    <td colspan='1' class='match'><i>".$lng->getTrn('matches/tourmatches/winner').":</i> $team->name </td>
-                    <td colspan='5'></td>
-                </tr>\n";
-    }
-    ?>
-    <tr><td colspan='7' class='seperator'></td></tr>
-                    </table>
-                </div>
+            echo "&nbsp;<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>&nbsp;\n";
+            if (is_object($coach) && $coach->admin) {
+                echo "<a onclick=\"return match_reset();\" href='$matchURL&amp;action=reset'>".$lng->getTrn('common/reset')."</a>&nbsp;\n";
+                echo "<a onclick=\"return match_delete();\" href='$matchURL&amp;action=delete' style='color:".(!empty($m->date_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('common/delete')."</a>&nbsp;\n";
+                echo "<a href='$matchURL&amp;action=".(($m->locked) ? 'unlock' : 'lock')."'>" . ($m->locked ? $lng->getTrn('common/unlock') : $lng->getTrn('common/lock')) . "</a>&nbsp;\n";
+            }
+            ?>
             </td>
         </tr>
-    </table>
-    <?php
+        <?php
+    }
+    echo "</table>\n";
 }
 
 public static function tours() 
