@@ -297,7 +297,7 @@ class Player
         if (!$this->is_unbuyable() || $this->is_sold)
             return false;
             
-        $price = ($this->is_journeyman) ? 0 : Player::price(array('race' => $this->f_rname, 'position' => $this->pos));
+        $price = ($this->is_journeyman) ? 0 : self::price($this->f_pos_id);
         $team = new Team($this->owned_by_team_id);
 
         if (!$team->dtreasury($price))
@@ -319,7 +319,7 @@ class Player
             return false;
             
         $team = new Team($this->owned_by_team_id);
-        $price = Player::price(array('race' => $team->f_rname, 'position' => $this->pos));
+        $price = self::price($this->f_pos_id);
         
         if ($team->isFull() || !$team->isPlayerBuyable($this->pos) || $team->treasury < $price || !$team->dtreasury(-1 * $price))
             return false;
@@ -348,7 +348,7 @@ class Player
         global $DEA;
 
         $team = new Team($this->owned_by_team_id);
-        $price = Player::price(array('race' => $team->f_rname, 'position' => $this->pos));
+        $price = self::price($this->f_pos_id);
 
         if ($this->qty != 16) # Journeymen are players from a 0-16 buyable position.
             return false;
@@ -689,7 +689,7 @@ class Player
              
         $team    = new Team($input['team_id']);
         $players = $team->getPlayers();
-        $price   = $journeyman ? 0 : Player::price($input['f_pos_id']);
+        $price   = $journeyman ? 0 : self::price($input['f_pos_id']);
         
         // Ignore errors and force creation (used when importing teams)?
         if (!array_key_exists('forceCreate', $input) || !$input['forceCreate']) {
