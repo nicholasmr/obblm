@@ -204,9 +204,7 @@ function report() {
     if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
         fatal("Invalid match ID.");
     
-    global $stars;
-    global $rules;
-    global $lng;
+    global $lng, $stars, $rules, $coach;
     
     $easyconvert = new array_to_js();
     @$easyconvert->add_array($stars, 'phpStars'); // Load stars array into JavaScript array.
@@ -219,17 +217,12 @@ function report() {
     ';
    
     // Create objects
-    $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null;
     $m = new Match($match_id);
     $team1 = new Team($m->team1_id);
     $team2 = new Team($m->team2_id);
     
     // Determine visitor privileges.
-    $ALLOW_EDIT = false;
-
-    if (!$m->locked && is_object($coach) && ($coach->admin || $coach->isInMatch($m->match_id)))
-        $ALLOW_EDIT = true;
-    
+    $ALLOW_EDIT = (!$m->locked && is_object($coach) && ($coach->admin || $coach->isInMatch($m->match_id)));
     $DIS = ($ALLOW_EDIT) ? '' : 'DISABLED';
 
     /*****************
@@ -417,7 +410,7 @@ function report() {
                     <b><?php echo $lng->getTrn('matches/report/stadium');?></b>&nbsp;
                     <select name="stadium" <?php echo $DIS;?>>
                         <?php
-                        $teams = Team::getTeams();
+                        $teams = get_rows('teams', array('team_id', 'name'));
                         objsort($teams, array('+name'));
                         $stad = ($m->stadium) ? $m->stadium : $m->team1_id;
                         foreach ($teams as $_t) {
