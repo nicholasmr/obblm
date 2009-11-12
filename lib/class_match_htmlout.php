@@ -75,7 +75,7 @@ public static function tourMatches()
     $query = "SELECT COUNT(*) FROM matches WHERE f_tour_id = $trid";
     $result = mysql_query($query);
     list($cnt) = mysql_fetch_row($result);
-    $pages = ceil($cnt/T_HTML_MATCHES_PER_PAGE);
+    $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_MATCHES_PER_PAGE);
     global $page;
     $page = isset($_GET['page']) ? $_GET['page'] : 1; # Page 1 is default, of course.    
     $_url = "?section=matches&amp;type=tourmatches&amp;trid=$trid&amp;";
