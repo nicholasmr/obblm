@@ -615,7 +615,7 @@ function report() {
                         <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
                             <?php
                             foreach ($stars as $s => $d) {
-                                echo "<option ".((in_array($t->race, $d['teams'])) ? 'style="background-color: '.COLOR_HTML_READY.';"' : '')." value='$d[id]'>$s</option>\n";
+                                echo "<option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';"' : '')." value='$d[id]'>$s</option>\n";
                             }
                             ?>
                         </select>

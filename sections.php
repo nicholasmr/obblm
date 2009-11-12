@@ -40,7 +40,7 @@ function sec_login() {
             ?>
             <select name='coach'>
             <?php
-            $coaches = get_rows('coaches', array('coach_id', 'name'));
+            $coaches = get_rows('coaches', array('coach_id', 'name', 'retired'));
             objsort($coaches, array('+name'));
             foreach ($coaches as $c) {
                 if (!$c->retired)
