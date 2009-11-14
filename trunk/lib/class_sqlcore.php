@@ -508,11 +508,7 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             DECLARE status '.$core_tables['players']['status'].' DEFAULT NULL;
 
-            IF mid != -1 AND EXISTS(SELECT match_id FROM matches WHERE match_id = mid AND date_played IS NULL) THEN 
-                RETURN getPlayerStatus(pid, -1);
-            END IF;
-
-            IF mid = -1 THEN
+            IF mid = -1 OR EXISTS(SELECT match_id FROM matches WHERE match_id = mid AND date_played IS NULL) THEN
                 SELECT inj INTO status FROM match_data, matches WHERE 
                     f_player_id = pid AND
                     match_id = f_match_id AND
