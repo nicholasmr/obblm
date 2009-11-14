@@ -229,7 +229,7 @@ function sec_main() {
                             foreach ($opts['fields'] as $title => $f) {
                                 echo "<td>";
                                 if ($settings['fp_links'] && $f == 'name')
-                                    echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t->team_id,false,false)."'>$t[name]</a>";
+                                    echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t['team_id'],false,false)."'>$t[name]</a>";
                                 elseif (is_numeric($t[$f]) && !ctype_digit($t[$f]))
                                     echo sprintf('%1.2f', $t[$f]);
                                 else
@@ -292,7 +292,7 @@ function sec_main() {
                         <?php
                         foreach ($players as $p) {
                             echo "<tr>\n";
-                            echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)."'>$p[name]</a>" : $p['name'])."</td>\n";
+                            echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p['player_id'],false,false)."'>$p[name]</a>" : $p['name'])."</td>\n";
                             echo "<td>".$p[$f]."</td>\n";
                             echo "<td>".$p['value']/1000 ."k</td>\n";
                             echo "</tr>";

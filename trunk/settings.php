@@ -49,7 +49,7 @@ $settings['fp_leaders'] = array(
 $settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
 $settings['show_stars_mercs']      = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.
 $settings['fp_team_news']          = true;  // Default is true. Show team news on front page.
-$settings['fp_links']              = false; // Default is false. Generate coach, team and player links on the front page?
+$settings['fp_links']              = true;  // Default is true. Generate coach, team and player links on the front page?
 $settings['hide_retired']		   = false; // Defailt is false. Hides retired coaches and teams from standings tables.
 $settings['relate_team_to_league'] = false; // Default is false. Associate teams with leagues. Teams from different leagues can not schedule matches against each other. 
 
