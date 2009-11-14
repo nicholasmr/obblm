@@ -36,7 +36,9 @@ function sec_login() {
     <form method="POST" action="index.php">
         <b><?php echo $lng->getTrn('login/loginname');?></b>
         <?php
-        if ($settings['login_list']) {
+        $result = mysql_query("SELECT COUNT(*) FROM coaches");
+        $row = mysql_fetch_row($result);
+        if ($settings['login_list'] && $row[0] <= MAX_LOGIN_DROPDOWN) {
             ?>
             <select name='coach'>
             <?php

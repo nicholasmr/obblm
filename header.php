@@ -41,6 +41,7 @@ define('OBBLM_VERSION', '0.8 $Rev$');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcomming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
+define('MAX_LOGIN_DROPDOWN', 15); // If more coaches than this number exist we force having a login field and not a drop-down list for when selecting the login name.
 
 /*********************
  *   Node and object types.
