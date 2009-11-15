@@ -41,7 +41,7 @@ require('lib/class_sqlcore.php');
 if (isset($_POST['proc'])) {
     $conn = mysql_up(true);
     SQLCore::setTriggers(false);
-    echo ($result = mysql_query("CALL ".$_POST['proc'])) ? 'OK' : 'Failed: '.mysql_error();
+    echo ($result = mysql_query("CALL ".$_POST['proc'])) ? '<b>OK</b>' : 'Failed: '.mysql_error();
     echo "<br><br>";
     SQLCore::setTriggers(true);
 }
@@ -57,5 +57,32 @@ MySQL procedure:
 </form>
 
 </small>
+<hr>
+<b>DB structure status:</b><br><br>
+<table><tr valign='top'>
+<td>
+<i>Installed table indexes:</i><br>
+<small>
+<?php
+$conn = mysql_up();
+$result = mysql_query("SELECT index_name, table_name  FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema = '$db_name'");
+while ($row = mysql_fetch_row($result)) {
+    echo "$row[0] ($row[1])<br>\n";
+}
+?>
+</small>
+</td>
+<td>
+<i>Installed table triggers:</i><br>
+<small>
+<?php
+$result = mysql_query("SELECT trigger_name FROM INFORMATION_SCHEMA.TRIGGERS");
+while ($row = mysql_fetch_row($result)) {
+    echo "$row[0]<br>\n";
+}
+?>
+</small>
+</td>
+</tr></table>
 </body>
 </html>
