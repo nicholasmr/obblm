@@ -83,7 +83,7 @@ class ImageSubSys
         if ($this->obj == IMGTYPE_TEAMLOGO) {
             global $DEA, $raceididx;
             $race = $raceididx[($rid) ? $rid : get_alt_col('teams', 'team_id', $this->obj_id, 'f_race_id')];
-            return RACE_ICONS.'/'.$DEA[$race]['other']['icon'];
+            return file_exists($path=RACE_ICONS.'/'.$DEA[$race]['other']['icon']) ? $path : NO_PIC;
         }
         else {
             return NO_PIC;
