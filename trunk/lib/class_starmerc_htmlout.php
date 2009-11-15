@@ -40,7 +40,6 @@ public static function standings()
     global $lng;
     // All stars
     title($lng->getTrn('menu/statistics_menu/star_stn'));
-    echo $lng->getTrn('common/notice_simul')."<br>\n";
     echo $lng->getTrn('common/notice_spp')."<br><br>\n";
     HTMLOUT::standings(STATS_STAR, false, false, array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false),));
 }

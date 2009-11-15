@@ -110,7 +110,7 @@ public static function tourMatches()
         }
         ?>
         <tr>
-            <td><?php echo textdate($m->date_played, true); ?></td>
+            <td><?php echo !empty($m->date_played) ? textdate($m->date_played, true) : ''; ?></td>
             <td class="match" style="text-align: right;"><?php echo $m->t1_name;?></td>
             <td class="match" style="text-align: center;"><?php echo !empty($m->date_played) ? $m->team1_score : '';?></td>
             <td class="match" style="text-align: center;">-</td>
