@@ -1,13 +1,13 @@
 <?php
 if (isset($_POST['button'])) {
 
-    $all_teams = get_rows('teams', array('team_id', 'name')); // Fast team objects.
-    $team_ids = array_values(array_map(create_function('$t', 'return $t->team_id;'), array_filter($all_teams, create_function('$t', 'return isset($_POST[$t->team_id]);'))));
-    $teamsCount = count($team_ids);
-    
     /*
         Input validation.
     */
+    
+    // Teams
+    $team_ids = explode(',', $_POST['teams']);
+    $teamsCount = count($team_ids);
     
     // Shortcut booleans:
     $mkNewFFA       = ($_POST['type'] == TT_FFA && $_POST['existTour'] == -1);
@@ -24,10 +24,10 @@ if (isset($_POST['button'])) {
             ||
             $addMatchToFFA && $coach->com_lid != get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE) 
         ), 'You are not allowed to schedule matches in that league.'),
-        array($_POST['type'] == TT_FFA && $teamsCount != 2, 'Please select only 2 teams'),
         array($_POST['type'] == TT_RROBIN && $teamsCount < 3, 'Please select at least 3 teams'),
+        array($_POST['type'] == TT_FFA && ($teamsCount % 2 != 0), 'Please select an even number of teams'),
     );
-    
+
     // Print errors.
     $STATUS = true;
     foreach ($errors as $e) {
@@ -44,9 +44,9 @@ if (isset($_POST['button'])) {
     if ($nameSet && get_magic_quotes_gpc()) {
         $_POST['name'] = stripslashes($_POST['name']);
     }
-    // Reverse pair-up for FFA match?
-    if ($_POST['type'] == TT_FFA && isset($_POST['reverse']) && $_POST['reverse']) {
-        $team_ids = array_reverse($team_ids);
+    // Shuffle team list if multiple teams are scheduled to play a FFA.
+    if ($_POST['type'] == TT_FFA && $teamsCount > 2) {
+        shuffle($team_ids);
     }
     // When creating a new FFA tour the "rounds" input is intepreted as the round number of the initial match being created in the new tour.
     if ($mkNewFFA) {
@@ -60,7 +60,11 @@ if (isset($_POST['button'])) {
         // Add match to existing FFA?
         if ($addMatchToFFA) {
             $rnd = (!isset($_POST['round'])) ? 1 : (int) $_POST['round'];
-            status(Match::create(array('team1_id' => $team_ids[0], 'team2_id' => $team_ids[1], 'round' => $rnd, 'f_tour_id' => (int) $_POST['existTour'])));
+            $status = true;
+            for ($i = 0; $i < $teamsCount/2; $i++) {
+                $status &= Match::create(array('team1_id' => $team_ids[$i*2], 'team2_id' => $team_ids[$i*2+1], 'round' => $rnd, 'f_tour_id' => (int) $_POST['existTour']));
+            }
+            status($status);
         }
         // Create new tour...
         else {
@@ -121,25 +125,53 @@ title($lng->getTrn('menu/admin_menu/schedule'));
         document.tourForm['name'].disabled = val;
         document.tourForm['rs'].disabled   = val;
     }
+    
+    /*
+        Team list related.
+    */
+
+    function addTeam(tid, name) 
+    {
+        TL.options[TL.selectedIndex] = null;
+        SL.options[SL.length] = new Option(name, tid);
+        SL.size++;
+        
+        TEAMS.value = TEAMS.value.concat( ((TEAMS.value.length == 0) ? '' : ',')+tid );
+    }
+    
+    function removeLastTeam()
+    {
+        var last = SL.options[SL.length-1];
+        SL.options[SL.length-1] = null;
+        TL.options[TL.length] = new Option(last.text, last.value);
+        SL.size--;
+
+        TEAMS.value = TEAMS.value.substr(0, TEAMS.value.lastIndexOf(','));
+//        alert('"'+TEAMS.value+'"');
+    }
+    
 </script>
 
 <?php
-echo $lng->getTrn('admin/schedule/create_leag_div').'<br>';
-echo $lng->getTrn('admin/schedule/multiple_schedule');
-$divisions = Division::getDivisions();
-foreach ($divisions as $d) {
-    $d->dispName = "$d->league_name: $d->name";
+$result = mysql_query("SELECT COUNT(*) FROM leagues,divisions WHERE f_lid = lid");
+if (($row = mysql_fetch_row($result)) && $row[0] == 0) {
+    fatal($lng->getTrn('admin/schedule/create_LD'));
 }
-objsort($divisions, array('+dispName'));
-?><br><br>
-
+HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needhelp'));
+$divisions = array();
+$result = mysql_query("SELECT lid, did, leagues.name  AS 'lname', divisions.name AS 'dname' FROM leagues,divisions WHERE f_lid = lid ORDER BY lname ASC, dname ASC");
+while ($row = mysql_fetch_object($result)) {
+    $row->dispName = "$row->lname: $row->dname";
+    $divisions[] = $row;
+}
+?><br>
 <form method="POST" name="tourForm">
     <table>
     <tr>
     <td valign='top'>
         <b><?php echo $lng->getTrn('admin/schedule/tour_type');?>:</b><br>
-        <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> FFA match <i>(Free For All a.k.a. "open league format" - creates a single match)</i><br>
-        <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> Round-Robin<br>
+        <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>" CHECKED> <?php echo $lng->getTrn('admin/schedule/TT_FFA');?><br>
+        <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> <?php echo $lng->getTrn('admin/schedule/TT_RR');?><br>
         <br>
         <b><?php echo $lng->getTrn('common/division');?>:</b><br>
         <select name='did'>
@@ -196,9 +228,6 @@ objsort($divisions, array('+dispName'));
             $body .= "<option value='$r'>$d</option>\n";
         }
         $body .= '</select>';
-        $body .= '<br><br>';
-        $body .= '<b>'.$lng->getTrn('admin/schedule/as_reverse').'</b>&nbsp;';
-        $body .= '<input type="checkbox" name="reverse" value="1">';
         $BOX_FFA = HTMLOUT::assistantBox($body);
         
         // Round robin seed multiplier.
@@ -213,7 +242,7 @@ objsort($divisions, array('+dispName'));
     </tr>
     </table>
     <br>
-    <b><?php echo $lng->getTrn('admin/schedule/participants');?>:</b><br>
+    <b><?php echo $lng->getTrn('admin/schedule/teams_avail');?>:</b><br>
     <?php
     $teams = get_rows('teams', array('team_id', 'name', 'f_cname'));
     $entriesToPrint = array();
@@ -221,15 +250,20 @@ objsort($divisions, array('+dispName'));
     {
         case 2:
             objsort($teams, array('+name'));
-            $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'><b>$t->name</b> ($t->f_cname)";'), $teams);
+            $entriesToPrint = array_map(create_function('$t', 'return "<option value=\'$t->team_id\'>$t->name ($t->f_cname)</option>";'), $teams);
             break;
         # case 1:
         default: 
             objsort($teams, array('+f_cname', '+name'));
-            $entriesToPrint = array_map(create_function('$t', 'return "<input type=\'checkbox\' name=\'$t->team_id\' value=\'$t->team_id\'>$t->f_cname\'s $t->name";'), $teams);
+            $entriesToPrint = array_map(create_function('$t', 'return "<option value=\'$t->team_id\'>$t->f_cname\'s $t->name</option>";'), $teams);
             break;
     }
-    print implode("<br>\n", $entriesToPrint);
+    print "<select id='teamlist' name='teamlist' ".(empty($teams) ? 'DISABLED' : '').">\n".implode("\n", $entriesToPrint)."\n</select>\n<br>";
+    print "<a href='javascript:void(0);' onClick='var opt = TL.options[TL.selectedIndex]; addTeam(opt.value, opt.text);'>".$lng->getTrn('common/add')."</a><br><br>";
+    print "<b>".$lng->getTrn('admin/schedule/teams_selected').":</b><br>";
+    print "<select id='selectedlist' name='selectedlist' size='2' MULTIPLE></select>\n<br>";
+    print "<a href='javascript:void(0);' onClick='removeLastTeam();'>".$lng->getTrn('common/remove')."</a><br>";
+    print "<input type='hidden' id='teams' name='teams' value=''>";
     ?>
     <br>
     <hr align="left" width="200px">
@@ -240,6 +274,10 @@ objsort($divisions, array('+dispName'));
     var BOX_FFA = '<?php echo $BOX_FFA;?>';
     var BOX_RR = '<?php echo $BOX_RR;?>';
     chTour(<?php echo TT_FFA;?>);
+    
+    var TL = document.getElementById('teamlist');
+    var SL = document.getElementById('selectedlist');
+    var TEAMS = document.getElementById('teams');
 </script>
 
 <?php
