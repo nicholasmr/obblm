@@ -238,38 +238,31 @@ class Tour
 
         /* Check input */
 
-        // Empty name or name already in use?
-        if (empty($input['name']) || get_alt_col('tours', 'name', $input['name'], 'name'))
-            return false;
-        
-        // Team array OK?
-        $teamsCnt = count($input['teams']);
-        if (empty($input['teams']) || !is_array($input['teams']) || ($input['type'] == TT_FFA && $teamsCnt != 2) || ($input['type'] == TT_RROBIN && $teamsCnt < 3))
-            return false;
+        // Done in in scheduler section code.
 
         /* Create tournament */
-        
        
         // Quit if can't make tournament entry.
         $query = "INSERT INTO tours (name, f_did, type, rs, date_created) VALUES ('" . mysql_real_escape_string($input['name']) . "', $input[did], $input[type], $input[rs], NOW())";
         if (!mysql_query($query)) {
             return false;
         }
-            
-        $tour_id = get_alt_col('tours', 'name', $input['name'], 'tour_id'); # Save tour_id
+        $tour_id = mysql_insert_id();
                 
         /* Generate matches depending on type */
         
-        // Single match?
+        // FFA match(es)?
         if ($input['type'] == TT_FFA) {
-            return (Match::create(
-                array(
-                    'team1_id'  => $input['teams'][0], 
-                    'team2_id'  => $input['teams'][1], 
+            $status = true;
+            for ($i = 0; $i < count($input['teams'])/2; $i++) {
+                $status &= Match::create(array(
+                    'team1_id'  => $input['teams'][$i*2], 
+                    'team2_id'  => $input['teams'][$i*2+1], 
                     'round'     => (($input['rounds']) ? $input['rounds'] : 1), 
                     'f_tour_id' => $tour_id
-                )
-            ));
+                ));
+            }
+            return $status;
         }
         // Round-Robin?
         elseif ($input['type'] == TT_RROBIN) {

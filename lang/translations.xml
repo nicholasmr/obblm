@@ -614,12 +614,39 @@
 
     <!-- Subsec: Schedule matches -->
     <schedule>
-        <multiple_schedule><![CDATA[<i>Note:</i> You are free to schedule multiple tournaments running concurrently.]]></multiple_schedule>
-        <create_leag_div><![CDATA[<i>Note:</i> You must first create a league with one or more divisions before being able to create matches.]]></create_leag_div>
+        <help>
+        <![CDATA[
+            <b>When scheduling matches please note that:</b><br>
+            - You must first create a league with one or more divisions before being able to create tournaments (in which matches are scheduled).<br>
+            - You are free to schedule multiple tournaments running concurrently.<br>
+            - You are NOT restricted to playing matches in their scheduling order. In fact, any team may play any scheduled match at any time.<br>
+            <br>
+            <b>Round-Robin (RR) scheduling</b>:<br>
+                In a RR tournament each contestant meets every other contestant in turn.<br>
+                The entire set of matches in which all contestants meet each other <i>once</i> is called a <i>bracket</i>.<br>
+                A bracket consists of multiple rounds in which each team plays <i>only one match</i>.<br>
+                A bracket may be seeded more than once in a RR tournament.<br>
+                When seeding the bracket multiple times the home&mdash;away pairings are swapped every second time.<br>
+                If an uneven number of teams is selected each team will, in each seeded bracket, receive <i>one</i> bye (walkthrough) in a given round.<br>
+            <br>
+            <b>Free For All (FFA) scheduling</b>:<br>
+                The FFA tournament type allows scheduling matches on-demand.<br>
+                You may either add the scheduled matches to a new tournament or add them to an existing FFA tournament.<br>
+                If only two teams are selected the match is scheduled by setting the first selected team as the home team.<br>
+                If multiple teams are selected the list of teams is shuffled, creating random matches with random home&mdash;away pairings.<br>
+                Only an even number of teams may be selected.<br>
+                The FFA tournament type may also be used to create Knock-Out tournaments and other tournament types by manually scheduling matches.<br>
+        ]]>
+        </help>
+        <create_LD>Please create a league + division(s) before scheduling matches</create_LD>
         <tour_name>Tournament name</tour_name>
         <rank_sys>Ranking system</rank_sys>
         <tour_type>Tournament type</tour_type>
-        <participants>Participating teams</participants>
+        <teams_avail>Available teams</teams_avail>
+        <teams_selected>Selected teams</teams_selected>
+        <!-- Tour Types (TT) -->
+            <TT_FFA><![CDATA[FFA <i>(Free For All a.k.a. "open league format")</i>]]></TT_FFA>
+            <TT_RR>Round-Robin</TT_RR>
         <!-- RR -->
             <RR_settings>Round-Robin settings</RR_settings>
             <rrobin_rnds><![CDATA[<b>Seed the bracket N times:</b>]]></rrobin_rnds>
@@ -628,7 +655,6 @@
             <add_match>Add the match to...</add_match>
                 <new_tour>A new FFA tournament</new_tour>
             <as_type>As type...</as_type>
-            <as_reverse>Reverse home/away pair-up?</as_reverse>
     </schedule>
 </admin>
 

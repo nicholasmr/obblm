@@ -109,6 +109,7 @@ require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
 
 // OBBLM libraries.
+require_once('lib/class_sqltriggers.php');
 require_once('lib/class_match.php');
 require_once('lib/class_tournament.php');
 require_once('lib/class_division.php');
