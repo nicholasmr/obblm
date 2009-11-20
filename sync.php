@@ -40,17 +40,32 @@ require('lib/class_sqlcore.php');
 <?php
 if (isset($_POST['proc'])) {
     $conn = mysql_up(true);
-    echo ($result = mysql_query("CALL ".$_POST['proc'])) ? '<b>OK</b>' : 'Failed: '.mysql_error();
-    echo "<br><br>";
+    echo (SQLCore::syncGameData()) 
+        ? "<font color='green'>OK &mdash; Synchronize game data with database</font><br>\n" 
+        : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
+    
+    echo (SQLCore::installTableIndexes())
+        ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
+
+    echo (SQLCore::installProcsAndFuncs(true))
+        ? "<font color='green'>OK &mdash; created MySQL functions/procedures</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
+    echo ($result = mysql_query("CALL ".$_POST['proc'])) 
+        ? "<font color='green'>OK &mdash; ran <b>$_POST[proc]</b></font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not run <b>$_POST[proc]</b>: '".mysql_error()."'</font><br>\n";
+        
+    echo "<br>";
 }
 ?>
-MySQL procedure:
+<b>MySQL procedure:</b>
 <br>
 <form method="POST">
     <INPUT TYPE=RADIO NAME="proc" VALUE="syncAll()">syncAll() - may take a few minutes!<br>
     <INPUT TYPE=RADIO NAME="proc" VALUE="syncAllMVs()">syncAllMVs()<br>
     <INPUT TYPE=RADIO NAME="proc" VALUE="syncAllDProps()">syncAllDProps()<br>
     <INPUT TYPE=RADIO NAME="proc" VALUE="syncAllRels()">syncAllRels()<br>
+    <br>
     <input type="submit" name='submit' value="Run">
 </form>
 
