@@ -77,6 +77,7 @@ class Team
         
         global $rules;
         $this->mayBuyFF = ($rules['post_game_ff'] || $this->mv_played == 0 || $this->mv_played == $this->played_0);
+        $this->doubleRRprice = (!$rules['static_rerolls_prices'] && $this->mv_played > 0 && $this->mv_played != $this->played_0);
 
         return true;
     }
@@ -132,16 +133,16 @@ class Team
         return false;
     }
 
-    public function getGoods($allow_double_rr_price = true) {
+    public function getGoods($use_dynamic_RR_prices = true) {
 
         /**
          * Returns array containing buyable stuff for teams in their coach corner.
          *
-         *  Setting $allow_double_rr_price allows the RR price to double up if: (1) team has played any matches AND (2) static RR prices are NOT set in the $rules.
+         *  Setting $use_dynamic_RR_prices forces non-doubled RR prices.
          **/
 
         $race = new Race($this->f_race_id);
-        return $race->getGoods($allow_double_rr_price && $this->mv_played > 0);
+        return $race->getGoods($use_dynamic_RR_prices ? $this->doubleRRprice : false);
     }
 
     public function delete() {
