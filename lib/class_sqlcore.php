@@ -14,11 +14,6 @@ define('T_ELO_PTS_DRAW', 0.5);
 class SQLCore
 {
 
-public static function setTriggers($set = true)
-{
-    // Placeholder.
-}
-
 /*
     Synchronizes PHP stored BB game date with DB game data. 
     These MUST be in sync thus this routine MUST be run whenever the PHP-stored game data is modified.
@@ -116,7 +111,7 @@ public static function installProcsAndFuncs($install = true)
     
     // MV syncs 
     $common_fields_keys = 'td,cp,intcpt,bh,si,ki,mvp,cas,tdcas,spp';
-    $common_fields = 'SUM(td),SUM(cp),SUM(intcpt),SUM(bh),SUM(si),SUM(ki),SUM(mvp),SUM(bh+si+ki),SUM(bh+si+ki+td),SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5)';
+    $common_fields = 'IFNULL(SUM(td),0), IFNULL(SUM(cp),0), IFNULL(SUM(intcpt),0), IFNULL(SUM(bh),0), IFNULL(SUM(si),0), IFNULL(SUM(ki),0), IFNULL(SUM(mvp),0), IFNULL(SUM(bh+si+ki),0), IFNULL(SUM(bh+si+ki+td),0), IFNULL(SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5),0)';
     $mstat_fields_suffix_player = 'FROM matches,match_data WHERE matches.match_id = match_data.f_match_id AND match_data.f_player_id = pid AND match_data.mg IS FALSE AND matches.f_tour_id = trid';
     $mstat_fields_suffix_team   = 'FROM matches WHERE f_tour_id = trid AND (team1_id = tid OR team2_id = tid)';
     $mstat_fields_suffix_coach  = 'FROM matches,teams WHERE f_tour_id = trid AND (team1_id = tid OR team2_id = tid) AND teams.owned_by_coach_id = cid';
@@ -207,12 +202,16 @@ public static function installProcsAndFuncs($install = true)
         DECLARE empty,begun,finished BOOLEAN;
         DECLARE winner '.$CT_cols[T_OBJ_TEAM].';
         
+        /* Team DPROPS */
+        DECLARE TV '.$CT_cols['tv'].';
+        DECLARE FF TINYINT UNSIGNED;
+        
         /* Streaks */
         DECLARE swon,sdraw,slost '.$CT_cols['streak'].';
         
         /* MVs */
         DECLARE done INT DEFAULT 0;
-        DECLARE pid '.$CT_cols[T_NODE_TOURNAMENT].';
+        DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
         DECLARE cur_p1 CURSOR FOR SELECT f_player_id FROM match_data WHERE f_team_id = tid1 AND f_match_id = mid;
         DECLARE cur_p2 CURSOR FOR SELECT f_player_id FROM match_data WHERE f_team_id = tid2 AND f_match_id = mid;
         DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
@@ -225,6 +224,13 @@ public static function installProcsAndFuncs($install = true)
     $matches_tourDProps = '
         CALL getTourDProps(trid, empty, begun, finished, winner);
         UPDATE tours SET tours.empty = empty, tours.begun = begun, tours.finished = finished, tours.winner = winner WHERE tour_id = trid;
+    ';
+        # Needs $matches_setup_rels.
+    $matches_teamDProps = '
+        CALL getTeamDProps(tid1, TV, FF);
+        UPDATE teams SET tv = TV, ff = FF WHERE team_id = tid1;
+        CALL getTeamDProps(tid2, TV, FF);
+        UPDATE teams SET tv = TV, ff = FF WHERE team_id = tid2;
     ';
         # Needs $matches_setup_rels.
     $matches_team_cnt = '
@@ -1052,20 +1058,26 @@ public static function installProcsAndFuncs($install = true)
             Match sync
         */
         
-        'CREATE PROCEDURE match_upd(IN mid '.$CT_cols[T_NODE_MATCH].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].', IN tid1 '.$CT_cols[T_OBJ_TEAM].', IN tid2 '.$CT_cols[T_OBJ_TEAM].')
+        'CREATE PROCEDURE match_upd(IN mid '.$CT_cols[T_NODE_MATCH].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].', IN tid1 '.$CT_cols[T_OBJ_TEAM].', IN tid2 '.$CT_cols[T_OBJ_TEAM].', IN played BOOLEAN)
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
             '.$matches_setup_rels.'
+            '.$matches_MVs.'
             '.$matches_tourDProps.'
+            '.$matches_teamDProps.'
             '.$matches_team_cnt.'
             '.$matches_pts.'
             '.$matches_wt_cnt.'
             '.$matches_streaks.'
             '.$matches_win_pct.'
-            '.$matches_MVs.'
-            SET ret = syncELOMatch(NULL, mid);
-            SET ret = syncELOMatch(trid, mid);
+            IF played THEN
+                CALL syncELOTour(NULL);
+                CALL syncELOTour(trid);
+            ELSE
+                SET ret = syncELOMatch(NULL, mid);
+                SET ret = syncELOMatch(trid, mid);
+            END IF;
         END',
         
         'CREATE PROCEDURE match_del(IN mid '.$CT_cols[T_NODE_MATCH].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].', IN tid1 '.$CT_cols[T_OBJ_TEAM].', IN tid2 '.$CT_cols[T_OBJ_TEAM].')
@@ -1073,48 +1085,32 @@ public static function installProcsAndFuncs($install = true)
             CONTAINS SQL
         BEGIN
             '.$matches_setup_rels.'
+            '.$matches_MVs.'
             '.$matches_tourDProps.'            
+            '.$matches_teamDProps.'
             '.$matches_team_cnt.'
             '.$matches_pts.'
             '.$matches_wt_cnt.'
             '.$matches_streaks.'
             '.$matches_win_pct.'
-            '.$matches_MVs.'
             CALL syncELOTour(NULL);
             CALL syncELOTour(trid);
         END',
         
         /*
-            Match data sync
+            Match data sync, updates player fields.
         */
         
-        'CREATE PROCEDURE MDSync(IN pid '.$CT_cols[T_OBJ_PLAYER].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].')
+        'CREATE PROCEDURE MDSync(IN pid '.$CT_cols[T_OBJ_PLAYER].')
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
-            /* General and MV related */
-            DECLARE retval BOOLEAN; 
-            DECLARE pid '.$CT_cols[T_OBJ_PLAYER].' DEFAULT NULL;
-            DECLARE tid '.$CT_cols[T_OBJ_TEAM].' DEFAULT NULL;
-            DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
-            DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
-            DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].' DEFAULT NULL;
-            
             /* Player DPROPS */
             DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
             DECLARE value '.$CT_cols['pv'].';
             DECLARE status '.$core_tables['players']['status'].';
             DECLARE date_died '.$core_tables['players']['date_died'].'; 
 
-            /* Common used fields */
-            CALL getObjParents('.T_OBJ_PLAYER.', pid, tid, cid, rid);
-
-            /* Update MVs */
-            SET retval = syncMVplayer(pid, trid);
-            SET retval = syncMVteam(tid, trid);
-            SET retval = syncMVcoach(cid, trid);
-            SET retval = syncMVrace(rid, trid);
-            
             /* Update player DPROPS */            
             CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, value,status,date_died);
             UPDATE players 

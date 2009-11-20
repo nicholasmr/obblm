@@ -96,10 +96,10 @@
     </statistics_menu>
     <admin_menu>
         <name>Admin</name> <!-- top level button text -->
-        <ld_man>Management: League &amp; division</ld_man>
-        <ct_man>Management: Coach &amp; team</ct_man>
+        <ld_man>Management: Leagues &amp; divisions</ld_man>
+        <ct_man>Management: Coaches &amp; teams</ct_man>
         <usr_man>Management: Users</usr_man>
-        <tour_man>Management: Tournament</tour_man>
+        <tour_man>Management: Tournaments</tour_man>
         <import>Import team</import>
         <schedule>Schedule matches</schedule>
     </admin_menu>

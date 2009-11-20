@@ -324,7 +324,7 @@ class Player
         $team = new Team($this->owned_by_team_id);
         $price = self::price($this->f_pos_id);
         
-        if ($team->isFull() || !$team->isPlayerBuyable($this->pos) || $team->treasury < $price || !$team->dtreasury(-1 * $price))
+        if ($team->isFull() || !$team->isPlayerBuyable($this->f_pos_id) || $team->treasury < $price || !$team->dtreasury(-1 * $price))
             return false;
 
         $query = "UPDATE players SET type = ".PLAYER_TYPE_NORMAL." WHERE player_id = $this->player_id";

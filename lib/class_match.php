@@ -304,7 +304,7 @@ class Match
         $this->saveText($input['comment']);
         
         // Run triggers.
-        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id));
+        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id, 'played' => $this->is_played));
         Module::runTriggers(T_TRIGGER_MATCH_SAVE, array($this->match_id));
         
         return true;
@@ -344,6 +344,7 @@ class Match
         $inj = $agn1 = $agn2 = NONE;
         
         // Ordinary player?
+        $p = null;
         if ($pid > 0) {
         
                 $p = new Player($pid);
@@ -536,7 +537,9 @@ class Match
             )";
         }
 
-        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_MATCHDATA, array('pid' => $pid, 'trid' => $trid));
+        return mysql_query($query) && 
+            SQLTriggers::run(T_SQLTRIG_MATCHDATA, array('pid' => $pid)) &&
+            ($p) ? SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $pid, 'obj' => $p)) : true; # Only for regular players.
     }
     
     public function getSummedAch($s) {

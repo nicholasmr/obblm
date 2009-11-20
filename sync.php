@@ -40,10 +40,8 @@ require('lib/class_sqlcore.php');
 <?php
 if (isset($_POST['proc'])) {
     $conn = mysql_up(true);
-    SQLCore::setTriggers(false);
     echo ($result = mysql_query("CALL ".$_POST['proc'])) ? '<b>OK</b>' : 'Failed: '.mysql_error();
     echo "<br><br>";
-    SQLCore::setTriggers(true);
 }
 ?>
 MySQL procedure:

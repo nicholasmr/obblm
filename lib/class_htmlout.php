@@ -238,7 +238,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             	'mv_smp' => array('desc' => 'SMP'),
                 'tv' => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),
             );
-            if ($sel_node == STATS_TOUR) { 
+            if ($sel_node == T_NODE_TOURNAMENT) { 
                 $fields_after['wt_cnt'] = array('desc' => 'WT');
                 $fields_after['mv_elo'] = array('desc' => 'ELO');
             }
@@ -310,10 +310,12 @@ public static function standings($obj, $node, $node_id, array $opts)
             	'mv_smp' => array('desc' => 'SMP'),
             );
             if ($sel_node == T_NODE_TOURNAMENT) {
-                $fields_before['mv_team_cnt'] = array('desc' => 'Teams');            
+                $fields_before['mv_team_cnt'] = array('desc' => 'Teams');
+                $fields_after['mv_elo'] = array('desc' => 'ELO');
             }
             else if ($ALL_TIME) {
                 $fields_before['rg_team_cnt'] = array('desc' => 'Teams');
+                $fields_after['rg_elo'] = array('desc' => 'ELO');
             }
             $objs = Stats::getLeaders(T_OBJ_COACH,$sel_node,$sel_node_id,sort_rule($tblSortRule),$settings['entries']['standings_coaches'],$set_avg);
             // OPTIONALLY hide retired coaches.
