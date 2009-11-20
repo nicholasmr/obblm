@@ -176,7 +176,7 @@ class Coach
     public function setName($name) {
         if (!isset($name) || empty($name) || get_alt_col('coaches', 'name', $name, 'coach_id')) {return false;} // Don't allow duplicates.
         $query = "UPDATE coaches SET name = '".mysql_real_escape_string($name)."' WHERE coach_id = $this->coach_id";
-        return (mysql_query($query) && ($this->name = $name));
+        return (mysql_query($query) && ($this->name = $name) && SQLTriggers::run(T_SQLTRIG_COACH_UPDATE_CHILD_RELS, array('id' => $this->coach_id, 'obj' => $this)));
     }
 
     public function setMail($mail) {

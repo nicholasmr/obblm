@@ -88,7 +88,7 @@ class Team
 
     public function setOwnership($cid) {
         $query = "UPDATE teams SET owned_by_coach_id = $cid WHERE team_id = $this->team_id";
-        return (mysql_query($query) && ($this->owned_by_coach_id = $cid));
+        return mysql_query($query) && ($this->owned_by_coach_id = $cid) && SQLTriggers::run(T_SQLTRIG_TEAM_UPDATE_CHILD_RELS, array('id' => $this->team_id, 'obj' => $this));
     }
     
     public function setLeagueID($lid) {
@@ -173,10 +173,7 @@ class Team
             return false;
 
         $query = "UPDATE teams SET name = '" . mysql_real_escape_string($new_name) . "' WHERE team_id = $this->team_id";
-        if (mysql_query($query))
-            return true;
-        else
-            return false;
+        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_TEAM_UPDATE_CHILD_RELS, array('id' => $this->team_id, 'obj' => $this));
     }
 
     public function setRetired($bool) {
@@ -213,7 +210,7 @@ class Team
         // Buy that thing!
         $price = $team_goods[$thing]['cost'];
         if (mysql_query("UPDATE teams SET treasury = treasury - $price, $thing = $thing + 1 WHERE team_id = $this->team_id")) {
-            self::forceUpdTrigger($this->team_id); # Update TV.
+            SQLTriggers::run(T_SQLTRIG_TEAM_DPROPS, array('id' => $this->team_id, 'obj' => $this)); # Update TV.
             $this->$thing++;
             $this->treasury -= $price;
             return true;
@@ -242,7 +239,7 @@ class Team
         // Un-buy!
         $price = $team_goods[$thing]['cost'];
         if (mysql_query("UPDATE teams SET treasury = treasury + $price, $thing = $thing - 1 WHERE team_id = $this->team_id")) {
-            self::forceUpdTrigger($this->team_id); # Update TV.
+            SQLTriggers::run(T_SQLTRIG_TEAM_DPROPS, array('id' => $this->team_id, 'obj' => $this));
             $this->$thing--;
             $this->treasury += $price;
             return true;
@@ -273,7 +270,7 @@ class Team
 
         if ($this->unbuy($thing)) {
             if ($this->dtreasury(-1 * $price)) {
-                self::forceUpdTrigger($this->team_id); # Update TV.
+                SQLTriggers::run(T_SQLTRIG_TEAM_DPROPS, array('id' => $this->team_id, 'obj' => $this));
                 return true;
             }
             else
@@ -502,12 +499,8 @@ class Team
                     )";
 
         $ret = mysql_query($query);
-        self::forceUpdTrigger((int) mysql_insert_id());
-        return $ret;
-    }
-    
-    public static function forceUpdTrigger($tid) {
-        return mysql_query("UPDATE teams SET tv = 0 WHERE team_id = $tid"); # Force update trigger to sync properties.
+        $tid = mysql_insert_id();
+        return $ret && SQLTriggers::run(T_SQLTRIG_TEAM_NEW, array('id' => $tid, 'obj' => new self($tid)));
     }
 }
 ?>
