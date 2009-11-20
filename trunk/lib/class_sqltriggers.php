@@ -58,7 +58,7 @@ class SQLTriggers
                 break;
             
             case T_SQLTRIG_PLAYER_RELS: 
-                "CALL getPlayerRels($pid, @f_cid, @f_rid, @f_cname, @f_rname, @f_tname, @f_pos_name)";
+                mysql_query("CALL getPlayerRels($pid, @f_cid, @f_rid, @f_cname, @f_rname, @f_tname, @f_pos_name)") or die(mysql_error());
                 mysql_query("UPDATE players SET f_cid = @f_cid, f_rid = @f_rid, f_cname = @f_cname, f_rname = @f_rname, f_tname = @f_tname, f_pos_name = @f_pos_name WHERE player_id = $pid") or die(mysql_error());
                 break;
         }
@@ -126,7 +126,7 @@ class SQLTriggers
         }
     }
     
-    protected static function _md($T_SQL_TRIG, array $argv)
+    protected static function _md($T_SQLTRIG, array $argv)
     {
         switch ($T_SQLTRIG)
         {
@@ -136,7 +136,7 @@ class SQLTriggers
         }
     }
     
-    protected static function _match($T_SQL_TRIG, array $argv)
+    protected static function _match($T_SQLTRIG, array $argv)
     {
         switch ($T_SQLTRIG)
         {

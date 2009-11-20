@@ -213,8 +213,8 @@ public static function installProcsAndFuncs($install = true)
         /* MVs */
         DECLARE done INT DEFAULT 0;
         DECLARE pid '.$CT_cols[T_NODE_TOURNAMENT].';
-        DECLARE cur_p1 CURSOR FOR SELECT f_pid FROM mv_players WHERE f_tid = tid1 AND f_trid = trid;
-        DECLARE cur_p2 CURSOR FOR SELECT f_pid FROM mv_players WHERE f_tid = tid2 AND f_trid = trid;
+        DECLARE cur_p1 CURSOR FOR SELECT f_player_id FROM match_data WHERE f_team_id = tid1 AND f_match_id = mid;
+        DECLARE cur_p2 CURSOR FOR SELECT f_player_id FROM match_data WHERE f_team_id = tid2 AND f_match_id = mid;
         DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
         
         SELECT t1.f_race_id, t2.f_race_id, t1.owned_by_coach_id, t2.owned_by_coach_id, t1.team_id, t2.team_id

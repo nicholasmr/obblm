@@ -261,7 +261,7 @@ class Player
             return false;
 
         $this->is_sold = true;
-        SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->played_id, 'obj' => $this)); # Update PV and TV.
+        SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
         return true;
     }
 
@@ -286,7 +286,7 @@ class Player
             return false;
 
         $this->is_sold = false;
-        SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->played_id, 'obj' => $this)); # Update PV and TV.
+        SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
         return true;        
     }
 
@@ -308,7 +308,7 @@ class Player
         if (!mysql_query("DELETE FROM players WHERE player_id = $this->player_id"))
             return false;
     
-        SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->played_id, 'obj' => $this)); # Update PV and TV.
+        SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
         return true;
     }
     
@@ -386,7 +386,7 @@ class Player
 
     public function dval($val = 0) {
         $query = "UPDATE players SET extra_val = $val WHERE player_id = $this->player_id";
-        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->played_id, 'obj' => $this)); # Update PV and TV.
+        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
     }
 
     public function addSkill($type, $skill) {
@@ -426,7 +426,7 @@ class Player
             $query = "INSERT INTO players_skills(f_pid, f_skill_id, type) VALUES ($this->player_id, $skill, '$type')";
         }
 
-        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->played_id, 'obj' => $this)); # Update PV and TV.
+        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
     }
 
     public function rmSkill($type, $skill) {
@@ -445,7 +445,7 @@ class Player
             $query = "UPDATE players SET $skill = $skill - 1 WHERE player_id = $this->player_id";
         }
         
-        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->played_id, 'obj' => $this)); # Update PV and TV.
+        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
     }
     
     public function getStatus($match_id) {
@@ -773,7 +773,7 @@ class Player
         
         // Return player ID if successful.
         $pid = (int) mysql_insert_id();
-        SQLTriggers::run(T_SQLTRIG_PLAYER_NEW, array('id' => $pid, 'obj' => new self($pid))); # Update PV and TV.
+        SQLTriggers::run(T_SQLTRIG_PLAYER_NEW, array('id' => $pid, 'obj' => (object) array('player_id' => $pid, 'owned_by_team_id' => $input['team_id']))); # Update PV and TV.
         return array(true, $pid);
     }
 }
