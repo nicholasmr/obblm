@@ -294,9 +294,15 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $match->entry( $input = array ( "team_id" => $team_id, "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ) );
             else
             {
-                    $delta = Player::price( array('race' => $team->race, 'position' => "Zombie") );
+                    #$race = new Race($DEA[$team->race]['other']['race_id']);
+                    global $DEA;
+                    $delta = Player::price( $DEA[$team->f_rname]['players']['Zombie']['pos_id'] );
+
                     $team->dtreasury($delta);
-                    $zombie_added = Player::create(array( 'nr' => $player['nr'], 'position' => "Zombie", 'team_id' => $team_id, 'name' => $player['name']) );
+                    #nr, f_pos_id, name, team_id, (optional) forceCreate
+                    #$zombie_added = Player::create(array( 'nr' => $player['nr'], 'position' => "Zombie", 'team_id' => $team_id, 'name' => $player['name']) );
+                    $zombie_added = Player::create(array( 'nr' => $player['nr'], 'f_pos_id' => $DEA[$team->f_rname]['players']['Zombie']['pos_id'], 'team_id' => $team_id, 'name' => $player['name']) );
+
                     if ( !$zombie_added[0] ) $team->dtreasury(-$delta);
                     else
                     {
@@ -312,6 +318,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         {
             if (  !$p->is_dead && !$p->is_sold ) {
                 $player = new Player ( $p->player_id );
+#print_r($player);
                 $p_matchdata = $player->getMatchData( $this->match_id );
                 if ( !$p_matchdata['inj'] ) {
                     $match->entry( $input = array ( "team_id" => $team_id, "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ) );
