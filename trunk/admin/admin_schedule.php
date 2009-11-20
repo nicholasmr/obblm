@@ -267,7 +267,7 @@ while ($row = mysql_fetch_object($result)) {
     ?>
     <br>
     <hr align="left" width="200px">
-    <input type="submit" name="button" value="<?php echo $lng->getTrn('common/create');?>" <?php echo (empty($divisions) ? 'DISABLED' : '');?>>
+    <input type="submit" name="button" value="<?php echo $lng->getTrn('common/create');?>" <?php echo (empty($divisions) || empty($teams) ? 'DISABLED' : '');?>>
 </form>
 
 <script language="JavaScript" type="text/javascript">

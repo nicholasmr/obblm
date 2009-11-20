@@ -59,7 +59,7 @@ public static function profile($cid)
                 <?php
                 $txt = $c->getText();
                 if (empty($txt)) {
-                    $txt = $lng->getTrn('common/nobody')." $c->name.";
+                    $txt = $lng->getTrn('common/nobody');
                 }
                 echo '<p>'.fmtprint($txt)."</p>\n";
                 ?>

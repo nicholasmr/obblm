@@ -17,7 +17,7 @@ $settings['forum_url'] = 'http://localhost';// URL of league forum, if you have 
 $settings['lang'] = 'en-GB';                // Language. Existing: en-GB.
 $settings['login_list'] = true;             // Show a list of available coaches on logins. If false coaches must type in their username on logins.
 $settings['site_name'] = 'UNNAMED BBL';     // Name of the site or the league name if only one league is being managed.
-$settings['stylesheet'] = 2;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
+$settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
 $settings['show_sort_rule'] = true;         // Default is true. Print in table footers what tables are sorted against?
 
 $settings['entries'] = array(

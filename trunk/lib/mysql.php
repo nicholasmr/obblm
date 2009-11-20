@@ -460,10 +460,11 @@ function get_rows($tbl, array $getFields, $where = array()) {
         ...will return an (unsorted) array of objects with the attributes 'team_id' and 'name', found in the teams table.
     */
     $query = 'SELECT '.(empty($getFields) ? '*' : implode(',', $getFields))." FROM $tbl ".(empty($where) ? '' : 'WHERE '.implode(' AND ', $where));
-    $result = mysql_query($query);
     $ret = array();
-    while ($row = mysql_fetch_object($result)) {
-        $ret[] = $row;
+    if ($result = mysql_query($query)) {
+        while ($row = mysql_fetch_object($result)) {
+            $ret[] = $row;
+        }
     }
     return $ret;
 }
@@ -548,10 +549,6 @@ function setup_database() {
         ? "<font color='green'>OK &mdash; created MySQL functions/procedures</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
 
-    echo (SQLCore::setTriggers(true))
-        ? "<font color='green'>OK &mdash; created MySQL triggers</font><br>\n"
-        : "<font color='red'>FAILED &mdash; could not create MySQL triggers</font><br>\n";
-
     // Create root user and leave welcome message on messageboard
     echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => RING_SYS, 'mail' => 'None', 'phone' => ''))) 
         ? "<font color=green>OK &mdash; root user created.</font><br>\n"
@@ -588,8 +585,6 @@ function upgrade_database($version)
     // Core
     echo "<b>Running SQLs for core system upgrade...</b><br>\n";
         
-    SQLCore::setTriggers(false); # Disable triggers when upgrading (we are doing a lot of table writes, prsumeably.
-
     echo (SQLCore::syncGameData()) 
         ? "<font color='green'>OK &mdash; Synchronized game data with database</font><br>\n" 
         : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
@@ -616,10 +611,6 @@ function upgrade_database($version)
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
    
-    echo (SQLCore::setTriggers(true))
-        ? "<font color='green'>OK &mdash; created MySQL triggers</font><br>\n"
-        : "<font color='red'>FAILED &mdash; could not create MySQL triggers</font><br>\n";
-    
     // Done!
     mysql_close($conn);
     return true;

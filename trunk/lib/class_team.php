@@ -155,6 +155,10 @@ class Team
             $query = "DELETE FROM match_data WHERE f_team_id = $this->team_id"; mysql_query($query); // These entries occur only when players are imported.
             $query = "DELETE FROM players WHERE owned_by_team_id = $this->team_id"; mysql_query($query);
             $query = "DELETE FROM teams WHERE team_id = $this->team_id"; mysql_query($query);
+            $query = "DELETE FROM mv_players WHERE f_tid = $this->team_id"; mysql_query($query);
+            $query = "DELETE FROM mv_teams WHERE f_tid = $this->team_id"; mysql_query($query);
+            SQLTriggers::run(T_SQLTRIG_COACH_TEAMCNT, array('id' => $this->owned_by_coach_id, 'obj' => new Coach($this->owned_by_coach_id)));
+            SQLTriggers::run(T_SQLTRIG_RACE_TEAMCNT, array('id' => $this->f_race_id, 'obj' => new Race($this->f_race_id)));
             return true;
         }
 
@@ -336,7 +340,7 @@ class Team
 
     public function isPlayerBuyable($pos_id) {
 
-        $query = "SELECT (COUNT(*) < qty) FROM players, game_data_players 
+        $query = "SELECT IFNULL(COUNT(*) < qty, TRUE) FROM players, game_data_players 
             WHERE f_pos_id = pos_id AND owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND status NOT IN (".DEAD.",".SOLD.")";
         $result = mysql_query($query);
         $row = mysql_fetch_row($result);
@@ -435,13 +439,13 @@ class Team
         global $rules, $raceididx;
 
         // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
-        if (!in_array($input['race'], Race::getRaces(false))
+        if (!in_array($input['race'], array_values($raceididx))
         || !get_alt_col('coaches', 'coach_id', $input['coach_id'], 'coach_id')
         || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
             return false;
         }
         $flipped = array_flip($raceididx);
-        $input['race'] = $flipped[$input['race']];
+        $input['race'] = $flipped[$input['race']]; # Insert race ID, not race name.
 
         $query = "INSERT INTO teams
                     (
@@ -460,6 +464,7 @@ class Team
                                 ",won_0,
                                 lost_0,
                                 draw_0,
+                                played_0,
                                 sw_0,
                                 sl_0,
                                 sd_0,
@@ -489,6 +494,7 @@ class Team
                                 ",$init[won],
                                 $init[lost],
                                 $init[draw],
+                                ".($init['won']+$init['lost']+$init['draw']).",
                                 $init[sw],
                                 $init[sl],
                                 $init[sd],
