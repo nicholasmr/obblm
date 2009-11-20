@@ -174,6 +174,7 @@ class Match
         $status &= $t1->dtreasury(-1*$this->income1) && $t2->dtreasury(-1*$this->income2);
         
         // Run triggers.
+        SQLTriggers(T_SQLTRIG_MATCH_DEL, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id));
         Module::runTriggers(T_TRIGGER_MATCH_DELETE, array($this->match_id));
         
         return $status;
@@ -211,6 +212,7 @@ class Match
         $t2->dtreasury(-1*$this->income2);
         
         // Run triggers
+        SQLTriggers(T_SQLTRIG_MATCH_DEL, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id));
         Module::runTriggers(T_TRIGGER_MATCH_RESET, array($this->match_id));
         
         return $status;
@@ -286,7 +288,7 @@ class Match
                     tv2             = $input[tv2]
         WHERE match_id = $this->match_id";
 
-        if (!mysql_query($query))
+        if (!mysql_query($query) && SQLTriggers(T_SQLTRIG_MATCH_UPD, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id)))
             return false;
 
         // Update team treasury
@@ -533,7 +535,7 @@ class Match
             )";
         }
 
-        return mysql_query($query);
+        return mysql_query($query) && SQLTriggers(T_SQLTRIG_MATCHDATA, array('pid' => $pid, 'mid' => $mid));
     }
     
     public function getSummedAch($s) {
