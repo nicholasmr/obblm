@@ -1027,7 +1027,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <?php
                         $DISABLE = true;
                         foreach ($team->getGoods() as $name => $details) {
-                            if ($name == 'ff_bought' && !$rules['post_game_ff'] && $team->played > 0)
+                            if ($name == 'ff_bought' && !$team->mayBuyFF)
                                 continue;
                             if (($team->$name < $details['max'] || $details['max'] == -1) && $team->treasury >= $details['cost']) {
                                 echo "<option value='$name'>" . $details['cost']/1000 . "k | $details[item]</option>\n";
@@ -1053,7 +1053,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <?php
                         $DISABLE = true;
                         foreach ($team->getGoods() as $name => $details) {
-                            if ($name == 'ff_bought' && !$rules['post_game_ff'] && $team->played > 0)
+                            if ($name == 'ff_bought' && !$team->mayBuyFF)
                                 continue;
                             if ($team->$name > 0) {
                                 echo "<option value='$name'>$details[item]</option>\n";

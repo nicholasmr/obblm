@@ -74,6 +74,9 @@ class Team
         unset($this->retired); // We use $this->is_retired instead.
         $this->imported = ($this->imported == 1); // Make boolean.
         $this->value = $this->tv;
+        
+        global $rules;
+        $this->mayBuyFF = ($rules['post_game_ff'] || $this->mv_played == 0 || $this->mv_played == $this->played_0);
 
         return true;
     }
@@ -195,8 +198,8 @@ class Team
         if (!array_key_exists($thing, $team_goods))
             return false;
 
-        // Is post game FF purchaseable? Note: Only counts for when teams are not newly imported ie. $this->played = $this-> "played_0".
-        if ($thing == 'ff_bought' && !$rules['post_game_ff'] && $this->played > 0 && $this->played != $this->won_0 + $this->lost_0 + $this->draw_0)
+        // Is post game FF purchaseable?
+        if ($thing == 'ff_bought' && !$this->mayBuyFF)
             return false;
 
         // Enough money?
@@ -260,7 +263,7 @@ class Team
         $price = null;
 
         // May drop post FF?
-        if ($thing == 'ff_bought' && !$rules['post_game_ff'] && $this->played > 0)
+        if ($thing == 'ff_bought' && !$this->mayBuyFF)
             return false;
 
         if (array_key_exists($thing, $goods))
