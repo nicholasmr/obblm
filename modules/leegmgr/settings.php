@@ -7,5 +7,6 @@ $settings['leegmgr_schedule'] = true; // Uploads report to a scheduled match.  T
                                        // false does not check for scheduled matches
                                        // true checks for scheduled matches and will create a match if not found
                                        // "strict" will allow only scheduled matches to be used
+$settings['leegmgr_extrastats'] = false // Enables the reporting of extra stats and the use of the alternate XSD file.
 
 ?>
