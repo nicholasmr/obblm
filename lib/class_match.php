@@ -304,7 +304,7 @@ class Match
         $this->saveText($input['comment']);
         
         // Run triggers.
-        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id, 'played' => $this->is_played));
+        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id, 'played' => (int) $this->is_played));
         Module::runTriggers(T_TRIGGER_MATCH_SAVE, array($this->match_id));
         
         return true;
