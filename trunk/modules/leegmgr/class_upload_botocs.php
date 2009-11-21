@@ -61,11 +61,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
     public $match_id = 0;
 
     public $revUpdate = false;
-
+    public $extrastats = false;
 
 
     function __construct($userfile, $tour_id, $coach_id) {
 
+        global $setting;
+        $this->extrastats = $settings['leegmgr_extrastats'];
         $status = true;
         libxml_use_internal_errors(true);
         $this->userfile = $userfile;
@@ -102,7 +104,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $this->error = "Failed to update the match.";
             return false;
         }
-        
+
+        if ( $this->extrastats )
+        {
+            EPS::makeEntry(array $relations, array $playerData);
+        }        
 
         $match = new Match( $this->match_id );
         $match->setLocked(true);
@@ -150,7 +156,6 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $this->homeplayers[intval($player->attributes()->number)]['bh'] = $player->casualties;
             $this->homeplayers[intval($player->attributes()->number)]['inj'] = $player->injuries->injury;
             $this->homeplayers[intval($player->attributes()->number)]['agn1'] = $player->injuries->injury[1];
-
         }
 
         $this->awayteam = strval($results->team[1]->attributes()->name);
@@ -187,6 +192,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
         }
 
         $this->hash = md5 ( $this->xmlresults );
+
+        if ( $this->extrastats )
+        {
+
+        }
 
         return true;
 
@@ -574,6 +584,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
     function valXML() {
 
+        $xsdfile = ($this->extrastats) ? 'modules/leegmgr/botocsreport_extra.xsd' : 'modules/leegmgr/botocsreport.xsd';
         $tmpfname = tempnam("/tmp", "XML");
 
         $handle = fopen($tmpfname, "w");
@@ -583,7 +594,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $xml = new DOMDocument();
         $xml->load($tmpfname); 
 
-        if (!$xml->schemaValidate('modules/leegmgr/botocsreport.xsd')) {
+        if (!$xml->schemaValidate($xsdfile)) {
             unlink($tmpfname);
             $this->error = "DOMDocument::schemaValidate() Generated Errors!";
             $this->libxml_display_errors();
