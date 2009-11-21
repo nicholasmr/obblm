@@ -66,7 +66,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
     function __construct($userfile, $tour_id, $coach_id) {
 
-        global $setting;
+        global $settings;
         $this->extrastats = $settings['leegmgr_extrastats'];
         $status = true;
         libxml_use_internal_errors(true);
@@ -107,7 +107,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         if ( $this->extrastats )
         {
-            EPS::makeEntry(array $relations, array $playerData);
+            #EPS::makeEntry(array $relations, array $playerData);
         }        
 
         $match = new Match( $this->match_id );
