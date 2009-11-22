@@ -68,6 +68,9 @@
                             <xs:element name="inflicted_bhs" type="t_int0_24" />
                             <xs:element name="inflicted_sis" type="t_int0_24" />
                             <xs:element name="inflicted_kills" type="t_int0_24" />
+                            <xs:element name="inflicted_bh_spp_casualties" type="t_int0_24" />
+                            <xs:element name="inflicted_si_spp_casualties" type="t_int0_24" />
+                            <xs:element name="inflicted_kill_spp_casualties" type="t_int0_24" />
                             <xs:element name="sustained_blocks" type="t_int0_24" />
                             <xs:element name="sustained_knocked_downs" type="t_int0_24" />
                             <xs:element name="sustained_sacks" type="t_int0_24" />
