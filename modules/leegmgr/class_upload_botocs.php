@@ -96,14 +96,14 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         $this->checkSpiralingExpenses();
 
-        if ( !$this->matchEntry ( $this->hometeam_id, $this->homeplayers ) ) return false;
-        if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
-
         if ( !$this->updateMatch () )
         {
             $this->error = "Failed to update the match.";
             return false;
         }
+
+        if ( !$this->matchEntry ( $this->hometeam_id, $this->homeplayers ) ) return false;
+        if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
 
         if ( $this->extrastats )
         {
