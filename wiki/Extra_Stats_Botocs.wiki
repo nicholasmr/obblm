@@ -192,7 +192,7 @@ Just to note inflicted counts here are based on the status of the player at the 
 ||sustained_kill||Total number of times this player has been seriously injured (from any means)... this would only ever be 1!||
 
 
-===Fouling Stats==
+===Fouling Stats===
 
 ||inflicted_fouls||Number of times this player has fouled another.||
 ||inflicted_foul_stuns||Number of times this player stunned another through fouling||
@@ -202,3 +202,13 @@ Just to note inflicted counts here are based on the status of the player at the 
 ||inflicted_foul_kills||Number of times this player killed another through fouling||
 ||sustained_fouls||Number of times this player has been fouled.||
 ||sustained_ejections||Number of times this player was ejected for fouling.||
+
+
+===Healing Stats===
+
+||apothecary_used||Number of times the apoth has been used on this player||
+||ko_recovery_attempts||Number of recovery rolls from KOs||
+||ko_recoveries||Number of successful KOs recoveries||
+||thickskull_used||Number of times thick skull was used by this player.||
+||regeneration_attempts||Number of time this player attempted to regenerate.||
+||regenerations||Number of times the regenerate roll succeeded.||
