@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <template>
     <element name="report">
+	    
+	    <!-- Winner tag -->
+	    <element name="winner">
+		    <attribute name="concession">
+			    <content type="exist">
+				    <filter>
+					    <log>
+						    <type>CONCESSION</type>
+					    </log> 
+				    </filter>
+			    </content>
+		    </attribute>
+		    <content type="value">
+			    <object>winner</object>
+			    <field>name</field>
+		    </content>
+	    </element>
+        
  
         <loop type="teams">
             <!-- Team element -->
