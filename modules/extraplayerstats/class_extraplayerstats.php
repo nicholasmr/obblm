@@ -149,7 +149,13 @@ public static function getModuleUpgradeSQL()
     return array();
 }
 
-public static function triggerHandler($type, $argv){}
+public static function triggerHandler($type, $argv){
+    switch ($type) {
+        case T_TRIGGER_MATCH_DELETE:
+            return mysql_query("DELETE FROM ".self::TABLE." WHERE f_mid = $argv[0]");
+            break;
+    }
+}
 
 public static function makeEntry(array $relations, array $playerData)
 {
