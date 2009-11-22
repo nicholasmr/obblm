@@ -1,0 +1,3065 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+    <element name="report">
+ 
+        <loop type="teams">
+            <!-- Team element -->
+            <element name="team">
+                <attribute name="name">
+                    <content type="value">
+                        <object>team</object>
+                        <field>name</field>
+                    </content>
+                </attribute>
+                <attribute name="home">
+                    <content type="equal">
+                        <content type="value">
+                            <object>team</object>
+                            <field>index</field>
+                        </content>
+                        <content type="static">0</content>
+                    </content>
+                </attribute>
+
+                <element name="transferedGold">
+                    <content type="firstValue">
+                        <filter path="result">
+                            <log>
+                                <type>TRANSFER</type>
+                                <key name="team" current="true" />
+                            </log>
+                        </filter>
+                    </content>
+                </element>
+
+                <element name="leftGold">
+                    <content type="firstValue">
+                        <filter path="left">
+                            <log>
+                                <type>INDUCEMENTS</type>
+                                <key name="team" current="true" />
+                            </log>
+                        </filter>
+                    </content>
+                </element>
+
+                <element name="fans">
+                    <content type="firstValue">
+                        <filter path="fans">
+                            <log>
+                                <type>INIT</type>
+                                <key name="team" current="true" />
+                            </log>
+                        </filter>
+                    </content>
+                </element>
+
+                <element name="fame">
+                    <content type="firstValue">
+                        <filter path="fame">
+                            <log>
+                                <type>INIT</type>
+                                <key name="team" current="true" />
+                            </log>
+                        </filter>
+                    </content>
+                </element>
+
+                <element name="score">
+                    <content type="count">
+                        <filter>
+                            <log>
+                                <type>TOUCHDOWN</type>
+                                <key name="team" current="true" />
+                            </log>
+                        </filter>
+                    </content>
+                </element>
+
+                <element name="fanfactor">
+                    <content type="firstValue">
+                        <filter path="result">
+                            <log>
+                                <type>FAN_FACTOR</type>
+                                <key name="team" current="true" />
+                            </log>
+                        </filter>
+                    </content>
+                </element>
+
+                <element name="winnings">
+                    <content type="firstValue">
+                        <filter path="result">
+                            <log>
+                                <type>WINNINGS</type>
+                                <key name="team" current="true" />
+                            </log>
+                        </filter>
+                    </content>
+                </element>
+
+<!--
+    //*****************************************************************************
+    //
+    //    Player stats
+    //
+    //*****************************************************************************
+-->
+                <element name="players">
+
+                    <loop type="players">
+                         <!-- Player element --> 
+                        <element name="player">
+
+                            <attribute name="name">
+                                <content type="value">
+                                    <object>player</object>
+                                    <field>name</field>
+                                </content>
+                            </attribute>
+
+                            <attribute name="number">
+                                <content type="value">
+                                    <object>player</object>
+                                    <field>number</field>
+                                </content>
+                            </attribute>
+
+                            <attribute name="journeyman">
+                                <content type="equal">
+                                    <content type="value">
+                                        <object>player</object>
+                                        <field>type</field>
+                                    </content>
+                                    <content type="static">JOURNEYMAN</content>
+                                </content>
+                            </attribute>
+
+                            <attribute name="mercenary">
+                                <content type="equal">
+                                    <content type="value">
+                                        <object>player</object>
+                                        <field>type</field>
+                                    </content>
+                                    <content type="static">MERCENARY</content>
+                                </content>
+                            </attribute>
+
+                            <attribute name="starPlayer">
+                                <content type="equal">
+                                    <content type="value">
+                                        <object>player</object>
+                                        <field>type</field>
+                                    </content>
+                                    <content type="static">STAR_PLAYER</content>
+                                </content>
+                            </attribute>
+                            
+                            <!--
+                                Player Passing stats     
+                           -->
+                            
+                            <element name="pass_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>THROW</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="bomb">false</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+
+                            <element name="pass_completions">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>THROW</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="completion">true</key>
+                                            <key name="bomb">false</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="interceptions_thrown">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>THROW</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="bomb">false</key>
+                                            <log name="interception">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>THROW</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="bomb">false</key>
+                                            <log name="interception">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="success">true</key>                      
+                                                <log name="reroll">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="success">true</key>
+                                               </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                                                        
+                            <element name="pass_distance">
+                                <content type="sum">
+                                    <filter path="progression">
+                                        <log>
+                                            <type>THROW</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="completion">true</key>
+                                            <key name="bomb">false</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="dumpoff_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true"/>
+                                            <log name="dumpOff" >
+                                                <type>THROW</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="bomb">false</key>
+                                            </log>
+                                        </log>
+                                        </filter>
+                                    </content>
+                                </element>
+                            
+                                <element name="dumpoff_completions">
+                                    <content type="count">
+                                        <filter>
+                                            <log>
+                                                <type>BLOCK</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true"/>
+                                                <log name="dumpOff" >
+                                                    <type>THROW</type>
+                                                    <key name="team" current="true" />
+                                                    <key name="player" current="true" />
+                                                    <key name="completion">true</key>
+                                                    <key name="bomb">false</key>
+                                                </log>
+                                            </log>
+                                        </filter>
+                                    </content>
+                            </element>
+                                
+                                
+                                
+                            <!--
+                                Player Receiving stats stats     
+                            -->                         
+                            
+                            <element name="catch_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>THROW</type>
+                                            <key name="team" current="true" />
+                                            <log name="catchRoll">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="player" current="true"/>
+                                            </log>
+                                        </log>
+                                        </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="catches">
+                                    <content type="count">
+                                        <filter>
+                                            <log>
+                                                <type>THROW</type>
+                                                <key name="team" current="true" />
+                                                <log name="catchRoll">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="player" current="true"/>
+                                                    <key name="success">false</key>
+                                                    <log name="reroll">
+                                                        <type>SIMPLE_ROLL</type>
+                                                        <key name="success">true</key>
+                                                        <key name="player" current="true"/>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </filter>
+                                        <filter>
+                                            <log>
+                                                <type>THROW</type>
+                                                <key name="team" current="true" />
+                                                <log name="catchRoll">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="success">true</key>
+                                                    <key name="player" current="true"/>
+                                                </log>
+                                            </log>
+                                        </filter>
+                                    </content>
+                            </element>
+                            
+                            
+                            <element name="handoffs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>HAND_OFF</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="handoffs_received">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>HAND_OFF</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true"/>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+
+                            
+                            <element name="handoff_catches">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>HAND_OFF</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true"/>
+                                            <log name="catchRoll">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="player" current="true"/>
+                                                <key name="success">false</key>
+                                                <log name="reroll">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="success">true</key>
+                                                    <key name="player" current="true"/>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>HAND_OFF</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true"/>
+                                            <log name="catchRoll">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="success">true</key>
+                                                <key name="player" current="true"/>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="pickup_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="type">PICK_UP</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="pickups">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="type">PICK_UP</key>
+                                            <key name="success">true</key>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="type">PICK_UP</key>
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="success">true</key>
+                                                <key name="player" current="true"/>
+                                                </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                           </element>
+                          
+                            
+                            <element name="rushing_distance_leap">
+                                <content type="sum">
+                                    <filter path="progression">
+                                        <log>
+                                            <type>LEAP</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ball">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="rushing_distance_push">
+                                <content type="sum">
+                                    <filter path="progression">
+                                        <log>
+                                            <type>PUSH</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ball">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="rushing_distance_move">
+                                <content type="sum">
+                                    <filter path="progression">
+                                        <log>
+                                            <type>MOVE</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ball">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="rushing_distance_block">
+                                <content type="sum">
+                                    <filter path="progression">
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ball">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="rushing_distance_shadowing">
+                                <content type="sum">
+                                    <filter path="progression">
+                                        <log>
+                                            <type>SHADOWING</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ball">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="leap_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>LEAP</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="leaps">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>LEAP</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="success">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                           <element name="dodge_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>MOVE</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <log name="dodge">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="player" current="true"/>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="dodges">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>MOVE</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <log name="dodge">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="player" current="true"/>
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>MOVE</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <log name="dodge">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="player" current="true"/>
+                                                <key name="success">false</key>
+                                                <log name="reroll">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="player" current="true"/>
+                                                    <key name="success">true</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="blitz_actions">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>ACTION_DECLARED</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="type">BLITZ</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="gfi_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="type">GFI</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                           </element>
+                           
+                           <element name="gfis">
+                               <content type="count">
+                                   <filter>
+                                       <log>
+                                           <type>SIMPLE_ROLL</type>
+                                           <key name="team" current="true" />
+                                           <key name="player" current="true"/>
+                                           <key name="type">GFI</key>
+                                           <key name="success">true</key>
+                                       </log>
+                                   </filter>
+                                   <filter>
+                                       <log>
+                                           <type>SIMPLE_ROLL</type>
+                                           <key name="team" current="true" />
+                                           <key name="player" current="true"/>
+                                           <key name="type">GFI</key>
+                                           <key name="success">false</key>
+                                           <log name="reroll">
+                                               <type>SIMPLE_ROLL</type>
+                                               <key name="player" current="true"/>
+                                               <key name="success">true</key>
+                                           </log> 
+                                       </log>
+                                   </filter>
+                               </content>
+                           </element>
+                           
+
+                            <element name="inflicted_blocks">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="inflicted_defender_downs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="result">DEFENDER_DOWN</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="result">DEFENDER_DOWN</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            <element name="inflicted_defender_stumbles">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="result">DEFENDER_STUMBLES</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="result">DEFENDER_STUMBLES</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_pushes">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="result">PUSHED</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="result">PUSHED</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_both_downs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="result">BOTH_DOWN</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="result">BOTH_DOWN</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="inflicted_attacker_downs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="result">ATTACKER_DOWN</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="result">ATTACKER_DOWN</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="inflicted_knock_downs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="armour2">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="inflicted_strip_balls">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ball2">true</key>
+                                            <key name="stripBall">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_sacks">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ball2">true</key>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="armour2">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ball2">true</key>
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="ball">true</key>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="ball">true</key>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            
+                            <element name="inflicted_crowd_surfs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="push">
+                                                    <type>PUSH</type>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="push">
+                                                <type>PUSH</type>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="inflicted_stuns">
+                                <content type="count">
+                                    <filter>
+                                    <log>
+                                        <type>BLOCK</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="reroll">
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">STUNNED</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">STUNNED</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">STUNNED</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">STUNNED</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_kos">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="armour2">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">KO</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">KO</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">KO</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">KO</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_bhs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="armour2">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">INJURED_BH</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter> 
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">INJURED_BH</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">INJURED_BH</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">INJURED_BH</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_sis">
+                                <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>BLOCK</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="reroll">
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">INJURED_SI</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">INJURED_SI</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">INJURED_SI</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">INJURED_SI</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="inflicted_kills">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="armour2">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">DEAD</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">DEAD</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">DEAD</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">DEAD</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                </content>
+                            </element>
+                            
+                            <element name="sustained_blocks">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+
+                            
+                            <element name="sustained_knocked_downs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <log name="armour2">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team" current="true" />
+                                                    <key name="player" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="knockedDown">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team" current="true" />
+                                                    <key name="player" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="knockedDown">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                           </element>          
+                           
+                           
+                           <element name="sustained_sacks">
+                               <content type="count">
+                                   <filter>
+                                       <log>
+                                           <type>BLOCK</type>
+                                           <key name="team2" current="true" />
+                                           <key name="player2" current="true" />
+                                           <key name="ball2">true</key>
+                                           
+                                           <log name="reroll">
+                                               <type>BLOCK</type>
+                                               <key name="team2" current="true" />
+                                               <key name="player2" current="true" />
+                                               <key name="ball2">true</key>
+                                               <log name="armour2">
+                                                   <type>ARMOUR_ROLL</type>
+                                                   <key name="team" current="true" />
+                                                   <key name="player" current="true" />
+                                                   <key name="knockedDown">true</key>
+                                               </log>
+                                           </log>
+                                       </log>
+                                   </filter>
+                                   <filter>
+                                       <log>
+                                           <type>BLOCK</type>
+                                           <key name="team2" current="true" />
+                                           <key name="player2" current="true" />
+                                           <key name="ball2">true</key>
+                                           <log name="armour2">
+                                               <type>ARMOUR_ROLL</type>
+                                               <key name="team" current="true" />
+                                               <key name="player" current="true" />
+                                               <key name="knockedDown">true</key>
+                                           </log>
+                                       </log>
+                                   </filter>
+                                   <filter>
+                                       <log>
+                                           <type>BLOCK</type>
+                                           <key name="team" current="true" />
+                                           <key name="player" current="true" />
+                                           <key name="ball">true</key>
+                                           <log name="reroll">
+                                               <type>BLOCK</type>
+                                               <key name="team" current="true" />
+                                               <key name="player" current="true" />
+                                               <key name="ball">true</key>
+                                               <log name="armour">
+                                                   <type>ARMOUR_ROLL</type>
+                                                   <key name="team" current="true" />
+                                                   <key name="player" current="true" />
+                                                   <key name="knockedDown">true</key>
+                                               </log>
+                                           </log>
+                                       </log>
+                                   </filter>
+                                   <filter>
+                                       <log>
+                                           <type>BLOCK</type>
+                                           <key name="team" current="true" />
+                                           <key name="player" current="true" />
+                                           <key name="ball">true</key>
+                                           <log name="armour">
+                                               <type>ARMOUR_ROLL</type>
+                                               <key name="team" current="true" />
+                                               <key name="player" current="true" />
+                                               <key name="knockedDown">true</key>
+                                           </log>
+                                       </log>
+                                    </filter>
+                                   
+                               </content>
+                           </element>
+                           
+                           <element name="sustained_crowd_surfs">
+                               <content type="count">
+                                   <filter>
+                                       <log>
+                                           <type>BLOCK</type>
+                                           <key name="team2" current="true" />
+                                           <key name="player2" current="true" />
+                                           <log name="reroll">
+                                               <type>BLOCK</type>
+                                               <key name="team2" current="true" />
+                                               <key name="player2" current="true" />
+                                               <log name="push">
+                                                   <type>PUSH</type>
+                                                   <log name="injury">
+                                                       <type>INJURY_ROLL</type>
+                                                   </log>
+                                               </log>
+                                           </log>
+                                       </log>
+                                   </filter>
+                                   <filter>
+                                       <log>
+                                           <type>BLOCK</type>
+                                           <key name="team2" current="true" />
+                                           <key name="player2" current="true" />
+                                           <log name="push">
+                                               <type>PUSH</type>
+                                               <log name="injury">
+                                                   <type>INJURY_ROLL</type>
+                                               </log>
+                                           </log>
+                                       </log>
+                                   </filter>
+                               </content>
+                            </element>                            
+                           
+                           <element name="sustained_stuns">
+                               <content type="count">
+                                   <filter>
+                                       <log>
+                                           <type>INJURY_ROLL</type>
+                                           <key name="team" current="true" />
+                                           <key name="player" current="true" />
+                                           <key name="status">STUNNED</key>
+                                       </log>
+                                   </filter>
+                               </content>
+                            </element>
+                           
+                           <element name="sustained_kos">
+                               <content type="count">
+                                   <filter>
+                                       <log>
+                                           <type>INJURY_ROLL</type>
+                                           <key name="team" current="true" />
+                                           <key name="player" current="true" />
+                                           <key name="status">KO</key>
+                                       </log>
+                                   </filter>
+                               </content>
+                            </element>
+                           
+                            <element name="sustained_bhs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>INJURY_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="status">INJURED_BH</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>                            
+                            
+                            <element name="sustained_sis">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>INJURY_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="status">INJURED_SI</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                           <element name="sustained_kill">
+                               <content type="count">
+                                   <filter>
+                                       <log>
+                                           <type>INJURY_ROLL</type>
+                                           <key name="team" current="true" />
+                                           <key name="player" current="true" />
+                                                <key name="status">DEAD</key>
+                                            </log>
+                                   </filter>
+                               </content>
+                            </element>
+                            
+                            
+                            <!--
+                                Player Fouling stats     
+                             --> 
+                            
+                            
+                            <element name="inflicted_fouls">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>FOUL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            
+                            <element name="inflicted_foul_stuns">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>FOUL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">STUNNED</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_foul_kos">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>FOUL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">KO</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_foul_bhs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>FOUL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">INJURED_BH</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_foul_sis">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>FOUL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">INJURED_SI</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="inflicted_foul_kills">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>FOUL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">DEAD</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="sustained_fouls">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>FOUL</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="sustained_ejections">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>EJECTION</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="ejected">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="apothecary_used">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>INJURY_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="apothecary">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="ko_recovery_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>KO_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="ko_recoveries">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>KO_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="thickskull_used">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>INJURY_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true"/>
+                                            <key name="thickSkull">true</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="regeneration_attempts">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>CASUALTY_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="regeneration">
+                                                <type>SKILL_ROLL</type>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <element name="regenerations">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>CASUALTY_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="regeneration">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            
+                            <!--
+                                Player Kicking stats  (kick skill only)
+                             --> 
+                            
+                            <element name="kickoffs">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>KICK_OFF</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="kick_distance">
+                                <content type="sum">
+                                    <filter path="distance">
+                                        <log>
+                                            <type>KICK_OFF</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="dice_rolls">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SIMPLE_ROLL</type>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="dice_natural_ones">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="roll1">1</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="roll1">1</key>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="roll1">1</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="roll1">1</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="dice_natural_sixes">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="roll1">6</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="roll1">6</key>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="roll1">6</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="roll1">6</key>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="dice_target_sum">
+                                <content type="sum">
+                                    <filter path="target">
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SIMPLE_ROLL</type>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter path="target">
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                    <filter path="target">
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter path="target">
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="dice_roll_sum">
+                                <content type="sum">
+                                    <filter path="roll1">
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SIMPLE_ROLL</type>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter path="roll1">
+                                        <log>
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                    <filter path="roll1">
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter path="roll1">
+                                        <log>
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            
+                            <element name="interceptions">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>THROW</type>
+                                            <key name="bomb">false</key>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                            <log name="interception">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>THROW</type>
+                                            <key name="bomb">false</key>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                            <log name="interception">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="reroll">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="success">true</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element> 
+
+                            <element name="casualties">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="stab">false</key>
+                                            <key name="chainsaw">false</key>
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="casualty">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                            <key name="stab">false</key>
+                                            <key name="chainsaw">false</key>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="casualty">true</key>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+
+                            <element name="touchdowns">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>TOUCHDOWN</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+
+                            
+                            
+                            <!--
+                                
+                                <attribute name="name">
+                                    <content type="value">
+                                        <object>player</object>
+                                        <field>name</field>
+                                    </content>
+                                </attribute>
+                                
+                                <attribute name="number">
+                                    <content type="value">
+                                        <object>player</object>
+                                        <field>number</field>
+                                    </content>
+                            </attribute>
+                            
+                                <content type="list">
+                                    <childrenName>roll</childrenName>
+                                    <filter path="roll1">
+                                        <log>
+                                            <type>IMPROVEMENT_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+                            <element name="iImprovement_Roll2">
+                                <content type="list">
+                                    <childrenName>roll</childrenName>
+                                    <filter path="roll2">
+                                        <log>
+                                            <type>IMPROVEMENT_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                            </element>
+-->
+                            
+                        
+                        <!--
+                            Speciality skills 
+                        -->
+                        <element name="big_guy_stupidity_attempts">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="boneHead">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="reallyStupid">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="takeRoot">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter> 
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="wildAnimal">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter> 
+                                
+                            </content>
+                        </element>
+                        
+                        
+                        
+                        <element name="big_guy_stupidity_successes">
+                            <content type="count">
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="boneHead">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="boneHead">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="reallyStupid">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="reallyStupid">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="takeRoot">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="takeRoot">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="wildAnimal">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="wildAnimal">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>        
+                            </content>
+                        </element>
+                        
+                        
+                        <element name="big_guy_stupidity_blitz_attempts">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="boneHead">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="reallyStupid">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="takeRoot">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter> 
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="wildAnimal">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter> 
+                                
+                            </content>
+                        </element>                        
+                        
+                        
+                        <element name="big_guy_stupidity_blitz_successes">
+                            <content type="count">
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="boneHead">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="boneHead">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="reallyStupid">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="reallyStupid">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="takeRoot">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="takeRoot">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="wildAnimal">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="type">BLITZ</key>
+                                        <log name="wildAnimal">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                            </content>
+                        </element>
+                        
+                        
+                        <element name="throw_team_mate_attempts">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                    </log>
+                                </filter> 
+                            </content>
+                        </element>
+                        
+                        <element name="throw_team_mate_successes">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="success">true</key>
+                                    </log>
+                                </filter> 
+                            </content>
+                        </element>     
+                        
+                        <element name="throw_team_mate_distance">
+                            <content type="sum">
+                                <filter path="progression">
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                    </log>
+                                </filter> 
+                            </content>
+                        </element>     
+                        
+                        <element name="throw_team_mate_to_safe_landing">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="success">true</key>
+                                        <log name="landing">
+                                            <type>LANDING</type>
+                                            <log name="landing">
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="success">true</key>
+                                             </log>
+                                            </log>
+                                       </log>
+                                    </log>
+                                </filter> 
+                                <filter>
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="success">true</key>
+                                        <log name="landing">
+                                            <type>LANDING</type>
+                                            <log name="landing">
+                                                <type>SIMPLE_ROLL</type>
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter> 
+                            </content>
+                        </element>    
+                        
+                        <element name="times_thrown">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team2" current="true" />
+                                        <key name="player2" current="true" />
+                                    </log>
+                                </filter> 
+                            </content>
+                        </element>
+                        
+                        <element name="landing_attempts">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team2" current="true" />
+                                        <key name="player2" current="true" />
+                                        <log name="landing">
+                                            <type>LANDING</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter> 
+                            </content>
+                        </element>
+                        
+                        <element name="landings">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team2" current="true" />
+                                        <key name="player2" current="true" />
+                                        <log name="landing">
+                                            <type>LANDING</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                        </log>
+                                    </log>
+                                </filter> 
+                            </content>
+                        </element>
+                        
+                        
+                        <element name="distance_thrown">
+                            <content type="sum">
+                                <filter path="progression">
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team2" current="true" />
+                                        <key name="player2" current="true" />
+                                    </log>
+                                </filter> 
+                            </content>
+                        </element>
+                        
+                        <element name="rushing_distance_thrown">
+                            <content type="sum">
+                                <filter path="progression">
+                                    <log>
+                                        <type>TEAM_MATE_THROW</type>
+                                        <key name="team2" current="true" />
+                                        <key name="player2" current="true" />
+                                        <key name="ball">true</key>
+                                    </log>
+                                    </filter> 
+                            </content>
+                        </element>
+                        
+
+                        
+                        <!--
+                            Vampire Stats
+                            
+                         -->
+                        <element name="bloodlust_rolls">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="bloodLust">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        <element name="bloodlust_successes">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="bloodLust">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                            <log name="reroll">
+                                                <type>SKILL_ROLL</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <key name="success">true</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                <filter>
+                                    <log>
+                                        <type>ACTION_DECLARED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="bloodLust">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        
+                        <element name="bloodfeeds">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>BLOOD_FEED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        
+                        <element name="hypnoze_rolls">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>HYPNOZE</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="bloodLust">
+                                            <type>SKILL_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        <element name="hypnoze_successes">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>HYPNOZE</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="roll1">
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">false</key>
+                                                <log name="reroll">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="team" current="true" />
+                                                    <key name="player" current="true" />
+                                                    <key name="success">true</key>
+                                                </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                                
+                                <filter>
+                                    <log>
+                                        <type>HYPNOZE</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="roll1">
+                                            <type>SIMPLE_ROLL</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="success">true</key>
+                                        </log>
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        <!--
+                            
+                            Blood feed effects dont seem to be working
+                            Armour2 isnt getting any matches
+                         
+                        
+                        <element name="inflicted_bloodfeed_stuns">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>BLOOD_FEED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="armour2">
+                                            <type>ARMOUR_ROLL</type>
+                                            <log name="injury">
+                                                <type>INJURY_ROLL</type>
+                                                <key name="status">STUNNED</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        
+                        
+                        <element name="inflicted_bloodfeed_kos">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>BLOOD_FEED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="armour2">
+                                            <type>ARMOUR_ROLL</type>
+                                            <log name="injury">
+                                                <type>INJURY_ROLL</type>
+                                                <key name="status">KO</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        <element name="inflicted_bloodfeed_bhs">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>BLOOD_FEED</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <log name="armour2">
+                                            <type>ARMOUR_ROLL</type>
+                                            <log name="injury">
+                                                <type>INJURY_ROLL</type>
+                                                <key name="status">INJURED_BH</key>
+                                            </log>
+                                        </log>
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        -->
+                        
+                        <element name="fed_on">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>BLOOD_FEED</type>
+                                        <key name="team2" current="true" />
+                                        <key name="player2" current="true" />
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        
+                        <element name="tentacles_rolls">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>HYPNOZE</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+                        
+                        
+                        <element name="tentacles_successes">
+                            <content type="count">
+                                <filter>
+                                    <log>
+                                        <type>HYPNOZE</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="success">true</key>
+                                    </log>
+                                </filter>
+                            </content>
+                        </element>
+
+                        
+                        <element name="injuries">
+                            <content type="list">
+                                <childrenName>injury</childrenName>
+                                <filter path="casualty">
+                                    <log>
+                                        <type>CASUALTY_ROLL</type>
+                                        <key name="team" current="true" />
+                                        <key name="player" current="true" />
+                                        <key name="heal">false</key>
+                                    </log>
+                                </filter>
+                            </content>
+                            </element>
+                            
+                            <element name="mvp">
+                                <content type="count">
+                                    <filter>
+                                        <log>
+                                            <type>MVP</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                        </log>
+                                    </filter>
+                                </content>
+                          </element>
+                          
+                          <element name="improvement_roll1">
+                              
+                              <content type="sum">
+                                  <filter path="roll1">
+                                      <log>
+                                          <type>IMPROVEMENT_ROLL</type>
+                                          <key name="team" current="true" />
+                                          <key name="player" current="true" />
+                                      </log>
+                                  </filter>
+                              </content>
+                          </element>
+                          
+                          <element name="improvement_roll2">
+                              
+                              <content type="sum">
+                                  <filter path="roll2">
+                                      <log>
+                                          <type>IMPROVEMENT_ROLL</type>
+                                          <key name="team" current="true" />
+                                          <key name="player" current="true" />
+                                      </log>
+                                  </filter>
+                              </content>
+                            </element>
+                            
+                    </element> 
+                   
+
+                    </loop>
+                </element>
+
+            </element>
+        </loop>       
+       
+    </element>
+</template>
