@@ -190,3 +190,15 @@ Just to note inflicted counts here are based on the status of the player at the 
 ||sustained_bhs||Total number of times this player has been badly hurt (from any means).||
 ||sustained_sis||Total number of times this player has been seriously injured (from any means).||
 ||sustained_kill||Total number of times this player has been seriously injured (from any means)... this would only ever be 1!||
+
+
+===Fouling Stats==
+
+||inflicted_fouls||Number of times this player has fouled another.||
+||inflicted_foul_stuns||Number of times this player stunned another through fouling||
+||inflicted_foul_kos||Number of times this player knocked out another through fouling||
+||inflicted_foul_bhs||Number of times this player badly hurt another through fouling||
+||inflicted_foul_sis||Number of times this player seriously injured another through fouling||
+||inflicted_foul_kills||Number of times this player killed another through fouling||
+||sustained_fouls||Number of times this player has been fouled.||
+||sustained_ejections||Number of times this player was ejected for fouling.||
