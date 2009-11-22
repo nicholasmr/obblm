@@ -107,7 +107,22 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         if ( $this->extrastats )
         {
-            #EPS::makeEntry(array $relations, array $playerData);
+            // General relations
+            $relations = mysql_fetch_assoc(mysql_query("SELECT $this->match_id AS 'f_mid', tour_id AS 'f_trid', did AS 'f_did', f_lid  AS 'f_lid'
+                FROM matches, tours, divisions WHERE match_id = $this->match_id AND tour_id = f_tour_id AND did = f_did"));
+            $game_date = get_alt_col('matches', 'match_id', $this->match_id, 'date_played');
+            foreach (array('home', 'away') as $team) {
+                // Team relations
+                $relations['f_cid'] = ${"team_$team"}->owned_by_coach_id;
+                $relations['f_rid'] = ${"team_$team"}->f_race_id;
+                $relations['f_tid'] = ${"team_$team"}->team_id;
+                foreach ($this->{"${team}players_eps"} as $p) {
+                    list($relations['f_pid']) = mysql_fetch_row(mysql_query("SELECT player_id FROM players 
+                        WHERE owned_by_team_id = $relations[f_tid] AND nr = $p[f_nr] AND date_sold IS NULL AND date_died IS NULL"));
+                    unset($p['f_nr']);
+                    EPS::makeEntry($relations, $p);
+                }
+            }
         }        
 
         $match = new Match( $this->match_id );
@@ -195,7 +210,15 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         if ( $this->extrastats )
         {
-
+            foreach (array(0 => 'home', 1 => 'away') as $nr => $team) {
+                $players = array();
+                foreach ($results->team[$nr]->players->player as $p) {
+                    if ($p->attributes()->mercenary == "true") 
+                        continue;
+                    $players[] = array_merge((array) $p, array('f_nr' => (int) $p->attributes()->number));
+                }
+                $this->{"${team}players_eps"} = array_map(create_function('$p', 'return array_intersect_key($p, array_merge(EPS::$types, EPS::$relations, array(\'f_nr\' => null)));'), $players);
+            }
         }
 
         return true;
@@ -680,7 +703,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 {
                     if (strpos(zip_entry_name($zip_entry),"report.xml") !== false )
                     {
-                        $this->xmlresults = zip_entry_read($zip_entry, 100000);
+                        $this->xmlresults = zip_entry_read($zip_entry, 256000);
                         zip_entry_close($zip_entry);
                     }
 
