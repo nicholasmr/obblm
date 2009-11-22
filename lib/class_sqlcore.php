@@ -314,6 +314,29 @@ public static function installProcsAndFuncs($install = true)
         SET ret = syncMVrace(rid1, trid);
         SET ret = syncMVrace(rid2, trid);
     ';
+        # Needs $matches_setup_rels.
+        /* When submitting $match->entry() updates player DPROPS, the same needs to be done on match deletion (where entry() is not called). */
+    $matches_reload_player_DPROPS = '
+        OPEN cur_p1;
+        REPEAT
+            FETCH cur_p1 INTO pid;
+            IF NOT done THEN
+                CALL MDSync(pid);
+            END IF;
+        UNTIL done END REPEAT;
+        CLOSE cur_p1;
+        SET done = 0;
+
+        OPEN cur_p2;
+        REPEAT
+            FETCH cur_p2 INTO pid;
+            IF NOT done THEN
+                CALL MDSync(pid);
+            END IF;
+        UNTIL done END REPEAT;
+        CLOSE cur_p2;
+        SET done = 0;
+    ';
     
     /* 
      *  All routines
@@ -1095,6 +1118,7 @@ public static function installProcsAndFuncs($install = true)
             '.$matches_win_pct.'
             CALL syncELOTour(NULL);
             CALL syncELOTour(trid);
+            '.$matches_reload_player_DPROPS.'
         END',
         
         /*
