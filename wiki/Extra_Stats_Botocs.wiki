@@ -212,3 +212,22 @@ Just to note inflicted counts here are based on the status of the player at the 
 ||thickskull_used||Number of times thick skull was used by this player.||
 ||regeneration_attempts||Number of time this player attempted to regenerate.||
 ||regenerations||Number of times the regenerate roll succeeded.||
+
+===Kicking Stats===
+
+Note: these are only recorded for a player with the kick skill. The only other thing I could try and get out of it might be direction kicked but it would be 8 more stats for not a whole lot.
+
+||kickoffs||Number of times this player kicked off||
+||kick_distance||Distance the ball was kicked in squares.||
+
+===Dice Stats (might be fun to see how lucky a player is)===
+
+||dice_rolls||Number of times this player rolled a simple roll or skill roll.||
+||dice_natural_ones||Number of natural ones rolled.||
+||dice_natural_sixes||Number of natural sixes rolled.||
+||dice_target_sum||Sum of the total targets required.||
+||dice_roll_sum||Sum of what was actually rolled (with above would be used to show averages).||
+
+
+
+
