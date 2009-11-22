@@ -51,7 +51,7 @@ class SQLTriggers
             case T_SQLTRIG_PLAYER_DPROPS: 
                 mysql_query("CALL getPlayerDProps($pid, @inj_ma,@inj_av,@inj_ag,@inj_st,@inj_ni, @ma,@av,@ag,@st, @value, @status, @date_died)") or die(mysql_error());
                 mysql_query("UPDATE players SET 
-                            inj_ma = @inj_ma, inj_av = @inj_av, inj_av = @inj_ag, inj_st = @inj_st, inj_ni = @inj_ni, 
+                            inj_ma = @inj_ma, inj_av = @inj_av, inj_ag = @inj_ag, inj_st = @inj_st, inj_ni = @inj_ni, 
                             ma = @ma, av = @av, ag = @ag, st = @st, 
                             value = @value, status = @status, date_died = @date_died WHERE player_id = $pid") or die(mysql_error());
                 self::_team(T_SQLTRIG_TEAM_DPROPS, array('id' => $p->owned_by_team_id, 'obj' => new Team($p->owned_by_team_id))); # TV updated dependency.
@@ -145,7 +145,8 @@ class SQLTriggers
                 break;
 
             case T_SQLTRIG_MATCH_DEL:
-                mysql_query("CALL match_del($argv[mid], $argv[trid], $argv[tid1], $argv[tid2])") or die(mysql_error());
+                mysql_query($q="CALL match_del($argv[mid], $argv[trid], $argv[tid1], $argv[tid2])") or die(mysql_error());
+#                echo $q;
                 break;
         }
     }

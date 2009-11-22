@@ -133,7 +133,7 @@ class Player
         $this->setSkills();
         
         $this->is_dead       = ($this->status == DEAD);
-        $this->is_mng        = ($this->status == MNG);
+        $this->is_mng        = !in_array($this->status, array(NONE, DEAD, SOLD));
         $this->is_sold       = (bool) $this->date_sold;
         $this->is_journeyman = ($this->type == PLAYER_TYPE_JOURNEY);
         
