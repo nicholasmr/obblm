@@ -229,5 +229,40 @@ Note: these are only recorded for a player with the kick skill. The only other t
 ||dice_roll_sum||Sum of what was actually rolled (with above would be used to show averages).||
 
 
+===Other SPPs Stats==
+
+The improvement roll info should be used to filter the list of skills for selection by a player on the team roster page
+
+||interceptions||Number of times this player intercepted the ball.||
+||casualties||Number of casualties caused earning spp.||
+||touchdowns||Number of touchdowns this player scored.||
+||injuries||Injuried sustained by this player.||
+||mvp||1 if this player was MVP||
+||improvement_roll1||The skill up improvement roll (d1)||
+||improvement_roll2||The skill up mprovement roll (d2)||
+
+
+===Big Guy Stats===
+
+||big_guy_stupidity_attempts||Number of rolls for really stupid, bonehead, take root and wild animal.||
+||big_guy_stupidity_successes||Number of times the really stupid, bonehead, take root and wild animal roll succeeded.||
+||big_guy_stupidity_blitz_attempts||Number of times this big guy declared a blitz||
+||big_guy_stupidity_blitz_successes||Number of times this big guy was able to blitz||
+||throw_team_mate_attempts||Number of attempts to throw a team mate by this player||
+||throw_team_mate_successes||Number of times this player successfully threw a team mate.||
+||throw_team_mate_distance||How far this player has thrown team mates in squares.||
+||throw_team_mate_to_safe_landing||Number of times this player successfully threw a team mate and the thrown player landed.||
+
+===Right Stuff Stats===
+||times_thrown||Number of times this player has been thrown||
+||landing_attempts||Number of times this player has attempted to land||
+||landings||Number of times this player successfully landed.||
+||distance_thrown||The distance this player has been thrown||
+||rushing_distance_thrown||The distance the ball progressed towards the end zone when this player was thrown (should be added to rushing distance total stat)||
+
+
+
+
+
 
 
