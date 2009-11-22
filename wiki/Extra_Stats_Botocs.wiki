@@ -123,3 +123,25 @@ inflicted_bloodfeed_kos
 inflicted_bloodfeed_bhs
 -->
 }}}
+
+
+===Offensive Stats===
+
+
+||pass_attempts||Number of pass throw attempts of the ball.||
+||pass_completions||Number of completions of throws of the ball (+1 spp)||
+||interceptions_thrown||Number of times the thrower has been intercepted.||
+||pass_distance||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
+||dumpoff_attempts||Number of passes thrown which have been dumpoffs (this is informational, iPass_Attempts includes dump offs).||
+||dumpoff_completions||Number of completions from dump offs (as above this is for informational purposes, iPass_Completions includes dump off completions).||
+||catch_attempts||Number of catch attempts made my a player from a throw.||
+||catches||Number of catches made (including re-rolled).||
+||handoffs||Number of hand offs this player has made||
+||handoffs_received||Number of times this player has been handed off too.||
+||handoff_catches||Number times this player caught a hand off (including re-rolled).||
+||pickup_attempts||Number of times attempting to pick the ball up.||
+||pickups||Number of successful pick ups (including re-rolled).||
+
+
+
+
