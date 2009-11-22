@@ -261,8 +261,24 @@ The improvement roll info should be used to filter the list of skills for select
 ||rushing_distance_thrown||The distance the ball progressed towards the end zone when this player was thrown (should be added to rushing distance total stat)||
 
 
+===Vampire Stats===
 
+The inflicted stats aren't working atm
 
+||bloodlust_rolls||Number of blood lust rolls||
+||bloodlust_successes||Number of times this player didn't succumb to blood lust.||
+||bloodfeeds||Number of blood feeds by this vampire||
+||hypnoze_rolls||Number of times hypnotic gaze was used||
+||hypnoze_successes||Number of times hypnotic gaze was successful||
 
+||inflicted_bloodfeed_stuns||Number of stuns from a blood feed (doesn't seem to be working, path is action blood feed, armour roll 2 for thrall, injury roll for thrall, end status stunned). Not sure why it doesn't go straight to the injury roll.||
+||inflicted_bloodfeed_kos||Number of KOs from a blood feed (as above)||
+||inflicted_bloodfeed_bhs||Number of badly hurts from a blood feed (as above)||
+
+===Thrall Stats===
+
+As above as the path for outcome of thrall injuries isnt working (or at least my filter is wrong), i cant work out sustained effects of the blood feed.
+
+||fed_on||Number of times this thrall player has been fed on.||
 
 
