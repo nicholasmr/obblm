@@ -3,7 +3,7 @@
 == Purpose ==
 
 Overview of the extra stats being added for botocs and what is being measured.
-Queries and isssues can be added to this page
+Queries and issues can be added to this page and requests for extra stats can be in made in comments.
 
 Some of the stats being collected should be joined together to form more interesting statistics (the rushing_distance_ stats should be summed into a single rushing_distance stat).
 
@@ -12,6 +12,8 @@ All successful stat counts include re-rolls, re-rolls themselves aren't specific
 I am assuming all player statistics will essentially form the basis for the team statistics so I didn't collect at the team level.
 
 Things that could be added, inducement information
+
+Goblin bombardiers:- I can work out how many bombs were thrown but the effect of the bombs is harder due to OR filtering and the effect of the bombs is a nested effect_roll->next_player->effect_roll thing 
 
 
 
@@ -270,7 +272,6 @@ The inflicted stats aren't working atm
 ||bloodfeeds||Number of blood feeds by this vampire||
 ||hypnoze_rolls||Number of times hypnotic gaze was used||
 ||hypnoze_successes||Number of times hypnotic gaze was successful||
-
 ||inflicted_bloodfeed_stuns||Number of stuns from a blood feed (doesn't seem to be working, path is action blood feed, armour roll 2 for thrall, injury roll for thrall, end status stunned). Not sure why it doesn't go straight to the injury roll.||
 ||inflicted_bloodfeed_kos||Number of KOs from a blood feed (as above)||
 ||inflicted_bloodfeed_bhs||Number of badly hurts from a blood feed (as above)||
@@ -281,4 +282,7 @@ As above as the path for outcome of thrall injuries isnt working (or at least my
 
 ||fed_on||Number of times this thrall player has been fed on.||
 
+==Tentacles Stats==
 
+||tentacles_rolls||Number of times this player used his tentacles||
+||tentacles_successes ||Number of times this players successfully held another||
