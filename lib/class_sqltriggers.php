@@ -145,8 +145,7 @@ class SQLTriggers
                 break;
 
             case T_SQLTRIG_MATCH_DEL:
-                mysql_query($q="CALL match_del($argv[mid], $argv[trid], $argv[tid1], $argv[tid2])") or die(mysql_error());
-#                echo $q;
+                mysql_query("CALL match_del($argv[mid], $argv[trid], $argv[tid1], $argv[tid2])") or die(mysql_error());
                 break;
         }
     }
