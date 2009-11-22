@@ -132,8 +132,8 @@ inflicted_bloodfeed_bhs
 ||pass_completions||Number of completions of throws of the ball (+1 spp)||
 ||interceptions_thrown||Number of times the thrower has been intercepted.||
 ||pass_distance||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
-||dumpoff_attempts||Number of passes thrown which have been dumpoffs (this is informational, iPass_Attempts includes dump offs).||
-||dumpoff_completions||Number of completions from dump offs (as above this is for informational purposes, iPass_Completions includes dump off completions).||
+||dumpoff_attempts||Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs).||
+||dumpoff_completions||Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions).||
 ||catch_attempts||Number of catch attempts made my a player from a throw.||
 ||catches||Number of catches made (including re-rolled).||
 ||handoffs||Number of hand offs this player has made||
@@ -143,5 +143,22 @@ inflicted_bloodfeed_bhs
 ||pickups||Number of successful pick ups (including re-rolled).||
 
 
+
+===Movement Stats===
+
+All progression is counted while carrying the ball.
+
+||rushing_distance_leap||Squares of progression towards the end zone leaping with the ball.||
+||rushing_distance_push||Squares of progression towards the end zone from pushes.||
+||rushing_distance_move||Squares of progression with the ball running towards the end zone in a normal move.||
+||rushing_distance_block||Squares of progression towards the end zone from blocks/blitzes.||
+||rushing_distance_shadowing||Squares of progression towards the end zone from shadowing.||
+||leap_attempts||Number of leap attempts.||
+||leaps||Number of successful leaps (including re-rolled).||
+||dodge_attempts||Number of dodge attempts||
+||dodges||Number of successful dodges (including re-rolled)||
+||blitz_actions||Number of times this player has blitzed.||
+||gfi_attempts||Go for it attempts||
+||gfis||Number of times Nuffle didn't shit on you.||
 
 
