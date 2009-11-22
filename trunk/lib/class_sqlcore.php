@@ -214,6 +214,11 @@ public static function installProcsAndFuncs($install = true)
         DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
         DECLARE cur_p1 CURSOR FOR SELECT f_player_id FROM match_data WHERE f_team_id = tid1 AND f_match_id = mid;
         DECLARE cur_p2 CURSOR FOR SELECT f_player_id FROM match_data WHERE f_team_id = tid2 AND f_match_id = mid;
+        
+        /* Player DPROPS sync on match reset & delete */
+        DECLARE cur_p1_all CURSOR FOR SELECT player_id FROM players WHERE owned_by_team_id = tid1;
+        DECLARE cur_p2_all CURSOR FOR SELECT player_id FROM players WHERE owned_by_team_id = tid2;
+
         DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
         
         SELECT t1.f_race_id, t2.f_race_id, t1.owned_by_coach_id, t2.owned_by_coach_id, t1.team_id, t2.team_id
@@ -317,24 +322,24 @@ public static function installProcsAndFuncs($install = true)
         # Needs $matches_setup_rels.
         /* When submitting $match->entry() updates player DPROPS, the same needs to be done on match deletion (where entry() is not called). */
     $matches_reload_player_DPROPS = '
-        OPEN cur_p1;
+        OPEN cur_p1_all;
         REPEAT
-            FETCH cur_p1 INTO pid;
+            FETCH cur_p1_all INTO pid;
             IF NOT done THEN
                 CALL MDSync(pid);
             END IF;
         UNTIL done END REPEAT;
-        CLOSE cur_p1;
+        CLOSE cur_p1_all;
         SET done = 0;
 
-        OPEN cur_p2;
+        OPEN cur_p2_all;
         REPEAT
-            FETCH cur_p2 INTO pid;
+            FETCH cur_p2_all INTO pid;
             IF NOT done THEN
                 CALL MDSync(pid);
             END IF;
         UNTIL done END REPEAT;
-        CLOSE cur_p2;
+        CLOSE cur_p2_all;
         SET done = 0;
     ';
     
