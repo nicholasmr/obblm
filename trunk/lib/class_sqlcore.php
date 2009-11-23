@@ -301,7 +301,7 @@ public static function installProcsAndFuncs($install = true)
         REPEAT
             FETCH cur_p1_all INTO pid;
             IF NOT done THEN
-                CALL MDSync(pid);
+                CALL MDSync(pid, trid);
             END IF;
         UNTIL done END REPEAT;
         CLOSE cur_p1_all;
@@ -311,7 +311,7 @@ public static function installProcsAndFuncs($install = true)
         REPEAT
             FETCH cur_p2_all INTO pid;
             IF NOT done THEN
-                CALL MDSync(pid);
+                CALL MDSync(pid, trid);
             END IF;
         UNTIL done END REPEAT;
         CLOSE cur_p2_all;
