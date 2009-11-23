@@ -209,16 +209,11 @@ public static function installProcsAndFuncs($install = true)
         /* Streaks */
         DECLARE swon,sdraw,slost '.$CT_cols['streak'].';
         
-        /* MVs */
+        /* Player DPROPS sync on match reset & delete */
         DECLARE done INT DEFAULT 0;
         DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
-        DECLARE cur_p1 CURSOR FOR SELECT f_player_id FROM match_data WHERE f_team_id = tid1 AND f_match_id = mid;
-        DECLARE cur_p2 CURSOR FOR SELECT f_player_id FROM match_data WHERE f_team_id = tid2 AND f_match_id = mid;
-        
-        /* Player DPROPS sync on match reset & delete */
         DECLARE cur_p1_all CURSOR FOR SELECT player_id FROM players WHERE owned_by_team_id = tid1;
         DECLARE cur_p2_all CURSOR FOR SELECT player_id FROM players WHERE owned_by_team_id = tid2;
-
         DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
         
         SELECT t1.f_race_id, t2.f_race_id, t1.owned_by_coach_id, t2.owned_by_coach_id, t1.team_id, t2.team_id
@@ -292,26 +287,6 @@ public static function installProcsAndFuncs($install = true)
     ';
         # Needs $matches_setup_rels.
     $matches_MVs = '
-        OPEN cur_p1;
-        REPEAT
-            FETCH cur_p1 INTO pid;
-            IF NOT done THEN
-                SET ret = syncMVplayer(pid, trid);
-            END IF;
-        UNTIL done END REPEAT;
-        CLOSE cur_p1;
-        SET done = 0;
-
-        OPEN cur_p2;
-        REPEAT
-            FETCH cur_p2 INTO pid;
-            IF NOT done THEN
-                SET ret = syncMVplayer(pid, trid);
-            END IF;
-        UNTIL done END REPEAT;
-        CLOSE cur_p2;
-        SET done = 0;
-            
         SET ret = syncMVteam(tid1, trid);
         SET ret = syncMVteam(tid2, trid);
         SET ret = syncMVcoach(cid1, trid);
@@ -1127,19 +1102,23 @@ public static function installProcsAndFuncs($install = true)
         END',
         
         /*
-            Match data sync, updates player fields.
+            Match data sync, updates ALL player fields.
+            
+            Run on match_data change for player.
         */
         
-        'CREATE PROCEDURE MDSync(IN pid '.$CT_cols[T_OBJ_PLAYER].')
+        'CREATE PROCEDURE MDSync(IN pid '.$CT_cols[T_OBJ_PLAYER].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].')
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
+            DECLARE ret BOOLEAN;
+        
             /* Player DPROPS */
             DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
             DECLARE value '.$CT_cols['pv'].';
             DECLARE status '.$core_tables['players']['status'].';
             DECLARE date_died '.$core_tables['players']['date_died'].'; 
-
+            
             /* Update player DPROPS */            
             CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, value,status,date_died);
             UPDATE players 
@@ -1147,6 +1126,9 @@ public static function installProcsAndFuncs($install = true)
                     players.ma = ma, players.av = av, players.ag = ag, players.st = st, 
                     players.value = value, players.status = status, players.date_died = date_died
                 WHERE players.player_id = pid;
+
+            /* Update MV */
+            SET ret = syncMVplayer(pid, trid);
         END
         ',
         
