@@ -537,9 +537,7 @@ class Match
             )";
         }
 
-        return mysql_query($query) && 
-            SQLTriggers::run(T_SQLTRIG_MATCHDATA, array('pid' => $pid)) &&
-            ($p) ? SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $pid, 'obj' => $p)) : true; # Only for regular players.
+        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_MATCHDATA, array('pid' => $pid, 'trid' => $trid));
     }
     
     public function getSummedAch($s) {
