@@ -141,7 +141,7 @@ public static function getModuleAttributes()
 
 public static function getModuleTables()
 {
-    return array(self::TABLE => array_merge(self::$relations, array_map(create_function('$t', 'return $t[type];'), self::$types));
+    return array(self::TABLE => array_merge(self::$relations, array_map(create_function('$t', 'return $t[type];'), self::$types)));
 }    
 
 public static function getModuleUpgradeSQL()
