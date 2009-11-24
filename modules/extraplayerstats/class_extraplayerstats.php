@@ -6,6 +6,7 @@ class EPS implements ModuleInterface
 {
 
 const TABLE = 'eps';
+const TABLE_DPROPS = 'mv_eps';
 
 public static $types = array(
     # cat fs.txt | perl -ne 's/^(\w*)\s*$/"$1" => "SMALLINT UNSIGNED NOT NULL DEFAULT 0",\n/ && print'
@@ -123,6 +124,11 @@ public static $relations = array(
     "f_lid"  => 'MEDIUMINT UNSIGNED',   # League ID
 );
 
+public static $DPROPS = array(
+    # "Field name" => "Field def."
+#    ''
+);
+
 public static function main($argv) # argv = argument vector (array).
 {
     $func = array_shift($argv);
@@ -141,7 +147,11 @@ public static function getModuleAttributes()
 
 public static function getModuleTables()
 {
-    return array(self::TABLE => array_merge(self::$relations, array_map(create_function('$t', 'return $t[type];'), self::$types)));
+    $std_fields = array_merge(self::$relations, array_map(create_function('$t', 'return $t[type];'), self::$types));
+    return array(
+        self::TABLE => $std_fields,
+#        self::TABLE_DPROPS => array_merge($std_fields, @FIXME self::$DPROPS),
+    );
 }    
 
 public static function getModuleUpgradeSQL()
