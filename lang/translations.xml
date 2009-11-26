@@ -32,6 +32,7 @@
     <upload>Upload</upload>
     <all>All</all>
     <select>Select</select>
+    <stats>Statistics</stats>
     
     <needhelp>Need help?</needhelp>
     <picof>Picture of</picof>
@@ -134,6 +135,7 @@
     <main>
         <start_new>Start a new team</start_new>
         
+        <your_stats>See your stats here</your_stats>
         <your_info>Your account information</your_info>
             <new>New</new>
             <old>Old</old>
