@@ -59,53 +59,25 @@ function objsort(&$obj_array, $fields)
 
 // Returns what sort rule is to be used for different stats-table types.
 function sort_rule($w) {
+
+    # - Summable values from the MV tables must always be referenced by using the "mv_" prefix.
+    # - Non-summable values (ie. steaks, win pct's etc.) are referenced by the "rg_" prefix.
+    # - Static and dynamic properties (ie. name, treasury, skills etc.) need no prefix.
     
-    $rule = array();
-    
-    switch ($w)
-    {
-        # - Summable values from the MV tables must always be referenced by using the "mv_" prefix.
-        # - Non-summable values (ie. steaks, win pct's etc.) are referenced by the "rg_" prefix.
-        # - Static and dynamic properties (ie. name, treasury, skills etc.) need no prefix.
+    $rules = array(
+        T_OBJ_RACE   => array('-rg_win_pct', '+name'), // "All races"-table
+        T_OBJ_COACH  => array('-rg_win_pct', '-wt_cnt', '-mv_cas', '+name'), // "All coaches"-table
+        T_OBJ_TEAM   => array('-mv_won', '-mv_draw', '+mv_lost', '-mv_sdiff', '-mv_cas', '+name'), // "All teams"-table
+        T_OBJ_PLAYER => array('-value', '-mv_td', '-mv_cas', '-mv_spp', '+name'), // "All players"-table
+        T_OBJ_STAR   => array('-mv_played', '+name'), // Stars table.
         
-        case T_OBJ_RACE: // "All races"-table
-            $rule = array('-rg_win_pct', '+name');
-            break;
+        'match'     => array('-date_played'), // Games played tables.
+        'player'    => array('+nr', '+name'), // For team roaster player list.
+        'race_page' => array('+cost', '+position'), // Race's players table.
+        'star_HH'   => array('-date_played'), // Stars hire history table.
+    );
 
-        case T_OBJ_COACH: // "All coaches"-table
-            $rule = array('-rg_win_pct', '-wt_cnt', '-mv_cas', '+name');
-            break;
-            
-        case T_OBJ_TEAM: // "All teams"-table
-            $rule = array('-mv_won', '-mv_draw', '+mv_lost', '-mv_sdiff', '-mv_cas', '+name');
-            break;
-
-        case T_OBJ_PLAYER: // "All players"-table
-            $rule = array('-value', '-mv_td', '-mv_cas', '-mv_spp', '+name');
-            break;
-            
-        case T_OBJ_STAR: // Stars table.
-            $rule = array('-mv_played', '+name');
-            break;
-            
-        case 'player': // For team roaster player list.
-            $rule = array('+nr', '+name');
-            break;
-            
-        case 'race_page': // Race's players table.
-            $rule = array('+cost', '+position');
-            break;
-            
-        case 'star_HH': // Stars hire history table.
-            $rule = array('-date_played');
-            break;
-            
-        case 'match': // Games played tables.
-            $rule = array('-date_played');
-            break;
-    }
-    
-    return $rule;
+    return array_key_exists($w, $rules) ? $rules[$w] : array();
 }
 
 
@@ -158,24 +130,16 @@ function fatal($err_msg) {
 
 // Print a status message.
 function status($status, $msg = '') {
-
-        if ($status) { # Status == success
-            echo "<div class=\"messageContainer green\">";
-                echo "Request succeeded";
-                if ($msg != ''){
-                    echo " : $msg\n";
-                }
-            echo "</div>";
-        } else { # Status == failure
-                echo "<div class=\"messageContainer red\">";
-                    echo "Request failed";
-                if ($msg != ''){
-                    echo " : $msg\n";
-                }
-            echo "</div>";
-        }
-        ?>
-    <?php
+    if ($status) { # Status == success
+        echo "<div class=\"messageContainer green\">";
+        echo "Request succeeded";
+    } 
+    else { # Status == failure
+        echo "<div class=\"messageContainer red\">";
+        echo "Request failed";
+    }
+    if ($msg) {echo " : $msg\n";}
+    echo "</div>";
 }
 
 function textdate($mysqldate, $noTime = false) {
@@ -191,40 +155,18 @@ function MTS($str) {
 /* 
     From http://us3.php.net/manual/en/function.lcfirst.php 
 */
-if ( false === function_exists('lcfirst') ):
-    function lcfirst( $str )
-    { return (string)(strtolower(substr($str,0,1)).substr($str,1));}
+if (false === function_exists('lcfirst')):
+    function lcfirst($str) { return (string)(strtolower(substr($str,0,1)).substr($str,1));}
 endif; 
-if ( false === function_exists('ucfirst') ):
-    function lcfirst( $str )
-    { return (string)(strtoupper(substr($str,0,1)).substr($str,1));}
+if (false === function_exists('ucfirst')):
+    function ucfirst($str) { return (string)(strtoupper(substr($str,0,1)).substr($str,1));}
 endif; 
 
 // Returns HTML to show an icon with the result of a game
 function matchresult_icon($result) {
-
-    global $lng;
-
-    $class = "";
-
-    switch ($result){
-        case "W":
-            $class = "won";
-            $title = 'Won';
-            break;
-        case "L":
-            $class = "lost";
-            $title = 'Lost';
-            break;
-        case "D":
-            $class = "draw";
-            $title = 'Draw';
-            break;
-        default:
-            $class = "";
-            $title = 'Unknown';
-    }
-    return "<div class='match_icon ". $class ."' title='". $title ."'></div>";
+    $types = array('W' => 'won', 'L' => 'lost', 'D' => 'draw');
+    if (!array_key_exists($result, $types)) {$types[$result] = '';}
+    return "<div class='match_icon ".$types[$result]."' title='".ucfirst($types[$result])."'></div>";
 }
 
 function fmtprint($str) {
@@ -238,9 +180,9 @@ define('T_URL_STANDINGS', 2);
 function urlcompile($type, $obj, $obj_id, $node, $node_id, $extraGETs = array()) {
     return 'index.php?section=objhandler&amp;type='.$type.
         (($obj)     ? "&amp;obj=$obj" : '').
-        (($obj)     ? "&amp;obj_id=$obj_id" : '').
+        (($obj_id)  ? "&amp;obj_id=$obj_id" : '').
         (($node)    ? "&amp;node=$node" : '').
-        (($node)    ? "&amp;node_id=$node_id" : '').
+        (($node_id) ? "&amp;node_id=$node_id" : '').
         implode("\n", array_map(create_function('$key,$val', 'return "$key=&amp;$val";'),array_keys($extraGETs),array_values($extraGETs)));
 }
 
