@@ -214,6 +214,8 @@ public static function coachCorner($cid) {
         );
         echo "<br>\n";
 
+        echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$coach->coach_id,false,false)."'>".$lng->getTrn('cc/main/your_stats')."</a><br><br>\n";
+
         // Generate teams list.
         Team_HTMLOUT::dispTeamList(STATS_COACH, $coach->coach_id);
 
