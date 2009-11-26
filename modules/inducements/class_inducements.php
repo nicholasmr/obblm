@@ -299,7 +299,7 @@ foreach ($inducements as $ind_name => $ind) {
     $ind_list .= '<option>'.$i."</option>\n";
   }
   $pi=0;
-  if ($_POST[str_replace(' ','_',$ind_name)]) {
+  if (isset($_POST[str_replace(' ','_',$ind_name)])) {
     $pi = $_POST[str_replace(' ','_',$ind_name)];
     if ($pi != 0)
       $ind_list=str_replace('<option>'.$pi.'</option>', '<option selected>'.$pi.'</option>', $ind_list);
@@ -314,6 +314,7 @@ foreach ($inducements as $ind_name => $ind) {
 }
 
 // Cards
+$card_list = ''; # Declare.
 echo '<tr>';
 echo '<td>Card budget</td><td class="cent2">&nbsp;</td><td class="cent2">&nbsp;</td>';
 echo '<td><SELECT name="Card" onChange="this.form.submit()">';
@@ -322,7 +323,7 @@ for ($i=0;$i<=1000;$i+=50) {
 }
 
 $cardb = '';
-if ($_POST["Card"]) {
+if (isset($_POST["Card"])) {
   $cardb = $_POST["Card"];
   if ($cardb != 0) {
     $card_list = str_replace('<option>'.$cardb.'</option>', '<option selected>'.$cardb.'</option>', $card_list);
