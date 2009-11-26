@@ -32,10 +32,6 @@ public $race = '';
 public $name = ''; // = $this->race, used for conventional reasons.
 public $race_id = 0;
 
-public $team_cnt = 0;
-public $wt_cnt = 0;
-public $cost_rr = 0;
-
 /***************
  * Methods 
  ***************/
@@ -43,26 +39,15 @@ public $cost_rr = 0;
 function __construct($race_id) 
 {
     global $raceididx;
-    
     $this->race_id = $race_id;
     $this->race = $this->name = $raceididx[$this->race_id];
-
-    // MySQL stored information
     $this->setStats(false,false,false);
 }
 
 public function setStats($node, $node_id, $set_avg = false)
 {
-    foreach (Stats::getAllStats(STATS_RACE, $this->race_id, $node, $node_id, $set_avg) as $key => $val) {
+    foreach (Stats::getAllStats(T_OBJ_RACE, $this->race_id, $node, $node_id, $set_avg) as $key => $val)
         $this->$key = $val;
-    }
-    return true;
-}
-
-public function getRoster()
-{
-    global $DEA;
-    return array_key_exists($this->race, $DEA) ? $DEA[$this->race] : array();
 }
 
 public function getGoods($double_RRs = false)
@@ -71,10 +56,10 @@ public function getGoods($double_RRs = false)
      * Returns buyable stuff for this race.
      **/
 
-    global $DEA, $rules;
+    global $DEA, $rules, $racesNoApothecary;
 
     $rr_price = $DEA[$this->race]['other']['rr_cost'] * (($double_RRs) ? 2 : 1);
-    $apoth = !in_array($this->race_id, array(10, 13, 15, 17)); # Teams that may not have apothecary.
+    $apoth = !in_array($this->race_id, $racesNoApothecary);
 
     return array(
             // MySQL column names as keys
@@ -84,21 +69,6 @@ public function getGoods($double_RRs = false)
             'ass_coaches'   => array('cost' => $rules['cost_ass_coaches'],  'max' => $rules['max_ass_coaches'],     'item' => 'Assistant Coach'),
             'cheerleaders'  => array('cost' => $rules['cost_cheerleaders'], 'max' => $rules['max_cheerleaders'],    'item' => 'Cheerleader'),
     );
-}
-
-public function getTeams()
-{
-    return Team::getTeams($this->race_id);
-}
-
-public static function getRaces($getRaceObjs = false)
-{
-    /* Return race names (strings) or corresponding race objects */
-    
-    global $raceididx;
-    $races = array_values($raceididx);
-    $race_ids = array_keys($raceididx);
-    return ($getRaceObjs) ? array_map(create_function('$rid', 'return (new Race($rid));'), $race_ids) : $races;
 }
 
 }

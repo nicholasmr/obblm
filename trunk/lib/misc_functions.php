@@ -180,7 +180,7 @@ define('T_URL_STANDINGS', 2);
 function urlcompile($type, $obj, $obj_id, $node, $node_id, $extraGETs = array()) {
     return 'index.php?section=objhandler&amp;type='.$type.
         (($obj)     ? "&amp;obj=$obj" : '').
-        (($obj_id)  ? "&amp;obj_id=$obj_id" : '').
+        (($obj_id !== false) ? "&amp;obj_id=$obj_id" : ''). # $obj_id may be = 0 (numeric zero).
         (($node)    ? "&amp;node=$node" : '').
         (($node_id) ? "&amp;node_id=$node_id" : '').
         implode("\n", array_map(create_function('$key,$val', 'return "$key=&amp;$val";'),array_keys($extraGETs),array_values($extraGETs)));

@@ -433,19 +433,17 @@ class Team
         /**
          * Creates a new team.
          *
-         * Input: coach_id, name, race (race name), f_lid
+         * Input: coach_id, name, race (race ID), f_lid
          **/
 
         global $rules, $raceididx;
 
         // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
-        if (!in_array($input['race'], array_values($raceididx))
+        if (!in_array($input['race'], array_keys($raceididx))
         || !get_alt_col('coaches', 'coach_id', $input['coach_id'], 'coach_id')
         || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
             return false;
         }
-        $flipped = array_flip($raceididx);
-        $input['race'] = $flipped[$input['race']]; # Insert race ID, not race name.
 
         $query = "INSERT INTO teams
                     (

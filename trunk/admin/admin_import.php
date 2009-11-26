@@ -1,5 +1,6 @@
 <?php
 fatal('Out of order');
+global $raceididx;
 define('HTML', 1);
 define('XML', 2);
 $inputType = null;
@@ -74,7 +75,7 @@ if (isset($_POST['button'])) {
             status(false, "The team name must not be empty or identical to an existing team name.");
             $err = true;
         }
-        if (!in_array($_POST['race'], Race::getRaces(false))) {
+        if (!in_array($_POST['race'], array_keys($raceididx))) {
             status(false, "Invalid race chosen.");
             $err = true;
         }
@@ -293,8 +294,8 @@ if (Module::isRegistered('cyanide_team_import')) {
     <b>Race:</b><br>
     <select name="race" onchange="chRace(this.options[this.selectedIndex].value)">
         <?php
-        foreach (Race::getRaces() as $r)
-            echo "<option value='$r' ".(($err && $_POST['race'] == $r) ? 'SELECTED' : '').">$r</option>\n";
+        foreach ($raceididx as $rid => $rname)
+            echo "<option value='$rid' ".(($err && $_POST['race'] == $rid) ? 'SELECTED' : '').">$rname</option>\n";
         ?>
     </select>
 

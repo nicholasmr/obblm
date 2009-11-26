@@ -26,10 +26,10 @@ class Race_HTMLOUT extends Race
 
 public static function profile($rid) 
 {
-    global $lng;
+    global $lng, $DEA;
     $race = new Race($rid);
-    $roster = $race->getRoster();
-    title($race->race);
+    $roster = $DEA[$race->name];
+    title($race->name);
     ?>
     <center><img src="<?php echo RACE_ICONS.'/'.$roster['other']['icon'];?>" alt="Race icon"></center>
     <ul><li>Re-roll cost: <?php echo $roster['other']['rr_cost']/1000;?>k</li></ul><br>
