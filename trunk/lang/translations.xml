@@ -102,6 +102,7 @@
         <tour_man>Management: Tournaments</tour_man>
         <import>Import team</import>
         <schedule>Schedule matches</schedule>
+        <cpanel>OBBLM core panel</cpanel>
     </admin_menu>
     <plugins>Plugins</plugins>
     
