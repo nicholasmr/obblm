@@ -104,7 +104,7 @@ public static function standings()
 
 public static function coachCorner($cid) {
 
-    global $lng, $settings, $coach;
+    global $lng, $settings, $coach, $raceididx;
 
     /*
      *  Main actions:
@@ -142,8 +142,8 @@ public static function coachCorner($cid) {
         <b><?php echo $lng->getTrn('cc/new_team/race');?>:</b> <br>
         <select name="race">
             <?php
-            foreach (Race::getRaces(false) as $r)
-                echo "<option value='$r'>$r</option>\n";
+            foreach ($raceididx as $rid => $rname)
+                echo "<option value='$rid'>$rname</option>\n";
             ?>
         </select>
         <br><br>

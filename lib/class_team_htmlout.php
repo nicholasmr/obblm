@@ -631,6 +631,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
      ******************************/
      
     global $lng, $rules, $settings, $skillarray, $coach, $DEA;
+    global $racesHasNecromancer, $racesNoApothecary;
     $team = $this; // Copy. Used instead of $this for readability.
     $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
      
@@ -672,13 +673,13 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                 <?php
-                if ($team->f_race_id == 13 || $team->f_race_id == 17) {
+                if (in_array($team->f_race_id, $racesHasNecromancer)) {
                     ?>
                     <td>Necromancer</td>
                     <td>Yes</td>
-                    <?php
+                    <?php                
                 }
-                elseif ($team->f_race_id != 10 && $team->f_race_id != 15) {
+                if (!in_array($team->f_race_id, $racesNoApothecary)) {
                     echo "<td>Apothecary</td>\n";
                     echo "<td>" . ($team->apothecary ? $lng->getTrn('common/yes') : $lng->getTrn('common/no')) . "</td>\n";
                 }

@@ -1994,6 +1994,12 @@ $IllegalSkillCombinations = array(
     91  => array(22, 5, 7, 8, 10),
 );
 
+// Instead of purchasing an Apothecary, Necromantic and Undead teams use the services of a Necromancer. 
+// This means these teams may also recieve free zombies.
+$racesHasNecromancer = array(13,17);
+// Khemri, Necromantic, Nurgle and Undead teams may not purchase or use an Apothecary.
+$racesNoApothecary = array_merge($racesHasNecromancer, array(10,15));
+
 $inducements = array (
     'Bloodweiser Babes' => array (
         'cost' => 50000,

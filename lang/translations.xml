@@ -510,10 +510,10 @@
     <intro>Introduction</intro>
     <intro_txt>
     <![CDATA[
-    OBBLM is a Blood Bowl league manager that works by team coaches submitting match data after each played match in a tournament. 
+    OBBLM is a Blood Bowl league manager that works by coaches submitting match data after each played match in a tournament. 
     League commissioners (admins) may create tournaments and include certain coaches' teams to participate in a tournament. 
-    When a tournament is created, the two coaches participating in each match may submit a match report to the system. 
-    The manager will thereby be able to update tournament stats and team details - including giving the team coach access to chose new player skills.
+    When a tournament is created, the two coaches participating in any match may submit a match report to the system. 
+    The manager will thereby be able to update tournament stats and team details - including giving the team coach access to chose new player skills etc.
     The order in which tournament matches are played/submitted does not matter, and if the need may arise, league commissioners are able to delete unplayed matches.
     <br><br>
     <b>The Coach Corner:</b><br>
@@ -524,10 +524,10 @@
         At your team page you may manage your team. 
         This includes buying and selling players, choosing player skills when your player has the required amount of SPP, and buying other goods for your team.
         <br>
-        At your team page you will be presented with your team roster. To view player details select the "detailed view"-link below the roster.
+        At your team page you will be presented with your team roster. To view player details select the "toggle roster view"-link below the roster.
         <br><br>
     <b>Submitting a played match:</b><br>
-        Once a match has been played, you must let the system know by submitting the match data in the <i>fixtures</i> section. 
+        Once a match has been played, you must let the system know by submitting the match data in the <i>tournaments</i> section. 
         This can under agreement be done by either team's coach. Only the two participating team coaches and league commissioners have edit access to the match reports.
     ]]>
     </intro_txt>
