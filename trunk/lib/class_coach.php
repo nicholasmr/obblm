@@ -61,8 +61,9 @@ class Coach
         // MySQL stored information
         $this->coach_id = $coach_id;
         $this->setStats(false,false,false);
-            
-        $this->admin = ($this->ring == RING_SYS);
+
+        $this->ring = (int) $this->ring;
+        $this->admin = ($this->ring === RING_SYS);
         if (empty($this->mail)) $this->mail = '';           # Re-define as empty string, and not numeric zero.
         if (empty($this->phone)) $this->phone = '';         # Re-define as empty string, and not numeric zero.
         if (empty($this->realname)) $this->realname = '';   # Re-define as empty string, and not numeric zero.
@@ -83,7 +84,7 @@ class Coach
     
     public function setStats($node, $node_id, $set_avg = false)
     {
-        foreach (Stats::getAllStats(STATS_COACH, $this->coach_id, $node, $node_id, $set_avg) as $key => $val) {
+        foreach (Stats::getAllStats(T_OBJ_COACH, $this->coach_id, $node, $node_id, $set_avg) as $key => $val) {
             $this->$key = $val;
         }
         return true;

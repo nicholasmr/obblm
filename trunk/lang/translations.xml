@@ -132,11 +132,17 @@
 </main>
 
 <cc>
-    <main>
-        <start_new>Start a new team</start_new>
-        
-        <your_stats>See your stats here</your_stats>
-        <your_info>Your account information</your_info>
+    <new_team>New team</new_team>
+        <league>Associated league</league>
+
+    <!-- <stats> defined in <common> block -->
+
+    <coach_teams>Coach's teams</coach_teams>
+
+    <profile>Profile</profile>        
+        <photo>Coach picture</photo>
+        <coach_info>Coach information</coach_info>
+            <note_persinfo>Personal information is only available to logged in users.</note_persinfo>
             <new>New</new>
             <old>Old</old>
             <current>Current</current>
@@ -146,23 +152,9 @@
             <chlogin>Change name (login)</chlogin>
             <chname>Change full name</chname>
             <chtheme>Change OBBLM theme</chtheme>
-            
-        <photo>Photo of you</photo>
-    </main>
-    
-    <new_team>
-        <title>Create new team</title>
-        <race>Race</race>
-        <name>Team name</name>
-        <button>Create team</button>
-        <league>Associated league</league>
-    </new_team>
 </cc>
 
 <profile>
-    <coach>
-        <contact>Contact information</contact>
-    </coach>
     <player>
         <about>About player</about>
             <pos>Position</pos>

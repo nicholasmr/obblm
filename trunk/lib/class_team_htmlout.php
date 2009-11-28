@@ -133,9 +133,7 @@ public static function profile($tid)
     else if (isset($_GET['sorttp_shh'])) $activeDiv = 'tp_shh';
     else if (isset($_GET['sorttp_mhh'])) $activeDiv = 'tp_mhh';
     else $activeDiv = 'tp_actionboxes';
-    ?>
-    <script language="JavaScript" type="text/javascript"> foldup('<?php echo $activeDiv;?>'); </script>
-    <?php
+    ?><script language="JavaScript" type="text/javascript"> foldup('<?php echo $activeDiv;?>'); </script><?php
 }
 
 private function _handleActions($ALLOW_EDIT)
@@ -489,7 +487,7 @@ private function _menu($ALLOW_EDIT, $DETAILED)
     
     ?>
     <br>
-    <ul id="nav" class="dropdown dropdown-horizontal">
+    <ul id="nav" class="dropdown dropdown-horizontal" style="position:static; z-index:0;">
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_actionboxes');?>><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_news');?>><?php echo $lng->getTrn('profile/team/news');?></a></li>
         <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_about');?>><?php echo $lng->getTrn('common/about');?></a></li>

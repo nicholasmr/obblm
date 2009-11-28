@@ -54,7 +54,7 @@ class Stats
 {
 
 
-public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $setAvg)
+public static function getRaw($obj, array $filters, $parentID, $grp, $n, array $sortRule, $setAvg)
 {
     global $core_tables, $relations_obj, $relations_node, $objFields_extra, $objFields_init;
     
@@ -76,7 +76,7 @@ public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $s
         T_OBJ_RACE   => 'mv_races',
     );
 
-    $ALL_TIME = (count(array_intersect(array_keys($filter),array_keys($relations_node))) == 0);
+    $ALL_TIME = (count(array_intersect(array_keys($filters),array_keys($relations_node))) == 0);
     
     global $cols_mv, $objFields_val0, $val0; # Dirty but efficient trick to make global from within function.
     $tbl_name_norm = $relations_obj[$obj]['tbl'];
@@ -117,13 +117,16 @@ public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $s
     $query = "SELECT $cols_mv_sqlsel,$cols_norm_sqlsel FROM $tbl_name_norm LEFT JOIN $tbl_name_mv ON ".$mv_keys[$obj].'='.$relations_obj[$obj]['id'];
 
     $and = false;
-    if (!empty($filter)) {
+    if (!empty($filters) || is_int($parentID)) {
         $query .= " WHERE ";
-        foreach ($filter as $filter_key => $id) {
+        foreach ($filters as $filter_key => $id) {
             if (is_numeric($id) && is_numeric($filter_key)) {
                 $query .= (($and) ? ' AND ' : ' ').(($obj == $filter_key) ? $relations_obj[$filter_key]['id'] : $mv_keys[$filter_key])." = $id ";
                 $and = true;
             }
+        }
+        if (is_int($parentID)) {
+            $query .= (($and) ? ' AND ' : ' ').$relations_obj[$obj]['parent_id']." = $parentID";
         }
     }
 
@@ -148,7 +151,7 @@ public static function getRaw($obj, array $filter, $grp, $n, array $sortRule, $s
  ***************/
 public static function getLeaders($obj, $node, $node_id, array $stats, $N, $setAvg = false)
 {
-    return self::getRaw($obj, ($node) ? array($node => $node_id) : array(), $obj, $N, $stats, $setAvg);
+    return self::getRaw($obj, ($node) ? array($node => $node_id) : array(), false, $obj, $N, $stats, $setAvg);
 }
 
 /***************
@@ -156,7 +159,7 @@ public static function getLeaders($obj, $node, $node_id, array $stats, $N, $setA
  ***************/
 public static function getStats($obj, $obj_id, $node, $node_id, $setAvg)
 {
-    return self::getRaw($obj, array($obj => $obj_id, $node => $node_id), false,false,array(),$setAvg);
+    return self::getRaw($obj, array($obj => $obj_id, $node => $node_id),false,false,false,array(),$setAvg);
 }
 
 /***************
@@ -164,6 +167,7 @@ public static function getStats($obj, $obj_id, $node, $node_id, $setAvg)
  ***************/
 public static function getAllStats($obj, $obj_id, $node, $node_id, $setAvg = false)
 {
+    // Wrapper for getStats() in case we add more stuff that objects would want to add to they properties.
     list($ach) = Stats::getStats($obj, $obj_id, $node, $node_id, $setAvg);
     $stats = array_merge($ach, array());
     return $stats;

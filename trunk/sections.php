@@ -324,13 +324,6 @@ function sec_teamlist() {
     Team_HTMLOUT::dispTeamList(false, false);
 }
 
-function sec_coachcorner() {
-    if (!isset($_SESSION['logged_in'])) {
-        fatal('You must log in to access the coach corner.');
-    }
-    Coach_HTMLOUT::coachCorner($_SESSION['coach_id']);
-}
-
 function sec_matcheshandler() {
     switch ($_GET['type'])
     {
