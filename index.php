@@ -66,7 +66,6 @@ switch ($_GET['section'])
 {
     case 'login':        sec_login();           break;
     case 'admin':        sec_admin();           break;
-    case 'coachcorner':  sec_coachcorner();     break;
     case 'teamlist':     sec_teamlist();        break;
     case 'rules':        sec_rules();           break;
     case 'about':        sec_about();           break;    
