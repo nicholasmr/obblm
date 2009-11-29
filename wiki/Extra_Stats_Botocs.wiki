@@ -233,7 +233,7 @@ Note: Might be fun to see how lucky a player is
 ||dice_roll_sum||Sum of what was actually rolled (with above would be used to show averages).||
 
 
-===Other SPPs Stats==
+===Other SPPs Stats===
 
 The improvement roll info should be used to filter the list of skills for selection by a player on the team roster page
 
