@@ -15,116 +15,12 @@ Things that could be added, inducement information
 
 Goblin bombardiers:- I can work out how many bombs were thrown but the effect of the bombs is harder due to OR filtering and the effect of the bombs is a nested effect_roll->next_player->effect_roll thing 
 
+*Special notation:*
 
-
-=== Overall List ===
-
-{{{
-pass_attempts
-pass_completions
-interceptions_thrown
-pass_distance
-dumpoff_attempts
-dumpoff_completions
-catch_attempts
-catches
-handoffs
-handoffs_received
-handoff_catches
-pickup_attempts   
-pickups
-rushing_distance_leap
-rushing_distance_push
-rushing_distance_move
-rushing_distance_block
-rushing_distance_shadowing
-leap_attempts
-leaps
-dodge_attempts
-dodges
-blitz_actions
-gfi_attempts
-gfis
-inflicted_blocks
-inflicted_defender_downs
-inflicted_defender_stumbles
-inflicted_pushes
-inflicted_both_downs
-inflicted_attacker_downs
-inflicted_knock_downs
-inflicted_strip_balls
-inflicted_sacks
-inflicted_crowd_surfs
-inflicted_stuns
-inflicted_kos 
-inflicted_bhs
-inflicted_sis
-inflicted_kills
-sustained_blocks
-sustained_knocked_downs
-sustained_sacks
-sustained_crowd_surfs
-sustained_stuns
-sustained_kos
-sustained_bhs
-sustained_sis
-sustained_kill
-inflicted_fouls
-inflicted_foul_stuns
-inflicted_foul_kos
-inflicted_foul_bhs
-inflicted_foul_sis
-inflicted_foul_kills
-sustained_fouls
-sustained_ejections
-apothecary_used
-ko_recovery_attempts
-ko_recoveries
-thickskull_used
-regeneration_attempts
-regenerations
-kickoffs
-kick_distance
-dice_rolls
-dice_natural_ones
-dice_natural_sixes
-dice_target_sum
-dice_roll_sum
-interceptions
-casualties
-touchdowns
-big_guy_stupidity_attempts
-big_guy_stupidity_successes
-big_guy_stupidity_blitz_attempts
-big_guy_stupidity_blitz_successes   
-throw_team_mate_attempts
-throw_team_mate_successes
-throw_team_mate_distance
-throw_team_mate_to_safe_landing
-times_thrown
-landing_attempts
-landings
-distance_thrown
-rushing_distance_thrown
-bloodlust_rolls
-bloodlust_successes
-bloodfeeds
-hypnoze_rolls
-hypnoze_successes
-fed_on
-tentacles_rolls
-tentacles_successes            
-injuries
-mvp
-improvement_roll1
-improvement_roll2
-
-<!-- Not in Til fixed
-inflicted_bloodfeed_stuns
-inflicted_bloodfeed_kos
-inflicted_bloodfeed_bhs
--->
-}}}
+The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) fields. Because of this a special notation is applied to the field names, which goes like this:
+  * "!" prefix denotes that the field is in a non-working order, and is ignored by OBBLM.
+  * "+" prefix denotes that the field is a _common_ (not ES) field used in OBBLM.
+  * "%" prefix denotes that the field is *NOT* a _scalar_, which is used by the module linking OBBLM with BOTOCS.
 
 
 ===Offensive Stats===
@@ -237,11 +133,11 @@ Note: Might be fun to see how lucky a player is
 
 The improvement roll info should be used to filter the list of skills for selection by a player on the team roster page
 
-||interceptions||Number of times this player intercepted the ball.||
-||casualties||Number of casualties caused earning spp.||
-||touchdowns||Number of touchdowns this player scored.||
-||injuries||Injuried sustained by this player.||
-||mvp||1 if this player was MVP||
+||+interceptions||Number of times this player intercepted the ball.||
+||+casualties||Number of casualties caused earning spp.||
+||+touchdowns||Number of touchdowns this player scored.||
+||+injuries||Injuried sustained by this player.||
+||+mvp||1 if this player was MVP||
 ||improvement_roll1||The skill up improvement roll (d1)||
 ||improvement_roll2||The skill up mprovement roll (d2)||
 
@@ -274,15 +170,15 @@ The inflicted stats aren't working atm
 ||bloodfeeds||Number of blood feeds by this vampire||
 ||hypnoze_rolls||Number of times hypnotic gaze was used||
 ||hypnoze_successes||Number of times hypnotic gaze was successful||
-||inflicted_bloodfeed_stuns||Number of stuns from a blood feed (doesn't seem to be working, path is action blood feed, armour roll 2 for thrall, injury roll for thrall, end status stunned). Not sure why it doesn't go straight to the injury roll.||
-||inflicted_bloodfeed_kos||Number of KOs from a blood feed (as above)||
-||inflicted_bloodfeed_bhs||Number of badly hurts from a blood feed (as above)||
+||!inflicted_bloodfeed_stuns||Number of stuns from a blood feed (doesn't seem to be working, path is action blood feed, armour roll 2 for thrall, injury roll for thrall, end status stunned). Not sure why it doesn't go straight to the injury roll.||
+||!inflicted_bloodfeed_kos||Number of KOs from a blood feed (as above)||
+||!inflicted_bloodfeed_bhs||Number of badly hurts from a blood feed (as above)||
 
 ===Thrall Stats===
 
 As above as the path for outcome of thrall injuries isnt working (or at least my filter is wrong), i cant work out sustained effects of the blood feed.
 
-||fed_on||Number of times this thrall player has been fed on.||
+||!fed_on||Number of times this thrall player has been fed on.||
 
 ===Tentacles Stats===
 
