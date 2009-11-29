@@ -75,14 +75,23 @@ public static function getRaw($obj, array $filters, $parentID, $grp, $n, array $
         T_OBJ_COACH  => 'mv_coaches',
         T_OBJ_RACE   => 'mv_races',
     );
+    $mv_es_tables = array(
+        T_OBJ_PLAYER => 'mv_es_players',
+        T_OBJ_STAR   => 'mv_es_players',
+        T_OBJ_TEAM   => 'mv_es_teams',
+        T_OBJ_COACH  => 'mv_es_coaches',
+        T_OBJ_RACE   => 'mv_es_races',
+    );
 
     $ALL_TIME = (count(array_intersect(array_keys($filters),array_keys($relations_node))) == 0);
     
     global $cols_mv, $objFields_val0, $val0; # Dirty but efficient trick to make global from within function.
-    $tbl_name_norm = $relations_obj[$obj]['tbl'];
-    $tbl_name_mv   = $mv_tables[$obj];
-    $cols_norm = array_keys($core_tables[$tbl_name_norm]);
-    $cols_mv   = array_filter(array_keys($core_tables[$tbl_name_mv]), create_function('$c', 'return !preg_match(\'/^f_/\', $c);'));
+    $tbl_name_norm  = $relations_obj[$obj]['tbl'];
+    $tbl_name_mv    = $mv_tables[$obj];
+    $tbl_name_mv_es = $mv_es_tables[$obj];
+    $cols_norm  = array_keys($core_tables[$tbl_name_norm]);
+    $cols_mv    = array_filter(array_keys($core_tables[$tbl_name_mv]),    create_function('$c', 'return !preg_match(\'/^f_/\', $c);'));
+    $cols_mv_es = array_filter(array_keys($core_tables[$tbl_name_mv_es]), create_function('$c', 'return !preg_match(\'/^f_/\', $c);'));
     ###
     $objFields_val0 = array_merge(
         array_key_exists($obj, $objFields_init) ? $objFields_init[$obj] : array(),
@@ -104,6 +113,12 @@ public static function getRaw($obj, array $filters, $parentID, $grp, $n, array $
         ), 
         $cols_mv)
     );
+    $cols_mv_es_sqlsel = implode(',', array_map( # Does NOT have init or extra value ($val0) additions!
+        create_function('$c', $f3='
+            return "IFNULL(SUM('.$tbl_name_mv_es.'.$c)'.(($setAvg) ? '/SUM('.$tbl_name_mv.'.played)' : "").',0) AS \'mv_$c\'\\n";'
+        ), 
+        $cols_mv_es)
+    );
   
     if (!empty($sortRule)) {
         for ($i = 0; $i < count($sortRule); $i++) {
@@ -114,19 +129,23 @@ public static function getRaw($obj, array $filters, $parentID, $grp, $n, array $
         }
     }
     
-    $query = "SELECT $cols_mv_sqlsel,$cols_norm_sqlsel FROM $tbl_name_norm LEFT JOIN $tbl_name_mv ON ".$mv_keys[$obj].'='.$relations_obj[$obj]['id'];
+    $MV    = $tbl_name_mv.'.'.$mv_keys[$obj];
+    $MV_ES = $tbl_name_mv_es.'.'.$mv_keys[$obj];
+    $REG   = $tbl_name_norm.'.'.$relations_obj[$obj]['id'];
+    $query = "SELECT $cols_mv_sqlsel,$cols_norm_sqlsel,$cols_mv_es_sqlsel
+        FROM $tbl_name_norm LEFT JOIN ($tbl_name_mv, $tbl_name_mv_es) ON ($MV = $MV_ES AND $tbl_name_mv.f_trid = $tbl_name_mv_es.f_trid AND $MV = $REG)";
 
     $and = false;
     if (!empty($filters) || is_int($parentID)) {
         $query .= " WHERE ";
         foreach ($filters as $filter_key => $id) {
             if (is_numeric($id) && is_numeric($filter_key)) {
-                $query .= (($and) ? ' AND ' : ' ').(($obj == $filter_key) ? $relations_obj[$filter_key]['id'] : $mv_keys[$filter_key])." = $id ";
+                $query .= (($and) ? ' AND ' : ' ').(($obj == $filter_key) ? $tbl_name_norm.'.'.$relations_obj[$filter_key]['id'] : $tbl_name_mv.'.'.$mv_keys[$filter_key])." = $id ";
                 $and = true;
             }
         }
         if (is_int($parentID)) {
-            $query .= (($and) ? ' AND ' : ' ').$relations_obj[$obj]['parent_id']." = $parentID";
+            $query .= (($and) ? ' AND ' : ' ').$tbl_name_norm.'.'.$relations_obj[$obj]['parent_id']." = $parentID";
         }
     }
 
@@ -136,13 +155,15 @@ public static function getRaw($obj, array $filters, $parentID, $grp, $n, array $
         ".((is_numeric($n))     ? " LIMIT $n" : '')." 
     ";
 
+#    echo $query;
+#    return;
+    
     $ret = array();
     if (($result = mysql_query($query)) && is_resource($result) && mysql_num_rows($result) > 0) {
         while ($r = mysql_fetch_assoc($result)) {
             array_push($ret, $r);
         }
     }
-#    echo $query;
     return $ret;
 }
 

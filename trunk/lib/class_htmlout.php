@@ -745,6 +745,26 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
     echo "</table>\n";
 }
 
+public static function generateEStable($obj)
+{
+    global $ES_fields;
+    echo "<table>\n";
+    echo "<tr><td><i>Stat</i></td> <td><i>Total</i></td> <td>&nbsp;<i>Match&nbsp;avg.</i>&nbsp;</td> <td><i>Description</i></td></tr>\n";
+            echo "<tr><td colspan='4'><hr></td></tr>\n";    
+    $grp = null;
+    $objAVG = clone $obj;
+    $objAVG->setStats(false,false,true);
+    # Require that fields are already sorted against group type!!!
+    foreach ($ES_fields as $ESf => $def) {
+        if ($grp != $def['group']) {
+            echo "<tr><td colspan='4'><br><b>$def[group]</b></td></tr>\n";
+            $grp = $def['group'];
+        }
+        echo "<tr><td>$ESf</td><td align='right'>".$obj->{"mv_$ESf"}."</td><td align='right'>".sprintf("%1.2f",$objAVG->{"mv_$ESf"})."</td><td style='padding-left:10px;'>".$def['desc']."</td></tr>\n";
+    }
+    echo "</table>";
+}
+
 private static $helpBoxIdx = 0;
 public static function helpBox($body, $link = '', $style = '')
 {

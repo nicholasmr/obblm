@@ -358,7 +358,8 @@ function report() {
             }
             MTS('Saved all STAR player entries in match_data for team '.$id);
         }
-
+        
+        $m->finalizeMatchSubmit(); # Required!
         MTS('Report submit ENDED');
 
         // Refresh objects used to display form.

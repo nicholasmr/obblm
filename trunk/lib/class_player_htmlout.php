@@ -50,6 +50,7 @@ public static function profile($pid)
     $p->_achievements();
     $p->_matchBest();
     $p->_recentGames();
+    $p->_ES();
 }
 
 private function _handleActions($ALLOW_EDIT)
@@ -423,6 +424,22 @@ private function _recentGames()
             <div class="boxBody" id="played">
                 <?php
                 HTMLOUT::recentGames(STATS_PLAYER, $p->player_id, false, false, false, false, array('n' => MAX_RECENT_GAMES, 'url' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)));
+                ?>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+private function _ES() 
+{
+    ?>
+    <div class="row">
+        <div class="boxWide">
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;ES</div>
+            <div class="boxBody" id="ES">
+                <?php
+                HTMLOUT::generateEStable($this);
                 ?>
             </div>
         </div>

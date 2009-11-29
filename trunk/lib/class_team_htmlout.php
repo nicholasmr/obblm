@@ -1456,6 +1456,21 @@ private function _actionBoxes($ALLOW_EDIT, $players)
             <?php
         }
     }
+    ?>
+    <br>
+    <div class="row"></div>
+    <br>
+    <div class="row">
+        <div class="boxWide">
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;ES</div>
+            <div class="boxBody" id="ES">
+                <?php
+                HTMLOUT::generateEStable($this);
+                ?>
+            </div>
+        </div>
+    </div>
+    <?php
     
     // If an team action was chosen, jump to actions HTML anchor.
     if ($JMP_ANC) {
