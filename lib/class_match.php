@@ -303,14 +303,10 @@ class Match
         // Save match summary.
         $this->saveText($input['comment']);
         
-        // Run triggers.
-        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id, 'played' => (int) $this->is_played));
-        Module::runTriggers(T_TRIGGER_MATCH_SAVE, array($this->match_id));
-        
         return true;
     }
 
-    public function entry(array $input) {
+    public function entry(array $input, $ES = array()) {
     
         /**
          * Updates player match data.
@@ -537,7 +533,50 @@ class Match
             )";
         }
 
-        return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_MATCHDATA, array('pid' => $pid, 'trid' => $trid));
+        return mysql_query($query) && 
+            // Extra stats, if sent.
+            (!empty($ES) ? $this->_ESentry(array(
+                'f_pid' => $pid, 'f_tid' => $tid, 'f_cid' => $cid, 'f_rid' => $rid, 
+                'f_mid' => $mid, 'f_trid' => $trid, 'f_did' => $did, 'f_lid' => $lid
+            ), $ES) : true);
+    }
+    
+    protected function _ESentry(array $relations, array $playerData)
+    {
+        global $core_tables;
+        
+        // Ready the data.
+        $tbl = 'match_data_es';
+        # Required keys/columns.
+        $KEYS = array_keys($core_tables[$tbl]); sort($KEYS);
+        # Recieved data.
+        $_receivedInput = array_merge($relations, $playerData); ksort($_receivedInput);
+        $INPUT_KEYS     = array_keys($_receivedInput);
+        $INPUT_VALUES   = array_values($_receivedInput);
+
+        // Verify input.
+        if ($INPUT_KEYS !== $KEYS)
+            return false;
+            
+        // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
+        $WHERE = "f_mid = $relations[f_mid] AND f_pid = $relations[f_pid]";
+        $query = "SELECT f_mid FROM $tbl WHERE $WHERE";
+        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
+            mysql_query("DELETE FROM $tbl WHERE $WHERE");
+        }
+        
+        // Insert entry.
+        $query  = 'INSERT INTO '.$tbl.' ('.implode(',', $KEYS).') VALUES ('.implode(',', $INPUT_VALUES).')';
+        return mysql_query($query);
+    }
+    
+    // ALWAYS run this when finished (AFTER!!!) submitting ALL match data.
+    public function finalizeMatchSubmit()
+    {
+        // Run triggers.
+        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id, 'played' => (int) $this->is_played));
+        Module::runTriggers(T_TRIGGER_MATCH_SAVE, array($this->match_id));
+        return true;
     }
     
     public function getSummedAch($s) {

@@ -112,12 +112,6 @@ Module::register(array(
 ));
 
 Module::register(array(
-    'class'         => 'EPS', 
-    'filesRunTime'  => array(),
-    'filesLoadTime' => array('extraplayerstats/class_extraplayerstats.php')
-));
-
-Module::register(array(
     'class'         => 'LogSubSys', 
     'filesRunTime'  => array(),
     'filesLoadTime' => array('log/class_log.php', 'log/header.php')

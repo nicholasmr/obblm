@@ -105,27 +105,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
         if ( !$this->matchEntry ( $this->hometeam_id, $this->homeplayers ) ) return false;
         if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
 
-        if ( $this->extrastats )
-        {
-            // General relations
-            $relations = mysql_fetch_assoc(mysql_query("SELECT $this->match_id AS 'f_mid', tour_id AS 'f_trid', did AS 'f_did', f_lid  AS 'f_lid'
-                FROM matches, tours, divisions WHERE match_id = $this->match_id AND tour_id = f_tour_id AND did = f_did"));
-            $game_date = get_alt_col('matches', 'match_id', $this->match_id, 'date_played');
-            foreach (array('home', 'away') as $team) {
-                // Team relations
-                $relations['f_cid'] = ${"team_$team"}->owned_by_coach_id;
-                $relations['f_rid'] = ${"team_$team"}->f_race_id;
-                $relations['f_tid'] = ${"team_$team"}->team_id;
-                foreach ($this->{"${team}players_eps"} as $p) {
-                    list($relations['f_pid']) = mysql_fetch_row(mysql_query("SELECT player_id FROM players 
-                        WHERE owned_by_team_id = $relations[f_tid] AND nr = $p[f_nr] AND date_sold IS NULL AND date_died IS NULL"));
-                    unset($p['f_nr']);
-                    EPS::makeEntry($relations, $p);
-                }
-            }
-        }        
-
         $match = new Match( $this->match_id );
+        $match->finalizeMatchSubmit(); # Must be run AFTER ALL match data has been submitted. This syncs stats.
         $match->setLocked(true);
 
         //Begin add replay
@@ -142,6 +123,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
     }
 
     function parse_results() {
+
+        global $ES_fields; # Used by 
 
         $results =  simplexml_load_string( $this->xmlresults );
 
@@ -171,6 +154,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $this->homeplayers[intval($player->attributes()->number)]['bh'] = $player->casualties;
             $this->homeplayers[intval($player->attributes()->number)]['inj'] = $player->injuries->injury;
             $this->homeplayers[intval($player->attributes()->number)]['agn1'] = $player->injuries->injury[1];
+
+            # Cut out the fields EPS wants and add them as a player "property", which we later pass as the second argument to $match->entry() like so:
+            # $m->entry($NORMAL_DATA, $this->awayplayers[$nr]['EPS']);
+            $this->homeplayers[intval($player->attributes()->number)]['EPS'] = ($this->extrastats) ? array_intersect_key((array) $player, $ES_fields) : array();
         }
 
         $this->awayteam = strval($results->team[1]->attributes()->name);
@@ -182,7 +169,6 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         foreach ( $results->team[1]->players->player as $player )
         {
-
             $this->awayplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
             $this->awayplayers[intval($player->attributes()->number)]['name'] = $player->attributes()->name;
             $this->awayplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
@@ -195,6 +181,9 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $this->awayplayers[intval($player->attributes()->number)]['inj'] = $player->injuries->injury[0];
             $this->awayplayers[intval($player->attributes()->number)]['agn1'] = $player->injuries->injury[1];
 
+            # Cut out the fields EPS wants and add them as a player "property", which we later pass as the second argument to $match->entry() like so:
+            # $m->entry($NORMAL_DATA, $this->awayplayers[$nr]['EPS']);
+            $this->awayplayers[intval($player->attributes()->number)]['EPS'] = ($this->extrastats) ? array_intersect_key((array) $player, $ES_fields) : array();
         }
 
         //Check winner and concession to change the score to 2 to 0 in favor of the team that did not concede.
@@ -208,21 +197,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         $this->hash = md5 ( $this->xmlresults );
 
-        if ( $this->extrastats )
-        {
-            foreach (array(0 => 'home', 1 => 'away') as $nr => $team) {
-                $players = array();
-                foreach ($results->team[$nr]->players->player as $p) {
-                    if ($p->attributes()->mercenary == "true") 
-                        continue;
-                    $players[] = array_merge((array) $p, array('f_nr' => (int) $p->attributes()->number));
-                }
-                $this->{"${team}players_eps"} = array_map(create_function('$p', 'return array_intersect_key($p, array_merge(EPS::$types, EPS::$relations, array(\'f_nr\' => null)));'), $players);
-            }
-        }
-
         return true;
-
     }
 
     function addMatch () {
@@ -324,7 +299,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
             if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
 
             if ( !$addZombie )
-            $match->entry( $input = array ( "team_id" => $team_id, "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ) );
+            $match->entry( 
+                $input = array ( "team_id" => $team_id, "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ),
+                $player['EPS']
+            );
             else
             {
                     #$race = new Race($DEA[$team->race]['other']['race_id']);
@@ -354,7 +332,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
 #print_r($player);
                 $p_matchdata = $player->getMatchData( $this->match_id );
                 if ( !$p_matchdata['inj'] ) {
-                    $match->entry( $input = array ( "team_id" => $team_id, "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ) );
+                    $match->entry(
+                        $input = array ( "team_id" => $team_id, "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ), 
+                        array() # No EPS!
+                    );
                 }
             }
         }

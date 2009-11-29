@@ -15,7 +15,7 @@ define('T_SQLTRIG_COACH_TEAMCNT', 25);
 
 define('T_SQLTRIG_RACE_TEAMCNT', 35);
 
-define('T_SQLTRIG_MATCHDATA', 41);
+#define('T_SQLTRIG_MATCHDATA', 41); # Deprecated
 
 define('T_SQLTRIG_MATCH_UPD', 51);
 define('T_SQLTRIG_MATCH_DEL', 52);
@@ -30,7 +30,7 @@ class SQLTriggers
             case ($T_SQLTRIG <= 20): self::_team($T_SQLTRIG, $argv); break;
             case ($T_SQLTRIG <= 30): self::_coach($T_SQLTRIG, $argv); break;
             case ($T_SQLTRIG <= 40): self::_race($T_SQLTRIG, $argv); break;
-            case ($T_SQLTRIG <= 50): self::_md($T_SQLTRIG, $argv); break;
+#            case ($T_SQLTRIG <= 50): self::_md($T_SQLTRIG, $argv); break; # Deprecated
             case ($T_SQLTRIG <= 60): self::_match($T_SQLTRIG, $argv); break;
         }
         
@@ -126,26 +126,16 @@ class SQLTriggers
         }
     }
     
-    protected static function _md($T_SQLTRIG, array $argv)
-    {
-        switch ($T_SQLTRIG)
-        {
-            case T_SQLTRIG_MATCHDATA:
-                mysql_query("CALL MDSync($argv[pid], $argv[trid])") or die(mysql_error());
-                break;
-        }
-    }
-    
     protected static function _match($T_SQLTRIG, array $argv)
     {
         switch ($T_SQLTRIG)
         {
             case T_SQLTRIG_MATCH_UPD:
-                mysql_query("CALL match_upd($argv[mid], $argv[trid], $argv[tid1], $argv[tid2], $argv[played])") or die(mysql_error());
+                mysql_query("CALL match_sync($argv[mid], $argv[trid], $argv[tid1], $argv[tid2], $argv[played])") or die(mysql_error());
                 break;
 
             case T_SQLTRIG_MATCH_DEL:
-                mysql_query("CALL match_del($argv[mid], $argv[trid], $argv[tid1], $argv[tid2])") or die(mysql_error());
+                mysql_query("CALL match_sync($argv[mid], $argv[trid], $argv[tid1], $argv[tid2], TRUE)") or die(mysql_error());
                 break;
         }
     }

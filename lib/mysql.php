@@ -344,10 +344,154 @@ $core_tables['mv_races'] = array(
     
     'team_cnt' => $CT_cols['team_cnt'],
 );
-foreach (array('players', 'teams', 'coaches', 'races') as $mv_tbl) {
-    $idx = "mv_$mv_tbl";
+
+$ES_fields = array(
+        # cat fs.txt | awk '/==/ {grp = $0} /\|\|/ {printf("%s%s\n", $0, grp);}' | perl -ne 's/^\|\|(\w*)\|\|([^|]*)\|\|===([^|]*)===\s*$/"$1" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "$3", "desc" => "$2"),\n/ && print'
+"pass_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of pass throw attempts of the ball."),
+"pass_completions" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of completions of throws of the ball (+1 spp)"),
+"interceptions_thrown" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of times the thrower has been intercepted."),
+"pass_distance" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)"),
+"dumpoff_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs)."),
+"dumpoff_completions" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions)."),
+"catch_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of catch attempts made my a player from a throw."),
+"catches" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of catches made (including re-rolled)."),
+"handoffs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of hand offs this player has made"),
+"handoffs_received" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of times this player has been handed off too."),
+"handoff_catches" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number times this player caught a hand off (including re-rolled)."),
+"pickup_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of times attempting to pick the ball up."),
+"pickups" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of successful pick ups (including re-rolled)."),
+"rushing_distance_leap" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Squares of progression towards the end zone leaping with the ball."),
+"rushing_distance_push" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Squares of progression towards the end zone from pushes."),
+"rushing_distance_move" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Squares of progression with the ball running towards the end zone in a normal move."),
+"rushing_distance_block" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Squares of progression towards the end zone from blocks/blitzes."),
+"rushing_distance_shadowing" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Squares of progression towards the end zone from shadowing."),
+"leap_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Number of leap attempts."),
+"leaps" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Number of successful leaps (including re-rolled)."),
+"dodge_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Number of dodge attempts"),
+"dodges" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Number of successful dodges (including re-rolled)"),
+"blitz_actions" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Number of times this player has blitzed."),
+"gfi_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Go for it attempts"),
+"gfis" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Movement Stats", "desc" => "Number of times Nuffle didn't shit on you."),
+"inflicted_blocks" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player tried to throw a block."),
+"inflicted_defender_downs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times defender down was the selected result."),
+"inflicted_defender_stumbles" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times defender stumbles was the selected result."),
+"inflicted_pushes" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times push was the selected result."),
+"inflicted_both_downs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times both down was the selected result."),
+"inflicted_attacker_downs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times attacker down was the selected result."),
+"inflicted_knock_downs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down)."),
+"inflicted_strip_balls" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times strip ball has been used by this player."),
+"inflicted_sacks" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down), when that player was carrying the ball."),
+"inflicted_crowd_surfs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times the push result has ended up in as an injury roll (presuming from being crowd surfed)."),
+"inflicted_stuns" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up stunned."),
+"inflicted_kos" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up KOed."),
+"inflicted_bhs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up badly hurt (after apoth)."),
+"inflicted_sis" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up seriously injured (after apoth)."),
+"inflicted_kills" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up dead (after apoth)"),
+"sustained_blocks" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player has been blocked."),
+"sustained_knocked_downs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number this this player was knocked down while blocking either from sustaining a block or when throwing a block."),
+"sustained_sacks" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number this this player was knocked down while blocking either from sustaining a block or when throwing a block when carrying the ball."),
+"sustained_crowd_surfs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Number of times this player has been pushed and required been required to make an injury roll (from crowd surfs)."),
+"sustained_stuns" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Total number of times this player has been stunned (from any means). All these stats check player status at the end of the turn."),
+"sustained_kos" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Total number of times this player has been KOed (from any means)."),
+"sustained_bhs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Total number of times this player has been badly hurt (from any means)."),
+"sustained_sis" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Total number of times this player has been seriously injured (from any means)."),
+"sustained_kill" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Blocking Stats", "desc" => "Total number of times this player has been seriously injured (from any means)... this would only ever be 1!"),
+"inflicted_fouls" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Fouling Stats", "desc" => "Number of times this player has fouled another."),
+"inflicted_foul_stuns" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Fouling Stats", "desc" => "Number of times this player stunned another through fouling"),
+"inflicted_foul_kos" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Fouling Stats", "desc" => "Number of times this player knocked out another through fouling"),
+"inflicted_foul_bhs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Fouling Stats", "desc" => "Number of times this player badly hurt another through fouling"),
+"inflicted_foul_sis" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Fouling Stats", "desc" => "Number of times this player seriously injured another through fouling"),
+"inflicted_foul_kills" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Fouling Stats", "desc" => "Number of times this player killed another through fouling"),
+"sustained_fouls" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Fouling Stats", "desc" => "Number of times this player has been fouled."),
+"sustained_ejections" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Fouling Stats", "desc" => "Number of times this player was ejected for fouling."),
+"apothecary_used" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Healing Stats", "desc" => "Number of times the apoth has been used on this player"),
+"ko_recovery_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Healing Stats", "desc" => "Number of recovery rolls from KOs"),
+"ko_recoveries" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Healing Stats", "desc" => "Number of successful KOs recoveries"),
+"thickskull_used" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Healing Stats", "desc" => "Number of times thick skull was used by this player."),
+"regeneration_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Healing Stats", "desc" => "Number of time this player attempted to regenerate."),
+"regenerations" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Healing Stats", "desc" => "Number of times the regenerate roll succeeded."),
+"kickoffs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Kicking Stats", "desc" => "Number of times this player kicked off"),
+"kick_distance" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Kicking Stats", "desc" => "Distance the ball was kicked in squares."),
+"dice_rolls" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Dice Stats ", "desc" => "Number of times this player rolled a simple roll or skill roll."),
+"dice_natural_ones" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Dice Stats ", "desc" => "Number of natural ones rolled."),
+"dice_natural_sixes" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Dice Stats ", "desc" => "Number of natural sixes rolled."),
+"dice_target_sum" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Dice Stats ", "desc" => "Sum of the total targets required."),
+"dice_roll_sum" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Dice Stats ", "desc" => "Sum of what was actually rolled (with above would be used to show averages)."),
+#"interceptions" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Other SPPs Stats", "desc" => "Number of times this player intercepted the ball."),
+#"casualties" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Other SPPs Stats", "desc" => "Number of casualties caused earning spp."),
+#"touchdowns" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Other SPPs Stats", "desc" => "Number of touchdowns this player scored."),
+#"injuries" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Other SPPs Stats", "desc" => "Injuried sustained by this player."),
+#"mvp" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Other SPPs Stats", "desc" => "1 if this player was MVP"),
+"improvement_roll1" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Other SPPs Stats", "desc" => "The skill up improvement roll (d1)"),
+"improvement_roll2" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Other SPPs Stats", "desc" => "The skill up mprovement roll (d2)"),
+"big_guy_stupidity_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Big Guy Stats", "desc" => "Number of rolls for really stupid, bonehead, take root and wild animal."),
+"big_guy_stupidity_successes" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Big Guy Stats", "desc" => "Number of times the really stupid, bonehead, take root and wild animal roll succeeded."),
+"big_guy_stupidity_blitz_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Big Guy Stats", "desc" => "Number of times this big guy declared a blitz"),
+"big_guy_stupidity_blitz_successes" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Big Guy Stats", "desc" => "Number of times this big guy was able to blitz"),
+"throw_team_mate_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Big Guy Stats", "desc" => "Number of attempts to throw a team mate by this player"),
+"throw_team_mate_successes" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Big Guy Stats", "desc" => "Number of times this player successfully threw a team mate."),
+"throw_team_mate_distance" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Big Guy Stats", "desc" => "How far this player has thrown team mates in squares."),
+"throw_team_mate_to_safe_landing" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Big Guy Stats", "desc" => "Number of times this player successfully threw a team mate and the thrown player landed."),
+"times_thrown" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Right Stuff Stats", "desc" => "Number of times this player has been thrown"),
+"landing_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Right Stuff Stats", "desc" => "Number of times this player has attempted to land"),
+"landings" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Right Stuff Stats", "desc" => "Number of times this player successfully landed."),
+"distance_thrown" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Right Stuff Stats", "desc" => "The distance this player has been thrown"),
+"rushing_distance_thrown" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Right Stuff Stats", "desc" => "The distance the ball progressed towards the end zone when this player was thrown (should be added to rushing distance total stat)"),
+"bloodlust_rolls" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Vampire Stats", "desc" => "Number of blood lust rolls"),
+"bloodlust_successes" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Vampire Stats", "desc" => "Number of times this player didn't succumb to blood lust."),
+"bloodfeeds" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Vampire Stats", "desc" => "Number of blood feeds by this vampire"),
+"hypnoze_rolls" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Vampire Stats", "desc" => "Number of times hypnotic gaze was used"),
+"hypnoze_successes" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Vampire Stats", "desc" => "Number of times hypnotic gaze was successful"),
+#"inflicted_bloodfeed_stuns" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Vampire Stats", "desc" => "Number of stuns from a blood feed (doesn't seem to be working, path is action blood feed, armour roll 2 for thrall, injury roll for thrall, end status stunned). Not sure why it doesn't go straight to the injury roll."),
+#"inflicted_bloodfeed_kos" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Vampire Stats", "desc" => "Number of KOs from a blood feed (as above)"),
+#"inflicted_bloodfeed_bhs" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Vampire Stats", "desc" => "Number of badly hurts from a blood feed (as above)"),
+#"fed_on" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Thrall Stats", "desc" => "Number of times this thrall player has been fed on."),
+"tentacles_rolls" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Tentacles Stats", "desc" => "Number of times this player used his tentacles"),
+"tentacles_successes" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Tentacles Stats", "desc" => "Number of times this players successfully held another"),
+);
+$ES_commoncols = array_merge(array(    
+    # Node references
+        # array() for compatibility.
+    'f_trid' => array('type' => $CT_cols[T_NODE_TOURNAMENT]),
+    'f_did'  => array('type' => $CT_cols[T_NODE_DIVISION]),
+    'f_lid'  => array('type' => $CT_cols[T_NODE_LEAGUE]),
+), $ES_fields);
+$core_tables['mv_es_players'] = array(
+    'f_pid' => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
+    'f_tid' => $CT_cols[T_OBJ_TEAM],
+    'f_cid' => $CT_cols[T_OBJ_COACH],
+    'f_rid' => $CT_cols[T_OBJ_RACE],
+);
+$core_tables['mv_es_teams'] = array(
+    'f_tid' => $CT_cols[T_OBJ_TEAM].' NOT NULL',
+    'f_cid' => $CT_cols[T_OBJ_COACH],
+    'f_rid' => $CT_cols[T_OBJ_RACE],
+);
+$core_tables['mv_es_coaches'] = array(
+    'f_cid' => $CT_cols[T_OBJ_COACH].' NOT NULL',
+);
+$core_tables['mv_es_races'] = array(
+    'f_rid' => $CT_cols[T_OBJ_RACE].' NOT NULL',
+);
+
+$core_tables['match_data_es'] = array(
+    'f_pid' => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
+    'f_tid' => $CT_cols[T_OBJ_TEAM],
+    'f_cid' => $CT_cols[T_OBJ_COACH],
+    'f_rid' => $CT_cols[T_OBJ_RACE],
+    
+    'f_mid' => $CT_cols[T_NODE_MATCH].' NOT NULL',
+);
+
+foreach (array('players', 'teams', 'coaches', 'races') as $tbl) {
+    $idx = "mv_$tbl";
     $core_tables[$idx] = array_merge($core_tables[$idx], $mv_commoncols);
+    $idx = "mv_es_$tbl";
+    $core_tables[$idx] = array_merge($core_tables[$idx], array_map(create_function('$c', 'return $c["type"];'), $ES_commoncols));
 }
+// The ES equivalent to match_data.
+$core_tables['match_data_es'] = array_merge($core_tables['match_data_es'], array_map(create_function('$c', 'return $c["type"];'), $ES_commoncols));
+
 
 // Table structure references.
 $relations_node = array(
@@ -606,6 +750,10 @@ function upgrade_database($version)
     echo (SQLCore::installMVs(false))
         ? "<font color='green'>OK &mdash; created MV tables</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not create MV tables</font><br>\n";
+
+    echo (SQLCore::reviseEStables())
+        ? "<font color='green'>OK &mdash; create/update ES tables</font><br>\n"
+        : "<font color='red'>FAILED &mdash; create/update ES tables</font><br>\n";        
    
     echo (SQLCore::installTableIndexes())
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"

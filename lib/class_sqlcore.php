@@ -103,7 +103,7 @@ public static function mkHRS(array $HRSs)
 
 public static function installProcsAndFuncs($install = true)
 {
-    global $CT_cols, $core_tables, $rules;
+    global $CT_cols, $core_tables, $ES_fields, $rules;
 
     /* 
      *  Re-useable code-chunks for routines.
@@ -134,7 +134,10 @@ public static function installProcsAndFuncs($install = true)
     $mstat_fields_coach = preg_replace('/tid/', 'teams.team_id', $mstat_fields_coach);
     $mstat_fields_race  = preg_replace('/tid/', 'teams.team_id', $mstat_fields_race);
     $mstat_fields_stars = preg_replace('/tid/', 'match_data.f_team_id', $mstat_fields_player);
-
+        # ES
+    $common_es_fields_keys = implode(',', array_keys($ES_fields));
+    $common_es_fields = implode(',', array_map(create_function('$k', 'return "IFNULL(SUM($k),0)";'), array_keys($ES_fields)));
+    
     // ELO
     $elo_matchsync_R0 = '
         SELECT IF(IFNULL((SELECT SUM(played) FROM mv_teams   WHERE f_tid = tid1 REGEX_REPLACE_HERE),FALSE) AND IFNULL(teams.elo,FALSE),   teams.elo, '.T_ELO_R_0.')   INTO Rt1_0 FROM teams   WHERE team_id = tid1;
@@ -191,7 +194,7 @@ public static function installProcsAndFuncs($install = true)
     $streaks_coach = preg_replace('/REGEX_REPLACE_TBL2/', $streaks_TBL2, $streaks_coach);
     $streaks_coach = preg_replace('/REGEX_REPLACE_TBL1/', $streaks_TBL1_coach, $streaks_coach);
     
-    // Matches
+    // Post match sync.
     $matches_setup_rels = '
         /* GENERAL */
         DECLARE ret BOOLEAN;
@@ -209,11 +212,14 @@ public static function installProcsAndFuncs($install = true)
         /* Streaks */
         DECLARE swon,sdraw,slost '.$CT_cols['streak'].';
         
-        /* Player DPROPS sync on match reset & delete */
+        /* Player DPROPS */
         DECLARE done INT DEFAULT 0;
+        DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
+        DECLARE value '.$CT_cols['pv'].';
+        DECLARE status '.$core_tables['players']['status'].';
+        DECLARE date_died '.$core_tables['players']['date_died'].'; 
         DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
-        DECLARE cur_p1_all CURSOR FOR SELECT player_id FROM players WHERE owned_by_team_id = tid1;
-        DECLARE cur_p2_all CURSOR FOR SELECT player_id FROM players WHERE owned_by_team_id = tid2;
+        DECLARE cur_p CURSOR FOR SELECT player_id FROM players WHERE owned_by_team_id = tid1 OR owned_by_team_id = tid2;
         DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
         
         SELECT t1.f_race_id, t2.f_race_id, t1.owned_by_coach_id, t2.owned_by_coach_id, t1.team_id, t2.team_id
@@ -295,26 +301,29 @@ public static function installProcsAndFuncs($install = true)
         SET ret = syncMVrace(rid2, trid);
     ';
         # Needs $matches_setup_rels.
-        /* When submitting $match->entry() updates player DPROPS, the same needs to be done on match deletion (where entry() is not called). */
-    $matches_reload_player_DPROPS = '
-        OPEN cur_p1_all;
+    $matches_player_all_stats = '
+        OPEN cur_p;
         REPEAT
-            FETCH cur_p1_all INTO pid;
+            FETCH cur_p INTO pid;
             IF NOT done THEN
-                CALL MDSync(pid, trid);
-            END IF;
-        UNTIL done END REPEAT;
-        CLOSE cur_p1_all;
-        SET done = 0;
 
-        OPEN cur_p2_all;
-        REPEAT
-            FETCH cur_p2_all INTO pid;
-            IF NOT done THEN
-                CALL MDSync(pid, trid);
+                /* Update player DPROPS */            
+                CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, value,status,date_died);
+                UPDATE players 
+                    SET players.inj_ma = inj_ma, players.inj_av = inj_av, players.inj_ag = inj_ag, players.inj_st = inj_st, players.inj_ni = inj_ni,
+                        players.ma = ma, players.av = av, players.ag = ag, players.st = st, 
+                        players.value = value, players.status = status, players.date_died = date_died
+                    WHERE players.player_id = pid;
+
+                /* All-time win percentage */
+                UPDATE players SET win_pct = getWinPct('.T_OBJ_PLAYER.', pid) WHERE player_id = pid;
+        
+                /* Update MV */
+                SET ret = syncMVplayer(pid, trid);
+                
             END IF;
         UNTIL done END REPEAT;
-        CLOSE cur_p2_all;
+        CLOSE cur_p;
         SET done = 0;
     ';
     
@@ -819,6 +828,13 @@ public static function installProcsAndFuncs($install = true)
             END IF;
             UPDATE mv_players SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_pid = pid AND f_trid = trid;
             
+            /* ES */
+            DELETE FROM mv_es_players WHERE f_pid = pid AND f_trid = trid; 
+            INSERT INTO mv_es_players(f_pid,f_tid,f_cid,f_rid, f_trid,f_did,f_lid, '.$common_es_fields_keys.') 
+                SELECT pid,tid,cid,rid, trid,did,lid, '.$common_es_fields.'
+                FROM match_data_es
+                WHERE match_data_es.f_pid = pid AND match_data_es.f_trid = trid;
+            
             RETURN EXISTS(SELECT COUNT(*) FROM mv_players WHERE f_pid = pid AND f_trid = trid);
         END',
         
@@ -844,6 +860,13 @@ public static function installProcsAndFuncs($install = true)
             UPDATE mv_teams SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_tid = tid AND f_trid = trid;
             UPDATE mv_teams SET pts = getPTS(f_tid, f_trid) WHERE f_tid = tid AND f_trid = trid;
 
+            /* ES */
+            DELETE FROM mv_es_teams WHERE f_tid = tid AND f_trid = trid; 
+            INSERT INTO mv_es_teams(f_tid,f_cid,f_rid, f_trid,f_did,f_lid, '.$common_es_fields_keys.') 
+                SELECT tid,cid,rid, trid,did,lid, '.$common_es_fields.'
+                FROM match_data_es
+                WHERE match_data_es.f_tid = tid AND match_data_es.f_trid = trid;
+
             RETURN EXISTS(SELECT COUNT(*) FROM mv_teams WHERE f_tid = tid AND f_trid = trid);
         END',
         
@@ -865,6 +888,13 @@ public static function installProcsAndFuncs($install = true)
             UPDATE mv_coaches '.$mstat_fields_coach.' WHERE f_cid = cid AND f_trid = trid;
             UPDATE mv_coaches SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_cid = cid AND f_trid = trid;
 
+            /* ES */
+            DELETE FROM mv_es_coaches WHERE f_cid = cid AND f_trid = trid; 
+            INSERT INTO mv_es_coaches(f_cid, f_trid,f_did,f_lid, '.$common_es_fields_keys.') 
+                SELECT cid, trid,did,lid, '.$common_es_fields.'
+                FROM match_data_es
+                WHERE match_data_es.f_cid = cid AND match_data_es.f_trid = trid;
+
             RETURN EXISTS(SELECT COUNT(*) FROM mv_coaches WHERE f_cid = cid AND f_trid = trid);
         END',
 
@@ -885,6 +915,13 @@ public static function installProcsAndFuncs($install = true)
                 WHERE match_data.f_race_id = rid AND match_data.f_tour_id = trid;
             UPDATE mv_races '.$mstat_fields_race.' WHERE f_rid = rid AND f_trid = trid;
             UPDATE mv_races SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_rid = rid AND f_trid = trid;
+
+            /* ES */
+            DELETE FROM mv_es_races WHERE f_rid = rid AND f_trid = trid; 
+            INSERT INTO mv_es_races(f_rid, f_trid,f_did,f_lid, '.$common_es_fields_keys.') 
+                SELECT rid, trid,did,lid, '.$common_es_fields.'
+                FROM match_data_es
+                WHERE match_data_es.f_rid = rid AND match_data_es.f_trid = trid;
 
             RETURN EXISTS(SELECT COUNT(*) FROM mv_races WHERE f_rid = rid AND f_trid = trid);
         END',
@@ -1058,14 +1095,15 @@ public static function installProcsAndFuncs($install = true)
         END',
 
         /*
-            Match sync
+            Match sync - ALWAYS run after changes to match data.
         */
         
-        'CREATE PROCEDURE match_upd(IN mid '.$CT_cols[T_NODE_MATCH].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].', IN tid1 '.$CT_cols[T_OBJ_TEAM].', IN tid2 '.$CT_cols[T_OBJ_TEAM].', IN played BOOLEAN)
+        'CREATE PROCEDURE match_sync(IN mid '.$CT_cols[T_NODE_MATCH].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].', IN tid1 '.$CT_cols[T_OBJ_TEAM].', IN tid2 '.$CT_cols[T_OBJ_TEAM].', IN played BOOLEAN)
             NOT DETERMINISTIC
             CONTAINS SQL
         BEGIN
             '.$matches_setup_rels.'
+            '.$matches_player_all_stats.'
             '.$matches_MVs.'
             '.$matches_tourDProps.'
             '.$matches_teamDProps.'
@@ -1082,55 +1120,6 @@ public static function installProcsAndFuncs($install = true)
                 SET ret = syncELOMatch(trid, mid);
             END IF;
         END',
-        
-        'CREATE PROCEDURE match_del(IN mid '.$CT_cols[T_NODE_MATCH].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].', IN tid1 '.$CT_cols[T_OBJ_TEAM].', IN tid2 '.$CT_cols[T_OBJ_TEAM].')
-            NOT DETERMINISTIC
-            CONTAINS SQL
-        BEGIN
-            '.$matches_setup_rels.'
-            '.$matches_MVs.'
-            '.$matches_tourDProps.'            
-            '.$matches_teamDProps.'
-            '.$matches_team_cnt.'
-            '.$matches_pts.'
-            '.$matches_wt_cnt.'
-            '.$matches_streaks.'
-            '.$matches_win_pct.'
-            CALL syncELOTour(NULL);
-            CALL syncELOTour(trid);
-            '.$matches_reload_player_DPROPS.'
-        END',
-        
-        /*
-            Match data sync, updates ALL player fields.
-            
-            Run on match_data change for player.
-        */
-        
-        'CREATE PROCEDURE MDSync(IN pid '.$CT_cols[T_OBJ_PLAYER].', IN trid '.$CT_cols[T_NODE_TOURNAMENT].')
-            NOT DETERMINISTIC
-            CONTAINS SQL
-        BEGIN
-            DECLARE ret BOOLEAN;
-        
-            /* Player DPROPS */
-            DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
-            DECLARE value '.$CT_cols['pv'].';
-            DECLARE status '.$core_tables['players']['status'].';
-            DECLARE date_died '.$core_tables['players']['date_died'].'; 
-            
-            /* Update player DPROPS */            
-            CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, value,status,date_died);
-            UPDATE players 
-                SET players.inj_ma = inj_ma, players.inj_av = inj_av, players.inj_ag = inj_ag, players.inj_st = inj_st, players.inj_ni = inj_ni,
-                    players.ma = ma, players.av = av, players.ag = ag, players.st = st, 
-                    players.value = value, players.status = status, players.date_died = date_died
-                WHERE players.player_id = pid;
-
-            /* Update MV */
-            SET ret = syncMVplayer(pid, trid);
-        END
-        ',
         
         /*
             Sync ALL
@@ -1180,30 +1169,52 @@ public static function installTableIndexes()
 {
     // Add tables indicies/keys.
     $indicies = array(
-        "idx_f_id"              => array("tbl" => "texts",      "idx" =>  "(f_id)"),
-        "idx_type"              => array("tbl" => "texts",      "idx" =>  "(type)"),
-        "idx_owned_by_team_id"  => array("tbl" => "players",    "idx" =>  "(owned_by_team_id)"),
-        "idx_owned_by_coach_id" => array("tbl" => "teams",      "idx" =>  "(owned_by_coach_id)"),
-        "idx_f_tour_id"         => array("tbl" => "matches",    "idx" =>  "(f_tour_id)"),
-        "idx_team1_id_team2_id" => array("tbl" => "matches",    "idx" =>  "(team1_id,team2_id)"),
-        "idx_team2_id"          => array("tbl" => "matches",    "idx" =>  "(team2_id)"),
-        "idx_m"                 => array("tbl" => "match_data", "idx" =>  "(f_match_id)"),
-        "idx_tr"                => array("tbl" => "match_data", "idx" =>  "(f_tour_id)"),
-        "idx_p_m"               => array("tbl" => "match_data", "idx" =>  "(f_player_id,f_match_id)"),
-        "idx_t_m"               => array("tbl" => "match_data", "idx" =>  "(f_team_id,  f_match_id)"),
-        "idx_r_m"               => array("tbl" => "match_data", "idx" =>  "(f_race_id,  f_match_id)"),
-        "idx_c_m"               => array("tbl" => "match_data", "idx" =>  "(f_coach_id, f_match_id)"),
-        "idx_p_tr"              => array("tbl" => "match_data", "idx" =>  "(f_player_id,f_tour_id)"),
-        "idx_t_tr"              => array("tbl" => "match_data", "idx" =>  "(f_team_id,  f_tour_id)"),
-        "idx_r_tr"              => array("tbl" => "match_data", "idx" =>  "(f_race_id,  f_tour_id)"),
-        "idx_c_tr"              => array("tbl" => "match_data", "idx" =>  "(f_coach_id, f_tour_id)"),
-        "idx_winner"            => array("tbl" => "tours",      "idx" =>  "(winner)"),
+        array("tbl" => "texts",      'name' => "idx_f_id",              "idx" =>  "(f_id)"),
+        array("tbl" => "texts",      'name' => "idx_type",              "idx" =>  "(type)"),
+        array("tbl" => "players",    'name' => "idx_owned_by_team_id",  "idx" =>  "(owned_by_team_id)"),
+        array("tbl" => "teams",      'name' => "idx_owned_by_coach_id", "idx" =>  "(owned_by_coach_id)"),
+        array("tbl" => "matches",    'name' => "idx_f_tour_id",         "idx" =>  "(f_tour_id)"),
+        array("tbl" => "matches",    'name' => "idx_team1_id_team2_id", "idx" =>  "(team1_id,team2_id)"),
+        array("tbl" => "matches",    'name' => "idx_team2_id",          "idx" =>  "(team2_id)"),
+        array("tbl" => "tours",      'name' => "idx_winner",            "idx" =>  "(winner)"),
+
+        array("tbl" => "match_data", 'name' => "idx_m",      "idx" =>  "(f_match_id)"),
+        array("tbl" => "match_data", 'name' => "idx_tr",     "idx" =>  "(f_tour_id)"),
+        array("tbl" => "match_data", 'name' => "idx_p_m",    "idx" =>  "(f_player_id,f_match_id)"),
+        array("tbl" => "match_data", 'name' => "idx_t_m",    "idx" =>  "(f_team_id,  f_match_id)"),
+        array("tbl" => "match_data", 'name' => "idx_r_m",    "idx" =>  "(f_race_id,  f_match_id)"),
+        array("tbl" => "match_data", 'name' => "idx_c_m",    "idx" =>  "(f_coach_id, f_match_id)"),
+        array("tbl" => "match_data", 'name' => "idx_p_tr",   "idx" =>  "(f_player_id,f_tour_id)"),
+        array("tbl" => "match_data", 'name' => "idx_t_tr",   "idx" =>  "(f_team_id,  f_tour_id)"),
+        array("tbl" => "match_data", 'name' => "idx_r_tr",   "idx" =>  "(f_race_id,  f_tour_id)"),
+        array("tbl" => "match_data", 'name' => "idx_c_tr",   "idx" =>  "(f_coach_id, f_tour_id)"),
+
+        array("tbl" => "match_data_es", 'name' => "idx_m",      "idx" =>  "(f_mid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_tr",     "idx" =>  "(f_trid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_p_m",    "idx" =>  "(f_pid,f_mid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_t_m",    "idx" =>  "(f_tid,f_mid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_r_m",    "idx" =>  "(f_rid,f_mid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_c_m",    "idx" =>  "(f_cid,f_mid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_p_tr",   "idx" =>  "(f_pid,f_trid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_t_tr",   "idx" =>  "(f_tid,f_trid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_r_tr",   "idx" =>  "(f_rid,f_trid)"),
+        array("tbl" => "match_data_es", 'name' => "idx_c_tr",   "idx" =>  "(f_cid,f_trid)"),
+        
+        array('tbl' => 'mv_players',  'name' => 'idx_p_tr', 'idx' => '(f_pid,f_trid)'),
+        array('tbl' => 'mv_teams',    'name' => 'idx_t_tr', 'idx' => '(f_tid,f_trid)'),
+        array('tbl' => 'mv_coaches',  'name' => 'idx_p_tr', 'idx' => '(f_cid,f_trid)'),
+        array('tbl' => 'mv_races',    'name' => 'idx_r_tr', 'idx' => '(f_rid,f_trid)'),
+        
+        array('tbl' => 'mv_es_players',  'name' => 'idx_p_tr', 'idx' => '(f_pid,f_trid)'),
+        array('tbl' => 'mv_es_teams',    'name' => 'idx_t_tr', 'idx' => '(f_tid,f_trid)'),
+        array('tbl' => 'mv_es_coaches',  'name' => 'idx_p_tr', 'idx' => '(f_cid,f_trid)'),
+        array('tbl' => 'mv_es_races',    'name' => 'idx_r_tr', 'idx' => '(f_rid,f_trid)'),
     );
 
     $status = true;
-    foreach ($indicies as $name => $def) {
-        @mysql_query("DROP INDEX $name ON $def[tbl]");
-        $status &= mysql_query("ALTER TABLE $def[tbl] ADD INDEX $name $def[idx]");
+    foreach ($indicies as $def) {
+        @mysql_query("DROP INDEX $def[name] ON $def[tbl]");
+        $status &= mysql_query("ALTER TABLE $def[tbl] ADD INDEX $def[name] $def[idx]");
     }
     return $status;
 }
@@ -1222,17 +1233,37 @@ public static function installMVs($delIfExists) {
         $status &= Table::createTable($name,$core_tables[$name]);
     }
     
-    // Add indicies
-    $indicies = array(
-        'idx_p_tr' => array('tbl' => 'mv_players',  'idx' => '(f_pid,f_trid)'),
-        'idx_t_tr' => array('tbl' => 'mv_teams',    'idx' => '(f_tid,f_trid)'),
-        'idx_c_tr' => array('tbl' => 'mv_coaches',  'idx' => '(f_cid,f_trid)'),
-        'idx_r_tr' => array('tbl' => 'mv_races',    'idx' => '(f_rid,f_trid)'),
-        
-    );
-    foreach ($indicies as $name => $def) {
-        @mysql_query("DROP INDEX $name ON $def[tbl]");
-        $status &= mysql_query("ALTER TABLE $def[tbl] ADD INDEX $name $def[idx]");
+    return $status;
+}
+
+public static function reviseEStables()
+{
+    global $ES_fields, $core_tables;
+    $MDES = $core_tables['match_data_es'];
+    $status = true;
+    
+    // Create tables if not existing:
+    # This will create all the ES MV (and regular, though not needed) tables with the correct up-to-date fields.
+    self::installMVs(true);
+    # Create, if not exists, the match_data_es table.
+    Table::createTableIfNotExists('match_data_es', $MDES);
+    
+    // Remove non-existing fields.
+    $result = mysql_query("DESCRIBE match_data_es");
+    $existingFields = array();
+    while ($r = mysql_fetch_assoc($result)) {
+        // Ignore relational fields.
+        if (preg_match('/^f\_/', $r['Field'])) {
+            continue;
+        }
+        $existingFields[] = $r['Field'];
+        if (!in_array($r['Field'], array_keys($ES_fields))) {
+            $status &= mysql_query("ALTER TABLE match_data_es DROP $r[Field]");
+        }
+    }
+    // Add new fields.
+    foreach (array_diff(array_keys($ES_fields), $existingFields) as $newField) {
+        $status &= mysql_query("ALTER TABLE match_data_es ADD COLUMN $newField ".$ES_fields[$newField]['type']);
     }
     
     return $status;
