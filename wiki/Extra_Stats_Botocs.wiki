@@ -287,4 +287,4 @@ As above as the path for outcome of thrall injuries isnt working (or at least my
 ===Tentacles Stats===
 
 ||tentacles_rolls||Number of times this player used his tentacles||
-||tentacles_successes ||Number of times this players successfully held another||
+||tentacles_successes||Number of times this players successfully held another||
