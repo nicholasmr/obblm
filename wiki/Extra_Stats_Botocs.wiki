@@ -136,7 +136,7 @@ The improvement roll info should be used to filter the list of skills for select
 ||+interceptions||Number of times this player intercepted the ball.||
 ||+casualties||Number of casualties caused earning spp.||
 ||+touchdowns||Number of touchdowns this player scored.||
-||+injuries||Injuried sustained by this player.||
+||%injuries||Injuried sustained by this player.||
 ||+mvp||1 if this player was MVP||
 ||improvement_roll1||The skill up improvement roll (d1)||
 ||improvement_roll2||The skill up mprovement roll (d2)||
