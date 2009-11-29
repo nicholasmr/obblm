@@ -222,7 +222,9 @@ Note: these are only recorded for a player with the kick skill. The only other t
 ||kickoffs||Number of times this player kicked off||
 ||kick_distance||Distance the ball was kicked in squares.||
 
-===Dice Stats (might be fun to see how lucky a player is)===
+===Dice Stats ===
+
+Note: Might be fun to see how lucky a player is
 
 ||dice_rolls||Number of times this player rolled a simple roll or skill roll.||
 ||dice_natural_ones||Number of natural ones rolled.||
@@ -282,7 +284,7 @@ As above as the path for outcome of thrall injuries isnt working (or at least my
 
 ||fed_on||Number of times this thrall player has been fed on.||
 
-==Tentacles Stats==
+===Tentacles Stats===
 
 ||tentacles_rolls||Number of times this player used his tentacles||
 ||tentacles_successes ||Number of times this players successfully held another||
