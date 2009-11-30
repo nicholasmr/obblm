@@ -191,6 +191,21 @@ public static function standings($obj, $node, $node_id, array $opts)
         'mv_si'      => array('desc' => 'Si'),
         'mv_ki'      => array('desc' => 'Ki'),
     );
+    if (true) # Replace with is_using_EPS $setting..
+    {
+        $ES = array(
+            'mv_inflicted_fouls'    => array('desc' => 'FoF'),
+            'mv_sustained_fouls'    => array('desc' => 'FoA'),
+            'mv_inflicted_blocks'   => array('desc' => 'BkF'),
+            'mv_sustained_blocks'   => array('desc' => 'BkA'),
+            'mv_catches'            => array('desc' => 'Ca'),
+            'mv_leaps'              => array('desc' => 'Lp'),
+            'mv_dodges'             => array('desc' => 'Dg'),
+            'mv_gfis'               => array('desc' => 'GFIs'),
+        );
+        $fields += $ES;
+        $objFields_avg = array_merge($objFields_avg, array_map(create_function('$k', 'return substr($k, 3);'), array_keys($ES)));
+    }
     // These fields are not summable!!! 
     //ie. you dont get the division/league value of these fields by summing over the related/underlying tournaments field's values.
     global $objFields_notsum;

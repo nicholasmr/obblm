@@ -348,7 +348,7 @@ $core_tables['mv_races'] = array(
 $ES_fields = array(
         # cat fs.txt | awk '/==/ {grp = $0} /\|\|/ {printf("%s%s\n", $0, grp);}' | perl -ne 's/^\|\|(\w*)\|\|([^|]*)\|\|===([^|]*)===\s*$/"$1" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "$3", "desc" => "$2"),\n/ && print'
 "pass_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of pass throw attempts of the ball."),
-"pass_completions" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of completions of throws of the ball (+1 spp)"),
+#"pass_completions" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of completions of throws of the ball (+1 spp)"),
 "interceptions_thrown" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of times the thrower has been intercepted."),
 "pass_distance" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)"),
 "dumpoff_attempts" => array("type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Offensive Stats", "desc" => "Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs)."),
