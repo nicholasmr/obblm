@@ -124,79 +124,65 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
     function parse_results() {
 
-        global $ES_fields; # Used by 
+        global $ES_fields; # Used by EPS.
 
+        // These are the general stats fields required by OBBLM:
+        $reqStats = array(
+            # Format: 'obblm_name' => 'parsed_name'
+            'mvp'   => 'mvp',
+            'cp'    => 'completion',
+            'td'    => 'touchdown',
+            'intcpt'=> 'interception',
+            'bh'    => $this->extrastats ? 'inflicted_bh_spp_casualties'   : 'casualties',
+            'si'    => $this->extrastats ? 'inflicted_si_spp_casualties'   : 'INVALID', # INVALID will fail as obj. prop. below and set field = 0.
+            'ki'    => $this->extrastats ? 'inflicted_kill_spp_casualties' : 'INVALID', # INVALID will fail as obj. prop. below and set field = 0.
+        );
+
+        // Start!
         $results =  simplexml_load_string( $this->xmlresults );
-
+        $this->hash = md5($this->xmlresults);
+        $this->gate = 0; # Initialize it.
         $this->winner = strval($results->winner);
-        $this->concession = $results->winner->attributes()->concession;
 
-        $this->gate = $results->team[0]->fans + $results->team[1]->fans;
-
-        $this->hometeam = strval($results->team[0]->attributes()->name);
-        $this->homescore = intval($results->team[0]->score);
-        $this->homewinnings = $results->team[0]->winnings - $results->team[0]->transferedGold;
-        $this->homeff = $results->team[0]->fanfactor;
-        $this->homefame = $results->team[0]->fame;
-        #$this->hometransferedGold = $results->team[0]->transferedGold;
-
-
-        foreach ( $results->team[0]->players->player as $player )
-        {
-            $this->homeplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
-            $this->homeplayers[intval($player->attributes()->number)]['name'] = $player->attributes()->name;
-            $this->homeplayers[intval($player->attributes()->number)]['star'] = addslashes($player->attributes()->starPlayer);
-            $this->homeplayers[intval($player->attributes()->number)]['merc'] = $player->attributes()->mercenary;
-            $this->homeplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
-            $this->homeplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
-            $this->homeplayers[intval($player->attributes()->number)]['td'] = $player->touchdown;
-            $this->homeplayers[intval($player->attributes()->number)]['intcpt'] = $player->interception;
-            $this->homeplayers[intval($player->attributes()->number)]['bh'] = $player->casualties;
-            $this->homeplayers[intval($player->attributes()->number)]['inj'] = $player->injuries->injury;
-            $this->homeplayers[intval($player->attributes()->number)]['agn1'] = $player->injuries->injury[1];
-
-            # Cut out the fields EPS wants and add them as a player "property", which we later pass as the second argument to $match->entry() like so:
-            # $m->entry($NORMAL_DATA, $this->awayplayers[$nr]['EPS']);
-            $this->homeplayers[intval($player->attributes()->number)]['EPS'] = ($this->extrastats) ? array_intersect_key((array) $player, $ES_fields) : array();
+        foreach (array(0 => 'home', 1 => 'away') as $N => $team) {
+            
+            // Team properties
+            $this->gate += $results->team[$N]->fans;
+            $this->{"${team}team"}      = strval($results->team[$N]->attributes()->name);
+            $this->{"${team}score"}     = intval($results->team[$N]->score);
+            $this->{"${team}winnings"}  = $results->team[$N]->winnings - $results->team[$N]->transferedGold;
+            $this->{"${team}ff"}        = (int) $results->team[$N]->fanfactor;
+            $this->{"${team}fame"}      = (int) $results->team[$N]->fame;
+            #$this->{"${team}transferedGold"} = (int) $results->team[$N]->transferedGold;
+            
+            // Player properties
+            $players = array();
+            foreach ($results->team[$N]->players->player as $p)
+            {
+                $nr = intval($p->attributes()->number);
+                $players[$nr]['nr']     = $p->attributes()->number;
+                $players[$nr]['name']   = $p->attributes()->name;
+                $players[$nr]['star']   = addslashes($p->attributes()->starPlayer);
+                $players[$nr]['merc']   = $p->attributes()->mercenary;
+                $players[$nr]['inj']    = $p->injuries->injury[0];
+                $players[$nr]['agn1']   = $p->injuries->injury[1];
+                foreach ($reqStats as $name_OBBLM => $name_BOTOCS) {
+                    $players[$nr][$name_OBBLM] = (isset($p->$name_BOTOCS) ? (int) $p->$name_BOTOCS : 0);
+                }
+                # Cut out the fields EPS wants and add them as a player "property", which we later pass as the second argument to $match->entry() like so:
+                $players[$nr]['EPS'] = ($this->extrastats) ? array_intersect_key((array) $p, $ES_fields) : array();
+            }
+            $this->{"${team}players"} = $players; # Assign proccessed players.
         }
-
-        $this->awayteam = strval($results->team[1]->attributes()->name);
-        $this->awayscore = intval($results->team[1]->score);
-        $this->awaywinnings = $results->team[1]->winnings - $results->team[1]->transferedGold;
-        $this->awayff = $results->team[1]->fanfactor;
-        $this->awayfame = $results->team[1]->fame;
-        #$this->awaytransferedGold = $results->team[1]->transferedGold;
-
-        foreach ( $results->team[1]->players->player as $player )
-        {
-            $this->awayplayers[intval($player->attributes()->number)]['nr'] = $player->attributes()->number;
-            $this->awayplayers[intval($player->attributes()->number)]['name'] = $player->attributes()->name;
-            $this->awayplayers[intval($player->attributes()->number)]['star'] = $player->attributes()->starPlayer;
-            $this->awayplayers[intval($player->attributes()->number)]['merc'] = $player->attributes()->mercenary;
-            $this->awayplayers[intval($player->attributes()->number)]['mvp'] = $player->mvp;
-            $this->awayplayers[intval($player->attributes()->number)]['cp'] = $player->completion;
-            $this->awayplayers[intval($player->attributes()->number)]['td'] = $player->touchdown;
-            $this->awayplayers[intval($player->attributes()->number)]['intcpt'] = $player->interception;
-            $this->awayplayers[intval($player->attributes()->number)]['bh'] = $player->casualties;
-            $this->awayplayers[intval($player->attributes()->number)]['inj'] = $player->injuries->injury[0];
-            $this->awayplayers[intval($player->attributes()->number)]['agn1'] = $player->injuries->injury[1];
-
-            # Cut out the fields EPS wants and add them as a player "property", which we later pass as the second argument to $match->entry() like so:
-            # $m->entry($NORMAL_DATA, $this->awayplayers[$nr]['EPS']);
-            $this->awayplayers[intval($player->attributes()->number)]['EPS'] = ($this->extrastats) ? array_intersect_key((array) $player, $ES_fields) : array();
-        }
-
-        //Check winner and concession to change the score to 2 to 0 in favor of the team that did not concede.
-        if ( $this->concession )
-        {
+        
+        // Check winner and concession to change the score to 2 to 0 in favor of the team that did not concede.
+        if ($this->concession = $results->winner->attributes()->concession) {
             if ( $this->winner == $this->hometeam && $this->homescore <= $this->awayscore )
                 $this->homescore = $this->homescore + $this->awayscore - $this->homescore +1;
             if ( $this->winner == $this->awayteam && $this->awayscore <= $this->homescore )
                 $this->awayscore = $this->awayscore + $this->homescore - $this->awayscore +1;
         }
-
-        $this->hash = md5 ( $this->xmlresults );
-
+        
         return true;
     }
 
@@ -279,18 +265,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 }
             }
 
-            $mvp = $player['mvp'];
-            if ($mvp == NULL) $mvp = 0;
-            $cp = $player['cp'];
-            if ($cp == NULL) $cp = 0;
-            $td = $player['td'];
-            if ($td == NULL) $td = 0;
-            $intcpt = $player['intcpt'];
-            if ($intcpt == NULL) $intcpt = 0;
-            $bh = $player['bh'][0];
-            if ($bh == NULL) $bh = 0;
-            #$si = $players[$i]
-            #$ki = $players[$i]
+            // Make $player[$f] into $$f. 
+            foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
+                $$f = $player[$f]; # NOTE: These fields are validated and typecasted correctly already in parse_results(), no further processing needed.
+            }
 
             $inj = $this->switchInjury ( $player['inj'] );
 
@@ -299,41 +277,64 @@ class UPLOAD_BOTOCS implements ModuleInterface
             if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
 
             if ( !$addZombie )
-            $match->entry( 
-                $input = array ( "team_id" => $team_id, "player_id" => $f_player_id, "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 ),
-                $player['EPS']
-            );
+                $match->entry( 
+                    $input = array ( 
+                        "team_id" => $team_id, "player_id" => $f_player_id, 
+                        "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
+                        "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
+                    $player['EPS']
+                );
             else
             {
-                    #$race = new Race($DEA[$team->race]['other']['race_id']);
-                    global $DEA;
-                    $delta = Player::price( $DEA[$team->f_rname]['players']['Zombie']['pos_id'] );
+                /* 
+                    Comments to William:
+                        You say that "Must add zombie last so that dead players can be reported first.", but I don't really see you ever adding the zombie?
+                        ..you don't go through the players list a second time around for adding zombies. Effectively, you are just skipping them?
+                        
+                        As far as I can see you have not written the $m->entry() reporting below in this block - around where you have defined $input (below).
+                        Maybe you have forgotten it? How did zombie reporting work earlier then?!
+                        
+                        What if there are multiple zombies to add? They can't all be number = 100?
+                */
+                global $DEA;
+                $pos_id = $DEA[$team->f_rname]['players']['Zombie']['pos_id'];
+                $delta = Player::price($pos_id);
+                $team->dtreasury($delta);
+                $zombie_added = Player::create(array( 'nr' => $player['nr'], 'f_pos_id' => $pos_id, 'team_id' => $team_id, 'name' => $player['name']) );
 
-                    $team->dtreasury($delta);
-                    #nr, f_pos_id, name, team_id, (optional) forceCreate
-                    #$zombie_added = Player::create(array( 'nr' => $player['nr'], 'position' => "Zombie", 'team_id' => $team_id, 'name' => $player['name']) );
-                    $zombie_added = Player::create(array( 'nr' => $player['nr'], 'f_pos_id' => $DEA[$team->f_rname]['players']['Zombie']['pos_id'], 'team_id' => $team_id, 'name' => $player['name']) );
-
-                    if ( !$zombie_added[0] ) $team->dtreasury(-$delta);
-                    else
-                    {
-                        $input = array ( "team_id" => $team_id, "player_id" => $zombie_added[1], "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => 0, "ki" => 0, "inj" => $inj, "agn1" => $agn1, "agn2" => 1 );
-                    }
+                if ( !$zombie_added[0] ) $team->dtreasury(-$delta);
+                else
+                {
+                    $input = array ( 
+                        "team_id" => $team_id, "player_id" => $zombie_added[1], 
+                        "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
+                        "inj" => $inj, "agn1" => $agn1, "agn2" => NONE );
+                }
             }
 
         }
 
         ##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 
+        /* 
+            Comments to William:
+                    I'm not sure what you are doing here.
+                    I would think that you'd simply want to check, in the ABOVE loop, not here, 
+                    if a player has an injury != NONE from previous match in THIS match, $match_id, 
+                    (by:  Player::getPlayerStatus($player_id, $match_id) != NONE ), if so, zero set all data.
+        */
+
         foreach ( $players as $p  )
         {
             if (  !$p->is_dead && !$p->is_sold ) {
                 $player = new Player ( $p->player_id );
-#print_r($player);
                 $p_matchdata = $player->getMatchData( $this->match_id );
                 if ( !$p_matchdata['inj'] ) {
                     $match->entry(
-                        $input = array ( "team_id" => $team_id, "player_id" => $p->player_id, "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, "inj" => 1, "agn1" => 1, "agn2" => 1  ), 
+                        $input = array ( 
+                            "team_id" => $team_id, "player_id" => $p->player_id, 
+                            "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, 
+                            "inj" => NONE, "agn1" => NONE, "agn2" => NONE ), 
                         array() # No EPS!
                     );
                 }
@@ -445,31 +446,31 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         switch ( $inj ) {
             case NULL:
-                $injeffect = 1;
+                $injeffect = NONE;
                 break;
             case "Miss Next Game":
-                $injeffect = 2;
+                $injeffect = MNG;
                 break;
             case "Niggling Injury":
-                $injeffect = 3;
+                $injeffect = NI;
                 break;
             case "-1 MA":
-                $injeffect = 4;
+                $injeffect = MA;
                 break;
             case "-1 AV":
-                $injeffect = 5;
+                $injeffect = AV;
                 break;
             case "-1 AG":
-                $injeffect = 6;
+                $injeffect = AG;
                 break;
             case "-1 ST":
-                $injeffect = 7;
+                $injeffect = ST;
                 break;
             case "Dead":
-                $injeffect = 8;
+                $injeffect = DEAD;
                 break;
             default:
-                $injeffect = 1;
+                $injeffect = NONE;
                 break;
         }
 
@@ -624,7 +625,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             <!-- The data encoding type, enctype, MUST be specified as below -->
             <form enctype='multipart/form-data' action='handler.php?type=leegmgr' method='POST'>
                 <!-- MAX_FILE_SIZE must precede the file input field -->
-                <input type='hidden' name='MAX_FILE_SIZE' value='100000' />
+                <input type='hidden' name='MAX_FILE_SIZE' value='256000' />
                 <!-- Name of input element determines name in $_FILES array -->
                 Send this file: <input name='userfile' type='file' />
                 <select name='ffatours'>
