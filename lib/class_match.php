@@ -161,8 +161,9 @@ class Match
     
         // Delete match entry and match data.
         $q = array();
-        $q[] = "DELETE FROM matches     WHERE match_id = $this->match_id";
-        $q[] = "DELETE FROM match_data  WHERE f_match_id = $this->match_id";
+        $q[] = "DELETE FROM matches       WHERE match_id = $this->match_id";
+        $q[] = "DELETE FROM match_data    WHERE f_match_id = $this->match_id";
+        $q[] = "DELETE FROM match_data_es WHERE f_mid = $this->match_id";
         $status = true;
         foreach ($q as $query) {
             $status &= mysql_query($query);
@@ -187,7 +188,8 @@ class Match
          **/
         
         $q = array();
-        $q[] = "DELETE FROM match_data WHERE f_match_id = $this->match_id";
+        $q[] = "DELETE FROM match_data    WHERE f_match_id = $this->match_id";
+        $q[] = "DELETE FROM match_data_es WHERE f_mid = $this->match_id";
         $q[] = "UPDATE matches SET 
             date_played = NULL, date_modified = NULL, 
             team1_score = NULL, team2_score = NULL,
