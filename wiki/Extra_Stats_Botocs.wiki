@@ -184,3 +184,10 @@ As above as the path for outcome of thrall injuries isnt working (or at least my
 
 ||tentacles_rolls||Number of times this player used his tentacles||
 ||tentacles_successes||Number of times this players successfully held another||
+
+
+===SPP Casualty Stats===
+
+||+inflicted_bh_spp_casualties||Used to count badly hurts which counted as a spp casuality||
+||+inflicted_si_spp_casualties||Used to count serious injuries which counted as a spp casuality||
+||+inflicted_kill_spp_casualties||Used to count deaths which counted as a spp casuality||
