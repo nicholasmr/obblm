@@ -129,7 +129,7 @@ Note: Might be fun to see how lucky a player is
 ||dice_roll_sum||Sum of what was actually rolled (with above would be used to show averages).||
 
 
-===Other SPPs Stats===
+===SPPs Stats===
 
 The improvement roll info should be used to filter the list of skills for selection by a player on the team roster page
 
@@ -138,6 +138,9 @@ The improvement roll info should be used to filter the list of skills for select
 ||+touchdowns||Number of touchdowns this player scored.||
 ||%injuries||Injuried sustained by this player.||
 ||+mvp||1 if this player was MVP||
+||+inflicted_bh_spp_casualties||Used to count badly hurts which counted as a spp casuality||
+||+inflicted_si_spp_casualties||Used to count serious injuries which counted as a spp casuality||
+||+inflicted_kill_spp_casualties||Used to count deaths which counted as a spp casuality||
 ||improvement_roll1||The skill up improvement roll (d1)||
 ||improvement_roll2||The skill up mprovement roll (d2)||
 
@@ -184,10 +187,3 @@ As above as the path for outcome of thrall injuries isnt working (or at least my
 
 ||tentacles_rolls||Number of times this player used his tentacles||
 ||tentacles_successes||Number of times this players successfully held another||
-
-
-===SPP Casualty Stats===
-
-||+inflicted_bh_spp_casualties||Used to count badly hurts which counted as a spp casuality||
-||+inflicted_si_spp_casualties||Used to count serious injuries which counted as a spp casuality||
-||+inflicted_kill_spp_casualties||Used to count deaths which counted as a spp casuality||
