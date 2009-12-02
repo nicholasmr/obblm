@@ -310,7 +310,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         "team_id" => $team_id, "player_id" => $zombie_added[1], 
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                         "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
-                    array() # No EPS!;
+                    $player['EPS']
                     );
                 }
             }
