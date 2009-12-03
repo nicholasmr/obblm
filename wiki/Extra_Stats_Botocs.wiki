@@ -27,7 +27,7 @@ The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) 
 
 
 ||pass_attempts||Number of pass throw attempts of the ball.||
-||+pass_completions||Number of completions of throws of the ball (+1 spp)||
+||+completion||Number of completions of throws of the ball (+1 spp)||
 ||interceptions_thrown||Number of times the thrower has been intercepted.||
 ||pass_distance||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
 ||dumpoff_attempts||Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs).||
@@ -133,9 +133,9 @@ Note: Might be fun to see how lucky a player is
 
 The improvement roll info should be used to filter the list of skills for selection by a player on the team roster page
 
-||+interceptions||Number of times this player intercepted the ball.||
+||+interception||Number of times this player intercepted the ball.||
 ||+casualties||Number of casualties caused earning spp.||
-||+touchdowns||Number of touchdowns this player scored.||
+||+touchdown||Number of touchdowns this player scored.||
 ||%injuries||Injuried sustained by this player.||
 ||+mvp||1 if this player was MVP||
 ||+inflicted_bh_spp_casualties||Used to count badly hurts which counted as a spp casuality||
