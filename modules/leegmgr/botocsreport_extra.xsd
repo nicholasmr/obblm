@@ -29,7 +29,7 @@
                       <xs:complexType>
                         <xs:sequence>
                             <xs:element name="pass_attempts" type="t_int0_24" />
-                            <xs:element name="pass_completions" type="t_int0_24" />
+                            <xs:element name="completion" type="t_int0_24" />
                             <xs:element name="interceptions_thrown" type="t_int0_24" />
                             <xs:element name="pass_distance" type="t_number0_100" />
                             <xs:element name="dumpoff_attempts" type="t_int0_24" />
@@ -41,11 +41,11 @@
                             <xs:element name="handoff_catches" type="t_int0_24" />
                             <xs:element name="pickup_attempts" type="t_int0_24" />   
                             <xs:element name="pickups" type="t_int0_24" />
-                            <xs:element name="rushing_distance_leap" type="t_int0_24" />
-                            <xs:element name="rushing_distance_push" type="t_int0_24" />
-                            <xs:element name="rushing_distance_move" type="t_number0_100" />
-                            <xs:element name="rushing_distance_block" type="t_int0_24" />
-                            <xs:element name="rushing_distance_shadowing" type="t_int0_24" />
+                            <xs:element name="rushing_distance_leap" type="t_progression" />
+                            <xs:element name="rushing_distance_push" type="t_progression" />
+                            <xs:element name="rushing_distance_move" type="t_progression" />
+                            <xs:element name="rushing_distance_block" type="t_progression" />
+                            <xs:element name="rushing_distance_shadowing" type="t_progression" />
                             <xs:element name="leap_attempts" type="t_int0_24" />
                             <xs:element name="leaps" type="t_int0_24" />
                             <xs:element name="dodge_attempts" type="t_number0_100" />
@@ -101,9 +101,9 @@
                             <xs:element name="dice_natural_sixes" type="t_int0_24" />
                             <xs:element name="dice_target_sum" type="t_number0_500" />
                             <xs:element name="dice_roll_sum" type="t_number0_500" />
-                            <xs:element name="interceptions" type="t_int0_24" />
+                            <xs:element name="interception" type="t_int0_24" />
                             <xs:element name="casualties" type="t_int0_24" />
-                            <xs:element name="touchdowns" type="t_int0_24" />
+                            <xs:element name="touchdown" type="t_int0_24" />
                             <xs:element name="big_guy_stupidity_attempts" type="t_int0_24" />
                             <xs:element name="big_guy_stupidity_successes" type="t_int0_24" />
                             <xs:element name="big_guy_stupidity_blitz_attempts" type="t_int0_24" />
@@ -116,7 +116,7 @@
                             <xs:element name="landing_attempts" type="t_int0_24" />
                             <xs:element name="landings" type="t_int0_24" />
                             <xs:element name="distance_thrown" type="t_int0_24" />
-                            <xs:element name="rushing_distance_thrown" type="t_number0_100" />
+                            <xs:element name="rushing_distance_thrown" type="t_progression" />
                             <xs:element name="bloodlust_rolls" type="t_int0_24" />
                             <xs:element name="bloodlust_successes" type="t_int0_24" />
                             <xs:element name="bloodfeeds" type="t_int0_24" />
@@ -225,6 +225,12 @@
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="1" />
       <xs:maxInclusive value="100" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_progression">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="-100" />
+      <xs:maxInclusive value="200" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="t_number0_100">
