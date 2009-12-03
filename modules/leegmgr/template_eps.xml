@@ -3127,11 +3127,6 @@
                                             <type>HYPNOZE</type>
                                             <key name="team" current="true" />
                                             <key name="player" current="true" />
-                                            <log name="bloodLust">
-                                                <type>SKILL_ROLL</type>
-                                                <key name="team" current="true" />
-                                                <key name="player" current="true" />
-                                            </log>
                                         </log>
                                     </filter>
                                 </content>
@@ -3157,8 +3152,7 @@
                                                 </log>
                                             </log>
                                         </log>
-                                    </filter>
-                                    
+                                    </filter>                                    
                                     <filter>
                                         <log>
                                             <type>HYPNOZE</type>
@@ -3259,7 +3253,7 @@
                                     <content type="count">
                                         <filter>
                                             <log>
-                                                <type>HYPNOZE</type>
+                                                <type>TENTACLES</type>
                                                 <key name="team" current="true" />
                                                 <key name="player" current="true" />
                                             </log>
@@ -3272,7 +3266,7 @@
                                     <content type="count">
                                         <filter>
                                             <log>
-                                                <type>HYPNOZE</type>
+                                                <type>TENTACLES</type>
                                                 <key name="team" current="true" />
                                                 <key name="player" current="true" />
                                                 <key name="success">true</key>
