@@ -190,7 +190,7 @@
                                 </content>
                             </element>
                             
-                            <element name="pass_completions">
+                            <element name="completion">
                                 <content type="count">
                                     <filter>
                                         <log>
@@ -2362,7 +2362,7 @@
                                 </content>
                             </element>
                             
-                            <element name="interceptions">
+                            <element name="interception">
                                 <content type="count">
                                     <filter>
                                         <log>
@@ -2429,7 +2429,7 @@
                                 </content>
                             </element>
                             
-                            <element name="touchdowns">
+                            <element name="touchdown">
                                 <content type="count">
                                     <filter>
                                         <log>
