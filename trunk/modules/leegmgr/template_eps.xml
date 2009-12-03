@@ -938,6 +938,7 @@
                             
                             <element name="inflicted_crowd_surfs">
                                 <content type="count">
+				<!-- Leaving in for the moment
                                     <filter>
                                         <log>
                                             <type>BLOCK</type>
@@ -956,6 +957,7 @@
                                             </log>
                                         </log>
                                     </filter>
+				    -->
                                     <filter>
                                         <log>
                                             <type>BLOCK</type>
@@ -1795,6 +1797,7 @@
                             
                             <element name="sustained_crowd_surfs">
                                 <content type="count">
+				    <!--  Leaving in for the moment, it seems the second filter gets the re-roll
                                     <filter>
                                         <log>
                                             <type>BLOCK</type>
@@ -1813,6 +1816,7 @@
                                             </log>
                                         </log>
                                     </filter>
+				    -->
                                     <filter>
                                         <log>
                                             <type>BLOCK</type>
