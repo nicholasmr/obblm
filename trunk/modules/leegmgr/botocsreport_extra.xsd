@@ -31,7 +31,7 @@
                             <xs:element name="pass_attempts" type="t_int0_24" />
                             <xs:element name="completion" type="t_int0_24" />
                             <xs:element name="interceptions_thrown" type="t_int0_24" />
-                            <xs:element name="pass_distance" type="t_number0_100" />
+                            <xs:element name="pass_distance" type="t_progression" />
                             <xs:element name="dumpoff_attempts" type="t_int0_24" />
                             <xs:element name="dumpoff_completions" type="t_int0_24" />
                             <xs:element name="catch_attempts" type="t_int0_24" />
@@ -110,7 +110,7 @@
                             <xs:element name="big_guy_stupidity_blitz_successes" type="t_int0_24" />   
                             <xs:element name="throw_team_mate_attempts" type="t_int0_24" />
                             <xs:element name="throw_team_mate_successes" type="t_int0_24" />
-                            <xs:element name="throw_team_mate_distance" type="t_int0_24" />
+                            <xs:element name="throw_team_mate_distance" type="t_progression" />
                             <xs:element name="throw_team_mate_to_safe_landing" type="t_int0_24" />
                             <xs:element name="times_thrown" type="t_int0_24" />
                             <xs:element name="landing_attempts" type="t_int0_24" />
