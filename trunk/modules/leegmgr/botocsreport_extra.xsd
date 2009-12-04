@@ -115,7 +115,7 @@
                             <xs:element name="times_thrown" type="t_int0_24" />
                             <xs:element name="landing_attempts" type="t_int0_24" />
                             <xs:element name="landings" type="t_int0_24" />
-                            <xs:element name="distance_thrown" type="t_int0_24" />
+                            <xs:element name="distance_thrown" type="t_progression" />
                             <xs:element name="rushing_distance_thrown" type="t_progression" />
                             <xs:element name="bloodlust_rolls" type="t_int0_24" />
                             <xs:element name="bloodlust_successes" type="t_int0_24" />
