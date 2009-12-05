@@ -25,6 +25,12 @@
  THIS FILE is used for HTML-helper routines.
  */
  
+// Special dropdown states for nodeSelector().
+define('T_STATE_ALLTIME', 1);
+define('T_STATE_ACTIVE', 2);
+define('T_NODE_ALL', -1);  # All nodes.
+define('T_RACE_ALL', -1);  # All races.
+ 
 class HTMLOUT
 {
 
@@ -140,8 +146,9 @@ public static function standings($obj, $node, $node_id, array $opts)
          $opts = array(
             'url' => page URL on which table is to be displayed (required!)
             'GET_SS' => GET Sorting suffix
-            'hidemenu' => bool
             'return_objects' => bool
+            'teams_from' => [T_OBJ_COACH|T_OBJ_RACE] when $obj = T_OBJ_TEAM and this is set, only teams related to this object type (teams_from), of ID = $opts[teams_from_id] are fetched.
+            'teams_from_id' => ID (int) see "teams_from" for details.
          );
      */
 
@@ -156,10 +163,10 @@ public static function standings($obj, $node, $node_id, array $opts)
     
     $extra['noHelp'] = false;
     
-    $hidemenu = (array_key_exists('hidemenu', $opts) && $opts['hidemenu']);
-    echo '<div ' . (($hidemenu) ? "style='display:none;'" : '').'>';
-    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector($node, $node_id, $hidemenu, '');
-    echo '</div>';
+    $enableRaceSelector = ($obj == T_OBJ_PLAYER || $obj == T_OBJ_TEAM && (!isset($opts['teams_from']) || $opts['teams_from'] != T_OBJ_RACE));
+    list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(false,$enableRaceSelector,'');
+    $filter_node = array($sel_node => $sel_node_id);
+    $filter_race = ($sel_race != T_RACE_ALL) ? array(T_OBJ_RACE => $sel_race) : array();
 
     $manualSort = isset($_GET["sort$opts[GET_SS]"]);
     $sortRule = array_merge(
@@ -242,7 +249,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 unset($fields["rg_s$f"]);
                 unset($fields["mv_s$f"]);
             }
-            $objs = Stats::getRaw(T_OBJ_PLAYER, array($sel_node => $sel_node_id), $settings['entries']['standings_players'], $sortRule, $set_avg);
+            $objs = Stats::getRaw(T_OBJ_PLAYER, $filter_node+$filter_race, $settings['entries']['standings_players'], $sortRule, $set_avg);
             break;
 
         case STATS_TEAM:
@@ -260,7 +267,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             elseif ($ALL_TIME) { 
                 $fields_after['rg_elo'] = array('desc' => 'ELO');
             }
-            if ($sel_node == STATS_TOUR) {
+            if ($sel_node == T_NODE_TOURNAMENT) {
                 $tr = new Tour($sel_node_id);
                 $sortRule = array_merge(($manualSort) ? array_slice($sortRule, 0, 1) : array(), array_map(create_function('$e', 'return substr($e,0,1).\'mv_\'.substr($e,1);'),$tr->getRSSortRule()));
                 if ($tr->isRSWithPoints()) {
@@ -272,19 +279,19 @@ public static function standings($obj, $node, $node_id, array $opts)
             // Show teams standings list only for teams owned by... ?
             switch ((array_key_exists('teams_from', $opts)) ? $opts['teams_from'] : false)
             {
-                case STATS_COACH:
+                case T_OBJ_COACH:
                     $fields_before['f_rname'] = array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_COACH => (int) $opts['teams_from_id']), false, $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_race+array(T_OBJ_COACH => (int) $opts['teams_from_id']), false, $sortRule, $set_avg);
                     break;
 
-                case STATS_RACE:
+                case T_OBJ_RACE:
                     $fields_before['f_cname'] = array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, array(T_OBJ_RACE => (int) $opts['teams_from_id']), $settings['entries']['standings_teams'], $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+array(T_OBJ_RACE => (int) $opts['teams_from_id']), $settings['entries']['standings_teams'], $sortRule, $set_avg);
                     break;
 
                 // All teams
                 default:
-                    $objs = Stats::getRaw(T_OBJ_TEAM, array($sel_node => $sel_node_id), $settings['entries']['standings_teams'], $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_race, $settings['entries']['standings_teams'], $sortRule, $set_avg);
             }
             // OPTIONALLY hide retired teams.
             # Don't for standings! Only for dispTeamList().
@@ -389,27 +396,25 @@ public static function standings($obj, $node, $node_id, array $opts)
     return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? $objs : true;
 }
 
-public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $prefix = '')
+public static function nodeSelector($setState = true, $setRace = true, $prefix = '')
 {
-    global $lng;
-    
+    global $lng, $raceididx;
+
     // Set defaults
-    $s_node     = "${prefix}_node";     # _SESSION index
-    $s_node_id  = "${prefix}_node_id";  # _SESSION index
-    if (($node && $node_id) || !isset($_SESSION[$s_node]) || $FORCE_FALSE) {
-        $_SESSION[$s_node] = $node;
-        $_SESSION[$s_node_id] = $node_id;
-    }
+    $s_node     = "${prefix}_node";
+    $s_node_id  = "${prefix}_node_id";
+    $s_state    = "${prefix}_state";
+    $s_race     = "${prefix}_race";
 
     $NEW = isset($_POST['select']);
-    switch ($_SESSION[$s_node] = ($NEW) ? (int) $_POST['node'] : (($_SESSION[$s_node]) ? $_SESSION[$s_node] : STATS_LEAGUE))
-    {
-        case STATS_TOUR:        if ($NEW) {$_SESSION[$s_node_id] = (int) $_POST['tour_in'];} break;
-        case STATS_DIVISION:    if ($NEW) {$_SESSION[$s_node_id] = (int) $_POST['division_in'];} break;
-        case STATS_LEAGUE:      if ($NEW) {$_SESSION[$s_node_id] = (int) $_POST['league_in'];} break;
-        default:                $_SESSION[$s_node_id] = false; // All-time.
-    }
-
+    $_SESSION[$s_state] = ($NEW && $setState) ? (int) $_POST['state_in'] : (isset($_SESSION[$s_state]) ? $_SESSION[$s_state] : T_STATE_ALLTIME);
+    $_SESSION[$s_race]  = ($NEW && $setRace)  ? (int) $_POST['race_in']  : (isset($_SESSION[$s_race])  ? $_SESSION[$s_race]  : T_RACE_ALL);
+    $_SESSION[$s_node]  = ($NEW)              ? (int) $_POST['node']     : (isset($_SESSION[$s_node])  ? $_SESSION[$s_node]  : T_NODE_LEAGUE);
+    $rel = array(T_NODE_TOURNAMENT => 'tour', T_NODE_DIVISION => 'division', T_NODE_LEAGUE => 'league');
+    $_SESSION[$s_node_id] = ($NEW) 
+        ? (int) $_POST[$rel[$_SESSION[$s_node]].'_in']
+        : (isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : T_NODE_ALL);
+    
     ?>
     <form method="POST">
     <?php echo $lng->getTrn('common/displayfrom');?>
@@ -418,13 +423,13 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         disableall();
         switch(selConst)
         {
-            case <?php echo STATS_TOUR;?>:      document.getElementById('tour_in').style.display = 'inline'; break;
-            case <?php echo STATS_DIVISION;?>:  document.getElementById('division_in').style.display = 'inline'; break;
-            case <?php echo STATS_LEAGUE;?>:    document.getElementById('league_in').style.display = 'inline'; break;
+            case <?php echo T_NODE_TOURNAMENT;?>: document.getElementById('tour_in').style.display = 'inline'; break;
+            case <?php echo T_NODE_DIVISION;?>:   document.getElementById('division_in').style.display = 'inline'; break;
+            case <?php echo T_NODE_LEAGUE;?>:     document.getElementById('league_in').style.display = 'inline'; break;
         }
     ">
         <?php
-        foreach (array(STATS_LEAGUE => $lng->getTrn('common/league'), STATS_DIVISION => $lng->getTrn('common/division'), STATS_TOUR => $lng->getTrn('common/tournament')) as $const => $name) {
+        foreach (array(T_NODE_LEAGUE => $lng->getTrn('common/league'), T_NODE_DIVISION => $lng->getTrn('common/division'), T_NODE_TOURNAMENT => $lng->getTrn('common/tournament')) as $const => $name) {
             echo "<option value='$const' ".(($_SESSION[$s_node] == $const) ? 'SELECTED' : '').">$name</option>\n";
         }
         ?>
@@ -434,7 +439,7 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         <?php
         foreach (Tour::getTours() as $t) {
             echo "<option value='$t->tour_id' ".
-                (($_SESSION[$s_node] == STATS_TOUR && $_SESSION[$s_node_id] == $t->tour_id) ? 'SELECTED' : '')
+                (($_SESSION[$s_node] == T_NODE_TOURNAMENT && $_SESSION[$s_node_id] == $t->tour_id) ? 'SELECTED' : '')
                 .">$t->name</option>\n";
         }
         ?>
@@ -443,21 +448,48 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         <?php
         foreach (Division::getDivisions() as $d) {
             echo "<option value='$d->did'".
-                (($_SESSION[$s_node] == STATS_DIVISION && $_SESSION[$s_node_id] == $d->did) ? 'SELECTED' : '')
+                (($_SESSION[$s_node] == T_NODE_DIVISION && $_SESSION[$s_node_id] == $d->did) ? 'SELECTED' : '')
                 .">$d->name</option>\n";
         }
         ?>
     </select>
     <select style='display:none;' name="league_in" id="league_in">
         <?php
-        echo "<option value='0'>-".$lng->getTrn('common/all')."-</option>\n";
+        echo "<option value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
         foreach (League::getLeagues() as $l) {
             echo "<option value='$l->lid'".
-                (($_SESSION[$s_node] == STATS_LEAGUE && $_SESSION[$s_node_id] == $l->lid) ? 'SELECTED' : '')
+                (($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == $l->lid) ? 'SELECTED' : '')
                 .">$l->name</option>\n";
         }
         ?>
-    </select> &nbsp;
+    </select>
+    <?php 
+    if ($setState) {
+        echo $lng->getTrn('common/type');
+        ?>
+        <select name="state_in" id="state_in">
+            <?php
+            echo "<option value='".T_STATE_ALLTIME."' ".(($_SESSION[$s_state] == T_STATE_ALLTIME) ? 'SELECTED' : '').">".$lng->getTrn('common/alltime')."</option>\n";
+            echo "<option value='".T_STATE_ACTIVE."'  ".(($_SESSION[$s_state] == T_STATE_ACTIVE) ? 'SELECTED' : '').">".$lng->getTrn('common/active')."</option>\n";
+            ?>
+        </select> 
+        <?php 
+    }
+    if ($setRace) {
+        echo $lng->getTrn('common/race');
+        ?>
+        <select name="race_in" id="race_in">
+            <?php
+            echo "<option value='".T_RACE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
+            foreach ($raceididx as $rid => $rname) {
+                echo "<option value='$rid'".(($_SESSION[$s_race] == $rid) ? 'SELECTED' : '').">$rname</option>\n";
+            }
+            ?>
+        </select>
+        <?php
+    }
+    ?>
+    &nbsp;
     <input type="submit" name="select" value="<?php echo $lng->getTrn('common/select');?>">
     </form>
     <script language="JavaScript" type="text/javascript">
@@ -466,9 +498,9 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         echo '
             switch('.$_SESSION[$s_node].')
             {
-                case '.STATS_TOUR.':      open = "tour"; break;
-                case '.STATS_DIVISION.':  open = "division"; break;
-                case '.STATS_LEAGUE.':    open = "league"; break;
+                case '.T_NODE_TOURNAMENT.': open = "tour"; break;
+                case '.T_NODE_DIVISION.':   open = "division"; break;
+                case '.T_NODE_LEAGUE.':     open = "league"; break;
             }
         ';
         ?>
@@ -482,10 +514,14 @@ public static function nodeSelector($node, $node_id, $FORCE_FALSE = false, $pref
         }
     </script>
     <?php
-    if ($_SESSION[$s_node] == STATS_LEAGUE && $_SESSION[$s_node_id] == 0) {
-        $_SESSION[$s_node] = $_SESSION[$s_node_id] = false;
-    }
-    return array($_SESSION[$s_node], $_SESSION[$s_node_id]);
+
+    $allNodes = ($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == T_NODE_ALL);
+    return array(
+        ($allNodes) ? false : $_SESSION[$s_node], 
+        ($allNodes) ? false : $_SESSION[$s_node_id], 
+        ($setState) ? $_SESSION[$s_state] : false, 
+        ($setRace) ? $_SESSION[$s_race] : false
+    );
 }
 
 public static function frame_begin($stylesheet = false)

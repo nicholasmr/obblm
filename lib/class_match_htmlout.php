@@ -30,7 +30,7 @@ function recentMatches() {
 
     global $lng;
     title($lng->getTrn('menu/matches_menu/recent'));
-    list($node, $node_id) = HTMLOUT::nodeSelector(false,false,false,'');
+    list($node, $node_id) = HTMLOUT::nodeSelector(false,false,'');
     echo '<br>';
     HTMLOUT::recentGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=recent', 'n' => MAX_RECENT_GAMES));
 }
@@ -39,7 +39,7 @@ function upcommingMatches() {
 
     global $lng;
     title($lng->getTrn('menu/matches_menu/upcomming'));
-    list($node, $node_id) = HTMLOUT::nodeSelector(false,false,false,'');
+    list($node, $node_id) = HTMLOUT::nodeSelector(false,false,'');
     echo '<br>';
     HTMLOUT::upcommingGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=upcomming', 'n' => MAX_RECENT_GAMES));
 }
