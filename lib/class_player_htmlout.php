@@ -21,6 +21,23 @@
  *
  */
 
+/*********************
+*   Roster/status colors
+*********************/
+define('COLOR_HTML_NORMAL',   '#FFFFFF'); // Color used when not in detailed view mode.
+define('COLOR_HTML_READY',    '#83b783');
+define('COLOR_HTML_MNG',      '#6495ED');
+define('COLOR_HTML_DEAD',     '#F78771');
+define('COLOR_HTML_SOLD',     '#D2B477');
+define('COLOR_HTML_STARMERC', '#bb99bb');
+define('COLOR_HTML_JOURNEY',  '#99BBBB');
+define('COLOR_HTML_NEWSKILL', '#BBBBBB');
+//-----
+define('COLOR_HTML_CHR_EQP1', '#90EE90'); // Characteristic equal plus one.
+define('COLOR_HTML_CHR_GTP1', '#50FF50'); // Characteristic greater than plus one.
+define('COLOR_HTML_CHR_EQM1', '#FF8888'); // Characteristic equal minus one.
+define('COLOR_HTML_CHR_LTM1', '#FF4444'); // Characteristic less than minus one.
+
 class Player_HTMLOUT extends Player
 {
 

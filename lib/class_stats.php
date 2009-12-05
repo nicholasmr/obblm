@@ -54,7 +54,7 @@ class Stats
 {
 
 
-public static function getRaw($obj, array $filters, $parentID, $grp, $n, array $sortRule, $setAvg)
+public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg)
 {
     global $core_tables, $relations_obj, $relations_node, $objFields_extra, $objFields_init;
     
@@ -136,26 +136,32 @@ public static function getRaw($obj, array $filters, $parentID, $grp, $n, array $
         FROM $tbl_name_norm LEFT JOIN ($tbl_name_mv, $tbl_name_mv_es) ON ($MV = $MV_ES AND $tbl_name_mv.f_trid = $tbl_name_mv_es.f_trid AND $MV = $REG)";
 
     $and = false;
-    if (!empty($filters) || is_int($parentID)) {
+    if (!empty($filters)) {
         $query .= " WHERE ";
         foreach ($filters as $filter_key => $id) {
             if (is_numeric($id) && is_numeric($filter_key)) {
-                $query .= (($and) ? ' AND ' : ' ').(($obj == $filter_key) ? $tbl_name_norm.'.'.$relations_obj[$filter_key]['id'] : $tbl_name_mv.'.'.$mv_keys[$filter_key])." = $id ";
+                $query .= ($and) ? ' AND ' : ' ';
+                if ($obj == $filter_key) {
+                    $query .= $tbl_name_norm.'.'.$relations_obj[$filter_key]['id']." = $id ";
+                }
+                elseif ($filter_key == $obj+1 && ($obj == T_OBJ_PLAYER || $obj = T_OBJ_TEAM)) {
+                    $query .= $tbl_name_norm.'.'.$relations_obj[$obj]['parent_id']." = $id ";
+                }
+                else {
+                    $query .= $tbl_name_mv.'.'.$mv_keys[$filter_key]." = $id ";
+                }
                 $and = true;
             }
-        }
-        if (is_int($parentID)) {
-            $query .= (($and) ? ' AND ' : ' ').$tbl_name_norm.'.'.$relations_obj[$obj]['parent_id']." = $parentID";
         }
     }
 
     $query .= " 
-        ".((!empty($grp))       ? " GROUP BY ".$relations_obj[$grp]['id'] : '')." 
+        GROUP BY ".$relations_obj[$obj]['id']." 
         ".((!empty($sortRule))  ? ' ORDER BY '.implode(', ', $sortRule) : '')." 
         ".((is_numeric($n))     ? " LIMIT $n" : '')." 
     ";
 
-#    echo $query;
+    echo $query;
 #    return;
     
     $ret = array();
@@ -172,15 +178,7 @@ public static function getRaw($obj, array $filters, $parentID, $grp, $n, array $
  ***************/
 public static function getLeaders($obj, $node, $node_id, array $stats, $N, $setAvg = false)
 {
-    return self::getRaw($obj, ($node) ? array($node => $node_id) : array(), false, $obj, $N, $stats, $setAvg);
-}
-
-/***************
- *   Fetches summed data from match_data by applying the filter specifications.
- ***************/
-public static function getStats($obj, $obj_id, $node, $node_id, $setAvg)
-{
-    return self::getRaw($obj, array($obj => $obj_id, $node => $node_id),false,false,false,array(),$setAvg);
+    return self::getRaw($obj, ($node) ? array($node => $node_id) : array(), $N, $stats, $setAvg);
 }
 
 /***************
@@ -189,9 +187,12 @@ public static function getStats($obj, $obj_id, $node, $node_id, $setAvg)
 public static function getAllStats($obj, $obj_id, $node, $node_id, $setAvg = false)
 {
     // Wrapper for getStats() in case we add more stuff that objects would want to add to they properties.
-    list($ach) = Stats::getStats($obj, $obj_id, $node, $node_id, $setAvg);
-    $stats = array_merge($ach, array());
-    return $stats;
+    $sarray = Stats::getStats($obj, $obj_id, $node, $node_id, $setAvg);
+    return empty($sarray) ? array() : $sarray[0];
+}
+public static function getStats($obj, $obj_id, $node, $node_id, $setAvg)
+{
+    return self::getRaw($obj, array($obj => $obj_id, $node => $node_id),false,array(),$setAvg);
 }
 
 /*

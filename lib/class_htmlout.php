@@ -274,7 +274,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             {
                 case STATS_COACH:
                     $fields_before['f_rname'] = array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, array(), (int) $opts['teams_from_id'], T_OBJ_TEAM, $settings['entries']['standings_teams'], $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, array(), (int) $opts['teams_from_id'], T_OBJ_TEAM, false, $sortRule, $set_avg);
                     break;
 
                 case STATS_RACE:
