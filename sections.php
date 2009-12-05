@@ -212,7 +212,7 @@ function sec_main() {
                 continue;
                 
             $tour = new Tour($trid);
-            $teams = Stats::getLeaders(T_OBJ_TEAM, T_NODE_TOURNAMENT, $tour->tour_id, $tour->getRSSortRule(), $opts['length']);
+            $teams = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour->tour_id), $opts['length'], $tour->getRSSortRule(), false);
             ?>
             <div class='boxWide'>
                 <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $tour->name;?></h3>
@@ -278,7 +278,7 @@ function sec_main() {
         MTS('Latest matches table generated');
 
         foreach ($settings['fp_leaders'] as $f => $opts) {
-            $players = Stats::getLeaders(T_OBJ_PLAYER,false,false,array('-'.$f),$opts['length'])
+            $players = Stats::getRaw(T_OBJ_PLAYER, array(), $opts['length'], array('-'.$f), false)
             ?>
             <div class="boxWide">
                 <h3 class='boxTitle1'><?php echo $opts['title'];?></h3>
