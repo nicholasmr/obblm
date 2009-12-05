@@ -71,7 +71,11 @@
     <notice_simul><![CDATA[<i>Note</i>: Both tables below are sorted simultaneously.]]></notice_simul>
     <notice_spp><![CDATA[<i>Note</i>: <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.]]></notice_spp>
     
+    <!-- nodeSelector() -->
     <displayfrom>Display from</displayfrom>
+    <type>Type</type>
+        <active>Active</active>
+        <alltime>All-time</alltime>
 </common>
 
 <!-- Link names for menu elements -->
