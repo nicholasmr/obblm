@@ -123,8 +123,6 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
     if (!empty($sortRule)) {
         for ($i = 0; $i < count($sortRule); $i++) {
             $str = $sortRule[$i];
-#            $str = preg_replace('/mv\_/', $tbl_name_mv.'.', $str); # MV fields.
-#            $str = preg_replace('/rg\_/', $tbl_name_norm.'.', $str); # Regular/all-time fields
             $sortRule[$i] = substr($str, 1, strlen($str)) .' '. (($str[0] == '+') ? 'ASC' : 'DESC');
         }
     }
@@ -135,25 +133,22 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
     $query = "SELECT $cols_mv_sqlsel,$cols_norm_sqlsel,$cols_mv_es_sqlsel
         FROM $tbl_name_norm LEFT JOIN ($tbl_name_mv, $tbl_name_mv_es) ON ($MV = $MV_ES AND $tbl_name_mv.f_trid = $tbl_name_mv_es.f_trid AND $MV = $REG)";
 
-    $and = false;
-    if (!empty($filters)) {
-        $query .= " WHERE ";
-        foreach ($filters as $filter_key => $id) {
-            if (is_numeric($id) && is_numeric($filter_key)) {
-                $query .= ($and) ? ' AND ' : ' ';
-                if ($obj == $filter_key) {
-                    $query .= $tbl_name_norm.'.'.$relations_obj[$filter_key]['id']." = $id ";
-                }
-                elseif ($filter_key == $obj+1 && ($obj == T_OBJ_PLAYER || $obj = T_OBJ_TEAM)) {
-                    $query .= $tbl_name_norm.'.'.$relations_obj[$obj]['parent_id']." = $id ";
-                }
-                else {
-                    $query .= $tbl_name_mv.'.'.$mv_keys[$filter_key]." = $id ";
-                }
-                $and = true;
+    $where = '';
+    foreach ($filters as $filter_key => $id) {
+        if (is_numeric($id) && is_numeric($filter_key)) {
+            $where .= !empty($where) ? ' AND ' : ' ';
+            if ($obj == $filter_key) {
+                $where .= $tbl_name_norm.'.'.$relations_obj[$filter_key]['id']." = $id ";
+            }
+            elseif ($filter_key == $obj+1 && ($obj == T_OBJ_PLAYER || $obj = T_OBJ_TEAM)) {
+                $where .= $tbl_name_norm.'.'.$relations_obj[$obj]['parent_id']." = $id ";
+            }
+            else {
+                $where .= $tbl_name_mv.'.'.$mv_keys[$filter_key]." = $id ";
             }
         }
     }
+    $query .= !empty($where) ? ' WHERE '.$where : '';
 
     $query .= " 
         GROUP BY ".$relations_obj[$obj]['id']." 
@@ -161,7 +156,7 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
         ".((is_numeric($n))     ? " LIMIT $n" : '')." 
     ";
 
-    echo $query;
+#    echo $query;
 #    return;
     
     $ret = array();
@@ -174,25 +169,12 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
 }
 
 /***************
- *   Pull out leaders of a specific stat (or multiple).
- ***************/
-public static function getLeaders($obj, $node, $node_id, array $stats, $N, $setAvg = false)
-{
-    return self::getRaw($obj, ($node) ? array($node => $node_id) : array(), $N, $stats, $setAvg);
-}
-
-/***************
  *   Returns object (team, coach, player and race) stats in array form ready to be assigned as respective object properties/fields.
  ***************/
 public static function getAllStats($obj, $obj_id, $node, $node_id, $setAvg = false)
 {
-    // Wrapper for getStats() in case we add more stuff that objects would want to add to they properties.
-    $sarray = Stats::getStats($obj, $obj_id, $node, $node_id, $setAvg);
+    $sarray = self::getRaw($obj, array($obj => $obj_id, $node => $node_id),false,array(),$setAvg);
     return empty($sarray) ? array() : $sarray[0];
-}
-public static function getStats($obj, $obj_id, $node, $node_id, $setAvg)
-{
-    return self::getRaw($obj, array($obj => $obj_id, $node => $node_id),false,array(),$setAvg);
 }
 
 /*
