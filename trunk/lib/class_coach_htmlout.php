@@ -128,7 +128,7 @@ private function _newTeam($ALLOW_EDIT)
     if ($settings['relate_team_to_league']) {
         $leagues = League::getLeagues();
         ?>
-        <b><?php echo $lng->getTrn('cc/new_team/league');?>:</b> <br>
+        <b><?php echo $lng->getTrn('cc/league');?>:</b> <br>
         <select name="f_lid" <?php if (empty($leagues)){echo "DISABLED";}?>>
         <?php
         foreach ($leagues as $l)
