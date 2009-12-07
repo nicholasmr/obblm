@@ -293,10 +293,6 @@ public static function standings($obj, $node, $node_id, array $opts)
                 default:
                     $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_race, $settings['entries']['standings_teams'], $sortRule, $set_avg);
             }
-            // OPTIONALLY hide retired teams.
-            # Don't for standings! Only for dispTeamList().
-#            if ($ALL_TIME && $settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
-
             break;
 
         case STATS_RACE:
@@ -320,7 +316,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 unset($fields["rg_s$f"]);
                 unset($fields["mv_s$f"]);
             }
-            $objs = Stats::getRaw(T_OBJ_RACE, array($sel_node => $sel_node_id), false, $sortRule, $set_avg);
+            $objs = Stats::getRaw(T_OBJ_RACE, $filter_node, false, $sortRule, $set_avg);
 
             break;
 
@@ -340,7 +336,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 $fields_before['rg_team_cnt'] = array('desc' => 'Teams');
                 $fields_after['rg_elo'] = array('desc' => 'ELO');
             }
-            $objs = Stats::getRaw(T_OBJ_COACH, array($sel_node => $sel_node_id), $settings['entries']['standings_coaches'], $sortRule, $set_avg);
+            $objs = Stats::getRaw(T_OBJ_COACH, $filter_node, $settings['entries']['standings_coaches'], $sortRule, $set_avg);
             // OPTIONALLY hide retired coaches.
             if ($settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
             break;
@@ -367,7 +363,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             unset($fields["rg_win_pct"]);
             
             $extra['dashed'] = array('condField' => 'mv_played', 'fieldVal' => 0, 'noDashFields' => array('name'));
-            $objs = Stats::getRaw(T_OBJ_STAR, array($sel_node => $sel_node_id), false, $sortRule, $set_avg);
+            $objs = Stats::getRaw(T_OBJ_STAR, $filter_node, false, $sortRule, $set_avg);
 
             break;
     }
@@ -670,6 +666,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             limit => int. Stop printing rows when this row number is reached.
             anchor => string. Will create table sorting links, that include this identifier as an anchor.
             noHelp => true/false. Will enable/disable help link [?].
+            noSRdisp => true/false. Will force not to show the table sort rule used/parsed.
     */
     global $settings;
 
@@ -682,6 +679,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
     $DONR = (!array_key_exists('doNr', $extra) || $extra['doNr']) ? true : false;
     $LIMIT = (array_key_exists('limit', $extra)) ? $extra['limit'] : -1;
     $ANCHOR = (array_key_exists('anchor', $extra)) ? $extra['anchor'] : false;
+    $NOSRDISP = (array_key_exists('noSRdisp', $extra)) ? $extra['noSRdisp'] : false;
 
     if ($DONR) {
         $fields = array_merge(array('nr' => array('desc' => '#')), $fields);
@@ -779,7 +777,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                 break;
             }
         }
-        if ($settings['show_sort_rule']) {
+        if ($settings['show_sort_rule'] && !$NOSRDISP) {
         ?>
         <tr>
             <td colspan="<?php echo $CP;?>">
