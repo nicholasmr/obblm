@@ -30,7 +30,7 @@ define('AV',    5);
 define('AG',    6);
 define('ST',    7);
 define('DEAD',  8);
-define('SOLD',  9);
+#define('SOLD',  9); Deprecated. This is NOT a match status!
 
 $STATUS_TRANS = array(
     NONE => 'NONE',
@@ -41,7 +41,7 @@ $STATUS_TRANS = array(
     AG   => 'AG',
     ST   => 'ST',
     DEAD => 'DEAD',
-    SOLD => 'SOLD',
+#    SOLD => 'SOLD', Deprecated. This is NOT a match status!
 );
 
 // Round types

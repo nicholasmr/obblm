@@ -332,7 +332,7 @@ class Team
         global $rules;
 
         $query = "SELECT (COUNT(*) >= ".$rules['max_team_players'].") FROM players
-            WHERE owned_by_team_id = $this->team_id AND date_sold IS NOT NULL AND status NOT IN (".DEAD.",".SOLD.")";
+            WHERE owned_by_team_id = $this->team_id AND date_sold IS NOT NULL AND status NOT IN (".DEAD.")";
         $result = mysql_query($query);
         $row = mysql_fetch_row($result);
         return (bool) $row[0];
@@ -341,7 +341,7 @@ class Team
     public function isPlayerBuyable($pos_id) {
 
         $query = "SELECT IFNULL(COUNT(*) < qty, TRUE) FROM players, game_data_players 
-            WHERE f_pos_id = pos_id AND owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND date_died IS NULL AND date_sold IS NULL"; #status NOT IN (".DEAD.",".SOLD.")";
+            WHERE f_pos_id = pos_id AND owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND date_died IS NULL AND date_sold IS NULL";
         $result = mysql_query($query);
         $row = mysql_fetch_row($result);
         return (bool) $row[0];

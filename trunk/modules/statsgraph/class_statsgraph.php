@@ -316,7 +316,6 @@ class SGraph implements ModuleInterface
                 array_push($queries, "SUM(IF($range, IF(inj = ".AG.",   1, 0)+IF(agn1 = ".AG.",   1, 0)+IF(agn2 = ".AG.",   1, 0), 0)) AS 'ag_m$i'"); 
                 array_push($queries, "SUM(IF($range, IF(inj = ".ST.",   1, 0)+IF(agn1 = ".ST.",   1, 0)+IF(agn2 = ".ST.",   1, 0), 0)) AS 'st_m$i'"); 
                 array_push($queries, "SUM(IF($range, IF(inj = ".DEAD.", 1, 0)+IF(agn1 = ".DEAD.", 1, 0)+IF(agn2 = ".DEAD.", 1, 0), 0)) AS 'dead_m$i'"); 
-                array_push($queries, "SUM(IF($range, IF(inj = ".SOLD.", 1, 0)+IF(agn1 = ".SOLD.", 1, 0)+IF(agn2 = ".SOLD.", 1, 0), 0)) AS 'sold_m$i'"); 
                 array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
                 array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
             }
@@ -325,7 +324,7 @@ class SGraph implements ModuleInterface
             $result = mysql_query($query);
             $row    = mysql_fetch_assoc($result);
             
-            $lengends = array('mng' => 'green', 'ni' => 'red', 'ma' => 'blue', 'av' => 'aqua', 'ag' => 'brown', 'st' => 'purple', 'dead' => 'slategray', 'sold' => 'yellow');
+            $lengends = array('mng' => 'green', 'ni' => 'red', 'ma' => 'blue', 'av' => 'aqua', 'ag' => 'brown', 'st' => 'purple', 'dead' => 'slategray');
             list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
             array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Types of sustained player injuries/statuses", "Months", "Amount", $opts));
             
@@ -459,7 +458,6 @@ class SGraph implements ModuleInterface
                 array_push($queries, "SUM(IF($range, IF(inj = ".AG.",   1, 0)+IF(agn1 = ".AG.",   1, 0)+IF(agn2 = ".AG.",   1, 0), 0)) AS 'ag_m$i'"); 
                 array_push($queries, "SUM(IF($range, IF(inj = ".ST.",   1, 0)+IF(agn1 = ".ST.",   1, 0)+IF(agn2 = ".ST.",   1, 0), 0)) AS 'st_m$i'"); 
                 array_push($queries, "SUM(IF($range, IF(inj = ".DEAD.", 1, 0)+IF(agn1 = ".DEAD.", 1, 0)+IF(agn2 = ".DEAD.", 1, 0), 0)) AS 'dead_m$i'"); 
-                array_push($queries, "SUM(IF($range, IF(inj = ".SOLD.", 1, 0)+IF(agn1 = ".SOLD.", 1, 0)+IF(agn2 = ".SOLD.", 1, 0), 0)) AS 'sold_m$i'"); 
                 array_push($queries, "YEAR(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'yr_m$i'");
                 array_push($queries, "MONTH(SUBDATE(DATE(NOW()), INTERVAL $i MONTH)) AS 'mn_m$i'");
             }
@@ -468,7 +466,7 @@ class SGraph implements ModuleInterface
             $result = mysql_query($query);
             $row    = mysql_fetch_assoc($result);
             
-            $lengends = array('mng' => 'green', 'ni' => 'red', 'ma' => 'blue', 'av' => 'aqua', 'ag' => 'brown', 'st' => 'purple', 'dead' => 'slategray', 'sold' => 'yellow');
+            $lengends = array('mng' => 'green', 'ni' => 'red', 'ma' => 'blue', 'av' => 'aqua', 'ag' => 'brown', 'st' => 'purple', 'dead' => 'slategray');
             list($datasets, $labels) = SGraph::mbarsInputFormatter($lengends, $row);
             array_push($graphs, SGraph::mbars($datasets, $labels, $lengends, "Types of sustained player injuries/statuses", "Months", "Amount", $opts));
             

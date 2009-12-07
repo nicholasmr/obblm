@@ -21,10 +21,17 @@
  *
  */
 
-define('T_HTML_MATCHES_PER_PAGE', 100);
-
 class Match_HTMLOUT extends Match
 {
+
+const T_HTML_MATCHES_PER_PAGE = 100;
+
+// Fields used in match reports
+# Stored name => display name
+# Don't touch - order denpendant entries!!!
+private static $fields_rel = array('nr' => 'Nr', 'name' => 'Name', 'pos' => 'Position',);
+private static $fields_ach = array('mvp' => 'MVP', 'cp' => 'Cp', 'td' => 'Td', 'intcpt' => 'Int', 'bh' => 'BH', 'si' => 'SI', 'ki' => 'Ki',);
+private static $fields_inj = array('inj' => 'Inj', 'agn1' => 'Ageing 1', 'agn2' => 'Ageing 2');
 
 function recentMatches() {
 
@@ -75,7 +82,7 @@ public static function tourMatches()
     $query = "SELECT COUNT(*) FROM matches WHERE f_tour_id = $trid";
     $result = mysql_query($query);
     list($cnt) = mysql_fetch_row($result);
-    $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_MATCHES_PER_PAGE);
+    $pages = ($cnt == 0) ? 1 : ceil($cnt/self::T_HTML_MATCHES_PER_PAGE);
     global $page;
     $page = isset($_GET['page']) ? $_GET['page'] : 1; # Page 1 is default, of course.    
     $_url = "?section=matches&amp;type=tourmatches&amp;trid=$trid&amp;";
@@ -91,7 +98,7 @@ public static function tourMatches()
     $cols = 7; # Common columns counter.
     $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score 
         FROM matches, teams AS t1, teams AS t2 WHERE f_tour_id = $trid AND team1_id = t1.team_id AND team2_id = t2.team_id 
-        ORDER BY round DESC, date_played DESC, date_created ASC LIMIT ".(($page-1)*T_HTML_MATCHES_PER_PAGE).', '.(($page)*T_HTML_MATCHES_PER_PAGE);
+        ORDER BY round DESC, date_played DESC, date_created ASC LIMIT ".(($page-1)*self::T_HTML_MATCHES_PER_PAGE).', '.(($page)*self::T_HTML_MATCHES_PER_PAGE);
     $result = mysql_query($query);
     echo "<table class='tours'>\n";
     while ($m = mysql_fetch_object($result)) {
@@ -197,7 +204,7 @@ public static function tours()
     echo "</table>\n";
 }
 
-function report() {
+public static function report() {
 
     // Is $match_id valid?
     $match_id = $_GET['mid'];
@@ -244,10 +251,10 @@ function report() {
             'stadium'       => $_POST['stadium'],
             'gate'          => (int) ($_POST['gate'] * 1000),
             'fans'          => (int) $_POST['fans'],
-            'ffactor1'      => $_POST['ff_1'],
-            'ffactor2'      => $_POST['ff_2'],
-            'income1'       => $_POST['inc_1'] ? $_POST['inc_1'] * 1000 : 0,
-            'income2'       => $_POST['inc_2'] ? $_POST['inc_2'] * 1000 : 0,
+            'ffactor1'      => $_POST['ff1'],
+            'ffactor2'      => $_POST['ff2'],
+            'income1'       => (int) $_POST['inc1'] * 1000,
+            'income2'       => (int) $_POST['inc2'] * 1000,
             'team1_score'   => $_POST['result1'] ? $_POST['result1'] : 0,
             'team2_score'   => $_POST['result2'] ? $_POST['result2'] : 0,
             'smp1'          => (int) $_POST['smp1'],
@@ -388,7 +395,7 @@ function report() {
     $CP = 8; // Colspan.
 
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
-        Print "<center><a href='http://".$_SERVER["SERVER_NAME"]."/handler.php?type=leegmgr&replay=".$m->match_id."'>view replay</a></center>";
+        Print "<center><a href='http://".$_SERVER["SERVER_NAME"]."/handler.php?type=leegmgr&amp;replay=".$m->match_id."'>view replay</a></center>";
     }
 
     ?>
@@ -402,40 +409,28 @@ function report() {
     <?php HTMLOUT::helpBox($lng->getTrn('matches/report/help'), $lng->getTrn('common/needhelp')); ?>
     <form method="POST" enctype="multipart/form-data">
         <table class="common">
-            <tr class='commonhead'>
-                <td colspan="<?php echo $CP;?>"><b><?php echo $lng->getTrn('matches/report/info');?></b></td>
-            </tr>
+            <tr class='commonhead'><td colspan="<?php echo $CP;?>"><b><?php echo $lng->getTrn('matches/report/info');?></b></td></tr>
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
-            <tr>
-                <td colspan='<?php echo $CP;?>'>
-                    <b><?php echo $lng->getTrn('matches/report/stadium');?></b>&nbsp;
-                    <select name="stadium" <?php echo $DIS;?>>
-                        <?php
-                        $teams = get_rows('teams', array('team_id', 'name'));
-                        objsort($teams, array('+name'));
-                        $stad = ($m->stadium) ? $m->stadium : $m->team1_id;
-                        foreach ($teams as $_t) {
-                            echo "<option value='$_t->team_id' " . (($stad == $_t->team_id) ? 'SELECTED' : '' ) . " ".(($_t->team_id == $m->team1_id || $_t->team_id == $m->team2_id) ? "style='background-color: ".COLOR_HTML_READY.";'" : '').">$_t->name</option>\n";
-                        }
-                        ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td colspan='<?php echo $CP;?>'>
-                    <b><?php echo $lng->getTrn('matches/report/gate');?></b>&nbsp;
-                    <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
-                </td>
-            </tr>
-            <tr>
-                <td colspan='<?php echo $CP;?>'>
-                    <b><?php echo $lng->getTrn('matches/report/fans');?></b>&nbsp;
-                    <input type="text" name="fans" value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
-                </td>
-            </tr>
-            
+            <tr><td colspan='<?php echo $CP;?>'>
+                <b><?php echo $lng->getTrn('matches/report/stadium');?></b>&nbsp;
+                <select name="stadium" <?php echo $DIS;?>>
+                    <?php
+                    $stad = ($m->stadium) ? $m->stadium : $m->team1_id;
+                    foreach (array($team1, $team2) as $_t) {
+                        echo "<option value='$_t->team_id'".(($stad == $_t->team_id) ? 'SELECTED' : '').">$_t->name</option>\n";
+                    }
+                    ?>
+                </select>
+            </td></tr>
+            <tr><td colspan='<?php echo $CP;?>'>
+                <b><?php echo $lng->getTrn('matches/report/gate');?></b>&nbsp;
+                <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
+            </td></tr>
+            <tr><td colspan='<?php echo $CP;?>'>
+                <b><?php echo $lng->getTrn('matches/report/fans');?></b>&nbsp;
+                <input type="text" name="fans" value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
+            </td></tr>
             <tr><td class="seperator" colspan='<?php echo $CP;?>'></td></tr>
-
             <tr class='commonhead'>
                 <td><b><?php echo $lng->getTrn('matches/report/teams');?></b></td>
                 <td><b><?php echo $lng->getTrn('matches/report/score');?></b></td>
@@ -448,65 +443,28 @@ function report() {
             </tr>
             
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
-
-            <tr>
-                <td><?php echo $m->team1_name;?></td>
-                <td>
-                    <input type="text" name="result1" value="<?php echo $m->team1_score ? $m->team1_score : 0;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type='text' name='inc_1' value="<?php echo ((int) $m->income1)/1000;?>" size='4' maxlength='4' <?php echo $DIS;?>>k
-                </td>
-                <td>
-                    <input <?php echo $DIS;?> type='radio' name='ff_1' value='1'  <?php echo ($m->ffactor1 == 1)  ? 'CHECKED' : '';?>><font color='green'><b>+1</b></font>
-                    <input <?php echo $DIS;?> type='radio' name='ff_1' value='0'  <?php echo ($m->ffactor1 == 0)  ? 'CHECKED' : '';?>><font color='blue'><b>+0</b></font>
-                    <input <?php echo $DIS;?> type='radio' name='ff_1' value='-1' <?php echo ($m->ffactor1 == -1) ? 'CHECKED' : '';?>><font color='red'><b>-1</b></font>
-                </td>
-                <td>
-                    <input type="text" name="smp1" value="<?php echo $m->smp1;?>" size="1" maxlength="2" <?php echo $DIS;?>> <?php echo $lng->getTrn('matches/report/pts');?>
-                </td>
-                <td>
-                    <input type="text" name="tcas1" value="<?php echo $m->tcas1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type="text" name="fame1" value="<?php echo $m->fame1;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type="text" name="tv1" value="<?php echo ($m->is_played) ? $m->tv1/1000 : $team1->value/1000;?>" size="4" maxlength="10" <?php echo $DIS;?>>k
-                </td>
-            </tr>
-            <tr>
-                <td><?php echo $m->team2_name;?></td>
-                <td>
-                    <input type="text" name="result2" value="<?php echo $m->team2_score ? $m->team2_score : 0;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type='text' name='inc_2' value="<?php echo ((int) $m->income2)/1000;?>" size='4' maxlength='4' <?php echo $DIS;?>>k
-                </td>
-                <td>
-                    <input <?php echo $DIS;?> type='radio' name='ff_2' value='1'  <?php echo ($m->ffactor2 == 1)  ? 'CHECKED' : '';?>><font color='green'><b>+1</b></font>
-                    <input <?php echo $DIS;?> type='radio' name='ff_2' value='0'  <?php echo ($m->ffactor2 == 0)  ? 'CHECKED' : '';?>><font color='blue'><b>+0</b></font>
-                    <input <?php echo $DIS;?> type='radio' name='ff_2' value='-1' <?php echo ($m->ffactor2 == -1) ? 'CHECKED' : '';?>><font color='red'><b>-1</b></font>
-                </td>
-                <td>
-                    <input type="text" name="smp2" value="<?php echo $m->smp2;?>" size="1" maxlength="2" <?php echo $DIS;?>> points
-                </td>
-                <td>
-                    <input type="text" name="tcas2" value="<?php echo $m->tcas2;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type="text" name="fame2" value="<?php echo $m->fame2;?>" size="1" maxlength="2" <?php echo $DIS;?>>
-                </td>
-                <td>
-                    <input type="text" name="tv2" value="<?php echo ($m->is_played) ? $m->tv2/1000 : $team2->value/1000;?>" size="4" maxlength="10" <?php echo $DIS;?>>k
-                </td>
-            </tr>
-            
+            <?php
+            foreach (array(1,2) as $N) {
+                echo "<tr>\n";
+                echo "<td>".${"team$N"}->name."</td>\n";
+                echo "<td><input type='text' name='result$N' value='".((int) $m->{"team${N}_score"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
+                echo "<td>";
+                foreach (array('1' => 'green', '0' => 'blue', '-1' => 'red') as $Nff => $color) {
+                    echo "<input $DIS type='radio' name='ff$N' value='$Nff' ".(($m->{"ffactor$N"} == (int) $Nff) ? 'CHECKED' : '')."><font color='$color'><b>$Nff</b></font>";
+                }
+                echo "</td>\n";
+                echo "<td><input type='text' name='smp$N' value='".($m->{"smp$N"})."' size='1' maxlength='2' $DIS>".$lng->getTrn('matches/report/pts')."</td>\n";
+                echo "<td><input type='text' name='tcas$N' value='".($m->{"tcas$N"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' name='fame$N' value='".($m->{"fame$N"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' name='tv$N' value='".($m->is_played ? $m->{"tv$N"}/1000 : ${"team$N"}->value/1000)."' size='4' maxlength='10' $DIS>k</td>\n";
+                echo "</tr>\n";
+            }
+            ?>
         </table>
 
         <?php
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
-
             ?>
             <table class='common'>
             <tr><td class='seperator' colspan='13'></td></tr>
@@ -514,23 +472,12 @@ function report() {
                 <b><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t->team_id,false,false);?>"><?php echo $t->name;?></a> <?php echo $lng->getTrn('matches/report/report');?></b>
             </td></tr>
             <tr><td class='seperator' colspan='13'></td></tr>
-
-            <tr>
-                <td><i>Nr</i></td>
-                <td><i>Name</i></td>
-                <td><i>Position</i></td>
-                <td><i>MVP</i></td>
-                <td><i>Cp</i></td>
-                <td><i>TD</i></td>
-                <td><i>Int</i></td>
-                <td><i>BH</i></td>
-                <td><i>SI</i></td>
-                <td><i>Ki</i></td>
-                <td><i>Inj</i></td>
-                <td><i>Ageing</i></td>
-                <td><i>Ageing</i></td>
-            </tr>
             <?php
+            echo "<tr>\n";
+            foreach (array_values(array_merge(self::$fields_rel, self::$fields_ach, self::$fields_inj)) as $f) {
+                echo "<td><i>$f</i></td>\n";
+            }
+            echo "</tr>\n";
             
             foreach ($t->getPlayers() as $p) {
 
@@ -542,84 +489,36 @@ function report() {
                 $mdat   = $p->getMatchData($m->match_id);
 
                 // Print player row
-                echo "<tr ";
-                    if ($p->is_journeyman)    {echo 'style="background-color: '.COLOR_HTML_JOURNEY.'"';}
-                    elseif ($status == MNG) {echo 'style="background-color: '.COLOR_HTML_MNG.'"';}
-                echo " >\n";
-                
-                echo "<td>$p->nr</td>\n";
-                echo "<td>$p->name</td>\n";
-                echo "<td>$p->position" . ($status == MNG ? '&nbsp;[MNG]' : '') . "</td>\n";
-                echo "<td><input type='checkbox' " . ($mdat['mvp'] ? 'CHECKED ' : '') . (($DIS || ($status == MNG)) ? 'DISABLED' : '') . " name='mvp_$p->player_id'></td>\n";
-                foreach (array('cp', 'td', 'intcpt', 'bh', 'si', 'ki') as $field) {
-                    echo "<td><input ". (($DIS || ($status == MNG)) ? 'DISABLED' : '') . " type='text' onChange='numError(this);' size='1' maxlength='2' name='" . $field . "_$p->player_id' value='" . $mdat[$field] . "'></td>\n";
-                }
-                
-                ?>
-                <td>
-                    <select name="inj_<?php echo $p->player_id;?>" <?php echo $DIS || $status == MNG ? 'DISABLED' : ''; ?>>
-                        <?php
-                        echo "<option value='" . NONE . "' " .  ($mdat['inj'] == NONE ? 'SELECTED' : '') . ">None</option>\n";
-                        echo "<option value='" . MNG . "' " .   ($mdat['inj'] == MNG ?  'SELECTED' : '') . ">MNG</option>\n";
-                        echo "<option value='" . NI . "' " .    ($mdat['inj'] == NI ?   'SELECTED' : '') . ">Ni</option>\n";
-                        echo "<option value='" . MA . "' " .    ($mdat['inj'] == MA ?   'SELECTED' : '') . ">Ma</option>\n";
-                        echo "<option value='" . AV . "' " .    ($mdat['inj'] == AV ?   'SELECTED' : '') . ">Av</option>\n";
-                        echo "<option value='" . AG . "' " .    ($mdat['inj'] == AG ?   'SELECTED' : '') . ">Ag</option>\n";
-                        echo "<option value='" . ST . "' " .    ($mdat['inj'] == ST ?   'SELECTED' : '') . ">St</option>\n";
-                        echo "<option value='" . DEAD . "' " .  ($mdat['inj'] == DEAD ? 'SELECTED' : '') . ">Dead!</option>\n";                                
-                        ?>
-                    </select>
-                </td>
-                <td>
-                    <select name="agn1_<?php echo $p->player_id;?>" <?php echo $DIS || $status == MNG ? 'DISABLED' : ''; ?>>
-                        <?php
-                        echo "<option value='" . NONE . "' " .  ($mdat['agn1'] == NONE ? 'SELECTED' : '') . ">None</option>\n";
-                        echo "<option value='" . NI . "' " .    ($mdat['agn1'] == NI ? 'SELECTED' : '') . ">Ni</option>\n";
-                        echo "<option value='" . MA . "' " .    ($mdat['agn1'] == MA ? 'SELECTED' : '') . ">Ma</option>\n";
-                        echo "<option value='" . AV . "' " .    ($mdat['agn1'] == AV ? 'SELECTED' : '') . ">Av</option>\n";
-                        echo "<option value='" . AG . "' " .    ($mdat['agn1'] == AG ? 'SELECTED' : '') . ">Ag</option>\n";
-                        echo "<option value='" . ST . "' " .    ($mdat['agn1'] == ST ? 'SELECTED' : '') . ">St</option>\n";
-                        ?>
-                    </select>
-                </td>
-                <td>
-                    <select name="agn2_<?php echo $p->player_id;?>" <?php echo $DIS || $status == MNG ? 'DISABLED' : ''; ?>>
-                        <?php
-                        echo "<option value='" . NONE . "' " .  ($mdat['agn2'] == NONE ? 'SELECTED' : '') . ">None</option>\n";
-                        echo "<option value='" . NI . "' " .    ($mdat['agn2'] == NI ? 'SELECTED' : '') . ">Ni</option>\n";
-                        echo "<option value='" . MA . "' " .    ($mdat['agn2'] == MA ? 'SELECTED' : '') . ">Ma</option>\n";
-                        echo "<option value='" . AV . "' " .    ($mdat['agn2'] == AV ? 'SELECTED' : '') . ">Av</option>\n";
-                        echo "<option value='" . AG . "' " .    ($mdat['agn2'] == AG ? 'SELECTED' : '') . ">Ag</option>\n";
-                        echo "<option value='" . ST . "' " .    ($mdat['agn2'] == ST ? 'SELECTED' : '') . ">St</option>\n";
-                        ?>
-                    </select>
-                </td>
-                </tr>
-                <?php
+                if ($p->is_journeyman) {$bgcolor = COLOR_HTML_JOURNEY;}
+                elseif ($status == MNG) {$bgcolor = COLOR_HTML_MNG;}
+                else {$bgcolor = false;}
+                self::_print_player_row($p->player_id, $p->name, $p->nr, $p->position.(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
             }
+            // Add raised zombies
+#            global $racesHasNecromancer;
+#            if (in_array($t->f_race_id, $racesHasNecromancer)) {
+#                echo "<tr><td colspan='13'>Raised zombie? <input type='checkbox' name='t${id}zombie' value='1'></td></tr>\n";
+#                self::_print_player_row("t${id}zombie", 'Raised zombie', '', 'Zombie', false, array('USE $mdat STRUCT HERE'), $DIS);
+#            }
             ?>
             </table>
 
             <table style='border-spacing: 10px;'>
-                <tr>
-                    <td align="left" valign="top">
-                        <b>Star Players</b>: 
-                        <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" 
-                        onClick="stars = document.getElementById('stars_<?php echo $id;?>'); addStarMerc(<?php echo $id;?>, stars.options[stars.selectedIndex].value);" <?php echo $DIS; ?>>
-                        <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
-                            <?php
-                            foreach ($stars as $s => $d) {
-                                echo "<option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';"' : '')." value='$d[id]'>$s</option>\n";
-                            }
-                            ?>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td align="left" valign="top">
-                        <b>Mercenaries</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
-                    </td>
-                </tr>
+                <tr><td align="left" valign="top">
+                    <b>Star Players</b>: 
+                    <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" 
+                    onClick="stars = document.getElementById('stars_<?php echo $id;?>'); addStarMerc(<?php echo $id;?>, stars.options[stars.selectedIndex].value);" <?php echo $DIS; ?>>
+                    <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
+                        <?php
+                        foreach ($stars as $s => $d) {
+                            echo "<option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';"' : '')." value='$d[id]'>$s</option>\n";
+                        }
+                        ?>
+                    </select>
+                </td></tr>
+                <tr><td align="left" valign="top">
+                    <b>Mercenaries</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
+                </td></tr>
             </table>
             
             <table class='common' id='<?php echo "starsmercs_$id";?>'>
@@ -628,20 +527,11 @@ function report() {
         }
         ?>
         <table class='common'>
-            <tr>
-                <td class='seperator' colspan='13'></td>
-            </tr>
-            <tr class='commonhead'>
-                <td colspan='13'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td>
-            </tr>
-            <tr>
-                <td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->comment; ?></textarea></td>
-            </tr>
+            <tr><td class='seperator' colspan='13'></td></tr>
+            <tr class='commonhead'><td colspan='13'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td></tr>
+            <tr><td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->comment; ?></textarea></td></tr>
         </table>
-        <br>
-        <center>
-            <input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>>
-        </center>
+        <br><center><input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>></center>
     </form>
     <br><br>
     <?php
@@ -651,37 +541,29 @@ function report() {
         <tr class='commonhead'>
             <td colspan='13'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('matches/report/comments');?></b></td>
         </tr>
-        <tr>
-            <td class='seperator'></td>
-        </tr>
-        <tr>
-            <td>
-                <div id="msmrc">
-                    <?php echo $lng->getTrn('matches/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('common/none').'</i>';?><br><br>
-                    <?php
-                    foreach ($m->getComments() as $c) {
-                        echo "Posted $c->date by <b>$c->sname</b> 
-                            <form method='POST' name='cmt$c->cid' style='display:inline; margin:0px;'>
-                            <input type='hidden' name='type' value='cmtdel'>
-                            <input type='hidden' name='cid' value='$c->cid'>
-                            <a href='javascript:void(0);' onClick='document.cmt$c->cid.submit();'>".$lng->getTrn('common/delete')."</a>
-                            </form>
-                            :<br>".$c->txt."<br><br>\n";
-                    }
-                    ?>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <form method="POST">
-                <?php echo $lng->getTrn('matches/report/newCmt');?>:<br>
-                <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('common/nobody');?></textarea>
-                <br>
-                <input type="submit" value="<?php echo $lng->getTrn('common/submit');?>" name="new_msmrc" <?php echo $CDIS;?>>
-                </form>
-            </td>
-        </tr>
+        <tr><td class='seperator'></td></tr>
+        <tr><td><div id="msmrc">
+            <?php echo $lng->getTrn('matches/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('common/none').'</i>';?><br><br>
+            <?php
+            foreach ($m->getComments() as $c) {
+                echo "Posted $c->date by <b>$c->sname</b> 
+                    <form method='POST' name='cmt$c->cid' style='display:inline; margin:0px;'>
+                    <input type='hidden' name='type' value='cmtdel'>
+                    <input type='hidden' name='cid' value='$c->cid'>
+                    <a href='javascript:void(0);' onClick='document.cmt$c->cid.submit();'>".$lng->getTrn('common/delete')."</a>
+                    </form>
+                    :<br>".$c->txt."<br><br>\n";
+            }
+            ?>
+        </div></td></tr>
+        <tr><td>
+            <form method="POST">
+            <?php echo $lng->getTrn('matches/report/newCmt');?>:<br>
+            <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('common/nobody');?></textarea>
+            <br>
+            <input type="submit" value="<?php echo $lng->getTrn('common/submit');?>" name="new_msmrc" <?php echo $CDIS;?>>
+            </form>
+        </td></tr>
     </table>
     <script language='JavaScript' type='text/javascript'>
         document.getElementById('msmrc').style.display = 'none';
@@ -698,7 +580,7 @@ function report() {
             echo "<script language='JavaScript' type='text/javascript'>\n";
             echo "var mdat$i = [];\n";
             $mdat = $s->getStats(T_NODE_MATCH,$m->match_id);
-            foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
+            foreach (array_keys(self::$fields_ach) as $f) {
                 echo "mdat${i}['$f'] = ".$mdat[$f].";\n";
             }
             echo "existingStarMerc($id, $s->star_id, mdat$i);\n";
@@ -709,7 +591,7 @@ function report() {
         foreach (Mercenary::getMercsHiredByTeam($t, $m->match_id) as $merc) {
             echo "<script language='JavaScript' type='text/javascript'>\n";
             echo "var mdat$i = [];\n";
-            foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si', 'skills') as $f) {
+            foreach (array_merge(array_keys(self::$fields_ach), array('skills')) as $f) {
                 echo "mdat${i}['$f'] = ".$merc->$f.";\n";
             }
             echo "existingStarMerc($id, ".ID_MERCS.", mdat$i);\n";
@@ -717,6 +599,31 @@ function report() {
             $i++;
         }
     }
+}
+
+
+protected static function _print_player_row($FS, $name, $nr, $pos, $bgcolor, $mdat, $DISABLE) {
+
+    $DIS = ($DISABLE) ? 'DISABLED' : '';
+    echo "<tr".(($bgcolor) ? " style='background-color: $bgcolor;'" : '').">\n";
+    echo "<td>$nr</td>\n";
+    echo "<td>$name</td>\n";
+    echo "<td>$pos</td>\n";
+    echo "<td><input type='checkbox' " . ($mdat['mvp'] ? 'CHECKED ' : '')." $DIS name='mvp_$FS'></td>\n";
+    foreach (array_diff(array_keys(self::$fields_ach), array('mvp')) as $f) {
+        echo "<td><input $DIS type='text' onChange='numError(this);' size='1' maxlength='2' name='${f}_$FS' value='".$mdat[$f]."'></td>\n";
+    }
+
+    global $STATUS_TRANS;
+    $STATUS_TRANS_AGN = array_diff_key($STATUS_TRANS, array(MNG => null, DEAD => null));
+    foreach (array_combine(array_keys(self::$fields_inj), array($STATUS_TRANS,$STATUS_TRANS_AGN,$STATUS_TRANS_AGN)) as $f => $opts) {
+        echo "<td><select name='${f}_$FS' $DIS>";
+        foreach ($opts as $status => $name) {
+            echo "<option value='$status' ".(($mdat[$f] == $status) ? 'SELECTED' : '').">$name</option>";
+        }
+        echo "</select></td>\n";
+    }
+    echo "</tr>\n";
 }
 
 private static function player_validation($p, $m) {
