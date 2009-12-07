@@ -21,55 +21,91 @@
  *
  */
 
+define('T_HTML_TEAMS_PER_PAGE', 30);
+
 class Team_HTMLOUT extends Team
 {
 
-public static function dispTeamList($obj, $obj_id)
+public static function dispTeamList()
 {
-    // Prints a list of teams owned by $obj (STATS_*) with ID = $obj_id.
+    global $lng;
 
-    global $settings, $lng;
-
-    $teams = array();
-    $get_row_fields = array('team_id', 'name', 'owned_by_coach_id', 'f_race_id', 'f_cname', 'f_rname', 'rdy', 'tv', 'retired');
-    switch ($obj) {
-        case STATS_COACH:
-            $teams = get_rows('teams', $get_row_fields, array("owned_by_coach_id = $obj_id"));
-            break;
-
+    /*
+        NOTE: We do NOT show teams not having played any matches!
+    */
+    
+    list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(true,true,'');
+    $q = 'SELECT _RRP AS "team_id", owned_by_coach_id, f_race_id, teams.name AS "name", f_cname, f_rname, tv, teams.rdy AS "rdy", teams.retired AS "retired" 
+        FROM matches, teams, tours, divisions 
+        WHERE 
+            matches._RRP = teams.team_id AND 
+            matches.f_tour_id = tours.tour_id AND 
+            tours.f_did = divisions.did ';
+    switch ($sel_node)
+    {
         case false:
-        default:
-            $teams = get_rows('teams', $get_row_fields);
+            break;
+        case T_NODE_TOURNAMENT:
+            $q .= "AND tours.tour_id = $sel_node_id";
+            break;
+        case T_NODE_DIVISION:
+            $q .= "AND divisions.did = $sel_node_id";
+            break;
+        case T_NODE_LEAGUE:
+            $q .= "AND divisions.f_lid = $sel_node_id";
             break;
     }
-
-    // OPTIONALLY hide retired teams.
-    if ($settings['hide_retired']) {$teams = array_filter($teams, create_function('$t', 'return !$t->retired;'));}
-    foreach ($teams as $t) {
-        $retired = (($t->retired) ? '<b><font color="red">[R]</font></b>' : '');
-        $t->name .= "</a>&nbsp;$retired";
+    if ($sel_state == T_STATE_ACTIVE) {
+        $q .= ' AND teams.rdy IS TRUE AND teams.retired IS FALSE';
+    }
+    if ($sel_race != T_RACE_ALL) {
+        $q .= ' AND teams.f_race_id = '.$sel_race;
+    }
+    $_subt1 = '('.preg_replace('/\_RRP/', 'team1_id', $q).')';
+    $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
+    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
+    $result = mysql_query($queryCnt);
+    list($cnt) = mysql_fetch_row($result);
+    $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_TEAMS_PER_PAGE);
+    global $page;
+    $page = (isset($_GET['page']) && $_GET['page'] <= $pages) ? $_GET['page'] : 1; # Page 1 is default, of course.
+    $_url = "?section=teamlist&amp;";
+    echo '<br><center><table>';
+    echo '<tr><td>';
+    echo 'Page: '.implode(', ', array_map(create_function('$nr', 'global $page; return ($nr == $page) ? $nr : "<a href=\''.$_url.'page=$nr\'>$nr</a>";'), range(1,$pages)));
+    echo '</td></td>';
+    echo "<tr><td>Teams: $cnt</td></td>";
+    echo '</table></center><br>';
+    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') LIMIT '.(($page-1)*T_HTML_TEAMS_PER_PAGE).', '.(($page)*T_HTML_TEAMS_PER_PAGE);
+    
+    $teams = array();
+    $result = mysql_query($queryGet);
+    while ($t = mysql_fetch_object($result)) {
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
         $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
         $t->retired = ($t->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
-        $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
+        $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';   
+        $teams[] = $t;
     }
+
     $fields = array(
-        'logo'    => array('desc' => 'Logo', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id'), 'nosort' => true),
-        'name'    => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
-        'f_cname' => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
+        'logo'    => array('desc' => 'Logo', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id'), 'nosort' => true),
+        'name'    => array('desc' => 'Name', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+        'f_cname' => array('desc' => 'Coach', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
         'rdy'     => array('desc' => 'Ready', 'nosort' => true),
-        'f_rname' => array('desc' => 'Race'),
-        'tv'      => array('desc' => 'TV', 'kilo' => true, 'suffix' => 'k'),
+        'retired' => array('desc' => 'Retired', 'nosort' => true),
+        'f_rname' => array('desc' => 'Race', 'nosort' => true),
+        'tv'      => array('desc' => 'TV', 'nosort' => true, 'kilo' => true, 'suffix' => 'k'),
     );
 
     HTMLOUT::sort_table(
         "Teams",
-        "index.php?section=".(($obj == STATS_COACH) ? 'coachcorner' : 'teamlist'),
+        "index.php$_url",
         $teams,
         $fields,
-        array('+name'),
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-        array('doNr' => false, 'noHelp' => true)
+        array(),
+        array(),
+        array('doNr' => false, 'noHelp' => true, 'noSRdisp' => true)
     );
 }
 

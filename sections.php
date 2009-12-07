@@ -321,7 +321,7 @@ function sec_main() {
 function sec_teamlist() {
     global $lng;
     title($lng->getTrn('menu/teams'));
-    Team_HTMLOUT::dispTeamList(false, false);
+    Team_HTMLOUT::dispTeamList();
 }
 
 function sec_matcheshandler() {
