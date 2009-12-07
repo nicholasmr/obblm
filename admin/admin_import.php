@@ -1,5 +1,9 @@
 <?php
 fatal('Out of order');
+/*
+FIX LIST:
+    SOLD constant removed! 
+*/
 global $raceididx;
 define('HTML', 1);
 define('XML', 2);
