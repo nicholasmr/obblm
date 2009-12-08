@@ -82,7 +82,7 @@ public static function dispTeamList()
     $result = mysql_query($queryGet);
     while ($t = mysql_fetch_object($result)) {
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
-        $t->logo = "<img border='0px' height='50' width='50' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
+        $t->logo = "<img border='0px' height='20' width='20' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
         $t->retired = ($t->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
         $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';   
         $teams[] = $t;
