@@ -1073,7 +1073,7 @@ public static function installProcsAndFuncs($install = true)
 
             SET ff = ff_bought + (SELECT IFNULL(SUM(mv_teams.ff),0) FROM mv_teams WHERE mv_teams.f_tid = tid);
 
-            SET tv = (SELECT IFNULL(SUM(value),0) FROM players WHERE owned_by_team_id = tid AND players.status NOT IN ('.MNG.','.DEAD.') AND players.date_sold IS NULL)
+            SET tv = (SELECT IFNULL(SUM(value),0) FROM players WHERE owned_by_team_id = tid AND players.status = '.NONE.' AND players.date_sold IS NULL)
                 + rerolls      * (SELECT cost_rr FROM races WHERE races.race_id = f_race_id)
                 + ff           * '.$rules['cost_fan_factor'].'
                 + cheerleaders * '.$rules['cost_cheerleaders'].'
