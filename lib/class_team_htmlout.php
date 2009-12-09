@@ -222,8 +222,8 @@ private function _handleActions($ALLOW_EDIT)
             $p->setChoosableSkills();
             if     (in_array($_POST['skill'], $p->choosable_skills['norm'])) $type = 'N';
             elseif (in_array($_POST['skill'], $p->choosable_skills['doub'])) $type = 'D';
-            elseif (preg_match('/^ach_/', $_POST['skill']))                  $type = 'C';
-            status($p->addSkill($type, $_POST['skill']));
+            else                                                             $type = 'C'; # Assume it's a characteristic.
+            status($p->addSkill($type, ($type == 'C') ? (int) str_replace('ach_','',$_POST['skill']) : (int) $_POST['skill']));
             break;
 
         case 'teamtext': status($team->saveText($_POST['teamtext'])); break;
@@ -268,7 +268,7 @@ private function _handleActions($ALLOW_EDIT)
                 if     (in_array($_POST['skill'], $p->ach_nor_skills))  $type = 'N';
                 elseif (in_array($_POST['skill'], $p->ach_dob_skills))  $type = 'D';
                 else                                                    $type = 'C'; # Assume it's a characteristic.
-                status($p->rmSkill($type, $_POST['skill']));
+                status($p->rmSkill($type, ($type == 'C') ? (int) str_replace('ach_','',$_POST['skill']) : (int) $_POST['skill']));
                 break;
         }
     }
@@ -383,10 +383,10 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             }
             $x .= "</optgroup>\n";
             
-            $x .= "<optgroup label='Other'>\n";
-            foreach (array('ma', 'st', 'ag', 'av') as $s) {
-                if ($p->chrLimits('ach', $s))
-                    $x .= "<option value='ach_$s'>+ " . ucfirst($s) . "</option>\n";
+            $x .= "<optgroup label='Characteristic increases'>\n";
+            foreach ($p->choosable_skills['chr'] as $s) {
+                global $CHR_CONV;
+                $x .= "<option value='ach_$s'>+ ".ucfirst($CHR_CONV[$s])."</option>\n";
             }
             $x .= "</optgroup>\n";
 
@@ -664,7 +664,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
      *
      ******************************/
      
-    global $lng, $rules, $settings, $skillarray, $coach, $DEA;
+    global $lng, $rules, $settings, $skillarray, $coach, $DEA, $CHR_CONV;
     global $racesHasNecromancer, $racesNoApothecary;
     $team = $this; // Copy. Used instead of $this for readability.
     $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
@@ -1472,9 +1472,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                     }
                                     echo "</OPTGROUP>";
                                 }
-                                echo "<optgroup label='Other'>\n";
-                                foreach (array('ma', 'st', 'ag', 'av') as $type) {
-                                    echo "<option value='ach_$type'>+ " . ucfirst($type) . "</option>\n";
+                                echo "<optgroup label='Characteristic increases'>\n";
+                                foreach ($CHR_CONV as $key => $name) {
+                                    echo "<option value='ach_$key'>+ ".ucfirst($name)."</option>\n";
                                 }
                                 echo "</optgroup>\n";
                                 ?>

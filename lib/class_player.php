@@ -38,6 +38,8 @@ $skillcats = array(
     'E' => array('DEA_idx' => null,   'obj_idx' => 'extra_skills'),
 );
 
+$CHR_CONV = array(MA => 'ma', AG => 'ag', AV => 'av', ST => 'st');
+
 class Player
 {
     /***************
@@ -96,7 +98,7 @@ class Player
     // Others
     public $icon = "";
     public $qty = 0;
-    public $choosable_skills = array('norm' => array(), 'doub' => array());
+    public $choosable_skills = array('norm' => array(), 'doub' => array(), 'chr' => array());
     
     // Relations
     public $f_tname = "";
@@ -205,6 +207,38 @@ class Player
             }
         }
         
+        // Now remove those not allowed by the improvement roll the player made.
+        $N_allowed_new_skills = $this->mayHaveNewSkill();
+        $query = "SELECT ir_d1 AS 'D1', ir_d2 AS 'D2' FROM match_data, matches WHERE f_match_id = match_id AND f_player_id = $this->player_id AND (ir_d1 != 0 OR ir_d2 != 0) ORDER BY date_played DESC LIMIT $N_allowed_new_skills";
+        $result = mysql_query($query);
+        $N_latest_skill_rolls = mysql_num_rows($result);
+        $allowed = array('N' => false, 'D' => false, 'C' => array());
+        while ($D6s = mysql_fetch_assoc($result)) {
+            switch ($D6s['D1']+$D6s['D2']) {
+                case 12: $chr = array(ST); break;
+                case 11: $chr = array(AG); break;
+                case 10: $chr = array(MA,AV); break;
+                default: $chr = array(); break;
+            }
+            $allowed['C'] = array_merge($allowed['C'], $chr);
+            $allowed['N'] = true; # May always select a new Normal skill when rolled no matter the outcome.
+            $allowed['D'] |= ($D6s['D1'] == $D6s['D2']); # May select from Double skills when D6s are equal.
+        }
+        
+        /* 
+            If a player has SPPs enough for a new skill but has not improvement rolled 2xD6 according to match_data entries, 
+            then allow player to select amongst all possible skills.
+        */
+        if ($N_allowed_new_skills > 0 && $N_allowed_new_skills == $N_latest_skill_rolls) {
+            if (!allowed['N']) {$this->choosable_skills['norm'] = array();}
+            if (!allowed['D']) {$this->choosable_skills['doub'] = array();}
+            foreach ($allowed['C'] as $chr) {
+                if ($this->chrLimits('ach', $chr)) {
+                    $this->choosable_skills['chr'][] = $chr;
+                }
+            }
+        }
+        
         return true;
     }
     
@@ -229,8 +263,10 @@ class Player
                 break;
             }
         }
-
-        return (($skill_count < $allowable_skills) && !$this->is_sold); # If fewer skills than able to have for current SPP-level -> allow new skill.
+        
+        # Returns the NUMBER of skills/chrs the player may take.
+        $skill_diff = $allowable_skills - $skill_count;
+        return ($this->is_sold || $this->is_dead || $skill_diff < 0) ? 0 : $skill_diff;
     }
 
     public function is_unbuyable() {
@@ -402,7 +438,7 @@ class Player
          *  "C" = Characteristics
          **/
 
-        global $DEA, $skillididx, $skillcats;
+        global $DEA, $skillididx, $skillcats, $CHR_CONV;
         
         $this->setSkills();        
         $this->setChoosableSkills();
@@ -417,9 +453,9 @@ class Player
 
         // Determine skill type.
         $query = '';
-        if ($type == "C" && preg_match("/^ach_\w{2}$/", $skill)) { # ach_XX ?
-            if ($this->chrLimits('ach', preg_replace('/^ach_/', '', $skill)))
-                $query = "UPDATE players SET $skill = $skill + 1 WHERE player_id = $this->player_id";
+        if ($type == "C" && in_array($skill, $this->choosable_skills['chr'])) {
+            $fname = $CHR_CONV[$skill];
+            $query = "UPDATE players SET $fname = $fname + 1 WHERE player_id = $this->player_id";
         }
         elseif ($IS_REGULAR || $IS_EXTRA) {
             $this->{$skillcats[$type]['obj_idx']}[] = $skill;
@@ -435,14 +471,15 @@ class Player
          * Remove existing player skill.
          **/
          
-        global $skillcats;
+        global $skillcats, $CHR_CONV;
 
         $query = '';
         if (in_array($type, array_keys($skillcats))) {
             $query = "DELETE FROM players_skills WHERE f_pid = $this->player_id AND type = '$type' AND f_skill_id = $skill";
         }
-        elseif ($type == "C" && preg_match("/^ach_\w{2}$/", $skill)) {
-            $query = "UPDATE players SET $skill = $skill - 1 WHERE player_id = $this->player_id";
+        elseif ($type == 'C') {
+            $fname = $CHR_CONV[$skill];
+            $query = "UPDATE players SET $fname = $fname - 1 WHERE player_id = $this->player_id";
         }
         
         return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
@@ -458,13 +495,15 @@ class Player
          * Characteristics limit handler. Returns the number of characteristic injuries/achievements the player is further allowed.
          **/
 
-        $def = 'def_' . $char; # Default characteristic value - where $char is one of: MA, ST, AG or AV.
+        global $CHR_CONV;
+        $char = $CHR_CONV[$char];
+        $def = 'def_'.$char; # Default characteristic value.
         $ret = 0;
 
         if ($type == 'ach') {
             
             /* 
-                Returns the number of archived characteristics the player is allowed.
+                Returns the number of increased/archived characteristics the player is allowed.
                 Limits:
                     - Default + 2
                     - Max 10

@@ -392,10 +392,11 @@ class Match
                     $agn2 = $input['agn2'];
                 else
                     array_push($fields, 'agn2');
-
+                
+#                foreach (array() as $f => $ @FIXME
                 foreach ($fields as $field) {
                     $chr = Player::theDoctor($input[$field]); # Characteristic
-                    if ($chr && $p->chrLimits('inj', $chr) + $cur_injs[$chr] > $cnt_injs[$chr]) { # Are injuries reported within injury limits?
+                    if ($chr && $p->chrLimits('inj', $input[$field]) + $cur_injs[$chr] > $cnt_injs[$chr]) { # Are injuries reported within injury limits?
                         $$field = $input[$field];
                         $cnt_injs[$chr]++;
                     }

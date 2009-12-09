@@ -41,9 +41,9 @@ $settings['fp_standings'] = array(
 
 $settings['fp_leaders'] = array(
     'mv_cas' => array('title' => 'Most casualties',    'length' => 5),
-    'mv_td'  => array('title' => 'Most touchdowns',    'length' => 5),
-    'mv_cp'  => array('title' => 'Most completions',   'length' => 5),
-    'mv_ki'  => array('title' => 'Most killed',        'length' => 5),
+#    'mv_td'  => array('title' => 'Most touchdowns',    'length' => 5),
+#    'mv_cp'  => array('title' => 'Most completions',   'length' => 5),
+#    'mv_ki'  => array('title' => 'Most killed',        'length' => 5),
 );
 
 $settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.

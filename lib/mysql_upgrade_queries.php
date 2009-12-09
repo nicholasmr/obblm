@@ -73,6 +73,10 @@ $upgradeSQLs = array(
         # Migrate to using player position IDs 
         SQLUpgrade::runIfColumnExists('players', 'position', 'UPDATE players,teams,game_data_players SET f_pos_id = pos_id WHERE owned_by_team_id = team_id AND teams.f_race_id = game_data_players.f_race_id AND position = pos'),
         SQLUpgrade::runIfColumnExists('players', 'position', 'ALTER TABLE players CHANGE COLUMN position f_pos_name VARCHAR(60)'),
+        
+        // Add improvement rolls.
+        SQLUpgrade::runIfColumnNotExists('match_data', 'ir_d1', 'ALTER TABLE match_data ADD COLUMN ir_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+        SQLUpgrade::runIfColumnNotExists('match_data', 'ir_d1', 'ALTER TABLE match_data ADD COLUMN ir_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
     ),
 );
 
