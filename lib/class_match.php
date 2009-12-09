@@ -537,13 +537,13 @@ class Match
 
         return mysql_query($query) && 
             // Extra stats, if sent.
-            (!empty($ES) ? $this->_ESentry(array(
+            (!empty($ES) ? $this->ESentry(array(
                 'f_pid' => $pid, 'f_tid' => $tid, 'f_cid' => $cid, 'f_rid' => $rid, 
                 'f_mid' => $mid, 'f_trid' => $trid, 'f_did' => $did, 'f_lid' => $lid
             ), $ES) : true);
     }
     
-    protected function _ESentry(array $relations, array $playerData)
+    public function ESentry(array $relations, array $playerData)
     {
         global $core_tables;
         

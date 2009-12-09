@@ -213,6 +213,21 @@ public static function report() {
     
     global $lng, $stars, $rules, $coach;
     
+    // Create objects
+    $m = new Match($match_id);
+    $team1 = new Team($m->team1_id);
+    $team2 = new Team($m->team2_id);
+    
+    // Determine visitor privileges.
+    $ALLOW_EDIT = (!$m->locked && is_object($coach) && ($coach->admin || $coach->isInMatch($m->match_id)));
+    $DIS = ($ALLOW_EDIT) ? '' : 'DISABLED';
+
+    // Relay to ES report page?
+    if (isset($_GET['es_report'])) { # Don't care what value the GET field has!
+        self::report_ES($match_id, $ALLOW_EDIT);
+        return;
+    }
+
     $easyconvert = new array_to_js();
     @$easyconvert->add_array($stars, 'phpStars'); // Load stars array into JavaScript array.
     echo $easyconvert->output_all();
@@ -222,15 +237,6 @@ public static function report() {
     var ID_STARS_BEGIN = '.ID_STARS_BEGIN.';    
     </script>
     ';
-   
-    // Create objects
-    $m = new Match($match_id);
-    $team1 = new Team($m->team1_id);
-    $team2 = new Team($m->team2_id);
-    
-    // Determine visitor privileges.
-    $ALLOW_EDIT = (!$m->locked && is_object($coach) && ($coach->admin || $coach->isInMatch($m->match_id)));
-    $DIS = ($ALLOW_EDIT) ? '' : 'DISABLED';
 
     /*****************
      *
@@ -429,6 +435,9 @@ public static function report() {
             <tr><td colspan='<?php echo $CP;?>'>
                 <b><?php echo $lng->getTrn('matches/report/fans');?></b>&nbsp;
                 <input type="text" name="fans" value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
+            </td></tr>
+            <tr><td colspan='<?php echo $CP;?>'>
+                <b>E</b>xtra player <b>S</b>tats (ES) <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id?>&amp;es_report=1">report page here</a>
             </td></tr>
             <tr><td class="seperator" colspan='<?php echo $CP;?>'></td></tr>
             <tr class='commonhead'>
@@ -658,6 +667,92 @@ private static function player_validation($p, $m) {
     return true;
 }
 
+public static function report_ES($mid, $DIS) 
+{
+    global $lng, $ES_fields;
+    $ES_grps = array();
+    foreach ($ES_fields as $f) {
+        if (!in_array($f['group'], $ES_grps)) {
+            $ES_grps[] = $f['group'];
+        }
+    }
+    $players = self::report_ES_loadPlayers($mid);
+    
+    // Update entries if requested.
+    if (!$DIS && isset($_POST['ES_submitted'])) {
+        $query = "SELECT tour_id AS 'trid', did, f_lid AS 'lid' FROM matches, tours, divisions WHERE match_id = $mid AND f_tour_id = tour_id AND f_did = did";
+        $result = mysql_query($query);
+        $NR = mysql_fetch_assoc($result); # Node Relations.
+        $m = new Match($mid);
+        global $p; # Dirty trick to make $p accessible within create_function() below.
+        $status = true;
+        foreach ($players as $teamPlayers) {
+        foreach ($teamPlayers as $p) {
+            $status &= $m->ESentry(
+                array(
+                    'f_pid' => $p['pid'], 'f_tid' => $p['f_tid'], 'f_cid' => $p['f_cid'], 'f_rid' => $p['f_rid'], 
+                    'f_mid' => $mid, 'f_trid' => $NR['trid'], 'f_did' => $NR['did'], 'f_lid' => $NR['lid']
+                ),
+                array_combine(array_keys($ES_fields), array_map(create_function('$f', 'global $p; return (int) $_POST["${f}_$p[pid]"];'), array_keys($ES_fields)))
+            );
+        }
+        }
+        status($status);
+        $players = self::report_ES_loadPlayers($mid); # Reload!
+    }
+    
+    // Create form
+    title('ES submission');
+    echo "<center><a href='index.php?section=matches&amp;type=report&amp;mid=$mid'>".$lng->getTrn('common/back')."</a></center>\n";
+    HTMLOUT::helpBox('<b>Field explanations</b><br><table>'.implode("\n", array_map(create_function('$f,$def', 'return "<tr><td>$f</td><td>$def[desc]</td></tr>";'), array_keys($ES_fields), array_values($ES_fields))).'</table>', $lng->getTrn('common/needhelp'));
+    echo "<form method='POST'>\n";
+    foreach ($players as $teamPlayers) {
+        echo "<br>\n";
+        echo "<table style='font-size: small;'>\n"; 
+        $COLSPAN = count($teamPlayers)+1; # +1 for field desc.
+        $tid = $teamPlayers[0]['f_tid'];
+        echo "<tr><td colspan='$COLSPAN'><b><a name='thead$tid'>".get_alt_col('teams', 'team_id', $tid, 'name')."</a></b></td></tr>";
+        echo "<tr><td colspan='$COLSPAN'>Player number references:</td></tr>";
+        echo implode('', array_map(create_function('$p', 'return "<tr><td colspan=\''.$COLSPAN.'\'>#$p[nr] $p[name]</td></tr>";'), $teamPlayers));
+        echo "<tr><td colspan='$COLSPAN'>GOTO anchor ".implode(', ', array_map(create_function('$anc', 'return "<a href=\'#'.$tid.'$anc\'>$anc</a>";'), $ES_grps))."</td></tr>";
+        $grp = null;
+        foreach ($ES_fields as $f => $def) {
+            if ($def['group'] != $grp) {
+                $grp = $def['group'];
+                echo "<tr><td colspan='$COLSPAN'>&nbsp;</td></tr>";
+                echo "<tr style='font-style: italic;'><td><a name='$tid$grp'>$grp</a>&nbsp;|&nbsp;<a href='#thead$tid'>GOTO team head</a></td>".implode('', array_map(create_function('$p', 'return "<td>#$p[nr]</td>";'), $teamPlayers))."</tr>";
+                echo "<tr><td colspan='$COLSPAN'><hr></td></tr>";
+            }
+            echo "<tr><td>$f</td>".implode('', array_map(
+                create_function('$p', 'return "<td><input '.(($DIS) ? 'DISABLED' : '').' size=\'2\' maxlength=\'4\' name=\''.$f.'_$p[pid]\' value=\'".(($p[\''.$f.'\']) ? (int) $p[\''.$f.'\'] : 0)."\'></td>";'), $teamPlayers
+            ))."</tr>\n";
+        }
+        echo "</table>\n";
+    }
+    echo "<br><br><input type='submit' name='submit' value='".$lng->getTrn('common/submit')."'>\n";
+    echo "<input type='hidden' name='ES_submitted' value='1'>\n";
+    echo "</form>\n";
+}
+
+protected static function report_ES_loadPlayers($mid) 
+{
+    global $ES_fields;
+    $query = "SELECT 
+            players.player_id AS 'pid', players.owned_by_team_id AS 'f_tid', players.f_cid AS 'f_cid', players.f_rid AS 'f_rid',
+            players.name AS 'name', players.nr AS 'nr',
+            ".implode(',', array_keys($ES_fields))." 
+        FROM matches, match_data, players LEFT JOIN match_data_es ON (match_data_es.f_mid = $mid AND players.player_id = match_data_es.f_pid)
+        WHERE 
+            matches.match_id = $mid AND matches.match_id = match_data.f_match_id AND match_data.f_player_id = players.player_id AND (owned_by_team_id = team1_id OR owned_by_team_id = team2_id)
+        ORDER BY f_tid ASC, nr ASC";
+#    echo $query;
+    $result = mysql_query($query);
+    $players = array();
+    while ($p = mysql_fetch_assoc($result)) {
+        $players[$p['f_tid']][] = $p;
+    }
+    return $players;
+}
 
 }
 
