@@ -1210,6 +1210,81 @@
                                             </log>
                                         </log>
                                     </filter>
+                                    
+                                  <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="armour2">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">RESERVE</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter> 
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">RESERVE</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">RESERVE</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">RESERVE</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
                                 </content>
                             </element>
                             
@@ -1458,6 +1533,90 @@
                                             </log>
                                         </log>
                                     </filter>
+                                    
+                                  <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="stab">false</key>
+                                            <key name="chainsaw">false</key>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <key name="team" current="true" />
+                                                <key name="player" current="true" />
+                                                <log name="armour2">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <key name="casualty">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">RESERVE</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter> 
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <key name="team" current="true" />
+                                            <key name="player" current="true" />
+                                            <key name="stab">false</key>
+                                            <key name="chainsaw">false</key>
+                                            <log name="armour2">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <key name="casualty">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">RESERVE</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
+                                    <!-- blocks thronw against resulting in attacker down -->
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="reroll">
+                                                <type>BLOCK</type>
+                                                <log name="armour">
+                                                    <type>ARMOUR_ROLL</type>
+                                                    <key name="team2" current="true" />
+                                                    <key name="player2" current="true" />
+                                                    <key name="knockedDown">true</key>
+                                                    <key name="casualty">true</key>
+                                                    <log name="injury">
+                                                        <type>INJURY_ROLL</type>
+                                                        <key name="status">RESERVE</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    <filter>
+                                        <log>
+                                            <type>BLOCK</type>
+                                            <log name="armour">
+                                                <type>ARMOUR_ROLL</type>
+                                                <key name="team2" current="true" />
+                                                <key name="player2" current="true" />
+                                                <key name="knockedDown">true</key>
+                                                <key name="casualty">true</key>
+                                                <log name="injury">
+                                                    <type>INJURY_ROLL</type>
+                                                    <key name="status">RESERVE</key>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter>
+                                    
                                 </content>
                             </element>
                             
