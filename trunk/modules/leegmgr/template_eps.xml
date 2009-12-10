@@ -2051,50 +2051,7 @@
                                     </filter>
                                 </content>
                             </element>
-                            
-                            
-                            <!--
-                                
-                                <attribute name="name">
-                                    <content type="value">
-                                        <object>player</object>
-                                        <field>name</field>
-                                    </content>
-                                </attribute>
-                                
-                                <attribute name="number">
-                                    <content type="value">
-                                        <object>player</object>
-                                        <field>number</field>
-                                    </content>
-                                </attribute>
-                                
-                                <content type="list">
-                                    <childrenName>roll</childrenName>
-                                    <filter path="roll1">
-                                        <log>
-                                            <type>IMPROVEMENT_ROLL</type>
-                                            <key name="team" current="true" />
-                                            <key name="player" current="true" />
-                                        </log>
-                                    </filter>
-                                </content>
-                            </element>
-                            <element name="iImprovement_Roll2">
-                                <content type="list">
-                                    <childrenName>roll</childrenName>
-                                    <filter path="roll2">
-                                        <log>
-                                            <type>IMPROVEMENT_ROLL</type>
-                                            <key name="team" current="true" />
-                                            <key name="player" current="true" />
-                                        </log>
-                                    </filter>
-                                </content>
-                            </element>
-                            -->
-                            
-                            
+                           
                             <!--
                                 Speciality skills 
                                 -->
