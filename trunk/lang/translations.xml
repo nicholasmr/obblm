@@ -404,6 +404,9 @@
         <b>Preliminary info</b><br>
         First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
         Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
+        Secondly, OBBLM supports the submission of a wide range of different player stats. 
+        The commonly recorded player match stats are submitted via. the primary match report along with general match information whilst the <i>extra stats</i> are submitted on a separate submission page - follow the below extra stats link on the primary report page.
+        Please note that you <i>must</i> submit the primary report before submitting the extra player stats.<br>
         <br>
         <b>Game information fields</b><br>
         The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
@@ -417,7 +420,9 @@
         Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
         <br>
         <b>Player skills</b><br>
-        Once the match report has been submitted OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
+        When you roll 2D6 for player improvements remember to record the results in the <i>IR</i> fields. 
+        Then, once the match report has been submitted, OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
+        If the improvement roll fields are <i>consistently</i> left as 0 the player in question may select among all skills whenever enough SPP is gained.<br>
         <br>
         <b>Player injuries</b><br>
         If a player sustains multiple injuries simply utilize the second and third injury columns "ageing 1" and "ageing 2". 

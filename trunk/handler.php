@@ -101,16 +101,6 @@ switch ($_GET['type'])
         Module::run('Gallery', array()); 
         break;
 
-    /* Cyanide match import */
-    case 'cyanide_match_import':
-        Module::run('cyanide_match_import', array());
-        break;
-
-    /* Cyanide team import */
-    case 'cyanide_team_import':
-        Module::run('cyanide_team_import', array());
-        break;
-
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
 }

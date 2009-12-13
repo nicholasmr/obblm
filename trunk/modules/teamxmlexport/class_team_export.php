@@ -84,8 +84,9 @@ class Team_export extends Team implements ModuleInterface
         $el_root->appendChild($dom->createElement('tcas_0', $this->mv_tcas));
         $el_root->appendChild($dom->createElement('elo_0', $this->rg_elo));
 
+        global $T_INJS;
         foreach ($this->getPlayers() as $p) {
-            $status = Player::theDoctor($p->getStatus(-1));
+            $status = strtolower($T_INJS[$p->getStatus(-1)]);
             if ($status == 'none') {$status = 'ready';}
             if ($p->is_sold) {$status = 'sold';}
 

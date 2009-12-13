@@ -21,17 +21,18 @@
  *
  */
 
+// Fields used in match reports
+# Stored name => display name
+# Don't touch - order denpendant entries!!!
+$T_MOUT_REL = array('nr' => 'Nr', 'name' => 'Name', 'pos' => 'Position',);
+$T_MOUT_ACH = array_combine($T_PMD_ACH, array('MVP','Cp','Td','Int','BH','SI','Ki',));
+$T_MOUT_IR = array_combine($T_PMD_IR, array('IR D1','IR D2',));
+$T_MOUT_INJ = array_combine($T_PMD_INJ, array('Inj','Ageing 1','Ageing 2'));
+
 class Match_HTMLOUT extends Match
 {
 
 const T_HTML_MATCHES_PER_PAGE = 100;
-
-// Fields used in match reports
-# Stored name => display name
-# Don't touch - order denpendant entries!!!
-private static $fields_rel = array('nr' => 'Nr', 'name' => 'Name', 'pos' => 'Position',);
-private static $fields_ach = array('mvp' => 'MVP', 'cp' => 'Cp', 'td' => 'Td', 'intcpt' => 'Int', 'bh' => 'BH', 'si' => 'SI', 'ki' => 'Ki',);
-private static $fields_inj = array('inj' => 'Inj', 'agn1' => 'Ageing 1', 'agn2' => 'Ageing 2');
 
 function recentMatches() {
 
@@ -212,6 +213,7 @@ public static function report() {
         fatal("Invalid match ID.");
     
     global $lng, $stars, $rules, $coach;
+    global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     
     // Create objects
     $m = new Match($match_id);
@@ -224,7 +226,7 @@ public static function report() {
 
     // Relay to ES report page?
     if (isset($_GET['es_report'])) { # Don't care what value the GET field has!
-        self::report_ES($match_id, $ALLOW_EDIT);
+        self::report_ES($match_id, !$ALLOW_EDIT);
         return;
     }
 
@@ -253,16 +255,16 @@ public static function report() {
         
         // Update general match data
         status($m->update(array(
-            'submitter_id'  => $_SESSION['coach_id'],
-            'stadium'       => $_POST['stadium'],
-            'gate'          => (int) ($_POST['gate'] * 1000),
+            'submitter_id'  => (int) $_SESSION['coach_id'],
+            'stadium'       => (int) $_POST['stadium'],
+            'gate'          => (int) $_POST['gate']*1000,
             'fans'          => (int) $_POST['fans'],
-            'ffactor1'      => $_POST['ff1'],
-            'ffactor2'      => $_POST['ff2'],
-            'income1'       => (int) $_POST['inc1'] * 1000,
-            'income2'       => (int) $_POST['inc2'] * 1000,
-            'team1_score'   => $_POST['result1'] ? $_POST['result1'] : 0,
-            'team2_score'   => $_POST['result2'] ? $_POST['result2'] : 0,
+            'ffactor1'      => (int) $_POST['ff1'],
+            'ffactor2'      => (int) $_POST['ff2'],
+            'income1'       => (int) $_POST['inc1']*1000,
+            'income2'       => (int) $_POST['inc2']*1000,
+            'team1_score'   => (int) $_POST['result1'],
+            'team2_score'   => (int) $_POST['result2'],
             'smp1'          => (int) $_POST['smp1'],
             'smp2'          => (int) $_POST['smp2'],
             'tcas1'         => (int) $_POST['tcas1'],
@@ -294,14 +296,14 @@ public static function report() {
                     $_POST['bh_' . $p->player_id]       = 0;
                     $_POST['si_' . $p->player_id]       = 0;
                     $_POST['ki_' . $p->player_id]       = 0;
+                    $_POST['ir_d1_' . $p->player_id]    = 0;
+                    $_POST['ir_d2_' . $p->player_id]    = 0;
                     $_POST['inj_' . $p->player_id]      = NONE;
                     $_POST['agn1_' . $p->player_id]     = NONE;
                     $_POST['agn2_' . $p->player_id]     = NONE;
                 }
                 
-                $m->entry(array(
-                    'player_id' => $p->player_id,
-                    'team_id'   => $t->team_id,
+                $m->entry($p->player_id, array(
                     // Regarding MVP: We must check for isset() since checkboxes are not sent at all when not checked! 
                     'mvp'     => (isset($_POST['mvp_' . $p->player_id])) ? 1 : 0,
                     'cp'      => $_POST['cp_' . $p->player_id],
@@ -310,6 +312,8 @@ public static function report() {
                     'bh'      => $_POST['bh_' . $p->player_id],
                     'si'      => $_POST['si_' . $p->player_id],
                     'ki'      => $_POST['ki_' . $p->player_id],
+                    'ir_d1'   => $_POST['ir_d1_' . $p->player_id],
+                    'ir_d2'   => $_POST['ir_d2_' . $p->player_id],
                     'inj'     => $_POST['inj_' . $p->player_id],
                     'agn1'    => $_POST['agn1_' . $p->player_id],
                     'agn2'    => $_POST['agn2_' . $p->player_id],
@@ -326,10 +330,10 @@ public static function report() {
                 if (isset($_POST['team_'.$star['id']]) && $_POST['team_'.$star['id']] == $id) {
                     $sid = $s->star_id;
 
-                    $m->entry(array(
-                        'player_id' => $sid,
+                    $m->entry($sid, array(
+                        // Star required input
                         'team_id'   => $t->team_id,
-                        
+                        // Regular input
                         'mvp'     => (isset($_POST["mvp_$sid"]) && $_POST["mvp_$sid"]) ? 1 : 0,
                         'cp'      => $_POST["cp_$sid"],
                         'td'      => $_POST["td_$sid"],
@@ -337,6 +341,11 @@ public static function report() {
                         'bh'      => $_POST["bh_$sid"],
                         'si'      => $_POST["si_$sid"],
                         'ki'      => $_POST["ki_$sid"],
+                        'ir_d1'   => 0,
+                        'ir_d2'   => 0,
+                        'inj'     => NONE,
+                        'agn1'    => NONE,
+                        'agn2'    => NONE,
                     ));
                 }
                 else {
@@ -353,12 +362,12 @@ public static function report() {
             for ($i = 0; $i <= 50; $i++)  { # We don't expect over 50 mercs. This is just some large random number.
                 $idm = '_'.ID_MERCS.'_'.$i;
                 if (isset($_POST["team$idm"]) && $_POST["team$idm"] == $id) {
-                    $m->entry(array(
-                        'player_id' => ID_MERCS,
+                    $m->entry(ID_MERCS, array(
+                        // Merc required input
                         'team_id'   => $t->team_id,
                         'nr'        => $i,
                         'skills'    => $_POST["skills$idm"],                    
-                        
+                        // Regular input
                         'mvp'     => (isset($_POST["mvp$idm"]) && $_POST["mvp$idm"]) ? 1 : 0,
                         'cp'      => $_POST["cp$idm"],
                         'td'      => $_POST["td$idm"],
@@ -366,6 +375,11 @@ public static function report() {
                         'bh'      => $_POST["bh$idm"],
                         'si'      => $_POST["si$idm"],
                         'ki'      => $_POST["ki$idm"],
+                        'ir_d1'   => 0,
+                        'ir_d2'   => 0,
+                        'inj'     => NONE,
+                        'agn1'    => NONE,
+                        'agn2'    => NONE,
                     ));
                 }
             }
@@ -473,17 +487,19 @@ public static function report() {
         </table>
 
         <?php
+        $playerFields = array_merge($T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ);
+        $CPP = count($playerFields);
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
             ?>
             <table class='common'>
-            <tr><td class='seperator' colspan='13'></td></tr>
-            <tr class='commonhead'><td colspan='13'>
+            <tr><td class='seperator' colspan='<?php echo $CPP;?>'></td></tr>
+            <tr class='commonhead'><td colspan='<?php echo $CPP;?>'>
                 <b><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t->team_id,false,false);?>"><?php echo $t->name;?></a> <?php echo $lng->getTrn('matches/report/report');?></b>
             </td></tr>
-            <tr><td class='seperator' colspan='13'></td></tr>
+            <tr><td class='seperator' colspan='<?php echo $CPP;?>'></td></tr>
             <?php
             echo "<tr>\n";
-            foreach (array_values(array_merge(self::$fields_rel, self::$fields_ach, self::$fields_inj)) as $f) {
+            foreach (array_values($playerFields) as $f) {
                 echo "<td><i>$f</i></td>\n";
             }
             echo "</tr>\n";
@@ -495,7 +511,7 @@ public static function report() {
             
                 // Fetch player data from match
                 $status = $p->getStatus($m->match_id);
-                $mdat   = $p->getMatchData($m->match_id);
+                $mdat   = $m->getPlayerEntry($p->player_id);
 
                 // Print player row
                 if ($p->is_journeyman) {$bgcolor = COLOR_HTML_JOURNEY;}
@@ -589,7 +605,7 @@ public static function report() {
             echo "<script language='JavaScript' type='text/javascript'>\n";
             echo "var mdat$i = [];\n";
             $mdat = $s->getStats(T_NODE_MATCH,$m->match_id);
-            foreach (array_keys(self::$fields_ach) as $f) {
+            foreach (array_keys($T_MOUT_ACH) as $f) {
                 echo "mdat${i}['$f'] = ".$mdat[$f].";\n";
             }
             echo "existingStarMerc($id, $s->star_id, mdat$i);\n";
@@ -600,7 +616,7 @@ public static function report() {
         foreach (Mercenary::getMercsHiredByTeam($t, $m->match_id) as $merc) {
             echo "<script language='JavaScript' type='text/javascript'>\n";
             echo "var mdat$i = [];\n";
-            foreach (array_merge(array_keys(self::$fields_ach), array('skills')) as $f) {
+            foreach (array_merge(array_keys($T_MOUT_ACH), array('skills')) as $f) {
                 echo "mdat${i}['$f'] = ".$merc->$f.";\n";
             }
             echo "existingStarMerc($id, ".ID_MERCS.", mdat$i);\n";
@@ -613,19 +629,27 @@ public static function report() {
 
 protected static function _print_player_row($FS, $name, $nr, $pos, $bgcolor, $mdat, $DISABLE) {
 
+    global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
+
     $DIS = ($DISABLE) ? 'DISABLED' : '';
     echo "<tr".(($bgcolor) ? " style='background-color: $bgcolor;'" : '').">\n";
     echo "<td>$nr</td>\n";
     echo "<td>$name</td>\n";
     echo "<td>$pos</td>\n";
     echo "<td><input type='checkbox' " . ($mdat['mvp'] ? 'CHECKED ' : '')." $DIS name='mvp_$FS'></td>\n";
-    foreach (array_diff(array_keys(self::$fields_ach), array('mvp')) as $f) {
+    foreach (array_diff(array_keys($T_MOUT_ACH), array('mvp')) as $f) {
         echo "<td><input $DIS type='text' onChange='numError(this);' size='1' maxlength='2' name='${f}_$FS' value='".$mdat[$f]."'></td>\n";
     }
-
-    global $STATUS_TRANS;
-    $STATUS_TRANS_AGN = array_diff_key($STATUS_TRANS, array(MNG => null, DEAD => null));
-    foreach (array_combine(array_keys(self::$fields_inj), array($STATUS_TRANS,$STATUS_TRANS_AGN,$STATUS_TRANS_AGN)) as $f => $opts) {
+    foreach (array_keys($T_MOUT_IR) as $irl) {
+        echo "<td><select name='${irl}_$FS' $DIS>";
+        foreach (range(0,6) as $N) {
+            echo "<option value='$N' ".(($mdat[$irl] == $N) ? 'SELECTED' : '').">$N</option>";
+        }
+        echo "</select></td>\n";
+    }
+    global $T_INJS;
+    $T_INJS_AGN = array_diff_key($T_INJS, array(MNG => null, DEAD => null));
+    foreach (array_combine(array_keys($T_MOUT_INJ), array($T_INJS, $T_INJS_AGN, $T_INJS_AGN)) as $f => $opts) {
         echo "<td><select name='${f}_$FS' $DIS>";
         foreach ($opts as $status => $name) {
             echo "<option value='$status' ".(($mdat[$f] == $status) ? 'SELECTED' : '').">$name</option>";

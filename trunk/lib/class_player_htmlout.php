@@ -165,7 +165,9 @@ private function _about($ALLOW_EDIT)
                                 echo "<b>SOLD</b> ($p->date_sold)";
                             }
                             else {
-                                echo (($status = Player::theDoctor($p->status)) == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
+                                global $T_INJS;
+                                $status = strtolower($T_INJS[$p->status]);
+                                echo ($status == 'none') ? '<b><font color="green">Ready</font></b>' : "<b><font color='blue'>$status</font></b>"; 
                             }
                         ?>
                         </td>

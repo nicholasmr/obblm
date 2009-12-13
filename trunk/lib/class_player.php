@@ -195,6 +195,7 @@ class Player
                 }
             }
         }
+        $this->choosable_skills['chr'] = array(MA,AG,AV,ST);
         
         /* Remove illegal combinations: */
         $all_skills = array_merge($this->def_skills, $this->extra_skills, $this->ach_nor_skills,$this->ach_dob_skills);
@@ -226,12 +227,13 @@ class Player
         }
         
         /* 
-            If a player has SPPs enough for a new skill but has not improvement rolled 2xD6 according to match_data entries, 
+            If a player has SPPs enough for a new skill but has NOT (ever) improvement rolled 2xD6 according to match_data entries, 
             then allow player to select amongst all possible skills.
         */
-        if ($N_allowed_new_skills > 0 && $N_allowed_new_skills == $N_latest_skill_rolls) {
-            if (!allowed['N']) {$this->choosable_skills['norm'] = array();}
-            if (!allowed['D']) {$this->choosable_skills['doub'] = array();}
+        if ($N_allowed_new_skills > 0 && $N_latest_skill_rolls > 0) {
+            if (!$allowed['N']) {$this->choosable_skills['norm'] = array();}
+            if (!$allowed['D']) {$this->choosable_skills['doub'] = array();}
+            $this->choosable_skills['chr'] = array();
             foreach ($allowed['C'] as $chr) {
                 if ($this->chrLimits('ach', $chr)) {
                     $this->choosable_skills['chr'][] = $chr;
@@ -583,24 +585,6 @@ class Player
         return $mdata;
     }
     
-    public function getMatchData($match_id) {
-    
-        /**
-         * Returns array holding the match data entry from a specific match for this player.
-         **/
-    
-        $query  = "SELECT * FROM match_data WHERE f_match_id = $match_id AND f_player_id = $this->player_id";
-        $result = mysql_query($query);
-        $row    = mysql_fetch_assoc($result);
-        
-        $mdat = array();
-        foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki', 'inj', 'agn1', 'agn2') as $col) {
-            $mdat[$col] = (isset($row[$col])) ? $row[$col] : 0;
-        }
-
-        return $mdat;
-    }
-    
     public function saveText($str) {
         $desc = new ObjDescriptions(T_TEXT_PLAYER, $this->player_id);
         return $desc->save($str);
@@ -706,14 +690,6 @@ class Player
         return (int) $row[0];
     }
     
-    public static function theDoctor($const) {
-
-        /* The doctor translates PHP constants into their string equivalents. */
-        
-        global $STATUS_TRANS;
-        return strtolower($STATUS_TRANS[$const]);
-    }
-
     public static function create(array $input, $journeyman = false) {
 
         /**
