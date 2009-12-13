@@ -251,20 +251,7 @@ This page allows you to create a customized team for an existing coach.<br>
 This is useful if you and your league wish to avoid starting from scratch in order to use OBBLM.<br>
 <u>Note</u>: If you discover errors after having imported your team, you can either repair the errors<br> 
 via the admin tools in the coach corner, or simply delete the team and import a new.<br>
-<?php
 
-if (Module::isRegistered('cyanide_team_import')) {
-    ?>
-    <hr align="left" width="200px">
-    <br>
-    <div style="background-color:#C8C8C8; border: solid 2px; border-color: #C0C0C0; width:40%; padding: 10px;">
-    <b>Import a Cyanide team</b>:
-    <a href='handler.php?type=cyanide_team_import'>Click here</a>
-    </div>
-    <br>
-    <?php
-}
-?>
 <hr align="left" width="200px">
 <br>
 <i>Method 1:</i> Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right click on link --> save as) and uploading it.<br>

@@ -278,24 +278,15 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
             if ( !$addZombie )
                 $match->entry( 
+                    $f_player_id,
                     $input = array ( 
-                        "team_id" => $team_id, "player_id" => $f_player_id, 
+                        "team_id" => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                         "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
                     $player['EPS']
                 );
             else
             {
-                /* 
-                    Comments to William:
-                        You say that "Must add zombie last so that dead players can be reported first.", but I don't really see you ever adding the zombie?
-                        ..you don't go through the players list a second time around for adding zombies. Effectively, you are just skipping them?
-                        
-                        As far as I can see you have not written the $m->entry() reporting below in this block - around where you have defined $input (below).
-                        Maybe you have forgotten it? How did zombie reporting work earlier then?!
-                        
-                        What if there are multiple zombies to add? They can't all be number = 100?
-                */
                 global $DEA;
                 $pos_id = $DEA[$team->f_rname]['players']['Zombie']['pos_id'];
                 $delta = Player::price($pos_id);
@@ -306,11 +297,12 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 else
                 {
                     $match->entry( 
-                    $input = array ( 
-                        "team_id" => $team_id, "player_id" => $zombie_added[1], 
-                        "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
-                        "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
-                    $player['EPS']
+                        $pid = $zombie_added[1],
+                        $input = array ( 
+                            "team_id" => $team_id,
+                            "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
+                            "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
+                        $player['EPS']
                     );
                 }
             }
@@ -319,23 +311,16 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         ##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
 
-        /* 
-            Comments to William:
-                    I'm not sure what you are doing here.
-                    I would think that you'd simply want to check, in the ABOVE loop, not here, 
-                    if a player has an injury != NONE from previous match in THIS match, $match_id, 
-                    (by:  Player::getPlayerStatus($player_id, $match_id) != NONE ), if so, zero set all data.
-        */
-
         foreach ( $players as $p  )
         {
             if (  !$p->is_dead && !$p->is_sold ) {
                 $player = new Player ( $p->player_id );
-                $p_matchdata = $player->getMatchData( $this->match_id );
+                $p_matchdata = $match->getPlayerEntry( $player->player_id );
                 if ( !$p_matchdata['inj'] ) {
                     $match->entry(
+                        $p->player_id,
                         $input = array ( 
-                            "team_id" => $team_id, "player_id" => $p->player_id, 
+                            "team_id" => $team_id,
                             "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, 
                             "inj" => NONE, "agn1" => NONE, "agn2" => NONE ), 
                         array() # No EPS!

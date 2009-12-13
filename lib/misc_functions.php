@@ -57,6 +57,17 @@ function objsort(&$obj_array, $fields)
     return usort($obj_array, create_function('$a, $b', $func));
 }
 
+function array_strpack($str, array $arr, $implode_delimiter = false, $specifier = '%s') {
+    /* 
+        Example: 
+            $str = '<td>%s</td>'
+            $arr = array(1,2) 
+        ...will return array('<td>1</td>', '<td>2</td>')
+    */
+    $ret = array_map(create_function('$e', 'return str_replace("'.$specifier.'", $e, "'.$str.'");'), $arr);
+    return ($implode_delimiter) ? implode($implode_delimiter, $ret) : $ret;
+}
+
 // Returns what sort rule is to be used for different stats-table types.
 function sort_rule($w) {
 
