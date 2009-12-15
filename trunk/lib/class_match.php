@@ -366,7 +366,7 @@ class Match
         {
             case ($pid <= ID_STARS_BEGIN): # Star player?
                 // Star match_data should not be counted/considered as race stats when a team of a given race hires the star.
-                $rels['f_race_id'] = 'NULL';
+                $input['f_race_id'] = 'NULL';
                 break;
             case ID_MERCS: # Mercenary?
                 // Mercs use the injs/agn fields differently from ordinary players. 
@@ -482,8 +482,8 @@ class Match
         return mysql_query($query) && 
             // Extra stats, if sent.
             (!empty($ES) ? $this->ESentry(array(
-                'f_pid' => $pid, 'f_tid' => $tid, 'f_cid' => $cid, 'f_rid' => $rid, 
-                'f_mid' => $this->match_id, 'f_trid' => $trid, 'f_did' => $did, 'f_lid' => $lid
+                'f_pid' => $input['f_player_id'], 'f_tid' => $input['f_team_id'], 'f_cid' => $input['f_coach_id'], 'f_rid' => $input['f_race_id'], 
+                'f_mid' => $input['f_match_id'], 'f_trid' => $input['f_tour_id'], 'f_did' => $input['f_did'], 'f_lid' => $input['f_lid']
             ), $ES) : true)
             && $status;
     }
