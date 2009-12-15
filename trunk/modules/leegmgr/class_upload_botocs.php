@@ -136,6 +136,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
             'bh'    => $this->extrastats ? 'inflicted_bh_spp_casualties'   : 'casualties',
             'si'    => $this->extrastats ? 'inflicted_si_spp_casualties'   : 'INVALID', # INVALID will fail as obj. prop. below and set field = 0.
             'ki'    => $this->extrastats ? 'inflicted_kill_spp_casualties' : 'INVALID', # INVALID will fail as obj. prop. below and set field = 0.
+            'ir_d1' => 'improvement_roll1',
+            'ir_d2' => 'improvement_roll2',
         );
 
         // Start!
@@ -266,7 +268,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             }
 
             // Make $player[$f] into $$f. 
-            foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
+            foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si', 'ir_d1', 'ir_d2') as $f) {
                 $$f = $player[$f]; # NOTE: These fields are validated and typecasted correctly already in parse_results(), no further processing needed.
             }
 
@@ -277,11 +279,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
             if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
 
             if ( !$addZombie )
-                $match->entry( 
+                $mresult = $match->entry( 
                     $f_player_id,
                     $input = array ( 
-                        "team_id" => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
+                        "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
                         "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
                     $player['EPS']
                 );
@@ -299,14 +301,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
                     $match->entry( 
                         $pid = $zombie_added[1],
                         $input = array ( 
-                            "team_id" => $team_id,
                             "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
+                            "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
                             "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
                         $player['EPS']
                     );
                 }
             }
-
         }
 
         ##ADD EMPTY RESULTS FOR PLAYERS WITHOUT RESULTS MAINLY FOR MNG
@@ -320,8 +321,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
                     $match->entry(
                         $p->player_id,
                         $input = array ( 
-                            "team_id" => $team_id,
                             "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, 
+                            "ir_d1" => 0, "ir_d2" => 0,
                             "inj" => NONE, "agn1" => NONE, "agn2" => NONE ), 
                         array() # No EPS!
                     );
