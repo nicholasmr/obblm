@@ -83,8 +83,15 @@ public static function main($argv) {
                             case 'intcpt':
                             case 'ki':
                             case 'cas':
-                                $s = $m->getSummedAch(($d == 'cas') ? 'bh+ki+si' : $d);
-                                echo "<b>$s[1] &nbsp;-&nbsp; $s[2]</b>";
+                                $v = array();
+                                $s = ($d == 'cas') ? 'bh+ki+si' : $d;
+                                foreach (array(1,2) as $j) {
+                                    $query = "SELECT SUM($s) as '$s' FROM matches, match_data WHERE f_match_id = match_id AND match_id = $m->match_id AND f_team_id = team${i}_id";
+                                    $result = mysql_query($query);
+                                    $row = mysql_fetch_assoc($result);
+                                    $v[$j] = ($row[$s]) ? $row[$s] : 0;
+                                }
+                                echo "<b>$v[1] &nbsp;-&nbsp; $v[2]</b>";
                                 break;
                                 
                             case 'svic': echo "<b>$m->team1_score &nbsp;-&nbsp; $m->team2_score</b>"; break;
