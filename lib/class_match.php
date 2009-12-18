@@ -71,34 +71,8 @@ class Match
      * Properties 
      ***************/
     
-    // MySQL stored information
-    public $match_id        = 0;
-    public $round           = 0;
-    public $f_tour_id       = 0;
-    public $locked          = false;
-    public $submitter_id    = 0;
-    public $stadium         = 0;
-    public $gate            = 0;
-    public $ffactor1        = 0;
-    public $ffactor2        = 0;
-    public $income1         = 0;
-    public $income2         = 0;
-    public $team1_id        = 0;
-    public $team2_id        = 0;
-    public $date_created    = '';
-    public $date_played     = '';
-    public $date_modified   = '';
-    public $team1_score     = 0;
-    public $team2_score     = 0;
-    public $smp1            = 0;
-    public $smp2            = 0;
-    public $tcas1           = 0; // Team cas 1
-    public $tcas2           = 0; // Team cas 2
-    public $fame1           = 0;
-    public $fame2           = 0;
-    public $tv1             = 0;
-    public $tv2             = 0;
-    public $comment         = ''; // Summary, not match comment.
+    // MySQL stored fields
+    # See $core_tables entry.
     
     // Other
     public $team1_name  = '';
@@ -113,32 +87,22 @@ class Match
     
     function __construct($match_id) {
 
-        // Check if $match_id is valid.
-        if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
-            return null;
-
         // MySQL stored information
         $result = mysql_query("SELECT * FROM matches WHERE match_id = $match_id");
-        if (mysql_num_rows($result) <= 0)
+        if (mysql_num_rows($result) == 0)
             return null;
-
         $row = mysql_fetch_assoc($result);
         foreach ($row as $col => $val) {
             $this->$col = ($val) ? $val : 0;
         }
         $this->locked = (bool) $this->locked;
         $this->is_played = !empty($this->date_played);
-        
+
         // Make class string properties = empty strings, and not zero's.
         foreach (array('date_created', 'date_played', 'date_modified') as $field) {
             if (empty($this->$field))
                 $this->$field = '';
         }
-    
-        // Match summary.
-        $this->comment = $this->getText();
-        if (empty($this->comment))
-            $this->comment = '';
     
         // Other
         $this->team1_name = get_alt_col('teams', 'team_id', $this->team1_id, 'name');
@@ -272,201 +236,7 @@ class Match
     }
 
     public function entry($pid, array $input, $ES = array()) {
-    
-        /**
-         * Updates match data of player.
-         *
-         *  When saving mercs pass the extra input fields: team_id, nr, skills
-         *  When saving stars pass the extra input fields: team_id
-         *
-         **/
-
-        if ($this->locked || empty($pid)) {
-            return false;
-        }
-
-        global $T_PMD;
-        $EXPECTED = $T_PMD; # We will be modifying (sorting) the contents, therefore we make a copy.
-         
-        /* 
-            Relation IDs
-        */
-        $rels = array();
-        switch ($pid) 
-        {
-            case ($pid > 0): # Ordinary player?
-                $query = "SELECT owned_by_team_id AS 'f_team_id', f_cid AS 'f_coach_id', f_rid AS 'f_race_id' FROM players WHERE player_id = $pid";
-                $result = mysql_query($query);            
-                $rels = mysql_fetch_assoc($result);
-                $tid = $rels['f_team_id'];
-                break;
-                
-            case ($pid <= ID_STARS_BEGIN): # Star player?
-            case ID_MERCS: # Mercenary?
-                $tid = $input['team_id']; unset($input['team_id']);
-                $query = "SELECT owned_by_coach_id AS 'f_coach_id', f_race_id AS 'f_race_id' FROM teams WHERE team_id = $tid";
-                $result = mysql_query($query);            
-                $rels = mysql_fetch_assoc($result);
-                break;
-        }
-        $input = array_merge($input, $rels);
-
-        /*        
-            Special $input field processing.
-        */
-        switch ($pid) 
-        {
-            case ($pid <= ID_STARS_BEGIN): # Star player?
-                // Star match_data should not be counted/considered as race stats when a team of a given race hires the star.
-                $input['f_race_id'] = 'NULL';
-                break;
-            case ID_MERCS: # Mercenary?
-                // Mercs use the injs/agn fields differently from ordinary players. 
-                // Nr:      #Merc hired by that team. 
-                // Skills:  Extra skill bought count for the merc.
-                $input['inj'] = $input['nr']; unset($input['nr']);
-                $input['agn1'] = $input['skills']; unset($input['skills']);
-                $input['agn2'] = NONE;
-                break;
-        }
-                
-        /* 
-            Node IDs
-        */
-        $query = "SELECT tour_id AS 'f_tour_id', did AS 'f_did', f_lid AS 'f_lid' FROM matches,tours,divisions WHERE matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did AND matches.match_id = $this->match_id";
-        $result = mysql_query($query);
-        $input = array_merge($input, mysql_fetch_assoc($result));        
-
-        /* 
-            Other match data
-        */
-        $input['mg'] = $MG = (int) (Player::getPlayerStatus($pid,$this->match_id) == MNG); // Missed (this) Game (ie. had a MNG from previous match)?
-        $input['f_player_id'] = $pid;
-        $input['f_match_id'] = $this->match_id;
-        
-        /* 
-            Verify input
-        */
-        sort($EXPECTED);
-        ksort($input);
-        if (array_keys($input) !== $EXPECTED)
-            return false;
-            
-        /* 
-            Post/pre match fixes
-            
-            Before we write player's match data, we need to check if player's status was...
-                - Set to DEAD? In which case we must delete all the player's match data from matches played after this match (if any played).
-                - Set to MNG? In which case we must zero set the player's match data from match played after this match (if this match is not the latest).
-        */
-        $status = true;
-        
-        if ($this->is_played) { # Must be played to have a date to compare with.
-            if ($input['inj'] == DEAD) {
-                $query = "DELETE FROM match_data USING match_data INNER JOIN matches 
-                    WHERE match_data.f_match_id = matches.match_id AND f_player_id = $pid AND date_played > (SELECT date_played FROM matches WHERE match_id = $this->match_id)";
-                $status &= mysql_query($query);
-
-            }
-            elseif ($input['inj'] != NONE) { # Player has MNG status.
-                global $T_PMD_ACH, $T_PMD_IR, $T_PMD_INJ;
-                $status &= mysql_query("UPDATE match_data SET ".
-                    array_strpack('%s = 0', array_merge($T_PMD_ACH, $T_PMD_IR), ',').','.
-                    array_strpack('%s = '.NONE, $T_PMD_INJ, ',')."
-                    mg = TRUE                
-                    WHERE f_player_id = $pid AND f_match_id = (
-                        SELECT match_id FROM matches, match_data WHERE 
-                        match_data.f_match_id = matches.match_id AND 
-                        date_played IS NOT NULL AND 
-                        date_played > (SELECT date_played FROM matches WHERE match_id = $this->match_id) AND 
-                        f_player_id = $pid 
-                        ORDER BY date_played ASC LIMIT 1)");
-            }
-        }
-        
-        /* 
-            Injury corrections
-        */
-        if ($pid > 0) {
-            $INJS = array('ma' => 0, 'av' => 0, 'ag' => 0, 'st' => 0, 'inj' => NONE, 'agn1' => NONE, 'agn2' => NONE);
-            if ($this->is_played) {
-                $MA = MA; $AV = AV; $AG = AG; $ST = ST; # Shortcuts.
-                $query = "SELECT 
-                        IF(inj=$MA,1,0)+IF(agn1=$MA,1,0)+IF(agn2=$MA,1,0) AS 'ma',
-                        IF(inj=$AG,1,0)+IF(agn1=$AG,1,0)+IF(agn2=$AG,1,0) AS 'ag',
-                        IF(inj=$AV,1,0)+IF(agn1=$AV,1,0)+IF(agn2=$AV,1,0) AS 'av',
-                        IF(inj=$ST,1,0)+IF(agn1=$ST,1,0)+IF(agn2=$ST,1,0) AS 'st'
-                    FROM match_data WHERE f_player_id = $pid AND f_match_id = $this->match_id";
-                $result = mysql_query($query);
-                $INJS = mysql_fetch_assoc($result);
-            }
-
-            global $CHR_CONV, $incpy;
-            $incpy = $input; # Used in below filter by create_function().
-            $p = new Player($pid);
-            $fields = array('inj', 'agn1', 'agn2');
-            foreach ($fields as $f) {
-                if (!in_array($input[$f], array_keys($CHR_CONV))) # Allow passed injury unconditionally.
-                    continue;
-                
-                if (
-                    // Currently allowed injuries of this kind (= $input[$f]).
-                    $p->chrLimits('inj', $input[$f]) 
-                    // Of the "currently allowed", this amount is contributed to "Currently allowed" by this match. 
-                    // Ie. the sum of the two is the allowed injuries of this kind if we neglect the contributions of this match to the total inj. count.
-                    + $INJS[$CHR_CONV[ $input[$f] ]]
-                    // This is the total inj. amount of this kind (=$input[$f]) which we want to add as recieved inuries from this match.
-                    - count(array_filter($fields, create_function('$x', "global \$incpy; return (\$incpy[\$x]==\$incpy['$f']);"))) 
-                    < 0) {
-                    $input[$f] = NONE; 
-                }
-            }
-        }
-
-        /********************
-         *  Insert data into MySQL 
-         ********************/
-
-        // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
-        $status &= mysql_query("DELETE FROM match_data WHERE f_player_id = $pid AND f_match_id = $this->match_id");
-        $query = 'INSERT INTO match_data ('.implode(',', $EXPECTED).') VALUES ('.implode(',', array_values($input)).')';
-        
-        return mysql_query($query) && 
-            // Extra stats, if sent.
-            (!empty($ES) ? $this->ESentry(array(
-                'f_pid' => $input['f_player_id'], 'f_tid' => $input['f_team_id'], 'f_cid' => $input['f_coach_id'], 'f_rid' => $input['f_race_id'], 
-                'f_mid' => $input['f_match_id'], 'f_trid' => $input['f_tour_id'], 'f_did' => $input['f_did'], 'f_lid' => $input['f_lid']
-            ), $ES) : true)
-            && $status;
-    }
-    
-    public function ESentry(array $relations, array $playerData)
-    {
-        global $core_tables;
-        
-        // Ready the data.
-        $tbl = 'match_data_es';
-        # Required keys/columns.
-        $KEYS = array_keys($core_tables[$tbl]); sort($KEYS);
-        # Recieved data.
-        $_receivedInput = array_merge($relations, $playerData); ksort($_receivedInput);
-        $INPUT_KEYS     = array_keys($_receivedInput);
-        $INPUT_VALUES   = array_values($_receivedInput);
-
-        // Verify input.
-        if ($INPUT_KEYS !== $KEYS)
-            return false;
-            
-        // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
-        $WHERE = "f_mid = $relations[f_mid] AND f_pid = $relations[f_pid]";
-        $query = "SELECT f_mid FROM $tbl WHERE $WHERE";
-        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
-            mysql_query("DELETE FROM $tbl WHERE $WHERE");
-        }
-        
-        // Insert entry.
-        $query  = 'INSERT INTO '.$tbl.' ('.implode(',', $KEYS).') VALUES ('.implode(',', $INPUT_VALUES).')';
-        return mysql_query($query);
+        return self::_entry($this->match_id, $pid, $input, $ES, false);
     }
     
     public function getPlayerEntry($pid) {
@@ -502,27 +272,216 @@ class Match
         return $txt->txt;
     }
     
-    public function hasComments() {
-        return MatchComment::matchHasComments($this->match_id);
-    }
-
-    public function getComments() {
-        return MatchComment::getComments($this->match_id, '-');
-    }
-    
-    public function newComment($sid, $txt) {
-        return MatchComment::create($this->match_id, $sid, $txt);
-    }
-    
-    public function deleteComment($cid) {
-        $cmt = new MatchComment($cid);
-        return $cmt->delete();
-    }
-    
     /***************
      * Statics
      ***************/
-     
+
+    public static function ImportEntry ($pid, array $input) {
+        $status = (bool) mysql_query("REPLACE INTO matches (match_id, team1_id,  team2_id, round, f_tour_id, date_created, date_played)
+            VALUES (".T_IMPORT_MID.", 0, 0, 0, 0, 0, 0)");
+        return $status && self::_entry(null, $pid, $input, array(), true);
+    }
+
+    private static function _entry($mid, $pid, array $input, $ES = array(), $IMPORT = false) {
+    
+        /**
+         * Updates match data of player.
+         *
+         *  When saving mercs pass the extra input fields: team_id, nr, skills
+         *  When saving stars pass the extra input fields: team_id
+         *
+         **/
+
+        if ($IMPORT) {
+            // Statuses
+            $LOCKED = $PLAYED = false;
+            // Node IDs
+            $mid = T_IMPORT_MID;
+            $input['f_tour_id'] = $input['f_did'] = $input['f_lid'] = 0;
+        } 
+        else {
+            // Statuses
+            $result = mysql_query("SELECT locked, IF(date_played IS NULL OR date_played = '', FALSE, TRUE) AS 'played' FROM matches WHERE match_id = $mid");
+            list($LOCKED, $PLAYED) = mysql_fetch_array($result);
+            // Node IDs
+            $query = "SELECT tour_id AS 'f_tour_id', did AS 'f_did', f_lid AS 'f_lid' FROM matches,tours,divisions WHERE matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did AND matches.match_id = $mid";
+            $result = mysql_query($query);
+            $input = array_merge($input, mysql_fetch_assoc($result));
+        }
+
+        /* 
+            Relation IDs
+        */
+        $rels = array();
+        switch ($pid) 
+        {
+            case ($pid > 0): # Ordinary player?
+                $query = "SELECT owned_by_team_id AS 'f_team_id', f_cid AS 'f_coach_id', f_rid AS 'f_race_id' FROM players WHERE player_id = $pid";
+                $result = mysql_query($query);            
+                $rels = mysql_fetch_assoc($result);
+                $tid = $rels['f_team_id'];
+                break;
+                
+            case ($pid <= ID_STARS_BEGIN || $pid == ID_MERCS): # Star player or Mercenary?
+                $tid = $input['team_id']; unset($input['team_id']);
+                $query = "SELECT owned_by_coach_id AS 'f_coach_id', f_race_id AS 'f_race_id' FROM teams WHERE team_id = $tid";
+                $result = mysql_query($query);            
+                $rels = mysql_fetch_assoc($result);
+                
+                /* Special $input field processing. */
+                switch ($pid) 
+                {
+                    case ($pid <= ID_STARS_BEGIN): # Star player?
+                        // Star match_data should not be counted/considered as race stats when a team of a given race hires the star.
+                        $rels['f_race_id'] = 'NULL';
+                        break;
+                    case ID_MERCS: # Mercenary?
+                        // Mercs use the injs/agn fields differently from ordinary players. 
+                        // Nr:      #Merc hired by that team. 
+                        // Skills:  Extra skill bought count for the merc.
+                        $input['inj'] = $input['nr']; unset($input['nr']);
+                        $input['agn1'] = $input['skills']; unset($input['skills']);
+                        $input['agn2'] = NONE;
+                        break;
+                }
+                break;
+        }
+        $input = array_merge($input, $rels);
+
+        /* 
+            Other match data
+        */
+        $input['mg'] = $MG = (int) (Player::getPlayerStatus($pid,$mid) == MNG); // Missed (this) Game (ie. had a MNG from previous match)?
+        $input['f_player_id'] = $pid;
+        $input['f_match_id'] = $mid;
+        
+        /* 
+            Verify input
+        */
+        global $T_PMD;
+        $EXPECTED = $T_PMD; # We will be modifying (sorting) the contents, therefore we make a copy.
+        sort($EXPECTED);
+        ksort($input);
+        if (array_keys($input) !== $EXPECTED)
+            return false;
+            
+        /* 
+            Post/pre match fixes
+            
+            Before we write player's match data, we need to check if player's status was...
+                - Set to DEAD? In which case we must delete all the player's match data from matches played after this match (if any played).
+                - Set to MNG? In which case we must zero set the player's match data from match played after this match (if this match is not the latest).
+        */
+        $status = true;
+        
+        if ($PLAYED) { # Must be played to have a date to compare with.
+            if ($input['inj'] == DEAD) {
+                $query = "DELETE FROM match_data USING match_data INNER JOIN matches 
+                    WHERE match_data.f_match_id = matches.match_id AND f_player_id = $pid AND date_played > (SELECT date_played FROM matches WHERE match_id = $mid)";
+                $status &= mysql_query($query);
+
+            }
+            elseif ($input['inj'] != NONE) { # Player has MNG status.
+                global $T_PMD_ACH, $T_PMD_IR, $T_PMD_INJ;
+                $status &= mysql_query("UPDATE match_data SET ".
+                    array_strpack('%s = 0', array_merge($T_PMD_ACH, $T_PMD_IR), ',').','.
+                    array_strpack('%s = '.NONE, $T_PMD_INJ, ',')."
+                    mg = TRUE                
+                    WHERE f_player_id = $pid AND f_match_id = (
+                        SELECT match_id FROM matches, match_data WHERE 
+                        match_data.f_match_id = matches.match_id AND 
+                        date_played IS NOT NULL AND 
+                        date_played > (SELECT date_played FROM matches WHERE match_id = $mid) AND 
+                        f_player_id = $pid 
+                        ORDER BY date_played ASC LIMIT 1)");
+            }
+        }
+        
+        /* 
+            Injury corrections
+        */
+        if ($pid > 0) {
+            $INJS = array('ma' => 0, 'av' => 0, 'ag' => 0, 'st' => 0, 'inj' => NONE, 'agn1' => NONE, 'agn2' => NONE);
+            if ($PLAYED) {
+                $MA = MA; $AV = AV; $AG = AG; $ST = ST; # Shortcuts.
+                $query = "SELECT 
+                        IF(inj=$MA,1,0)+IF(agn1=$MA,1,0)+IF(agn2=$MA,1,0) AS 'ma',
+                        IF(inj=$AG,1,0)+IF(agn1=$AG,1,0)+IF(agn2=$AG,1,0) AS 'ag',
+                        IF(inj=$AV,1,0)+IF(agn1=$AV,1,0)+IF(agn2=$AV,1,0) AS 'av',
+                        IF(inj=$ST,1,0)+IF(agn1=$ST,1,0)+IF(agn2=$ST,1,0) AS 'st'
+                    FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid";
+                $result = mysql_query($query);
+                $INJS = mysql_fetch_assoc($result);
+            }
+
+            global $CHR_CONV, $incpy;
+            $incpy = $input; # Used in below filter by create_function().
+            $p = new Player($pid);
+            $fields = array('inj', 'agn1', 'agn2');
+            foreach ($fields as $f) {
+                if (!in_array($input[$f], array_keys($CHR_CONV))) # Allow passed injury unconditionally.
+                    continue;
+                
+                if (
+                    // Currently allowed injuries of this kind (= $input[$f]).
+                    $p->chrLimits('inj', $input[$f]) 
+                    // Of the "currently allowed", this amount is contributed to "Currently allowed" by this match. 
+                    // Ie. the sum of the two is the allowed injuries of this kind if we neglect the contributions of this match to the total inj. count.
+                    + $INJS[$CHR_CONV[ $input[$f] ]]
+                    // This is the total inj. amount of this kind (=$input[$f]) which we want to add as recieved inuries from this match.
+                    - count(array_filter($fields, create_function('$x', "global \$incpy; return (\$incpy[\$x]==\$incpy['$f']);"))) 
+                    < 0) {
+                    $input[$f] = NONE; 
+                }
+            }
+        }
+
+        /********************
+         *  Insert data into MySQL 
+         ********************/
+
+        // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
+        $status &= mysql_query("DELETE FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid");
+        $query = 'INSERT INTO match_data ('.implode(',', $EXPECTED).') VALUES ('.implode(',', array_values($input)).')';
+        
+        return mysql_query($query) && 
+            // Extra stats, if sent.
+            (!empty($ES) ? self::ESentry(array(
+                'f_pid' => $input['f_player_id'], 'f_tid' => $input['f_team_id'], 'f_cid' => $input['f_coach_id'], 'f_rid' => $input['f_race_id'], 
+                'f_mid' => $input['f_match_id'], 'f_trid' => $input['f_tour_id'], 'f_did' => $input['f_did'], 'f_lid' => $input['f_lid']
+            ), $ES) : true)
+            && $status;
+    }
+    
+    public static function ESentry(array $relations, array $playerData)
+    {
+        global $core_tables;
+        
+        // Ready the data.
+        $tbl = 'match_data_es';
+        # Required keys/columns.
+        $KEYS = array_keys($core_tables[$tbl]); sort($KEYS);
+        # Recieved data.
+        $_receivedInput = array_merge($relations, $playerData); ksort($_receivedInput);
+        $INPUT_KEYS     = array_keys($_receivedInput);
+        $INPUT_VALUES   = array_values($_receivedInput);
+
+        // Verify input.
+        if ($INPUT_KEYS !== $KEYS)
+            return false;
+            
+        // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
+        $WHERE = "f_mid = $relations[f_mid] AND f_pid = $relations[f_pid]";
+        $query = "SELECT f_mid FROM $tbl WHERE $WHERE";
+        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
+            mysql_query("DELETE FROM $tbl WHERE $WHERE");
+        }
+        
+        // Insert entry.
+        $query  = 'INSERT INTO '.$tbl.' ('.implode(',', $KEYS).') VALUES ('.implode(',', $INPUT_VALUES).')';
+        return mysql_query($query);
+    }
+
     public static function getMatches($n = false, $node = false, $node_id = false, $getUpcomming = false) {
     
         /**
@@ -550,94 +509,6 @@ class Match
         }
         
         return $m;
-    }
-    
-    public static function fakeEntry(array $input) {
-        
-        /*
-            This routine is somewhat a hack in our own system!
-            We use a fake match as match reference for inputting player match_data for imported players.
-            
-            If a request for creating a fake match_data entry is made, we must first make sure that this fake match exist.
-        */
-        
-        $mid = null;
-        
-        // Does fake match not exist?
-        if (!get_alt_col('matches', 'match_id', T_IMPORT_MID, 'match_id')) {
-            $query = "INSERT INTO matches (match_id, team1_id,  team2_id, round, f_tour_id, date_created, date_played)
-                                    VALUES (".T_IMPORT_MID.", 0, 0, 0, 0, 0, 0)";
-            mysql_query($query);
-        }
-        
-        $mid = T_IMPORT_MID;
-        
-        // Input
-        $p = new Player($input['player_id']);
-        $pid    = $p->player_id;
-        $tid    = $p->owned_by_team_id;
-        $cid    = $p->coach_id;
-        $rid    = get_alt_col('teams', 'team_id', $tid, 'f_race_id');
-    
-        $mvp    = $input['mvp']    ? $input['mvp']     : 0;
-        $cp     = $input['cp']     ? $input['cp']      : 0;
-        $td     = $input['td']     ? $input['td']      : 0;
-        $intcpt = $input['intcpt'] ? $input['intcpt']  : 0;
-        $bh     = $input['bh']     ? $input['bh']      : 0;
-        $si     = $input['si']     ? $input['si']      : 0;
-        $ki     = $input['ki']     ? $input['ki']      : 0;
-        $inj    = $input['inj']    ? $input['inj']     : 0;
-        $agn1   = $input['agn1']   ? $input['agn1']    : 0;
-        $agn2   = $input['agn2']   ? $input['agn2']    : 0;
-    
-        $query = "INSERT INTO match_data
-        (
-            f_coach_id,
-            f_team_id,
-            f_match_id,
-            f_tour_id,
-            f_did,
-            f_lid,
-            f_player_id,
-            f_race_id,
-
-            mvp,
-            cp,
-            td,
-            intcpt,
-            bh,
-            si,
-            ki,
-            inj,
-            agn1,
-            agn2,
-            mg
-        )
-        VALUES
-        (
-            $cid,
-            $tid,
-            $mid,
-            0,
-            0,
-            0,
-            $pid,
-            $rid,
-
-            $mvp,
-            $cp,
-            $td,
-            $intcpt,
-            $bh,
-            $si,
-            $ki,
-            $inj,
-            $agn1,
-            $agn2,
-            FALSE
-        )";
-        
-        return mysql_query($query);
     }
     
     public static function create(array $input) {

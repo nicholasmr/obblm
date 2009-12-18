@@ -36,7 +36,7 @@ define('T_TEXT_MATCH_SUMMARY', 7);
 #define('T_TEXT_TOUR',   8); # Deprecated
 #define('T_TEXT_GUEST',  9); # Deprecated
 #define('T_TEXT_LOG',    10); # Deprecated
-define('T_TEXT_MATCH_COMMENT', 11);
+#define('T_TEXT_MATCH_COMMENT', 11); # Deprecated
 define('T_TEXT_TNEWS',  12); // Team news.
 
 class TextSubSys
@@ -132,13 +132,12 @@ class TextSubSys
             // Specific fields:
             $o->date_mod  = $m->date_modified;
             $o->match_id  = $m->match_id;
-            $o->comments  = $m->getComments();
             // General fields:
             $o->cssidx    = T_HTMLBOX_INFO; // CSS box index
             $o->type      = T_TEXT_MATCH_SUMMARY;
             $o->author    = get_alt_col('coaches', 'coach_id', $m->submitter_id, 'name');
             $o->title     = "Match: $m->team1_name $m->team1_score&mdash;$m->team2_score $m->team2_name";
-            $o->message   = $m->comment;
+            $o->message   = $m->getText();
             $o->date      = $m->date_played;
             array_push($board, $o);
         }
@@ -341,68 +340,6 @@ class MatchSummary extends TextSubSys
         }
 
         return $r;
-    }
-}
-
-/* 
- *  Match summary comments
- */
-
-class MatchComment extends TextSubSys
-{
-    /***************
-     * Properties 
-     ***************/
-
-    public $cid = 0; // Comment ID.
-    public $mid = 0; // ID of match to which this summary comment belongs to.
-    public $sid = 0; // Submitter's ID.
-    public $sname = ''; // Submitter's name.
-    public $txt = '';
-
-    /***************
-     * Methods 
-     ***************/    
-
-    function __construct($cid) 
-    {
-        parent::__construct($cid);
-        $this->cid = $cid;
-        $this->mid = $this->f_id;
-        $this->sid = (int) $this->txt2; // NOTE: The submitter's ID is stored in a text field type!
-        $this->sname = get_alt_col('coaches', 'coach_id', $this->sid, 'name');
-        
-        return true;
-    }
-    
-    /***************
-     * Statics
-     ***************/
-     
-    public static function matchHasComments($mid)
-    {
-        $query = "SELECT COUNT(*) AS 'cnt' FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MATCH_COMMENT;
-        $result = mysql_query($query);
-        $row = mysql_fetch_assoc($result);
-        return ((int) $row['cnt'] > 0);
-    }
-    
-    public static function getComments($mid, $sort = '-')
-    {
-        $c = array();
-        $query = "SELECT txt_id FROM texts WHERE f_id = $mid AND type = ".T_TEXT_MATCH_COMMENT.' ORDER BY date '.(($sort == '-') ? 'DESC' : 'ASC');
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                array_push($c, new self($row['txt_id']));
-            }
-        }
-        return $c;
-    }
-    
-    public static function create($mid, $sid, $txt)
-    {
-        return parent::create($mid, T_TEXT_MATCH_COMMENT, $txt, $sid);
     }
 }
 

@@ -77,6 +77,8 @@ $upgradeSQLs = array(
         // Add improvement rolls.
         SQLUpgrade::runIfColumnNotExists('match_data', 'ir_d1', 'ALTER TABLE match_data ADD COLUMN ir_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
         SQLUpgrade::runIfColumnNotExists('match_data', 'ir_d2', 'ALTER TABLE match_data ADD COLUMN ir_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+        
+        'DELETE FROM texts WHERE type = 11', # Match summary comments are deprecated.
     ),
 );
 

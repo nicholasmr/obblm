@@ -151,9 +151,6 @@ function sec_main() {
                             case T_TEXT_MATCH_SUMMARY:
                                 echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." " . (isset($e->date_mod) ? "(".$lng->getTrn('main/lastedit')." ".textdate($e->date_mod).") " : '') .$lng->getTrn('main/by')." $e->author</td>\n";
                                 echo "<td align='right'><a href='index.php?section=matches&amp;type=report&amp;mid=$e->match_id'>".$lng->getTrn('common/view')."</a></td>\n";
-                                if (!empty($e->comments)) {
-                                    echo "<td align='right'><a href='javascript:void(0)' onclick=\"slideToggle('comment$e->match_id');\">".$lng->getTrn('main/comments')."</a></td>\n";
-                                }
                                 break;
                             case  T_TEXT_MSG:
                                 echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." ".$lng->getTrn('main/by')." $e->author</td>\n";
@@ -171,12 +168,7 @@ function sec_main() {
                         ?>
                     </tr></table>
                     <?php
-                    if ($e->type == T_TEXT_MATCH_SUMMARY && !empty($e->comments)) {
-                        echo "<div style='display:none;' id='comment$e->match_id'><hr>\n";
-                        foreach ($e->comments as $c) { echo '<br>'.$lng->getTrn('main/posted').' '.textdate($c->date).' '.$lng->getTrn('main/by')." $c->sname:<br>\n".$c->txt."<br>\n";}
-                        echo "</div>";
-                    }
-                    elseif ($e->type == T_TEXT_MSG) {
+                    if ($e->type == T_TEXT_MSG) {
                         echo "<div style='display:none;' id='msgedit$e->msg_id'>\n";
                         echo "<hr><br>\n";
                         echo '<form method="POST">

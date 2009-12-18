@@ -274,7 +274,9 @@ public static function report() {
             'tv1'           => (int) $_POST['tv1']*1000,
             'tv2'           => (int) $_POST['tv2']*1000,
         )));
-        $m->saveText($_POST['summary']); # Save summery.
+        if (!empty($_POST['summary'])) {
+            $m->saveText($_POST['summary']); # Save summery.
+        }
         MTS('matches entry submitted');
 
         // Update match's player data
@@ -395,16 +397,6 @@ public static function report() {
         $team2 = new Team($m->team2_id);
     }
     
-    // Match comment made?
-    if (isset($_POST['msmrc']) && is_object($coach)) {
-        status($m->newComment($coach->coach_id, $_POST['msmrc']));
-    }
-    
-    // Match comment delete?
-    if (isset($_POST['type']) && $_POST['type'] == 'cmtdel' && is_object($coach)) {
-        status($m->deleteComment($_POST['cid']));
-    }
-
     /****************
      *
      * Generate form 
@@ -554,45 +546,11 @@ public static function report() {
         <table class='common'>
             <tr><td class='seperator' colspan='13'></td></tr>
             <tr class='commonhead'><td colspan='13'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td></tr>
-            <tr><td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->comment; ?></textarea></td></tr>
+            <tr><td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->getText(); ?></textarea></td></tr>
         </table>
         <br><center><input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>></center>
     </form>
     <br><br>
-    <?php
-    $CDIS = (!is_object($coach)) ? 'DISABLED' : '';
-    ?>
-    <table class="common">
-        <tr class='commonhead'>
-            <td colspan='13'><b><a href="javascript:void(0)" onclick="obj=document.getElementById('msmrc'); if (obj.style.display != 'none'){obj.style.display='none'}else{obj.style.display='block'};">[+/-]</a> <?php echo $lng->getTrn('matches/report/comments');?></b></td>
-        </tr>
-        <tr><td class='seperator'></td></tr>
-        <tr><td><div id="msmrc">
-            <?php echo $lng->getTrn('matches/report/existCmt');?>: <?php if (!$m->hasComments()) echo '<i>'.$lng->getTrn('common/none').'</i>';?><br><br>
-            <?php
-            foreach ($m->getComments() as $c) {
-                echo "Posted $c->date by <b>$c->sname</b> 
-                    <form method='POST' name='cmt$c->cid' style='display:inline; margin:0px;'>
-                    <input type='hidden' name='type' value='cmtdel'>
-                    <input type='hidden' name='cid' value='$c->cid'>
-                    <a href='javascript:void(0);' onClick='document.cmt$c->cid.submit();'>".$lng->getTrn('common/delete')."</a>
-                    </form>
-                    :<br>".$c->txt."<br><br>\n";
-            }
-            ?>
-        </div></td></tr>
-        <tr><td>
-            <form method="POST">
-            <?php echo $lng->getTrn('matches/report/newCmt');?>:<br>
-            <textarea name="msmrc" rows='5' cols='100' <?php echo $CDIS;?>><?php echo $lng->getTrn('common/nobody');?></textarea>
-            <br>
-            <input type="submit" value="<?php echo $lng->getTrn('common/submit');?>" name="new_msmrc" <?php echo $CDIS;?>>
-            </form>
-        </td></tr>
-    </table>
-    <script language='JavaScript' type='text/javascript'>
-        document.getElementById('msmrc').style.display = 'none';
-    </script>
     <?php
     
     /* 
@@ -712,7 +670,7 @@ public static function report_ES($mid, $DIS)
         $status = true;
         foreach ($players as $teamPlayers) {
         foreach ($teamPlayers as $p) {
-            $status &= $m->ESentry(
+            $status &= Match::ESentry(
                 array(
                     'f_pid' => $p['pid'], 'f_tid' => $p['f_tid'], 'f_cid' => $p['f_cid'], 'f_rid' => $p['f_rid'], 
                     'f_mid' => $mid, 'f_trid' => $NR['trid'], 'f_did' => $NR['did'], 'f_lid' => $NR['lid']
