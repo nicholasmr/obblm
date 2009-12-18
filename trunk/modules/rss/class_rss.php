@@ -154,9 +154,7 @@ class RSSfeed implements ModuleInterface
                         $m = new Match($item->match_id);
                         $entries[] = (object) array(
                             'title' => "Match: $m->team1_name ($m->team1_score) vs. $m->team2_name ($m->team2_score)", 
-                            'desc' => $m->comment.(($m->hasComments()) 
-                                ? "\n\nComments:\n---------\n\n".implode("\n\n", array_map(create_function('$c', 'return "$c->sname:\n$c->txt";'), $m->getComments()))
-                                : ''), 
+                            'desc' => $m->getText(), 
                             'date' => $m->date_played
                         );
                     }

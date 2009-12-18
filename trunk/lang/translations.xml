@@ -128,7 +128,6 @@
     <!-- has no <name> tag! -->
     <newmsg>New message</newmsg>
     <more>more</more>
-    <comments>Comments</comments>
     <posted>Posted</posted>
     <by>by</by>
     <lastedit>last edited</lastedit>
@@ -462,9 +461,6 @@
             <tv>TVs</tv>
             
         <summary>Game summary</summary>
-        <comments>Match comment(s)</comments>
-            <existCmt>Existing comment(s)</existCmt>
-            <newCmt>New comment</newCmt>
     </report>
 </matches>
 
