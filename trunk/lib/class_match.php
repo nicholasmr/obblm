@@ -490,24 +490,6 @@ class Match
         return true;
     }
     
-    public function getSummedAch($s) {
-        
-        /**
-         * Returns a two-element array with a match summed field, $s (td or int or ...), for each team. Index 1 = team 1, index 2 = team 2.
-         **/
-         
-         $v = array();
-         
-         foreach (array(1,2) as $i) {
-             $query = "SELECT SUM($s) as '$s' FROM matches, match_data WHERE f_match_id = match_id AND match_id = $this->match_id AND f_team_id = team${i}_id";
-             $result = mysql_query($query);
-             $row = mysql_fetch_assoc($result);
-             $v[$i] = ($row[$s]) ? $row[$s] : 0;
-         }
-         
-         return $v;
-    }
-    
     public function saveText($str) {
         
         $txt = new MatchSummary($this->match_id);
