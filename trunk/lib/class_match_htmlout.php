@@ -273,8 +273,8 @@ public static function report() {
             'fame2'         => (int) $_POST['fame2'],
             'tv1'           => (int) $_POST['tv1']*1000,
             'tv2'           => (int) $_POST['tv2']*1000,
-            'comment'       => $_POST['summary'] ? $_POST['summary'] : '',
         )));
+        $m->saveText($_POST['summary']); # Save summery.
         MTS('matches entry submitted');
 
         // Update match's player data
@@ -636,14 +636,14 @@ protected static function _print_player_row($FS, $name, $nr, $pos, $bgcolor, $md
     echo "<td>$nr</td>\n";
     echo "<td>$name</td>\n";
     echo "<td>$pos</td>\n";
-    echo "<td><input type='checkbox' " . ($mdat['mvp'] ? 'CHECKED ' : '')." $DIS name='mvp_$FS'></td>\n";
+    echo "<td><input type='checkbox' " . ((isset($mdat['mvp']) && $mdat['mvp']) ? 'CHECKED ' : '')." $DIS name='mvp_$FS'></td>\n";
     foreach (array_diff(array_keys($T_MOUT_ACH), array('mvp')) as $f) {
-        echo "<td><input $DIS type='text' onChange='numError(this);' size='1' maxlength='2' name='${f}_$FS' value='".$mdat[$f]."'></td>\n";
+        echo "<td><input $DIS type='text' onChange='numError(this);' size='1' maxlength='2' name='${f}_$FS' value='".(isset($mdat[$f]) ? $mdat[$f] : 0)."'></td>\n";
     }
     foreach (array_keys($T_MOUT_IR) as $irl) {
         echo "<td><select name='${irl}_$FS' $DIS>";
         foreach (range(0,6) as $N) {
-            echo "<option value='$N' ".(($mdat[$irl] == $N) ? 'SELECTED' : '').">$N</option>";
+            echo "<option value='$N' ".((isset($mdat[$irl]) && $mdat[$irl] == $N) ? 'SELECTED' : '').">$N</option>";
         }
         echo "</select></td>\n";
     }
@@ -652,7 +652,7 @@ protected static function _print_player_row($FS, $name, $nr, $pos, $bgcolor, $md
     foreach (array_combine(array_keys($T_MOUT_INJ), array($T_INJS, $T_INJS_AGN, $T_INJS_AGN)) as $f => $opts) {
         echo "<td><select name='${f}_$FS' $DIS>";
         foreach ($opts as $status => $name) {
-            echo "<option value='$status' ".(($mdat[$f] == $status) ? 'SELECTED' : '').">$name</option>";
+            echo "<option value='$status' ".((isset($mdat[$f]) && $mdat[$f] == $status) ? 'SELECTED' : '').">$name</option>";
         }
         echo "</select></td>\n";
     }

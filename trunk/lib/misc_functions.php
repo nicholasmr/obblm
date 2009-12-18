@@ -68,6 +68,12 @@ function array_strpack($str, array $arr, $implode_delimiter = false, $specifier 
     return ($implode_delimiter) ? implode($implode_delimiter, $ret) : $ret;
 }
 
+function array_strpack_assoc($str, array $arr, $implode_delimiter = false, $key = '%k', $val = '%v') {
+    /* Like array_strpack(), but supports associative array argument. */
+    $ret = array_map(create_function('$k,$v', 'return str_replace(array("'.$key.'","'.$val.'"), array($k,$v), "'.$str.'");'), array_keys($arr),array_values($arr));
+    return ($implode_delimiter) ? implode($implode_delimiter, $ret) : $ret;
+}
+
 // Returns what sort rule is to be used for different stats-table types.
 function sort_rule($w) {
 

@@ -28,10 +28,8 @@ define('RT_SEMI', 253); # Semi-finals.
 define('RT_QUARTER', 252); # Quarter-finals.
 define('RT_ROUND16', 251); # Round of 16.
 
-define('MAX_ROUNDNR', RT_ROUND16); # This should have the value of the smallest reserved round number.
-
 // Reserved (non-real) matches:
-define('MATCH_ID_IMPORT', -1);
+define('T_IMPORT_MID', -1);
 
 // Player match data fields:
 $T_PMD_RELS_OBJ = array('f_player_id','f_team_id','f_coach_id','f_race_id',);
@@ -231,42 +229,22 @@ class Match
         return $status;
     }
 
-    public function chTeamId($nr, $new_tid) {
-
-        /**
-         * Changes team $nr id to $new_tid.
-         **/
-
-        // If both competitor IDs are to become zero, then the match entry is unuseable, therefore we delete it.
-        if ($new_tid == 0 && $this->{'team'.(($nr == 1) ? 2 : 1).'_id'} == 0) {
-            $this->delete();
-            return true;
-        }
-
-        $old_tid = $this->{"team{$nr}_id"};
-        
-        $query1 = "UPDATE matches SET team${nr}_id = $new_tid WHERE match_id = $this->match_id";
-        $query2 = "DELETE FROM match_data WHERE f_match_id = $this->match_id AND f_team_id = $old_tid";
-        
-        if (mysql_query($query1) && mysql_query($query2)) {
-            $this->{"team{$nr}_id"} = $new_tid;
-            if ($new_tid == 0) {
-                $query = "UPDATE matches SET team1_score = NULL, team2_score = NULL, date_played = NULL, date_modified = NULL, locked = 1 WHERE match_id = $this->match_id";
-                if (mysql_query($query)) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-
     public function update(array $input) {
  
-        /**
-         * Updates general match data.
-         **/
+        /* 
+            Updates general match data. 
+            
+            $input must contain the keys defined in $core_tables, with the exception of the $filter contents below.
+        */
 
+        // Verify input
+        global $core_tables;
+        $filter = array('match_id','round','f_tour_id','locked','date_played','date_modified','date_created','team1_id','team2_id',);
+        $EXPECTED = array_diff(array_keys($core_tables['matches']), $filter); sort($EXPECTED);
+        $PASSED = array_keys($input); sort($PASSED);
+        if ($PASSED !== $EXPECTED)
+            return false;
+            
         // Input check.
         if ($this->locked || !get_alt_col('coaches', 'coach_id', $input['submitter_id'], 'coach_id')) # If invalid submitter ID (coach ID) then quit.
             return false;
@@ -277,44 +255,18 @@ class Match
         if ($team1->rg_ff - $this->ffactor1 + $input['ffactor1'] < 0) $input['ffactor1'] = $this->ffactor1;
         if ($team2->rg_ff - $this->ffactor2 + $input['ffactor2'] < 0) $input['ffactor2'] = $this->ffactor2;
 
-        // Update match entry.
-        $query = "UPDATE matches SET 
-                    submitter_id    = $input[submitter_id],
-                    stadium         = $input[stadium],
-                    gate            = $input[gate],
-                    fans            = $input[fans],
-                    ffactor1        = $input[ffactor1],
-                    ffactor2        = $input[ffactor2],
-                    income1         = $input[income1],
-                    income2         = $input[income2],
-                    date_played     = ".(($this->is_played) ? 'date_played' : 'NOW()').",
-                    date_modified   = NOW(),
-                    team1_score     = $input[team1_score],
-                    team2_score     = $input[team2_score],
-                    smp1            = $input[smp1],
-                    smp2            = $input[smp2],
-                    tcas1           = $input[tcas1],
-                    tcas2           = $input[tcas2],
-                    fame1           = $input[fame1],
-                    fame2           = $input[fame2],
-                    tv1             = $input[tv1],
-                    tv2             = $input[tv2]
-        WHERE match_id = $this->match_id";
+        // Entry corrections
+        $input['date_played'] = ($this->is_played) ? 'date_played' : 'NOW()';
+        $input['date_modified'] = 'NOW()';
 
+        // Update match entry.
+        $query = "UPDATE matches SET ".array_strpack_assoc('%k = %v',$input,',')." WHERE match_id = $this->match_id";
         if (!mysql_query($query))
             return false;
             
         // Update team treasury
-        if ($input['income1'] != $this->income1 || $input['income2'] != $this->income2) {
-            $delta1 = $input['income1'] - $this->income1;
-            $delta2 = $input['income2'] - $this->income2;
-
-            if (!$team1->dtreasury($delta1) || !$team2->dtreasury($delta2))
-                return false;
-        }
-
-        // Save match summary.
-        $this->saveText($input['comment']);
+        $team1->dtreasury($input['income1'] - $this->income1);
+        $team2->dtreasury($input['income2'] - $this->income2);
         
         return true;
     }
@@ -518,7 +470,6 @@ class Match
     }
     
     public function getPlayerEntry($pid) {
-    
         /**
          * Returns array holding the match data entry from a specific match for this player.
          **/
@@ -527,8 +478,7 @@ class Match
         $fields = array_merge(array_fill_keys($T_PMD_ACH_IR, 0), array_fill_keys($T_PMD_INJ, NONE));
         $query  = "SELECT ".implode(',',array_keys($fields))." FROM match_data WHERE f_match_id = $this->match_id AND f_player_id = $pid";
         $result = mysql_query($query);
-        $mdat   = (mysql_num_rows($result) > 0) ? mysql_fetch_assoc($result) : $fields;
-        return $mdat;
+        return (mysql_num_rows($result) > 0) ? mysql_fetch_assoc($result) : array();
     }
     
     // ALWAYS run this when finished (AFTER!!!) submitting ALL match data.
@@ -632,13 +582,13 @@ class Match
         $mid = null;
         
         // Does fake match not exist?
-        if (!get_alt_col('matches', 'match_id', MATCH_ID_IMPORT, 'match_id')) {
+        if (!get_alt_col('matches', 'match_id', T_IMPORT_MID, 'match_id')) {
             $query = "INSERT INTO matches (match_id, team1_id,  team2_id, round, f_tour_id, date_created, date_played)
-                                    VALUES (".MATCH_ID_IMPORT.", 0, 0, 0, 0, 0, 0)";
+                                    VALUES (".T_IMPORT_MID.", 0, 0, 0, 0, 0, 0)";
             mysql_query($query);
         }
         
-        $mid = MATCH_ID_IMPORT;
+        $mid = T_IMPORT_MID;
         
         // Input
         $p = new Player($input['player_id']);
