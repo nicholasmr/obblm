@@ -1,22 +1,11 @@
 <?php
-
-/*
-FIX LIST:
-    SOLD constant removed! 
-*/
-
 global $raceididx;
-$err = false; // Invalid input data?
 
 // Input sent?
-if (isset($_POST['button'])) {
-
+if (isset($_FILES['xmlfile']) && ($xml = simplexml_load_file($_FILES['xmlfile']['tmp_name']))) {
+    
     $in = array('coach', 'name', 'race', 'treasury', 'apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders', 'players',
         'won_0', 'lost_0', 'draw_0', 'sw_0', 'sl_0', 'sd_0', 'wt_0', 'gf_0', 'ga_0', 'tcas_0', 'elo_0');
-    $inputType = (isset($_FILES['xmlfile'])) ? XML : HTML;
-
-    // Is input given as XML file? If so, make it appear as if it was submitted via the HTML import page (POST).
-    if ($inputType == XML && $xml = simplexml_load_file($_FILES['xmlfile']['tmp_name'])) {
 
         // Team related.
         foreach ($in as $field) {
@@ -42,12 +31,6 @@ if (isset($_POST['button'])) {
             }
             $_POST[$i.'status'] = $a;
         }
-    }
-
-    if ($inputType == XML && !$xml) {
-        status(false, 'Something is wrong with the passed XML file.');
-        $err = true;
-    }
 
     // Validate input.
     foreach ($in as $field) {
@@ -79,11 +62,6 @@ if (isset($_POST['button'])) {
                 $err = true;
             }
         }
-    }
-
-    if ($inputType == HTML && get_magic_quotes_gpc()) {
-        $_POST['name'] = stripslashes($_POST['name']);
-        $_POST['race'] = stripslashes($_POST['race']);
     }
 
     // If received input was valid, then create the team.
@@ -219,18 +197,6 @@ if (isset($_POST['button'])) {
     }
 }
 
-// We use JavaScript to manage populating the player position selection depending on what race chosen.
-$easyconvert = new array_to_js();
-@$easyconvert->add_array($DEA, 'gd'); // Load Game Data array into JavaScript array.
-echo $easyconvert->output_all();
-
-/*
-    If there was en error in the inputted data, $err is true, and the data did NOT come from a HTML form,
-    then don't try to recover it by filling out input fields with the received values.
-*/
-if ($err && $inputType == XML)
-    $err = false;
-
 title($lng->getTrn('menu/admin_menu/import'));
 ?>
 This page allows you to create a customized team for an existing coach.<br> 
@@ -248,3 +214,13 @@ Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right cli
     <br>
     <input type="submit" name="button" value="Import via XML file">
 </form>
+<br>
+When importing teams you will need to consult the below table in order to determine the team's race ID.<br><br>
+<table><tr style='font-style:italic;'><td>Race</td><td>Race ID</td></tr>
+<?php
+global $raceididx;
+foreach ($raceididx as $rid => $rname) {
+    echo "<tr><td>$rname</td><td>$rid</td></tr>\n";
+}
+?>
+</table>
