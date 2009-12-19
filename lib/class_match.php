@@ -434,9 +434,9 @@ class Match
             }
         }
 
-        /********************
-         *  Insert data into MySQL 
-         ********************/
+        /*
+            Insert data into MySQL 
+         */
 
         // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
         $status &= mysql_query("DELETE FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid");
