@@ -307,7 +307,7 @@ public static function report() {
                 
                 $m->entry($p->player_id, array(
                     // Regarding MVP: We must check for isset() since checkboxes are not sent at all when not checked! 
-                    'mvp'     => (isset($_POST['mvp_' . $p->player_id])) ? 1 : 0,
+                    'mvp'     => (isset($_POST["mvp_$p->player_id"]) && $_POST["mvp_$p->player_id"]) ? 1 : 0,
                     'cp'      => $_POST['cp_' . $p->player_id],
                     'td'      => $_POST['td_' . $p->player_id],
                     'intcpt'  => $_POST['intcpt_' . $p->player_id],
