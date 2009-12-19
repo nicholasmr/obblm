@@ -1,26 +1,12 @@
 <?php
-fatal('Out of order');
+
 /*
 FIX LIST:
     SOLD constant removed! 
 */
-global $raceididx;
-define('HTML', 1);
-define('XML', 2);
-$inputType = null;
-$err = false; // Invalid input data?
 
-define('INIT_PLAYERS', 11); // Initial player entries.
-define('UNLIMITED', 20); // Used for limiting the allowed amount of team items/things.
-?>
-<script language="JavaScript" type="text/javascript">
-    // Global JavaScript Variables.
-    var NONE    = <?php echo NONE; ?>;
-    var MNG     = <?php echo MNG; ?>;
-    var DEAD    = <?php echo DEAD; ?>;
-    var SOLD    = <?php echo SOLD; ?>;
-</script>
-<?php
+global $raceididx;
+$err = false; // Invalid input data?
 
 // Input sent?
 if (isset($_POST['button'])) {
@@ -254,7 +240,7 @@ via the admin tools in the coach corner, or simply delete the team and import a 
 
 <hr align="left" width="200px">
 <br>
-<i>Method 1:</i> Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right click on link --> save as) and uploading it.<br>
+Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right click on link --> save as) and uploading it.<br>
 <br>
 <form enctype="multipart/form-data" action="index.php?section=admin&amp;subsec=import" method="POST">
     <b>XML file:</b><br>
@@ -262,157 +248,3 @@ via the admin tools in the coach corner, or simply delete the team and import a 
     <br>
     <input type="submit" name="button" value="Import via XML file">
 </form>
-<br>
-<hr align="left" width="200px">
-<br>
-<i>Method 2:</i> Import a team by filling in the below formular.<br>
-<br>
-<form method="POST" action="index.php?section=admin&amp;subsec=import" name="importForm">
-
-    <b>Coach:</b><br>
-    <select name="coach">
-        <?php
-        foreach ($coaches as $c)
-            echo "<option value='$c->coach_id' ".(($err && $_POST['coach'] == $c->coach_id) ? 'SELECTED' : '').">$c->name </option>\n";
-        ?>
-    </select>
-
-    <br><br>
-    <b>Team name:</b><br>
-    <input type="text" name="name" size="20" maxlength="50" value="<?php echo ($err) ? $_POST['name'] : '';?>">
-
-    <br><br>
-    <b>Race:</b><br>
-    <select name="race" onchange="chRace(this.options[this.selectedIndex].value)">
-        <?php
-        foreach ($raceididx as $rid => $rname)
-            echo "<option value='$rid' ".(($err && $_POST['race'] == $rid) ? 'SELECTED' : '').">$rname</option>\n";
-        ?>
-    </select>
-
-    <br><br>
-    <b>Treasury:</b><br>
-    <input type="text" name="treasury" size="10" maxlength="10" value="<?php echo ($err) ? $_POST['treasury'] : '';?>" onChange="numError(this);">k gold pieces
-
-    <br><br>
-    <b>Apothecary</b> (ignored if chosen race can't buy a apothecary):<br>
-    <input type="radio" name="apothecary" value="1" <?php echo ($err && $_POST['apothecary']) ? 'CHECKED' : '';?>> Yes<br>
-    <input type="radio" name="apothecary" value="0" <?php echo ($err && !$_POST['apothecary'] || !$err) ? 'CHECKED' : '';?>> No
-
-    <br><br>
-    <table>
-        <tr>
-            <td><b>Re-rolls:</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Fan factor:</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Assistant coaches:</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Cheerleaders:</b>&nbsp;&nbsp;&nbsp;</td>
-        </tr>
-        <tr>
-            <td>
-                <select name="rerolls">
-                    <?php
-                    foreach (range(0, ($rules['max_rerolls'] == -1) ? UNLIMITED : $rules['max_rerolls']) as $i)
-                        echo "<option value='$i' ".(($err && $_POST['rerolls'] == $i) ? 'SELECTED' : '').">$i</option>\n";
-                    ?>
-                </select>
-            </td>
-            <td>
-                <select name="ff_bought">
-                    <?php
-                    foreach (range(0, ($rules['max_fan_factor'] == -1) ? UNLIMITED : $rules['max_fan_factor']) as $i)
-                        echo "<option value='$i' ".(($err && $_POST['ff_bought'] == $i) ? 'SELECTED' : '').">$i</option>\n";
-                    ?>
-                </select>
-            </td>
-            <td>
-                <select name="ass_coaches">
-                    <?php
-                    foreach (range(0, ($rules['max_ass_coaches'] == -1) ? UNLIMITED : $rules['max_ass_coaches']) as $i)
-                        echo "<option value='$i' ".(($err && $_POST['ass_coaches'] == $i) ? 'SELECTED' : '').">$i</option>\n";
-                    ?>
-                </select>
-            </td>
-            <td>
-                <select name="cheerleaders">
-                    <?php
-                    foreach (range(0, ($rules['max_cheerleaders'] == -1) ? UNLIMITED : $rules['max_cheerleaders']) as $i)
-                        echo "<option value='$i' ".(($err && $_POST['cheerleaders'] == $i) ? 'SELECTED' : '').">$i</option>\n";
-                    ?>
-                </select>
-            </td>
-        </tr>
-    </table>
-    <table>
-        <tr>
-            <td><b>Won matches</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Lost matches</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Draw matches</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Largest win streak</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Largest lose streak</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Largest draw streak</b>&nbsp;&nbsp;&nbsp;</td>
-        </tr>
-        <tr>
-            <td><input type="text" name="won_0"  size="4" maxlength="10" value="<?php echo ($err) ? $_POST['won_0'] : '0';?>"></td>
-            <td><input type="text" name="lost_0" size="4" maxlength="10" value="<?php echo ($err) ? $_POST['lost_0'] : '0';?>"></td>
-            <td><input type="text" name="draw_0" size="4" maxlength="10" value="<?php echo ($err) ? $_POST['draw_0'] : '0';?>"></td>
-            <td><input type="text" name="sw_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['sw_0'] : '0';?>"></td>
-            <td><input type="text" name="sl_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['sl_0'] : '0';?>"></td>
-            <td><input type="text" name="sd_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['sd_0'] : '0';?>"></td>
-        </tr>
-        <tr>
-            <td><b>Tournaments won</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Goals by team</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Goals against team</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Total team cas</b>&nbsp;&nbsp;&nbsp;</td>
-            <td><b>Team's current ELO</b>&nbsp;&nbsp;&nbsp;</td>
-            <td> </td>
-        </tr>
-        <tr>
-            <td><input type="text" name="wt_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['wt_0'] : '0';?>"></td>
-            <td><input type="text" name="gf_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['gf_0'] : '0';?>"></td>
-            <td><input type="text" name="ga_0"   size="4" maxlength="10" value="<?php echo ($err) ? $_POST['ga_0'] : '0';?>"></td>
-            <td><input type="text" name="tcas_0" size="4" maxlength="10" value="<?php echo ($err) ? $_POST['tcas_0'] : '0';?>"></td>
-            <td><input type="text" name="elo_0"  size="4" maxlength="10" value="<?php echo ($err) ? $_POST['elo_0'] : '0';?>"></td>
-            <td> </td>
-        </tr>
-    </table>
-
-    <br>
-    <b>Players:</b>
-    <br><br>
-    <u>Please note:</u>
-    <ul>
-        <li>Player entries are ignored if player name is empty.</li>
-        <li>Player skills and characteristics are chosen via coach corner.</li>
-        <li>Empty cells are equal to zero.</li>
-    </ul>
-
-    <table id="playerTable">
-        <tr>
-            <td>#</td>
-            <td>Name</td>
-            <td>Position</td>
-            <td>Status</td>
-            <td>Cp/Td/Int/BH/SI/Ki/Mvp</td>
-            <td>Inj.: Ma/St/Ag/Av/Ni</td>
-        </tr>
-        <!-- Body (player rows) are added by javascript -->
-    </table>
-    <a href="javascript:void(0)" onClick="addPlayerEntry();return false;" title="Add new player entry"><b>[+]</b></a>
-    <br><br>
-    <hr align="left" style="width:150px; height:3px;">
-    <input type="hidden" name="players" value="0">
-    <input type="submit" name="button" value="Create team">
-</form>
-
-<?php
-for ($i = 1; $i <= INIT_PLAYERS; $i++) {
-    ?>
-    <script language="JavaScript" type="text/javascript">addPlayerEntry();</script>
-    <?php
-}
-?>
-<script language="JavaScript" type="text/javascript">
-    scrollTop();
-</script>
-<?php

@@ -388,27 +388,26 @@ private function _stats()
             <table class="boxTable">
             <?php
             $stats = array(
-                # Display name => array(field_for, field_against, (int or false) sprintf() precision)
-                'CAS' => array('cas', false, 2),
-                'BH'  => array('bh', false, 2),
-                'Ki'  => array('ki', false, 2),
-                'Si'  => array('si', false, 2),
-                'TD'  => array('td', false, 2),
-                'Int' => array('intcpt', false, 2),
-                'Cp'  => array('cp', false, 2),
-                'Goals' => array('gf', 'ga', 2),
-                'SMP' => array('smp', false, 2),                
+                # Display name => array(field (int or false) sprintf() precision)
+                'CAS' => array('cas', 2),
+                'BH'  => array('bh', 2),
+                'Ki'  => array('ki', 2),
+                'Si'  => array('si', 2),
+                'TD'  => array('td', 2),
+                'Int' => array('intcpt', 2),
+                'Cp'  => array('cp', 2),
+                'GF'  => array('gf', 2),
+                'GA'  => array('ga', 2),
+                'SMP' => array('smp', 2),                
             );
             $thisAVG = clone $this;
             $thisAVG->setStats(false, false, true);
-            echo "<tr><td>Ach.</td> <td>For</td> <td>Against</td> <td>Avg. for per match</td> <td>Avg. against per match</td> </tr>\n";
+            echo "<tr><td>Ach.</td> <td>Amount</td> <td>Avg. per match</td></tr>\n";
             echo "<tr><td colspan='5'><hr></td></tr>\n";
             foreach ($stats as $name => $d) {
                 echo "<tr><td><i>$name</i></td>";
                 echo "<td>".($this->{"mv_$d[0]"})."</td>";
-                echo "<td>".(($d[1]) ? $this->{"mv_$d[1]"} : '<i>N/A</i>')."</td>";
-                echo "<td>".sprintf("%1.$d[2]f", $thisAVG->{"mv_$d[0]"})."</td>";
-                echo "<td>".(($d[1]) ? sprintf("%1.$d[2]f", $thisAVG->{"mv_$d[1]"}) : '<i>N/A</i>')."</td>";
+                echo "<td>".sprintf("%1.$d[1]f", $thisAVG->{"mv_$d[0]"})."</td>";
                 echo "</tr>\n";
             }
             ?>
