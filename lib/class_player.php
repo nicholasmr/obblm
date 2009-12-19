@@ -457,7 +457,7 @@ class Player
         $query = '';
         if ($type == "C" && in_array($skill, $this->choosable_skills['chr'])) {
             $fname = $CHR_CONV[$skill];
-            $query = "UPDATE players SET $fname = $fname + 1 WHERE player_id = $this->player_id";
+            $query = "UPDATE players SET ach_$fname = ach_$fname + 1 WHERE player_id = $this->player_id";
         }
         elseif ($IS_REGULAR || $IS_EXTRA) {
             $this->{$skillcats[$type]['obj_idx']}[] = $skill;
