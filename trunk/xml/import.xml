@@ -8,26 +8,22 @@
     <!-- General team fields -->
     <coach>Coach name</coach>
     <name>Team name</name>
-    <race>Amazon</race>
+    <race_id>0</race_id>
     <treasury>0</treasury>
     <apothecary>0</apothecary>
     <rerolls>0</rerolls>
-    <ff_bought>0</ff_bought> <!-- Use your current total FF count -->
+    <ff>0</ff> <!-- Use your current TOTAL FF count -->
     <ass_coaches>0</ass_coaches>
     <cheerleaders>0</cheerleaders>
     
     <!-- Statistics -->
-    <won_0>0</won_0>   <!-- Won matches -->
-    <lost_0>0</lost_0> <!-- Lost matches -->
-    <draw_0>0</draw_0> <!-- Draw matches -->
-    <sw_0>0</sw_0>     <!-- Largest win streak -->
-    <sl_0>0</sl_0>     <!-- Largest lose streak -->
-    <sd_0>0</sd_0>     <!-- Largest draw streak -->
-    <wt_0>0</wt_0>     <!-- Won tournaments -->
-    <gf_0>0</gf_0>     <!-- Goals by team -->
-    <ga_0>0</ga_0>     <!-- Goals against team -->
-    <tcas_0>0</tcas_0> <!-- Total team CAS -->
-    <elo_0>0</elo_0>   <!-- Team's current ELO -->
+    <won>0</won>   <!-- Won matches -->
+    <lost>0</lost> <!-- Lost matches -->
+    <draw>0</draw> <!-- Draw matches -->
+    <wt>0</wt>     <!-- Won tournaments -->
+    <gf>0</gf>     <!-- Goals by team -->
+    <ga>0</ga>     <!-- Goals against team -->
+    <tcas>0</tcas> <!-- Total team CAS -->
 
     <!-- Players -->
     <!-- To add more players simply add more player tags in the same way as done below -->
