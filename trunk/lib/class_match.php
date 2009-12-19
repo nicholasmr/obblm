@@ -287,8 +287,8 @@ class Match
         /**
          * Updates match data of player.
          *
-         *  When saving mercs pass the extra input fields: team_id, nr, skills
-         *  When saving stars pass the extra input fields: team_id
+         *  When saving mercs pass the extra input fields: f_team_id, nr, skills
+         *  When saving stars pass the extra input fields: f_team_id
          *
          **/
 
@@ -319,12 +319,10 @@ class Match
                 $query = "SELECT owned_by_team_id AS 'f_team_id', f_cid AS 'f_coach_id', f_rid AS 'f_race_id' FROM players WHERE player_id = $pid";
                 $result = mysql_query($query);            
                 $rels = mysql_fetch_assoc($result);
-                $tid = $rels['f_team_id'];
                 break;
                 
             case ($pid <= ID_STARS_BEGIN || $pid == ID_MERCS): # Star player or Mercenary?
-                $tid = $input['team_id']; unset($input['team_id']);
-                $query = "SELECT owned_by_coach_id AS 'f_coach_id', f_race_id AS 'f_race_id' FROM teams WHERE team_id = $tid";
+                $query = "SELECT owned_by_coach_id AS 'f_coach_id', f_race_id AS 'f_race_id' FROM teams WHERE team_id = $input[f_team_id]";
                 $result = mysql_query($query);            
                 $rels = mysql_fetch_assoc($result);
                 

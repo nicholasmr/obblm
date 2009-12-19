@@ -334,7 +334,7 @@ public static function report() {
 
                     $m->entry($sid, array(
                         // Star required input
-                        'team_id'   => $t->team_id,
+                        'f_team_id' => $t->team_id,
                         // Regular input
                         'mvp'     => (isset($_POST["mvp_$sid"]) && $_POST["mvp_$sid"]) ? 1 : 0,
                         'cp'      => $_POST["cp_$sid"],
@@ -366,7 +366,7 @@ public static function report() {
                 if (isset($_POST["team$idm"]) && $_POST["team$idm"] == $id) {
                     $m->entry(ID_MERCS, array(
                         // Merc required input
-                        'team_id'   => $t->team_id,
+                        'f_team_id' => $t->team_id,
                         'nr'        => $i,
                         'skills'    => $_POST["skills$idm"],                    
                         // Regular input
