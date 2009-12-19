@@ -282,6 +282,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 $mresult = $match->entry( 
                     $f_player_id,
                     $input = array ( 
+                        'f_team_id' => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                         "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
                         "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
@@ -301,6 +302,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                     $match->entry( 
                         $pid = $zombie_added[1],
                         $input = array ( 
+                            'f_team_id' => $team_id,
                             "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                             "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
                             "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
@@ -321,6 +323,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                     $match->entry(
                         $p->player_id,
                         $input = array ( 
+                            'f_team_id' => $team_id,
                             "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, 
                             "ir_d1" => 0, "ir_d2" => 0,
                             "inj" => NONE, "agn1" => NONE, "agn2" => NONE ), 
