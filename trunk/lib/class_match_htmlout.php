@@ -617,7 +617,7 @@ protected static function _print_player_row($FS, $name, $nr, $pos, $bgcolor, $md
     echo "</tr>\n";
 }
 
-private static function player_validation($p, $m) {
+public static function player_validation($p, $m) {
 
     // NOTE: we allow MNG players!
 
