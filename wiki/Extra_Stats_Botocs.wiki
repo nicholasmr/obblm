@@ -26,9 +26,9 @@ The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) 
 ===Offensive Stats===
 
 
-||pass_attempts||Number of pass throw attempts of the ball.||
-||+completion||Number of completions of throws of the ball (+1 spp)||
-||interceptions_thrown||Number of times the thrower has been intercepted.||
+||pass_attempts||cp_a||Number of pass throw attempts of the ball.||
+||+completion||cp||Number of completions of throws of the ball (+1 spp)||
+||interceptions_thrown||??||Number of times the thrower has been intercepted.||
 ||pass_distance||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
 ||dumpoff_attempts||Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs).||
 ||dumpoff_completions||Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions).||
