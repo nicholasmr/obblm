@@ -66,9 +66,9 @@ Just to note inflicted counts here are based on the status of the player at the 
 
 ||inflicted_blocks||blk_i||Number of times this player tried to throw a block.||
 ||inflicted_defender_downs||pow_i||Number of times defender down was the selected result.||
-||inflicted_defender_stumbles||pow(i)_i||Number of times defender stumbles was the selected result.||
+||inflicted_defender_stumbles||pow(!)_i||Number of times defender stumbles was the selected result.||
 ||inflicted_pushes||psh_i||Number of times push was the selected result.||
-||inflicted_both_downs||both_iNumber of times both down was the selected result.||
+||inflicted_both_downs||both_i||Number of times both down was the selected result.||
 ||inflicted_attacker_downs||skul_i||Number of times attacker down was the selected result.||
 ||inflicted_knock_downs||dwns_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down).||
 ||inflicted_strip_balls||strp_i||Number of times strip ball has been used by this player.||
