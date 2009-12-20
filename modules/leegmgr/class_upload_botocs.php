@@ -242,6 +242,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         $team = new Team( $team_id );
         $players = $team->getPlayers();
+        $merc_nr = 1;
 
         foreach ( $teamPlayers as $player )
         {
@@ -253,11 +254,14 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 global $stars;
                 $stname = strval($player['name']);
                 if ( $stname == "Morg ‘n’ Thorg" ) $stname = "Morg 'n' Thorg";
-                $f_player_id  = $stars[$stname]['id'];
+                $f_player_id = $stars[$stname]['id'];
                 $player['inj'] = '';
             }
 
-            if ( $player['merc'] == "true" ) continue;
+            if ( $player['merc'] == "true" )
+            {
+                $f_player_id = ID_MERCS;
+            }#continue;
 
             foreach ( $players as $p  )
             {
@@ -278,14 +282,30 @@ class UPLOAD_BOTOCS implements ModuleInterface
             if ( $agn1 > $inj ) list($inj, $agn1) = array($agn1, $inj);
             if ( $agn1 == 8 || $agn1 == 2 ) $agn1 = 1;
 
-            if ( !$addZombie )
-                $mresult = $match->entry( 
+            if ( $f_player_id == ID_MERCS )
+            {
+                $match->entry( 
                     $f_player_id,
                     $input = array ( 
                         'f_team_id' => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                         "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
-                        "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
+                        "inj" => $inj, "agn1" => NONE, "agn2" => $agn1,
+                        "skills" => NONE, "nr" => $merc_nr,
+                    $player['EPS']
+                );
+                $merc_nr++;
+                continue;
+            }
+
+            if ( !$addZombie )
+                $match->entry( 
+                    $f_player_id,
+                    $input = array ( 
+                        'f_team_id' => $team_id,
+                        "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
+                        "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
+                        "inj" => $inj, "agn1" => $agn1, "agn2" => NONE,
                     $player['EPS']
                 );
             else
