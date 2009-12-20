@@ -70,7 +70,7 @@ if (isset($_FILES['xmlfile'])) {
         }
         
         // SYNC DATA!
-        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => T_IMPORT_MID, 'trid' => 0, 'tid1' => $tid, 'tid2' => 0, 'played' => 0));
+#        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => T_IMPORT_MID, 'trid' => 0, 'tid1' => $tid, 'tid2' => 0, 'played' => 0));
     }
 }
 

@@ -449,11 +449,11 @@ class Team
 
         // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
         global $raceididx;
-#        if (!in_array($input['f_race_id'], array_keys($raceididx))
-#        || !get_alt_col('coaches', 'coach_id', $input['owned_by_coach_id'], 'coach_id')
-#        || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
-#            return false;
-#        }
+        if (!in_array($input['f_race_id'], array_keys($raceididx))
+        || !get_alt_col('coaches', 'coach_id', $input['owned_by_coach_id'], 'coach_id')
+        || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
+            return false;
+        }
 
         // Data correction/preperation.
         $input['name'] = "'".mysql_real_escape_string($input['name'])."'"; # Need to quote strings when using INSERT statement.
