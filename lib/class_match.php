@@ -276,7 +276,7 @@ class Match
      * Statics
      ***************/
 
-    public static function ImportEntry ($pid, array $input) {
+    public static function ImportEntry($pid, array $input) {
         $status = (bool) mysql_query("REPLACE INTO matches (match_id, team1_id,  team2_id, round, f_tour_id, date_created, date_played)
             VALUES (".T_IMPORT_MID.", 0, 0, 0, 0, 0, 0)");
         return $status && self::_entry(null, $pid, $input, array(), true);
@@ -439,7 +439,9 @@ class Match
          */
 
         // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
-        $status &= mysql_query("DELETE FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid");
+        if (!$IMPORT) {
+            $status &= mysql_query("DELETE FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid");
+        }
         $query = 'INSERT INTO match_data ('.implode(',', $EXPECTED).') VALUES ('.implode(',', array_values($input)).')';
         
         return mysql_query($query) && 

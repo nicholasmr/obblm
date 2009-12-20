@@ -131,7 +131,8 @@ class SQLTriggers
         switch ($T_SQLTRIG)
         {
             case T_SQLTRIG_MATCH_UPD:
-                mysql_query("CALL match_sync($argv[mid], $argv[trid], $argv[tid1], $argv[tid2], $argv[played])") or die(mysql_error());
+                mysql_query($q="CALL match_sync($argv[mid], $argv[trid], $argv[tid1], $argv[tid2], $argv[played])") or die(mysql_error());
+                echo $q;
                 break;
 
             case T_SQLTRIG_MATCH_DEL:

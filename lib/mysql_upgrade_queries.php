@@ -79,6 +79,9 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNotExists('match_data', 'ir_d2', 'ALTER TABLE match_data ADD COLUMN ir_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
         
         'DELETE FROM texts WHERE type = 11', # Match summary comments are deprecated.
+        SQLUpgrade::runIfColumnExists('teams', 'sw_0', 'ALTER TABLE teams DROP sw_0'),
+        SQLUpgrade::runIfColumnExists('teams', 'sd_0', 'ALTER TABLE teams DROP sd_0'),
+        SQLUpgrade::runIfColumnExists('teams', 'sl_0', 'ALTER TABLE teams DROP sl_0'),
     ),
 );
 

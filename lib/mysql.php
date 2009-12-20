@@ -93,9 +93,6 @@ $core_tables = array(
         'lost_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'draw_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'played_0'  => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
-        'sw_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
-        'sl_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
-        'sd_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'wt_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'gf_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'ga_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
@@ -513,8 +510,7 @@ $relations_obj = array(
 // Initial values of object properties
 $objFields_init = array(
     T_OBJ_TEAM => array(
-        'won' => 'won_0', 'lost' => 'lost_0', 'draw' => 'draw_0', 
-        'swon' => 'sw_0', 'slost' => 'sl_0', 'sdraw' => 'sd_0',
+        'won' => 'won_0', 'lost' => 'lost_0', 'draw' => 'draw_0', 'played' => 'played_0',
         'wt_cnt' => 'wt_0', 'gf' => 'gf_0', 'ga' => 'ga_0', 'tcas' => 'tcas_0'
     ),
 );

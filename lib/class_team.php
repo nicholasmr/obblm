@@ -428,87 +428,42 @@ class Team
         return $teams;
     }
 
-    public static function create(array $input, $init = array()) {
+    // Required passed fields used by create().
+    public static $createEXPECTED = array(
+        'name','owned_by_coach_id','f_race_id','f_lid',
+        'treasury', 'apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders',
+        'won_0','lost_0','draw_0','played_0','wt_0','gf_0','ga_0','tcas_0','imported',
+    );
+
+    public static function create(array $input) {
 
         /**
          * Creates a new team.
-         *
-         * Input: coach_id, name, race (race ID), f_lid
          **/
 
-        global $rules, $raceididx;
+        $EXPECTED = self::$createEXPECTED;
+        sort($EXPECTED);
+        ksort($input);
+        if ($EXPECTED !== array_keys($input))
+            return false;
 
         // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
-        if (!in_array($input['race'], array_keys($raceididx))
-        || !get_alt_col('coaches', 'coach_id', $input['coach_id'], 'coach_id')
-        || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
-            return false;
-        }
+        global $raceididx;
+#        if (!in_array($input['f_race_id'], array_keys($raceididx))
+#        || !get_alt_col('coaches', 'coach_id', $input['owned_by_coach_id'], 'coach_id')
+#        || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
+#            return false;
+#        }
 
-        $query = "INSERT INTO teams
-                    (
-                        name,
-                        owned_by_coach_id,
-                        f_race_id,
-                        f_lid,
-                        treasury,
-                        apothecary,
-                        rerolls,
-                        ff_bought,
-                        ass_coaches,
-                        cheerleaders
-                        ".((!empty($init))
-                            ?
-                                ",won_0,
-                                lost_0,
-                                draw_0,
-                                played_0,
-                                sw_0,
-                                sl_0,
-                                sd_0,
-                                wt_0,
-                                gf_0,
-                                ga_0,
-                                elo_0,
-                                tcas_0,
-                                imported"
-                            : ''
-                        )."
-                    )
-                    VALUES
-                    (
-                        '" . mysql_real_escape_string($input['name']) . "',
-                        $input[coach_id],
-                        $input[race],
-                        $input[f_lid],
-                        $rules[initial_treasury],
-                        0,
-                        $rules[initial_rerolls],
-                        $rules[initial_fan_factor],
-                        $rules[initial_ass_coaches],
-                        $rules[initial_cheerleaders]
-                        ".((!empty($init))
-                            ?
-                                ",$init[won],
-                                $init[lost],
-                                $init[draw],
-                                ".($init['won']+$init['lost']+$init['draw']).",
-                                $init[sw],
-                                $init[sl],
-                                $init[sd],
-                                $init[wt],
-                                $init[gf],
-                                $init[ga],
-                                $init[elo],
-                                $init[tcas],
-                                1"
-                            : ''
-                        )."
-                    )";
+        // Data correction/preperation.
+        $input['name'] = "'".mysql_real_escape_string($input['name'])."'"; # Need to quote strings when using INSERT statement.
 
+        // Insert data.
+        $query = "INSERT INTO teams (".implode(',',$EXPECTED).") VALUES (".implode(',', $input).")";
         $ret = mysql_query($query);
         $tid = mysql_insert_id();
-        return $ret && SQLTriggers::run(T_SQLTRIG_TEAM_NEW, array('id' => $tid, 'obj' => new self($tid)));
+        
+        return ($ret && SQLTriggers::run(T_SQLTRIG_TEAM_NEW, array('id' => $tid, 'obj' => new self($tid)))) ? $tid : false;
     }
 }
 ?>
