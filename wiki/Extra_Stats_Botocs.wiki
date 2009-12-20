@@ -28,17 +28,17 @@ The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) 
 
 ||pass_attempts||cp_a||Number of pass throw attempts of the ball.||
 ||+completion||cp||Number of completions of throws of the ball (+1 spp)||
-||interceptions_thrown||??||Number of times the thrower has been intercepted.||
-||pass_distance||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
-||dumpoff_attempts||Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs).||
-||dumpoff_completions||Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions).||
-||catch_attempts||Number of catch attempts made my a player from a throw.||
-||catches||Number of catches made (including re-rolled).||
-||handoffs||Number of hand offs this player has made||
-||handoffs_received||Number of times this player has been handed off too.||
-||handoff_catches||Number times this player caught a hand off (including re-rolled).||
-||pickup_attempts||Number of times attempting to pick the ball up.||
-||pickups||Number of successful pick ups (including re-rolled).||
+||interceptions_thrown||cp_int||Number of times the thrower has been intercepted.||
+||pass_distance||cp_dist||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
+||dumpoff_attempts||dmp_a||Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs).||
+||dumpoff_completions||dmp_s||Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions).||
+||catch_attempts||catch_a|Number of catch attempts made my a player from a throw.||
+||catches||catch||Number of catches made (including re-rolled).||
+||handoffs||hnd||Number of hand offs this player has made||
+||handoffs_received||hnd_r_a||Number of times this player has been handed off to.||
+||handoff_catches||hnd_r||Number times this player caught a hand off (including re-rolled).||
+||pickup_attempts||pick_a||Number of times attempting to pick the ball up.||
+||pickups||pick||Number of successful pick ups (including re-rolled).||
 
 
 
