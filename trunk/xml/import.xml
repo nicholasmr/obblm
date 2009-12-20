@@ -1,50 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!-- 
     OBBLM team import XML schema 
-    Please DO NOT change or delete any XML tag identifiers!
+    DO NOT delete or change order of any XML tags!
 -->
-<xmlimport>
 
-    <!-- General team fields -->
-    <coach>Coach name</coach>
-    <name>Team name</name>
-    <race_id>0</race_id>
-    <treasury>0</treasury>
-    <apothecary>0</apothecary>
-    <rerolls>0</rerolls>
-    <ff>0</ff> <!-- Use your current TOTAL FF count -->
-    <ass_coaches>0</ass_coaches>
-    <cheerleaders>0</cheerleaders>
-    
-    <!-- Statistics -->
-    <won>0</won>   <!-- Won matches -->
-    <lost>0</lost> <!-- Lost matches -->
-    <draw>0</draw> <!-- Draw matches -->
-    <wt>0</wt>     <!-- Won tournaments -->
-    <gf>0</gf>     <!-- Goals by team -->
-    <ga>0</ga>     <!-- Goals against team -->
-    <tcas>0</tcas> <!-- Total team CAS -->
-
-    <!-- Players -->
-    <!-- To add more players simply add more player tags in the same way as done below -->
-
-        <player>
-            <name>Player #1 name</name>
-            <position>Linewoman</position>
-            <!-- Status may be one of the following: "ready", "mng" or "dead" -->
-            <status>ready</status>
-            <!-- Stats: cp/td/int/bh/si/ki/mvp -->
-            <stats>0/0/0/0/0/0/0</stats>
-            <!-- Injuries: ma/st/ag/av/ni -->
-            <injs>0/0/0/0/0</injs>
-        </player>
+<teams>
+    <!-- To add more teams simply create another "team" block within the "teams" block -->
+    <team>
+        <!-- General team fields -->
+        <name>Team name</name>
+        <coach_id>1</coach_id> <!-- ID of team's coach -->
+        <race_id>0</race_id> <!-- Race ID -->
         
-        <player>
-            <name>Player #2 name</name>
-            <position>Linewoman</position>
-            <status>ready</status>
-            <stats>0/0/0/0/0/0/0</stats>
-            <injs>0/0/0/0/0</injs>
-        </player>
+        <treasury>0</treasury>
+        <apothecary>0</apothecary>
+        <rr>0</rr>
+        <ff>0</ff> <!-- Use your current TOTAL FF count -->
+        <ass_coaches>0</ass_coaches>
+        <cheerleaders>0</cheerleaders>
         
-</xmlimport>
+        <!-- Statistics -->
+        <won>0</won>   <!-- Won matches -->
+        <lost>0</lost> <!-- Lost matches -->
+        <draw>0</draw> <!-- Draw matches -->
+        <wt>0</wt>     <!-- Won tournaments -->
+        <gf>0</gf>     <!-- Goals by team -->
+        <ga>0</ga>     <!-- Goals against team -->
+        <tcas>0</tcas> <!-- Total team CAS -->
+
+        <!-- Players -->
+        <players>
+            <!-- To add more players simply create another "player" block within the "players" block -->
+            <player>
+                <name>Player #1 name</name>
+                <nr>99</nr>
+                <pos_id>1</pos_id> <!-- Positional ID of player -->
+                <!-- Status may be one of the following: "none" (ready), "mng" or "dead" -->
+                <status>none</status>
+                <!-- Achievements -->
+                <cp>0</cp>
+                <td>0</td>
+                <intcpt>0</intcpt>
+                <bh>0</bh>
+                <ki>0</ki>
+                <si>0</si>
+                <mvp>0</mvp>
+                <!-- Injuries -->                
+                <ma>0</ma>
+                <st>0</st>
+                <ag>0</ag>
+                <av>0</av>
+                <ni>0</ni>
+            </player>
+        </players>
+    </team>
+</teams>

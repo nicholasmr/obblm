@@ -1,199 +1,76 @@
 <?php
-global $raceididx;
+
+global $raceididx, $T_INJS;
+global $T_PMD_ACH, $T_PMD_IR, $T_PMD_INJ;
+$T_INJS_REV = array_flip($T_INJS);
 
 // Input sent?
-if (isset($_FILES['xmlfile']) && ($xml = simplexml_load_file($_FILES['xmlfile']['tmp_name']))) {
-    
-    $in = array('coach', 'name', 'race', 'treasury', 'apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders', 'players',
-        'won_0', 'lost_0', 'draw_0', 'sw_0', 'sl_0', 'sd_0', 'wt_0', 'gf_0', 'ga_0', 'tcas_0', 'elo_0');
+if (isset($_FILES['xmlfile'])) {
 
-        // Team related.
-        foreach ($in as $field) {
-            if (isset($xml->$field))
-                $_POST[$field] = (string) $xml->$field;
-        }
-        $_POST['coach'] = ($tmp = get_alt_col('coaches', 'name', $_POST['coach'], 'coach_id')) ? $tmp : 0;
-        $_POST['players'] = count($xml->player);
+    $file = $_FILES['xmlfile']['tmp_name'];
+    $xml = new DOMDocument();
+    $xml->load($file); 
+    $xmlteams = $xml->schemaValidate('xml/import.xsd') ? simplexml_load_file($file) : (object) array('team' => array());
 
-        // Players.
-        for ($i = 1; $i <= $_POST['players']; $i++) {
-            foreach (array('name', 'position', 'status', 'stats', 'injs') as $field) {
-                if (isset($xml->player[$i-1]->$field))
-                    $_POST[$i.$field] = (string) $xml->player[$i-1]->$field;
-            }
-            switch ((isset($_POST[$i.'status'])) ? $_POST[$i.'status'] : '')
-            {
-                case 'ready': $a = NONE; break;
-                case 'mng':   $a = MNG; break;
-                case 'dead':  $a = DEAD; break;
-                case 'sold':  $a = SOLD; break;
-                default: $a = -1; // Unknown.
-            }
-            $_POST[$i.'status'] = $a;
-        }
+    $map = array(
+        # Team::$createEXPECTED => XML import schema field name
+        # If field is the same do not define entry!
+        'owned_by_coach_id' => 'coach_id', 
+        'f_race_id' => 'race_id',
+        'rerolls' => 'rr',
+        'ff_bought' => 'ff',
+        'won_0' => 'won',
+        'lost_0' => 'lost',
+        'draw_0' => 'draw',
+        'wt_0' => 'wt',
+        'gf_0' => 'gf',
+        'ga_0' => 'ga',
+        'tcas_0' => 'tcas',
+    );
 
-    // Validate input.
-    foreach ($in as $field) {
-        if (!isset($_POST[$field])) {
-            status(false, "Field '$field' could not be found.");
-            $err = true;
-        }
-    }
-    if (!$err) {
-        if (!get_alt_col('coaches', 'coach_id', $_POST['coach'], 'coach_id')) {
-            status(false, "Invalid team coach.");
-            $err = true;
-        }
-        if (empty($_POST['name']) || get_alt_col('teams', 'name', $_POST['name'], 'team_id')) {
-            status(false, "The team name must not be empty or identical to an existing team name.");
-            $err = true;
-        }
-        if (!in_array($_POST['race'], array_keys($raceididx))) {
-            status(false, "Invalid race chosen.");
-            $err = true;
-        }
-        if (!is_numeric($_POST['treasury'])) {
-            status(false, "Treasury amount must be numeric.");
-            $err = true;
-        }
-        foreach (array('apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders') as $a) {
-            if (!is_numeric($_POST[$a])) {
-                status(false, "Field '$a' must be numeric.");
-                $err = true;
-            }
-        }
-    }
-
-    // If received input was valid, then create the team.
-    if (!$err && Team::create(
-        array('coach_id' => $_POST['coach'], 'name' => $_POST['name'], 'race' => $_POST['race']),
-        array('won' => $_POST['won_0'], 'lost' => $_POST['lost_0'], 'draw' => $_POST['draw_0'], 'sw' => $_POST['sw_0'], 'sl' => $_POST['sl_0'], 'sd' => $_POST['sd_0'], 'wt' => $_POST['wt_0'], 'gf' => $_POST['gf_0'], 'ga' => $_POST['ga_0'], 'tcas' => $_POST['tcas_0'], 'elo' => $_POST['elo_0']-ELO_DEF_RANK) # ELO_DEF_RANK + true_elo_0 = $_POST['elo_0']
-        )) {
-        status(true, 'Team created.');
-
-        // Now lets correct team properties to fit the requested.
-        $t = new Team(get_alt_col('teams', 'name', $_POST['name'], 'team_id'));
-
-        foreach ($t->getGoods() as $name => $details) {
-            $cur = $t->$name;
-            if ($_POST[$name] > $cur) {
-                for ($i = 1; $i <= ($_POST[$name] - $cur); $i++) {
-                    $t->buy($name); // Buy the item.
-                    $t->dtreasury($details['cost']); // Give money back for item.
-                }
-            }
-            elseif ($_POST[$name] < $cur) {
-                for ($i = 1; $i <= ($cur - $_POST[$name]); $i++) {
-                    $t->drop($name); // Throw away the item.
-                }
-            }
-        }
-
-        // Now we create the players.
-        for ($i = 1; $i <= $_POST['players']; $i++) { // Note $i is the player number.
-
-            // Validate player input.
-            $in = array('name', 'position', 'status', 'stats', 'injs');
-
-            foreach ($in as $field) {
-                if (!isset($_POST[$i.$field])) {
-                    status(false, "Player #$i field '$field' could not be found.");
-                    continue 2;
-                }
-            }
-
-            if (!Player::price($_POST[$i.'position'])) {
-                // If we are able to find a price for the player at the specified position, then the position must be valid!
-                status(false, "The player position of player #$i is invalid.");
-                continue;
-            }
-            if (!in_array($_POST[$i.'status'], array(NONE, MNG, DEAD, SOLD))) {
-                status(false, "The status of player $i is invalid.");
-                continue;
-            }
-            if ((count($injsCnt = explode('/', $_POST[$i.'injs'])) != 5 && $attr = 'injuries') ||
-                (count($stats = explode('/', $_POST[$i.'stats'])) != 7  && $attr = 'stats')) {
-                status(false, "Not enough fields in player #$i attribute '$attr'.");
-                continue;
-            }
-
-            if (get_magic_quotes_gpc()) {
-                $_POST[$i.'name'] = stripslashes($_POST[$i.'name']);
-                $_POST[$i.'position'] = stripslashes($_POST[$i.'position']);
-            }
-
-            // Skip player entries with empty names.
-            if (empty($_POST[$i.'name']))
-                continue;
-
-            // Create the player.
-            $t->dtreasury(Player::price($_POST[$i.'position'])); // Make sure we have enough money to buy player.
-            $ret = Player::create(array('nr' => $i, 'position' => $_POST[$i.'position'], 'name' => $_POST[$i.'name'], 'team_id' => $t->team_id, 'forceCreate' => true));
-
-            if ($ret[0]) {
-
-                if ($_POST[$i.'status'] == SOLD) {
-                    $p = new Player($ret[1]);
-                    $p->sell();
-                    $_POST[$i.'status'] = NONE;
-                }
-
-                status(true, "Created player #$i.");
-
-                /*
-                    Since we are only able to store 3 injuries per player per match entry, we might need to create more than one fake match entry.
-                    Therefore we simply store all injuries in an array, an keep pop'ing them out until empty.
-                */
-
-                $injs = array();
-                $injs_idx = array('ma' => 0, 'st' => 1, 'ag' => 2, 'av' => 3, 'ni' => 4);
-                foreach (array('ma' => MA, 'st' => ST, 'ag' => AG, 'av' => AV, 'ni' => NI) as $a => $b) {
-                    for ($j = 1; $j <= $injsCnt[$injs_idx[$a]]; $j++) {
-                        array_push($injs, $b);
-                    }
-                }
-
-                Match::fakeEntry(array(
-                    'player_id' => $ret[1],
-                    'mvp'     => $stats[6],
-                    'cp'      => $stats[0],
-                    'td'      => $stats[1],
-                    'intcpt'  => $stats[2],
-                    'bh'      => $stats[3],
-                    'si'      => $stats[4],
-                    'ki'      => $stats[5],
-                    'inj'     => $_POST[$i.'status'],
-                    'agn1'    => ($tmp = array_pop($injs)) ? $tmp : NONE,
-                    'agn2'    => ($tmp = array_pop($injs)) ? $tmp : NONE,
+    foreach ($xmlteams->team as $t) {
+        # Corrections
+        $t->played_0 = $t->won+$t->lost+$t->draw;
+        $t->imported = 1;
+        $t->f_lid = 0;
+        # Add team
+        status($tid = Team::create(array_merge(
+            array_intersect_key((array) $t, array_fill_keys(Team::$createEXPECTED, null)), # Fields which are correctly named in XMl file.
+            array_combine(array_keys($map), array_values(array_intersect_key((array) $t, array_fill_keys(array_values($map), null)))) # Mapped fields.
+        )), 
+        "Created team '$t->name'");
+        # Add players
+        if ($tid) {
+            foreach ($t->players->player as $p) {
+                $p = (object) ((array) $p); # Get rid of SimpleXML objects.
+                list($status1, $pid) = Player::create(array(
+                    'nr' => $p->nr, 'f_pos_id' => $p->pos_id, 'name' => $p->name, 'team_id' => $tid, 'forceCreate' => true,
                 ));
-
-                while (!empty($injs)) {
-                    Match::fakeEntry(array(
-                        'player_id' => $ret[1],
-                        'mvp'     => 0,
-                        'cp'      => 0,
-                        'td'      => 0,
-                        'intcpt'  => 0,
-                        'bh'      => 0,
-                        'si'      => 0,
-                        'ki'      => 0,
-                        'inj'     => $_POST[$i.'status'], // This field value must exist for all entries for else the player status is forgotten.
-                        'agn1'    => ($tmp = array_pop($injs)) ? $tmp : NONE,
-                        'agn2'    => ($tmp = array_pop($injs)) ? $tmp : NONE,
-                    ));
+                $status2 = true;
+                if ($status1) {
+                    # The status must be set as the "inj" (not agn) field for EVERY match (import) entry. 
+                    # This is because MySQL may pick a random match data entry from which to get the status from.
+                    $pstatus = $T_INJS_REV[strtoupper($p->status)];
+                    # Injuries
+                    foreach (array('ma', 'st', 'ag', 'av', 'ni') as $inj) {
+                        $agn = $T_INJS_REV[strtoupper($inj)];
+                        while ($p->{$inj}-- > 0) {
+                            $status2 &= Match::ImportEntry($pid, array_merge(array_fill_keys(array_merge($T_PMD_ACH, $T_PMD_IR),0), array_combine($T_PMD_INJ, array($pstatus,$agn,($p->{$inj}-- > 0) ? $agn : NONE))));
+                        }
+                    }
+                    # Set player achievements
+                    $status2 &= Match::ImportEntry($pid, array_merge(array_intersect_key((array) $p, array_fill_keys($T_PMD_ACH,null)), array_combine($T_PMD_INJ,array($pstatus,NONE,NONE)), array_fill_keys($T_PMD_IR,0)));
                 }
+                status($status1 && $status2, "Added to '$t->name' player '$p->name'");
             }
-            else {
-                status(false, "Could not create player #$i. " . $ret[1]);
-            }
+            
+            # Set correct treasury.
+            $team = new Team($tid);
+            $team->dtreasury($t->treasury*1000 - $team->treasury); // $t->treasury + $delta = XML value
         }
-
-        // Set correct treasury.
-        $t = new Team($t->team_id); # Update team object to get current treasury.
-        $t->dtreasury($_POST['treasury']*1000 - $t->treasury); // $t->treasury + $delta = $_POST['treasury']
-    }
-    else {
-        status(false, 'Unable to create team. Halting.');
+        
+        // SYNC DATA!
+        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => T_IMPORT_MID, 'trid' => 0, 'tid1' => $tid, 'tid2' => 0, 'played' => 0));
     }
 }
 
