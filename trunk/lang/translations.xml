@@ -33,6 +33,7 @@
     <all>All</all>
     <select>Select</select>
     <stats>Statistics</stats>
+    <general>General</general>
     
     <needhelp>Need help?</needhelp>
     <picof>Picture of</picof>
@@ -76,6 +77,8 @@
     <type>Type</type>
         <active>Active</active>
         <alltime>All-time</alltime>
+    <sgrp>Stats group</sgrp>
+
 </common>
 
 <!-- Link names for menu elements -->
@@ -85,6 +88,7 @@
     <home>Home</home>
     <cc>Coach corner</cc>
     <teams>Teams</teams>
+    <coaches>Coaches</coaches>
     <matches_menu>
         <name>Matches</name> <!-- top level button text -->
         <tours>Tournaments</tours>

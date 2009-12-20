@@ -53,7 +53,7 @@ public static function main($argv) {
     global $lng;
     title($lng->getTrn('name', __CLASS__));
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
-    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(false,false,'memm');
+    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array(),'memm');
     foreach (self::getMemMatches($sel_node, $sel_node_id) as $d => $matches) {
         ?>
         <div style="clear: both; width: 60%; border: 1px solid #545454; margin: 20px auto 20px auto;">

@@ -21,8 +21,84 @@
  *
  */
 
+define('T_HTML_COACHES_PER_PAGE', 50);
+
 class Coach_HTMLOUT extends Coach
 {
+
+public static function dispTeamList()
+{
+    global $lng;
+
+    /*
+        NOTE: We do NOT show teams not having played any matches!
+    */
+    
+    list($sel_node, $sel_node_id, $sel_state) = HTMLOUT::nodeSelector(array('state' => true),'');
+    $q = 'SELECT coach_id AS "coach_id", coaches.name AS "name", coaches.retired AS "retired", team_cnt AS "team_cnt"
+        FROM matches, teams, coaches, tours, divisions 
+        WHERE 
+            teams.owned_by_coach_id = coaches.coach_id AND 
+            matches._RRP = teams.team_id AND 
+            matches.f_tour_id = tours.tour_id AND 
+            tours.f_did = divisions.did ';
+    switch ($sel_node)
+    {
+        case false:
+            break;
+        case T_NODE_TOURNAMENT:
+            $q .= "AND tours.tour_id = $sel_node_id";
+            break;
+        case T_NODE_DIVISION:
+            $q .= "AND divisions.did = $sel_node_id";
+            break;
+        case T_NODE_LEAGUE:
+            $q .= "AND divisions.f_lid = $sel_node_id";
+            break;
+    }
+    if ($sel_state == T_STATE_ACTIVE) {
+        $q .= ' AND coaches.retired IS FALSE';
+    }
+    $_subt1 = '('.preg_replace('/\_RRP/', 'team1_id', $q).')';
+    $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
+    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
+    $result = mysql_query($queryCnt);
+    list($cnt) = mysql_fetch_row($result);
+    $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_COACHES_PER_PAGE);
+    global $page;
+    $page = (isset($_GET['page']) && $_GET['page'] <= $pages) ? $_GET['page'] : 1; # Page 1 is default, of course.
+    $_url = "?section=coachlist&amp;";
+    echo '<br><center><table>';
+    echo '<tr><td>';
+    echo 'Page: '.implode(', ', array_map(create_function('$nr', 'global $page; return ($nr == $page) ? $nr : "<a href=\''.$_url.'page=$nr\'>$nr</a>";'), range(1,$pages)));
+    echo '</td></td>';
+    echo "<tr><td>Coaches: $cnt</td></td>";
+    echo '</table></center><br>';
+    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') LIMIT '.(($page-1)*T_HTML_COACHES_PER_PAGE).', '.(($page)*T_HTML_COACHES_PER_PAGE);
+    
+    $coaches = array();
+    $result = mysql_query($queryGet);
+    while ($c = mysql_fetch_object($result)) {
+        $c->retired = ($c->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
+        $coaches[] = $c;
+    }
+
+    $fields = array(
+        'name'    => array('desc' => 'Name', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
+        'team_cnt' => array('desc' => 'Teams', 'nosort' => true),
+        'retired' => array('desc' => 'Retired', 'nosort' => true),
+    );
+
+    HTMLOUT::sort_table(
+        "Coaches",
+        "index.php$_url",
+        $coaches,
+        $fields,
+        array(),
+        array(),
+        array('doNr' => false, 'noHelp' => true, 'noSRdisp' => true)
+    );
+}
 
 public static function standings()
 {
@@ -39,41 +115,31 @@ public static function profile($cid) {
 
     title($c->name);
     echo "<hr>";
-    $c->_sectionNames = array('cc_teams', 'cc_ccprofile', 'cc_stats', 'cc_newteam', 'cc_recentmatches');
     $c->_menu($ALLOW_EDIT);
-    $c->_CCprofile($ALLOW_EDIT);
-    $c->_stats();
-    $c->_newTeam($ALLOW_EDIT); # Must come before _teams() else new teams won't show.
-    $c->_teams($ALLOW_EDIT);
-    $c->_recentGames();
-
-    // Default folded out sub-section.
-    $activeDiv = (isset($_POST['type']) && in_array('cc_'.$_POST['type'],$c->_sectionNames)) ? 'cc_'.$_POST['type'] : 'cc_ccprofile';
-    if (isset($_GET['sortgp'])) {$activeDiv = 'cc_recentmatches';}
-    if (isset($_GET['sort'])) {$activeDiv = 'cc_teams';}
-    ?><script language="JavaScript" type="text/javascript"> foldup('<?php echo $activeDiv;?>'); </script><?php
-}
-
-// Small helper routine for _menu().
-private function _makeOnClick($divID)
-{
-    return "onClick=\"foldup('$divID');\"";
+    switch (isset($_GET['subsec']) ? $_GET['subsec'] : 'stats')
+    {
+        case 'profile': $c->_CCprofile($ALLOW_EDIT); break;
+        case 'stats': $c->_stats(); break;
+        case 'newteam': $c->_newTeam($ALLOW_EDIT); break;
+        case 'teams': $c->_teams($ALLOW_EDIT); break;
+        case 'recentmatches': $c->_recentGames(); break;
+    }
 }
 
 private function _menu($ALLOW_EDIT)
 {
     global $lng, $settings, $rules;
-    
+    $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false);
     ?>
     <br>
     <ul id="nav" class="dropdown dropdown-horizontal" style="position:static; z-index:0;">
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('cc_teams');?>><?php echo $lng->getTrn('cc/coach_teams');?></a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('cc_ccprofile');?>><?php echo $lng->getTrn('cc/profile');?></a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('cc_stats');?>><?php echo $lng->getTrn('common/stats');?></a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('cc_recentmatches');?>><?php echo $lng->getTrn('common/recentmatches');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=teams';?>"><?php echo $lng->getTrn('cc/coach_teams');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=profile';?>"><?php echo $lng->getTrn('cc/profile');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=stats';?>"><?php echo $lng->getTrn('common/stats');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=recentmatches';?>"><?php echo $lng->getTrn('common/recentmatches');?></a></li>
         <?php
         if ($ALLOW_EDIT) {
-            ?><li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('cc_newteam');?>><?php echo $lng->getTrn('cc/new_team');?></a></li><?php
+            ?><li><a href="<?php echo $url.'&amp;subsec=newteam';?>"><?php echo $lng->getTrn('cc/new_team');?></a></li><?php
         }
         if (Module::isRegistered('SGraph')) {
             echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$this->coach_id'>Vis. stats</a></li>\n";
@@ -81,32 +147,34 @@ private function _menu($ALLOW_EDIT)
         ?>
     </ul>
     <br><br>
-    
-    <script language="JavaScript" type="text/javascript">
-        function foldup(execption)
-        {
-            var fields = [<?php echo implode(',', array_map(create_function('$sn', 'return "\'$sn\'";'), $this->_sectionNames)); ?>];
-            for (f in fields) {
-                document.getElementById(fields[f]).style.display='none';
-            }
-            document.getElementById(execption).style.display='block';
-        }
-    </script>
     <?php
 }
 
 private function _newTeam($ALLOW_EDIT)
 {
-    global $lng, $settings, $raceididx;
+    global $lng, $settings, $raceididx, $rules;
 
-    echo "<div id='cc_newteam' style='clear:both;'>\n";
-        
     // Form posted? -> Create team.
     if (isset($_POST['type']) && $_POST['type'] == 'newteam' && $ALLOW_EDIT) {
         if (get_magic_quotes_gpc()) {
             $_POST['name'] = stripslashes($_POST['name']);
         }
-        status(Team::create(array('name' => $_POST['name'], 'coach_id' => $this->coach_id, 'race' => $_POST['race'], 'f_lid' => isset($_POST['f_lid']) ? $_POST['f_lid'] : 0)));
+        status(Team::create(array(
+            'name' => $_POST['name'], 
+            'owned_by_coach_id' => $this->coach_id, 
+            'f_race_id' => $_POST['race'], 
+            'f_lid' => isset($_POST['f_lid']) ? $_POST['f_lid'] : 0,
+            'treasury' => $rules['initial_treasury'], 
+            'apothecary' => 0, 
+            'rerolls' => $rules['initial_rerolls'], 
+            'ff_bought' => $rules['initial_fan_factor'], 
+            'ass_coaches' => $rules['initial_ass_coaches'], 
+            'cheerleaders' => $rules['initial_cheerleaders'],
+            'won_0' => 0, 'lost_0' => 0, 'draw_0' => 0, 'played_0' => 0, 'wt_0' => 0,
+            'gf_0' => 0, 'ga_0' => 0, 'tcas_0' => 0,
+            'imported' => 0,
+            ))
+        );
     }
 
     // Show new team form.
@@ -143,14 +211,12 @@ private function _newTeam($ALLOW_EDIT)
     <input type="submit" name="new_team" value="<?php echo $lng->getTrn('common/create');?>" <?php if ($settings['relate_team_to_league'] && empty($leagues)){echo "DISABLED";}?>>
     </form>
     <?php
-    echo "</div>\n";
 }
 
 private function _teams($ALLOW_EDIT)
 {
     global $lng;
     
-    echo "<div id='cc_teams' style='clear:both;'>\n";
     echo "<br>";
     if ($ALLOW_EDIT) {
         HTMLOUT::helpBox(
@@ -164,20 +230,14 @@ private function _teams($ALLOW_EDIT)
         );
     }
 
-    // Generate teams list.
-#    Team_HTMLOUT::dispTeamList(T_OBJ_COACH, $this->coach_id);
-#    echo "<br>";
-    $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false);
+    $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false).'&amp;subsec=teams';
     HTMLOUT::standings(T_OBJ_TEAM,false,false,array('url' => $url, 'teams_from' => T_OBJ_COACH, 'teams_from_id' => $this->coach_id));
-    echo "</div>";
 }
 
 private function _CCprofile($ALLOW_EDIT) 
 {
     global $lng, $coach;
 
-    echo "<div id='cc_ccprofile' style='clear:both;'>\n";
-    
     // Was new password/email request made?
     if (isset($_POST['type']) && $ALLOW_EDIT) {
 
@@ -221,16 +281,24 @@ private function _CCprofile($ALLOW_EDIT)
         ?>
         <table>
             <tr>
-                <td>Name:</td>
-                <td><?php echo empty($c->realname) ? '<i>'.$lng->getTrn('common/none').'</i>' : $c->realname;?></td>
+                <td>ID:</td>
+                <td><?php echo $this->coach_id;?></td>
+            </tr>
+            <tr>
+                <td>Name (login):</td>
+                <td><?php echo $this->name;?></td>
+            </tr>
+            <tr>
+                <td>Full name:</td>
+                <td><?php echo empty($this->realname) ? '<i>'.$lng->getTrn('common/none').'</i>' : $this->realname;?></td>
             </tr>
             <tr>
                 <td>Phone:</td>
-                <td><?php echo empty($c->phone) ? '<i>'.$lng->getTrn('common/none').'</i>' : $c->phone?></td>
+                <td><?php echo empty($this->phone) ? '<i>'.$lng->getTrn('common/none').'</i>' : $this->phone?></td>
             </tr>
             <tr>
                 <td>Mail:</td>
-                <td><?php echo empty($c->mail) ? '<i>'.$lng->getTrn('common/none').'</i>' : $c->mail?></td>
+                <td><?php echo empty($this->mail) ? '<i>'.$lng->getTrn('common/none').'</i>' : $this->mail?></td>
             </tr>
         </table>
         <br>
@@ -239,6 +307,7 @@ private function _CCprofile($ALLOW_EDIT)
     if ($ALLOW_EDIT) {
         ?>
         <table class="common" style="border-spacing:5px; padding:20px;">
+            <tr><td colspan='4'>ID: <?php echo $this->coach_id;?></td></tr>
             <tr>
                 <form method="POST">
                 <td><?php echo $lng->getTrn('cc/chpasswd');?>:</td>
@@ -342,78 +411,81 @@ private function _CCprofile($ALLOW_EDIT)
         </tr>
     </table>
     <?php
-    echo "</div>\n";
 }
 
 private function _stats()
 {
     global $lng;
-    echo "<div id='cc_stats' style='clear:both;'>\n";
     ?>
-    <div class="boxCommon">
-        <h3 class='boxTitle1'>General</h3>
-        <div class='boxBody'>
-            <table class="boxTable">
-            <?php
-            echo "<tr><td>Played</td><td>$this->mv_played</td></tr>\n";
-            echo "<tr><td>WIN%</td><td>".(sprintf("%1.1f", $this->rg_win_pct).'%')."</td></tr>\n";
-            echo "<tr><td>ELO</td><td>".(($this->rg_elo) ? sprintf("%1.2f", $this->rg_elo) : '<i>N/A</i>')."</td></tr>\n";
-            echo "<tr><td>W/L/D</td><td>$this->mv_won/$this->mv_lost/$this->mv_draw</td></tr>\n";
-            echo "<tr><td>W/L/D streaks</td><td>$this->mv_swon/$this->mv_slost/$this->mv_sdraw</td></tr>\n";
-            echo "<tr><td>Won tours</td><td>$this->wt_cnt</td></tr>\n";            
-            echo "<tr><td colspan='2'><hr></td></tr>";
-            $result = mysql_query("
-                SELECT 
-                    COUNT(*) AS 'teams_total', 
-                    SUM(IF(rdy IS TRUE,1,0)) AS 'teams_active', 
-                    SUM(IF(retired IS TRUE,1,0)) AS 'teams_retired',
-                    AVG(elo) AS 'avg_elo',
-                    CAST(AVG(ff) AS SIGNED INT) AS 'avg_ff',
-                    CAST(AVG(tv)/1000 AS SIGNED INT) AS 'avg_tv'
-                FROM teams WHERE owned_by_coach_id = $this->coach_id");
-            $row = mysql_fetch_assoc($result);
-            echo "<tr><td>Teams total</td><td>$row[teams_total]</td></tr>\n";
-            echo "<tr><td>Teams active</td><td>$row[teams_active]</td></tr>\n";
-            echo "<tr><td>Teams retired</td><td>$row[teams_retired]</td></tr>\n";
-            echo "<tr><td>Average ELO per team</td><td>".(($row['avg_elo']) ? sprintf("%1.2f", $row['avg_elo']) : '<i>N/A</i>')."</td></tr>\n";
-            echo "<tr><td>Average TV per team</td><td>$row[avg_tv]</td></tr>\n";
-            echo "<tr><td>Average FF per team</td><td>$row[avg_ff]</td></tr>\n";
-            ?>
-            </table>
+    <div class="row">
+        <div class="boxCoachPage">
+            <h3 class='boxTitle1'>General</h3>
+            <div class='boxBody'>
+                <table class="boxTable">
+                <?php
+                echo "<tr><td>Played</td><td>$this->mv_played</td></tr>\n";
+                echo "<tr><td>WIN%</td><td>".(sprintf("%1.1f", $this->rg_win_pct).'%')."</td></tr>\n";
+                echo "<tr><td>ELO</td><td>".(($this->rg_elo) ? sprintf("%1.2f", $this->rg_elo) : '<i>N/A</i>')."</td></tr>\n";
+                echo "<tr><td>W/L/D</td><td>$this->mv_won/$this->mv_lost/$this->mv_draw</td></tr>\n";
+                echo "<tr><td>W/L/D streaks</td><td>$this->mv_swon/$this->mv_slost/$this->mv_sdraw</td></tr>\n";
+                echo "<tr><td>Won tours</td><td>$this->wt_cnt</td></tr>\n";            
+                echo "<tr><td colspan='2'><hr></td></tr>";
+                $result = mysql_query("
+                    SELECT 
+                        COUNT(*) AS 'teams_total', 
+                        SUM(IF(rdy IS TRUE,1,0)) AS 'teams_active', 
+                        SUM(IF(retired IS TRUE,1,0)) AS 'teams_retired',
+                        AVG(elo) AS 'avg_elo',
+                        CAST(AVG(ff) AS SIGNED INT) AS 'avg_ff',
+                        CAST(AVG(tv)/1000 AS SIGNED INT) AS 'avg_tv'
+                    FROM teams WHERE owned_by_coach_id = $this->coach_id");
+                $row = mysql_fetch_assoc($result);
+                echo "<tr><td>Teams total</td><td>$row[teams_total]</td></tr>\n";
+                echo "<tr><td>Teams active</td><td>$row[teams_active]</td></tr>\n";
+                echo "<tr><td>Teams retired</td><td>$row[teams_retired]</td></tr>\n";
+                echo "<tr><td>Average ELO per team</td><td>".(($row['avg_elo']) ? sprintf("%1.2f", $row['avg_elo']) : '<i>N/A</i>')."</td></tr>\n";
+                echo "<tr><td>Average TV per team</td><td>$row[avg_tv]</td></tr>\n";
+                echo "<tr><td>Average FF per team</td><td>$row[avg_ff]</td></tr>\n";
+                ?>
+                </table>
+            </div>
+        </div>
+        <div class="boxCoachPage">
+            <h3 class='boxTitle1'>Achievements</h3>
+            <div class='boxBody'>
+                <table class="boxTable">
+                <?php
+                $stats = array(
+                    # Display name => array(field (int or false) sprintf() precision)
+                    'CAS' => array('cas', 2),
+                    'BH'  => array('bh', 2),
+                    'Ki'  => array('ki', 2),
+                    'Si'  => array('si', 2),
+                    'TD'  => array('td', 2),
+                    'Int' => array('intcpt', 2),
+                    'Cp'  => array('cp', 2),
+                    'GF'  => array('gf', 2),
+                    'GA'  => array('ga', 2),
+                    'SMP' => array('smp', 2),                
+                );
+                $thisAVG = clone $this;
+                $thisAVG->setStats(false, false, true);
+                echo "<tr><td>Ach.</td> <td>Amount</td> <td>Avg. per match</td></tr>\n";
+                echo "<tr><td colspan='5'><hr></td></tr>\n";
+                foreach ($stats as $name => $d) {
+                    echo "<tr><td><i>$name</i></td>";
+                    echo "<td>".($this->{"mv_$d[0]"})."</td>";
+                    echo "<td>".sprintf("%1.$d[1]f", $thisAVG->{"mv_$d[0]"})."</td>";
+                    echo "</tr>\n";
+                }
+                ?>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="boxCommon">
-        <h3 class='boxTitle1'>Achievements</h3>
-        <div class='boxBody'>
-            <table class="boxTable">
-            <?php
-            $stats = array(
-                # Display name => array(field (int or false) sprintf() precision)
-                'CAS' => array('cas', 2),
-                'BH'  => array('bh', 2),
-                'Ki'  => array('ki', 2),
-                'Si'  => array('si', 2),
-                'TD'  => array('td', 2),
-                'Int' => array('intcpt', 2),
-                'Cp'  => array('cp', 2),
-                'GF'  => array('gf', 2),
-                'GA'  => array('ga', 2),
-                'SMP' => array('smp', 2),                
-            );
-            $thisAVG = clone $this;
-            $thisAVG->setStats(false, false, true);
-            echo "<tr><td>Ach.</td> <td>Amount</td> <td>Avg. per match</td></tr>\n";
-            echo "<tr><td colspan='5'><hr></td></tr>\n";
-            foreach ($stats as $name => $d) {
-                echo "<tr><td><i>$name</i></td>";
-                echo "<td>".($this->{"mv_$d[0]"})."</td>";
-                echo "<td>".sprintf("%1.$d[1]f", $thisAVG->{"mv_$d[0]"})."</td>";
-                echo "</tr>\n";
-            }
-            ?>
-            </table>
-        </div>
-    </div>
+    <br>
+    <div class="row"></div>
+    <br>
     <div class="row">
         <div class="boxWide">
             <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;ES</div>
@@ -425,14 +497,13 @@ private function _stats()
         </div>
     </div>
     <?php
-    echo "</div>\n";
 }
 
 private function _recentGames()
 {
     echo "<div id='cc_recentmatches' style='clear:both;'>\n";
     echo "<br>";
-    $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false);
+    $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false).'&amp;subsec=recentmatches';
     HTMLOUT::recentGames(T_OBJ_COACH, $this->coach_id, false, false, false, false, array('url' => $url, 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
     echo "</div>";
 }

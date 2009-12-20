@@ -70,12 +70,6 @@ switch ($_GET['type'])
    		Module::run('Memmatches', array());
    		break;
 
-    /* Comparison */
-// Currently not maintained.
-#   	case 'comparison':
-#   		Module::run('Comparison', array());
-#   		break;
-
     /* Register */
    	case 'registration':
    		Module::run('Registration', array());

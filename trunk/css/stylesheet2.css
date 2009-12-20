@@ -70,9 +70,10 @@ div.section {
 /*
  *   Box (inner) stylings.
  */
-div.boxCommon,div.boxWide,div.boxTeamPage,div.boxPlayerPageInfo {margin: 20px; border: 1px solid #545454;}
+div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo {margin: 20px; border: 1px solid #545454;}
 div.boxWide             {clear:both;}
 div.boxCommon           {float:left;}
+div.boxCoachPage        {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
 div.boxTeamPage         {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
 div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 

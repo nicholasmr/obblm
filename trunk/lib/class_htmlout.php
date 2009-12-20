@@ -164,9 +164,10 @@ public static function standings($obj, $node, $node_id, array $opts)
     $extra['noHelp'] = false;
     
     $enableRaceSelector = ($obj == T_OBJ_PLAYER || $obj == T_OBJ_TEAM && (!isset($opts['teams_from']) || $opts['teams_from'] != T_OBJ_RACE));
-    list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(false,$enableRaceSelector,'');
+    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp) = HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true),'');
     $filter_node = array($sel_node => $sel_node_id);
     $filter_race = ($sel_race != T_RACE_ALL) ? array(T_OBJ_RACE => $sel_race) : array();
+    $SGRP_GEN = ($sel_sgrp == 'GENERAL');
 
     $manualSort = isset($_GET["sort$opts[GET_SS]"]);
     $sortRule = array_merge(
@@ -198,21 +199,21 @@ public static function standings($obj, $node, $node_id, array $opts)
         'mv_si'      => array('desc' => 'Si'),
         'mv_ki'      => array('desc' => 'Ki'),
     );
-    if (true) # Replace with is_using_EPS $setting..
-    {
-        $ES = array(
-            'mv_inflicted_fouls'    => array('desc' => 'FoF'),
-            'mv_sustained_fouls'    => array('desc' => 'FoA'),
-            'mv_inflicted_blocks'   => array('desc' => 'BkF'),
-            'mv_sustained_blocks'   => array('desc' => 'BkA'),
-            'mv_catches'            => array('desc' => 'Ca'),
-            'mv_leaps'              => array('desc' => 'Lp'),
-            'mv_dodges'             => array('desc' => 'Dg'),
-            'mv_gfis'               => array('desc' => 'GFIs'),
+    
+    // Was a different (non-general) stats group selected?
+    if (!$SGRP_GEN) {
+        $grps_short = getESGroups(true,true);
+        $grps_long = getESGroups(true,false);
+        $fields_short = $grps_short[$sel_sgrp];
+        $fields_long = $grps_long[$sel_sgrp];
+        
+        $fields = array_combine(
+            array_strpack('mv_%s', $fields_long), 
+            array_map(create_function('$f', 'return array("desc" => $f);'), $fields_short)
         );
-        $fields += $ES;
-        $objFields_avg = array_merge($objFields_avg, array_map(create_function('$k', 'return substr($k, 3);'), array_keys($ES)));
+        $objFields_avg = array_merge($objFields_avg, array_map(create_function('$k', 'return substr($k, 3);'), array_keys($fields)));
     }
+
     // These fields are not summable!!! 
     //ie. you dont get the division/league value of these fields by summing over the related/underlying tournaments field's values.
     global $objFields_notsum;
@@ -254,11 +255,13 @@ public static function standings($obj, $node, $node_id, array $opts)
 
         case STATS_TEAM:
             $tblTitle = 'Team standings';
-            $fields_before = array('name' => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')));
+            $fields_before = array(
+                'name' => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+                'tv' => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),                
+            );
             $fields_after = array(
                 'mv_tcas' => array('desc' => 'tcas'), 
             	'mv_smp' => array('desc' => 'SMP'),
-                'tv' => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),
             );
             if ($sel_node == T_NODE_TOURNAMENT) { 
                 $fields_after['wt_cnt'] = array('desc' => 'WT');
@@ -369,6 +372,11 @@ public static function standings($obj, $node, $node_id, array $opts)
     }
 
     foreach ($objs as $idx => $obj) {$objs[$idx] = (object) $obj;}
+    if (!$SGRP_GEN) {
+        $tmp = $fields_before['name'];
+        $fields_before = $fields_after = array();
+        $fields_before['name'] = $tmp;
+    }
     $fields = array_merge($fields_before, $fields, $fields_after);
     // Add average marker on fields (*).
     if ($set_avg) {
@@ -392,7 +400,7 @@ public static function standings($obj, $node, $node_id, array $opts)
     return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? $objs : true;
 }
 
-public static function nodeSelector($setState = true, $setRace = true, $prefix = '')
+public static function nodeSelector(array $opts, $prefix = '')
 {
     global $lng, $raceididx;
 
@@ -401,10 +409,17 @@ public static function nodeSelector($setState = true, $setRace = true, $prefix =
     $s_node_id  = "${prefix}_node_id";
     $s_state    = "${prefix}_state";
     $s_race     = "${prefix}_race";
+    $s_sgrp     = "${prefix}_sgrp";
+    
+    // Options
+    $setState = (array_key_exists('state', $opts) && $opts['state']);
+    $setRace = (array_key_exists('race', $opts) && $opts['race']);
+    $setSGrp = (array_key_exists('sgrp', $opts) && $opts['sgrp']);
 
     $NEW = isset($_POST['select']);
     $_SESSION[$s_state] = ($NEW && $setState) ? (int) $_POST['state_in'] : (isset($_SESSION[$s_state]) ? $_SESSION[$s_state] : T_STATE_ALLTIME);
     $_SESSION[$s_race]  = ($NEW && $setRace)  ? (int) $_POST['race_in']  : (isset($_SESSION[$s_race])  ? $_SESSION[$s_race]  : T_RACE_ALL);
+    $_SESSION[$s_sgrp]  = ($NEW && $setSGrp)  ? $_POST['sgrp_in']        : (isset($_SESSION[$s_sgrp])  ? $_SESSION[$s_sgrp]  : 'GENERAL');
     $_SESSION[$s_node]  = ($NEW)              ? (int) $_POST['node']     : (isset($_SESSION[$s_node])  ? $_SESSION[$s_node]  : T_NODE_LEAGUE);
     $rel = array(T_NODE_TOURNAMENT => 'tour', T_NODE_DIVISION => 'division', T_NODE_LEAGUE => 'league');
     $_SESSION[$s_node_id] = ($NEW) 
@@ -484,6 +499,19 @@ public static function nodeSelector($setState = true, $setRace = true, $prefix =
         </select>
         <?php
     }
+    if ($setSGrp) {
+        echo $lng->getTrn('common/sgrp');
+        ?>
+        <select name="sgrp_in" id="sgrp_in">
+            <?php
+            echo "<option value='GENERAL'>".$lng->getTrn('common/general')."</option>\n";
+            foreach (getESGroups(false) as $f) {
+                echo "<option value='$f'".(($_SESSION[$s_sgrp] == $f) ? 'SELECTED' : '').">$f</option>\n";
+            }
+            ?>
+        </select>
+        <?php
+    }
     ?>
     &nbsp;
     <input type="submit" name="select" value="<?php echo $lng->getTrn('common/select');?>">
@@ -516,7 +544,8 @@ public static function nodeSelector($setState = true, $setRace = true, $prefix =
         ($allNodes) ? false : $_SESSION[$s_node], 
         ($allNodes) ? false : $_SESSION[$s_node_id], 
         ($setState) ? $_SESSION[$s_state] : false, 
-        ($setRace) ? $_SESSION[$s_race] : false
+        ($setRace) ? $_SESSION[$s_race] : false,
+        ($setSGrp) ? $_SESSION[$s_sgrp] : false,
     );
 }
 
@@ -600,6 +629,7 @@ private static function make_menu()
         ?>
         <li><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a></li>
         <li><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
+        <li><a href="index.php?section=coachlist"><?php echo $lng->getTrn('menu/coaches');?></a></li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/matches_menu/name');?></span>
             <ul>
                 <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>

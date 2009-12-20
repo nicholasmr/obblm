@@ -316,6 +316,12 @@ function sec_teamlist() {
     Team_HTMLOUT::dispTeamList();
 }
 
+function sec_coachlist() {
+    global $lng;
+    title($lng->getTrn('menu/coaches'));
+    Coach_HTMLOUT::dispTeamList();
+}
+
 function sec_matcheshandler() {
     switch ($_GET['type'])
     {
