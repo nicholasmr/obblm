@@ -31,7 +31,7 @@ The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) 
 ||interceptions_thrown||cp_int||Number of times the thrower has been intercepted.||
 ||pass_distance||cp_dist||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
 ||dumpoff_attempts||dmp_a||Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs).||
-||dumpoff_completions||dmp_s||Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions).||
+||dumpoff_completions||dmp||Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions).||
 ||catch_attempts||catch_a||Number of catch attempts made my a player from a throw.||
 ||catches||catch||Number of catches made (including re-rolled).||
 ||handoffs||hnd||Number of hand offs this player has made||
@@ -70,24 +70,24 @@ Just to note inflicted counts here are based on the status of the player at the 
 ||inflicted_pushes||psh_i||Number of times push was the selected result.||
 ||inflicted_both_downs||both_iNumber of times both down was the selected result.||
 ||inflicted_attacker_downs||skul_i||Number of times attacker down was the selected result.||
-||inflicted_knock_downs||knock_dwns_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down).||
-||inflicted_strip_balls||strp+i||Number of times strip ball has been used by this player.||
+||inflicted_knock_downs||dwns_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down).||
+||inflicted_strip_balls||strp_i||Number of times strip ball has been used by this player.||
 ||inflicted_sacks||sack_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down), when that player was carrying the ball.||
 ||inflicted_crowd_surfs||surf_i||Number of times the push result has ended up in as an injury roll (presuming from being crowd surfed).||
-||inflicted_stuns||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up stunned.||
-||inflicted_kos||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up KOed.||
-||inflicted_bhs||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up badly hurt (after apoth).||
-||inflicted_sis||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up seriously injured (after apoth).||
-||inflicted_kills||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up dead (after apoth)||
-||sustained_blocks||Number of times this player has been blocked.||
-||sustained_knocked_downs||Number this this player was knocked down while blocking either from sustaining a block or when throwing a block.||
-||sustained_sacks||Number this this player was knocked down while blocking either from sustaining a block or when throwing a block when carrying the ball.||
-||sustained_crowd_surfs||Number of times this player has been pushed and required been required to make an injury roll (from crowd surfs).||
-||sustained_stuns||Total number of times this player has been stunned (from any means). All these stats check player status at the end of the turn.||
-||sustained_kos||Total number of times this player has been KOed (from any means).||
-||sustained_bhs||Total number of times this player has been badly hurt (from any means).||
-||sustained_sis||Total number of times this player has been seriously injured (from any means).||
-||sustained_kill||Total number of times this player has been seriously injured (from any means)... this would only ever be 1!||
+||inflicted_stuns||stun_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up stunned.||
+||inflicted_kos||ko_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up KOed.||
+||inflicted_bhs||bh_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up badly hurt (after apoth).||
+||inflicted_sis||si_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up seriously injured (after apoth).||
+||inflicted_kills||ki_i||Number of times this player knocked the other player down blocking (as the attacker, the defends ends up down or as the defender the attacker ends up down) and that player ended up dead (after apoth)||
+||sustained_blocks||blk_s||Number of times this player has been blocked.||
+||sustained_knocked_downs||dwn_s||Number this this player was knocked down while blocking either from sustaining a block or when throwing a block.||
+||sustained_sacks||sack_s||Number this this player was knocked down while blocking either from sustaining a block or when throwing a block when carrying the ball.||
+||sustained_crowd_surfs||surf_s||Number of times this player has been pushed and required been required to make an injury roll (from crowd surfs).||
+||sustained_stuns||stun_s||Total number of times this player has been stunned (from any means). All these stats check player status at the end of the turn.||
+||sustained_kos||ko_s||Total number of times this player has been KOed (from any means).||
+||sustained_bhs||bh_s||Total number of times this player has been badly hurt (from any means).||
+||sustained_sis||si_s||Total number of times this player has been seriously injured (from any means).||
+||sustained_kill||ki_s||Total number of times this player has been killed (from any means)... this would only ever be 1!||
 
 
 ===Fouling Stats===
