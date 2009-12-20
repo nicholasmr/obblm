@@ -23,7 +23,7 @@ The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) 
   * "%" prefix denotes that the field is *NOT* a _scalar_, which is used by the module linking OBBLM with BOTOCS.
 
 
-===Offensive Stats===
+===Offensive stats===
 
 
 ||pass_attempts||cp_a||Number of pass throw attempts of the ball.||
@@ -42,7 +42,7 @@ The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) 
 
 
 
-===Movement Stats===
+===Movement stats===
 
 All progression is counted while carrying the ball.
 
@@ -60,7 +60,7 @@ All progression is counted while carrying the ball.
 ||gfis||gfi||Successful go for its.||
 
 
-===Blocking Stats===
+===Blocking stats===
 
 Just to note inflicted counts here are based on the status of the player at the end of the everything, so if you cause a casuality and get a kill but the apoth is used to heal it, it doesnt count the death in the inflicted although it is still casualty of course.
 
@@ -90,7 +90,7 @@ Just to note inflicted counts here are based on the status of the player at the 
 ||sustained_kill||ki_s||Total number of times this player has been killed (from any means)... this would only ever be 1!||
 
 
-===Fouling Stats===
+===Fouling stats===
 
 ||inflicted_fouls||fl_i||Number of times this player has fouled another.||
 ||inflicted_foul_stuns||st_fi||Number of times this player stunned another through fouling||
@@ -102,7 +102,7 @@ Just to note inflicted counts here are based on the status of the player at the 
 ||sustained_ejections||ejct||Number of times this player was ejected for fouling.||
 
 
-===Healing Stats===
+===Healing stats===
 
 ||apothecary_used||ap||Number of times the apoth has been used on this player||
 ||ko_recovery_attempts||ko_ra||Number of recovery rolls from KOs||
@@ -111,14 +111,14 @@ Just to note inflicted counts here are based on the status of the player at the 
 ||regeneration_attempts||rgn_a||Number of time this player attempted to regenerate.||
 ||regenerations||rgn||Number of times the regenerate roll succeeded.||
 
-===Kicking Stats===
+===Kicking stats===
 
 Note: these are only recorded for a player with the kick skill. The only other thing I could try and get out of it might be direction kicked but it would be 8 more stats for not a whole lot.
 
 ||kickoffs||kck||Number of times this player kicked off||
 ||kick_distance||kck_dist||Distance the ball was kicked in squares.||
 
-===Dice Stats ===
+===Dice stats ===
 
 Note: Might be fun to see how lucky a player is
 
@@ -129,7 +129,7 @@ Note: Might be fun to see how lucky a player is
 ||dice_roll_sum||dice_sum||Sum of what was actually rolled (with above would be used to show averages).||
 
 
-===SPPs Stats===
+===SPPs stats===
 
 The improvement roll info should be used to filter the list of skills for selection by a player on the team roster page
 
@@ -145,7 +145,7 @@ The improvement roll info should be used to filter the list of skills for select
 ||+improvement_roll2||ir_d2||The skill up mprovement roll (d2)||
 
 
-===Big Guy Stats===
+===Big Guy stats===
 
 ||big_guy_stupidity_attempts||big_stp_a||Number of rolls for really stupid, bonehead, take root and wild animal.||
 ||big_guy_stupidity_successes||big_stp||Number of times the really stupid, bonehead, take root and wild animal roll succeeded.||
@@ -156,7 +156,7 @@ The improvement roll info should be used to filter the list of skills for select
 ||throw_team_mate_distance||TTM_dist||How far this player has thrown team mates in squares.||
 ||throw_team_mate_to_safe_landing||TTM_landed||Number of times this player successfully threw a team mate and the thrown player landed.||
 
-===Right Stuff Stats===
+===Right Stuff stats===
 ||times_thrown||RS_thrn||Number of times this player has been thrown||
 ||landing_attempts||RS_land_a||Number of times this player has attempted to land||
 ||landings||RS_land||Number of times this player successfully landed.||
@@ -164,7 +164,7 @@ The improvement roll info should be used to filter the list of skills for select
 ||rushing_distance_thrown||RS_rush_dist||The distance the ball progressed towards the end zone when this player was thrown (should be added to rushing distance total stat)||
 
 
-===Vampire Stats===
+===Vampire stats===
 
 The inflicted stats aren't working atm
 
@@ -177,13 +177,13 @@ The inflicted stats aren't working atm
 ||!inflicted_bloodfeed_kos||bld_ko_i||Number of KOs from a blood feed (as above)||
 ||!inflicted_bloodfeed_bhs||bld_bh_i||Number of badly hurts from a blood feed (as above)||
 
-===Thrall Stats===
+===Thrall stats===
 
 As above as the path for outcome of thrall injuries isnt working (or at least my filter is wrong), i cant work out sustained effects of the blood feed.
 
 ||!fed_on||fed_s||Number of times this thrall player has been fed on.||
 
-===Tentacles Stats===
+===Tentacles stats===
 
 ||tentacles_rolls||tent_a||Number of times this player used his tentacles||
 ||tentacles_successes||tent||Number of times this players successfully held another||
