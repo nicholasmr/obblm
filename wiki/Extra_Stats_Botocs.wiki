@@ -105,7 +105,7 @@ Just to note inflicted counts here are based on the status of the player at the 
 ===Healing Stats===
 
 ||apothecary_used||ap||Number of times the apoth has been used on this player||
-||ko_recovery_attempts||ko_ra|Number of recovery rolls from KOs||
+||ko_recovery_attempts||ko_ra||Number of recovery rolls from KOs||
 ||ko_recoveries||ko_r||Number of successful KOs recoveries||
 ||thickskull_used||thk||Number of times thick skull was used by this player.||
 ||regeneration_attempts||rgn_a||Number of time this player attempted to regenerate.||
@@ -175,7 +175,7 @@ The inflicted stats aren't working atm
 ||hypnoze_successes||hyp||Number of times hypnotic gaze was successful||
 ||!inflicted_bloodfeed_stuns||bld_st_i||Number of stuns from a blood feed (doesn't seem to be working, path is action blood feed, armour roll 2 for thrall, injury roll for thrall, end status stunned). Not sure why it doesn't go straight to the injury roll.||
 ||!inflicted_bloodfeed_kos||bld_ko_i||Number of KOs from a blood feed (as above)||
-||!inflicted_bloodfeed_bhs||bld_bh_iNumber of badly hurts from a blood feed (as above)||
+||!inflicted_bloodfeed_bhs||bld_bh_i||Number of badly hurts from a blood feed (as above)||
 
 ===Thrall Stats===
 
