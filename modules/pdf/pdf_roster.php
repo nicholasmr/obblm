@@ -87,6 +87,7 @@ define('COLOR_ROSTER_CHR_GTP1', COLOR_HTML_CHR_GTP1); // Characteristic greater 
 define('COLOR_ROSTER_CHR_EQM1', COLOR_HTML_CHR_EQM1); // Characteristic equal minus one.
 define('COLOR_ROSTER_CHR_LTM1', COLOR_HTML_CHR_LTM1); // Characteristic less than minus one.
 
+define('T_PDF_ROSTER_SET_EMPTY_ON_ZERO', true); # Prints cp, td etc. as '' (empty string) when field = 0.
 
 $ind_cost=0;
 
@@ -254,6 +255,14 @@ foreach ($players as $p) {
   $sum_int+=$p->mv_intcpt;
   $sum_cas+=$p->mv_cas;
   $sum_mvp+=$p->mv_mvp;
+  
+    if (T_PDF_ROSTER_SET_EMPTY_ON_ZERO) {
+        foreach (array('cp','td','int','cas','mvp','spp') as $f) {
+            if ($pp[$f] == 0) {
+                $pp[$f] = '';
+            }
+        }
+    }
   
   // Printing player row
   $currenty+=$pdf->print_prow($pp, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8, $p->ma_color, $p->st_color, $p->ag_color, $p->av_color);

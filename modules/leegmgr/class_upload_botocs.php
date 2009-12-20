@@ -339,7 +339,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             if (  !$p->is_dead && !$p->is_sold ) {
                 $player = new Player ( $p->player_id );
                 $p_matchdata = $match->getPlayerEntry( $player->player_id );
-                if ( !$p_matchdata['inj'] ) {
+                if ( empty($p_matchdata) ) {
                     $match->entry(
                         $p->player_id,
                         $input = array ( 
