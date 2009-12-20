@@ -291,7 +291,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                         "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
                         "inj" => $inj, "agn1" => NONE, "agn2" => $agn1,
-                        "skills" => NONE, "nr" => $merc_nr,
+                        "skills" => NONE, "nr" => $merc_nr,),
                     $player['EPS']
                 );
                 $merc_nr++;
@@ -305,7 +305,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         'f_team_id' => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                         "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
-                        "inj" => $inj, "agn1" => $agn1, "agn2" => NONE,
+                        "inj" => $inj, "agn1" => $agn1, "agn2" => NONE,),
                     $player['EPS']
                 );
             else
