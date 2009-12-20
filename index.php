@@ -67,6 +67,7 @@ switch ($_GET['section'])
     case 'login':        sec_login();           break;
     case 'admin':        sec_admin();           break;
     case 'teamlist':     sec_teamlist();        break;
+    case 'coachlist':    sec_coachlist();       break;
     case 'rules':        sec_rules();           break;
     case 'about':        sec_about();           break;    
     case 'matches':      sec_matcheshandler();  break; // Tournaments, matches, match reports, recent matches, upcomming matches etc.

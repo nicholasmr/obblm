@@ -32,7 +32,10 @@ public static function profile($rid)
     title($race->name);
     ?>
     <center><img src="<?php echo RACE_ICONS.'/'.$roster['other']['icon'];?>" alt="Race icon"></center>
-    <ul><li>Re-roll cost: <?php echo $roster['other']['rr_cost']/1000;?>k</li></ul><br>
+    <ul>
+        <li>ID: <?php echo $roster['other']['race_id'];?></li>
+        <li>Re-roll cost: <?php echo $roster['other']['rr_cost']/1000;?>k</li>
+    </ul><br>
     <?php
     $players = array();
     foreach ($roster['players'] as $player => $d) {
@@ -44,6 +47,7 @@ public static function profile($rid)
     }
     $fields = array(
         'position'  => array('desc' => 'Position'),
+        'pos_id'    => array('desc' => 'ID'),
         'ma'        => array('desc' => 'Ma'),
         'st'        => array('desc' => 'St'),
         'ag'        => array('desc' => 'Ag'),

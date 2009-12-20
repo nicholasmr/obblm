@@ -209,4 +209,24 @@ function inlineform($fields, $formName, $buttonText, $myFormElements = array()) 
           implode("\n", $myFormElements).
           "<a href='javascript:void(0);' onClick='document.$formName.submit();'>$buttonText</a></form>";
 }
+
+function getESGroups($appendFields = false, $useAbbrevs = false)
+{
+    global $ES_fields;
+    $grps = array();
+    if ($appendFields) {
+        foreach ($ES_fields as $k => $f) {
+            $grps[$f['group']][] = $useAbbrevs ? $f['short'] : $k;
+        }
+    }
+    else {
+        foreach ($ES_fields as $k => $f) {
+            if (!in_array($f['group'], $grps))
+                $grps[] = $f['group'];
+        }
+    }
+    
+    return $grps;
+}
+
 ?>

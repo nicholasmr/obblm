@@ -1,7 +1,6 @@
 <?php
 
-global $raceididx, $T_INJS;
-global $T_PMD_ACH, $T_PMD_IR, $T_PMD_INJ;
+global $T_INJS, $T_PMD_ACH, $T_PMD_IR, $T_PMD_INJ;
 $T_INJS_REV = array_flip($T_INJS);
 
 // Input sent?
@@ -92,12 +91,8 @@ Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right cli
     <input type="submit" name="button" value="Import via XML file">
 </form>
 <br>
-When importing teams you will need to consult the below table in order to determine the team's race ID.<br><br>
-<table><tr style='font-style:italic;'><td>Race</td><td>Race ID</td></tr>
-<?php
-global $raceididx;
-foreach ($raceididx as $rid => $rname) {
-    echo "<tr><td>$rname</td><td>$rid</td></tr>\n";
-}
-?>
-</table>
+When importing teams you will need to know the IDs of the respective coaches, races and player positionals.<br>
+Coach IDs can be found in the information section of the Coach's Corner pages.<br>
+Race IDs and the IDs of the player positional allowed by the race can be found on the race's information pages.
+
+

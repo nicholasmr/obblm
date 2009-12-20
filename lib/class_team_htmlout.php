@@ -21,7 +21,7 @@
  *
  */
 
-define('T_HTML_TEAMS_PER_PAGE', 30);
+define('T_HTML_TEAMS_PER_PAGE', 50);
 
 class Team_HTMLOUT extends Team
 {
@@ -34,7 +34,7 @@ public static function dispTeamList()
         NOTE: We do NOT show teams not having played any matches!
     */
     
-    list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(true,true,'');
+    list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(array('race' => true, 'state' => true),'');
     $q = 'SELECT _RRP AS "team_id", owned_by_coach_id, f_race_id, teams.name AS "name", f_cname, f_rname, tv, teams.rdy AS "rdy", teams.retired AS "retired" 
         FROM matches, teams, tours, divisions 
         WHERE 
@@ -156,20 +156,23 @@ public static function profile($tid)
     $t->_roster($ALLOW_EDIT, $DETAILED, $players);
     $players = $players_backup; # Restore the $players array (_roster() manipulates the passed $players array).
     $t->_menu($ALLOW_EDIT, $DETAILED);
-    $t->_starMercHH($DETAILED);
-    $t->_actionBoxes($ALLOW_EDIT, $players);
-    $t->_about($ALLOW_EDIT);
-    $t->_news($ALLOW_EDIT);
-    $t->_recentGames();
-
-    // Default folded out sub-section.
-    if (isset($_POST['type']) && ($_POST['type'] == 'news' || $_POST['type'] == 'newsedit' || $_POST['type'] == 'newsdel')) $activeDiv = 'tp_news';
-    else if (isset($_POST['type']) && ($_POST['type'] == 'teamtext' || $_POST['type'] == 'pic')) $activeDiv = 'tp_about';
-    else if (isset($_GET['sortgp'])) $activeDiv = 'tp_recent';
-    else if (isset($_GET['sorttp_shh'])) $activeDiv = 'tp_shh';
-    else if (isset($_GET['sorttp_mhh'])) $activeDiv = 'tp_mhh';
-    else $activeDiv = 'tp_actionboxes';
-    ?><script language="JavaScript" type="text/javascript"> foldup('<?php echo $activeDiv;?>'); </script><?php
+    
+    switch (isset($_GET['subsec']) ? $_GET['subsec'] : 'man') 
+    {
+        case 'hhmerc': $t->_HHMerc($DETAILED); break;
+        case 'hhstar': $t->_HHStar($DETAILED); break;
+        case 'man': $t->_actionBoxes($ALLOW_EDIT, $players); break;
+        case 'about': $t->_about($ALLOW_EDIT); break;
+        case 'news': $t->_news($ALLOW_EDIT); break;
+        case 'recentmatches': $t->_recentGames(); break;
+    }
+    if (isset($_GET['subsec'])){
+        ?>
+        <script language="JavaScript" type="text/javascript">
+        window.location = "#anc";
+        </script>
+        <?php
+    }
 }
 
 private function _handleActions($ALLOW_EDIT)
@@ -520,17 +523,17 @@ private function _menu($ALLOW_EDIT, $DETAILED)
 {
     global $lng, $settings, $rules;
     $team = $this; // Copy. Used instead of $this for readability.
-    
+    $url = urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$this->team_id,false,false);
     ?>
     <br>
     <ul id="nav" class="dropdown dropdown-horizontal" style="position:static; z-index:0;">
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_actionboxes');?>><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_news');?>><?php echo $lng->getTrn('profile/team/news');?></a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_about');?>><?php echo $lng->getTrn('common/about');?></a></li>
-        <li><a href='javascript:void(0)' <?php echo $this->_makeOnClick('tp_recent');?>><?php echo $lng->getTrn('common/recentmatches');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=man';?>"><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=news';?>"><?php echo $lng->getTrn('profile/team/news');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=about';?>"><?php echo $lng->getTrn('common/about');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=recentmatches';?>"><?php echo $lng->getTrn('common/recentmatches');?></a></li>
         <?php
-        echo "<li><a href='javascript:void(0)' ".$this->_makeOnClick('tp_shh')." title='Show/hide star hire history'>Star HH</a></li>\n";
-        echo "<li><a href='javascript:void(0)' ".$this->_makeOnClick('tp_mhh')." title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
+        echo "<li><a href='${url}&amp;subsec=hhstar' title='Show/hide star hire history'>Star HH</a></li>\n";
+        echo "<li><a href='${url}&amp;subsec=hhmerc' title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
         
         $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$this->team_id&amp;detailed=".($DETAILED ? '1' : '0') : '';
         $xml    = (Module::isRegistered('Team_export')) ? "handler.php?type=xmlexport&amp;tid=$this->team_id" : '';
@@ -556,102 +559,75 @@ private function _menu($ALLOW_EDIT, $DETAILED)
     </ul>
     <br><br>
     
-    <script language="JavaScript" type="text/javascript">
-        function foldup(execption)
-        {
-            var fields = ['tp_actionboxes', 'tp_news', 'tp_about', 'tp_recent', 'tp_shh', 'tp_mhh'];
-            for (f in fields) {
-                document.getElementById(fields[f]).style.display='none';
-            }
-            document.getElementById(execption).style.display='block';
-        }
-    </script>
     <?php
 }
 
-// Small helper routine for _menu().
-private function _makeOnClick($divID)
+private function _HHMerc($DETAILED)
 {
-    return "onClick=\"foldup('$divID');\"";
-}
-
-private function _starMercHH($DETAILED)
-{
-    /* 
-        Show color descriptions in detailed view and links to special team page actions. 
-    */
-
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
-
-    ?>
-    <div id='tp_shh' style='clear:both;'>
-        <?php
-        title($lng->getTrn('common/starhh'));
-        Star_HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
-            'url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
-            'GET_SS' => 'tp_shh', 
-            'anchor' => 'tp_shhanc')
-        );
-        ?>
-    </div> 
-    
-    <div id='tp_mhh' style='clear:both;'>
-        <?php
-        title($lng->getTrn('common/merchh'));
-        $mdat = array();
-        foreach (Mercenary::getMercsHiredByTeam($team->team_id, false) as $merc) {
-            $o = (object) array();
-            $m = new Match($merc->match_id);
-            $o->date_played = $m->date_played;
-            $o->opponent = ($m->team1_id == $team->team_id) ? $m->team1_name : $m->team2_name;
-            foreach (array('match_id', 'skills', 'mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
-                $o->$f = $merc->$f;
-            }
-            $o->cas = $o->bh+$o->ki+$o->si;
-            $o->match = '[view]';
-            $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
-            $o->score = "$m->team1_score - $m->team2_score";
-            $o->result = matchresult_icon(
-                (
-                ($m->team1_id == $team->team_id && $m->team1_score > $m->team2_score) ||
-                ($m->team2_id == $team->team_id && $m->team1_score < $m->team2_score)
-                ) 
-                    ? 'W'
-                    : (($m->team1_score == $m->team2_score) ? 'D' : 'L')
-            );
-            
-            array_push($mdat, $o);
+    title("<a name='anc'>".$lng->getTrn('common/merchh')."</a>");
+    $mdat = array();
+    foreach (Mercenary::getMercsHiredByTeam($team->team_id, false) as $merc) {
+        $o = (object) array();
+        $m = new Match($merc->match_id);
+        $o->date_played = $m->date_played;
+        $o->opponent = ($m->team1_id == $team->team_id) ? $m->team1_name : $m->team2_name;
+        foreach (array('match_id', 'skills', 'mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
+            $o->$f = $merc->$f;
         }
-        $fields = array(
-            'date_played'   => array('desc' => 'Hire date'), 
-            'tour'          => array('desc' => 'Tournament'),
-            'opponent'      => array('desc' => 'Opponent team'), 
-            'skills' => array('desc' => 'Add. skills'), 
-            'cp'     => array('desc' => 'Cp'), 
-            'td'     => array('desc' => 'Td'), 
-            'intcpt' => array('desc' => 'Int'), 
-            'cas'    => array('desc' => 'Cas'), 
-            'bh'     => array('desc' => 'BH'), 
-            'si'     => array('desc' => 'Si'), 
-            'ki'     => array('desc' => 'Ki'), 
-            'mvp'    => array('desc' => 'MVP'), 
-            'score'  => array('desc' => 'Score', 'nosort' => true),
-            'result' => array('desc' => 'Result', 'nosort' => true),
-            'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true), 
+        $o->cas = $o->bh+$o->ki+$o->si;
+        $o->match = '[view]';
+        $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+        $o->score = "$m->team1_score - $m->team2_score";
+        $o->result = matchresult_icon(
+            (
+            ($m->team1_id == $team->team_id && $m->team1_score > $m->team2_score) ||
+            ($m->team2_id == $team->team_id && $m->team1_score < $m->team2_score)
+            ) 
+                ? 'W'
+                : (($m->team1_score == $m->team2_score) ? 'D' : 'L')
         );
-        HTMLOUT::sort_table(
-            "<a name='tp_mhhanc'>".$lng->getTrn('common/merchh')."</a>", 
-            urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
-            $mdat, 
-            $fields, 
-            sort_rule('star_HH'), 
-            (isset($_GET['sorttp_mhh'])) ? array((($_GET['dirtp_mhh'] == 'a') ? '+' : '-') . $_GET['sorttp_mhh']) : array(),
-            array('GETsuffix' => 'tp_mhh', 'doNr' => false, 'anchor' => 'tp_mhhanc')
-        );
-        ?>
-    </div>
-    <?php
+        
+        array_push($mdat, $o);
+    }
+    $fields = array(
+        'date_played'   => array('desc' => 'Hire date'), 
+        'tour'          => array('desc' => 'Tournament'),
+        'opponent'      => array('desc' => 'Opponent team'), 
+        'skills' => array('desc' => 'Add. skills'), 
+        'cp'     => array('desc' => 'Cp'), 
+        'td'     => array('desc' => 'Td'), 
+        'intcpt' => array('desc' => 'Int'), 
+        'cas'    => array('desc' => 'Cas'), 
+        'bh'     => array('desc' => 'BH'), 
+        'si'     => array('desc' => 'Si'), 
+        'ki'     => array('desc' => 'Ki'), 
+        'mvp'    => array('desc' => 'MVP'), 
+        'score'  => array('desc' => 'Score', 'nosort' => true),
+        'result' => array('desc' => 'Result', 'nosort' => true),
+        'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true), 
+    );
+    HTMLOUT::sort_table(
+        "<a name='tp_mhhanc'>".$lng->getTrn('common/merchh')."</a>", 
+        urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=hhmerc'.(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+        $mdat, 
+        $fields, 
+        sort_rule('star_HH'), 
+        (isset($_GET['sorttp_mhh'])) ? array((($_GET['dirtp_mhh'] == 'a') ? '+' : '-') . $_GET['sorttp_mhh']) : array(),
+        array('GETsuffix' => 'tp_mhh', 'doNr' => false,)
+    );
+}
+
+private function _HHStar($DETAILED)
+{
+    global $lng;
+    $team = $this; // Copy. Used instead of $this for readability.
+    title("<a name='anc'>".$lng->getTrn('common/starhh')."</a>");
+    Star_HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
+        'url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=hhstar'.(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+        'GET_SS' => 'tp_shh',)
+    );
 }
 
 private function _actionBoxes($ALLOW_EDIT, $players)
@@ -669,10 +645,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     $team = $this; // Copy. Used instead of $this for readability.
     $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
      
-    echo "<div id='tp_actionboxes'>\n";
     ?>
     <div class="boxTeamPage">
-        <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><a name='aanc'><?php echo $lng->getTrn('profile/team/box_info/title');?></a></div>
+        <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><a name='anc'><?php echo $lng->getTrn('profile/team/box_info/title');?></a></div>
         <div class="boxBody">
             <table width="100%">
                 <tr>
@@ -1516,7 +1491,6 @@ private function _actionBoxes($ALLOW_EDIT, $players)
         </script>
         <?php
     }
-    echo "</div> <!-- Container end -->\n";
 }
 
 private function _about($ALLOW_EDIT)
@@ -1524,8 +1498,7 @@ private function _about($ALLOW_EDIT)
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
     
-    echo "<div id='tp_about'>\n";
-    title("<a name='anc_about'>".$lng->getTrn('common/about')." $team->name</a>");
+    title("<a name='anc'>".$lng->getTrn('common/about')." $team->name</a>");
     ?>
     <table class='common'>
         <tr class='commonhead'>
@@ -1570,7 +1543,6 @@ private function _about($ALLOW_EDIT)
             </td>
         </tr>
     </table>
-    </div> <!-- Container end -->
     <?php
 }
 
@@ -1579,8 +1551,7 @@ private function _news($ALLOW_EDIT)
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
     
-    echo "<div id='tp_news'>\n";
-    title("<a name='anc_news'>".$lng->getTrn('profile/team/news')."</a>");
+    title("<a name='anc'>".$lng->getTrn('profile/team/news')."</a>");
     $news = $team->getNews(MAX_TNEWS);
     ?>
     <div class="row">
@@ -1627,7 +1598,6 @@ private function _news($ALLOW_EDIT)
             </div>    
         </div>
     </div>
-    </div> <!-- Container end -->
     <?php
 }
 
@@ -1636,10 +1606,8 @@ private function _recentGames()
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
 
-    echo "<div id='tp_recent'>\n";
-    title("<a name='gp'>".$lng->getTrn('common/recentmatches')."</a>");
-    HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false), 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
-    echo "</div> <!-- Container end -->\n";
+    title("<a name='anc'>".$lng->getTrn('common/recentmatches')."</a>");
+    HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=recentmatches', 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
 }
 
 }
