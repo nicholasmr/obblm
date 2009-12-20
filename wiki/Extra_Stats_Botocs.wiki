@@ -94,7 +94,7 @@ Just to note inflicted counts here are based on the status of the player at the 
 
 ||inflicted_fouls||fl_i||Number of times this player has fouled another.||
 ||inflicted_foul_stuns||st_fi||Number of times this player stunned another through fouling||
-||inflicted_foul_kos||ko_fi||fl_Number of times this player knocked out another through fouling||
+||inflicted_foul_kos||ko_fi||Number of times this player knocked out another through fouling||
 ||inflicted_foul_bhs||bh_fi||Number of times this player badly hurt another through fouling||
 ||inflicted_foul_sis||si_fi||Number of times this player seriously injured another through fouling||
 ||inflicted_foul_kills||ki_fi||Number of times this player killed another through fouling||
