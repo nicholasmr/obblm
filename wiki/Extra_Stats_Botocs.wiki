@@ -32,7 +32,7 @@ The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) 
 ||pass_distance||cp_dist||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
 ||dumpoff_attempts||dmp_a||Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs).||
 ||dumpoff_completions||dmp_s||Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions).||
-||catch_attempts||catch_a|Number of catch attempts made my a player from a throw.||
+||catch_attempts||catch_a||Number of catch attempts made my a player from a throw.||
 ||catches||catch||Number of catches made (including re-rolled).||
 ||handoffs||hnd||Number of hand offs this player has made||
 ||handoffs_received||hnd_r_a||Number of times this player has been handed off to.||
