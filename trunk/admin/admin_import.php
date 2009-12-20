@@ -91,8 +91,10 @@ Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right cli
     <input type="submit" name="button" value="Import via XML file">
 </form>
 <br>
+<b>Please note</b> that you <i>must</i> run the "syncAll()" synchronization procedure from the <a href='index.php?section=admin&amp;subsec=cpanel'>OBBLM core panel</a> after importing teams.<br>
+<br>
 When importing teams you will need to know the IDs of the respective coaches, races and player positionals.<br>
 Coach IDs can be found in the information section of the Coach's Corner pages.<br>
-Race IDs and the IDs of the player positional allowed by the race can be found on the race's information pages.
+Race IDs and the IDs of the player positionals allowed by the race can be found on the race's information pages.
 
 
