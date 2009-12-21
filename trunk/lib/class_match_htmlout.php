@@ -43,13 +43,13 @@ function recentMatches() {
     HTMLOUT::recentGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=recent', 'n' => MAX_RECENT_GAMES));
 }
 
-function upcommingMatches() {
+function upcomingMatches() {
 
     global $lng;
-    title($lng->getTrn('menu/matches_menu/upcomming'));
+    title($lng->getTrn('menu/matches_menu/upcoming'));
     list($node, $node_id) = HTMLOUT::nodeSelector(array(),'');
     echo '<br>';
-    HTMLOUT::upcommingGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=upcomming', 'n' => MAX_RECENT_GAMES));
+    HTMLOUT::upcomingGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=upcoming', 'n' => MAX_RECENT_GAMES));
 }
 
 public static function tourMatches() 
@@ -615,38 +615,6 @@ protected static function _print_player_row($FS, $name, $nr, $pos, $bgcolor, $md
         echo "</select></td>\n";
     }
     echo "</tr>\n";
-}
-
-public static function player_validation($p, $m) {
-
-    // NOTE: we allow MNG players!
-
-    if (!is_object($p) || !is_object($m))
-        return false;
-        
-    // Existing match?                    
-    if ($m->is_played) {
-
-        // Skip if player is bought after match was played.
-        if ($p->date_bought > $m->date_played)
-            return false;
-    
-        // If sold before this match was played.
-        if ($p->is_sold && $p->date_sold < $m->date_played)
-            return false;
-        
-        // Player died in a earlier match.
-        if ($p->getStatus($m->match_id) == DEAD)
-            return false;
-    }
-    // New match?
-    else {
-    
-        if ($p->is_dead || $p->is_sold)
-            return false;
-    }
-    
-    return true;
 }
 
 public static function report_ES($mid, $DIS) 

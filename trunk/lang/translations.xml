@@ -40,7 +40,7 @@
     <about>About</about>
     
     <recentmatches>Recent matches</recentmatches>
-    <upcommingmatches>Upcomming matches</upcommingmatches>
+    <upcomingmatches>Upcoming matches</upcomingmatches>
     <dateplayed>Date played</dateplayed>
     
     <starhh>Star Hire History</starhh>
@@ -93,7 +93,7 @@
         <name>Matches</name> <!-- top level button text -->
         <tours>Tournaments</tours>
         <recent>Recent matches</recent>
-        <upcomming>Upcomming matches</upcomming>
+        <upcoming>Upcoming matches</upcoming>
     </matches_menu>
     <statistics_menu>
         <name>Statistics</name> <!-- top level button text -->

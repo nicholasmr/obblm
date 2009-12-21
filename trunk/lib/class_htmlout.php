@@ -89,10 +89,10 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
     );
 }
 
-public static function upcommingGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array $opts)
+public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array $opts)
 {
     /*
-        Make upcomming games table.
+        Make upcoming games table.
 
          $opts = array(
             'url' => The URL of the page on which this table is to be printed.
@@ -127,7 +127,7 @@ public static function upcommingGames($obj, $obj_id, $node, $node_id, $opp_obj, 
     );
 
     HTMLOUT::sort_table(
-        $lng->getTrn('common/upcommingmatches'),
+        $lng->getTrn('common/upcomingmatches'),
         $opts['url'],
         $matches,
         $fields,
@@ -634,7 +634,7 @@ private static function make_menu()
             <ul>
                 <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
                 <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
-                <li><a href="index.php?section=matches&amp;type=upcomming"><?php echo $lng->getTrn('menu/matches_menu/upcomming');?></a></li>
+                <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a></li>
             </ul>
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/statistics_menu/name');?></span>
