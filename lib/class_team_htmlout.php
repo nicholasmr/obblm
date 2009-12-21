@@ -536,7 +536,6 @@ private function _menu($ALLOW_EDIT, $DETAILED)
         echo "<li><a href='${url}&amp;subsec=hhmerc' title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
         
         $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$this->team_id&amp;detailed=".($DETAILED ? '1' : '0') : '';
-        $xml    = (Module::isRegistered('Team_export')) ? "handler.php?type=xmlexport&amp;tid=$this->team_id" : '';
         $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_enabled']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id" : '';
         if ($pdf || $xml || $botocs) {
         ?>
