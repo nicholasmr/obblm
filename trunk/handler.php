@@ -60,11 +60,6 @@ switch ($_GET['type'])
         Module::run('XML_BOTOCS', array());
         break;
 
-    /* Team XML export */
-    case 'xmlexport':
-        Module::run('Team_export', array($_GET['tid']));
-        break;
-
     /* Mem. matches */
    	case 'memmatches':
    		Module::run('Memmatches', array());

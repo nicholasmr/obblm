@@ -57,12 +57,6 @@ Module::register(array(
 ));
 
 Module::register(array(
-    'class'         => 'Team_export', 
-    'filesRunTime'  => array(),
-    'filesLoadTime' => array('teamxmlexport/class_team_export.php')
-));
-
-Module::register(array(
     'class'         => 'Memmatches', 
     'filesRunTime'  => array(),
     'filesLoadTime' => array('memmatches/class_memmatches.php')

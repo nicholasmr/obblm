@@ -162,7 +162,6 @@ $settings['modules_enabled'] = array(
     'PDFroster'     => true, # Team PDF roster
     'RSSfeed'       => true, # Site RSS feed
     'SGraph'        => true, # Graphical statistics
-    'Team_export'   => true, # Standard XML export of team
     'Memmatches'    => true, # Memorable matches viewer
     'Wanted'        => true, # Wanted list
     'HOF'           => true, # Hall of fame
