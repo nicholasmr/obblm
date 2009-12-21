@@ -330,7 +330,7 @@ function sec_matcheshandler() {
         case 'tourmatches': Match_HTMLOUT::tourMatches(); break;
         case 'report':      Match_HTMLOUT::report(); break;
         case 'recent':      Match_HTMLOUT::recentMatches(); break;
-        case 'upcomming':   Match_HTMLOUT::upcommingMatches(); break;
+        case 'upcoming':    Match_HTMLOUT::upcomingMatches(); break;
     }    
 }
 

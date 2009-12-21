@@ -70,7 +70,7 @@ switch ($_GET['section'])
     case 'coachlist':    sec_coachlist();       break;
     case 'rules':        sec_rules();           break;
     case 'about':        sec_about();           break;    
-    case 'matches':      sec_matcheshandler();  break; // Tournaments, matches, match reports, recent matches, upcomming matches etc.
+    case 'matches':      sec_matcheshandler();  break; // Tournaments, matches, match reports, recent matches, upcoming matches etc.
     case 'objhandler':   sec_objhandler();      break; // Object profiles, object standings.
     default:             sec_main();
 }

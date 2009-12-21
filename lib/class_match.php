@@ -482,6 +482,38 @@ class Match
         return mysql_query($query);
     }
 
+    public static function player_validation($p, $m) {
+
+        // NOTE: we allow MNG players!
+
+        if (!is_object($p) || !is_object($m))
+            return false;
+            
+        // Existing match?                    
+        if ($m->is_played) {
+
+            // Skip if player is bought after match was played.
+            if ($p->date_bought > $m->date_played)
+                return false;
+        
+            // If sold before this match was played.
+            if ($p->is_sold && $p->date_sold < $m->date_played)
+                return false;
+            
+            // Player died in a earlier match.
+            if ($p->getStatus($m->match_id) == DEAD)
+                return false;
+        }
+        // New match?
+        else {
+        
+            if ($p->is_dead || $p->is_sold)
+                return false;
+        }
+        
+        return true;
+    }
+
     public static function getMatches($n = false, $node = false, $node_id = false, $getUpcomming = false) {
     
         /**

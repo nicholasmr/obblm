@@ -266,7 +266,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             foreach ( $players as $p  )
             {
 #                if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold && !$f_player_id ) {
-                if ( $p->nr == $player['nr'] && Match_HTMLOUT::player_validation($p, $match) && !$f_player_id ) {
+                if ( $p->nr == $player['nr'] && Match::player_validation($p, $match) && !$f_player_id ) {
                     $f_player_id = $p->player_id;
                     break;
                 }
@@ -299,7 +299,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 continue;
             }
 
-            if ( !$addZombie && Match_HTMLOUT::player_validation($p, $match) )
+            if ( !$addZombie && Match::player_validation($p, $match) )
                 $match->entry( 
                     $f_player_id,
                     $input = array ( 
@@ -337,7 +337,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         foreach ( $players as $p  )
         {
-            if ( Match_HTMLOUT::player_validation($p, $match) ) {
+            if ( Match::player_validation($p, $match) ) {
                 $player = new Player ( $p->player_id );
                 $p_matchdata = $match->getPlayerEntry( $player->player_id );
                 if ( empty($p_matchdata) ) {
