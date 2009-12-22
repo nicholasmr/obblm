@@ -29,7 +29,7 @@ define('RING_SYS',   0); // Admins
 define('RING_COM',   1); // Commissioners.
 define('RING_COACH', 2); // Coach/ordinary user
 
-define('RING_COM_NOLEAGUE', 0); // Value of commisioner's league ID reference if the commisioner is NOT assinged to any league.
+define('T_COACH_NO_ASSOC_LID', 0); // Value of coaches associative league ID if the coach is NOT assigned to any league.
 
 class Coach
 {
@@ -46,7 +46,7 @@ class Coach
     public $phone       = '';
     public $ring        = 0; // Privilege ring (ie. coach access level).
     public $retired     = false;
-    public $com_lid    = 0;
+    public $f_lid       = 0;
     public $settings    = array();
 
     // Shortcut for compabillity issues.
@@ -195,9 +195,9 @@ class Coach
         return (mysql_query($query) && ($this->realname = $rname));
     }
 
-    public function setCommissionerLid($lid) {
-        $this->com_lid = $lid;
-        $query = "UPDATE coaches SET com_lid = $lid WHERE coach_id = $this->coach_id";
+    public function setLid($lid) {
+        $this->f_lid = $lid;
+        $query = "UPDATE coaches SET f_lid = $lid WHERE coach_id = $this->coach_id";
         return mysql_query($query);
     }
 
@@ -236,6 +236,52 @@ class Coach
     /***************
      * Statics
      ***************/
+
+    const NODE_STRUCT__TREE = 1;
+    const NODE_STRUCT__FLAT = 2;
+    public static function allowedNodeAccess($NODE_SRUCT, $f_lid, $extraFields = array())
+    {
+        $extraFields[T_NODE_LEAGUE]['name']     = 'lname';
+        $extraFields[T_NODE_DIVISION]['name']   = 'dname';
+        $extraFields[T_NODE_TOURNAMENT]['name'] = 'tname';
+        foreach ($extraFields as $node => $fields) {
+            switch ($node) {
+                case T_NODE_LEAGUE:     $tbl = 'l'; break;
+                case T_NODE_DIVISION:   $tbl = 'd'; break;
+                case T_NODE_TOURNAMENT: $tbl = 't'; break;
+            }
+            foreach ($fields as $ref => $name) {
+                $properFields[] = "$tbl.$ref AS '$name'";
+            }
+        }
+        $query = "SELECT l.lid AS 'lid', d.did AS 'did', t.tour_id AS 'trid',".implode(',',$properFields)."
+            FROM leagues AS l, divisions AS d, tours AS t 
+            WHERE t.f_did = d.did AND d.f_lid = l.lid".($f_lid ? " AND l.lid = $f_lid" : '');
+        $result = mysql_query($query);
+        switch ($NODE_SRUCT)
+        {
+            case self::NODE_STRUCT__TREE:
+                $struct = array();
+                while ($r = mysql_fetch_object($result)) {
+                    $struct[$r->lid][$r->did][$r->trid]['desc'] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
+                    $struct[$r->lid][$r->did]['desc']           = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
+                    $struct[$r->lid]['desc']                    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
+                }            
+                return $struct;
+                
+            case self::NODE_STRUCT__FLAT:
+                $leagues = $divisions = $tours = array();
+                while ($r = mysql_fetch_object($result)) {
+                    $tours[$r->trid]    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
+                    $divisions[$r->did] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
+                    $leagues[$r->lid]   = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
+                }
+                return array($leagues,$divisions,$tours);
+                
+            default:
+                return false;
+        }
+    }
 
     public static function getCoaches() {
     

@@ -212,7 +212,7 @@ public static function report() {
     if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
         fatal("Invalid match ID.");
     
-    global $lng, $stars, $rules, $coach;
+    global $lng, $stars, $rules, $coach, $racesHasNecromancer, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     
     // Create objects
@@ -252,6 +252,23 @@ public static function report() {
             $_POST['summary'] =  stripslashes($_POST['summary']);
         
         MTS('Report submit STARTED');
+        
+        // FIRST, if any raised zombies are kept we need to create their player objects in order have the correct player- vs. match creation & played dates.
+        foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
+            if (in_array($t->f_race_id, $racesHasNecromancer) && isset($_POST["t${id}zombie"])) {
+                $pos_id = $DEA[$t->f_rname]['players']['Zombie']['pos_id'];
+                list(,$pid) = Player::create(array('nr' => $t->getFreePlayerNr(), 'f_pos_id' => $pos_id, 'team_id' => $t->team_id, 'name' => 'RAISED ZOMBIE', 'forceCreate' => true));
+                /* 
+                    Knowing the new zombie's PID we relocate the zombie match data to regular player data - this allows us 
+                    to use the same loop for submitting the zombie's match data.
+                */
+                foreach ($T_PMD__ENTRY_EXPECTED as $f) {
+                    $postName = "${f}_t${id}zombie";
+                    $_POST["${f}_$pid"] = isset($_POST[$postName]) ? $_POST[$postName] : 0;
+                    unset($_POST[$postName]);
+                }
+            }
+        }
         
         // Update general match data
         status($m->update(array(
@@ -511,14 +528,19 @@ public static function report() {
                 else {$bgcolor = false;}
                 self::_print_player_row($p->player_id, $p->name, $p->nr, $p->position.(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
             }
+            echo "</table>\n";
+            
             // Add raised zombies
-#            global $racesHasNecromancer;
-#            if (in_array($t->f_race_id, $racesHasNecromancer)) {
-#                echo "<tr><td colspan='13'>Raised zombie? <input type='checkbox' name='t${id}zombie' value='1'></td></tr>\n";
-#                self::_print_player_row("t${id}zombie", 'Raised zombie', '', 'Zombie', false, array('USE $mdat STRUCT HERE'), $DIS);
-#            }
+            global $racesHasNecromancer;
+            if (in_array($t->f_race_id, $racesHasNecromancer)) {
+                echo "Raised zombie? <input type='checkbox' name='t${id}zombie' value='1' onclick='slideToggleFast(\"t${id}zombie\");'><br>\n";
+                echo "<div id='t${id}zombie' style='display:none;'>\n";
+                echo "<table class='common'>\n";
+                self::_print_player_row("t${id}zombie", 'Raised zombie', '&mdash;', 'Zombie', false, array(), $DIS);
+                echo "</table>\n";
+                echo "</div>\n";
+            }
             ?>
-            </table>
 
             <table style='border-spacing: 10px;'>
                 <tr><td align="left" valign="top">

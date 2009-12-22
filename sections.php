@@ -35,29 +35,7 @@ function sec_login() {
     <div class='login'>
     <form method="POST" action="index.php">
         <b><?php echo $lng->getTrn('login/loginname');?></b>
-        <?php
-        $result = mysql_query("SELECT COUNT(*) FROM coaches");
-        $row = mysql_fetch_row($result);
-        if ($settings['login_list'] && $row[0] <= MAX_LOGIN_DROPDOWN) {
-            ?>
-            <select name='coach'>
-            <?php
-            $coaches = get_rows('coaches', array('coach_id', 'name', 'retired'));
-            objsort($coaches, array('+name'));
-            foreach ($coaches as $c) {
-                if (!$c->retired)
-                    echo "<option value='$c->coach_id'>$c->name</option>";
-            }
-            ?>
-            </select>
-            <?php
-        }
-        else {
-            ?>
-            <input type="text" name="coach" size="20" maxlength="50">
-            <?php
-        }
-        ?>
+        <input type="text" name="coach" size="20" maxlength="50">
         &nbsp;&nbsp;
         <b><?php echo $lng->getTrn('login/passwd');?></b>
         <input type="password" name="passwd" size="20" maxlength="50">

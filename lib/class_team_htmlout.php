@@ -257,7 +257,6 @@ private function _handleActions($ALLOW_EDIT)
                 }
                 break;
             case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
-            case 'chlid':             status($team->setLeagueID((int) $_POST['lid'])); break;
             case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
             case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
             
@@ -466,7 +465,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
      ******************************/
 
     title($team->name . (($team->is_retired) ? ' <font color="red"> (Retired)</font>' : ''));
-    
+        
     $fields = array(
         'nr'        => array('desc' => 'Nr.'), 
         'name'      => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
@@ -641,6 +640,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
      
     global $lng, $rules, $settings, $skillarray, $coach, $DEA, $CHR_CONV;
     global $racesHasNecromancer, $racesNoApothecary;
+    global $T_ALLOWED_PLAYER_NR;
     $team = $this; // Copy. Used instead of $this for readability.
     $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
      
@@ -657,16 +657,6 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td><?php echo $lng->getTrn('common/race');?></td>
                     <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?php echo $team->f_rname; ?></a></td>
                 </tr>
-                <?php
-                if ($settings['relate_team_to_league']) {
-                    ?>
-                    <tr>
-                        <td><?php echo $lng->getTrn('profile/team/box_info/inleague');?></td>
-                        <td><?php echo get_alt_col('leagues', 'lid', $team->f_lid, 'name');?></td>
-                    </tr>
-                    <?php
-                }
-                ?>
                 <tr>
                     <td><?php echo $lng->getTrn('common/ready');?></td>
                     <td><?php echo ($team->rdy) ? $lng->getTrn('common/yes') : $lng->getTrn('common/no'); ?></td>
@@ -842,7 +832,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         Number:<br>
                         <select name="number">
                         <?php
-                        foreach (range(1, MAX_PLAYER_NR) as $i) {
+                        foreach ($T_ALLOWED_PLAYER_NR as $i) {
                             foreach ($players as $p) {
                                 if ($p->nr == $i && !$p->is_sold && !$p->is_dead)
                                     continue 2;
@@ -996,7 +986,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         Number:<br>
                         <select name="number">
                         <?php
-                        foreach (range(1, MAX_PLAYER_NR) as $i) {
+                        foreach ($T_ALLOWED_PLAYER_NR as $i) {
                             echo "<option value='$i'>$i</option>\n";
                         }
                         ?>
@@ -1143,16 +1133,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         'unbuy_goods'       => $lng->getTrn($base.'/box_admin/unbuy_goods'),
                         'bank'              => $lng->getTrn($base.'/box_admin/bank'),
                         'chown'             => $lng->getTrn($base.'/box_admin/chown'),
-                        'chlid'             => $lng->getTrn($base.'/box_admin/chlid'),
                         'spp'               => $lng->getTrn($base.'/box_admin/spp'),
                         'dval'              => $lng->getTrn($base.'/box_admin/dval'),
                         'extra_skills'      => $lng->getTrn($base.'/box_admin/extra_skills'),
                         'ach_skills'        => $lng->getTrn($base.'/box_admin/ach_skills'),
                     );
-                    
-                    if (!$settings['relate_team_to_league']) {
-                        unset($admin_tools['chlid']);
-                    }
 
                     // Set default choice.
                     if (!isset($_POST['menu_admintools'])) {
@@ -1288,28 +1273,6 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 ?>
                                 </select>
                                 <input type="hidden" name="type" value="chown">
-                                <?php
-                                break;
-
-                            /***************
-                             * Change team-league association
-                             **************/
-                                
-                            case 'chlid':
-                                echo $lng->getTrn('profile/team/box_admin/desc/chlid');
-                                ?>
-                                <hr><br>
-                                League:<br>
-                                <select name="lid">
-                                <?php
-                                $leagues = League::getLeagues();
-                                $DISABLE = empty($leagues);
-                                foreach ($leagues as $l) {
-                                    echo "<option value='$l->lid'".(($l->lid == $team->f_lid) ? ' SELECTED ' : '').">$l->name</option>\n";
-                                }
-                                ?>
-                                </select>
-                                <input type="hidden" name="type" value="chlid">
                                 <?php
                                 break;
                                 

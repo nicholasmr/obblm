@@ -78,7 +78,6 @@
         <active>Active</active>
         <alltime>All-time</alltime>
     <sgrp>Stats group</sgrp>
-
 </common>
 
 <!-- Link names for menu elements -->
@@ -140,7 +139,6 @@
 
 <cc>
     <new_team>New team</new_team>
-        <league>Associated league</league>
 
     <!-- <stats> defined in <common> block -->
 
@@ -200,7 +198,6 @@
 
         <box_info>
             <title>Team info and statistics</title>
-            <inleague>In league</inleague>
             
             <gp><![CDATA[Games&nbsp;played]]></gp>
             <pct_won><![CDATA[PCT&nbsp;won]]></pct_won>
@@ -307,7 +304,6 @@
             <unbuy_goods>Un-buy team goods</unbuy_goods>
             <bank>Gold bank</bank>
             <chown>Change ownership</chown>
-            <chlid>Change league association</chlid>
             <spp>Manage extra player SPP</spp>
             <dval>Manage extra player value</dval>
             <extra_skills>Manage extra player skills</extra_skills>
@@ -340,11 +336,6 @@
                 Change this team's ownership.
                 ]]>
                 </chown>
-                <chlid>
-                <![CDATA[
-                Change this team's league association.
-                ]]>
-                </chlid>
                 <spp>
                 <![CDATA[
                 Manage a player's extra SPP.
@@ -536,12 +527,6 @@
     <faq>FAQ</faq>
     <faq_txt>
     <![CDATA[
-    <i>Q:</i>
-    How do I add free zombies from matches to my team roster?<br>
-    <i>A:</i>
-    Simply buy the zombie(s) as you normally would and ask a league commissioner to return the money you spent.
-    <br><br>
-    
     <i>Q:</i>
     I can't seem to save a player's injury when submitting match data.<br>
     <i>A:</i>

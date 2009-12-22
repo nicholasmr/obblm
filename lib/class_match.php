@@ -40,6 +40,7 @@ $T_PMD_IR = array('ir_d1','ir_d2',);
 $T_PMD_INJ = array('inj','agn1','agn2',);
 $T_PMD_OTHER = array('mg',);
 $T_PMD = array_merge($T_PMD_RELS, $T_PMD_ACH, $T_PMD_IR, $T_PMD_INJ, $T_PMD_OTHER);
+$T_PMD__ENTRY_EXPECTED = array_merge($T_PMD_ACH, $T_PMD_IR, $T_PMD_INJ); # These fields should be passed to _entry().
 
 // Injury/status constants:
 define('NONE',  1);
@@ -556,13 +557,10 @@ class Match
         if ($input['team1_id'] == $input['team2_id'] || ($isLocked = get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'locked')))
             return false;
             
-        // If team->league relations are on don't allow teams from different leagues to play each other.
-        // If tour (f_tour_id) is not a node under the league associated with both teams, then deny match creation.
-        $tr = get_alt_col('divisions', 'did', get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'f_did'), 'f_lid');
-        $t1 = get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid');
-        $t2 = get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid');
-        if ($settings['relate_team_to_league'] && ($t1 == $t2 && $t1 != $tr || $t1 != $t2))
-            return false;
+        // Don't allow coaches' teams from different leagues to play each other.
+        $query = "SELECT (c1.f_lid = c2.f_lid) FROM teams AS t1, coaches AS c1, teams AS t2, coaches AS c2 
+            WHERE t1.owned_by_coach_id = c1.coach_id AND t2.owned_by_coach_id = c2.coach_id AND t1.team_id = $input[team1_id] AND t2.team_id = $input[team2_id]";
+
 
         $query = "INSERT INTO matches (team1_id, team2_id, round, f_tour_id, date_created)
                     VALUES ($input[team1_id], $input[team2_id], $input[round], '$input[f_tour_id]', NOW())";

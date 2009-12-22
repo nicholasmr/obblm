@@ -64,7 +64,7 @@ $core_tables = array(
         'ring'      => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
         'settings'  => 'VARCHAR(320) NOT NULL',
         'retired'   => 'BOOLEAN NOT NULL DEFAULT 0',
-        'com_lid'   => $CT_cols[T_NODE_LEAGUE].' NOT NULL DEFAULT 0',
+        'f_lid'     => $CT_cols[T_NODE_LEAGUE].' NOT NULL DEFAULT 0',
         // Dynamic properties (DPROPS)
         'elo'   => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
         'swon'  => $CT_cols['streak'].' DEFAULT 0',
@@ -79,7 +79,6 @@ $core_tables = array(
         'name'              => $CT_cols['name'],
         'owned_by_coach_id' => $CT_cols[T_OBJ_COACH],
         'f_race_id'         => $CT_cols[T_OBJ_RACE].' NOT NULL DEFAULT 0',
-        'f_lid'             => $CT_cols[T_NODE_LEAGUE].' NOT NULL DEFAULT 0',
         'treasury'          => 'BIGINT SIGNED',
         'apothecary'        => 'BOOLEAN',
         'rerolls'           => 'MEDIUMINT UNSIGNED',

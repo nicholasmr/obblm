@@ -34,7 +34,6 @@ class Team
     public $f_race_id         = 0;
     public $f_rname           = '';
     public $f_cname           = '';
-    public $f_lid             = 0;
     public $treasury          = 0;
     public $apothecary        = 0;
     public $rerolls           = 0;
@@ -95,11 +94,6 @@ class Team
         return mysql_query($query) && ($this->owned_by_coach_id = $cid) && SQLTriggers::run(T_SQLTRIG_TEAM_UPDATE_CHILD_RELS, array('id' => $this->team_id, 'obj' => $this));
     }
     
-    public function setLeagueID($lid) {
-        $query = "UPDATE teams SET f_lid = $lid WHERE team_id = $this->team_id";
-        return (mysql_query($query) && ($this->f_lid = $lid));
-    }
-
     public function getPlayers() {
         $this->_players = array();
         $result = mysql_query("SELECT player_id FROM players WHERE owned_by_team_id = $this->team_id ORDER BY nr ASC, name ASC");
@@ -363,6 +357,17 @@ class Team
 
         return $tours;
     }
+    
+    public function getFreePlayerNr()
+    {
+        global $T_ALLOWED_PLAYER_NR;
+        $query = "SELECT GROUP_CONCAT(nr) FROM players WHERE owned_by_team_id = $this->team_id GROUP BY owned_by_team_id";
+        $result = mysql_query($query);
+        list($inUse) = mysql_fetch_row($result);
+        $inUse = explode(',',$inUse);
+        $free = array_diff($T_ALLOWED_PLAYER_NR, $inUse);
+        return current($free);
+    }
 
     public function saveText($str) {
 
@@ -430,7 +435,7 @@ class Team
 
     // Required passed fields used by create().
     public static $createEXPECTED = array(
-        'name','owned_by_coach_id','f_race_id','f_lid',
+        'name','owned_by_coach_id','f_race_id',
         'treasury', 'apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders',
         'won_0','lost_0','draw_0','played_0','wt_0','gf_0','ga_0','tcas_0','imported',
     );
