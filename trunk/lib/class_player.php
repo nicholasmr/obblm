@@ -21,8 +21,11 @@
  *
  */
  
-// Maximum player-number a player can be assigned.
-define("MAX_PLAYER_NR", 100);
+// Player number restrictions.
+define('T_MAX_PLAYER_NR', 100);
+$T_RESERVED_PLAYER_NR = array();
+$T_ALLOWED_PLAYER_NR = array_diff(range(1,T_MAX_PLAYER_NR), $T_RESERVED_PLAYER_NR); # These are the non-reserved player numbers allowed by regular players to use.
+$T_ALL_PLAYER_NR = range(1,T_MAX_PLAYER_NR); # = array_merge($T_ALLOWED_PLAYER_NR, $T_RESERVED_PLAYER_NR)
 
 // Stars and mercenaries.
 define('ID_MERCS',       -1); // Mercenaries player_id.
@@ -414,7 +417,8 @@ class Player
     }
     
     public function renumber($number) {
-        return ($number <= MAX_PLAYER_NR && mysql_query("UPDATE players SET nr = $number WHERE player_id = $this->player_id"));
+        global $T_ALLOWED_PLAYER_NR;
+        return (in_array($number, $T_ALLOWED_PLAYER_NR) && mysql_query("UPDATE players SET nr = $number WHERE player_id = $this->player_id"));
     }
 
     public function dspp($delta) {
@@ -699,8 +703,7 @@ class Player
          * Output: Returns array. First element: True/false, if false second element holds string containing error explanation.
          **/
 
-        global $rules;
-        global $DEA;
+        global $rules, $DEA, $T_ALL_PLAYER_NR;
              
         $team    = new Team($input['team_id']);
         $players = $team->getPlayers();
@@ -735,7 +738,7 @@ class Player
         }
         
         // Player number to large?
-        if ($input['nr'] > MAX_PLAYER_NR)
+        if (!in_array($input['nr'], $T_ALL_PLAYER_NR))
             return array(false, 'Player number too large.');
 
         // Player number already in use on team?

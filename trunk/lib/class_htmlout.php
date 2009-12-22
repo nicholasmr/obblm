@@ -402,7 +402,7 @@ public static function standings($obj, $node, $node_id, array $opts)
 
 public static function nodeSelector(array $opts, $prefix = '')
 {
-    global $lng, $raceididx;
+    global $lng, $raceididx, $coach;
 
     // Set defaults
     $s_node     = "${prefix}_node";
@@ -416,15 +416,27 @@ public static function nodeSelector(array $opts, $prefix = '')
     $setRace = (array_key_exists('race', $opts) && $opts['race']);
     $setSGrp = (array_key_exists('sgrp', $opts) && $opts['sgrp']);
 
+    // Defaults
+    $RESTRICT_NODES = (is_object($coach) && $coach->f_lid != T_COACH_NO_ASSOC_LID);
+    
+    $def_node    = T_NODE_LEAGUE;
+    $def_node_id = $RESTRICT_NODES ? $coach->f_lid : T_NODE_ALL;
+    $def_state   = T_STATE_ALLTIME;
+    $def_race    = T_RACE_ALL;
+    $def_sgrp    = 'GENERAL';
+
     $NEW = isset($_POST['select']);
-    $_SESSION[$s_state] = ($NEW && $setState) ? (int) $_POST['state_in'] : (isset($_SESSION[$s_state]) ? $_SESSION[$s_state] : T_STATE_ALLTIME);
-    $_SESSION[$s_race]  = ($NEW && $setRace)  ? (int) $_POST['race_in']  : (isset($_SESSION[$s_race])  ? $_SESSION[$s_race]  : T_RACE_ALL);
-    $_SESSION[$s_sgrp]  = ($NEW && $setSGrp)  ? $_POST['sgrp_in']        : (isset($_SESSION[$s_sgrp])  ? $_SESSION[$s_sgrp]  : 'GENERAL');
-    $_SESSION[$s_node]  = ($NEW)              ? (int) $_POST['node']     : (isset($_SESSION[$s_node])  ? $_SESSION[$s_node]  : T_NODE_LEAGUE);
+    $_SESSION[$s_state] = ($NEW && $setState) ? (int) $_POST['state_in'] : (isset($_SESSION[$s_state]) ? $_SESSION[$s_state] : $def_state);
+    $_SESSION[$s_race]  = ($NEW && $setRace)  ? (int) $_POST['race_in']  : (isset($_SESSION[$s_race])  ? $_SESSION[$s_race]  : $def_race);
+    $_SESSION[$s_sgrp]  = ($NEW && $setSGrp)  ? $_POST['sgrp_in']        : (isset($_SESSION[$s_sgrp])  ? $_SESSION[$s_sgrp]  : $def_sgrp);
+    $_SESSION[$s_node]  = ($NEW)              ? (int) $_POST['node']     : (isset($_SESSION[$s_node])  ? $_SESSION[$s_node]  : $def_node);
     $rel = array(T_NODE_TOURNAMENT => 'tour', T_NODE_DIVISION => 'division', T_NODE_LEAGUE => 'league');
     $_SESSION[$s_node_id] = ($NEW) 
         ? (int) $_POST[$rel[$_SESSION[$s_node]].'_in']
-        : (isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : T_NODE_ALL);
+        : (isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : $def_node_id);
+    
+    // Fetch contents of node selector
+    list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $RESTRICT_NODES ? $coach->f_lid : false);
     
     ?>
     <form method="POST">
@@ -448,29 +460,31 @@ public static function nodeSelector(array $opts, $prefix = '')
     :
     <select style='display:none;' name="tour_in" id="tour_in">
         <?php
-        foreach (Tour::getTours() as $t) {
-            echo "<option value='$t->tour_id' ".
-                (($_SESSION[$s_node] == T_NODE_TOURNAMENT && $_SESSION[$s_node_id] == $t->tour_id) ? 'SELECTED' : '')
-                .">$t->name</option>\n";
+        foreach ($tours as $trid => $desc) {
+            echo "<option value='$trid' ".
+                (($_SESSION[$s_node] == T_NODE_TOURNAMENT && $_SESSION[$s_node_id] == $trid) ? 'SELECTED' : '')
+                .">$desc[tname]</option>\n";
         }
         ?>
     </select>
     <select style='display:none;' name="division_in" id="division_in">
         <?php
-        foreach (Division::getDivisions() as $d) {
-            echo "<option value='$d->did'".
-                (($_SESSION[$s_node] == T_NODE_DIVISION && $_SESSION[$s_node_id] == $d->did) ? 'SELECTED' : '')
-                .">$d->name</option>\n";
+        foreach ($divisions as $did => $desc) {
+            echo "<option value='$did'".
+                (($_SESSION[$s_node] == T_NODE_DIVISION && $_SESSION[$s_node_id] == $did) ? 'SELECTED' : '')
+                .">$desc[dname]</option>\n";
         }
         ?>
     </select>
     <select style='display:none;' name="league_in" id="league_in">
         <?php
-        echo "<option value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
-        foreach (League::getLeagues() as $l) {
-            echo "<option value='$l->lid'".
-                (($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == $l->lid) ? 'SELECTED' : '')
-                .">$l->name</option>\n";
+        if (!$RESTRICT_NODES) {
+            echo "<option value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
+        }
+        foreach ($leagues as $lid => $desc) {
+            echo "<option value='$lid'".
+                (($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == $lid) ? 'SELECTED' : '')
+                .">$desc[lname]</option>\n";
         }
         ?>
     </select>

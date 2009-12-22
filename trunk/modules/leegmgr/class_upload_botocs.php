@@ -313,9 +313,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
             {
                 global $DEA;
                 $pos_id = $DEA[$team->f_rname]['players']['Zombie']['pos_id'];
-                $delta = Player::price($pos_id);
-                $team->dtreasury($delta);
-                $zombie_added = Player::create(array( 'nr' => $player['nr'], 'f_pos_id' => $pos_id, 'team_id' => $team_id, 'name' => $player['name']) );
+                // Note: "'forceCreate' => true" makes sure that the player creation was free of cost and skips all regular player $input rescritions.
+                $zombie_added = Player::create(array('nr' => $team->getFreePlayerNr(), 'f_pos_id' => $pos_id, 'team_id' => $team_id, 'name' => 'RAISED ZOMBIE', 'forceCreate' => true) );
 
                 if ( !$zombie_added[0] ) $team->dtreasury(-$delta);
                 else

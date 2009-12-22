@@ -163,7 +163,6 @@ private function _newTeam($ALLOW_EDIT)
             'name' => $_POST['name'], 
             'owned_by_coach_id' => $this->coach_id, 
             'f_race_id' => $_POST['race'], 
-            'f_lid' => isset($_POST['f_lid']) ? $_POST['f_lid'] : 0,
             'treasury' => $rules['initial_treasury'], 
             'apothecary' => 0, 
             'rerolls' => $rules['initial_rerolls'], 
@@ -192,23 +191,8 @@ private function _newTeam($ALLOW_EDIT)
         ?>
     </select>
     <br><br>
-    <?php
-    if ($settings['relate_team_to_league']) {
-        $leagues = League::getLeagues();
-        ?>
-        <b><?php echo $lng->getTrn('cc/league');?>:</b> <br>
-        <select name="f_lid" <?php if (empty($leagues)){echo "DISABLED";}?>>
-        <?php
-        foreach ($leagues as $l)
-            echo "<option value='$l->lid'>$l->name</option>\n";
-        ?>
-        </select>
-        <br><br>
-        <?php
-    }
-    ?>
     <input type='hidden' name='type' value='newteam'>
-    <input type="submit" name="new_team" value="<?php echo $lng->getTrn('common/create');?>" <?php if ($settings['relate_team_to_league'] && empty($leagues)){echo "DISABLED";}?>>
+    <input type="submit" name="new_team" value="<?php echo $lng->getTrn('common/create');?>">
     </form>
     <?php
 }

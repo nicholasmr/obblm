@@ -7,8 +7,7 @@
 $upgradeSQLs = array(
     '075-080' => array(
         # Add league relations.
-        SQLUpgrade::runIfColumnNotExists('teams', 'f_lid',      'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id'),
-        SQLUpgrade::runIfColumnNotExists('coaches', 'com_lid',  'ALTER TABLE coaches ADD COLUMN com_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER retired'),
+        SQLUpgrade::runIfColumnNotExists('coaches', 'f_lid',  'ALTER TABLE coaches ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER retired'),
         # Delete, now modulized, type from texts.
         'DELETE FROM texts WHERE type = 8',
         SQLUpgrade::runIfColumnExists('matches', 'hash_botocs', 'ALTER TABLE matches DROP hash_botocs'),

@@ -20,9 +20,9 @@ if (isset($_POST['button'])) {
         array(!$nameSet && !$addMatchToFFA, "Please fill out the tournament name."),
         array($nameSet && get_alt_col('tours', 'name', $_POST['name'], 'tour_id'), "Tournament name already in use."),
         array($coach->ring == RING_COM && (
-            $mkNewFFA && $coach->com_lid != get_parent_id(T_NODE_DIVISION, $_POST['did'], T_NODE_LEAGUE)
+            $mkNewFFA && $coach->f_lid != get_parent_id(T_NODE_DIVISION, $_POST['did'], T_NODE_LEAGUE)
             ||
-            $addMatchToFFA && $coach->com_lid != get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE) 
+            $addMatchToFFA && $coach->f_lid != get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE) 
         ), 'You are not allowed to schedule matches in that league.'),
         array($_POST['type'] == TT_RROBIN && $teamsCount < 3, 'Please select at least 3 teams'),
         array($_POST['type'] == TT_FFA && ($teamsCount % 2 != 0), 'Please select an even number of teams'),
@@ -158,12 +158,7 @@ if (($row = mysql_fetch_row($result)) && $row[0] == 0) {
     fatal($lng->getTrn('admin/schedule/create_LD'));
 }
 HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needhelp'));
-$divisions = array();
-$result = mysql_query("SELECT lid, did, leagues.name  AS 'lname', divisions.name AS 'dname' FROM leagues,divisions WHERE f_lid = lid ORDER BY lname ASC, dname ASC");
-while ($row = mysql_fetch_object($result)) {
-    $row->dispName = "$row->lname: $row->dname";
-    $divisions[] = $row;
-}
+list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->f_lid, array(T_NODE_TOURNAMENT => array('locked' => 'locked', 'type' => 'type')));
 ?><br>
 <form method="POST" name="tourForm">
     <table>
@@ -176,10 +171,8 @@ while ($row = mysql_fetch_object($result)) {
         <b><?php echo $lng->getTrn('common/division');?>:</b><br>
         <select name='did'>
             <?php
-            foreach ($divisions as $d) {
-                if ($coach->ring == RING_SYS || $coach->ring == RING_COM && $coach->com_lid == $d->f_lid) {
-                    echo "<option value='$d->did'>$d->dispName</option>\n";
-                }
+            foreach ($divisions as $did => $desc) {
+                echo "<option value='$did'>$desc[dname]</option>\n";
             }
             ?>
         </select>
@@ -211,9 +204,11 @@ while ($row = mysql_fetch_object($result)) {
         $body .= "<option value='-1'>".$lng->getTrn('admin/schedule/new_tour').'</option>';
         $body .= '</optgroup>';
         $body .= '<optgroup label="Existing FFA">';
-        foreach (Tour::getTours() as $t)
-            if ($t->type == TT_FFA && ($coach->ring == RING_SYS || $coach->ring == RING_COM && $coach->com_lid == get_alt_col('divisions', 'did', $t->f_did, 'f_lid')))
-                $body .= "<option value='$t->tour_id' ".(($t->locked) ? 'DISABLED' : '').">$t->name".(($t->locked) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
+        foreach ($tours as $trid => $desc) {
+            if ($desc['type'] == TT_FFA) {
+                $body .= "<option value='$trid' ".(($desc['locked']) ? 'DISABLED' : '').">$desc[tname]".(($desc['locked']) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
+            }
+        }
         $body .= '</optgroup>';
         $body .= '</select>';
         $body .= '<br><br>';
@@ -244,7 +239,12 @@ while ($row = mysql_fetch_object($result)) {
     <br>
     <b><?php echo $lng->getTrn('admin/schedule/teams_avail');?>:</b><br>
     <?php
-    $teams = get_rows('teams', array('team_id', 'name', 'f_cname'));
+    $query = "SELECT team_id, teams.name AS 'name', f_cname FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id ".(($coach->f_lid) ? "AND coaches.f_lid = $coach->f_lid" : '');
+    $result = mysql_query($query);
+    $teams = array();
+    while ($o = mysql_fetch_object($result)) {
+        $teams[] = $o;
+    }
     $entriesToPrint = array();
     switch ($settings['scheduling_list_style'])
     {

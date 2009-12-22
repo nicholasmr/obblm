@@ -31,7 +31,6 @@ if (isset($_FILES['xmlfile'])) {
         # Corrections
         $t->played_0 = $t->won+$t->lost+$t->draw;
         $t->imported = 1;
-        $t->f_lid = 0;
         # Add team
         status($tid = Team::create(array_merge(
             array_intersect_key((array) $t, array_fill_keys(Team::$createEXPECTED, null)), # Fields which are correctly named in XMl file.
