@@ -2579,8 +2579,6 @@
                                                 <type>LANDING</type>
                                                 <key name="team" current="true" />
                                                 <key name="player" current="true" />
-                                                <key name="team2" current="true" />
-                                                <key name="player2" current="true" />
                                             </log>
                                         </log>
                                     </filter> 
