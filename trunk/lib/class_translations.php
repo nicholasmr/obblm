@@ -1,6 +1,6 @@
 <?php
 /**
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -23,10 +23,12 @@
 class Translations 
 {
 
+public static $registeredLanguages = array('en-GB');
 private $lang = 'en-GB';
 private $translationFiles = array();
 private $docs = array(); # DOMDocument for the xml files.
 const main = 'main'; # $this->docs[] key of main translation file.
+const fallback = 'en-GB';
 
 public function __construct($lang = false) {
 	if ($lang) {
@@ -52,6 +54,10 @@ public function getTrn($key, $doc = false) {
 
     $xpath = new DOMXpath($this->docs[$doc]);
     $query = $xpath->query("//$this->lang/$key");
+    if ($query->length == 0) {
+        # Try fallback language
+        $query = $xpath->query("//".self::fallback."/$key");
+    }
     return (string) $query->item(0)->nodeValue;
 }
 

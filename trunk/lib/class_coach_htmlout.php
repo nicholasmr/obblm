@@ -241,6 +241,7 @@ private function _CCprofile($ALLOW_EDIT)
             case 'chlogin':     status($this->setName($_POST['new_name'])); break;
             case 'chname':      status($this->setRealName($_POST['new_realname'])); break;
             case 'chtheme':     status($this->setSetting('theme', (int) $_POST['new_theme'])); break;
+            case 'chlang':      status($this->setSetting('lang', $_POST['new_lang'])); break;
 
             case 'pic':         status($this->savePic(false)); break;
             case 'coachtext':
@@ -353,6 +354,24 @@ private function _CCprofile($ALLOW_EDIT)
                 </td>
                 <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chtheme');?>"></td>
                 <input type='hidden' name='type' value='chtheme'>
+                </form>
+            </tr>
+            <tr>
+                <form method="POST">
+                <td><?php echo $lng->getTrn('cc/chlang');?>:</td>
+                <td><?php echo $lng->getTrn('cc/current');?>: <?php echo $this->settings['lang'];?></td>
+                <td>
+                    <?php echo $lng->getTrn('cc/new');?>:
+                    <select name='new_lang'>
+                        <?php
+                        foreach (Translations::$registeredLanguages as $lang) {
+                            echo "<option value='$lang'>$lang</option>\n";
+                        }
+                        ?>
+                    </select>
+                </td>
+                <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chlang');?>"></td>
+                <input type='hidden' name='type' value='chlang'>
                 </form>
             </tr>
         </table>

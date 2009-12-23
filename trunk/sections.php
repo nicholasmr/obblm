@@ -61,7 +61,7 @@ function sec_login() {
 
 function sec_main() {
 
-    global $settings, $rules, $coach, $lng;
+    global $settings, $rules, $coach, $lng, $league;
     
     MTS('Main start');
     
@@ -87,12 +87,15 @@ function sec_main() {
      */
 
     ?>
-    <div class="main_head"><?php echo $settings['site_name']; ?></div>
+    <div class="main_head"><?php echo is_object($league) ? $league->name.(!empty($league->location) ? ", $league->location" : '') : $settings['site_name']; ?></div>
     <div class='main_leftColumn'>
         <div class="main_leftColumn_head">
             <?php
             echo "<div class='main_leftColumn_welcome'>\n";
             readfile('WELCOME');
+# @FIXME
+#            $welcome = new LeaugeWelcomeMsg(is_object($league) ? $league->lid : T_COACH_NO_ASSOC_LID);
+#            echo empty($welcome->txt) ? $lng->getTrn('main/nowelcome') : $welcome->txt;
             echo "</div>\n";
             if (is_object($coach) && $coach->ring <= RING_COM) {echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";}
             if (Module::isRegistered('RSSfeed')) {echo "<a href='handler.php?type=rss'>RSS</a>\n";}

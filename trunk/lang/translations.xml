@@ -130,6 +130,7 @@
 <main>
     <!-- has no <name> tag! -->
     <newmsg>New message</newmsg>
+    <nowelcome>You have not yet set the welcome message</nowelcome>
     <more>more</more>
     <posted>Posted</posted>
     <by>by</by>
@@ -157,6 +158,7 @@
             <chlogin>Change name (login)</chlogin>
             <chname>Change full name</chname>
             <chtheme>Change OBBLM theme</chtheme>
+            <chlang>Change language</chlang>
 </cc>
 
 <profile>
