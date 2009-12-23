@@ -147,13 +147,14 @@ public static function tourMatches()
 public static function tours() 
 {
 
-    global $rules, $settings, $lng;
+    global $rules, $settings, $lng, $league;
 
     title($lng->getTrn('menu/matches_menu/tours'));
 
     $query = "SELECT lid,did,tour_id,locked,
         tours.name AS 'tours.name',divisions.name AS 'divisions.name',leagues.name AS 'leagues.name'
-        FROM tours,divisions,leagues WHERE tours.f_did = divisions.did AND divisions.f_lid = leagues.lid
+        FROM tours,divisions,leagues 
+        WHERE tours.f_did = divisions.did AND divisions.f_lid = leagues.lid ".(is_object($league) ? "AND leagues.lid = $league->lid " : '')." 
         ORDER BY leagues.lid ASC, divisions.did ASC, tours.tour_id ASC";
     $result = mysql_query($query);
     $flist = array();

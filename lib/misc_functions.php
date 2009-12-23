@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -55,6 +55,15 @@ function objsort(&$obj_array, $fields)
 
     $func .= str_repeat(')', $parens) . ';';
     return usort($obj_array, create_function('$a, $b', $func));
+}
+
+function setupGlobalVars($keepLngDocs = true) {
+    global $coach, $league, $lng, $settings;
+    $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
+    $league = (is_object($coach) && $coach->f_lid != T_COACH_NO_ASSOC_LID) ? new League($coach->f_lid) : null; # Create global league object.
+    if (!($keepLngDocs && is_object($lng))) {
+        $lng = new Translations((is_object($coach) && isset($coach->settings['lang'])) ? $coach->settings['lang'] : $settings['lang']); # Load language.
+    }
 }
 
 function array_strpack($str, array $arr, $implode_delimiter = false, $specifier = '%s') {

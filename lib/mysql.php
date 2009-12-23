@@ -61,10 +61,9 @@ $core_tables = array(
         'passwd'    => 'VARCHAR(32)',
         'mail'      => 'VARCHAR(129)',
         'phone'     => 'VARCHAR(25) NOT NULL',
-        'ring'      => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+        'ring'      => 'TINYINT UNSIGNED NOT NULL DEFAULT 0', # Global access level
         'settings'  => 'VARCHAR(320) NOT NULL',
         'retired'   => 'BOOLEAN NOT NULL DEFAULT 0',
-        'f_lid'     => $CT_cols[T_NODE_LEAGUE].' NOT NULL DEFAULT 0',
         // Dynamic properties (DPROPS)
         'elo'   => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
         'swon'  => $CT_cols['streak'].' DEFAULT 0',
@@ -146,6 +145,11 @@ $core_tables = array(
         'inj_ni'    => $CT_cols['chr'].' DEFAULT 0',
         'win_pct' => $CT_cols['win_pct'].' DEFAULT 0', # All-time win pct (across all matches).
     ),
+    'memberships' => array(
+        'cid'   => $CT_cols[T_OBJ_COACH],
+        'lid'   => $CT_cols[T_NODE_LEAGUE],
+        'ring'  => 'TINYINT UNSIGNED NOT NULL DEFAULT 0', # Local access level
+    ),
     'players_skills' => array(
         'f_pid'      => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
         'f_skill_id' => $CT_cols['skill_id'].' NOT NULL',
@@ -165,6 +169,7 @@ $core_tables = array(
         'name'      => $CT_cols['name'],
         'location'  => $CT_cols['name'],
         'date'      => 'DATETIME',
+        'tie_teams' => 'BOOLEAN DEFAULT TRUE',
     ),
     'divisions' => array(
         'did'   => $CT_cols[T_NODE_DIVISION].' NOT NULL PRIMARY KEY AUTO_INCREMENT',

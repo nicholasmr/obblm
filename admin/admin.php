@@ -29,7 +29,7 @@
 
 function sec_admin() {
 
-    global $rules, $settings, $DEA, $coach, $lng, $ring_sys_access, $ring_com_access;
+    global $rules, $settings, $DEA, $coach, $lng, $league, $ring_sys_access, $ring_com_access;
 
     // Quit if coach does not has administrator privileges.
 
@@ -39,7 +39,7 @@ function sec_admin() {
     if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
         fatal("Sorry. Your access level does not allow you opening the requested page.");
 
-    $coaches = get_rows('coaches', array()); // Used by multiple sub-sections.
+    list($GLOBAL_MANAGE, $coaches, $leagues, $coach_ids, $league_ids) = _getState(); // Used by multiple sub-sections.
 
     switch ($_GET['subsec']) 
     {
@@ -54,5 +54,37 @@ function sec_admin() {
         default:            fatal('The requested admin page does not exist.');
     }
 }
+
+function _getState()
+{
+    global $coach;
+    
+    $GLOBAL_MANAGE = ($coach->admin || $coach->f_lid == T_COACH_NO_ASSOC_LID); # Is global management allowed by the logged in $coach ?
+    
+    // Fellow coaches
+    $query = "SELECT * FROM coaches".($GLOBAL_MANAGE ? '' : " WHERE f_lid = $coach->f_lid");
+    $result = mysql_query($query);
+    $coaches = $coach_ids = array();
+    while ($c = mysql_fetch_object($result)) {$coaches[] = $c; $coach_ids[] = $c->coach_id;}
+
+    // League(s) visibillity
+    $query = "SELECT * FROM leagues".($GLOBAL_MANAGE ? '' : " WHERE lid = $coach->f_lid");
+    $result = mysql_query($query);
+    $leagues = $league_ids = array();
+    while ($l = mysql_fetch_object($result)) {$leagues[] = $l; $league_ids[] = $l->lid;}
+    if ($GLOBAL_MANAGE) {
+        $leagues[] = (object) array('name' => '--No league--', 'lid' => T_COACH_NO_ASSOC_LID);
+        $league_ids[] = T_COACH_NO_ASSOC_LID;
+    }
+    
+    return array(
+        $GLOBAL_MANAGE,
+        $coaches,
+        $leagues,
+        $coach_ids,
+        $league_ids,
+    );
+};
+
 
 ?>

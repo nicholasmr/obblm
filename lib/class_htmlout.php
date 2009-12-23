@@ -470,7 +470,7 @@ public static function nodeSelector(array $opts, $prefix = '')
     <select style='display:none;' name="division_in" id="division_in">
         <?php
         foreach ($divisions as $did => $desc) {
-            echo "<option value='$did'".
+            echo "<option value='$did' ".
                 (($_SESSION[$s_node] == T_NODE_DIVISION && $_SESSION[$s_node_id] == $did) ? 'SELECTED' : '')
                 .">$desc[dname]</option>\n";
         }
@@ -482,7 +482,7 @@ public static function nodeSelector(array $opts, $prefix = '')
             echo "<option value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
         }
         foreach ($leagues as $lid => $desc) {
-            echo "<option value='$lid'".
+            echo "<option value='$lid' ".
                 (($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == $lid) ? 'SELECTED' : '')
                 .">$desc[lname]</option>\n";
         }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -25,6 +25,13 @@ define('LOGIN_COOKIE_COACHID', 'obblmuserid');
 define('LOGIN_COOKIE_PASSWD', 'obblmpasswd');
 
 // Privilege rings (ie. coach access level)
+# Global:
+define('T_RING_GLOBAL_ADMIN', 10); // Site admins
+define('T_RING_GLOBAL_NONE',  0); // No global rights
+# Local (league)
+define('T_RING_LOCAL_COMMISH', 10); // League commissioner
+define('T_RING_LOCAL_COMMISH', 2); // Regualr coach.
+
 define('RING_SYS',   0); // Admins
 define('RING_COM',   1); // Commissioners.
 define('RING_COACH', 2); // Coach/ordinary user
@@ -46,7 +53,6 @@ class Coach
     public $phone       = '';
     public $ring        = 0; // Privilege ring (ie. coach access level).
     public $retired     = false;
-    public $f_lid       = 0;
     public $settings    = array();
 
     // Shortcut for compabillity issues.
@@ -75,7 +81,8 @@ class Coach
             list($key, $val) = explode('=', $set);
             $this->settings[$key] = $val;
         }
-        $init = array('theme' => 1, ); // Setting values which must be initialized if not stored/saved in mysql.
+        global $settings;
+        $init = array('theme' => 1, 'lang' => $settings['lang']); // Setting values which must be initialized if not stored/saved in mysql.
         foreach ($init as $key => $val) {
             if (!array_key_exists($key, $this->settings) || !isset($this->settings[$key]))
                 $this->settings[$key] = $val;
@@ -239,8 +246,11 @@ class Coach
 
     const NODE_STRUCT__TREE = 1;
     const NODE_STRUCT__FLAT = 2;
-    public static function allowedNodeAccess($NODE_SRUCT, $f_lid, $extraFields = array())
+    public static function allowedNodeAccess($NODE_SRUCT, $cid, $extraFields = array())
     {
+        $GLOBAL_VIEW = (!$cid || (int) get_alt_col('coaches', 'coach_id', $cid, 'ring') > T_RING_GLOBAL_NONE);
+        
+        $properFields = array();
         $extraFields[T_NODE_LEAGUE]['name']     = 'lname';
         $extraFields[T_NODE_DIVISION]['name']   = 'dname';
         $extraFields[T_NODE_TOURNAMENT]['name'] = 'tname';
@@ -254,10 +264,12 @@ class Coach
                 $properFields[] = "$tbl.$ref AS '$name'";
             }
         }
+        $properFields[] = "m.ring AS 'ring'";
         $query = "SELECT l.lid AS 'lid', d.did AS 'did', t.tour_id AS 'trid',".implode(',',$properFields)."
-            FROM leagues AS l, divisions AS d, tours AS t 
-            WHERE t.f_did = d.did AND d.f_lid = l.lid".($f_lid ? " AND l.lid = $f_lid" : '');
+            FROM leagues AS l LEFT JOIN divisions AS d ON d.f_lid = l.lid LEFT JOIN tours AS t ON t.f_did = d.did ".
+            ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '');
         $result = mysql_query($query);
+        
         switch ($NODE_SRUCT)
         {
             case self::NODE_STRUCT__TREE:
@@ -266,6 +278,7 @@ class Coach
                     $struct[$r->lid][$r->did][$r->trid]['desc'] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
                     $struct[$r->lid][$r->did]['desc']           = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
                     $struct[$r->lid]['desc']                    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
+                    $struct[$r->lid]['desc']['ring'] = $r->ring;
                 }            
                 return $struct;
                 
@@ -275,6 +288,7 @@ class Coach
                     $tours[$r->trid]    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
                     $divisions[$r->did] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
                     $leagues[$r->lid]   = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
+                    $leagues[$r->lid]['ring'] = $r->ring;
                 }
                 return array($leagues,$divisions,$tours);
                 
@@ -373,21 +387,22 @@ class Coach
         /**
          * Creates a new coach.
          *
-         * Input: name, realname, passwd, mail, phone, ring
+         * Input: name, realname, passwd, mail, phone, ring, f_lid, settings
          **/
 
         if (empty($input['name']) || empty($input['passwd']) || get_alt_col('coaches', 'name', $input['name'], 'coach_id')) # Name exists already?
             return false;
 
-        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring, settings) 
+        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring, f_lid, settings) 
                     VALUES ('" . mysql_real_escape_string($input['name']) . "',
                             '" . mysql_real_escape_string($input['realname']) . "', 
                             '" . md5($input['passwd']) . "', 
                             '" . mysql_real_escape_string($input['mail']) . "', 
                             '" . mysql_real_escape_string($input['phone']) . "', 
-                            '" . $input['ring']."',
-                            '')";
-                            
+                            " . $input['ring'].",
+                            " . $input['f_lid'].",
+                            '".array_strpack_assoc('%k=%v', $input['settings'], ',')."')";
+
         return mysql_query($query);
     }
 }
