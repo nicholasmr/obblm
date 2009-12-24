@@ -83,6 +83,7 @@ $upgradeSQLs = array(
         # New security system.
         SQLUpgrade::runIfColumnNotExists('leagues', 'tie_teams',  'ALTER TABLE leagues ADD COLUMN tie_teams BOOLEAN NOT NULL DEFAULT TRUE'),
         SQLUpgrade::runIfColumnNotExists('teams', 'f_did',  'ALTER TABLE teams ADD COLUMN f_did MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id'),
+        SQLUpgrade::runIfColumnNotExists('teams', 'f_lid',  'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_did'),
         'CREATE TABLE IF NOT EXISTS memberships (
             cid   MEDIUMINT UNSIGNED NOT NULL,
             lid   MEDIUMINT UNSIGNED NOT NULL,

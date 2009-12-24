@@ -79,6 +79,7 @@ $core_tables = array(
         'owned_by_coach_id' => $CT_cols[T_OBJ_COACH],
         'f_race_id'         => $CT_cols[T_OBJ_RACE].' NOT NULL DEFAULT 0',
         'f_did'             => $CT_cols[T_NODE_DIVISION].' NOT NULL DEFAULT 0',
+        'f_lid'             => $CT_cols[T_NODE_LEAGUE].' NOT NULL DEFAULT 0',
         'treasury'          => 'BIGINT SIGNED',
         'apothecary'        => 'BOOLEAN',
         'rerolls'           => 'MEDIUMINT UNSIGNED',

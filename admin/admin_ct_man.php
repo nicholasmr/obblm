@@ -1,37 +1,42 @@
 <?php
 
-title($lng->getTrn('menu/admin_menu/ct_man'));
-
 if (isset($_POST['type'])) {
+    $IS_COACH = ($_POST['type'][1] == 'c');
+    if (!is_numeric($id = get_alt_col($IS_COACH ? 'coaches' : 'teams', 'name', $_POST['name'], ($IS_COACH ? 'coach' : 'team').'_id'))) {
+        status(false, 'Invalid name. Check spelling?');
+        $_POST['type'] = 'QUIT';
+    }
+    else {
+        $o = $IS_COACH ? new Coach($id) : new Team($id);
+        if (!$coach->mayManageCoach($IS_COACH ? $o->coach_id : $o->owned_by_coach_id)) {
+            status(false, 'You do not have permissions to manage the selected coach.');
+            $_POST['type'] = 'QUIT';
+        }
+    }
+
     switch ($_POST['type'])
     {
+        case 'QUIT':
+            break;
+            
         case 'rt':
-            $t = new Team($_POST['id']);
-            status($t->setRetired(!(isset($_POST['unretire']) && $_POST['unretire'])));
+            status($o->setRetired(!(isset($_POST['unretire']) && $_POST['unretire'])));
             break;
 
         case 'rc':
-            $c = new Coach($_POST['id']);
-            status($c->setRetired(!(isset($_POST['unretire']) && $_POST['unretire'])));
+            status($o->setRetired(!(isset($_POST['unretire']) && $_POST['unretire'])));
             break;
 
         case 'dt':
-            $t = new Team($_POST['id']);
-            status($t->delete());
+            status($o->delete());
             break;
 
         case 'dc':
-            $c = new Coach($_POST['id']);
-            status($c->delete());
+            status($o->delete());
             break;
     }
 }
-
-$teams = Team::getTeams();
-objsort($teams, array('+name'));
-$coaches = Coach::getCoaches();
-objsort($coaches, array('+name'));
-
+title($lng->getTrn('menu/admin_menu/ct_man'));
 ?>
 <table>
     <tr>
@@ -49,13 +54,8 @@ objsort($coaches, array('+name'));
                 <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Retire team</div>
                 <div class="boxBody">
                 <form method="POST">
-                <select name='id'>
-                    <?php
-                    foreach ($teams as $t) {
-                        echo "<option value='$t->team_id' ".(($t->is_retired) ? 'style="background-color: orange;"' : '').">$t->name</option>\n";
-                    }
-                    ?>
-                </select><br><br>
+                Team name:
+                <input type="text" name="name" size="30" maxlength="50"><br><br>
                 Un-retire (ie. regret retiring) instead of retiring? <input type='checkbox' name='unretire' value='1'><br><br>
                 <input type='submit' value='Retire/unretire'>
                 <input type='hidden' name='type' value='rt'>
@@ -68,15 +68,8 @@ objsort($coaches, array('+name'));
                 <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Delete team</div>
                 <div class="boxBody">
                 <form method="POST">
-                <select name='id'>
-                    <?php
-                    foreach ($teams as $t) {
-                        if ($t->isDeletable())
-                            echo "<option value='$t->team_id'>$t->name</option>\n";
-                    }
-                    ?>
-                </select>
-                <br><br>
+                Team name:
+                <input type="text" name="name" size="30" maxlength="50"><br><br>
                 <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
                 <input type='hidden' name='type' value='dt'>
                 </form>
@@ -91,13 +84,8 @@ objsort($coaches, array('+name'));
                 <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Retire coach</div>
                 <div class="boxBody">
                 <form method="POST">
-                <select name='id'>
-                    <?php
-                    foreach ($coaches as $c) {
-                        echo "<option value='$c->coach_id' ".(($c->retired) ? 'style="background-color: orange;"' : '').">$c->name</option>\n";
-                    }
-                    ?>
-                </select><br><br>
+                Coach name:
+                <input type="text" name="name" size="30" maxlength="50"><br><br>
                 Un-retire (ie. regret retiring) instead of retiring? <input type='checkbox' name='unretire' value='1'><br><br>
                 <input type='submit' value='Retire/unretire'>
                 <input type='hidden' name='type' value='rc'>
@@ -110,15 +98,8 @@ objsort($coaches, array('+name'));
                 <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Delete coach</div>
                 <div class="boxBody">
                 <form method="POST">
-                <select name='id'>
-                    <?php
-                    foreach ($coaches as $c) {
-                        if ($c->isDeletable())
-                            echo "<option value='$c->coach_id'>$c->name</option>\n";
-                    }
-                    ?>
-                </select>
-                <br><br>
+                Coach name:
+                <input type="text" name="name" size="30" maxlength="50"><br><br>
                 <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
                 <input type='hidden' name='type' value='dc'>
                 </form>
