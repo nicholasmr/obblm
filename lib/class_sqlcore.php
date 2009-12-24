@@ -1173,7 +1173,7 @@ public static function installTableIndexes()
         array("tbl" => "texts",      'name' => "idx_type",              "idx" =>  "(type)"),
         array("tbl" => "texts",      'name' => "idx_type_f_id",         "idx" =>  "(type,f_id)"),
         array("tbl" => "memberships",'name' => "idx_lid",               "idx" =>  "(lid)"),
-        array("tbl" => "memberships",'name' => "idx_cid,lid",           "idx" =>  "(cid,lid)"),
+        array("tbl" => "memberships",'name' => "idx_cid_lid",           "idx" =>  "(cid,lid)"),
         array("tbl" => "players",    'name' => "idx_owned_by_team_id",  "idx" =>  "(owned_by_team_id)"),
         array("tbl" => "teams",      'name' => "idx_owned_by_coach_id", "idx" =>  "(owned_by_coach_id)"),
         array("tbl" => "matches",    'name' => "idx_f_tour_id",         "idx" =>  "(f_tour_id)"),

@@ -58,9 +58,9 @@ function objsort(&$obj_array, $fields)
 }
 
 function setupGlobalVars($keepLngDocs = true) {
-    global $coach, $league, $lng, $settings;
+    global $coach, $lng, $leagues, $divisions, $tours, $settings;
     $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
-    $league = (is_object($coach) && $coach->f_lid != T_COACH_NO_ASSOC_LID) ? new League($coach->f_lid) : null; # Create global league object.
+    list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false, $extraFields = array(T_NODE_TOURNAMENT => array('locked' => 'locked', 'type' => 'type', 'f_did' => 'f_did'), T_NODE_DIVISION => array('f_lid' => 'f_lid')));
     if (!($keepLngDocs && is_object($lng))) {
         $lng = new Translations((is_object($coach) && isset($coach->settings['lang'])) ? $coach->settings['lang'] : $settings['lang']); # Load language.
     }

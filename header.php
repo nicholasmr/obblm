@@ -136,7 +136,7 @@ if (!is_writable(IMG))
 if (!defined('NO_STARTUP')) {
     $conn = mysql_up(true); # MySQL connect. If constant is set before calling this header table checking will be ignored.
 }
-setupGlobalVars(); # Sets $coach, $league, $lng
+setupGlobalVars(); # Sets $coach, $lng, ...
 
 // Modules.
 require_once('modules/modsheader.php'); # Registration of modules.

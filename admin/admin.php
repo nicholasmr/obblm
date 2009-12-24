@@ -29,17 +29,27 @@
 
 function sec_admin() {
 
-    global $rules, $settings, $DEA, $coach, $lng, $league, $ring_sys_access, $ring_com_access;
+    global $rules, $settings, $DEA, $coach, $lng, $ring_sys_access, $ring_com_access;
+    global $leagues, $divisions, $tours;
+    
+    if (!is_object($coach))
+        fatal('Please login.');
+
+    // What is the largest ring of logged in coach's leagues.
+    $LARGEST_LOCAL_RING = Coach::T_RING_LOCAL_REGULAR;
+    foreach ($leagues as $lid => $desc) {
+        if ($desc['ring'] > $LARGEST_LOCAL_RING) {
+            $LARGEST_LOCAL_RING = $desc['ring'];
+        }
+    }
 
     // Quit if coach does not has administrator privileges.
+    if (!( ($IS_GLOBAL_ADMIN = ($coach->ring == Coach::T_RING_GLOBAL_ADMIN)) || $LARGEST_LOCAL_RING > Coach::T_RING_LOCAL_REGULAR))
+        fatal("Sorry. Only site administrators and league commissioners are allowed to access this section.");
 
-    if (!is_object($coach) || $coach->ring > RING_COM)
-        fatal("Sorry. Only site administrators and commissioners are allowed to access this section.");
-
-    if (isset($_GET['subsec']) && $coach->ring != RING_SYS && in_array($_GET['subsec'], array_keys($ring_sys_access)))
+    // Deny local commish trying to access global admin pages.
+    if (isset($_GET['subsec']) && !$IS_GLOBAL_ADMIN && in_array($_GET['subsec'], array_keys($ring_sys_access)))
         fatal("Sorry. Your access level does not allow you opening the requested page.");
-
-    list($GLOBAL_MANAGE, $coaches, $leagues, $coach_ids, $league_ids) = _getState(); // Used by multiple sub-sections.
 
     switch ($_GET['subsec']) 
     {
@@ -54,37 +64,5 @@ function sec_admin() {
         default:            fatal('The requested admin page does not exist.');
     }
 }
-
-function _getState()
-{
-    global $coach;
-    
-    $GLOBAL_MANAGE = ($coach->admin || $coach->f_lid == T_COACH_NO_ASSOC_LID); # Is global management allowed by the logged in $coach ?
-    
-    // Fellow coaches
-    $query = "SELECT * FROM coaches".($GLOBAL_MANAGE ? '' : " WHERE f_lid = $coach->f_lid");
-    $result = mysql_query($query);
-    $coaches = $coach_ids = array();
-    while ($c = mysql_fetch_object($result)) {$coaches[] = $c; $coach_ids[] = $c->coach_id;}
-
-    // League(s) visibillity
-    $query = "SELECT * FROM leagues".($GLOBAL_MANAGE ? '' : " WHERE lid = $coach->f_lid");
-    $result = mysql_query($query);
-    $leagues = $league_ids = array();
-    while ($l = mysql_fetch_object($result)) {$leagues[] = $l; $league_ids[] = $l->lid;}
-    if ($GLOBAL_MANAGE) {
-        $leagues[] = (object) array('name' => '--No league--', 'lid' => T_COACH_NO_ASSOC_LID);
-        $league_ids[] = T_COACH_NO_ASSOC_LID;
-    }
-    
-    return array(
-        $GLOBAL_MANAGE,
-        $coaches,
-        $leagues,
-        $coach_ids,
-        $league_ids,
-    );
-};
-
 
 ?>

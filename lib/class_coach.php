@@ -24,17 +24,9 @@
 define('LOGIN_COOKIE_COACHID', 'obblmuserid');
 define('LOGIN_COOKIE_PASSWD', 'obblmpasswd');
 
-// Privilege rings (ie. coach access level)
-# Global:
-define('T_RING_GLOBAL_ADMIN', 10); // Site admins
-define('T_RING_GLOBAL_NONE',  0); // No global rights
-# Local (league)
-define('T_RING_LOCAL_COMMISH', 10); // League commissioner
-define('T_RING_LOCAL_COMMISH', 2); // Regualr coach.
-
-define('RING_SYS',   0); // Admins
-define('RING_COM',   1); // Commissioners.
-define('RING_COACH', 2); // Coach/ordinary user
+#define('RING_SYS',   0); // Admins
+#define('RING_COM',   1); // Commissioners.
+#define('RING_COACH', 2); // Coach/ordinary user
 
 define('T_COACH_NO_ASSOC_LID', 0); // Value of coaches associative league ID if the coach is NOT assigned to any league.
 
@@ -58,6 +50,21 @@ class Coach
     // Shortcut for compabillity issues.
     public $admin       = false;
     
+    // Privilege rings (coach access levels)
+    const T_RING_GROUP_GLOBAL = 1;
+    const T_RING_GROUP_LOCAL = 2;
+    
+    const T_RING_GLOBAL_ADMIN   = 5; // Site admins
+    const T_RING_GLOBAL_NONE    = 0; // No global rights
+    const T_RING_LOCAL_ADMIN    = 5; // League commissioner
+    const T_RING_LOCAL_REGULAR  = 2; // Regular coach.
+    const T_RING_LOCAL_NONE     = -1; // Pseudo field!!!    
+    
+    public static $RINGS = array(
+        self::T_RING_GROUP_GLOBAL => array(self::T_RING_GLOBAL_ADMIN, self::T_RING_GLOBAL_NONE),
+        self::T_RING_GROUP_LOCAL => array(self::T_RING_LOCAL_ADMIN, self::T_RING_LOCAL_REGULAR, self::T_RING_LOCAL_NONE),
+    );
+    
     /***************
      * Methods 
      ***************/
@@ -69,7 +76,7 @@ class Coach
         $this->setStats(false,false,false);
 
         $this->ring = (int) $this->ring;
-        $this->admin = ($this->ring === RING_SYS);
+        $this->admin = ($this->ring === self::T_RING_GLOBAL_ADMIN);
         if (empty($this->mail)) $this->mail = '';           # Re-define as empty string, and not numeric zero.
         if (empty($this->phone)) $this->phone = '';         # Re-define as empty string, and not numeric zero.
         if (empty($this->realname)) $this->realname = '';   # Re-define as empty string, and not numeric zero.
@@ -170,11 +177,35 @@ class Coach
         return mysql_query("UPDATE coaches SET retired = ".(($bool) ? 1 : 0)." WHERE coach_id = $this->coach_id");
     }
 
-    public function setRing($level) {
-        if (!in_array($level, array(RING_SYS, RING_COM, RING_COACH))) {return false;}
-        $this->ring = $level;
-        return mysql_query("UPDATE coaches SET ring = $level WHERE coach_id = $this->coach_id");
+    public function setRing($rtype, $ring, $lid = false) {
+        if ($rtype == self::T_RING_GROUP_GLOBAL && in_array($ring, self::$RINGS[self::T_RING_GROUP_GLOBAL])) {
+            $this->ring = $ring;
+            return mysql_query("UPDATE coaches SET ring = $ring WHERE coach_id = $this->coach_id");
+        }
+        else if ($rtype == self::T_RING_GROUP_LOCAL && in_array($ring, self::$RINGS[self::T_RING_GROUP_LOCAL]) && $lid) {
+            $status = mysql_query("DELETE FROM memberships WHERE cid = $this->coach_id AND lid = $lid");
+            if ($ring != self::T_RING_LOCAL_NONE) {
+                $status &= mysql_query("INSERT INTO memberships (cid,lid,ring) VALUES($this->coach_id, $lid, $ring)");
+            }
+            return $status;
+        }
+        
+        return false;
     }
+
+#    public function getRings() {
+#        $result = mysql_query("SELECT ring FROM coaches WHERE coach_id = $this->coach_id");
+#        list($global) = mysql_fetch_row($result);
+#        $result = mysql_query("SELECT ring, lid, l.name AS 'lname' FROM memberships AS m, leagues AS l WHERE m.lid = l.lid AND m.cid = $this->coach_id");
+#        $locals = array();
+#        while ($membership = mysql_fetch_object($result)) {
+#            $locals[] = $membership;
+#        }
+#        return array(
+#            self::T_RING_GROUP_GLOBAL => $global, 
+#            self::T_RING_GROUP_GLOBAL => $locals,
+#        );
+#    }
 
     public function setPasswd($passwd) {
         $query = "UPDATE coaches SET passwd = '".md5($passwd)."' WHERE coach_id = $this->coach_id";
@@ -200,12 +231,6 @@ class Coach
     public function setRealName($rname) {
         $query = "UPDATE coaches SET realname = '".mysql_real_escape_string($rname)."' WHERE coach_id = $this->coach_id";
         return (mysql_query($query) && ($this->realname = $rname));
-    }
-
-    public function setLid($lid) {
-        $this->f_lid = $lid;
-        $query = "UPDATE coaches SET f_lid = $lid WHERE coach_id = $this->coach_id";
-        return mysql_query($query);
     }
 
     public function isInMatch($match_id) {
@@ -248,7 +273,7 @@ class Coach
     const NODE_STRUCT__FLAT = 2;
     public static function allowedNodeAccess($NODE_SRUCT, $cid, $extraFields = array())
     {
-        $GLOBAL_VIEW = (!$cid || (int) get_alt_col('coaches', 'coach_id', $cid, 'ring') > T_RING_GLOBAL_NONE);
+        $GLOBAL_VIEW = (!$cid || (int) get_alt_col('coaches', 'coach_id', $cid, 'ring') > self::T_RING_GLOBAL_NONE);
         
         $properFields = array();
         $extraFields[T_NODE_LEAGUE]['name']     = 'lname';
@@ -264,12 +289,14 @@ class Coach
                 $properFields[] = "$tbl.$ref AS '$name'";
             }
         }
-        $properFields[] = "m.ring AS 'ring'";
+        if (!$GLOBAL_VIEW) {
+            $properFields[] = "m.ring AS 'ring'";
+        }
         $query = "SELECT l.lid AS 'lid', d.did AS 'did', t.tour_id AS 'trid',".implode(',',$properFields)."
             FROM leagues AS l LEFT JOIN divisions AS d ON d.f_lid = l.lid LEFT JOIN tours AS t ON t.f_did = d.did ".
             ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '');
         $result = mysql_query($query);
-        
+
         switch ($NODE_SRUCT)
         {
             case self::NODE_STRUCT__TREE:
@@ -278,7 +305,7 @@ class Coach
                     $struct[$r->lid][$r->did][$r->trid]['desc'] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
                     $struct[$r->lid][$r->did]['desc']           = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
                     $struct[$r->lid]['desc']                    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
-                    $struct[$r->lid]['desc']['ring'] = $r->ring;
+                    $struct[$r->lid]['desc']['ring'] = ($GLOBAL_VIEW) ? self::T_RING_LOCAL_ADMIN : $r->ring;
                 }            
                 return $struct;
                 
@@ -288,7 +315,7 @@ class Coach
                     $tours[$r->trid]    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
                     $divisions[$r->did] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
                     $leagues[$r->lid]   = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
-                    $leagues[$r->lid]['ring'] = $r->ring;
+                    $leagues[$r->lid]['ring'] = ($GLOBAL_VIEW) ? self::T_RING_LOCAL_ADMIN : $r->ring;
                 }
                 return array($leagues,$divisions,$tours);
                 
@@ -387,23 +414,36 @@ class Coach
         /**
          * Creates a new coach.
          *
-         * Input: name, realname, passwd, mail, phone, ring, f_lid, settings
+         * Input: name, realname, passwd, mail, phone, ring, settings, def_leagues (array of LIDs)
          **/
-
-        if (empty($input['name']) || empty($input['passwd']) || get_alt_col('coaches', 'name', $input['name'], 'coach_id')) # Name exists already?
+         
+        global $settings;
+        
+        if (
+            empty($input['name']) || 
+            empty($input['passwd']) || 
+            get_alt_col('coaches', 'name', $input['name'], 'coach_id') || # Name exists already?
+            !in_array($input['ring'], self::$RINGS[self::T_RING_GROUP_GLOBAL])
+            ) 
             return false;
 
-        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring, f_lid, settings) 
+        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring, settings) 
                     VALUES ('" . mysql_real_escape_string($input['name']) . "',
                             '" . mysql_real_escape_string($input['realname']) . "', 
                             '" . md5($input['passwd']) . "', 
                             '" . mysql_real_escape_string($input['mail']) . "', 
                             '" . mysql_real_escape_string($input['phone']) . "', 
                             " . $input['ring'].",
-                            " . $input['f_lid'].",
                             '".array_strpack_assoc('%k=%v', $input['settings'], ',')."')";
 
-        return mysql_query($query);
+        if (($status = mysql_query($query)) && is_numeric($cid = mysql_insert_id())) {
+            // Set default memberships
+            $newCoach = new Coach($cid);
+            foreach (array_merge($settings['default_leagues'], $input['def_leagues']) as $lid) {
+                $status &= $newCoach->setRing(self::T_RING_GROUP_LOCAL, self::T_RING_LOCAL_REGULAR, $lid);
+            }
+        }
+        return $status ? $cid : false;
     }
 }
 ?>

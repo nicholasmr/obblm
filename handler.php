@@ -90,6 +90,12 @@ switch ($_GET['type'])
         Module::run('Gallery', array()); 
         break;
 
+    
+    /* Veridy team name - AJAX use */
+    case 'verifyteam':
+        echo (isset($_POST['tname']) && is_numeric($tid = get_alt_col('teams', 'name', $_POST['tname'], 'team_id'))) ? $tid : '0';
+        break;
+
     default:
         fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
 }
