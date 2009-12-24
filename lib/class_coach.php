@@ -207,24 +207,33 @@ class Coach
 #        );
 #    }
 
-    public function mayManageCoach($obj, $id) { # T_OBJ_[COACH|TEAM]
-#    public function mayManageCoach($cid) {
+    public function mayManageObj($obj, $id) { # T_OBJ_[COACH|TEAM]
         
-        // May manage the coach = $cid?...
-        $c = new Coach($cid);
-        
-        // Is this coach a commish in a league where the selected coach is a member?
-        list($lA) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $this->coach_id);
-        list($lB) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $c->coach_id);
+        $managee = new Coach($obj == T_OBJ_COACH ? $cid : get_alt_col('teams', 'team_id', $id, 'owned_by_coach_id'));
+        list($mangers_leagues) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $this->coach_id);
         $MAY_MANAGE_LOCALLY = false;
-        foreach ($lA as $lid => $desc) {
-            if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN && isset($lB[$lid])) {
-                $MAY_MANAGE_LOCALLY = true;
+        
+        switch ($obj) {
+    
+            // Is this coach a commish in a league where the selected coach is a member?
+            case T_OBJ_COACH:
+                list($managees_leagues) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $managee->coach_id);
+                foreach (array_intersect_key($mangers_leagues, $mangees_leagues)  as $lid => $desc) {
+                    if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+                        $MAY_MANAGE_LOCALLY = true;
+                        break;
+                    }
+                }
                 break;
-            }
+            
+            // Is this coach a commish in the league the specified team is bounded to?
+            case T_OBJ_TEAM:
+                $f_lid = get_alt_col('teams', 'team_id', $id, 'f_lid');
+                $MAY_MANAGE_LOCALLY = (isset($mangers_leagues[$lid]) && $mangers_leagues[$lid]['ring'] == Coach::T_RING_LOCAL_ADMIN);
+                break;
         }
         
-        return ($c->ring <= $this->ring && ($MAY_MANAGE_LOCALLY || $this->ring == Coach::T_RING_GLOBAL_ADMIN));
+        return ($managee->ring <= $this->ring && ($MAY_MANAGE_LOCALLY || $this->ring == Coach::T_RING_GLOBAL_ADMIN));
     }
 
     public function setPasswd($passwd) {
