@@ -44,16 +44,14 @@ $settings['fp_leaders'] = array(
 #    'mv_ki'  => array('title' => 'Most killed',        'length' => 5),
 );
 
-$settings['show_sort_rule'] = true;         // Default is true. Print in table footers what tables are sorted against?
+
+$settings['default_leagues'] = array(1,3); // When creating a coach the coach will automatically become a regular coach in leauges with these IDs.
+$settings['show_sort_rule']        = true;  // Default is true. Print in table footers what tables are sorted against?
 $settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
 $settings['show_stars_mercs']      = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.
 $settings['fp_team_news']          = true;  // Default is true. Show team news on front page.
 $settings['fp_links']              = true;  // Default is true. Generate coach, team and player links on the front page?
 $settings['hide_retired']		   = false; // Defailt is false. Hides retired coaches and teams from standings tables.
-
-// The style of the team list in the match scheduling section.
-// Options: 1, 2. 1: Sorts against coach name, then team name. 2: Sorts against team name only. 1 is preferably if coaches have multiple teams, else 2.
-$settings['scheduling_list_style'] = 1; // Default is 1.
 
 /*****************
  * OBBLM rule set

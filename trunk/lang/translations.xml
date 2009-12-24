@@ -633,7 +633,7 @@
         <tour_name>Tournament name</tour_name>
         <rank_sys>Ranking system</rank_sys>
         <tour_type>Tournament type</tour_type>
-        <teams_avail>Available teams</teams_avail>
+        <add_team>Add team</add_team>
         <teams_selected>Selected teams</teams_selected>
         <!-- Tour Types (TT) -->
             <TT_FFA><![CDATA[FFA <i>(Free For All a.k.a. "open league format")</i>]]></TT_FFA>

@@ -78,6 +78,7 @@ $core_tables = array(
         'name'              => $CT_cols['name'],
         'owned_by_coach_id' => $CT_cols[T_OBJ_COACH],
         'f_race_id'         => $CT_cols[T_OBJ_RACE].' NOT NULL DEFAULT 0',
+        'f_did'             => $CT_cols[T_NODE_DIVISION].' NOT NULL DEFAULT 0',
         'treasury'          => 'BIGINT SIGNED',
         'apothecary'        => 'BOOLEAN',
         'rerolls'           => 'MEDIUMINT UNSIGNED',
@@ -146,8 +147,8 @@ $core_tables = array(
         'win_pct' => $CT_cols['win_pct'].' DEFAULT 0', # All-time win pct (across all matches).
     ),
     'memberships' => array(
-        'cid'   => $CT_cols[T_OBJ_COACH],
-        'lid'   => $CT_cols[T_NODE_LEAGUE],
+        'cid'   => $CT_cols[T_OBJ_COACH].' NOT NULL',
+        'lid'   => $CT_cols[T_NODE_LEAGUE].' NOT NULL',
         'ring'  => 'TINYINT UNSIGNED NOT NULL DEFAULT 0', # Local access level
     ),
     'players_skills' => array(
@@ -574,14 +575,8 @@ function get_alt_col($V, $X, $Y, $Z) {
      *  $Z = column to return value from.
      */
 
-    $result = mysql_query("SELECT * FROM $V WHERE $X = '" . mysql_real_escape_string($Y) . "'");
-
-    if (mysql_num_rows($result) > 0) {
-        $row = mysql_fetch_assoc($result);
-        return $row[$Z];
-    }
-
-    return null;
+    $result = mysql_query("SELECT $Z FROM $V WHERE $X = '" . mysql_real_escape_string($Y) . "'");
+    return (mysql_num_rows($result) > 0 && ($r = mysql_fetch_row($result))) ? $r[0] : null;
 }
 
 

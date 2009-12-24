@@ -14,16 +14,34 @@ if (isset($_POST['button'])) {
     $addMatchToFFA  = ($_POST['type'] == TT_FFA && $_POST['existTour'] != -1);
     $nameSet        = (isset($_POST['name']) && !empty($_POST['name']));
 
-    // Error condition definitions.
+    /* Error condition definitions. */
+    
+    // Here we test for illegal pair-ups due to league and division relations.
+    $teams_OK['l'] = $teams_OK['d'] = true;
+    $lid = ($GOT_DID = ($_POST['type'] == TT_RROBIN || $mkNewFFA)) ? get_parent_id(T_NODE_DIVISION, $_POST['did'], T_NODE_LEAGUE) : get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE);
+    $did = ($GOT_DID) ? $_POST['did'] : get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_DIVISION);
+    $TIE_TEAMS = get_alt_col('leagues', 'lid', $lid, 'tie_teams');
+    foreach ($team_ids as $tid) {
+        $query = "SELECT (t.f_did = $did) AS 'in_did', 0 < (SELECT COUNT(*) FROM coaches AS c,memberships AS m WHERE m.cid = c.coach_id AND m.cid = t.owned_by_coach_id AND m.lid = $lid) AS 'in_lid' FROM teams AS t WHERE t.team_id = $tid";
+        $result = mysql_query($query);
+        $state = mysql_fetch_assoc($result);
+        if (!$state['in_lid']) {
+            $teams_OK['l'] = false;
+            break;
+        }
+        if ($TIE_TEAMS && !$state['in_did']) {
+            $teams_OK['d'] = false;
+            break;
+        }
+    }
+
     $errors = array(
         # "Halt if bool is true" => "Error message"
         array(!$nameSet && !$addMatchToFFA, "Please fill out the tournament name."),
         array($nameSet && get_alt_col('tours', 'name', $_POST['name'], 'tour_id'), "Tournament name already in use."),
-        array($coach->ring == RING_COM && (
-            $mkNewFFA && $coach->f_lid != get_parent_id(T_NODE_DIVISION, $_POST['did'], T_NODE_LEAGUE)
-            ||
-            $addMatchToFFA && $coach->f_lid != get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE) 
-        ), 'You are not allowed to schedule matches in that league.'),
+        array(!$teams_OK['d'], 'You may not schedule matches between teams from different divisions in the selected league.'),
+        array(!$teams_OK['l'], 'You may not schedule matches between teams from different leagues.'),
+        array($leagues[$lid]['ring'] != Coach::T_RING_LOCAL_ADMIN, 'You do not have the rights to schedule matches in the selected league.'),
         array($_POST['type'] == TT_RROBIN && $teamsCount < 3, 'Please select at least 3 teams'),
         array($_POST['type'] == TT_FFA && ($teamsCount % 2 != 0), 'Please select an even number of teams'),
     );
@@ -130,35 +148,64 @@ title($lng->getTrn('menu/admin_menu/schedule'));
         Team list related.
     */
 
-    function addTeam(tid, name) 
+    var TID = false;
+    var TNAME = false;
+    
+    function verifyTeam(name) 
     {
-        TL.options[TL.selectedIndex] = null;
+        $.ajax({
+           type: "POST",
+           async: true,
+           url: "handler.php?type=verifyteam",
+           data: {tname:  name},
+           success: function(tid){
+                TID = tid;
+                TNAME = name;
+                document.getElementById("team_verify").innerHTML = (TID > 0) 
+                    ? '<font color="green">OK</font>, <a href="javascript:void(0);" onClick="addTeam();"><?php echo $lng->getTrn("common/add");?></a>' 
+                    : '<font color="red">Does not exist</font>';
+           }
+         });
+    }
+
+    function addTeam() 
+    {
+        var tid;
+        var name;
+        
+        if (TID == 0) {
+            return false;
+        }
+        else {
+            tid = TID;
+            name = TNAME;
+        }
+        for (i = 0; i < SL.length; i++) {
+            if (SL.options[i].value == tid) {
+                return false;
+            }
+        }
+
         SL.options[SL.length] = new Option(name, tid);
         SL.size++;
-        
         TEAMS.value = TEAMS.value.concat( ((TEAMS.value.length == 0) ? '' : ',')+tid );
     }
     
     function removeLastTeam()
     {
-        var last = SL.options[SL.length-1];
         SL.options[SL.length-1] = null;
-        TL.options[TL.length] = new Option(last.text, last.value);
         SL.size--;
-
         TEAMS.value = TEAMS.value.substr(0, TEAMS.value.lastIndexOf(','));
-//        alert('"'+TEAMS.value+'"');
     }
     
 </script>
 
 <?php
-$result = mysql_query("SELECT COUNT(*) FROM leagues,divisions WHERE f_lid = lid");
-if (($row = mysql_fetch_row($result)) && $row[0] == 0) {
+if (count($leagues) < 0 || count($divisions) < 0) {
     fatal($lng->getTrn('admin/schedule/create_LD'));
 }
 HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needhelp'));
-list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->f_lid, array(T_NODE_TOURNAMENT => array('locked' => 'locked', 'type' => 'type')));
+
 ?><br>
 <form method="POST" name="tourForm">
     <table>
@@ -172,7 +219,7 @@ list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__
         <select name='did'>
             <?php
             foreach ($divisions as $did => $desc) {
-                echo "<option value='$did'>$desc[dname]</option>\n";
+                echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
             }
             ?>
         </select>
@@ -206,7 +253,7 @@ list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__
         $body .= '<optgroup label="Existing FFA">';
         foreach ($tours as $trid => $desc) {
             if ($desc['type'] == TT_FFA) {
-                $body .= "<option value='$trid' ".(($desc['locked']) ? 'DISABLED' : '').">$desc[tname]".(($desc['locked']) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
+                $body .= "<option value='$trid' ".(($desc['locked']) ? 'DISABLED' : '').">".$divisions[$desc['f_did']]['dname'].": $desc[tname]".(($desc['locked']) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
             }
         }
         $body .= '</optgroup>';
@@ -237,29 +284,11 @@ list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__
     </tr>
     </table>
     <br>
-    <b><?php echo $lng->getTrn('admin/schedule/teams_avail');?>:</b><br>
+    
+    <b><?php echo $lng->getTrn('admin/schedule/add_team');?>:</b><br>    
+    <input id='team' type="text" name="team" size="30" maxlength="50"> <a href='javascript:void(0);' onClick="verifyTeam(document.getElementById('team').value);">Verify</a> <span id='team_verify'></span><br>
     <?php
-    $query = "SELECT team_id, teams.name AS 'name', f_cname FROM teams, coaches WHERE teams.owned_by_coach_id = coaches.coach_id ".(($coach->f_lid) ? "AND coaches.f_lid = $coach->f_lid" : '');
-    $result = mysql_query($query);
-    $teams = array();
-    while ($o = mysql_fetch_object($result)) {
-        $teams[] = $o;
-    }
-    $entriesToPrint = array();
-    switch ($settings['scheduling_list_style'])
-    {
-        case 2:
-            objsort($teams, array('+name'));
-            $entriesToPrint = array_map(create_function('$t', 'return "<option value=\'$t->team_id\'>$t->name ($t->f_cname)</option>";'), $teams);
-            break;
-        # case 1:
-        default: 
-            objsort($teams, array('+f_cname', '+name'));
-            $entriesToPrint = array_map(create_function('$t', 'return "<option value=\'$t->team_id\'>$t->f_cname\'s $t->name</option>";'), $teams);
-            break;
-    }
-    print "<select id='teamlist' name='teamlist' ".(empty($teams) ? 'DISABLED' : '').">\n".implode("\n", $entriesToPrint)."\n</select>\n<br>";
-    print "<a href='javascript:void(0);' onClick='var opt = TL.options[TL.selectedIndex]; addTeam(opt.value, opt.text);'>".$lng->getTrn('common/add')."</a><br><br>";
+    print "<br><br>";
     print "<b>".$lng->getTrn('admin/schedule/teams_selected').":</b><br>";
     print "<select id='selectedlist' name='selectedlist' size='2' MULTIPLE></select>\n<br>";
     print "<a href='javascript:void(0);' onClick='removeLastTeam();'>".$lng->getTrn('common/remove')."</a><br>";
@@ -267,7 +296,7 @@ list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__
     ?>
     <br>
     <hr align="left" width="200px">
-    <input type="submit" name="button" value="<?php echo $lng->getTrn('common/create');?>" <?php echo (empty($divisions) || empty($teams) ? 'DISABLED' : '');?>>
+    <input type="submit" name="button" value="<?php echo $lng->getTrn('common/create');?>" <?php echo (empty($divisions) ? 'DISABLED' : '');?>>
 </form>
 
 <script language="JavaScript" type="text/javascript">
@@ -275,7 +304,6 @@ list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__
     var BOX_RR = '<?php echo $BOX_RR;?>';
     chTour(<?php echo TT_FFA;?>);
     
-    var TL = document.getElementById('teamlist');
     var SL = document.getElementById('selectedlist');
     var TEAMS = document.getElementById('teams');
 </script>
