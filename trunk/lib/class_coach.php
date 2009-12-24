@@ -207,6 +207,26 @@ class Coach
 #        );
 #    }
 
+    public function mayManageCoach($obj, $id) { # T_OBJ_[COACH|TEAM]
+#    public function mayManageCoach($cid) {
+        
+        // May manage the coach = $cid?...
+        $c = new Coach($cid);
+        
+        // Is this coach a commish in a league where the selected coach is a member?
+        list($lA) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $this->coach_id);
+        list($lB) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $c->coach_id);
+        $MAY_MANAGE_LOCALLY = false;
+        foreach ($lA as $lid => $desc) {
+            if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN && isset($lB[$lid])) {
+                $MAY_MANAGE_LOCALLY = true;
+                break;
+            }
+        }
+        
+        return ($c->ring <= $this->ring && ($MAY_MANAGE_LOCALLY || $this->ring == Coach::T_RING_GLOBAL_ADMIN));
+    }
+
     public function setPasswd($passwd) {
         $query = "UPDATE coaches SET passwd = '".md5($passwd)."' WHERE coach_id = $this->coach_id";
         return (mysql_query($query) && ($this->passwd = md5($passwd)));

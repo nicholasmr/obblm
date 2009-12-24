@@ -11,21 +11,9 @@ if (isset($_POST['type'])) {
         $c is the coach referred to in the "Coach name" HTML fields.
     */
     if (isset($_POST['cname'])) {
-        if (is_numeric($cid = (int) get_alt_col('coaches', 'name', $_POST['cname'], 'coach_id'))) {
-            $c = new Coach($cid);
-            {
-                // Is the logged in coach a commish in a league where the selected coach is a member?
-                list($lA) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->coach_id);
-                list($lB) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $c->coach_id);
-                $MAY_MANAGE_LOCALLY = false;
-                foreach ($lA as $lid => $desc) {
-                    if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN && isset($lB[$lid])) {
-                        $MAY_MANAGE_LOCALLY = true;
-                        break;
-                    }
-                }
-            }
-            if (!($MAY_MANAGE_LOCALLY || $IS_GLOBAL_ADMIN) || $c->ring > $coach->ring) {
+        if (is_numeric($cid = get_alt_col('coaches', 'name', $_POST['cname'], 'coach_id'))) {
+            $c = new Coach($cid); # Needed later.
+            if (!$coach->mayManageCoach($cid)) {
                 status(false, 'You do not have permissions to manage the selected coach.');
                 $_POST['type'] = 'QUIT';
             }
@@ -39,7 +27,7 @@ if (isset($_POST['type'])) {
     switch ($_POST['type']) {
 
         case 'QUIT':
-            unset($c);
+            $c = null;
             break;
 
         case 'mk_coach':
