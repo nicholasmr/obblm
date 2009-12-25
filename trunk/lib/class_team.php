@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -23,6 +23,8 @@
 
 class Team
 {
+    const T_NO_DIVISION_TIE = 0;
+
     /***************
      * Properties
      ***************/
@@ -333,7 +335,15 @@ class Team
     }
 
     public function isPlayerBuyable($pos_id) {
-
+        
+        /* 
+            Checks whether maximum number of positional is reached AND if the position ID is valid to this team's race. 
+        */
+        
+        $query = "SELECT COUNT(*), IFNULL(COUNT(*) < (SELECT qty FROM game_data_players WHERE pos_id = $pos_id), TRUE) 
+            FROM game_data_players LEFT JOIN players ON f_pos_id = pos_id 
+            WHERE owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND date_died IS NULL AND date_sold IS NULL";
+        
         $query = "SELECT IFNULL(COUNT(*) < qty, TRUE) FROM players, game_data_players 
             WHERE f_pos_id = pos_id AND owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND date_died IS NULL AND date_sold IS NULL";
         $result = mysql_query($query);
@@ -435,7 +445,7 @@ class Team
 
     // Required passed fields used by create().
     public static $createEXPECTED = array(
-        'name','owned_by_coach_id','f_race_id',
+        'name','owned_by_coach_id','f_race_id','f_lid','f_did',
         'treasury', 'apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders',
         'won_0','lost_0','draw_0','played_0','wt_0','gf_0','ga_0','tcas_0','imported',
     );
@@ -455,8 +465,15 @@ class Team
         // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
         global $raceididx;
         if (!in_array($input['f_race_id'], array_keys($raceididx))
-        || !get_alt_col('coaches', 'coach_id', $input['owned_by_coach_id'], 'coach_id')
-        || get_alt_col('teams', 'name', $input['name'], 'team_id'))  {
+        || !($coach_ring = get_alt_col('coaches', 'coach_id', $input['owned_by_coach_id'], 'ring')) # We use coach's ring later.
+        || get_alt_col('teams', 'name', $input['name'], 'team_id')
+        || $input['f_did'] != self::T_NO_DIVISION_TIE && $input['f_lid'] != get_alt_col('divisions', 'did', $input['f_did'], 'f_lid'))  {
+            return false;
+        }
+        # Valid league chosen?
+        $result = mysql_query("SELECT COUNT(*) FROM memberships WHERE lid = $input[f_lid] AND cid = $input[owned_by_coach_id] AND ring >= ".Coach::T_RING_LOCAL_REGULAR);
+        list($cnt) = mysql_fetch_row($result);
+        if ($cnt < 1 && $coach_ring == Coach::T_RING_GLOBAL_NONE) {
             return false;
         }
 

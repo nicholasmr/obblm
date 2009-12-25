@@ -47,14 +47,14 @@ if (isset($_POST['login'])) {
     if (!Coach::login($_POST['coach'], $_POST['passwd'], isset($_POST['remember']))) {
         $_GET['section'] = 'login';
     }
-    setupGlobalVars();
+    setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT);
 }
 
 // Logout?
 if (isset($_GET['logout'])) {
     $_GET['section'] = 'main'; # Redirect logged out users to the main page.
     Coach::logout();
-    setupGlobalVars();
+    setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT);
 }
 
 HTMLOUT::frame_begin(isset($_SESSION['logged_in']) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.

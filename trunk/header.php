@@ -136,17 +136,12 @@ if (!is_writable(IMG))
 if (!defined('NO_STARTUP')) {
     $conn = mysql_up(true); # MySQL connect. If constant is set before calling this header table checking will be ignored.
 }
-setupGlobalVars(); # Sets $coach, $lng, ...
+else {
+    Coach::logout(); # Make sure we don't have session data triggering SQL queries for logged in coaches.
+}
 
-// Modules.
+setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
 require_once('modules/modsheader.php'); # Registration of modules.
-
-/********************
- *   Post startup
- ********************/
-
-// Ring access allowances.
-$ring_sys_access = array('ld_man' => $lng->getTrn('menu/admin_menu/ld_man'), 'tour_man' => $lng->getTrn('menu/admin_menu/tour_man'), 'import' => $lng->getTrn('menu/admin_menu/import'), 'cpanel' => $lng->getTrn('menu/admin_menu/cpanel'));
-$ring_com_access = array('schedule' => $lng->getTrn('menu/admin_menu/schedule'), 'log' => $lng->getTrn('name', 'LogSubSys'), 'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'),);
+setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
 
 ?>
