@@ -29,26 +29,19 @@
 
 function sec_admin() {
 
-    global $rules, $settings, $DEA, $coach, $lng, $ring_sys_access, $ring_com_access;
+    global $rules, $settings, $DEA, $coach, $lng, $admin_menu;
     global $leagues, $divisions, $tours;
     
     if (!is_object($coach))
         fatal('Please login.');
+    if (!isset($_GET['subsec']))
+        $_GET['subsec'] = '_NONE_';
 
-    // What is the largest ring of logged in coach's leagues.
-    $LARGEST_LOCAL_RING = Coach::T_RING_LOCAL_REGULAR;
-    foreach ($leagues as $lid => $desc) {
-        if ($desc['ring'] > $LARGEST_LOCAL_RING) {
-            $LARGEST_LOCAL_RING = $desc['ring'];
-        }
-    }
+    $IS_GLOBAL_ADMIN = ($coach->ring == Coach::T_RING_GLOBAL_ADMIN);
+    $ONLY_FOR_GLOBAL_ADMIN = "Note: This feature may only be used by <i>global</i> administrators."; # Used string in a few common feature/action boxes.
 
-    // Quit if coach does not has administrator privileges.
-    if (!( ($IS_GLOBAL_ADMIN = ($coach->ring == Coach::T_RING_GLOBAL_ADMIN)) || $LARGEST_LOCAL_RING > Coach::T_RING_LOCAL_REGULAR))
-        fatal("Sorry. Only site administrators and league commissioners are allowed to access this section.");
-
-    // Deny local commish trying to access global admin pages.
-    if (isset($_GET['subsec']) && !$IS_GLOBAL_ADMIN && in_array($_GET['subsec'], array_keys($ring_sys_access)))
+    // Deny un-authorized users.
+    if (!in_array($_GET['subsec'], array_keys($admin_menu)))
         fatal("Sorry. Your access level does not allow you opening the requested page.");
 
     switch ($_GET['subsec']) 

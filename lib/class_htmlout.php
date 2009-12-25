@@ -611,7 +611,7 @@ public static function frame_end()
 private static function make_menu()
 {
 
-    global $lng, $coach, $settings, $rules, $ring_sys_access, $ring_com_access;
+    global $lng, $coach, $settings, $rules, $admin_menu;
 
     ?>
     <ul id="nav" class="dropdown dropdown-horizontal">
@@ -621,24 +621,19 @@ private static function make_menu()
 
         if (isset($_SESSION['logged_in']) && is_object($coach)) {
             echo '<li><a href="'.urlcompile(T_URL_PROFILE,T_OBJ_COACH,$coach->coach_id,false,false).'">'.$lng->getTrn('menu/cc').'</a></li>';
-#            if ($coach->ring <= RING_COM) {
+            if (!empty($admin_menu)) {
                 ?>
                 <li><span class="dir"><?php echo $lng->getTrn('menu/admin_menu/name');?></span>
                     <ul>
-                        <?php
-                        foreach ($ring_com_access as $lnk => $desc) {
-                            echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
-                        }
-#                        if ($coach->ring == RING_SYS) {
-                            foreach ($ring_sys_access as $lnk => $desc) {
-                                echo "<li><a style='font-style: italic;' href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
-                            }
-#                        }
-                        ?>
+                    <?php
+                    foreach ($admin_menu as $lnk => $desc) {
+                        echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
+                    }
+                    ?>
                     </ul>
                 </li>
                 <?php
-#            }
+            }
         }
         ?>
         <li><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a></li>

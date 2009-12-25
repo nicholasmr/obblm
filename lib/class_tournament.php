@@ -171,12 +171,6 @@ class Tour
         return mysql_query($query);
     }
 
-    public function ch_did($did) {
-        $query1 = "UPDATE tours SET f_did = $did WHERE tour_id = $this->tour_id";
-        $query2 = "UPDATE match_data SET f_did = $did WHERE f_tour_id = $this->tour_id";
-        return (mysql_query($query1) && mysql_query($query2));
-    }
-    
     public function setLocked($lock) {
         $this->locked = (bool) $lock;
         return mysql_query("UPDATE tours SET locked = ".(($lock) ? 1 : 0)." WHERE tour_id = $this->tour_id");

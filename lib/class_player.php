@@ -733,7 +733,7 @@ class Player
 
                 // Reached max quantity of player position?
                 if (!$team->isPlayerBuyable($input['f_pos_id']))
-                    return array(false, 'Maximum quantity of player position is reached.');        
+                    return array(false, 'Maximum quantity of player position is reached or illegal choice of player position.');        
             }
         }
         

@@ -16,6 +16,8 @@ if (isset($_FILES['xmlfile'])) {
         # If field is the same do not define entry!
         'owned_by_coach_id' => 'coach_id', 
         'f_race_id' => 'race_id',
+        'f_lid' => 'league_id',
+        'f_did' => 'division_id',
         'rerolls' => 'rr',
         'ff_bought' => 'ff',
         'won_0' => 'won',
@@ -67,8 +69,9 @@ if (isset($_FILES['xmlfile'])) {
             $team->dtreasury($t->treasury*1000 - $team->treasury); // $t->treasury + $delta = XML value
         }
         
-        // SYNC DATA!
-#        SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => T_IMPORT_MID, 'trid' => 0, 'tid1' => $tid, 'tid2' => 0, 'played' => 0));
+        if ($ROLLBACK) {
+            
+        }
     }
 }
 
@@ -94,6 +97,18 @@ Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right cli
 <br>
 When importing teams you will need to know the IDs of the respective coaches, races and player positionals.<br>
 Coach IDs can be found in the information section of the Coach's Corner pages.<br>
-Race IDs and the IDs of the player positionals allowed by the race can be found on the race's information pages.
+Race IDs and the IDs of the player positionals allowed by the race can be found on the race's information pages.<br>
+You'll also need to know the IDs of the leagues which the teams belong to and likwise division IDs, if the league in question require teams to be tied to a divsions.<br>
+League and division IDs <i>you</i> may use are<br><br>
+<table>
+<tr style='font-style:italic;'><td>League</td><td>Division</td><td>League ID</td><td>Division ID</td><td>League requires team-division ties?</td></tr>
+<?php
+foreach ($divisions as $did => $desc) {
+    if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+        echo "<tr><td>".$leagues[$desc['f_lid']]['lname']."</td><td>$desc[dname]</td><td>$desc[f_lid]</td><td>$did</td><td>".(($leagues[$desc['f_lid']]['tie_teams']) ? 'Yes' : 'No')."</td></tr>";
+    }
+}
+?>
+</table>
 
 

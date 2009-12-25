@@ -5,24 +5,33 @@ if (isset($_POST['type'])) {
             $_POST[$i] = isset($_POST[$i]) ? stripslashes($_POST[$i]) : '';
         }
     }
-    $l = (isset($_POST['lid'])) ? new League($_POST['lid']) : null;
-    $d = (isset($_POST['did'])) ? new Division($_POST['did']) : null;
+    if (isset($_POST['lid']) && (!isset($leagues[$_POST['lid']]) || $leagues[$_POST['lid']]['ring'] != Coach::T_RING_LOCAL_ADMIN) || 
+        isset($_POST['did']) && (!isset($divisions[$_POST['did']]) || $leagues[$divisions[$_POST['did']]['f_lid']]['ring'] != Coach::T_RING_LOCAL_ADMIN)
+       ) {
+        status(false, 'You do not have permissions to administrate the chosen division or league');
+        $_POST['type'] = 'QUIT';
+    }
+    else {
+        $l = (isset($_POST['lid'])) ? new League($_POST['lid']) : null;
+        $d = (isset($_POST['did'])) ? new Division($_POST['did']) : null;    
+    }
+
     switch ($_POST['type'])
     {
-        case 'new_league':      status($GLOBAL_MANAGE && League::create($_POST['name'], $_POST['location'])); break;
-        case 'new_division':    status(in_array($_POST['lid'], $league_ids) && Division::create($_POST['lid'], $_POST['name'])); break;
-        case 'mod_league':      status(in_array($_POST['lid'], $league_ids) && $l->setName($_POST['name']) && $l->setLocation($_POST['location'])); break;
-        case 'mod_division':    status($d->setName($_POST['name']) && $d->set_f_lid($_POST['lid'])); break;
-        case 'del_league':      status($GLOBAL_MANAGE && $l->delete()); break;
-        case 'del_division':    status($d->delete()); break;
+        case 'QUIT': break;
+        case 'new_league':      status($IS_GLOBAL_ADMIN && League::create($_POST['name'], $_POST['location'])); break;
+        case 'new_division':    status(Division::create($_POST['lid'], $_POST['name'])); break;
+        case 'mod_league':      status($l->setName($_POST['name']) && $l->setLocation($_POST['location'])); break;
+        case 'mod_division':    status($d->setName($_POST['name'])); break;
+        case 'del_league':      status($IS_GLOBAL_ADMIN && $l->delete()); break;
+        case 'del_division':    status($IS_GLOBAL_ADMIN && $d->delete()); break;
     }
 }
 
 title($lng->getTrn('menu/admin_menu/ld_man'));
-list($leagues,$divisions) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->f_lid, array(T_NODE_TOURNAMENT => array('locked' => 'locked', 'type' => 'type')));
 
 ?>
-<b>Please note:</b> When modifying or deleting any of the below data seperation layers (divisions and leagues) a "syncAll()" re-synchronisation should be run afterwards from the <a href='index.php?section=admin&amp;subsec=cpanel'>OBBLM core panel</a>.
+<b>Please note:</b> When deleting any of the below data seperation layers (divisions and leagues) a "syncAll()" re-synchronisation should be run afterwards from the <a href='index.php?section=admin&amp;subsec=cpanel'>OBBLM core panel</a>.
 <table>
     <tr>
         <td valign='top'>
@@ -34,7 +43,9 @@ list($leagues,$divisions) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $
             <select name='lid'>
                 <?php
                 foreach ($leagues as $lid => $desc) {
-                    echo "<option value='$lid'>$desc[lname]</option>\n";
+                    if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+                        echo "<option value='$lid'>$desc[lname]</option>\n";
+                    }
                 }
                 ?>
             </select><br><br>
@@ -55,15 +66,9 @@ list($leagues,$divisions) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $
             <select name='did'>
                 <?php
                 foreach ($divisions as $did => $desc) {
-                    echo "<option value='$did'>$desc[dname] ($d->league_name)</option>\n";
-                }
-                ?>
-            </select><br><br>
-            Assigned to league:<br>
-            <select name='lid'>
-                <?php
-                foreach ($leagues as $lid => $desc) {
-                    echo "<option value='$lid'>$desc[lname]</option>\n";
+                    if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+                        echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
+                    }
                 }
                 ?>
             </select><br><br>
@@ -84,11 +89,14 @@ list($leagues,$divisions) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $
             <select name='did'>
                 <?php
                 foreach ($divisions as $did => $desc) {
-                    echo "<option value='$did'>$desc[dname] ($d->league_name)</option>\n";
+                    if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+                        echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
+                    }
                 }
                 ?>
             </select><br><br>
-            <input type='submit' value='Delete' <?php echo empty($divisions) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete devisions when no matches are assigned to it.')){return false;}">
+            <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
+            <input type='submit' value='Delete' <?php echo (empty($divisions) || !$IS_GLOBAL_ADMIN) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete devisions when no matches are assigned to it.')){return false;}">
             <input type='hidden' name='type' value='del_division'>
             </form>
             </div>
@@ -103,10 +111,11 @@ list($leagues,$divisions) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $
             <div class="boxBody">
             <form method="POST">
             Name:<br>
-            <input type="text" name="name"><br><br>
+            <input type="text" name="name" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
             Location:<br>
-            <input type="text" name="location"><br><br>
-            <input type='submit' value='Create'>
+            <input type="text" name="location" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
+            <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
+            <input type='submit' value='Create' <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>>
             <input type='hidden' name='type' value='new_league'>
             </form>
             </div>
@@ -121,7 +130,9 @@ list($leagues,$divisions) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $
             <select name='lid'>
                 <?php
                 foreach ($leagues as $lid => $desc) {
-                    echo "<option value='$lid'>$desc[lname]</option>\n";
+                    if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+                        echo "<option value='$lid'>$desc[lname]</option>\n";
+                    }
                 }
                 ?>
             </select><br><br>
@@ -141,46 +152,20 @@ list($leagues,$divisions) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $
             <div class="boxBody">
             <form method="POST">
             League:<br>
-            <select name='lid'>
+            <select name='lid' <?php echo (empty($leagues) || !$IS_GLOBAL_ADMIN) ? ' DISABLED ' : '';?>>
                 <?php
                 foreach ($leagues as $lid => $desc) {
                     echo "<option value='$lid'>$desc[lname]</option>\n";
                 }
                 ?>
             </select><br><br>
-            <input type='submit' value='Delete' <?php echo empty($leagues) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete leagues if empty, ie. no divisions/matches assigned to them.')){return false;}">
+            <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
+            <input type='submit' value='Delete' <?php echo (empty($leagues) || !$IS_GLOBAL_ADMIN) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete leagues if empty, ie. no divisions/matches assigned to them.')){return false;}">
             <input type='hidden' name='type' value='del_league'>
             </form>
             </div>
         </div>
         </td>
     </tr>
-    <!--
-    @FIXME - NOT YET IMPLEMENTED
-    <tr>
-        <td valign='top' colspan="3">
-        <div class="boxCommon">
-            <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Change league welcome message</div>
-            <div class="boxBody">
-            <form method="POST">
-            League:<br>
-            <select name='lid'>
-                <?php
-                foreach ($leagues as $lid => $desc) {
-                    echo "<option value='$lid'>$desc[lname]</option>\n";
-                }
-                ?>
-            </select><br><br>
-            Message:<br>
-            <textarea cols='80' rows="15" name='welcome'></textarea>
-            <br><br>
-            <input type='submit' value='Change welcome message' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
-            <input type='hidden' name='type' value='ch_welcome'>
-            </form>
-            </div>
-        </div>
-        </td>
-    </tr>
-    -->
 </table>
 <?php

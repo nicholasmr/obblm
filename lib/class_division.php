@@ -55,11 +55,6 @@ public function delete()
     return mysql_query("DELETE FROM divisions WHERE did = $this->did");
 }
 
-public function set_f_lid($f_lid)
-{
-    return (mysql_query("UPDATE divisions SET f_lid = $f_lid WHERE did = $this->did") && mysql_query("UPDATE match_data SET f_lid = $f_lid WHERE f_did = $this->did"));
-}
-
 public function setName($name)
 {
     $query = "UPDATE divisions SET name = '".mysql_real_escape_string($name)."' WHERE did = $this->did";

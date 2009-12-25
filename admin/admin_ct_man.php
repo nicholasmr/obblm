@@ -8,8 +8,8 @@ if (isset($_POST['type'])) {
     }
     else {
         $o = $IS_COACH ? new Coach($id) : new Team($id);
-        if (!$coach->mayManageCoach($IS_COACH ? $o->coach_id : $o->owned_by_coach_id)) {
-            status(false, 'You do not have permissions to manage the selected coach.');
+        if (!$coach->mayManageObj($IS_COACH ? T_OBJ_COACH : T_OBJ_TEAM, $IS_COACH ? $o->coach_id : $o->owned_by_coach_id)) {
+            status(false, 'You do not have permissions to manage the selected coach or team.');
             $_POST['type'] = 'QUIT';
         }
     }
@@ -20,17 +20,11 @@ if (isset($_POST['type'])) {
             break;
             
         case 'rt':
-            status($o->setRetired(!(isset($_POST['unretire']) && $_POST['unretire'])));
-            break;
-
         case 'rc':
             status($o->setRetired(!(isset($_POST['unretire']) && $_POST['unretire'])));
             break;
 
         case 'dt':
-            status($o->delete());
-            break;
-
         case 'dc':
             status($o->delete());
             break;

@@ -57,12 +57,35 @@ function objsort(&$obj_array, $fields)
     return usort($obj_array, create_function('$a, $b', $func));
 }
 
-function setupGlobalVars($keepLngDocs = true) {
-    global $coach, $lng, $leagues, $divisions, $tours, $settings;
-    $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
-    list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false, $extraFields = array(T_NODE_TOURNAMENT => array('locked' => 'locked', 'type' => 'type', 'f_did' => 'f_did'), T_NODE_DIVISION => array('f_lid' => 'f_lid')));
-    if (!($keepLngDocs && is_object($lng))) {
-        $lng = new Translations((is_object($coach) && isset($coach->settings['lang'])) ? $coach->settings['lang'] : $settings['lang']); # Load language.
+define('T_SETUP_GLOBAL_VARS__COMMON', 1);
+define('T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES', 2);
+define('T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT', 3);
+function setupGlobalVars($type, $opts = array()) {
+
+    global $coach, $lng, $leagues, $divisions, $tours, $settings, $admin_menu;
+
+    switch ($type) {
+    
+        case T_SETUP_GLOBAL_VARS__COMMON:
+            $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
+            list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false, $extraFields = array(T_NODE_TOURNAMENT => array('locked' => 'locked', 'type' => 'type', 'f_did' => 'f_did'), T_NODE_DIVISION => array('f_lid' => 'f_lid'), T_NODE_LEAGUE => array('tie_teams' => 'tie_teams')));
+            $_LANGUAGE = (is_object($coach) && isset($coach->settings['lang'])) ? $coach->settings['lang'] : $settings['lang'];
+            if (!is_object($lng)) {
+                $lng = new Translations($_LANGUAGE);
+            }
+            else {
+                $lng->setLanguage($_LANGUAGE);
+            }
+            break;
+            
+        case T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES:
+            $admin_menu = is_object($coach) ? $coach->getAdminMenu() : array();
+            break;
+            
+        case T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT:
+            setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
+            setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
+            break;
     }
 }
 

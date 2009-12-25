@@ -1,66 +1,48 @@
 <?php
+
+$manageable_tours = array();
+foreach ($tours as $trid => $desc) {
+    if ($leagues[$divisions[$desc['f_did']]['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+        $manageable_tours[$trid] = $desc;
+        $manageable_tours[$trid]['f_dname'] = $divisions[$desc['f_did']]['dname'];        
+        $manageable_tours[$trid]['f_lid'] = $lid = $divisions[$desc['f_did']]['f_lid'];
+        $manageable_tours[$trid]['f_lname'] = $leagues[$lid]['lname'];
+    }
+}
+
 if (isset($_POST['type'])) {
+    if (!in_array($trid = $_POST['trid'], array_keys($manageable_tours))) {
+        status(false, 'You do not have the permissions to manage the selected tournament.');
+        $_POST['type'] = 'QUIT';
+    }
+    else {
+        $t = new Tour($trid);
+    }
+    
     switch ($_POST['type'])
     {
+        case 'QUIT': break;
+        
         case 'change':
-            $t = new Tour($_POST['trid']);
             status($t->chRS($_POST['rs']) && $t->chType($_POST['ttype']) && $t->rename($_POST['tname']));
             break;
 
         case 'delete':
-            if (isset($_POST['delete']) && $_POST['delete']) {
-                $t = new Tour($_POST['trid']);
-                status($t->delete(true));
-            }
-            else {
-                status(false, 'Please mark the agreement box before trying to delete a tournament.');
-            }
-            break;
-
-        case 'move':
-            $t = new Tour($_POST['trid']);
-            status($t->ch_did($_POST['did']));
+            $_OK = ($IS_GLOBAL_ADMIN && isset($_POST['delete']) && $_POST['delete']);
+            status($_OK ? $t->delete(true) : false, $_OK ? '' : 'Please mark the agreement box before trying to delete a tournament. Also note that only site admins may use this feature.');
             break;
 
         case 'lock':
-            $t = new Tour($_POST['trid']);
             status($t->setLocked(isset($_POST['lock']) && $_POST['lock']));
             break;
     }
 }
 
 title($lng->getTrn('menu/admin_menu/tour_man'));
-$tours = Tour::getTours();
-$nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value = e['trid'].options[e['trid'].selectedIndex].text;";
 
 ?>
 
 <div class="row">
-<div class="boxCommon">
-    <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Move tour to other division</div>
-    <div class="boxBody">
-    <form method="POST">
-        <b>Move tournament</b><br>
-        <select name="trid">
-            <?php
-            foreach ($tours as $t) {
-                echo "<option value='$t->tour_id'>$t->name</option>\n";
-            }
-            ?>
-        </select><br><br>
-        <b>...to the division</b><br>
-        <select name="did">
-            <?php
-            foreach (Division::getDivisions() as $d) {
-                echo "<option value='$d->did'>$d->name</option>\n";
-            }
-            ?>
-        </select><br><br>
-        <input type="hidden" name="type" value="move">
-        <input type="submit" value="Move">
-    </form>
-    </div>
-</div>
 
 <div class="boxCommon">
     <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Lock/unlock tournament</div>
@@ -69,8 +51,8 @@ $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value =
         <b>Tournament</b><br>
         <select name="trid">
             <?php
-            foreach ($tours as $t) {
-                echo "<option value='$t->tour_id'>$t->name".(($t->locked) ? ' (is locked)' : '')."</option>\n";
+            foreach ($manageable_tours as $trid => $desc) {
+                echo "<option value='$trid'>$desc[f_lname], $desc[f_dname]: $desc[tname]".(($desc['locked']) ? ' (is locked)' : '')."</option>\n";
             }
             ?>
         </select><br><br>
@@ -90,10 +72,10 @@ $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value =
     <form id='tourForm' method="POST">
         <br>
         <b>Edit tournament:</b><br>
-        <select name="trid" onChange="<?php echo $nameChangeJScode;?>">
+        <select name="trid">
             <?php
-            foreach ($tours as $t) {
-                echo "<option value='$t->tour_id'>$t->name</option>\n";
+            foreach ($manageable_tours as $trid => $desc) {
+                echo "<option value='$trid'>$desc[f_lname], $desc[f_dname]: $desc[tname]</option>\n";
             }
             ?>
         </select>
@@ -102,11 +84,6 @@ $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value =
         <br>
         <b>New name:</b><br>
         <input type='text' name='tname' length='20' value=''>
-
-        <script language="JavaScript" type="text/javascript">
-            <?php echo $nameChangeJScode;?>
-        </script>
-
         <br><br>
         <b>New ranking system:</b> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
         <select name='rs'>
@@ -121,7 +98,7 @@ $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value =
         <br><br>
         <b>New tournament type:</b><br>
         <input type="radio" name="ttype" value="<?php echo TT_RROBIN;?>" > Round-Robin<br>
-        <input type="radio" name="ttype" value="<?php echo TT_FFA;?>" CHECKED> FFA (free for all) single match<br>
+        <input type="radio" name="ttype" value="<?php echo TT_FFA;?>" CHECKED> FFA<br>
         <br>
 
         <input type="hidden" name="type" value="change">
@@ -138,8 +115,8 @@ $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value =
         <b>I wish to delete the following tournament</b><br>
         <select name="trid">
             <?php
-            foreach ($tours as $t) {
-                echo "<option value='$t->tour_id'>$t->name</option>\n";
+            foreach ($manageable_tours as $trid => $desc) {
+                echo "<option value='$trid'>$desc[f_lname], $desc[f_dname]: $desc[tname]</option>\n";
             }
             ?>
         </select>
@@ -156,8 +133,10 @@ $nameChangeJScode = "e = document.forms['tourForm'].elements; e['tname'].value =
             <li>generate incorrect player statuses for those matches following (date-wise) the matches deleted. Re-saving/changing old matches may therefore be problematic.</li>
         </ul>
         <br>
+        <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br>
+        <br>
         <input type="hidden" name="type" value="delete">
-        <input type="submit" value="Delete" onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
+        <input type="submit" value="Delete" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?> onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
     </form>
     </div>
 </div>

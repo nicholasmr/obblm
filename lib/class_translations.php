@@ -24,17 +24,20 @@ class Translations
 {
 
 public static $registeredLanguages = array('en-GB');
-private $lang = 'en-GB';
-private $translationFiles = array();
-private $docs = array(); # DOMDocument for the xml files.
 const main = 'main'; # $this->docs[] key of main translation file.
-const fallback = 'en-GB';
+const fallback = 'en-GB'; # Default language.
+
+private $lang = self::fallback; # Translation language used.
+private $translationFiles = array(); # XML file names.
+private $docs = array(); # DOMDocument objects of the XML files.
 
 public function __construct($lang = false) {
-	if ($lang) {
-		$this->lang = $lang;
-	}
+	$this->setLanguage($lang);
 	$this->registerTranslationFile(self::main, 'lang/translations.xml');
+}
+
+public function setLanguage($lang) {
+    $this->lang = in_array($lang, self::$registeredLanguages) ? $lang : self::fallback;
 }
 
 public function registerTranslationFile($doc, $file) {

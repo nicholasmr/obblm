@@ -13,7 +13,7 @@ if (isset($_POST['type'])) {
     if (isset($_POST['cname'])) {
         if (is_numeric($cid = get_alt_col('coaches', 'name', $_POST['cname'], 'coach_id'))) {
             $c = new Coach($cid); # Needed later.
-            if (!$coach->mayManageCoach($cid)) {
+            if (!$coach->mayManageObj(T_OBJ_COACH, $cid)) {
                 status(false, 'You do not have permissions to manage the selected coach.');
                 $_POST['type'] = 'QUIT';
             }

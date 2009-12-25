@@ -11,6 +11,8 @@
         <xs:element name="name" type="xs:string" />
         <xs:element name="coach_id" type="xs:nonNegativeInteger" />
         <xs:element name="race_id" type="xs:nonNegativeInteger" />
+        <xs:element name="league_id" type="xs:nonNegativeInteger" />
+        <xs:element name="division_id" type="xs:nonNegativeInteger" />
 
         <xs:element name="treasury" type="xs:nonNegativeInteger" />
         <xs:element name="apothecary" type="xs:boolean" />

@@ -207,9 +207,9 @@ class Coach
 #        );
 #    }
 
-    public function mayManageObj($obj, $id) { # T_OBJ_[COACH|TEAM]
+    public function mayManageObj($obj, $id) { 
         
-        $managee = new Coach($obj == T_OBJ_COACH ? $cid : get_alt_col('teams', 'team_id', $id, 'owned_by_coach_id'));
+        $managee = new Coach($obj == T_OBJ_COACH ? $id : get_alt_col('teams', 'team_id', $id, 'owned_by_coach_id'));
         list($mangers_leagues) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $this->coach_id);
         $MAY_MANAGE_LOCALLY = false;
         
@@ -218,7 +218,7 @@ class Coach
             // Is this coach a commish in a league where the selected coach is a member?
             case T_OBJ_COACH:
                 list($managees_leagues) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $managee->coach_id);
-                foreach (array_intersect_key($mangers_leagues, $mangees_leagues)  as $lid => $desc) {
+                foreach (array_intersect_key($mangers_leagues, $managees_leagues)  as $lid => $desc) {
                     if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN) {
                         $MAY_MANAGE_LOCALLY = true;
                         break;
@@ -229,11 +229,39 @@ class Coach
             // Is this coach a commish in the league the specified team is bounded to?
             case T_OBJ_TEAM:
                 $f_lid = get_alt_col('teams', 'team_id', $id, 'f_lid');
-                $MAY_MANAGE_LOCALLY = (isset($mangers_leagues[$lid]) && $mangers_leagues[$lid]['ring'] == Coach::T_RING_LOCAL_ADMIN);
+                $MAY_MANAGE_LOCALLY = (isset($mangers_leagues[$f_lid]) && $mangers_leagues[$f_lid]['ring'] == Coach::T_RING_LOCAL_ADMIN);
                 break;
         }
         
         return ($managee->ring <= $this->ring && ($MAY_MANAGE_LOCALLY || $this->ring == Coach::T_RING_GLOBAL_ADMIN));
+    }
+
+    public function getAdminMenu()
+    {
+        global $lng;
+        // Ring access allowances.
+        $ring_sys_access = array(
+            'cpanel' => $lng->getTrn('menu/admin_menu/cpanel')
+        );
+        $ring_com_access = array(
+            'schedule' => $lng->getTrn('menu/admin_menu/schedule'), 
+            'log' => $lng->getTrn('name', 'LogSubSys'), 
+            'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 
+            'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'), 
+            'ld_man' => $lng->getTrn('menu/admin_menu/ld_man'), 
+            'tour_man' => $lng->getTrn('menu/admin_menu/tour_man'), 
+            'import' => $lng->getTrn('menu/admin_menu/import'), 
+        );
+        $my_admin_menu = array();
+
+        $result = mysql_query("SELECT COUNT(*) FROM memberships WHERE cid = $this->coach_id AND ring = ".self::T_RING_LOCAL_ADMIN);
+        list($cnt) = mysql_fetch_row($result);
+        $my_admin_menu = array_merge(
+            $this->ring == Coach::T_RING_GLOBAL_ADMIN ? $ring_com_access+$ring_sys_access : array(),
+            count($cnt) > 0 ? $ring_com_access : array()
+        );
+        
+        return $my_admin_menu;
     }
 
     public function setPasswd($passwd) {
@@ -302,7 +330,9 @@ class Coach
     const NODE_STRUCT__FLAT = 2;
     public static function allowedNodeAccess($NODE_SRUCT, $cid, $extraFields = array())
     {
-        $GLOBAL_VIEW = (!$cid || (int) get_alt_col('coaches', 'coach_id', $cid, 'ring') > self::T_RING_GLOBAL_NONE);
+        $FORCE_LOCAL_ADMIN = ((int) get_alt_col('coaches', 'coach_id', $cid, 'ring') > self::T_RING_GLOBAL_NONE);
+        $GLOBAL_VIEW = (!$cid || $FORCE_LOCAL_ADMIN);
+        $FORCE_LOCAL_RING = ($FORCE_LOCAL_ADMIN) ? self::T_RING_LOCAL_ADMIN : (!$cid ? self::T_RING_LOCAL_REGULAR : false);
         
         $properFields = array();
         $extraFields[T_NODE_LEAGUE]['name']     = 'lname';
@@ -331,20 +361,20 @@ class Coach
             case self::NODE_STRUCT__TREE:
                 $struct = array();
                 while ($r = mysql_fetch_object($result)) {
-                    $struct[$r->lid][$r->did][$r->trid]['desc'] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
-                    $struct[$r->lid][$r->did]['desc']           = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
-                    $struct[$r->lid]['desc']                    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
-                    $struct[$r->lid]['desc']['ring'] = ($GLOBAL_VIEW) ? self::T_RING_LOCAL_ADMIN : $r->ring;
+                    if (!empty($r->trid)) $struct[$r->lid][$r->did][$r->trid]['desc'] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
+                    if (!empty($r->did))  $struct[$r->lid][$r->did]['desc']           = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
+                                          $struct[$r->lid]['desc']                    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
+                    $struct[$r->lid]['desc']['ring'] = ($FORCE_LOCAL_RING) ? $FORCE_LOCAL_RING : $r->ring;
                 }            
                 return $struct;
                 
             case self::NODE_STRUCT__FLAT:
                 $leagues = $divisions = $tours = array();
                 while ($r = mysql_fetch_object($result)) {
-                    $tours[$r->trid]    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
-                    $divisions[$r->did] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
-                    $leagues[$r->lid]   = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
-                    $leagues[$r->lid]['ring'] = ($GLOBAL_VIEW) ? self::T_RING_LOCAL_ADMIN : $r->ring;
+                    if (!empty($r->trid)) $tours[$r->trid]    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_TOURNAMENT]),null));
+                    if (!empty($r->did))  $divisions[$r->did] = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
+                                          $leagues[$r->lid]   = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
+                    $leagues[$r->lid]['ring'] = ($FORCE_LOCAL_RING) ? $FORCE_LOCAL_RING : $r->ring;
                 }
                 return array($leagues,$divisions,$tours);
                 
