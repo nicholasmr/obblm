@@ -22,7 +22,7 @@ if (isset($_POST['button'])) {
     $did = ($GOT_DID) ? $_POST['did'] : get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_DIVISION);
     $TIE_TEAMS = get_alt_col('leagues', 'lid', $lid, 'tie_teams');
     foreach ($team_ids as $tid) {
-        $query = "SELECT (t.f_did = $did) AS 'in_did', 0 < (SELECT COUNT(*) FROM coaches AS c,memberships AS m WHERE m.cid = c.coach_id AND m.cid = t.owned_by_coach_id AND m.lid = $lid) AS 'in_lid' FROM teams AS t WHERE t.team_id = $tid";
+        $query = "SELECT (t.f_did = $did) AS 'in_did', (t.f_lid = $lid) AS 'in_lid' FROM teams AS t WHERE t.team_id = $tid";
         $result = mysql_query($query);
         $state = mysql_fetch_assoc($result);
         if (!$state['in_lid']) {

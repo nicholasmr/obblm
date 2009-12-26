@@ -24,12 +24,6 @@
 define('LOGIN_COOKIE_COACHID', 'obblmuserid');
 define('LOGIN_COOKIE_PASSWD', 'obblmpasswd');
 
-#define('RING_SYS',   0); // Admins
-#define('RING_COM',   1); // Commissioners.
-#define('RING_COACH', 2); // Coach/ordinary user
-
-define('T_COACH_NO_ASSOC_LID', 0); // Value of coaches associative league ID if the coach is NOT assigned to any league.
-
 class Coach
 {
     /***************
@@ -89,7 +83,7 @@ class Coach
             $this->settings[$key] = $val;
         }
         global $settings;
-        $init = array('theme' => 1, 'lang' => $settings['lang']); // Setting values which must be initialized if not stored/saved in mysql.
+        $init = array('theme' => 1, 'lang' => $settings['lang'], 'home_lid' => null); // Setting values which must be initialized if not stored/saved in mysql.
         foreach ($init as $key => $val) {
             if (!array_key_exists($key, $this->settings) || !isset($this->settings[$key]))
                 $this->settings[$key] = $val;
@@ -193,20 +187,6 @@ class Coach
         return false;
     }
 
-#    public function getRings() {
-#        $result = mysql_query("SELECT ring FROM coaches WHERE coach_id = $this->coach_id");
-#        list($global) = mysql_fetch_row($result);
-#        $result = mysql_query("SELECT ring, lid, l.name AS 'lname' FROM memberships AS m, leagues AS l WHERE m.lid = l.lid AND m.cid = $this->coach_id");
-#        $locals = array();
-#        while ($membership = mysql_fetch_object($result)) {
-#            $locals[] = $membership;
-#        }
-#        return array(
-#            self::T_RING_GROUP_GLOBAL => $global, 
-#            self::T_RING_GROUP_GLOBAL => $locals,
-#        );
-#    }
-
     public function mayManageObj($obj, $id) { 
         
         $managee = new Coach($obj == T_OBJ_COACH ? $id : get_alt_col('teams', 'team_id', $id, 'owned_by_coach_id'));
@@ -241,11 +221,11 @@ class Coach
         global $lng;
         // Ring access allowances.
         $ring_sys_access = array(
+            'log' => $lng->getTrn('name', 'LogSubSys'), 
             'cpanel' => $lng->getTrn('menu/admin_menu/cpanel')
         );
         $ring_com_access = array(
             'schedule' => $lng->getTrn('menu/admin_menu/schedule'), 
-            'log' => $lng->getTrn('name', 'LogSubSys'), 
             'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 
             'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'), 
             'ld_man' => $lng->getTrn('menu/admin_menu/ld_man'), 
@@ -258,7 +238,7 @@ class Coach
         list($cnt) = mysql_fetch_row($result);
         $my_admin_menu = array_merge(
             $this->ring == Coach::T_RING_GLOBAL_ADMIN ? $ring_com_access+$ring_sys_access : array(),
-            count($cnt) > 0 ? $ring_com_access : array()
+            $cnt > 0 ? $ring_com_access : array()
         );
         
         return $my_admin_menu;

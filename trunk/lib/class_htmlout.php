@@ -417,10 +417,8 @@ public static function nodeSelector(array $opts, $prefix = '')
     $setSGrp = (array_key_exists('sgrp', $opts) && $opts['sgrp']);
 
     // Defaults
-    $RESTRICT_NODES = (is_object($coach) && $coach->f_lid != T_COACH_NO_ASSOC_LID);
-    
     $def_node    = T_NODE_LEAGUE;
-    $def_node_id = $RESTRICT_NODES ? $coach->f_lid : T_NODE_ALL;
+    $def_node_id = (is_object($coach) && isset($coach->settings['home_lid'])) ? $coach->settings['home_lid'] : T_NODE_ALL;
     $def_state   = T_STATE_ALLTIME;
     $def_race    = T_RACE_ALL;
     $def_sgrp    = 'GENERAL';
@@ -436,7 +434,7 @@ public static function nodeSelector(array $opts, $prefix = '')
         : (isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : $def_node_id);
     
     // Fetch contents of node selector
-    list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $RESTRICT_NODES ? $coach->f_lid : false);
+    list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false);
     
     ?>
     <form method="POST">
@@ -478,9 +476,7 @@ public static function nodeSelector(array $opts, $prefix = '')
     </select>
     <select style='display:none;' name="league_in" id="league_in">
         <?php
-        if (!$RESTRICT_NODES) {
-            echo "<option value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
-        }
+        echo "<option value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
         foreach ($leagues as $lid => $desc) {
             echo "<option value='$lid' ".
                 (($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == $lid) ? 'SELECTED' : '')
@@ -815,7 +811,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                 break;
             }
         }
-        if ($settings['show_sort_rule'] && !$NOSRDISP) {
+        if (!$NOSRDISP) {
         ?>
         <tr>
             <td colspan="<?php echo $CP;?>">

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -147,46 +147,35 @@ public static function tourMatches()
 public static function tours() 
 {
 
-    global $rules, $settings, $lng, $league;
+    global $rules, $settings, $lng, $coach;
 
     title($lng->getTrn('menu/matches_menu/tours'));
 
-    $query = "SELECT lid,did,tour_id,locked,
-        tours.name AS 'tours.name',divisions.name AS 'divisions.name',leagues.name AS 'leagues.name'
-        FROM tours,divisions,leagues 
-        WHERE tours.f_did = divisions.did AND divisions.f_lid = leagues.lid ".(is_object($league) ? "AND leagues.lid = $league->lid " : '')." 
-        ORDER BY leagues.lid ASC, divisions.did ASC, tours.tour_id ASC";
-    $result = mysql_query($query);
-    $flist = array();
-    while ($row = mysql_fetch_object($result)) {
-        $flist[$row->lid][$row->did][$row->tour_id] = $row;
-        $flist[$row->lid]['info']            = array('name' => $row->{'leagues.name'});
-        $flist[$row->lid][$row->did]['info'] = array('name' => $row->{'divisions.name'});
-    }
+    $flist = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, is_object($coach) ? $coach->coach_id : false);
 
     // Print fixture list.
     echo "<table class='tours'>\n";
     foreach ($flist as $lid => $divs) {
         echo "<tr class='leauges'><td><b>
         <a href='javascript:void(0);' onClick=\"slideToggleFast('lid_$lid');\"><b>[+/-]</b></a>&nbsp;
-        ".$flist[$lid]['info']['name']."
+        ".$flist[$lid]['desc']['lname']."
         </b></td></tr>";
         echo "<tr><td><div id='lid_$lid'>";
     foreach ($divs as $did => $tours) {
-        if ($did == 'info') continue;
+        if ($did == 'desc') continue;
         echo "<table class='tours'>\n";
         echo "<tr class='divisions'><td><b>
         <a href='javascript:void(0);' onClick=\"slideToggleFast('did_$did');\"><b>[+/-]</b></a>&nbsp;
-        ".$flist[$lid][$did]['info']['name']."
+        ".$flist[$lid][$did]['desc']['dname']."
         </b></td></tr>";
         echo "<tr><td><div id='did_$did'>";
-    foreach ($tours as $trid => $mergedObj) {
-        if ($trid == 'info') continue;
+    foreach ($tours as $trid => $desc) {
+        if ($trid == 'desc') continue;
         ?>
         <table class='tours'>
             <tr class='tours'>
                 <td>
-                    &nbsp;&nbsp;<a href='index.php?section=matches&amp;type=tourmatches&amp;trid=<?php echo $trid;?>'><b><?php echo $mergedObj->{'tours.name'};?></b></a>
+                    &nbsp;&nbsp;<a href='index.php?section=matches&amp;type=tourmatches&amp;trid=<?php echo $trid;?>'><b><?php echo $flist[$lid][$did][$trid]['desc']['tname'];?></b></a>
                     <?php
                     $tr = new Tour($trid);
                     $suffix = '';
@@ -215,6 +204,7 @@ public static function report() {
     
     global $lng, $stars, $rules, $coach, $racesHasNecromancer, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
+    global $leagues,$divisions,$tours;
     
     // Create objects
     $m = new Match($match_id);
@@ -222,7 +212,8 @@ public static function report() {
     $team2 = new Team($m->team2_id);
     
     // Determine visitor privileges.
-    $ALLOW_EDIT = (!$m->locked && is_object($coach) && ($coach->admin || $coach->isInMatch($m->match_id)));
+    $lid = $divisions[$tours[$m->f_tour_id]['f_did']]['f_lid'];
+    $ALLOW_EDIT = (!$m->locked && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $leagues[$lid]['ring'] == Coach::T_RING_LOCAL_ADMIN || $coach->isInMatch($m->match_id)));
     $DIS = ($ALLOW_EDIT) ? '' : 'DISABLED';
 
     // Relay to ES report page?

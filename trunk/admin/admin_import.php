@@ -40,9 +40,18 @@ if (isset($_FILES['xmlfile'])) {
         )), 
         "Created team '$t->name'");
         # Add players
+        $ROLLBACK = false;
         if ($tid) {
+            $team = new Team($tid);
             foreach ($t->players->player as $p) {
                 $p = (object) ((array) $p); # Get rid of SimpleXML objects.
+                
+                if (!$team->isPlayerPosValid($p->pos_id)) {
+                    status(false, "Invalid race position ID '$p->pos_id' for '$p->name'");
+                    $ROLLBACK = true;
+                    break;
+                }
+                
                 list($status1, $pid) = Player::create(array(
                     'nr' => $p->nr, 'f_pos_id' => $p->pos_id, 'name' => $p->name, 'team_id' => $tid, 'forceCreate' => true,
                 ));
@@ -65,12 +74,11 @@ if (isset($_FILES['xmlfile'])) {
             }
             
             # Set correct treasury.
-            $team = new Team($tid);
             $team->dtreasury($t->treasury*1000 - $team->treasury); // $t->treasury + $delta = XML value
         }
         
         if ($ROLLBACK) {
-            
+            status($team->delete(), 'Successfully deleted new team due to error.');
         }
     }
 }

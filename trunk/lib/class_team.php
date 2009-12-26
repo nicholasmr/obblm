@@ -337,18 +337,31 @@ class Team
     public function isPlayerBuyable($pos_id) {
         
         /* 
-            Checks whether maximum number of positional is reached AND if the position ID is valid to this team's race. 
+            Checks whether maximum number of allowed positionals is reached. 
         */
-        
-        $query = "SELECT COUNT(*), IFNULL(COUNT(*) < (SELECT qty FROM game_data_players WHERE pos_id = $pos_id), TRUE) 
-            FROM game_data_players LEFT JOIN players ON f_pos_id = pos_id 
-            WHERE owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND date_died IS NULL AND date_sold IS NULL";
         
         $query = "SELECT IFNULL(COUNT(*) < qty, TRUE) FROM players, game_data_players 
             WHERE f_pos_id = pos_id AND owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND date_died IS NULL AND date_sold IS NULL";
         $result = mysql_query($query);
         $row = mysql_fetch_row($result);
-        return (bool) $row[0];
+        return (bool) $row[0] && $this->isPlayerPosValid($pos_id);
+    }
+
+    public function isPlayerPosValid($pos_id) {
+
+        // Is $pos_id a valid position for this team's race?
+        
+        global $DEA;
+        
+        $VALID_pos_id = false;
+        foreach ($DEA[$this->f_rname]['players'] as $pos => $desc) {
+            if ($desc['pos_id'] == $pos_id) {
+                $VALID_pos_id = true;
+                break;
+            }
+        }
+        
+        return $VALID_pos_id;
     }
 
     public function getToursPlayedIn($ids_only = false)
