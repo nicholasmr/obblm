@@ -76,6 +76,10 @@ function setupGlobalVars($type, $opts = array()) {
             else {
                 $lng->setLanguage($_LANGUAGE);
             }
+            // Local league settings exist?
+            if (is_object($coach) && isset($coach->settings['home_lid']) && file_exists($localsettings='localsettings/settings_'.$coach->settings['home_lid'].'.php')) {
+                include($localsettings);
+            }
             break;
             
         case T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES:

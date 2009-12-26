@@ -259,7 +259,7 @@ private function _teams($ALLOW_EDIT)
 
 private function _CCprofile($ALLOW_EDIT) 
 {
-    global $lng, $coach;
+    global $lng, $coach, $leagues;
 
     // Was new password/email request made?
     if (isset($_POST['type']) && $ALLOW_EDIT) {
@@ -281,6 +281,7 @@ private function _CCprofile($ALLOW_EDIT)
             case 'chname':      status($this->setRealName($_POST['new_realname'])); break;
             case 'chtheme':     status($this->setSetting('theme', (int) $_POST['new_theme'])); break;
             case 'chlang':      status($this->setSetting('lang', $_POST['new_lang'])); break;
+            case 'chhomelid':   status($this->setSetting('home_lid', $_POST['new_homelid'])); break;
 
             case 'pic':         status($this->savePic(false)); break;
             case 'coachtext':
@@ -411,6 +412,24 @@ private function _CCprofile($ALLOW_EDIT)
                 </td>
                 <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chlang');?>"></td>
                 <input type='hidden' name='type' value='chlang'>
+                </form>
+            </tr>
+            <tr>
+                <form method="POST">
+                <td><?php echo $lng->getTrn('cc/chhomelid');?>:</td>
+                <td><?php echo $lng->getTrn('cc/current');?>: <?php echo isset($this->settings['home_lid']) ? $leagues[$this->settings['home_lid']]['lname'] : '<i>'.$lng->getTrn('common/none').'</i>';?></td>
+                <td>
+                    <?php echo $lng->getTrn('cc/new');?>:
+                    <select name='new_homelid'>
+                        <?php
+                        foreach ($leagues as $lid => $desc) {
+                            echo "<option value='$lid'>$desc[lname]</option>\n";
+                        }
+                        ?>
+                    </select>
+                </td>
+                <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chhomelid');?>"></td>
+                <input type='hidden' name='type' value='chhomelid'>
                 </form>
             </tr>
         </table>

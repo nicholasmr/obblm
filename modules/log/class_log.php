@@ -85,7 +85,7 @@ public static function logViewPage()
 {
     global $coach, $lng;
     
-    if (!is_object($coach) || $coach->ring > RING_COM)
+    if (!is_object($coach) || $coach->ring != Coach::T_RING_GLOBAL_ADMIN)
         fatal("Sorry. Only site administrators and commissioners are allowed to access this section.");
 
     title($lng->getTrn('name', 'LogSubSys'));

@@ -19,9 +19,9 @@ if (isset($_POST['type'])) {
     switch ($_POST['type'])
     {
         case 'QUIT': break;
-        case 'new_league':      status($IS_GLOBAL_ADMIN && League::create($_POST['name'], $_POST['location'])); break;
+        case 'new_league':      status($IS_GLOBAL_ADMIN && League::create($_POST['name'], $_POST['location'], isset($_POST['tie_teams']) && $_POST['tie_teams'])); break;
         case 'new_division':    status(Division::create($_POST['lid'], $_POST['name'])); break;
-        case 'mod_league':      status($l->setName($_POST['name']) && $l->setLocation($_POST['location'])); break;
+        case 'mod_league':      status($l->setName($_POST['name']) && $l->setLocation($_POST['location']) && $l->setTeamDivisionTies(isset($_POST['tie_teams']) && $_POST['tie_teams'])); break;
         case 'mod_division':    status($d->setName($_POST['name'])); break;
         case 'del_league':      status($IS_GLOBAL_ADMIN && $l->delete()); break;
         case 'del_division':    status($IS_GLOBAL_ADMIN && $d->delete()); break;
@@ -114,6 +114,8 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <input type="text" name="name" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
             Location:<br>
             <input type="text" name="location" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
+            Tie teams to divisions?
+            <input type="checkbox" CHECKED name="tie_teams" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
             <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
             <input type='submit' value='Create' <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>>
             <input type='hidden' name='type' value='new_league'>
@@ -140,6 +142,8 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <input type="text" name="name"><br><br>
             New location:<br>
             <input type="text" name="location"><br><br>
+            Tie teams to divisions?
+            <input type="checkbox" CHECKED name="tie_teams"><br><br>
             <input type='submit' value='Modify' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
             <input type='hidden' name='type' value='mod_league'>
             </form>

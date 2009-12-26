@@ -69,7 +69,7 @@ function sec_main() {
      *  Was any main board actions made?
      */
 
-    if (isset($_POST['type']) && is_object($coach) && $coach->ring <= RING_COM) {
+    if (isset($_POST['type']) && is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN) {
         if (get_magic_quotes_gpc()) {
             if (isset($_POST['title'])) $_POST['title'] = stripslashes($_POST['title']);
             if (isset($_POST['txt']))   $_POST['txt']   = stripslashes($_POST['txt']);
@@ -92,12 +92,9 @@ function sec_main() {
         <div class="main_leftColumn_head">
             <?php
             echo "<div class='main_leftColumn_welcome'>\n";
-            readfile('WELCOME');
-# @FIXME
-#            $welcome = new LeaugeWelcomeMsg(is_object($league) ? $league->lid : T_COACH_NO_ASSOC_LID);
-#            echo empty($welcome->txt) ? $lng->getTrn('main/nowelcome') : $welcome->txt;
+            echo $settings['welcome'];
             echo "</div>\n";
-            if (is_object($coach) && $coach->ring <= RING_COM) {echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";}
+            if (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN) {echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";}
             if (Module::isRegistered('RSSfeed')) {echo "<a href='handler.php?type=rss'>RSS</a>\n";}
             ?>
             <div style="display:none; clear:both;" id="msgnew">

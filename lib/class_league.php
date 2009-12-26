@@ -28,6 +28,7 @@ class League
  ***************/
  
 public $lid = 0; // League ID.
+public $tie_teams = true;
 public $name = '';
 public $date = ''; 
 public $location = ''; // Physical location of league.
@@ -69,6 +70,12 @@ public function setLocation($location)
     return mysql_query($query);
 }
 
+public function setTeamDivisionTies($bool)
+{
+    $query = "UPDATE leagues SET tie_teams = ".($bool ? 'TRUE' : 'FALSE')." WHERE lid = $this->lid";
+    return mysql_query($query);
+}
+
 public function getDivisions($onlyIds = false)
 {
     $divisions = array();
@@ -93,9 +100,9 @@ public static function getLeagues($onlyIds = false)
     return $leagues;
 }
 
-public static function create($name, $location)
+public static function create($name, $location, $tie_teams)
 {
-    $query = "INSERT INTO leagues (date, location, name) VALUES (NOW(), '".mysql_real_escape_string($location)."', '".mysql_real_escape_string($name)."')";
+    $query = "INSERT INTO leagues (date, location, name, tie_teams) VALUES (NOW(), '".mysql_real_escape_string($location)."', '".mysql_real_escape_string($name)."', ".((int) $tie_teams).")";
     return (get_alt_col('leagues', 'name', $name, 'lid')) ? false : mysql_query($query);
 }
 }

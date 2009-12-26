@@ -147,7 +147,7 @@ public static function profile($tid)
     $t = new self($tid);
     
     /* Argument(s) passed to generating functions. */
-    $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$t->is_retired); # Show team action boxes?
+    $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $tid)) && !$t->is_retired); # Show team action boxes?
     $DETAILED   = (isset($_GET['detailed']) && $_GET['detailed'] == 1);# Detailed roster view?
 
     /* Team pages consist of the output of these generating functions. */
@@ -639,6 +639,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
      ******************************/
      
     global $lng, $rules, $settings, $skillarray, $coach, $DEA, $CHR_CONV;
+    global $leagues, $divisions;
     global $racesHasNecromancer, $racesNoApothecary;
     global $T_ALLOWED_PLAYER_NR;
     $team = $this; // Copy. Used instead of $this for readability.
@@ -657,6 +658,20 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td><?php echo $lng->getTrn('common/race');?></td>
                     <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?php echo $team->f_rname; ?></a></td>
                 </tr>
+                <tr>
+                    <td><?php echo $lng->getTrn('common/league');?></td>
+                    <td><?php echo $leagues[$team->f_lid]['lname'];?></td>
+                </tr>
+                <?php
+                if ($team->f_did != self::T_NO_DIVISION_TIE) {
+                    ?>
+                    <tr>
+                        <td><?php echo $lng->getTrn('common/division');?></td>
+                        <td><?php echo $divisions[$team->f_did]['dname'];?></td>
+                    </tr> 
+                    <?php
+                }
+                ?>               
                 <tr>
                     <td><?php echo $lng->getTrn('common/ready');?></td>
                     <td><?php echo ($team->rdy) ? $lng->getTrn('common/yes') : $lng->getTrn('common/no'); ?></td>
