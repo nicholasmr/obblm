@@ -1170,8 +1170,10 @@ public static function installTableIndexes()
     // Add tables indicies/keys.
     $indicies = array(
         array("tbl" => "texts",      'name' => "idx_f_id",              "idx" =>  "(f_id)"),
+        array("tbl" => "texts",      'name' => "idx_f_id",              "idx" =>  "(f_id2)"),
         array("tbl" => "texts",      'name' => "idx_type",              "idx" =>  "(type)"),
-        array("tbl" => "texts",      'name' => "idx_type_f_id",         "idx" =>  "(type,f_id)"),
+        array("tbl" => "texts",      'name' => "idx_type_f_id_f_id2",   "idx" =>  "(type,f_id,f_id2)"),
+        
         array("tbl" => "memberships",'name' => "idx_lid",               "idx" =>  "(lid)"),
         array("tbl" => "memberships",'name' => "idx_cid_lid",           "idx" =>  "(cid,lid)"),
         array("tbl" => "players",    'name' => "idx_owned_by_team_id",  "idx" =>  "(owned_by_team_id)"),

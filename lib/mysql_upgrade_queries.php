@@ -89,6 +89,8 @@ $upgradeSQLs = array(
             lid   MEDIUMINT UNSIGNED NOT NULL,
             ring  TINYINT UNSIGNED NOT NULL DEFAULT 0
         )',
+        
+        SQLUpgrade::runIfColumnNotExists('texts', 'f_id2',  'ALTER TABLE texts ADD COLUMN f_id2 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_id'),
     ),
 );
 
