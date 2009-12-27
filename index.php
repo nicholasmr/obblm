@@ -38,8 +38,8 @@ if (!isset($_GET['section'])) {
 }
 
 // Login?
-Coach::cookieLogin(); # If not already logged in then check for login-cookie and try to log in using the stored credentials.
-if (isset($_POST['login'])) {
+$_VISSTATE['COOCKIE'] = Coach::cookieLogin(); # If not already logged in then check for login-cookie and try to log in using the stored credentials.
+if ($_VISSTATE['POST_IN'] = isset($_POST['login'])) {
     if (get_magic_quotes_gpc()) {
         $_POST['coach'] = stripslashes($_POST['coach']);
         $_POST['passwd'] = stripslashes($_POST['passwd']);
@@ -47,13 +47,15 @@ if (isset($_POST['login'])) {
     if (!Coach::login($_POST['coach'], $_POST['passwd'], isset($_POST['remember']))) {
         $_GET['section'] = 'login';
     }
-    setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT);
 }
 
 // Logout?
-if (isset($_GET['logout'])) {
+if ($_VISSTATE['POST_OUT'] = isset($_GET['logout'])) {
     $_GET['section'] = 'main'; # Redirect logged out users to the main page.
     Coach::logout();
+}
+
+if ($_VISSTATE['COOCKIE'] || $_VISSTATE['POST_IN'] || $_VISSTATE['POST_OUT']) {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT);
 }
 
