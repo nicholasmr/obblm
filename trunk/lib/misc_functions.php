@@ -60,6 +60,8 @@ function objsort(&$obj_array, $fields)
 define('T_SETUP_GLOBAL_VARS__COMMON', 1);
 define('T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES', 2);
 define('T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT', 3);
+define('T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS', 4);
+
 function setupGlobalVars($type, $opts = array()) {
 
     global $coach, $lng, $leagues, $divisions, $tours, $settings, $admin_menu;
@@ -76,14 +78,30 @@ function setupGlobalVars($type, $opts = array()) {
             else {
                 $lng->setLanguage($_LANGUAGE);
             }
-            // Local league settings exist?
-            if (is_object($coach) && isset($coach->settings['home_lid']) && file_exists($localsettings='localsettings/settings_'.$coach->settings['home_lid'].'.php')) {
-                include($localsettings);
-            }
+            setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS);
             break;
             
         case T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES:
             $admin_menu = is_object($coach) ? $coach->getAdminMenu() : array();
+            break;
+            
+        case T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS:
+            // Local league settings exist?
+            $file = "localsettings/settings_ID.php";
+            if (isset($opts['lid']) && is_numeric($opts['lid'])) {
+                $id = $opts['lid'];
+            }
+            else if (is_object($coach) && isset($coach->settings['home_lid'])) {
+                $id = $coach->settings['home_lid'];
+            }
+            else {
+                $id = '';
+            }
+
+            $file = str_replace("ID", $id, $file);
+            if ($localsettings = file_exists($file) ? $file : false) {
+                include($localsettings);                
+            }
             break;
             
         case T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT:

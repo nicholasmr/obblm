@@ -52,7 +52,8 @@ $settings['fp_team_news']          = true;  // Default is true. Show team news o
 $settings['fp_links']              = true;  // Default is true. Generate coach, team and player links on the front page?
 $settings['hide_retired']		   = false; // Defailt is false. Hides retired coaches and teams from standings tables.
 
-$settings['default_leagues'] = array(1,3); // When creating a coach the coach will automatically become a regular coach in leauges with these IDs.
+$settings['default_leagues']   = array(1); // When creating a coach the coach will automatically become a regular coach in leauges with these IDs.
+$settings['default_fp_league'] = 1;        // ID of default league to show on front page when not logged in/coach has not selected a home league.
 
 /*****************
  * OBBLM rule set
