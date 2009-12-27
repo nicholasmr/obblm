@@ -2546,6 +2546,7 @@
                                             <type>TEAM_MATE_THROW</type>
                                             <key name="team2" current="true" />
                                             <key name="player2" current="true" />
+                                            <key name="success">true</key>
                                         </log>
                                     </filter> 
                                 </content>
@@ -2558,6 +2559,7 @@
                                             <type>TEAM_MATE_THROW</type>
                                             <key name="team2" current="true" />
                                             <key name="player2" current="true" />
+                                            <key name="success">true</key>
                                             <log name="landing">
                                                 <type>LANDING</type>
                                                 <key name="team" current="true" />
@@ -2570,15 +2572,37 @@
                             
                             <element name="landings">
                                 <content type="count">
+                                  <filter>
+                                        <log>
+                                            <type>TEAM_MATE_THROW</type>
+                                            <key name="team2" current="true" />
+                                            <key name="player2" current="true" />
+                                            <key name="success">true</key>
+                                            <log name="landing">
+                                                <type>LANDING</type>
+                                                <log name="landing">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="success">false</key>
+                                                    <log name="reroll">
+                                                        <type>SIMPLE_ROLL</type>
+                                                        <key name="success">true</key>
+                                                    </log>
+                                                </log>
+                                            </log>
+                                        </log>
+                                    </filter> 
                                     <filter>
                                         <log>
                                             <type>TEAM_MATE_THROW</type>
                                             <key name="team2" current="true" />
                                             <key name="player2" current="true" />
+                                            <key name="success">true</key>
                                             <log name="landing">
                                                 <type>LANDING</type>
-                                                <key name="team" current="true" />
-                                                <key name="player" current="true" />
+                                                <log name="landing">
+                                                    <type>SIMPLE_ROLL</type>
+                                                    <key name="success">true</key>
+                                                </log>
                                             </log>
                                         </log>
                                     </filter> 
