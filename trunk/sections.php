@@ -64,23 +64,6 @@ function sec_main() {
     global $settings, $rules, $coach, $lng, $leagues;
     
     MTS('Main start');
-    
-    /*
-     *  Was any main board actions made?
-     */
-
-    if (isset($_POST['type']) && is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN) {
-        if (get_magic_quotes_gpc()) {
-            if (isset($_POST['title'])) $_POST['title'] = stripslashes($_POST['title']);
-            if (isset($_POST['txt']))   $_POST['txt']   = stripslashes($_POST['txt']);
-        }
-        switch ($_POST['type'])
-        {
-            case 'msgdel':  $msg = new Message($_POST['msg_id']); status($msg->delete()); break;
-            case 'msgnew':  status(Message::create(array('f_coach_id' => $coach->coach_id, 'title' => $_POST['title'], 'msg' => $_POST['txt']))); break;
-            case 'msgedit': $msg = new Message($_POST['msg_id']); status($msg->edit($_POST['title'], $_POST['txt'])); break;
-        }
-    }
 
     # Default league.
     $sel_lid = (is_object($coach) && isset($coach->settings['home_lid'])) ? $coach->settings['home_lid'] : $settings['default_fp_league'];
@@ -91,6 +74,31 @@ function sec_main() {
     $_SESSION['fp_lid'] = $sel_lid;
 
     setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $sel_lid)); # Force load league settings.
+    $IS_GLOBAL_ADMIN = (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN);
+    
+    /*
+     *  Was any main board actions made?
+     */
+
+    if (isset($_POST['type']) && is_object($coach) && ($IS_GLOBAL_ADMIN || isset($leagues[$sel_lid]) && $leagues[$sel_lid] == Coach::T_RING_LOCAL_ADMIN)) {
+        if (get_magic_quotes_gpc()) {
+            if (isset($_POST['title'])) $_POST['title'] = stripslashes($_POST['title']);
+            if (isset($_POST['txt']))   $_POST['txt']   = stripslashes($_POST['txt']);
+        }
+        $msg = isset($_POST['msg_id']) ? new Message((int) $_POST['msg_id']) : null;
+        switch ($_POST['type'])
+        {
+            case 'msgdel': status($msg->delete()); break;
+            case 'msgnew':  
+                status(Message::create(array(
+                    'f_coach_id' => $coach->coach_id, 
+                    'f_lid'      => ($IS_GLOBAL_ADMIN && isset($_POST['BC']) && $_POST['BC']) ? Message::T_BROADCAST : $sel_lid, 
+                    'title'      => $_POST['title'], 
+                    'msg'        => $_POST['txt'])
+                )); break;
+            case 'msgedit': status($msg->edit($_POST['title'], $_POST['txt'])); break;
+        }
+    }
 
     /*
      *  Now we are ready to generate the HTML code.
@@ -123,6 +131,12 @@ function sec_main() {
                 <form method="POST">
                     <textarea name="title" rows="1" cols="50"><?php echo $lng->getTrn('common/notitle');?></textarea><br><br>
                     <textarea name="txt" rows="15" cols="50"><?php echo $lng->getTrn('common/nobody');?></textarea><br><br>
+                    <?php 
+                    if ($IS_GLOBAL_ADMIN) {
+                        echo $lng->getTrn('main/broadcast');
+                        ?><input type="checkbox" name="BC"><br><br><?php
+                    }
+                    ?>
                     <input type="hidden" name="type" value="msgnew">
                     <input type="submit" value="<?php echo $lng->getTrn('common/submit');?>">
                 </form>
@@ -153,10 +167,10 @@ function sec_main() {
                                 break;
                             case  T_TEXT_MSG:
                                 echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." ".$lng->getTrn('main/by')." $e->author</td>\n";
-                                if (is_object($coach) && ($coach->admin || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
+                                if (is_object($coach) && ($IS_GLOBAL_ADMIN || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
                                     echo "<td align='right'><a href='javascript:void(0);' onClick=\"slideToggle('msgedit$e->msg_id');\">".$lng->getTrn('common/edit')."</a></td>\n";
                                     echo "<td align='right'>";
-                                    inlineform(array('type' => 'msgdel', 'msg_id' => $e->msg_id), "msgdel$e->msg_id", $lng->getTrn('common/delete'));
+                                    echo inlineform(array('type' => 'msgdel', 'msg_id' => $e->msg_id), "msgdel$e->msg_id", $lng->getTrn('common/delete'));
                                     echo "</td>";
                                 }
                                 break;

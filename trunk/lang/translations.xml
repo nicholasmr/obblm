@@ -130,6 +130,7 @@
 <main>
     <!-- has no <name> tag! -->
     <newmsg>New message</newmsg>
+    <broadcast>Broadcast message to all leagues?</broadcast>
     <nowelcome>You have not yet set the welcome message</nowelcome>
     <more>more</more>
     <posted>Posted</posted>

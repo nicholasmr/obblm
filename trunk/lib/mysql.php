@@ -248,6 +248,7 @@ $core_tables = array(
         'txt_id'    => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'type'      => 'TINYINT UNSIGNED',
         'f_id'      => 'MEDIUMINT UNSIGNED',
+        'f_id2'     => 'MEDIUMINT UNSIGNED NOT NULL DEFAULT 0',
         'date'      => 'DATETIME',
         'txt2'      => 'TEXT',
         'txt'       => 'TEXT',

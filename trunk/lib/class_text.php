@@ -95,14 +95,11 @@ class TextSubSys
      * Statics
      ***************/
     
-    public static function create($f_id, $type, $txt, $txt2)
+    public static function create($f_id, $type, $txt, $txt2, $f_id2 = false)
     {
-        return (mysql_query("
-                INSERT INTO texts 
-                (f_id, txt2, txt, date, type) 
-                VALUES 
-                ($f_id, '".mysql_real_escape_string($txt2)."', '".mysql_real_escape_string($txt)."', NOW(), $type)
-                "));
+        $query = "INSERT INTO texts (f_id, txt2, txt, date, type".(($f_id2) ? ', f_id2' : '').") 
+                VALUES ($f_id, '".mysql_real_escape_string($txt2)."', '".mysql_real_escape_string($txt)."', NOW(), $type".(($f_id2) ? ", $f_id2" : '').")";
+        return mysql_query($query);
     }
     
     public static function getMainBoardMessages($n, $lid = false) 
@@ -219,12 +216,15 @@ class ObjDescriptions extends TextSubSys
 
 class Message extends TextSubSys
 {
+    const T_BROADCAST = 0;
+
     /***************
      * Properties 
      ***************/
 
     public $msg_id      = 0;
-    public $f_coach_id  = 0 ;
+    public $f_coach_id  = 0;
+    public $f_lid       = self::T_BROADCAST;
     public $date_posted = '';
     public $title       = '';
     public $message     = '';
@@ -239,6 +239,7 @@ class Message extends TextSubSys
         
         $this->msg_id       = $this->txt_id;        
         $this->f_coach_id   = $this->f_id;
+        $this->f_lid        = $this->f_id2;
         $this->date_posted  = $this->date;
         $this->title        = $this->txt2;
         $this->message      = $this->txt;
@@ -261,8 +262,8 @@ class Message extends TextSubSys
         $m = array();
 
         $result = mysql_query("SELECT txt_id 
-            FROM texts, coaches 
-            WHERE f_id = coach_id AND (ring > ".Coach::T_RING_GLOBAL_NONE." OR ".(($lid) ? "EXISTS(SELECT cid FROM memberships WHERE cid = f_id AND lid = $lid)" : 'TRUE').") AND type = ".T_TEXT_MSG." 
+            FROM texts
+            WHERE type = ".T_TEXT_MSG." AND (f_id2 = ".self::T_BROADCAST." OR ".(($lid) ? "f_id2 = $lid" : 'TRUE').") 
             ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -275,7 +276,7 @@ class Message extends TextSubSys
 
     public static function create($input) 
     {
-        return parent::create($input['f_coach_id'], T_TEXT_MSG, $input['msg'], $input['title']);
+        return parent::create($input['f_coach_id'], T_TEXT_MSG, $input['msg'], $input['title'], $input['f_lid']);
     }
 }
 
