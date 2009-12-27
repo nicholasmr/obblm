@@ -182,13 +182,13 @@ public static function standings($obj, $node, $node_id, array $opts)
     # mv_ fields are accumulated stats from MV tables. rg_ (regular) are regular/static/all-time fields from non mv-tables (players, teams, coaches etc.)
     $fields = array(
         'mv_won'     => array('desc' => 'W'),
-        'mv_lost'    => array('desc' => 'L'),
         'mv_draw'    => array('desc' => 'D'),
+        'mv_lost'    => array('desc' => 'L'),
         'mv_played'  => array('desc' => 'GP'),
         'rg_win_pct' => array('desc' => 'WIN%'),
         'rg_swon'    => array('desc' => 'SW'),
-        'rg_slost'   => array('desc' => 'SL'),
         'rg_sdraw'   => array('desc' => 'SD'),
+        'rg_slost'   => array('desc' => 'SL'),
         'mv_gf'      => array('desc' => 'GF'),
         'mv_ga'      => array('desc' => 'GA'),
         'mv_td'      => array('desc' => 'Td'),
@@ -218,7 +218,7 @@ public static function standings($obj, $node, $node_id, array $opts)
     //ie. you dont get the division/league value of these fields by summing over the related/underlying tournaments field's values.
     global $objFields_notsum;
         # Look non-summable field and remove them.
-    $ALL_TIME = ($sel_node == false && ($sel_node_id == 0 || $sel_node_id === false));       
+    $ALL_TIME = ($sel_node == false && ($sel_node_id == 0 || $sel_node_id === false) || ($obj == T_OBJ_TEAM && $sel_node == T_NODE_LEAGUE)); # Teams may not cross leagues, so a team's league stats is equal to its all-time stats.
     if (!$ALL_TIME) {
         if ($sel_node == T_NODE_TOURNAMENT) {
             $new_fields = array();
@@ -263,14 +263,12 @@ public static function standings($obj, $node, $node_id, array $opts)
                 'mv_tcas' => array('desc' => 'tcas'), 
             	'mv_smp' => array('desc' => 'SMP'),
             );
-            if ($sel_node == T_NODE_TOURNAMENT) { 
+            if ($ALL_TIME) {
                 $fields_after['wt_cnt'] = array('desc' => 'WT');
-                $fields_after['mv_elo'] = array('desc' => 'ELO');
-            }
-            elseif ($ALL_TIME) { 
                 $fields_after['rg_elo'] = array('desc' => 'ELO');
             }
-            if ($sel_node == T_NODE_TOURNAMENT) {
+            else if ($sel_node == T_NODE_TOURNAMENT) {
+                $fields_after['mv_elo'] = array('desc' => 'ELO');
                 $tr = new Tour($sel_node_id);
                 $sortRule = array_merge(($manualSort) ? array_slice($sortRule, 0, 1) : array(), array_map(create_function('$e', 'return substr($e,0,1).\'mv_\'.substr($e,1);'),$tr->getRSSortRule()));
                 if ($tr->isRSWithPoints()) {
