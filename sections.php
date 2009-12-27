@@ -61,7 +61,7 @@ function sec_login() {
 
 function sec_main() {
 
-    global $settings, $rules, $coach, $lng, $league;
+    global $settings, $rules, $coach, $lng, $leagues;
     
     MTS('Main start');
     
@@ -82,20 +82,41 @@ function sec_main() {
         }
     }
 
+    # Default league.
+    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid'])) ? $coach->settings['home_lid'] : $settings['default_fp_league'];
+    # Update league view?
+    if (isset($_POST['lid'])) $sel_lid = (int) $_POST['lid'];
+    else if (isset($_SESSION['fp_lid'])) $sel_lid = $_SESSION['fp_lid'];
+    # Save league view.
+    $_SESSION['fp_lid'] = $sel_lid;
+
+    setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $sel_lid)); # Force load league settings.
+
     /*
      *  Now we are ready to generate the HTML code.
      */
 
     ?>
-    <div class="main_head"><?php echo is_object($league) ? $league->name.(!empty($league->location) ? ", $league->location" : '') : $settings['site_name']; ?></div>
+    <div class="main_head"><?php echo $settings['site_name']; ?></div>
     <div class='main_leftColumn'>
         <div class="main_leftColumn_head">
             <?php
             echo "<div class='main_leftColumn_welcome'>\n";
             echo $settings['welcome'];
             echo "</div>\n";
+            echo "<div class='main_leftColumn_left'>\n";
+            if (count($leagues) > 1) {
+                echo "<form name='lid_selector' method='POST' style='display:inline; margin:0px;'>".$lng->getTrn('common/league')." <select name='lid' onChange='document.lid_selector.submit();'>";
+                foreach ($leagues as $lid => $desc) {
+                    echo "<option value='$lid' ".(($lid == $sel_lid) ? 'SELECTED' : '').">$desc[lname]</option>";
+                }
+                echo "</select></form>\n";
+            }
+            echo "</div>\n";
+            echo "<div class='main_leftColumn_right'>\n";
             if (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN) {echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";}
             if (Module::isRegistered('RSSfeed')) {echo "<a href='handler.php?type=rss'>RSS</a>\n";}
+            echo "</div>\n";
             ?>
             <div style="display:none; clear:both;" id="msgnew">
                 <br><br>
@@ -116,7 +137,7 @@ function sec_main() {
             To generate this table we create a general array holding the content of both.
         */
         $j = 1;
-        foreach (TextSubSys::getMainBoardMessages($settings['entries']['messageboard']) as $e) {
+        foreach (TextSubSys::getMainBoardMessages($settings['entries']['messageboard'], $sel_lid) as $e) {
             echo "<div class='boxWide'>\n";
                 echo "<h3 class='boxTitle$e->cssidx'>$e->title</h3>\n";
                 echo "<div class='boxBody'>\n";
@@ -228,7 +249,7 @@ function sec_main() {
                             <td style="text-align: left;" width="50%"><i>Guest</i></td><td> </td>
                         </tr>
                         <?php
-                        foreach (Match::getMatches($settings['entries']['latestgames']) as $m) {
+                        foreach (Match::getMatches($settings['entries']['latestgames'], T_NODE_LEAGUE, $sel_lid, false) as $m) {
                             $home   = ($m->stadium == $m->team1_id) ? 'team1' : 'team2';
                             $guest  = ($home == 'team1') ? 'team2' : 'team1';
                             echo "<tr>\n";
@@ -248,7 +269,7 @@ function sec_main() {
         MTS('Latest matches table generated');
 
         foreach ($settings['fp_leaders'] as $f => $opts) {
-            $players = Stats::getRaw(T_OBJ_PLAYER, array(), $opts['length'], array('-'.$f), false)
+            $players = Stats::getRaw(T_OBJ_PLAYER, array(T_NODE_LEAGUE => $sel_lid), $opts['length'], array('-'.$f), false)
             ?>
             <div class="boxWide">
                 <h3 class='boxTitle1'><?php echo $opts['title'];?></h3>

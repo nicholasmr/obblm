@@ -105,13 +105,13 @@ class TextSubSys
                 "));
     }
     
-    public static function getMainBoardMessages($n) 
+    public static function getMainBoardMessages($n, $lid = false) 
     {
         global $settings;
         $board = array();
 
         // First we add all commissioner messages to the board structure.
-        foreach (Message::getMessages($n) as $m) {
+        foreach (Message::getMessages($n, $lid) as $m) {
             $o = (object) array();
             // Specific fields:
             $o->msg_id    = $m->msg_id;
@@ -127,7 +127,7 @@ class TextSubSys
         }
 
         // Now we add all game summaries.
-        foreach (MatchSummary::getSummaries($n) as $r) {
+        foreach (MatchSummary::getSummaries($n, $lid) as $r) {
             $o = (object) array();
             $m = new Match($r->match_id);
             // Specific fields:
@@ -145,7 +145,7 @@ class TextSubSys
 
         // And finally team news.
         if ($settings['fp_team_news']) {
-            foreach (TeamNews::getNews(false, $n) as $t) {
+            foreach (TeamNews::getNews(false, $n, $lid) as $t) {
                 $o = (object) array();
                 // Specific fields:
                     # none
@@ -256,11 +256,14 @@ class Message extends TextSubSys
      * Statics
      ***************/
 
-    public static function getMessages($n = false) 
+    public static function getMessages($n = false, $lid = false) 
     {
         $m = array();
 
-        $result = mysql_query("SELECT txt_id FROM texts WHERE type = ".T_TEXT_MSG." ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
+        $result = mysql_query("SELECT txt_id 
+            FROM texts, coaches 
+            WHERE f_id = coach_id AND (ring > ".Coach::T_RING_GLOBAL_NONE." OR ".(($lid) ? "EXISTS(SELECT cid FROM memberships WHERE cid = f_id AND lid = $lid)" : 'TRUE').") AND type = ".T_TEXT_MSG." 
+            ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($m, new Message($row['txt_id']));
@@ -319,18 +322,21 @@ class MatchSummary extends TextSubSys
             : parent::edit($txt, false, false, false);
     }
     
-    public static function getSummaries($n = false) {
+    public static function getSummaries($n = false, $lid = false) {
         
         $r = array();
         
-        $query = "SELECT match_id, txt FROM matches, texts WHERE 
-                match_id = f_id 
-            AND type = ".T_TEXT_MATCH_SUMMARY." 
+        $query = "SELECT match_id, txt FROM matches, tours, divisions, texts WHERE 
+                f_tour_id = tour_id
+            AND f_did = did
+            AND match_id = f_id 
+            AND texts.type = ".T_TEXT_MATCH_SUMMARY." 
             AND date_played IS NOT NULL 
             AND txt IS NOT NULL 
             AND txt != '' 
+            ".(($lid) ? "AND f_lid = $lid" : '')." 
             ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
-        
+
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -386,11 +392,13 @@ class TeamNews extends TextSubSys
         return parent::create($tid, T_TEXT_TNEWS, $str, false);
     }
     
-    public static function getNews($tid = false, $n = false)
+    public static function getNews($tid = false, $n = false, $lid = false)
     {
         $news = array();
         
-        $query = "SELECT txt_id FROM texts WHERE type = ".T_TEXT_TNEWS.(($tid) ? " AND f_id = $tid " : ''). " ORDER BY date DESC ".(($n) ? " LIMIT $n " : '');
+        $query = "SELECT txt_id FROM texts, teams 
+            WHERE f_id = team_id AND type = ".T_TEXT_TNEWS.(($tid) ? " AND f_id = $tid " : '').(($lid) ? " AND teams.f_lid = $lid " : ''). " 
+            ORDER BY date DESC ".(($n) ? " LIMIT $n " : '');
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {

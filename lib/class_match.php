@@ -529,6 +529,9 @@ class Match
             case STATS_LEAGUE:   $where = "f_lid = $node_id"; break;
             default: $where = false;
         }
+        if (!is_numeric($node_id)) {
+            $where = false;
+        }
         $query = "SELECT match_id FROM matches, tours, divisions 
             WHERE date_played IS ".(($getUpcomming) ? '' : 'NOT')." NULL AND match_id > 0 AND f_tour_id = tour_id AND f_did = did
             ".(($where) ? " AND $where " : '')."
