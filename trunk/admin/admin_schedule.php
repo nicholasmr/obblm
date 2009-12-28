@@ -80,7 +80,8 @@ if (isset($_POST['button'])) {
             $rnd = (!isset($_POST['round'])) ? 1 : (int) $_POST['round'];
             $status = true;
             for ($i = 0; $i < $teamsCount/2; $i++) {
-                $status &= Match::create(array('team1_id' => $team_ids[$i*2], 'team2_id' => $team_ids[$i*2+1], 'round' => $rnd, 'f_tour_id' => (int) $_POST['existTour']));
+                list($exitStatus, $mid) = Match::create(array('team1_id' => $team_ids[$i*2], 'team2_id' => $team_ids[$i*2+1], 'round' => $rnd, 'f_tour_id' => (int) $_POST['existTour']));
+                $status &= !$exitStatus;
             }
             status($status);
         }

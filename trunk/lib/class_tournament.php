@@ -249,12 +249,13 @@ class Tour
         if ($input['type'] == TT_FFA) {
             $status = true;
             for ($i = 0; $i < count($input['teams'])/2; $i++) {
-                $status &= Match::create(array(
+                 list($exitStatus, $mid) = Match::create(array(
                     'team1_id'  => $input['teams'][$i*2], 
                     'team2_id'  => $input['teams'][$i*2+1], 
                     'round'     => (($input['rounds']) ? $input['rounds'] : 1), 
                     'f_tour_id' => $tour_id
                 ));
+                $status &= !$exitStatus;
             }
             return $status;
         }
@@ -281,7 +282,8 @@ class Tour
             for ($i = 1; $i <= $input['rounds']; $i++) {
                 foreach ($robin->{(($i % 2) ? 'tour' : 'tour_inv')} as $ridx => $r) {
                     foreach ($r as $match) { // Depict round's match compets inversely for every other round.
-                        $status &= Match::create(array('team1_id' => $match[0], 'team2_id' => $match[1], 'round' => $ridx + ($i-1)*($real_rounds), 'f_tour_id' => $tour_id));
+                        list($exitStatus, $mid) = Match::create(array('team1_id' => $match[0], 'team2_id' => $match[1], 'round' => $ridx + ($i-1)*($real_rounds), 'f_tour_id' => $tour_id));
+                        $status &= !$exitStatus;
                     }
                 }
             }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -35,18 +35,6 @@ class Match_BOTOCS extends Match
     {
         #return mysql_query("UPDATE leegmgr_matches SET hash = '".mysql_real_escape_string($hash)."' WHERE mid = $this->match_id");
         return mysql_query("INSERT INTO leegmgr_matches (mid, hash) VALUES ($this->match_id, '".mysql_real_escape_string($hash)."')");
-    }
-    
-    public static function create(array $input)
-    {
-        /* Like parent but returns match_id of created match */
-        
-        return (parent::create($input) 
-            && ($result = mysql_query("Select last_insert_id() from matches")) 
-            && mysql_num_rows($result) > 0 
-            && (list($mid) = array_values(mysql_fetch_assoc($result)))
-            && $mid
-            ) ? $mid : false;
     }
 }
 
