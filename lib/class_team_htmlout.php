@@ -536,12 +536,11 @@ private function _menu($ALLOW_EDIT, $DETAILED)
         
         $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$this->team_id&amp;detailed=".($DETAILED ? '1' : '0') : '';
         $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_enabled']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id" : '';
-        if ($pdf || $xml || $botocs) {
+        if ($pdf || $botocs) {
         ?>
         <li><span class="dir">Roster</span>
             <ul>
                 <?php if ($pdf)    { ?><li><a TARGET="_blank" href="<?php echo $pdf;?>">PDF</a></li> <?php } ?>
-                <?php if ($xml)    { ?><li><a TARGET="_blank" href="<?php echo $xml;?>">XML</a></li> <?php } ?>
                 <?php if ($botocs) { ?><li><a TARGET="_blank" href="<?php echo $botocs;?>">BOTOCS-XML</a></li> <?php } ?>
             </ul>
         </li>
