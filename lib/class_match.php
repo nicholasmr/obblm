@@ -547,6 +547,22 @@ class Match
         return $m;
     }
     
+    const T_CREATE_SUCCESS = 0;
+    const T_CREATE_ERROR__SQL_QUERY_FAIL = 1;
+    const T_CREATE_ERROR__IDENTICAL_TEAM_IDS = 2;
+    const T_CREATE_ERROR__IDENTICAL_PARENT_COACH = 3;
+    const T_CREATE_ERROR__PARENT_TOUR_LOCKED = 4;
+    const T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER = 5;
+    const T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER = 6;
+
+    public static $T_CREATE_ERROR_MSGS = array(
+        self::T_CREATE_ERROR__IDENTICAL_TEAM_IDS       => 'Illegal match-up, the passed team IDs are identical.',
+        self::T_CREATE_ERROR__IDENTICAL_PARENT_COACH   => 'Illegal match-up, the passed team\'s parent coaches are identical.',
+        self::T_CREATE_ERROR__PARENT_TOUR_LOCKED       => 'The parent tournament of the match is in a locked state.',
+        self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER   => 'Illegal match-up, the passed teams are not associated with the same league.',
+        self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER => 'Illegal match-up, the passed teams are not associated with the same division.',
+    );
+    
     public static function create(array $input) {
 
         /**
@@ -557,18 +573,27 @@ class Match
 
         global $settings;
     
-        if ($input['team1_id'] == $input['team2_id'] || ($isLocked = get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'locked')))
-            return false;
+        $errors = array(
+            self::T_CREATE_ERROR__IDENTICAL_TEAM_IDS       => (int) $input['team1_id'] == (int) $input['team2_id'],
+            self::T_CREATE_ERROR__IDENTICAL_PARENT_COACH   => (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'owned_by_coach_id') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'owned_by_coach_id'),
+            self::T_CREATE_ERROR__PARENT_TOUR_LOCKED       => (bool) get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'locked'),
+            self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER   => (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid'),
+            self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER => (bool) get_alt_col('leagues', 'lid', get_parent_id(T_NODE_TOURNAMENT, (int) $input['f_tour_id'], T_NODE_LEAGUE), 'tie_teams') && ((int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_did') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_did')),
+        );
+        foreach ($errors as $exitStatus => $halt) {
+            if ($halt) return array($exitStatus);
+        }
             
-        // Don't allow coaches' teams from different leagues to play each other.
-        $query = "SELECT (c1.f_lid = c2.f_lid) FROM teams AS t1, coaches AS c1, teams AS t2, coaches AS c2 
-            WHERE t1.owned_by_coach_id = c1.coach_id AND t2.owned_by_coach_id = c2.coach_id AND t1.team_id = $input[team1_id] AND t2.team_id = $input[team2_id]";
-
-
         $query = "INSERT INTO matches (team1_id, team2_id, round, f_tour_id, date_created)
                     VALUES ($input[team1_id], $input[team2_id], $input[round], '$input[f_tour_id]', NOW())";
+        if (mysql_query($query))
+            $mid = mysql_insert_id();
+        else
+            return array(self::T_CREATE_ERROR__SQL_QUERY_FAIL, $query);
 
-        return mysql_query($query) && Module::runTriggers(T_TRIGGER_MATCH_CREATE, array(mysql_insert_id()));
+        Module::runTriggers(T_TRIGGER_MATCH_CREATE, array($mid));
+
+        return array(self::T_CREATE_SUCCESS, $mid);
     }
 }
 

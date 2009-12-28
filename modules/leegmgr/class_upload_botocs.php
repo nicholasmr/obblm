@@ -218,7 +218,12 @@ class UPLOAD_BOTOCS implements ModuleInterface
         }
 
         if ( !$this->match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
-            $this->match_id = Match_BOTOCS::create( $input = array("team1_id" => $this->hometeam_id, "team2_id" => $this->awayteam_id, "round" => 1, "f_tour_id" => $this->tour_id, "hash" => $this->hash ) );
+            list($exitStatus, $this->match_id) = Match_BOTOCS::create( $input = array("team1_id" => $this->hometeam_id, "team2_id" => $this->awayteam_id, "round" => 1, "f_tour_id" => $this->tour_id, "hash" => $this->hash ) );
+            if ($exitStatus) {
+                # If the SQL query for creating the match failed $this->match_id contains the faulty query.
+                status(false, isset($this->match_id) ? $this->match_id : Match::$T_CREATE_ERROR_MSGS[$exitStatus]);
+                $this->match_id = false; # Force fail below.
+            }
         }
 
         unset( $input );
