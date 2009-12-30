@@ -556,11 +556,17 @@ class Match
     const T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER = 6;
 
     public static $T_CREATE_ERROR_MSGS = array(
+        self::T_CREATE_ERROR__SQL_QUERY_FAIL           => 'SQL query failed.',
         self::T_CREATE_ERROR__IDENTICAL_TEAM_IDS       => 'Illegal match-up, the passed team IDs are identical.',
         self::T_CREATE_ERROR__IDENTICAL_PARENT_COACH   => 'Illegal match-up, the passed team\'s parent coaches are identical.',
         self::T_CREATE_ERROR__PARENT_TOUR_LOCKED       => 'The parent tournament of the match is in a locked state.',
         self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER   => 'Illegal match-up, the passed teams are not associated with the same league.',
         self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER => 'Illegal match-up, the passed teams are not associated with the same division.',
+    );
+    
+    public static $T_CREATE_SQL_ERROR = array(
+        'query' => null, # mysql fail query.
+        'error' => null, # mysql_error()
     );
     
     public static function create(array $input) {
@@ -588,8 +594,11 @@ class Match
                     VALUES ($input[team1_id], $input[team2_id], $input[round], '$input[f_tour_id]', NOW())";
         if (mysql_query($query))
             $mid = mysql_insert_id();
-        else
-            return array(self::T_CREATE_ERROR__SQL_QUERY_FAIL, $query);
+        else {
+            $self::$T_CREATE_SQL_ERROR['query'] = $query;
+            $self::$T_CREATE_SQL_ERROR['error'] = mysql_error();
+            return array(self::T_CREATE_ERROR__SQL_QUERY_FAIL);
+        }
 
         Module::runTriggers(T_TRIGGER_MATCH_CREATE, array($mid));
 
