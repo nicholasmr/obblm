@@ -587,7 +587,7 @@ class Match
             self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER => (bool) get_alt_col('leagues', 'lid', get_parent_id(T_NODE_TOURNAMENT, (int) $input['f_tour_id'], T_NODE_LEAGUE), 'tie_teams') && ((int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_did') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_did')),
         );
         foreach ($errors as $exitStatus => $halt) {
-            if ($halt) return array($exitStatus);
+            if ($halt) return array($exitStatus, null);
         }
             
         $query = "INSERT INTO matches (team1_id, team2_id, round, f_tour_id, date_created)
@@ -597,7 +597,7 @@ class Match
         else {
             self::$T_CREATE_SQL_ERROR['query'] = $query;
             self::$T_CREATE_SQL_ERROR['error'] = mysql_error();
-            return array(self::T_CREATE_ERROR__SQL_QUERY_FAIL);
+            return array(self::T_CREATE_ERROR__SQL_QUERY_FAIL, null);
         }
 
         Module::runTriggers(T_TRIGGER_MATCH_CREATE, array($mid));
