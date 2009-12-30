@@ -595,8 +595,8 @@ class Match
         if (mysql_query($query))
             $mid = mysql_insert_id();
         else {
-            $self::$T_CREATE_SQL_ERROR['query'] = $query;
-            $self::$T_CREATE_SQL_ERROR['error'] = mysql_error();
+            self::$T_CREATE_SQL_ERROR['query'] = $query;
+            self::$T_CREATE_SQL_ERROR['error'] = mysql_error();
             return array(self::T_CREATE_ERROR__SQL_QUERY_FAIL);
         }
 
