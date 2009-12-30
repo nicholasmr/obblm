@@ -583,8 +583,8 @@ class Match
             self::T_CREATE_ERROR__IDENTICAL_TEAM_IDS       => (int) $input['team1_id'] == (int) $input['team2_id'],
             self::T_CREATE_ERROR__IDENTICAL_PARENT_COACH   => (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'owned_by_coach_id') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'owned_by_coach_id'),
             self::T_CREATE_ERROR__PARENT_TOUR_LOCKED       => (bool) get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'locked'),
-            self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER   => (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid'),
-            self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER => (bool) get_alt_col('leagues', 'lid', get_parent_id(T_NODE_TOURNAMENT, (int) $input['f_tour_id'], T_NODE_LEAGUE), 'tie_teams') && ((int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_did') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_did')),
+            self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER   => (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid') != (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid'),
+            self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER => (bool) get_alt_col('leagues', 'lid', get_parent_id(T_NODE_TOURNAMENT, (int) $input['f_tour_id'], T_NODE_LEAGUE), 'tie_teams') && ((int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_did') != (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_did')),
         );
         foreach ($errors as $exitStatus => $halt) {
             if ($halt) return array($exitStatus, null);
