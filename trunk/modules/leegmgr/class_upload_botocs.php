@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 
 /*
  *  Copyright (c) William Leonard <email protected> 2009. All Rights Reserved.
@@ -85,7 +85,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         if ( !$this->addMatch () )
         {
-            $this->error = "Failed to create the match.  The most likely reason for this is an illegal matchup.";
+            #$this->error = "Failed to create the match.  The most likely reason for this is an illegal matchup.";
             return false;
         }
 
@@ -220,9 +220,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
         if ( !$this->match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
             list($exitStatus, $this->match_id) = Match_BOTOCS::create( $input = array("team1_id" => $this->hometeam_id, "team2_id" => $this->awayteam_id, "round" => 1, "f_tour_id" => $this->tour_id, "hash" => $this->hash ) );
             if ($exitStatus) {
-                # If the SQL query for creating the match failed $this->match_id contains the faulty query.
-                status(false, isset($this->match_id) ? $this->match_id : Match::$T_CREATE_ERROR_MSGS[$exitStatus]);
-                $this->match_id = false; # Force fail below.
+                $this->error = $T_CREATE_ERROR_MSGS[$exitStatus];
+                return false;
             }
         }
 
@@ -258,7 +257,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             {
                 global $stars;
                 $stname = strval($player['name']);
-                if ( $stname == "Morg â€˜nâ€™ Thorg" ) $stname = "Morg 'n' Thorg";
+                if ( $stname == "Morg ‘n’ Thorg" ) $stname = "Morg 'n' Thorg";
                 $f_player_id = $stars[$stname]['id'];
                 $player['inj'] = '';
             }
