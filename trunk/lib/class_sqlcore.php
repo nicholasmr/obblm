@@ -1090,7 +1090,7 @@ public static function installProcsAndFuncs($install = true)
             
             SET empty = (SELECT (COUNT(*) < 1) FROM matches WHERE f_tour_id = trid);
             SET begun = (SELECT (COUNT(*) > 0) FROM matches WHERE f_tour_id = trid AND date_played IS NOT NULL);
-            SET winner = (SELECT IF(team1_score > team2_score, team1_id, team2_id) FROM matches WHERE f_tour_id = trid AND round = '.RT_FINAL.' AND date_played IS NOT NULL AND team1_score != team2_score);
+            SET winner = (SELECT IF(team1_score > team2_score, team1_id, team2_id) FROM matches WHERE f_tour_id = trid AND round = '.RT_FINAL.' AND date_played IS NOT NULL AND team1_score != team2_score LIMIT 1);
             SET finished = (SELECT (type = '.TT_RROBIN.' AND COUNT(*) = 0 OR type = '.TT_FFA.' AND winner IS NOT NULL) FROM matches WHERE f_tour_id = trid AND date_played IS NULL);
         END',
 
