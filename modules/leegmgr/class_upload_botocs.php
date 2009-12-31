@@ -6,7 +6,7 @@
  *
  *  This file is part of OBBLM.
  *
- *  OBBLM is free software; you can redistribute it and/or modify 
+ *  OBBLM is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
  *  (at your option) any later version.
@@ -220,7 +220,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         if ( !$this->match_id && $settings['leegmgr_schedule'] !== 'strict' ) {
             list($exitStatus, $this->match_id) = Match_BOTOCS::create( $input = array("team1_id" => $this->hometeam_id, "team2_id" => $this->awayteam_id, "round" => 1, "f_tour_id" => $this->tour_id, "hash" => $this->hash ) );
             if ($exitStatus) {
-                $this->error = $T_CREATE_ERROR_MSGS[$exitStatus];
+                $this->error = Match::$T_CREATE_ERROR_MSGS[$exitStatus];
                 return false;
             }
         }
@@ -257,7 +257,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             {
                 global $stars;
                 $stname = strval($player['name']);
-                if ( $stname == "Morg `n` Thorg" ) $stname = "Morg 'n' Thorg";
+                if ( $stname == "Morg ‘n’ Thorg" ) $stname = "Morg 'n' Thorg";
                 $f_player_id = $stars[$stname]['id'];
                 $player['inj'] = '';
             }
