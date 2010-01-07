@@ -476,9 +476,10 @@ class Team
             return false;
 
         // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
+        $coach_ring = get_alt_col('coaches', 'coach_id', $input['owned_by_coach_id'], 'ring'); # We use coach's ring later.
         global $raceididx;
         if (!in_array($input['f_race_id'], array_keys($raceididx))
-        || !($coach_ring = get_alt_col('coaches', 'coach_id', $input['owned_by_coach_id'], 'ring')) # We use coach's ring later.
+        || !isset($coach_ring) # Does coach ID exist?
         || get_alt_col('teams', 'name', $input['name'], 'team_id')
         || $input['f_did'] != self::T_NO_DIVISION_TIE && $input['f_lid'] != get_alt_col('divisions', 'did', $input['f_did'], 'f_lid'))  {
             return false;
