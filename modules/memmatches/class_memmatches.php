@@ -88,8 +88,13 @@ public static function main($argv) {
                                 foreach (array(1,2) as $j) {
                                     $query = "SELECT SUM($s) as '$s' FROM matches, match_data WHERE f_match_id = match_id AND match_id = $m->match_id AND f_team_id = team${i}_id";
                                     $result = mysql_query($query);
-                                    $row = mysql_fetch_assoc($result);
-                                    $v[$j] = ($row[$s]) ? $row[$s] : 0;
+                                    if (mysql_num_results($result) > 0) {
+                                        $row = mysql_fetch_assoc($result);
+                                        $v[$j] = ($row[$s]) ? $row[$s] : 0;
+                                    }
+                                    else {
+                                        $v[$j] = 0;
+                                    }
                                 }
                                 echo "<b>$v[1] &nbsp;-&nbsp; $v[2]</b>";
                                 break;
