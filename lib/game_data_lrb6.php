@@ -22,8 +22,14 @@
  */
 
 // Changes to present teams/positionals from LRB5b to LRB6.
+#Halfling Chef reduced price is now 100,000
 
 $DEA['Necromantic']['players']['Flesh Golem']['cost'] = 110000;
+$DEA['Necromantic']['players']['Necromantic Werewolf'] = $DEA['Necromantic']['players']['Werewolf'];
+$DEA['Norse']['players']['Norse Werewolf'] = $DEA['Norse']['players']['Ulfwerener'];
+$DEA['Norse']['players']['Yhetee'] = $DEA['Norse']['players']['Snow Troll'];
+$DEA['Norse']['players']['Catcher'] = $DEA['Norse']['players']['Runner'];
+$DEA['Norse']['players']['Blitzer'] = $DEA['Norse']['players']['Berserker'];
 
 // Changes in star players from LRB5b to LRB6.
 
@@ -34,6 +40,8 @@ $stars['Fezglitch']['cost']                           = 100000;
 $stars['Glart Smashrip Jr.']['cost']                  = 210000;
 $stars['Morg \'n\' Thorg']['cost']                    = 430000;
 $stars['Zzharg Madeye']['cost']                		=  90000;
+$stars['Deeproot Strongbranch']                       = 300000;
+$stars['Eldril Sidewinder']                           = 200000;
 
 ksort($stars, SORT_STRING);
 
