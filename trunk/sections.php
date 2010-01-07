@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -549,7 +549,7 @@ function sec_about() {
 
     <?php title("License");?>
     <p>
-        Copyright (c) Niels Orsleff Justesen and Nicholas Mossor Rathmann 2007-2009. All Rights Reserved.
+        Copyright (c) Niels Orsleff Justesen and Nicholas Mossor Rathmann 2007-2010. All Rights Reserved.
         <br><br>
         OBBLM is free software; you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
