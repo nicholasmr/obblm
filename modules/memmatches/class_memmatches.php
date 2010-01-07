@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -86,15 +86,10 @@ public static function main($argv) {
                                 $v = array();
                                 $s = ($d == 'cas') ? 'bh+ki+si' : $d;
                                 foreach (array(1,2) as $j) {
-                                    $query = "SELECT SUM($s) as '$s' FROM matches, match_data WHERE f_match_id = match_id AND match_id = $m->match_id AND f_team_id = team${i}_id";
+                                    $query = "SELECT SUM($s) as '$s' FROM matches, match_data WHERE f_match_id = match_id AND match_id = $m->match_id AND f_team_id = team${j}_id";
                                     $result = mysql_query($query);
-                                    if (mysql_num_results($result) > 0) {
-                                        $row = mysql_fetch_assoc($result);
-                                        $v[$j] = ($row[$s]) ? $row[$s] : 0;
-                                    }
-                                    else {
-                                        $v[$j] = 0;
-                                    }
+                                    $row = mysql_fetch_assoc($result);
+                                    $v[$j] = ($row[$s]) ? $row[$s] : 0;
                                 }
                                 echo "<b>$v[1] &nbsp;-&nbsp; $v[2]</b>";
                                 break;
