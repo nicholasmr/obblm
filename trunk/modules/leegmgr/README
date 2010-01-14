@@ -11,6 +11,12 @@ The settings.php file is the only configurable file for LEEGMGR.  The settings a
                                             // "strict" will allow only scheduled matches to be used
     $settings['leegmgr_extrastats'] = true; // Enables the reporting of extra stats and the use of the alternate XSD file.
     
+The leegmgr_extrastats settings requires that the BOTOCS install is using the template_eps.xml file.
+The easiest way to set this up is to:
+1. Delete <BOTOCS>\template\default.xml.
+2. Copy template_eps.xml to <BOTOCS>\template.
+3. Rename <BOTOCS>\template\template_eps.xml to default.xml.
+    
 Using LEEGMGR
 
 After the coaches play a match in BOTOCS, the result file is created as <BOTOCS>\results\OrcsWood.zip.
