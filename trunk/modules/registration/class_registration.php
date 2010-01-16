@@ -173,7 +173,7 @@ class Registration implements ModuleInterface
 
         $to      = $this->AdminEmails();
         $subject = EMAIL_SUBJECT;
-        $message = EMAIL_MESSAGE.$this->username.", ".$this->email."\n"."http://".$_SERVER["SERVER_NAME"]."/index.php?section=admin&subsec=ctman";
+        $message = EMAIL_MESSAGE.$this->username.", ".$this->email."\n"."http://".$_SERVER["SERVER_NAME"]."/index.php?section=admin&subsec=ct_man";
         $headers = 'From: '.$webmaster. "\r\n" .
                    'Reply-To: '.$webmaster. "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
@@ -194,7 +194,7 @@ class Registration implements ModuleInterface
         $coaches = Coach::getCoaches();
         foreach ( $coaches as $c )
         {
-            if ( $c->ring === 0 && $this->chk_email_Admin($c->mail) )
+            if ( $c->ring === Coach::T_RING_GLOBAL_ADMIN && $this->chk_email_Admin($c->mail) )
             {
                 $email = $email.$sep_comma.$c->mail;
                 if ( $email ) $sep_comma = ", ";
@@ -241,7 +241,7 @@ class Registration implements ModuleInterface
 
         $form = "
         <form method='POST' action='handler.php?type=registration'>
-            <div class='adminBox'>
+            <div class='boxCommon'>
                 <div class='boxTitle3'>
                     Register
                 </div>
