@@ -681,12 +681,13 @@ function setup_database() {
         : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
 
     // Create root user and leave welcome message on messageboard
-    echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => Coach::T_RING_GLOBAL_ADMIN, 'mail' => 'None', 'phone' => ''))) 
+    echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => Coach::T_RING_GLOBAL_ADMIN, 'mail' => '', 'phone' => '', 'settings' => array(), 'def_leagues' => array()))) 
         ? "<font color=green>OK &mdash; root user created.</font><br>\n"
         : "<font color=red>FAILED &mdash; root user was not created.</font><br>\n";
 
     Message::create(array(
         'f_coach_id' => 1, 
+        'f_lid'      => Message::T_BROADCAST,
         'title'      => 'OBBLM installed!', 
         'msg'        => 'Congratulations! You have successfully installed Online Blood Bowl League Manager. See "about" and "introduction" for more information.'));
     
@@ -761,7 +762,8 @@ class SQLUpgrade
     
     public static function doesColExist($tbl, $col)
     {
-        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
+        global $db_name;
+        $colCheck = "SELECT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db_name' AND COLUMN_NAME='$col' AND TABLE_NAME='$tbl') AS 'exists'";
         $result = mysql_query($colCheck);
         $row = mysql_fetch_assoc($result);
         return (bool) $row['exists'];
@@ -781,6 +783,9 @@ class SQLUpgrade
     public static function runIfTrue($evalQuery, $query)
     {
         $result = mysql_query($evalQuery);
+        if (!$result || mysql_num_rows($result) == 0) {
+            return self::NONE;
+        }
         $row = mysql_fetch_row($result);
         return ((int) $row[0]) ? $query : self::NONE;
     }

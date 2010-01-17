@@ -133,9 +133,15 @@ if (!is_writable(IMG))
  *   Globals/Startup
  ********************/
 
-$conn = mysql_up(!defined('T_NO_STARTUP')); # MySQL connect.
-setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
-require_once('modules/modsheader.php'); # Registration of modules.
-setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
+if (defined('T_NO_STARTUP')) {
+    Coach::logout();
+    require_once('modules/modsheader.php'); # Registration of modules.
+}
+else {
+    $conn = mysql_up(true); # MySQL connect.
+    setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
+    require_once('modules/modsheader.php'); # Registration of modules.
+    setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
+}
 
 ?>

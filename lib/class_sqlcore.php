@@ -93,6 +93,7 @@ public static function mkHRS(array $HRSs)
         $query .= "WHEN $nr THEN RETURN (SELECT $pts FROM mv_teams WHERE f_tid = tid AND f_trid = trid);\n";
     }
     $query .= '
+            ELSE RETURN 0;
         END CASE;
         
         RETURN NULL;
