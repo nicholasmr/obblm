@@ -4,7 +4,7 @@
  * MySQL database settings 
  **************************/
 
-$db_name   = 'obblmdb';
+$db_name   = 'obblm';
 $db_user   = 'root';
 $db_passwd = '';
 $db_host   = 'localhost';
@@ -134,6 +134,10 @@ $rules['enable_lrb6x'] = true; // Default is false.
     PLEASE NOTE: If you do not need the points field, because it is not included in the rule field of your ranking system, 
     then simply leave the "points" definition be equal to '' (that's two single quotes only).
     
+    IMPORTANT!!!
+    Once you have changed the below ranking systems you must notify OBBLM. 
+    This is done via the admin menu: Admin -> OBBLM core panel. 
+    Here you msut select the "Re-install DB back-end procedures and functions" under "DB maitenance".
 */
 
 // Rule 1

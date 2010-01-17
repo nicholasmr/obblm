@@ -344,7 +344,7 @@ class Team
             WHERE f_pos_id = pos_id AND owned_by_team_id = $this->team_id AND f_pos_id = $pos_id AND date_died IS NULL AND date_sold IS NULL";
         $result = mysql_query($query);
         $row = mysql_fetch_row($result);
-        return (bool) $row[0] && $this->isPlayerPosValid($pos_id);
+        return ((bool) $row[0]) && $this->isPlayerPosValid($pos_id);
     }
 
     public function isPlayerPosValid($pos_id) {
@@ -353,15 +353,13 @@ class Team
         
         global $DEA;
         
-        $VALID_pos_id = false;
         foreach ($DEA[$this->f_rname]['players'] as $pos => $desc) {
             if ($desc['pos_id'] == $pos_id) {
-                $VALID_pos_id = true;
-                break;
+                return true;
             }
         }
         
-        return $VALID_pos_id;
+        return false;
     }
 
     public function getToursPlayedIn($ids_only = false)

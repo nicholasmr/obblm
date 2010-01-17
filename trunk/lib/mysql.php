@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -748,7 +748,7 @@ function upgrade_database($version)
    
     // Done!
     mysql_close($conn);
-    return true;
+    return $upgradeMsgs[$version];
 }
 
 /*
