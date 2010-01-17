@@ -181,6 +181,12 @@ class XML_BOTOCS implements ModuleInterface
             return false;
         }
 
+        if ( $this->noninjplayercount > 16 )
+        {
+            Print "You have more than 16 players that can participate in the next match.";
+            return false;
+        }
+
         return true;
 
     }
