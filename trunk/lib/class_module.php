@@ -70,7 +70,9 @@ class Module
         // Load translation file, if exists. Exploit that the translation.xml MUST lie in same directory as $struct['filesLoadTime'][0].
         if (file_exists($file = self::MOD_RPATH.dirname($struct['filesLoadTime'][0]).'/translations.xml')) {
             global $lng;
-            $lng->registerTranslationFile($struct['class'], $file);
+            if (is_object($lng)) {
+                $lng->registerTranslationFile($struct['class'], $file);
+            }
         }
     }
     
