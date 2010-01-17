@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -21,7 +21,7 @@
  *   
  */
 
-define('NO_STARTUP', true); # header.php hint.
+define('T_NO_STARTUP', true);
 require('header.php'); // Includes and constants.
 
 ?>

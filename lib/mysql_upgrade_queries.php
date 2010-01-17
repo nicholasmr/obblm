@@ -84,13 +84,17 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNotExists('leagues', 'tie_teams',  'ALTER TABLE leagues ADD COLUMN tie_teams BOOLEAN NOT NULL DEFAULT TRUE'),
         SQLUpgrade::runIfColumnNotExists('teams', 'f_did',  'ALTER TABLE teams ADD COLUMN f_did MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id'),
         SQLUpgrade::runIfColumnNotExists('teams', 'f_lid',  'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_did'),
+        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM teams WHERE f_lid != 0', 'UPDATE teams SET f_lid = IFNULL((SELECT d.f_lid FROM matches AS m ,tours AS t,divisions AS d WHERE m.f_tour_id = t.tour_id AND t.f_did = d.did AND (team1_id = team_id OR team2_id = team_id) ORDER BY m.date_played ASC LIMIT 1), 0)'), # Teams are tied to the league in which they played their first match.
         'CREATE TABLE IF NOT EXISTS memberships (
             cid   MEDIUMINT UNSIGNED NOT NULL,
             lid   MEDIUMINT UNSIGNED NOT NULL,
             ring  TINYINT UNSIGNED NOT NULL DEFAULT 0
         )',
+        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM memberships', 'INSERT INTO memberships (cid,lid,ring) SELECT DISTINCT owned_by_coach_id, f_lid, 2 FROM teams WHERE f_lid != 0'), # Coaches should be regular coach members of the leagues in which their teams are tied.
+        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM coaches WHERE ring = 5', 'UPDATE coaches SET ring = IF(ring = 0, 5, 0)'), # New rings system.
         
         SQLUpgrade::runIfColumnNotExists('texts', 'f_id2',  'ALTER TABLE texts ADD COLUMN f_id2 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_id'),
+        
     ),
 );
 
@@ -146,5 +150,21 @@ function upgrade_075_080_pskills_migrate()
 
     return $status;
 }
+
+/*
+    Upgrade messages
+*/
+
+$upgradeMsgs = array(
+'075-080' => array(
+
+'Teams are now required to be tied to leagues. Upgrading automatically ties teams to the league in which they played their first match.
+Teams which have not yet played any games are therefore not tied to any leagues and you must manually run some SQL code to tie them to a given league, 
+for example running "UPDATE teams SET f_lid = 5 WHERE f_lid = 0", will tie the remaining teams to the league with ID = 5 (you would generally want to do something like that). 
+If you don\'t do this the non-tied teams may not be scheduled to play in any matches!',
+
+),
+
+);
 
 ?>

@@ -27,7 +27,7 @@ if (version_compare(PHP_VERSION, '5.1.0') == -1)
 if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
     die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
 
-if (!defined('NO_STARTUP') && file_exists('install.php'))
+if (!defined('T_NO_STARTUP') && file_exists('install.php'))
     die('Please remove <i>install.php</i> before using OBBLM.');
 
 error_reporting(E_ALL);
@@ -133,13 +133,7 @@ if (!is_writable(IMG))
  *   Globals/Startup
  ********************/
 
-if (!defined('NO_STARTUP')) {
-    $conn = mysql_up(true); # MySQL connect. If constant is set before calling this header table checking will be ignored.
-}
-else {
-    Coach::logout(); # Make sure we don't have session data triggering SQL queries for logged in coaches.
-}
-
+$conn = mysql_up(!defined('T_NO_STARTUP')); # MySQL connect.
 setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
 require_once('modules/modsheader.php'); # Registration of modules.
 setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
