@@ -31,3 +31,7 @@ Upload the results zip file:
 6. Click Send File.
 
 You can now view the match report as a normal OBBLM match.  The replay file for the match is available on that page.
+
+LRB6 for BOTOCS
+To configure BOTOCS for LRB6 copy rules-LRB5-Experimental.xml to the <BOTOCS>\rules folder, overwriting the existing file.
+Using the same name is the easiest way as the path to the default rules is hard coded.
