@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Daniel Straalman <email is protected> 2008-2009. All Rights Reserved.
+ *  Copyright (c) Daniel Straalman <email is protected> 2009-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,6 +21,8 @@
  *
  */
 
+require('lib/game_data_lrb6x.php');
+
 // Changes to present teams/positionals from LRB5b to LRB6.
 #Halfling Chef reduced price is now 100,000
 
@@ -39,10 +41,9 @@ $stars['Dolfar Longstride']['cost']                   = 150000;
 $stars['Fezglitch']['cost']                           = 100000;
 $stars['Glart Smashrip Jr.']['cost']                  = 210000;
 $stars['Morg \'n\' Thorg']['cost']                    = 430000;
-$stars['Zzharg Madeye']['cost']                		=  90000;
-$stars['Deeproot Strongbranch']                       = 300000;
-$stars['Eldril Sidewinder']                           = 200000;
+$stars['Zzharg Madeye']['cost']                       = 90000;
+$stars['Deeproot Strongbranch']['cost']               = 300000;
+$stars['Eldril Sidewinder']['cost']                   = 200000;
 
 ksort($stars, SORT_STRING);
-
 ?>
