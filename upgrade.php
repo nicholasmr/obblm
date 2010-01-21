@@ -44,14 +44,15 @@ if (isset($_POST['version'])) {
         : "<br><b><font color='red'>Error</font></b>";
         
     echo "<br><br><b>IMPORTANT</b>:<br><ul>";
-    echo array_strpack('<li>%s</li>', $upgradeMsgs, "\n");
+    echo array_strpack('<li>%s</li>', array_merge($upgradeMsgs,array('You are required to visit the <a href="index.php?section=admin&amp;subsec=cpanel">OBBLM core panel</a> in the admin menu and run the "syncAll()" DB synchronisation procedure in order to syncronize all statistics.')), "\n");
     echo "</ul><br><hr>";
 }
 ?>
-Please make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>
+Please make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid AND that the rules fields of the old settings file are consistant with the new settings file for those fields which are common.<br><br>
 Now, click the appropriate SQL code to run depending on the version upgrade you are doing.<br><br>
 <b>Please note:</b>
 <ul>
+<li>ALWAYS make sure you have a backup/dump of your OBBLM database before running the upgrade script.</li>
 <li>If upgrading across two or more versions simply run the SQL code for the next version, one after the other until the latest version is reached.</li>
 <li>If upgrading <i>from</i> versions previous of v. 0.75 you must consult the <i>INSTALL</i> file and run the listed SQL queries <u>manually</u>.</li>
 </ul>
