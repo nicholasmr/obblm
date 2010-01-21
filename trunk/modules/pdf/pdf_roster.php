@@ -445,10 +445,10 @@ else {
   else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Wandering Apothecaries']['cost']; }
 }
 // Checking LRB6 cheaper Chef for Halfling
-if (($r == 'Halfling') && ($rules['enable_lrb6x'])) $inducements['Halfling Master Chef']['cost'] = 50000;
+if (($r == 'Halfling') && ($rules['enable_lrb6'])) $inducements['Halfling Master Chef']['cost'] = 50000;
 $chef_cost = $inducements['Halfling Master Chef']['cost'];
 // Checking LRB6 cheaper bribes for Goblin
-if (($r == 'Goblin') && ($rules['enable_lrb6x'])) $inducements['Bribes']['cost'] = 50000;
+if (($r == 'Goblin') && ($rules['enable_lrb6'])) $inducements['Bribes']['cost'] = 50000;
 $bribe_cost = $inducements['Bribes']['cost'];
 
 if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; }

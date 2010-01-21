@@ -835,7 +835,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         
                             // Show players on the select list if buyable, or if player is a potential journeyman AND team has not reached journeymen limit.
                             if (($team->isPlayerBuyable($details['pos_id']) && $team->treasury >= $details['cost']) || 
-                                (($details['qty'] == 16 || (($rules['enable_lrb6x']) ? ($details['qty'] == 12) : false)) && count($active_players) < $rules['journeymen_limit'])) {
+                                (($details['qty'] == 16 || (($rules['enable_lrb6']) ? ($details['qty'] == 12) : false)) && count($active_players) < $rules['journeymen_limit'])) {
                                 echo "<option value='$details[pos_id]'>" . $details['cost']/1000 . "k | $pos</option>\n";
                                 $DISABLE = false;
                             }

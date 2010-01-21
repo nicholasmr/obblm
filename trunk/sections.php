@@ -484,7 +484,7 @@ function sec_rules() {
 
         <tr>
             <td><?php echo $lng->getTrn('rules/enable_lrb6');?></td>
-            <td><?php echo $rules['enable_lrb6x'] ? $lng->getTrn('common/yes') : $lng->getTrn('common/no'); ?></td>
+            <td><?php echo $rules['enable_lrb6'] ? $lng->getTrn('common/yes') : $lng->getTrn('common/no'); ?></td>
         </tr>
     </table>
 
