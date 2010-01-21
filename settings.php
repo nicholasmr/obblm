@@ -88,13 +88,16 @@ $rules['cost_ass_coaches']      = 10000;    // Default is 10000.
 $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
 
 /*
-    Enable the partial implementation of the LRB6 experimental rule set.
-    This implies acknowledging the differences between the LRB5 and 6 with respect to the initial properties of teams, players and their skills.
-    
-    IMPORTANT: This setting must not be changed while using OBBLM. Please enable/disable it and leave it that way throughout the use of this software.
+    Enable LRB6 rule set.
+
+    IMPORTANT: If you decide to switch to LRB6 whilst using LRB5 you must:
+        - Go to the "Admin -> OBBLM core panel" menu and execute, in the below order:
+            * DB maitenance: Synchronise the PHP-stored BB game data (lib/game_data*.php files) with DB
+            * DB synchronisation procedures: syncAll()
+        - Be aware of, and manually correct, players with changed base stats (def. skills & def. characteristics) with illegal skills or characteristic values.
  */
 
-$rules['enable_lrb6x'] = true; // Default is false.
+$rules['enable_lrb6'] = true; // Default is true.
 
 /*****************
  * House ranking systems

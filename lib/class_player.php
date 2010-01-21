@@ -719,7 +719,7 @@ class Player
 
                 // Is position valid to make a journeyman? 
                 // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
-                if ($DEA[$team->f_rname]['players'][get_alt_col('game_data_players', 'pos_id', $input['f_pos_id'], 'pos')]['qty'] < (($rules['enable_lrb6x']) ? 12 : 16))
+                if ($DEA[$team->f_rname]['players'][get_alt_col('game_data_players', 'pos_id', $input['f_pos_id'], 'pos')]['qty'] < (($rules['enable_lrb6']) ? 12 : 16))
                     return array(false, 'May not make a journeyman from that player position.');       
             }
             else {
