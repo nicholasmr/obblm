@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,7 +21,7 @@
  *
  */
 
-define('NO_PIC', IMG.'/nopic.jpg'); # Used when no picture is uploaded.
+define('NO_PIC', IMG.'/nopic.png'); # Used when no picture is uploaded.
 define('UPLOAD_DIR', IMG);
 
 define('IMGTYPE_PLAYER',      1);

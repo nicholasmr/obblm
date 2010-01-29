@@ -42,7 +42,7 @@ div.everything {width: 1000px; margin: auto; background-color: #eeeeee;} /* Top 
 div.banner {
     width: 1000px;
     height: 150px;
-    background-image: url(../images/banner_lowres.jpg); /* 150x1000px */
+    background-image: url(../images/banner.png); /* 150x1000px */
     background-repeat: no-repeat;
     background-position: top left;
 }
