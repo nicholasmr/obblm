@@ -23,7 +23,7 @@
 class Translations 
 {
 
-public static $registeredLanguages = array('en-GB');
+public static $registeredLanguages = array('en-GB', 'es');
 const main = 'main'; # $this->docs[] key of main translation file.
 const fallback = 'en-GB'; # Default language.
 

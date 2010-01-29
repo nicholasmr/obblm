@@ -416,7 +416,7 @@ public static function report() {
     $CP = 8; // Colspan.
 
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
-        Print "<center><a href='http://".$_SERVER["SERVER_NAME"]."/handler.php?type=leegmgr&amp;replay=".$m->match_id."'>view replay</a></center>";
+        Print "<center><a href='handler.php?type=leegmgr&amp;replay=".$m->match_id."'>view replay</a></center>";
     }
 
     ?>

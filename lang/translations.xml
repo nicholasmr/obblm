@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
+
 <en-GB>
 
 <!-- Commonly used strings -->
@@ -652,3 +654,375 @@
 </admin>
 
 </en-GB>
+
+
+<!-- Spanish is only PARTLY implemented -->
+
+<es>
+
+<common>
+    <notitle>Introduce el título aquí</notitle>
+    <nobody>--Cuerpo vacio--</nobody>
+    
+    <submit>Enviar</submit>
+    <save>Salvar</save>
+    <create>Crear</create>
+    <delete>Borrar</delete>
+    <edit>Editar</edit>
+    <view>Ver</view>
+    <back>Volver</back>
+    <yes>Si</yes>
+    <no>No</no>
+    <none>Ninguno</none>
+    <reset>Restablecer</reset>
+    <lock>Bloquear</lock>
+    <locked>Bloqueado</locked>
+    <finished>Terminado</finished>
+    <unlock>Desbloquear</unlock>
+    <add>Añadir</add>
+    <remove>Eliminar</remove>
+    <next>Siguiente</next>
+    <previous>Anterior</previous>
+    <name>Nombre</name>
+    <status>Estado</status>
+    <desc>Descripción</desc>
+    <ready>Preparado</ready>
+    <upload>Subir</upload>
+    <all>Todo</all>
+    <select>Seleccionar</select>
+    <stats>Estadísticas</stats>
+    <general>General</general>
+    
+    <needhelp>¿Necesitas ayuda?</needhelp>
+    <picof>Imagen de</picof>
+    <about>Sobre</about>
+    
+    <recentmatches>Partidos recientes</recentmatches>
+    <upcomingmatches>Próximos partidos</upcomingmatches>
+    <dateplayed>Fecha de juego</dateplayed>
+    
+    <starhh>Histórico de contratación de Jugadores Estrella</starhh>
+    <merchh>Histórico de contratación de mercenarios</merchh>
+    
+    <match>Partido</match>
+    <tournament>Torneo</tournament>
+    <division>División</division>
+    <league>Liga</league>
+    
+    <player>Jugador</player>
+    <team>Equipo</team>
+    <coach>Entrenador</coach>
+    <race>Raza</race>
+    <star>Estrella</star>
+    
+    <td>Touchdowns</td>
+    <intcpt>Intercepciones</intcpt>
+    <cp>Pases completos</cp>
+    <ki>Muertos</ki>
+    <bh>Heridos</bh>
+    <si>Heridos Graves</si>
+    <cas>Bajas</cas>
+    <mvp>Mejor Jugador del Encuentro</mvp>
+    
+    <pms>Mostrar estadísticas medias por partido</pms>
+    <ats>Mostrar estadísticas totales </ats>
+    <uploadnew>Subir nueva imagen</uploadnew>
+    <notice_simul><![CDATA[<i>Nota</i>: Las dos tablas mostradas abajo se ordenan simultaneamente.]]></notice_simul>
+    <notice_spp><![CDATA[<i>Nota</i>: <b>Si</b>los jugadores estrella pudiesen ganar PE tendrian la cantidad correspondiente a la columna PE.]]></notice_spp>
+    
+    <!-- nodeSelector() -->
+    <displayfrom>Mostrar de</displayfrom>
+    <type>Tipo</type>
+        <active>Activo</active>
+        <alltime>Total</alltime>
+    <sgrp>Grupo de estadísticas</sgrp>
+</common>
+
+<!-- Link names for menu elements -->
+<menu>
+    <login>Login</login>
+    <logout>Desconectar</logout>
+    <home>Home</home>
+    <cc>Rincón del entrenador</cc>
+    <teams>Equipos</teams>
+    <coaches>Entrenadores</coaches>
+    <matches_menu>
+        <name>Partidos</name> <!-- top level button text -->
+        <tours>Torneos</tours>
+        <recent>Partidos recientes</recent>
+        <upcoming>Próximos partidos</upcoming>
+    </matches_menu>
+    <statistics_menu>
+        <name>Estadísticas</name> <!-- top level button text -->
+        <player_stn>Jugadores</player_stn>
+        <team_stn>Equipos</team_stn>
+        <coach_stn>Entrenadores</coach_stn>
+        <race_stn>Razas</race_stn>
+        <star_stn>Jugadores Estrella</star_stn>
+    </statistics_menu>
+    <admin_menu>
+        <name>Admin</name> <!-- top level button text -->
+        <ld_man>Gestión: Ligas &amp; divisiones</ld_man>
+        <ct_man>Gestión: Entrenadores &amp; equipos</ct_man>
+        <usr_man>Gestión: Usuarios</usr_man>
+        <tour_man>Gestión: Torneos</tour_man>
+        <import>Importar equipo</import>
+        <schedule>Planificar partidos</schedule>
+        <cpanel>Panel principal de OBBLM</cpanel>
+    </admin_menu>
+    <plugins>Plugins</plugins>
+    
+    <rules>Reglas</rules>
+    <forum>Foro</forum>
+</menu>
+
+<!-- Section translations -->
+<login>
+    <!-- has no <name> tag! -->
+    <loginname>Nombre de Entrenador</loginname>
+    <passwd>Contraseña</passwd>
+    <remember>Recordarme</remember>
+    <loginbutton>Login</loginbutton>
+</login>
+
+<main>
+    <!-- has no <name> tag! -->
+    <newmsg>Nuevo mensaje</newmsg>
+    <broadcast>Publicar mensaje para todas las ligar?</broadcast>
+    <nowelcome>Aún no has creado el mensaje de bienvenida</nowelcome>
+    <more>más</more>
+    <posted>Publicado</posted>
+    <by>por</by>
+    <lastedit>Última edición</lastedit>
+    <value>Valor</value>
+</main>
+
+<cc>
+    <new_team>Nuevo equipo</new_team>
+
+    <!-- <stats> defined in <common> block -->
+
+    <coach_teams>Equipos del entrenador</coach_teams>
+
+    <profile>Perfil</profile>        
+        <photo>Foto del entrenador</photo>
+        <coach_info>Información del entrenador</coach_info>
+            <note_persinfo>La información personal solo es visible para usuarios conectados.</note_persinfo>
+            <new>Nuevo</new>
+            <old>Viejo</old>
+            <current>Actual</current>
+            <chpasswd>Cambiar contraseña</chpasswd>
+            <chphone>Cambiar número de teléfono</chphone>
+            <chmail>Cambiar email</chmail>
+            <chlogin>Cambiar nombre (login)</chlogin>
+            <chname>Cambiar nombre completo</chname>
+            <chtheme>Cambiar tema OBBLM</chtheme>
+            <chlang>Cambiar idioma</chlang>
+            <chhomelid>Cambiar liga principal</chhomelid>
+</cc>
+
+<profile>
+    <player>
+        <about>Sobre el jugador</about>
+            <pos>Posición</pos>
+            <bought>Contratado</bought>
+        
+        <profile>Perfil de jugador</profile>
+        
+        <ach>Logros</ach>
+        <best>Mejor partido</best>
+        <playedmatches>Partidos jugados</playedmatches>
+    </player>
+    
+    <team>
+        <!-- sub secs. -->
+        
+        <viewtoggle>Cambiar vista de la plantilla</viewtoggle>
+        
+        <!-- Team management sec. -->
+        <tmanage>Gestión e información de equipos</tmanage>
+        
+        <!-- About sec. -->
+            <logo>Logo del equipo</logo>
+            <stad>Estadio del equipo</stad>
+
+        <!-- News sec. -->            
+        <news>Noticias</news>
+            <tnews>Noticias del equipo</tnews>
+            <wnews>Escribir noticias</wnews>
+            <nonews>No hay entradas</nonews>
+        
+        <!-- Recent games sec. -->
+        
+        <!-- Star/merc HH secs. -->
+        
+        <!-- For the three team page boxes -->
+
+        <box_info>
+            <title>Información y estadísticas del equipo</title>
+            
+            <gp><![CDATA[Partidos&nbsp;jugados]]></gp>
+            <pct_won><![CDATA[PCT&nbsp;ganados]]></pct_won>
+            <tours_won><![CDATA[Torneos&nbsp;ganados]]></tours_won>
+            <ws><![CDATA[Racha&nbsp;ganadora]]></ws>
+            <ls><![CDATA[Racha&nbsp;perdedora]]></ls>
+            <ds><![CDATA[Racha&nbsp;de empates]]></ds>
+            <ltour><![CDATA[Torneo&nbsp;más reciente]]></ltour>
+            <toursplayed><![CDATA[Torneos&nbsp;jugados]]></toursplayed>
+        </box_info>
+        
+        <box_tm>
+            <title>Gestión de equipo</title>
+
+            <hire_player>Contratar jugador</hire_player>
+            <hire_journeyman>Contratar independiente</hire_journeyman>
+            <fire_player>Despedir jugador</fire_player>
+            <unbuy_player>Descontratar jugador</unbuy_player>
+            <rename_player>Renombrar jugador</rename_player>
+            <renumber_player>Renumerar jugador</renumber_player>
+            <rename_team>Renombrar equipo</rename_team>
+            <buy_goods>Comprar bienes de equipo</buy_goods>
+            <drop_goods>Deshacerse de bienes de equipo</drop_goods>
+            <ready_state>Marcar como disponible para jugar</ready_state>
+            <retire>Retirar equipo</retire>
+            <delete>Borrar equipo</delete>
+
+            <desc>
+                <hire_player>
+                <![CDATA[
+                Contratar un nuevo jugador.<br>
+                Contratar a un jugador como independiente es gratis, pero solo puedes contratar independientes de la  posición que permite 0-16 jugadores de tu lista de equipo.
+                ]]>
+                </hire_player>
+                <hire_journeyman>
+                <![CDATA[
+                Contrata permanentemente a uno de tus independientes.
+                ]]>
+                </hire_journeyman>
+                <fire_player>
+                <![CDATA[
+                Despide a un jugador. Tasa de devolución:
+                ]]>
+                </fire_player>
+                <unbuy_player>
+                <![CDATA[
+                ¿Te arrepientes de contratar a un jugador?. Devolución del 100%.<br>
+                Esto es solo posible con jugadores que no han participado en ningún partido.
+                ]]>
+                </unbuy_player>
+                <rename_player>
+                <![CDATA[
+                Renombrar un jugador.
+                ]]>
+                </rename_player>
+                <renumber_player>
+                <![CDATA[
+                Renumerar un jugador.
+                ]]>
+                </renumber_player>
+                <rename_team>
+                <![CDATA[
+                Renombrar tu equipo.
+                ]]>
+                </rename_team>
+                <buy_goods>
+                <![CDATA[
+                Comprar bienes de equipo.
+                ]]>
+                </buy_goods>
+                <buy_goods_warn>
+                <![CDATA[
+                <br><br>Por favor, date cuenta de que el precio de las segundas oportunidades es actualmente el <font color='red'><b>doble</b></font>.<br>Si tu intención es comprar una segunda oportunidad al precio normal, compralo igualmente y pide a un administrador que ajuste tu tesorería.
+                ]]>
+                </buy_goods_warn>
+                <drop_goods>
+                <![CDATA[
+                Deshacerse de bienes de equipo sin recibir una devolución.
+                ]]>
+                </drop_goods>
+                <ready_state>
+                <![CDATA[
+                Este atributo advierte a otros entrenadores de que el equipo está interesado en jugar partidos.
+                ]]>
+                </ready_state>
+                <retire>
+                <![CDATA[
+                Retirar equipo.<br>Una vez retirado, no podrás gestionar el equipo.<br>Los administradores pueden traer de vuelta equipos retirados. El retiro tiene efecto inmediato, pero será visible por  primera vez <b>al recargar la página</b>.
+                ]]>
+                </retire>
+                <delete>
+                <![CDATA[
+                Borrar equipo.<br>Para mantener la integridad de las estadísticas, no se permite borrar equipos que hayan jugado partidos. El borrado tiene efecto inmediato, pero será visible por primera vez <b>al recargar la página</b>.
+                ]]>
+                </delete>
+            </desc>
+        </box_tm>
+        
+        <box_admin>
+            <title>Herramientas de administrador</title>
+
+            <unhire_journeyman>Un-hire journeymen</unhire_journeyman>
+            <unsell_player>Un-fire player</unsell_player>
+            <unbuy_goods>Un-buy team goods</unbuy_goods>
+            <bank>Gold bank</bank>
+            <chown>Change ownership</chown>
+            <spp>Manage extra player SPP</spp>
+            <dval>Manage extra player value</dval>
+            <extra_skills>Manage extra player skills</extra_skills>
+            <ach_skills>Remove ach. player skills</ach_skills>
+
+            <desc>
+                <unhire_journeyman>
+                <![CDATA[
+                Regret permanently hiring a journeyman.<br>
+                This only works on players from a 0-16 allowed position on your team's roster.
+                ]]>
+                </unhire_journeyman>
+                <unsell_player>
+                <![CDATA[
+                Regret firing a player.
+                ]]>
+                </unsell_player>
+                <unbuy_goods>
+                <![CDATA[
+                Regret buying team goods.
+                ]]>
+                </unbuy_goods>
+                <bank>
+                <![CDATA[
+                Make changes to team's treasury.
+                ]]>
+                </bank>
+                <chown>
+                <![CDATA[
+                Change this team's ownership.
+                ]]>
+                </chown>
+                <spp>
+                <![CDATA[
+                Manage a player's extra SPP.
+                ]]>
+                </spp>
+                <dval>
+                <![CDATA[
+                Change a player's value by a certain amount.
+                ]]>
+                </dval>
+                <extra_skills>
+                <![CDATA[
+                Manage a player's extra skills.
+                ]]>
+                </extra_skills>
+                <ach_skills>
+                <![CDATA[
+                Remove a players achieved skills. This makes the player able to rechoose a skill.
+                ]]>
+                </ach_skills>
+            </desc>
+        </box_admin>
+    </team>
+</profile>
+
+</es>
+
+</translations>

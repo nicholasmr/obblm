@@ -4,7 +4,7 @@
  * MySQL database settings 
  **************************/
 
-$db_name   = 'obblm';
+$db_name   = 'obblmdb';
 $db_user   = 'root';
 $db_passwd = '';
 $db_host   = 'localhost';
@@ -16,7 +16,7 @@ $db_host   = 'localhost';
 $settings['site_name'] = 'UNNAMED BBL';     // Name of the site or the league name if only one league is being managed.
 $settings['forum_url'] = 'http://localhost';// URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
 $settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
-$settings['lang'] = 'en-GB';                // Deafult language. Existing: en-GB.
+$settings['lang'] = 'en-GB';                // Deafult visitor language. Existing: en-GB, es.
 $settings['welcome'] = 'Please replace this line in your <i>settings</i> file with your own league greeting message.';
 
 $settings['entries'] = array(
