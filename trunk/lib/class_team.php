@@ -454,7 +454,31 @@ class Team
         return $teams;
     }
 
-    // Required passed fields used by create().
+    const T_CREATE_SUCCESS = 0;
+    const T_CREATE_ERROR__SQL_QUERY_FAIL = 1;
+    const T_CREATE_ERROR__UNEXPECTED_INPUT = 2;
+    const T_CREATE_ERROR__INVALID_RACE = 3;
+    const T_CREATE_ERROR__INVALID_COACH = 4;
+    const T_CREATE_ERROR__INVALID_NAME = 5;
+    const T_CREATE_ERROR__INVALID_LEAGUE = 6;
+    const T_CREATE_ERROR__INVALID_DIVISION = 7;
+
+    public static $T_CREATE_ERROR_MSGS = array(
+        self::T_CREATE_ERROR__SQL_QUERY_FAIL   => 'SQL query failed.',
+        self::T_CREATE_ERROR__UNEXPECTED_INPUT => 'Unexpected input.',
+        self::T_CREATE_ERROR__INVALID_RACE     => 'Illegal/invalid team race.',
+        self::T_CREATE_ERROR__INVALID_COACH    => 'Illegal/invalid parent coach ID.',
+        self::T_CREATE_ERROR__INVALID_NAME     => 'Illegal/invalid team name.',
+        self::T_CREATE_ERROR__INVALID_LEAGUE   => 'Illegal/invalid league ID.',
+        self::T_CREATE_ERROR__INVALID_DIVISION => 'Illegal/invalid division ID.',
+    );
+
+    public static $T_CREATE_SQL_ERROR = array(
+        'query' => null, # mysql fail query.
+        'error' => null, # mysql_error()
+    );
+
+    // Required passed fields (input) to create().
     public static $createEXPECTED = array(
         'name','owned_by_coach_id','f_race_id','f_lid','f_did',
         'treasury', 'apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders',
@@ -467,37 +491,38 @@ class Team
          * Creates a new team.
          **/
 
+        global $raceididx;
+
         $EXPECTED = self::$createEXPECTED;
         sort($EXPECTED);
         ksort($input);
-        if ($EXPECTED !== array_keys($input))
-            return false;
-
-        // Valid race? Does coach exist? Does team exist already? (Teams with identical names not allowed).
-        $coach_ring = get_alt_col('coaches', 'coach_id', $input['owned_by_coach_id'], 'ring'); # We use coach's ring later.
-        global $raceididx;
-        if (!in_array($input['f_race_id'], array_keys($raceididx))
-        || !isset($coach_ring) # Does coach ID exist?
-        || get_alt_col('teams', 'name', $input['name'], 'team_id')
-        || $input['f_did'] != self::T_NO_DIVISION_TIE && $input['f_lid'] != get_alt_col('divisions', 'did', $input['f_did'], 'f_lid'))  {
-            return false;
+        
+        $errors = array(
+            self::T_CREATE_ERROR__UNEXPECTED_INPUT => $EXPECTED !== array_keys($input),
+            self::T_CREATE_ERROR__INVALID_RACE     => !in_array((int) $input['f_race_id'], array_keys($raceididx)),
+            self::T_CREATE_ERROR__INVALID_COACH    => !get_alt_col('coaches', 'coach_id', (int) $input['owned_by_coach_id'], 'coach_id'),
+            self::T_CREATE_ERROR__INVALID_NAME     => get_alt_col('teams', 'name', mysql_real_escape_string($input['name']), 'team_id') || empty($input['name']),
+            self::T_CREATE_ERROR__INVALID_LEAGUE   => get_alt_col('coaches', 'coach_id', (int) $input['owned_by_coach_id'], 'ring') != Coach::T_RING_GLOBAL_ADMIN && 0 == (int) SQLFetchField("SELECT COUNT(*) FROM memberships WHERE lid = ".((int) $input['f_lid'])." AND cid = ".((int) $input['owned_by_coach_id'])." AND ring >= ".Coach::T_RING_LOCAL_REGULAR),
+            self::T_CREATE_ERROR__INVALID_DIVISION => $input['f_did'] != self::T_NO_DIVISION_TIE && $input['f_lid'] != get_alt_col('divisions', 'did', (int) $input['f_did'], 'f_lid'),
+        );
+        foreach ($errors as $exitStatus => $halt) {
+            if ($halt) return array($exitStatus, null);
         }
-        # Valid league chosen?
-        $result = mysql_query("SELECT COUNT(*) FROM memberships WHERE lid = $input[f_lid] AND cid = $input[owned_by_coach_id] AND ring >= ".Coach::T_RING_LOCAL_REGULAR);
-        list($cnt) = mysql_fetch_row($result);
-        if ($cnt < 1 && $coach_ring == Coach::T_RING_GLOBAL_NONE) {
-            return false;
-        }
-
-        // Data correction/preperation.
+            
         $input['name'] = "'".mysql_real_escape_string($input['name'])."'"; # Need to quote strings when using INSERT statement.
 
-        // Insert data.
         $query = "INSERT INTO teams (".implode(',',$EXPECTED).") VALUES (".implode(',', $input).")";
-        $ret = mysql_query($query);
-        $tid = mysql_insert_id();
+        if (mysql_query($query))
+            $tid = mysql_insert_id();
+        else {
+            self::$T_CREATE_SQL_ERROR['query'] = $query;
+            self::$T_CREATE_SQL_ERROR['error'] = mysql_error();
+            return array(self::T_CREATE_ERROR__SQL_QUERY_FAIL, null);
+        }
         
-        return ($ret && SQLTriggers::run(T_SQLTRIG_TEAM_NEW, array('id' => $tid, 'obj' => new self($tid)))) ? $tid : false;
+        SQLTriggers::run(T_SQLTRIG_TEAM_NEW, array('id' => $tid, 'obj' => new self($tid)));
+        
+        return array(self::T_CREATE_SUCCESS, $tid);
     }
 }
 ?>

@@ -91,7 +91,7 @@ $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
     Enable LRB6 rule set.
 
     IMPORTANT: If you decide to switch to LRB6 whilst using LRB5 you must:
-        - Go to the "Admin -> OBBLM core panel" menu and execute, in the below order:
+        - Go to the "Admin -> OBBLM core panel" menu and execute, in the below order (after setting the below "enable_lrb6" = true):
             * DB maitenance: Synchronise the PHP-stored BB game data (lib/game_data*.php files) with DB
             * DB synchronisation procedures: syncAll()
         - Be aware of, and manually correct, players with changed base stats (def. skills & def. characteristics) with illegal skills or characteristic values.

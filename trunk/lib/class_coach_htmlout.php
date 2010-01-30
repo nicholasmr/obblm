@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -160,7 +160,7 @@ private function _newTeam($ALLOW_EDIT)
         if (get_magic_quotes_gpc()) {
             $_POST['name'] = stripslashes($_POST['name']);
         }
-        status(Team::create(array(
+        list($exitStatus, $tid) = Team::create(array(
             'name' => $_POST['name'], 
             'owned_by_coach_id' => (int) $this->coach_id, 
             'f_race_id' => (int) $_POST['rid'], 
@@ -175,8 +175,8 @@ private function _newTeam($ALLOW_EDIT)
             'imported' => 0,
             'f_lid' => (int) $_POST['lid'],
             'f_did' => isset($_POST['did']) ? (int) $_POST['did'] : Team::T_NO_DIVISION_TIE,
-            ))
-        );
+            ));
+        status(!$exitStatus, $exitStatus ? Team::$T_CREATE_ERROR_MSGS[$exitStatus] : null);
     }
 
     // Show new team form.
