@@ -642,6 +642,16 @@ function set_list($table, $col, $val, $new_col, $new_val = array()) {
         return false;
 }
 
+function SQLFetchField($query) {
+    $result = mysql_query($query);
+    list($field) = ($result) ? mysql_fetch_row($result) : array(null);
+    return $field;
+}
+
+function SQLBoolEval($query) {
+    return (bool) SQLFetchField($query);
+}
+
 function setup_database() {
 
     global $core_tables;
