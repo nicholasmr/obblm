@@ -488,8 +488,8 @@ private function _stats()
                 echo "<tr><td>WIN%</td><td>".(sprintf("%1.1f", $this->rg_win_pct).'%')."</td></tr>\n";
                 echo "<tr><td>ELO</td><td>".(($this->rg_elo) ? sprintf("%1.2f", $this->rg_elo) : '<i>N/A</i>')."</td></tr>\n";
                 echo "<tr><td>W/L/D</td><td>$this->mv_won/$this->mv_lost/$this->mv_draw</td></tr>\n";
-                echo "<tr><td>W/L/D streaks</td><td>$this->mv_swon/$this->mv_slost/$this->mv_sdraw</td></tr>\n";
-                echo "<tr><td>Won tours</td><td>$this->wt_cnt</td></tr>\n";            
+                echo "<tr><td>W/L/D ".$lng->getTrn('common/streaks')."</td><td>$this->mv_swon/$this->mv_slost/$this->mv_sdraw</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('common/wontours')."</td><td>$this->wt_cnt</td></tr>\n";            
                 echo "<tr><td colspan='2'><hr></td></tr>";
                 $result = mysql_query("
                     SELECT 
@@ -502,13 +502,13 @@ private function _stats()
                         CAST(AVG(tv)/1000 AS SIGNED INT) AS 'avg_tv'
                     FROM teams WHERE owned_by_coach_id = $this->coach_id");
                 $row = mysql_fetch_assoc($result);
-                echo "<tr><td>Teams total</td><td>$row[teams_total]</td></tr>\n";
-                echo "<tr><td>Teams active</td><td>$row[teams_active]</td></tr>\n";
-                echo "<tr><td>Teams not ready</td><td>$row[teams_notready]</td></tr>\n";
-                echo "<tr><td>Teams retired</td><td>$row[teams_retired]</td></tr>\n";
-                echo "<tr><td>Average ELO per team</td><td>".(($row['avg_elo']) ? sprintf("%1.2f", $row['avg_elo']) : '<i>N/A</i>')."</td></tr>\n";
-                echo "<tr><td>Average TV per team</td><td>$row[avg_tv]</td></tr>\n";
-                echo "<tr><td>Average FF per team</td><td>$row[avg_ff]</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('profile/coach/teams_total')."</td><td>$row[teams_total]</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('profile/coach/teams_active')."</td><td>$row[teams_active]</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('profile/coach/teams_notready')."</td><td>$row[teams_notready]</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('profile/coach/teams_retired')."</td><td>$row[teams_retired]</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('profile/coach/avgteam_elo')."</td><td>".(($row['avg_elo']) ? sprintf("%1.2f", $row['avg_elo']) : '<i>N/A</i>')."</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('profile/coach/avgteam_tv')."</td><td>$row[avg_tv]</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('profile/coach/avgteam_ff')."</td><td>$row[avg_ff]</td></tr>\n";
                 ?>
                 </table>
             </div>
