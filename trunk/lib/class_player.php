@@ -775,7 +775,7 @@ class Player
             self::T_CREATE_ERROR__INSUFFICIENT_FUNDS => $team->treasury - ($price = ($JM || $FREE) ? 0 : self::price((int) $input['f_pos_id'])) < 0,
             self::T_CREATE_ERROR__INVALID_NUMBER     => !in_array($input['nr'], $T_ALL_PLAYER_NR),
             self::T_CREATE_ERROR__NUMBER_OCCUPIED    => $team->isPlayerNumberOccupied((int) $input['nr']),
-            self::T_CREATE_ERROR__JM_LIMIT_REACHED   => $team->isJMLimitReached(),
+            self::T_CREATE_ERROR__JM_LIMIT_REACHED   => $JM && $team->isJMLimitReached(),
             // Is position valid to make a journeyman? 
             // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
             self::T_CREATE_ERROR__INVALID_JM_POS     => $DEA[$team->f_rname]['players'][get_alt_col('game_data_players', 'pos_id', (int) $input['f_pos_id'], 'pos')]['qty'] < (($rules['enable_lrb6']) ? 12 : 16),
