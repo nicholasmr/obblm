@@ -317,13 +317,23 @@ class UPLOAD_BOTOCS implements ModuleInterface
             {
                 global $DEA;
                 $pos_id = $DEA[$team->f_rname]['players']['Zombie']['pos_id'];
-                // Note: "'forceCreate' => true" makes sure that the player creation was free of cost and skips all regular player $input rescritions.
-                $zombie_added = Player::create(array('nr' => $player['nr'], 'f_pos_id' => $pos_id, 'team_id' => $team_id, 'name' => $player['name'], 'forceCreate' => true) );
+                list($exitStatus, $pid) = Player::create(
+                    $input = array(
+                        'nr' => $player['nr'], 
+                        'f_pos_id' => $pos_id, 
+                        'team_id' => $team_id, 
+                        'name' => $player['name'], 
+                    ),
+                    $opts = array(
+                        'free' => true,
+                        'force' => true,
+                    )
+                );
 
-                if ( $zombie_added[0] )
+                if ( $exitStatus == Player::T_CREATE_SUCCESS )
                 {
                     $match->entry( 
-                        $pid = $zombie_added[1],
+                        $pid,
                         $input = array ( 
                             'f_team_id' => $team_id,
                             "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 

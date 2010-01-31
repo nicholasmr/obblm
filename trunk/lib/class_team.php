@@ -361,6 +361,15 @@ class Team
         
         return false;
     }
+    
+    public function isPlayerNumberOccupied($nr) {
+        return SQLBoolEval("SELECT COUNT(*) FROM players WHERE owned_by_team_id = $this->team_id AND nr = $nr AND date_sold IS NULL AND date_died IS NULL AND status != ".DEAD);
+    }
+    
+    public function isJMLimitReached() {
+        global $rules;
+        return ($rules['journeymen_limit'] <= (int) SQLFetchField("SELECT COUNT(*) FROM players WHERE owned_by_team_id = $this->team_id AND date_sold IS NULL AND date_died IS NULL AND status = ".NONE));
+    }
 
     public function getToursPlayedIn($ids_only = false)
     {

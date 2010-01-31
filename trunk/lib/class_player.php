@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -694,105 +694,116 @@ class Player
         return (int) $row[0];
     }
     
-    public static function create(array $input, $journeyman = false) {
+    const T_CREATE_SUCCESS = 0;
+    const T_CREATE_ERROR__SQL_QUERY_FAIL = 1;
+    const T_CREATE_ERROR__UNEXPECTED_INPUT = 2;
+    const T_CREATE_ERROR__INVALID_TEAM = 3;
+    const T_CREATE_ERROR__TEAM_FULL = 4;
+    const T_CREATE_ERROR__INVALID_POS = 5;
+    const T_CREATE_ERROR__POS_LIMIT_REACHED = 6;
+    const T_CREATE_ERROR__INSUFFICIENT_FUNDS = 7;
+    const T_CREATE_ERROR__INVALID_NUMBER = 8; # Player number.
+    const T_CREATE_ERROR__NUMBER_OCCUPIED = 9;
+    const T_CREATE_ERROR__JM_LIMIT_REACHED = 10;
+    const T_CREATE_ERROR__INVALID_JM_POS = 11;
+    
+
+    public static $T_CREATE_ERROR_MSGS = array(
+        self::T_CREATE_ERROR__SQL_QUERY_FAIL     => 'SQL query failed.',
+        self::T_CREATE_ERROR__UNEXPECTED_INPUT   => 'Unexpected input.',
+        self::T_CREATE_ERROR__INVALID_TEAM       => 'Illegal/invalid parent team ID.',
+        self::T_CREATE_ERROR__TEAM_FULL          => 'Team is full.',
+        self::T_CREATE_ERROR__INVALID_POS        => 'Illegal/invalid player position for parent team race.',
+        self::T_CREATE_ERROR__POS_LIMIT_REACHED  => 'Maximum quantity of player position is reached.',
+        self::T_CREATE_ERROR__INSUFFICIENT_FUNDS => 'Not enough gold.',
+        self::T_CREATE_ERROR__INVALID_NUMBER     => 'The chosen player number is not within the allowed range.',
+        self::T_CREATE_ERROR__NUMBER_OCCUPIED    => 'The chosen player number is already occupied by an active player.',
+        self::T_CREATE_ERROR__JM_LIMIT_REACHED   => 'Journeymen limit is reached.',
+        self::T_CREATE_ERROR__INVALID_JM_POS     => 'May not make a journeyman from that player position.',
+    );
+    
+    public static $T_CREATE_SQL_ERROR = array(
+        'query' => null, # mysql fail query.
+        'error' => null, # mysql_error()
+    );
+    
+    // Required passed fields (input) to create().
+    public static $createEXPECTED = array(
+        'name','team_id','nr','f_pos_id',
+    );
+    
+#    public static function create(array $input, $journeyman = false) {
+    public static function create(array $input, array $opts) {
 
         /**
          * Creates a new player.
          *
-         * Input: nr, f_pos_id, name, team_id, (optional) forceCreate
-         * Output: Returns array. First element: True/false, if false second element holds string containing error explanation.
+         * Input: nr, f_pos_id, name, team_id
          **/
 
         global $rules, $DEA, $T_ALL_PLAYER_NR;
-             
-        $team    = new Team($input['team_id']);
-        $players = $team->getPlayers();
-        $price   = $journeyman ? 0 : self::price($input['f_pos_id']);
+
+        // Do these fixes because we can't define class statics using string interpolation for $rules.
+        self::$T_CREATE_ERROR_MSGS[self::T_CREATE_ERROR__TEAM_FULL] .= " You have filled all $rules[max_team_players] available positions.";
+        self::$T_CREATE_ERROR_MSGS[self::T_CREATE_ERROR__JM_LIMIT_REACHED] .= " Your team is now able to fill $rules[journeymen_limit] positions.";
+
+        $JM = isset($opts['JM']) && $opts['JM'];
+        $FREE = isset($opts['free']) && $opts['free'];
+        $FORCE = isset($opts['force']) && $opts['force'];
         
-        // Ignore errors and force creation (used when importing teams)?
-        if (!array_key_exists('forceCreate', $input) || !$input['forceCreate']) {
-        
-            if ($journeyman) {
-                // Journeymen limit reached?
-                if (count(array_filter($players, create_function('$p', "return (\$p->is_sold || \$p->is_dead || \$p->is_mng) ? false : true;"))) >= $rules['journeymen_limit'])
-                    return array(false, "Journeymen limit is reached. Your team is able to fill $rules[journeymen_limit] positions.");
+        # When forcing ($FORCE is true) we ignore these errors:
+        $ignoreableErrors = array(
+            self::T_CREATE_ERROR__TEAM_FULL, self::T_CREATE_ERROR__POS_LIMIT_REACHED, self::T_CREATE_ERROR__INSUFFICIENT_FUNDS, 
+            self::T_CREATE_ERROR__NUMBER_OCCUPIED, self::T_CREATE_ERROR__JM_LIMIT_REACHED, self::T_CREATE_ERROR__INVALID_JM_POS,
+        );
 
-                // Is position valid to make a journeyman? 
-                // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
-                if ($DEA[$team->f_rname]['players'][get_alt_col('game_data_players', 'pos_id', $input['f_pos_id'], 'pos')]['qty'] < (($rules['enable_lrb6']) ? 12 : 16))
-                    return array(false, 'May not make a journeyman from that player position.');       
-            }
-            else {
-                // Team full?
-                if ($team->isFull())
-                    return array(false, "Team is full. You have filled all $rules[max_team_players] available positions.");
+        $EXPECTED = self::$createEXPECTED;
+        sort($EXPECTED);
+        ksort($input);
 
-                // Enough money?
-                if ($team->treasury - $price < 0)
-                    return array(false, 'Not enough money.');
+        // Input error handler
+        if (!get_alt_col('teams', 'team_id', (int) $input['team_id'], 'team_id'))
+            return array(self::T_CREATE_ERROR__INVALID_TEAM, null);
+        else
+            $team = new Team((int) $input['team_id']);
 
-                // Reached max quantity of player position?
-                if (!$team->isPlayerBuyable($input['f_pos_id']))
-                    return array(false, 'Maximum quantity of player position is reached or illegal choice of player position.');
-            }
-        }
-        
-        // Player number to large?
-        if (!in_array($input['nr'], $T_ALL_PLAYER_NR))
-            return array(false, 'Player number too large.');
-
-        // Player number already in use on team?
-        foreach ($players as $p) {
-            if ($p->nr == $input['nr'] && !$p->is_sold && !$p->is_dead) {
-                return array(false, 'Player number in use.');
-            }
+        $errors = array(
+            self::T_CREATE_ERROR__UNEXPECTED_INPUT   => $EXPECTED !== array_keys($input),
+            self::T_CREATE_ERROR__TEAM_FULL          => $team->isFull(),
+            self::T_CREATE_ERROR__INVALID_POS        => !$team->isPlayerPosValid((int) $input['f_pos_id']),
+            self::T_CREATE_ERROR__POS_LIMIT_REACHED  => !$team->isPlayerBuyable((int) $input['f_pos_id']),
+            self::T_CREATE_ERROR__INSUFFICIENT_FUNDS => $team->treasury - ($price = ($JM || $FREE) ? 0 : self::price((int) $input['f_pos_id'])) < 0,
+            self::T_CREATE_ERROR__INVALID_NUMBER     => !in_array($input['nr'], $T_ALL_PLAYER_NR),
+            self::T_CREATE_ERROR__NUMBER_OCCUPIED    => $team->isPlayerNumberOccupied((int) $input['nr']),
+            self::T_CREATE_ERROR__JM_LIMIT_REACHED   => $team->isJMLimitReached(),
+            // Is position valid to make a journeyman? 
+            // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
+            self::T_CREATE_ERROR__INVALID_JM_POS     => $DEA[$team->f_rname]['players'][get_alt_col('game_data_players', 'pos_id', (int) $input['f_pos_id'], 'pos')]['qty'] < (($rules['enable_lrb6']) ? 12 : 16),
+        );
+        foreach ($errors as $exitStatus => $halt) {
+            if ($halt && !($FORCE && in_array($exitStatus, $ignoreableErrors))) return array($exitStatus, null);
         }
 
-        // Withdraw the gold.
-        if (!$team->dtreasury(-1 * $price))
-            return array(false, 'Failed to withdraw money from treasury.');
+        $input['owned_by_team_id'] = (int) $input['team_id']; unset($input['team_id']);
+        $input['name'] = "'".mysql_real_escape_string($input['name'])."'"; 
+        $input['date_bought'] = 'NOW()';
+        $input['type'] = $JM ? PLAYER_TYPE_JOURNEY : PLAYER_TYPE_NORMAL;
+        foreach (array('ach_ma', 'ach_st', 'ach_ag', 'ach_av', 'extra_spp') as $f) {$input[$f] = 0;}
 
-        // Add player to team.
-        $query = "INSERT INTO players
-                    (
-                        name,
-                        type,
-                        owned_by_team_id,
-                        nr,
-                        f_pos_id,
-                        date_bought,
-                        ach_ma,
-                        ach_st,
-                        ach_ag,
-                        ach_av,
-                        extra_spp
-                    )
-                    VALUES
-                    (
-                        '" . mysql_real_escape_string($input['name']) . "', 
-                        " . ($journeyman ? PLAYER_TYPE_JOURNEY : PLAYER_TYPE_NORMAL ) . ",
-                        $input[team_id], 
-                        $input[nr], 
-                        $input[f_pos_id], 
-                        NOW(), 
-
-                        0, 0, 0, 0,
-                        0
-                    )";
-
-        if (!mysql_query($query)) {
-
-            // If execution made it here, the team needs its money back before returning an error.
-            if (!$team->dtreasury($price))
-                return array(false, 'Could not acquire new player and failed to pay money back to team! Please contact an admin.');
-
-            return array(false, 'MySQL error: Could not add new player to team.'); // Gold was returned to team's treasury.
+        $query = "INSERT INTO teams (".implode(',',array_keys($input)).") VALUES (".implode(',', array_values($input)).")";
+        if (mysql_query($query)) {
+            $pid = mysql_insert_id();
+            $team->dtreasury(-1 * $price);
         }
+        else {
+            self::$T_CREATE_SQL_ERROR['query'] = $query;
+            self::$T_CREATE_SQL_ERROR['error'] = mysql_error();
+            return array(self::T_CREATE_ERROR__SQL_QUERY_FAIL, null);
+        }
+
+        SQLTriggers::run(T_SQLTRIG_PLAYER_NEW, array('id' => $pid, 'obj' => (object) array('player_id' => $pid, 'owned_by_team_id' => (int) $input['owned_by_team_id']))); # Update PV and TV.
         
-        // Return player ID if successful.
-        $pid = (int) mysql_insert_id();
-        SQLTriggers::run(T_SQLTRIG_PLAYER_NEW, array('id' => $pid, 'obj' => (object) array('player_id' => $pid, 'owned_by_team_id' => $input['team_id']))); # Update PV and TV.
-        return array(true, $pid);
+        return array(self::T_CREATE_SUCCESS, $pid);
     }
 }
 

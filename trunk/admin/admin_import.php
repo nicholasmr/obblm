@@ -53,8 +53,9 @@ if (isset($_FILES['xmlfile'])) {
                 }
                 
                 list($status1, $pid) = Player::create(array(
-                    'nr' => $p->nr, 'f_pos_id' => $p->pos_id, 'name' => $p->name, 'team_id' => $tid, 'forceCreate' => true,
-                ));
+                    'nr' => $p->nr, 'f_pos_id' => $p->pos_id, 'name' => $p->name, 'team_id' => $tid
+                    ), array('force' => true, 'free' => true)
+                );
                 $status2 = true;
                 if ($status1) {
                     # The status must be set as the "inj" (not agn) field for EVERY match (import) entry. 

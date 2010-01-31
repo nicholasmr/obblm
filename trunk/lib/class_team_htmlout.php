@@ -199,13 +199,18 @@ private function _handleActions($ALLOW_EDIT)
     switch ($_POST['type']) {
 
         case 'hire_player':
-            $status = Player::create(array(
-                'nr'        => $_POST['number'], 
-                'f_pos_id'  => $_POST['player'], 
-                'team_id'   => $team->team_id, 
-                'name'      => $_POST['name']),
-                (isset($_POST['as_journeyman']) && $_POST['as_journeyman']) ? true : false);
-            status($status[0], (($status[0] == true) ? null : $status[1]));
+            list($exitStatus, $pid) = Player::create(
+                array(
+                    'nr'        => $_POST['number'], 
+                    'f_pos_id'  => $_POST['player'], 
+                    'team_id'   => $team->team_id, 
+                    'name'      => $_POST['name']
+                ),
+                array(
+                    'JM' => isset($_POST['as_journeyman']) && $_POST['as_journeyman']
+                )
+            );
+            status(!$exitStatus, $exitStatus ? Player::$T_CREATE_ERROR_MSGS[$exitStatus] : null);
             break;
 
         case 'hire_journeyman': status($p->hireJourneyman()); break;

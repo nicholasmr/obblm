@@ -249,7 +249,16 @@ public static function report() {
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
             if (in_array($t->f_race_id, $racesHasNecromancer) && isset($_POST["t${id}zombie"])) {
                 $pos_id = $DEA[$t->f_rname]['players']['Zombie']['pos_id'];
-                list(,$pid) = Player::create(array('nr' => $t->getFreePlayerNr(), 'f_pos_id' => $pos_id, 'team_id' => $t->team_id, 'name' => 'RAISED ZOMBIE', 'forceCreate' => true));
+                list($exitStatus,$pid) = Player::create(
+                    array(
+                        'nr' => $t->getFreePlayerNr(), 
+                        'f_pos_id' => $pos_id, 
+                        'team_id' => $t->team_id, 
+                        'name' => 'RAISED ZOMBIE'
+                    ), 
+                    array(
+                        'free' => true,
+                    ));
                 /* 
                     Knowing the new zombie's PID we relocate the zombie match data to regular player data - this allows us 
                     to use the same loop for submitting the zombie's match data.
