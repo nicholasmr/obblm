@@ -656,15 +656,23 @@ public static function installProcsAndFuncs($install = true)
             READS SQL DATA
         BEGIN
             IF obj = '.T_OBJ_TEAM.' THEN 
-                RETURN (SELECT 100*IFNULL(SUM(won)/SUM(played),0) FROM mv_teams WHERE f_tid = obj_id);
+                RETURN (SELECT winPct(SUM(won),SUM(lost),SUM(draw),SUM(played)) FROM mv_teams WHERE f_tid = obj_id);
             ELSEIF obj = '.T_OBJ_COACH.' THEN 
-                RETURN (SELECT 100*IFNULL(SUM(won)/SUM(played),0) FROM mv_coaches WHERE f_cid = obj_id);
+                RETURN (SELECT winPct(SUM(won),SUM(lost),SUM(draw),SUM(played)) FROM mv_coaches WHERE f_cid = obj_id);
             ELSEIF obj = '.T_OBJ_RACE.' THEN 
-                RETURN (SELECT 100*IFNULL(SUM(won)/SUM(played),0) FROM mv_races WHERE f_rid = obj_id);
+                RETURN (SELECT winPct(SUM(won),SUM(lost),SUM(draw),SUM(played)) FROM mv_races WHERE f_rid = obj_id);
             ELSEIF (obj = '.T_OBJ_PLAYER.' OR obj = '.T_OBJ_STAR.') THEN 
-                RETURN (SELECT 100*IFNULL(SUM(won)/SUM(played),0) FROM mv_players WHERE f_pid = obj_id);
+                RETURN (SELECT winPct(SUM(won),SUM(lost),SUM(draw),SUM(played)) FROM mv_players WHERE f_pid = obj_id);
             END IF;
-        END',        
+        END', 
+        
+        'CREATE FUNCTION winPct(won INT UNSIGNED, lost INT UNSIGNED, draw INT UNSIGNED, played INT UNSIGNED)
+            RETURNS '.$CT_cols['win_pct'].'
+            DETERMINISTIC
+            NO SQL
+        BEGIN
+            RETURN IFNULL(100*(won+draw/2)/played,0);
+        END', 
 
         /* 
          *  Object relations
@@ -827,7 +835,7 @@ public static function installProcsAndFuncs($install = true)
             ELSE
                 UPDATE mv_players '.$mstat_fields_stars.' WHERE f_pid = pid AND f_trid = trid;
             END IF;
-            UPDATE mv_players SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_pid = pid AND f_trid = trid;
+            UPDATE mv_players SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_pid = pid AND f_trid = trid;
             
             /* ES */
             DELETE FROM mv_es_players WHERE f_pid = pid AND f_trid = trid; 
@@ -858,7 +866,7 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data 
                 WHERE match_data.f_team_id = tid AND match_data.f_tour_id = trid;
             UPDATE mv_teams '.$mstat_fields_team.' WHERE f_tid = tid AND f_trid = trid;
-            UPDATE mv_teams SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_tid = tid AND f_trid = trid;
+            UPDATE mv_teams SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_tid = tid AND f_trid = trid;
             UPDATE mv_teams SET pts = getPTS(f_tid, f_trid) WHERE f_tid = tid AND f_trid = trid;
 
             /* ES */
@@ -887,7 +895,7 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data
                 WHERE match_data.f_coach_id = cid AND match_data.f_tour_id = trid;
             UPDATE mv_coaches '.$mstat_fields_coach.' WHERE f_cid = cid AND f_trid = trid;
-            UPDATE mv_coaches SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_cid = cid AND f_trid = trid;
+            UPDATE mv_coaches SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_cid = cid AND f_trid = trid;
 
             /* ES */
             DELETE FROM mv_es_coaches WHERE f_cid = cid AND f_trid = trid; 
@@ -915,7 +923,7 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data
                 WHERE match_data.f_race_id = rid AND match_data.f_tour_id = trid;
             UPDATE mv_races '.$mstat_fields_race.' WHERE f_rid = rid AND f_trid = trid;
-            UPDATE mv_races SET win_pct = IF(played = 0, 0, 100*won/played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_rid = rid AND f_trid = trid;
+            UPDATE mv_races SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_rid = rid AND f_trid = trid;
 
             /* ES */
             DELETE FROM mv_es_races WHERE f_rid = rid AND f_trid = trid; 

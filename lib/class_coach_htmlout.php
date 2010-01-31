@@ -494,7 +494,8 @@ private function _stats()
                 $result = mysql_query("
                     SELECT 
                         COUNT(*) AS 'teams_total', 
-                        SUM(IF(rdy IS TRUE,1,0)) AS 'teams_active', 
+                        SUM(IF(rdy IS TRUE AND retired IS FALSE,1,0)) AS 'teams_active', 
+                        SUM(IF(rdy IS FALSE,1,0)) AS 'teams_notready',
                         SUM(IF(retired IS TRUE,1,0)) AS 'teams_retired',
                         AVG(elo) AS 'avg_elo',
                         CAST(AVG(ff) AS SIGNED INT) AS 'avg_ff',
@@ -503,6 +504,7 @@ private function _stats()
                 $row = mysql_fetch_assoc($result);
                 echo "<tr><td>Teams total</td><td>$row[teams_total]</td></tr>\n";
                 echo "<tr><td>Teams active</td><td>$row[teams_active]</td></tr>\n";
+                echo "<tr><td>Teams not ready</td><td>$row[teams_notready]</td></tr>\n";
                 echo "<tr><td>Teams retired</td><td>$row[teams_retired]</td></tr>\n";
                 echo "<tr><td>Average ELO per team</td><td>".(($row['avg_elo']) ? sprintf("%1.2f", $row['avg_elo']) : '<i>N/A</i>')."</td></tr>\n";
                 echo "<tr><td>Average TV per team</td><td>$row[avg_tv]</td></tr>\n";
