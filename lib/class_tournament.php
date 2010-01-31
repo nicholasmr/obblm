@@ -121,7 +121,7 @@ class Tour
 
     public function getRSSortRule() {
         global $hrs;
-        return $hrs[$this->rs]['rule'];
+        return isset($hrs[$this->rs]) ? $hrs[$this->rs]['rule'] : array();
     }
     
     public function isRSWithPoints() {

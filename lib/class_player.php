@@ -732,7 +732,6 @@ class Player
         'name','team_id','nr','f_pos_id',
     );
     
-#    public static function create(array $input, $journeyman = false) {
     public static function create(array $input, array $opts) {
 
         /**

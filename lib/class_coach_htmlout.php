@@ -281,7 +281,7 @@ private function _CCprofile($ALLOW_EDIT)
             case 'chname':      status($this->setRealName($_POST['new_realname'])); break;
             case 'chtheme':     status($this->setSetting('theme', (int) $_POST['new_theme'])); break;
             case 'chlang':      status($this->setSetting('lang', $_POST['new_lang'])); break;
-            case 'chhomelid':   status($this->setSetting('home_lid', $_POST['new_homelid'])); break;
+            case 'chhomelid':   status(isset($_POST['new_homelid']) && get_alt_col('leagues', 'lid', (int) $_POST['new_homelid'], 'lid') && $this->setSetting('home_lid', $_POST['new_homelid'])); break;
 
             case 'pic':         status($this->savePic(false)); break;
             case 'coachtext':
@@ -428,7 +428,7 @@ private function _CCprofile($ALLOW_EDIT)
                         ?>
                     </select>
                 </td>
-                <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chhomelid');?>"></td>
+                <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chhomelid');?>" <?php echo (count($leagues) == 0) ? 'DISABLED' : '';?>></td>
                 <input type='hidden' name='type' value='chhomelid'>
                 </form>
             </tr>
@@ -494,12 +494,12 @@ private function _stats()
                 $result = mysql_query("
                     SELECT 
                         COUNT(*) AS 'teams_total', 
-                        SUM(IF(rdy IS TRUE AND retired IS FALSE,1,0)) AS 'teams_active', 
-                        SUM(IF(rdy IS FALSE,1,0)) AS 'teams_notready',
-                        SUM(IF(retired IS TRUE,1,0)) AS 'teams_retired',
-                        AVG(elo) AS 'avg_elo',
-                        CAST(AVG(ff) AS SIGNED INT) AS 'avg_ff',
-                        CAST(AVG(tv)/1000 AS SIGNED INT) AS 'avg_tv'
+                        IFNULL(SUM(IF(rdy IS TRUE AND retired IS FALSE,1,0)),0) AS 'teams_active', 
+                        IFNULL(SUM(IF(rdy IS FALSE,1,0)),0) AS 'teams_notready',
+                        IFNULL(SUM(IF(retired IS TRUE,1,0)),0) AS 'teams_retired',
+                        IFNULL(AVG(elo),0) AS 'avg_elo',
+                        IFNULL(CAST(AVG(ff) AS SIGNED INT),0) AS 'avg_ff',
+                        IFNULL(CAST(AVG(tv)/1000 AS SIGNED INT),0) AS 'avg_tv'
                     FROM teams WHERE owned_by_coach_id = $this->coach_id");
                 $row = mysql_fetch_assoc($result);
                 echo "<tr><td>".$lng->getTrn('profile/coach/teams_total')."</td><td>$row[teams_total]</td></tr>\n";

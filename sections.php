@@ -266,7 +266,7 @@ function sec_main() {
                         foreach (Match::getMatches($settings['entries']['latestgames'], T_NODE_LEAGUE, $sel_lid, false) as $m) {
                             $home   = ($m->stadium == $m->team1_id) ? 'team1' : 'team2';
                             $guest  = ($home == 'team1') ? 'team2' : 'team1';
-                            echo "<tr>\n";
+                            echo "<tr valign='top'>\n";
                             echo "<td style='text-align: right;'>" . $m->{"{$home}_name"} . "</td>\n";
                             echo "<td><nobr>" . $m->{"${home}_score"} . "&mdash;" . $m->{"${guest}_score"} . "</nobr></td>\n";
                             echo "<td style='text-align: left;'>" . $m->{"${guest}_name"} . "</td>\n";
