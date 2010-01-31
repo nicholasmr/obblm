@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 
 /*
  *  Copyright (c) William Leonard <email protected> 2009. All Rights Reserved.
@@ -257,7 +257,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             {
                 global $stars;
                 $stname = strval($player['name']);
-                if ( $stname == "Morg â€˜nâ€™ Thorg" ) $stname = "Morg 'n' Thorg";
+                if ( $stname == "Morg ‘n’ Thorg" ) $stname = "Morg 'n' Thorg";
                 $f_player_id = $stars[$stname]['id'];
                 $player['inj'] = '';
             }
