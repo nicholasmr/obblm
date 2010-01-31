@@ -46,17 +46,17 @@ public static function profile($rid)
         $players[] = $p;
     }
     $fields = array(
-        'position'  => array('desc' => 'Position'),
+        'position'  => array('desc' => $lng->getTrn('common/pos')),
         'pos_id'    => array('desc' => 'ID'),
         'ma'        => array('desc' => 'Ma'),
         'st'        => array('desc' => 'St'),
         'ag'        => array('desc' => 'Ag'),
         'av'        => array('desc' => 'Av'),
-        'skills'    => array('desc' => 'Skills', 'nosort' => true),
+        'skills'    => array('desc' => $lng->getTrn('common/skills'), 'nosort' => true),
         'N'         => array('desc' => 'Normal', 'nosort' => true),
         'D'         => array('desc' => 'Double', 'nosort' => true),
-        'cost'      => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'),
-        'qty'       => array('desc' => 'Max.'),
+        'cost'      => array('desc' => $lng->getTrn('common/price'), 'kilo' => true, 'suffix' => 'k'),
+        'qty'       => array('desc' => 'Max. qty'),
     );
     HTMLOUT::sort_table(
         'Roster',

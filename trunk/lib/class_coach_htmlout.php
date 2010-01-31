@@ -70,9 +70,9 @@ public static function dispTeamList()
     $_url = "?section=coachlist&amp;";
     echo '<br><center><table>';
     echo '<tr><td>';
-    echo 'Page: '.implode(', ', array_map(create_function('$nr', 'global $page; return ($nr == $page) ? $nr : "<a href=\''.$_url.'page=$nr\'>$nr</a>";'), range(1,$pages)));
+    echo $lng->getTrn('common/page').': '.implode(', ', array_map(create_function('$nr', 'global $page; return ($nr == $page) ? $nr : "<a href=\''.$_url.'page=$nr\'>$nr</a>";'), range(1,$pages)));
     echo '</td></td>';
-    echo "<tr><td>Coaches: $cnt</td></td>";
+    echo "<tr><td>".$lng->getTrn('common/coaches').": $cnt</td></td>";
     echo '</table></center><br>';
     $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') LIMIT '.(($page-1)*T_HTML_COACHES_PER_PAGE).', '.(($page)*T_HTML_COACHES_PER_PAGE);
     
@@ -84,13 +84,13 @@ public static function dispTeamList()
     }
 
     $fields = array(
-        'name'    => array('desc' => 'Name', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
-        'team_cnt' => array('desc' => 'Teams', 'nosort' => true),
-        'retired' => array('desc' => 'Retired', 'nosort' => true),
+        'name'    => array('desc' => $lng->getTrn('common/name'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
+        'team_cnt' => array('desc' => $lng->getTrn('common/teams'), 'nosort' => true),
+        'retired' => array('desc' => $lng->getTrn('common/retired'), 'nosort' => true),
     );
 
     HTMLOUT::sort_table(
-        "Coaches",
+        $lng->getTrn('common/coaches'),
         "index.php$_url",
         $coaches,
         $fields,
@@ -480,7 +480,7 @@ private function _stats()
     ?>
     <div class="row">
         <div class="boxCoachPage">
-            <h3 class='boxTitle1'>General</h3>
+            <h3 class='boxTitle1'><?php echo $lng->getTrn('common/general'); ?></h3>
             <div class='boxBody'>
                 <table class="boxTable">
                 <?php
@@ -514,7 +514,7 @@ private function _stats()
             </div>
         </div>
         <div class="boxCoachPage">
-            <h3 class='boxTitle1'>Achievements</h3>
+            <h3 class='boxTitle1'><?php echo $lng->getTrn('common/ach'); ?></h3>
             <div class='boxBody'>
                 <table class="boxTable">
                 <?php
@@ -533,7 +533,7 @@ private function _stats()
                 );
                 $thisAVG = clone $this;
                 $thisAVG->setStats(false, false, true);
-                echo "<tr><td>Ach.</td> <td>Amount</td> <td>Avg. per match</td></tr>\n";
+                echo "<tr><td>".$lng->getTrn('common/stat')."</td> <td>".$lng->getTrn('common/amount')."</td> <td>".$lng->getTrn('common/matchavg')."</td></tr>\n";
                 echo "<tr><td colspan='5'><hr></td></tr>\n";
                 foreach ($stats as $name => $d) {
                     echo "<tr><td><i>$name</i></td>";
@@ -551,7 +551,7 @@ private function _stats()
     <br>
     <div class="row">
         <div class="boxWide">
-            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;ES</div>
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/extrastats'); ?></div>
             <div class="boxBody" id="ES">
                 <?php
                 HTMLOUT::generateEStable($this);

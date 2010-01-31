@@ -68,15 +68,15 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
     }
 
     $fields = array(
-        'date_played' => array('desc' => 'Date played'),
-        'tour_name'   => array('desc' => 'Tournament'),
-        'team1_name'  => array('desc' => 'Home', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id')),
-        'team2_name'  => array('desc' => 'Away', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id')),
-        'gate'        => array('desc' => 'Gate', 'kilo' => true, 'suffix' => 'k', 'href' => false),
-        'score'       => array('desc' => 'Score', 'nosort' => true),
+        'date_played' => array('desc' => $lng->getTrn('common/dateplayed')),
+        'tour_name'   => array('desc' => $lng->getTrn('common/tournament')),
+        'team1_name'  => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id')),
+        'team2_name'  => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id')),
+        'gate'        => array('desc' => $lng->getTrn('common/gate'), 'kilo' => true, 'suffix' => 'k', 'href' => false),
+        'score'       => array('desc' => $lng->getTrn('common/score'), 'nosort' => true),
     );
-    if ($FOR_OBJ) {$fields['result'] = array('desc' => 'Result', 'nosort' => true);}
-    $fields['mlink'] = array('desc' => 'Match', 'nosort' => true); # Must be last!
+    if ($FOR_OBJ) {$fields['result'] = array('desc' => $lng->getTrn('common/result'), 'nosort' => true);}
+    $fields['mlink'] = array('desc' => $lng->getTrn('common/match'), 'nosort' => true); # Must be last!
 
     HTMLOUT::sort_table(
         $lng->getTrn('common/recentmatches'),
@@ -119,11 +119,11 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
     }
 
     $fields = array(
-        'date_created'      => array('desc' => 'Date created'),
-        'tour_name'         => array('desc' => 'Tournament'),
-        'team1_name'        => array('desc' => 'Home', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id')),
-        'team2_name'        => array('desc' => 'Away', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id')),
-        'mlink'             => array('desc' => 'Match', 'nosort' => true),
+        'date_created'      => array('desc' => $lng->getTrn('common/datecreated')),
+        'tour_name'         => array('desc' => $lng->getTrn('common/tournament')),
+        'team1_name'        => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id')),
+        'team2_name'        => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id')),
+        'mlink'             => array('desc' => $lng->getTrn('common/match'), 'nosort' => true),
     );
 
     HTMLOUT::sort_table(
@@ -236,15 +236,15 @@ public static function standings($obj, $node, $node_id, array $opts)
     switch ($obj)
     {
         case STATS_PLAYER:
-            $tblTitle = 'Player standings';
+            $tblTitle = $lng->getTrn('menu/statistics_menu/player_stn');
             $fields_before = array(
-                'name'    => array('desc' => 'Player', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
-                'f_tname' => array('desc' => 'Team',   'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_team_id')),
+                'name'    => array('desc' => $lng->getTrn('common/player'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
+                'f_tname' => array('desc' => $lng->getTrn('common/team'),   'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_team_id')),
             );
             $fields_after = array(
                 'mv_mvp' => array('desc' => 'MVP'),
                 'mv_spp' => array('desc' => 'SPP'),
-                'value'  => array('desc' => 'Value', 'nosort' => !$ALL_TIME, 'kilo' => true, 'suffix' => 'k'),
+                'value'  => array('desc' => $lng->getTrn('common/value'), 'nosort' => !$ALL_TIME, 'kilo' => true, 'suffix' => 'k'),
             );
             foreach (array('won', 'lost', 'draw') as $f) {
                 unset($fields["rg_s$f"]);
@@ -254,10 +254,10 @@ public static function standings($obj, $node, $node_id, array $opts)
             break;
 
         case STATS_TEAM:
-            $tblTitle = 'Team standings';
+            $tblTitle = $lng->getTrn('menu/statistics_menu/team_stn');
             $fields_before = array(
-                'name' => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
-                'tv' => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),                
+                'name' => array('desc' => $lng->getTrn('common/name'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+                'tv' => array('desc' => $lng->getTrn('common/value'), 'kilo' => true, 'suffix' => 'k'),                
             );
             $fields_after = array(
                 'mv_tcas' => array('desc' => 'tcas'), 
@@ -281,12 +281,12 @@ public static function standings($obj, $node, $node_id, array $opts)
             switch ((array_key_exists('teams_from', $opts)) ? $opts['teams_from'] : false)
             {
                 case T_OBJ_COACH:
-                    $fields_before['f_rname'] = array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
+                    $fields_before['f_rname'] = array('desc' => $lng->getTrn('common/race'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
                     $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_race+array(T_OBJ_COACH => (int) $opts['teams_from_id']), false, $sortRule, $set_avg);
                     break;
 
                 case T_OBJ_RACE:
-                    $fields_before['f_cname'] = array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
+                    $fields_before['f_cname'] = array('desc' => $lng->getTrn('common/coach'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
                     $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+array(T_OBJ_RACE => (int) $opts['teams_from_id']), $settings['entries']['standings_teams'], $sortRule, $set_avg);
                     break;
 
@@ -297,17 +297,17 @@ public static function standings($obj, $node, $node_id, array $opts)
             break;
 
         case STATS_RACE:
-            $tblTitle = 'Race standings';
+            $tblTitle = $lng->getTrn('menu/statistics_menu/race_stn');
             $fields_before = array(
-                'name' => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'race_id')),
+                'name' => array('desc' => $lng->getTrn('common/race'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'race_id')),
             );
             $dash_empty = false;
             if ($sel_node == T_NODE_TOURNAMENT) {
-                $fields_before['mv_team_cnt'] = array('desc' => 'Teams');
+                $fields_before['mv_team_cnt'] = array('desc' => $lng->getTrn('common/teams'));
                 $dash_empty = 'mv_team_cnt';
             }
             else if ($ALL_TIME) {
-                $fields_before['rg_team_cnt'] = array('desc' => 'Teams');
+                $fields_before['rg_team_cnt'] = array('desc' => $lng->getTrn('common/teams'));
                 $dash_empty = 'rg_team_cnt';
             }
             if ($dash_empty) {
@@ -322,19 +322,19 @@ public static function standings($obj, $node, $node_id, array $opts)
             break;
 
         case STATS_COACH:
-            $tblTitle = 'Coaches standings';
+            $tblTitle = $lng->getTrn('menu/statistics_menu/coach_stn');
             $fields_before = array(
-                'name' => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
+                'name' => array('desc' => $lng->getTrn('common/coach'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
             );
             $fields_after = array(
             	'mv_smp' => array('desc' => 'SMP'),
             );
             if ($sel_node == T_NODE_TOURNAMENT) {
-                $fields_before['mv_team_cnt'] = array('desc' => 'Teams');
+                $fields_before['mv_team_cnt'] = array('desc' => $lng->getTrn('common/teams'));
                 $fields_after['mv_elo'] = array('desc' => 'ELO');
             }
             else if ($ALL_TIME) {
-                $fields_before['rg_team_cnt'] = array('desc' => 'Teams');
+                $fields_before['rg_team_cnt'] = array('desc' => $lng->getTrn('common/teams'));
                 $fields_after['rg_elo'] = array('desc' => 'ELO');
             }
             $objs = Stats::getRaw(T_OBJ_COACH, $filter_node, $settings['entries']['standings_coaches'], $sortRule, $set_avg);
@@ -343,9 +343,9 @@ public static function standings($obj, $node, $node_id, array $opts)
             break;
 
         case STATS_STAR:
-            $tblTitle = 'Star standings';
+            $tblTitle = $lng->getTrn('menu/statistics_menu/star_stn');
             $fields_before = array(
-                'name' => array('desc' => 'Star', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_STAR,false,false,false), 'field' => 'obj_id', 'value' => 'star_id')),
+                'name' => array('desc' => $lng->getTrn('common/star'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_STAR,false,false,false), 'field' => 'obj_id', 'value' => 'star_id')),
                 // Statics
                 'cost'   => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'),
                 'ma'     => array('desc' => 'Ma'),
@@ -700,7 +700,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             noHelp => true/false. Will enable/disable help link [?].
             noSRdisp => true/false. Will force not to show the table sort rule used/parsed.
     */
-    global $settings;
+    global $settings, $lng;
 
     if (array_key_exists('remove', $extra)) {
         $objs = array_filter($objs, create_function('$obj', 'return ($obj->'.$extra['remove']['condField'].' != '.$extra['remove']['fieldVal'].');'));
@@ -818,7 +818,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
         </tr>
         <tr>
             <td align="right" colspan="<?php echo $CP;?>">
-            <i>Sorted against: <?php echo implode(', ', rule_dict($MASTER_SORT));?></i>
+            <i><?php echo $lng->getTrn('common/sortedagainst');?>: <?php echo implode(', ', rule_dict($MASTER_SORT));?></i>
             </td>
         </tr>
         <?php
@@ -828,9 +828,12 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
 
 public static function generateEStable($obj)
 {
-    global $ES_fields;
+    global $ES_fields, $lng;
     echo "<table>\n";
-    echo "<tr><td><i>Stat</i></td> <td><i>Total</i></td> <td>&nbsp;<i>Match&nbsp;avg.</i>&nbsp;</td> <td><i>Description</i></td></tr>\n";
+    echo "<tr><td><i>".$lng->getTrn('common/stat')."</i></td> 
+        <td><i>".$lng->getTrn('common/alltime')."</i></td> 
+        <td>&nbsp;<i>".$lng->getTrn('common/matchavg')."</i>&nbsp;</td> 
+        <td><i>".$lng->getTrn('common/desc')."</i></td></tr>\n";
             echo "<tr><td colspan='4'><hr></td></tr>\n";    
     $grp = null;
     $objAVG = clone $obj;

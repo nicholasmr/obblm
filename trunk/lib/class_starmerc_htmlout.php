@@ -30,8 +30,8 @@ public function profile($sid)
     $s = new self($sid);
     title($s->name);
     echo '<center><a href="'.urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false).'">'.$lng->getTrn('common/back').'</a></center><br><br>';
-    echo "<b>Skills:</b> ".skillsTrans($s->skills)."<br><br>";
-    echo "<b>Races:</b> ".racesTrans($s->races)."<br><br>";
+    echo "<b>".$lng->getTrn('common/skills').":</b> ".skillsTrans($s->skills)."<br><br>";
+    echo "<b>".$lng->getTrn('common/races').":</b> ".racesTrans($s->races)."<br><br>";
     self::starHireHistory(false, false, false, false, $s->star_id, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_STAR, $s->star_id,false,false)));
 }
 
@@ -69,7 +69,7 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
             foreach ($s->getStats(T_NODE_MATCH,$m->match_id) as $k => $v) {
                 $o->$k = $v;
             }
-            $o->match = '[view]';
+            $o->match = $lng->getTrn('common/view');
             $o->tour = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
             $o->score = "$m->team1_score - $m->team2_score";
             $o->result = matchresult_icon(
@@ -86,9 +86,9 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
         }
     }
     $fields = array(
-        'date_played'       => array('desc' => 'Hire date'),
-        'name'              => array('desc' => 'Star', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_STAR,false,false,false), 'field' => 'obj_id', 'value' => 'star_id')),
-        'tour'              => array('desc' => 'Tournament'),
+        'date_played'       => array('desc' => $lng->getTrn('common/dateplayed')),
+        'name'              => array('desc' => $lng->getTrn('common/star'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_STAR,false,false,false), 'field' => 'obj_id', 'value' => 'star_id')),
+        'tour'              => array('desc' => $lng->getTrn('common/tournament')),
         'hiredByName'       => array('desc' => 'Hired by',      'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'hiredBy')),
         'hiredAgainstName'  => array('desc' => 'Opponent team', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'hiredAgainst')),
         'cp'     => array('desc' => 'Cp'),
@@ -99,9 +99,9 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
         'si'     => array('desc' => 'Si'),
         'ki'     => array('desc' => 'Ki'),
         'mvp'    => array('desc' => 'MVP'),
-        'score'  => array('desc' => 'Score', 'nosort' => true),
-        'result' => array('desc' => 'Result', 'nosort' => true),
-        'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true),
+        'score'  => array('desc' => $lng->getTrn('common/score'), 'nosort' => true),
+        'result' => array('desc' => $lng->getTrn('common/result'), 'nosort' => true),
+        'match'  => array('desc' => $lng->getTrn('common/match'), 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true),
     );
     if ($star_id) {unset($fields['name']);}
     if ($obj && $obj_id) {unset($fields['hiredByName']);}
