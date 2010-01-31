@@ -36,6 +36,16 @@
     <select>Select</select>
     <stats>Statistics</stats>
     <general>General</general>
+    <value>Value</value>
+    <amount>Amount</amount>
+    <ach>Achievements</ach>
+    <page>Page</page>
+    <retired>Retired</retired>
+    <skills>Skills</skills>
+    <injs>Injuries</injs>
+    <pos>Position</pos>
+    <price>Price</price>
+    <number>Number</number>
     
     <needhelp>Need help?</needhelp>
     <picof>Picture of</picof>
@@ -44,6 +54,12 @@
     <recentmatches>Recent matches</recentmatches>
     <upcomingmatches>Upcoming matches</upcomingmatches>
     <dateplayed>Date played</dateplayed>
+    <datecreated>Date created</datecreated>
+    <home>Home</home>
+    <away>Away</away>
+    <score>Score</score>
+    <gate>Gate</gate>
+    <result>Result</result>
     
     <starhh>Star Hire History</starhh>
     <merchh>Mercenary Hire History</merchh>
@@ -54,10 +70,15 @@
     <league>League</league>
     
     <player>Player</player>
+    <players>Players</players>
     <team>Team</team>
+    <teams>Teams</teams>
     <coach>Coach</coach>
+    <coaches>Coaches</coaches>
     <race>Race</race>
+    <races>Races</races>
     <star>Star</star>
+    <stars>Stars</stars>
     
     <td>Touchdowns</td>
     <intcpt>Interceptions</intcpt>
@@ -73,6 +94,7 @@
     <uploadnew>Upload new image</uploadnew>
     <notice_simul><![CDATA[<i>Note</i>: Both tables below are sorted simultaneously.]]></notice_simul>
     <notice_spp><![CDATA[<i>Note</i>: <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.]]></notice_spp>
+    <sortedagainst>Sorted against</sortedagainst>
     
     <!-- nodeSelector() -->
     <displayfrom>Display from</displayfrom>
@@ -80,6 +102,13 @@
         <active>Active</active>
         <alltime>All-time</alltime>
     <sgrp>Stats group</sgrp>
+    
+    <!-- ES -->
+    <extrastats>Extra stats</extrastats>
+    <stat>Stat</stat>
+    <!-- use "all-time" string from nodeSelect() translation -->
+    <matchavg><![CDATA[Match&nbsp;avg.]]></matchavg> <!-- "Match avg." -->
+    
 </common>
 
 <!-- Link names for menu elements -->
@@ -138,7 +167,6 @@
     <posted>Posted</posted>
     <by>by</by>
     <lastedit>last edited</lastedit>
-    <value>Value</value>
 </main>
 
 <cc>
@@ -173,7 +201,6 @@
         
         <profile>Player profile</profile>
         
-        <ach>Achievements</ach>
         <best>Match best</best>
         <playedmatches>Played matches</playedmatches>
     </player>
@@ -447,12 +474,9 @@
         <!-- Subsecs of team page -->
         <info>Game information</info>
             <stadium>Stadium</stadium>
-            <gate>Gate</gate>
             <fans>Fans (RL spectators)</fans>
             
         <results>Game results</results>
-            <teams>Teams</teams>
-            <score>Score</score>
             <treas>Treasury</treas>
             <ff>Fan factor</ff>
             <smp>Sportsmanship points</smp>

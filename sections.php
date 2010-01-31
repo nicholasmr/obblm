@@ -259,8 +259,8 @@ function sec_main() {
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
-                            <td style="text-align: right;" width="50%"><i>Home</i></td><td> </td>
-                            <td style="text-align: left;" width="50%"><i>Guest</i></td><td> </td>
+                            <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
+                            <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td><td> </td>
                         </tr>
                         <?php
                         foreach (Match::getMatches($settings['entries']['latestgames'], T_NODE_LEAGUE, $sel_lid, false) as $m) {
@@ -292,7 +292,7 @@ function sec_main() {
                         <tr>
                             <td width="100%"><i><?php echo $lng->getTrn('common/name');?></i></td>
                             <td><i>#</i></td>
-                            <td><i><?php echo $lng->getTrn('main/value');?></i></td>
+                            <td><i><?php echo $lng->getTrn('common/value');?></i></td>
                         </tr>
                         <?php
                         foreach ($players as $p) {

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -143,7 +143,7 @@ private function _about($ALLOW_EDIT)
                         <td><?php echo "$p->name (#$p->nr)"; ?></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng->getTrn('profile/player/pos');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/pos');?></b></td>
                         <td><?php echo $p->position; ?></td>
                     </tr>
                     <tr>
@@ -173,7 +173,7 @@ private function _about($ALLOW_EDIT)
                         </td>
                     </tr>
                     <tr>
-                        <td><b>Value</b></td>
+                        <td><b><?php echo $lng->getTrn('common/value');?></b></td>
                         <td><?php echo $p->value/1000 .'k' ?></td>
                     </tr>
                     <tr>
@@ -240,11 +240,11 @@ private function _about($ALLOW_EDIT)
                         <td><?php echo $p->av; ?></td>
                     </tr>
                     <tr>
-                        <td><b>Skills</b></td>
+                        <td><b><?php echo $lng->getTrn('common/skills');?></b></td>
                         <td><?php echo (empty($p->skills)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $p->skills; ?></td>
                     </tr>
                     <tr>
-                        <td><b>Injuries</b></td>
+                        <td><b><?php echo $lng->getTrn('common/injs');?></b></td>
                         <td><?php echo (empty($p->injs)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $p->injs; ?></td>
                     </tr>
                     <tr>
@@ -316,21 +316,21 @@ private function _achievements()
     ?>
     <div class="row">
         <div class="boxWide">
-            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ach');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/ach');?></div>
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ach');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/ach');?></div>
             <div class="boxBody" id="ach" style='display:none;'>
                 <table class="common">
                     <tr>
-                        <td><b>Type</b></td>
-                        <td><b>Tournament</b></td>
+                        <td><b><?php echo $lng->getTrn('common/type');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/tournament');?></b></td>
                         <td><b>Opponent</b></td>
                         <td><b>MVP</b></td>
                         <td><b>Cp</b></td>
                         <td><b>Td</b></td>
                         <td><b>Int</b></td>
                         <td><b>Cas</b></td>
-                        <td><b>Score</b></td>
-                        <td><b>Result</b></td>
-                        <td><b>Match</b></td>
+                        <td><b><?php echo $lng->getTrn('common/score');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/result');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/match');?></b></td>
                     </tr>
                     <?php
                     foreach (array('intcpt' => 'Interceptions', 'cp' => 'Completions', 'td' => 'Touchdowns', 'mvp' => 'MVP awards', 'bh+ki+si' => 'Cas') as $s => $desc) {
@@ -384,14 +384,14 @@ private function _matchBest()
             <div class="boxBody" id="mbest" style='display:none;'>
                 <table class="common">
                     <tr>
-                        <td><b>Type</b></td>
-                        <td><b>Tournament</b></td>
+                        <td><b><?php echo $lng->getTrn('common/type');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/tournament');?></b></td>
                         <td><b>Opponent</b></td>
                         <td><b>Td</b></td>
                         <td><b>Ki</b></td>
-                        <td><b>Score</b></td>
-                        <td><b>Result</b></td>
-                        <td><b>Match</b></td>
+                        <td><b><?php echo $lng->getTrn('common/score');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/result');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/match');?></b></td>
                     </tr>
                     <?php
                     foreach (array('td' => 'scorer', 'ki' => 'killer') as $s => $desc) {
@@ -452,10 +452,11 @@ private function _recentGames()
 
 private function _ES() 
 {
+    global $lng;
     ?>
     <div class="row">
         <div class="boxWide">
-            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;ES</div>
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/extrastats');?></div>
             <div class="boxBody" id="ES">
                 <?php
                 HTMLOUT::generateEStable($this);

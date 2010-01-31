@@ -24,7 +24,7 @@
 // Fields used in match reports
 # Stored name => display name
 # Don't touch - order denpendant entries!!!
-$T_MOUT_REL = array('nr' => 'Nr', 'name' => 'Name', 'pos' => 'Position',);
+$T_MOUT_REL = array('nr' => '#', 'name' => 'Name', 'pos' => 'Position',);
 $T_MOUT_ACH = array_combine($T_PMD_ACH, array('MVP','Cp','Td','Int','BH','SI','Ki',));
 $T_MOUT_IR = array_combine($T_PMD_IR, array('IR D1','IR D2',));
 $T_MOUT_INJ = array_combine($T_PMD_INJ, array('Inj','Ageing 1','Ageing 2'));
@@ -453,7 +453,7 @@ public static function report() {
                 </select>
             </td></tr>
             <tr><td colspan='<?php echo $CP;?>'>
-                <b><?php echo $lng->getTrn('matches/report/gate');?></b>&nbsp;
+                <b><?php echo $lng->getTrn('common/gate');?></b>&nbsp;
                 <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
             </td></tr>
             <tr><td colspan='<?php echo $CP;?>'>
@@ -465,8 +465,8 @@ public static function report() {
             </td></tr>
             <tr><td class="seperator" colspan='<?php echo $CP;?>'></td></tr>
             <tr class='commonhead'>
-                <td><b><?php echo $lng->getTrn('matches/report/teams');?></b></td>
-                <td><b><?php echo $lng->getTrn('matches/report/score');?></b></td>
+                <td><b><?php echo $lng->getTrn('common/teams');?></b></td>
+                <td><b><?php echo $lng->getTrn('common/score');?></b></td>
                 <td><b>&Delta; <?php echo $lng->getTrn('matches/report/treas');?></b></td>
                 <td><b><?php echo $lng->getTrn('matches/report/ff');?></b></td>
                 <td><b><?php echo $lng->getTrn('matches/report/smp');?></b></td>

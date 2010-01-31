@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -72,9 +72,9 @@ public static function dispTeamList()
     $_url = "?section=teamlist&amp;";
     echo '<br><center><table>';
     echo '<tr><td>';
-    echo 'Page: '.implode(', ', array_map(create_function('$nr', 'global $page; return ($nr == $page) ? $nr : "<a href=\''.$_url.'page=$nr\'>$nr</a>";'), range(1,$pages)));
+    echo $lng->getTrn('common/page').': '.implode(', ', array_map(create_function('$nr', 'global $page; return ($nr == $page) ? $nr : "<a href=\''.$_url.'page=$nr\'>$nr</a>";'), range(1,$pages)));
     echo '</td></td>';
-    echo "<tr><td>Teams: $cnt</td></td>";
+    echo "<tr><td>".$lng->getTrn('common/teams').": $cnt</td></td>";
     echo '</table></center><br>';
     $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') LIMIT '.(($page-1)*T_HTML_TEAMS_PER_PAGE).', '.(($page)*T_HTML_TEAMS_PER_PAGE);
     
@@ -90,16 +90,16 @@ public static function dispTeamList()
 
     $fields = array(
         'logo'    => array('desc' => 'Logo', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id'), 'nosort' => true),
-        'name'    => array('desc' => 'Name', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
-        'f_cname' => array('desc' => 'Coach', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
-        'rdy'     => array('desc' => 'Ready', 'nosort' => true),
-        'retired' => array('desc' => 'Retired', 'nosort' => true),
-        'f_rname' => array('desc' => 'Race', 'nosort' => true),
+        'name'    => array('desc' => $lng->getTrn('common/name'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+        'f_cname' => array('desc' => $lng->getTrn('common/coach'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
+        'rdy'     => array('desc' => $lng->getTrn('common/ready'), 'nosort' => true),
+        'retired' => array('desc' => $lng->getTrn('common/retired'), 'nosort' => true),
+        'f_rname' => array('desc' => $lng->getTrn('common/race'), 'nosort' => true),
         'tv'      => array('desc' => 'TV', 'nosort' => true, 'kilo' => true, 'suffix' => 'k'),
     );
 
     HTMLOUT::sort_table(
-        "Teams",
+        $lng->getTrn('common/teams'),
         "index.php$_url",
         $teams,
         $fields,
@@ -119,9 +119,9 @@ public static function standings($node = false, $node_id = false)
     $teams = HTMLOUT::standings(STATS_TEAM,$node,$node_id,array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false), 'hidemenu' => false, 'return_objects' => true));
 
     $fields = array(
-        'name'         => array('desc' => 'Team', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
-        'f_rname'      => array('desc' => 'Race', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
-        'f_cname'      => array('desc' => 'Coach', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
+        'name'         => array('desc' => $lng->getTrn('common/team'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+        'f_rname'      => array('desc' => $lng->getTrn('common/race'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
+        'f_cname'      => array('desc' => $lng->getTrn('common/coach'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
         'rg_ff'        => array('desc' => 'FF'),
         'rerolls'      => array('desc' => 'RR'),
         'ass_coaches'  => array('desc' => 'Ass. coaches'),
@@ -472,22 +472,22 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
     title($team->name . (($team->is_retired) ? ' <font color="red"> (Retired)</font>' : ''));
         
     $fields = array(
-        'nr'        => array('desc' => 'Nr.'), 
-        'name'      => array('desc' => 'Name', 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
-        'position'  => array('desc' => 'Position', 'nosort' => true), 
+        'nr'        => array('desc' => '#'), 
+        'name'      => array('desc' => $lng->getTrn('common/name'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
+        'position'  => array('desc' => $lng->getTrn('common/pos'), 'nosort' => true), 
         'ma'        => array('desc' => 'Ma'), 
         'st'        => array('desc' => 'St'), 
         'ag'        => array('desc' => 'Ag'), 
         'av'        => array('desc' => 'Av'), 
-        'skills'    => array('desc' => 'Skills', 'nosort' => true),
-        'injs'      => array('desc' => 'Injuries', 'nosort' => true),
+        'skills'    => array('desc' => $lng->getTrn('common/skills'), 'nosort' => true),
+        'injs'      => array('desc' => $lng->getTrn('common/injs'), 'nosort' => true),
         'mv_cp'     => array('desc' => 'Cp'), 
         'mv_td'     => array('desc' => 'Td'), 
         'mv_intcpt' => array('desc' => 'Int'), 
         'mv_cas'    => array('desc' => ($DETAILED) ? 'BH/SI/Ki' : 'Cas', 'nosort' => ($DETAILED) ? true : false),
         'mv_mvp'    => array('desc' => 'MVP'), 
         'mv_spp'    => array('desc' => ($DETAILED) ? 'SPP/extra' : 'SPP', 'nosort' => ($DETAILED) ? true : false),
-        'value'     => array('desc' => 'Value', 'kilo' => true, 'suffix' => 'k'),  
+        'value'     => array('desc' => $lng->getTrn('common/value'), 'kilo' => true, 'suffix' => 'k'),  
     );
 
     echo "<a href=".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$this->team_id,false,false)."&amp;detailed=".(($DETAILED) ? 0 : 1).">".$lng->getTrn('profile/team/viewtoggle')."</a><br><br>\n";
@@ -831,7 +831,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/hire_player');
                         ?>
                         <hr><br>
-                        Player:<br>
+                        <?php echo $lng->getTrn('common/player');?>:<br>
                         <select name='player'>
                         <?php
                         $active_players = array_filter($players, create_function('$p', "return (\$p->is_sold || \$p->is_dead || \$p->is_mng) ? false : true;"));
@@ -848,7 +848,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo "</select>\n";
                         ?>
                         <br><br>
-                        Number:<br>
+                        <?php echo $lng->getTrn('common/number');?>:<br>
                         <select name="number">
                         <?php
                         foreach ($T_ALLOWED_PLAYER_NR as $i) {
@@ -861,9 +861,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         ?>
                         </select>
                         <br><br>
-                        As journeyman: <input type="checkbox" name="as_journeyman" value="1">
+                        Journeyman? <input type="checkbox" name="as_journeyman" value="1">
                         <br><br>
-                        Name:<br>
+                        <?php echo $lng->getTrn('common/name');?>:<br>
                         <input type="text" name="name">
                         <input type="hidden" name="type" value="hire_player">
                         <?php
@@ -877,7 +877,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/hire_journeyman');
                         ?>
                         <hr><br>
-                        Player:<br>
+                        <?php echo $lng->getTrn('common/player');?>:<br>
                         <select name="player">
                         <?php
                         $DISABLE = true;
@@ -905,7 +905,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/fire_player').' '.$rules['player_refund']*100 . "%.\n";
                         ?>
                         <hr><br>
-                        Player:<br>
+                        <?php echo $lng->getTrn('common/player');?>:<br>
                         <select name="player">
                         <?php
                         $DISABLE = true;
@@ -930,7 +930,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/unbuy_player');
                         ?>
                         <hr><br>
-                        Player:<br>
+                        <?php echo $lng->getTrn('common/player');?>:<br>
                         <select name="player">
                         <?php
                         $DISABLE = true;
@@ -954,7 +954,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/rename_player');
                         ?>
                         <hr><br>
-                        Player:<br>
+                        <?php echo $lng->getTrn('common/player');?>:<br>
                         <select name="player">
                         <?php
                         $DISABLE = true;
@@ -971,7 +971,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         ?>
                         </select>
                         <br><br>
-                        New name:<br>
+                        <?php echo $lng->getTrn('common/name');?>:<br>
                         <input type='text' name='name' maxlength=50 size=20>
                         <input type="hidden" name="type" value="rename_player">
                         <?php
@@ -985,7 +985,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/renumber_player');
                         ?>
                         <hr><br>
-                        Player:<br>
+                        <?php echo $lng->getTrn('common/player');?>:<br>
                         <select name="player">
                         <?php
                         $DISABLE = true;
@@ -1002,7 +1002,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         ?>
                         </select>
                         <br><br>
-                        Number:<br>
+                        <?php echo $lng->getTrn('common/number');?>:<br>
                         <select name="number">
                         <?php
                         foreach ($T_ALLOWED_PLAYER_NR as $i) {
@@ -1022,7 +1022,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/rename_team');
                         ?>
                         <hr><br>
-                        New name:<br>
+                        <?php echo $lng->getTrn('common/name');?>:<br>
                         <input type='text' name='name' maxlength='50' size='20'>
                         <input type="hidden" name="type" value="rename_team">
                         <?php
@@ -1106,7 +1106,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/retire');
                         ?>
                         <hr><br>
-                        Retire?
+                        <?php echo $lng->getTrn('common/retire');?>?
                         <input type="checkbox" name="bool" value="1">
                         <input type="hidden" name="type" value="retire">
                         <?php
@@ -1195,7 +1195,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 echo $lng->getTrn('profile/team/box_admin/desc/unhire_journeyman');
                                 ?>
                                 <hr><br>
-                                Player:<br>
+                                <?php echo $lng->getTrn('common/player');?>:<br>
                                 <select name="player">
                                 <?php
                                 $DISABLE = true;
@@ -1220,7 +1220,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 echo $lng->getTrn('profile/team/box_admin/desc/unsell_player');
                                 ?>
                                 <hr><br>
-                                Player:<br>
+                                <?php echo $lng->getTrn('common/player');?>:<br>
                                 <select name="player">
                                 <?php
                                 $DISABLE = true;
@@ -1303,7 +1303,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 echo $lng->getTrn('profile/team/box_admin/desc/spp');
                                 ?>
                                 <hr><br>
-                                Player:<br>
+                                <?php echo $lng->getTrn('common/player');?>:<br>
                                 <select name="player">
                                 <?php
                                 $DISABLE = true;
@@ -1333,7 +1333,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 echo $lng->getTrn('profile/team/box_admin/desc/dval');
                                 ?>
                                 <hr><br>
-                                Player:<br>
+                                <?php echo $lng->getTrn('common/player');?>:<br>
                                 <select name="player">
                                 <?php
                                 $DISABLE = true;
@@ -1364,7 +1364,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 echo $lng->getTrn('profile/team/box_admin/desc/extra_skills');
                                 ?>
                                 <hr><br>
-                                Player:<br>
+                                <?php echo $lng->getTrn('common/player');?>:<br>
                                 <select name="player">
                                 <?php
                                 $DISABLE = true;
@@ -1405,7 +1405,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 echo $lng->getTrn('profile/team/box_admin/desc/ach_skills');
                                 ?>
                                 <hr><br>
-                                Player:<br>
+                                <?php echo $lng->getTrn('common/player');?>:<br>
                                 <select name="player">
                                 <?php
                                 $DISABLE = true;
@@ -1454,7 +1454,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     <br>
     <div class="row">
         <div class="boxWide">
-            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;ES</div>
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/extrastats'); ?></div>
             <div class="boxBody" id="ES">
                 <?php
                 HTMLOUT::generateEStable($this);
