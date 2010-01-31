@@ -30,7 +30,6 @@
     <name>Name</name>
     <status>Status</status>
     <desc>Description</desc>
-    <ready>Ready</ready>
     <upload>Upload</upload>
     <all>All</all>
     <select>Select</select>
@@ -46,6 +45,7 @@
     <pos>Position</pos>
     <price>Price</price>
     <number>Number</number>
+    <opponent>Opponent</opponent>
     
     <needhelp>Need help?</needhelp>
     <picof>Picture of</picof>
@@ -79,6 +79,19 @@
     <races>Races</races>
     <star>Star</star>
     <stars>Stars</stars>
+    
+    <won>Won</won>
+    <lost>Lost</lost>
+    <draw>Draw</draw>
+    <streaks>Streaks</streaks>
+    <played>Played</played>
+    <playedtours>Tours played</playedtours>
+    <wontours>Won tours</wontours>
+    
+    <ready>Ready</ready>
+    <dead>Dead</dead>
+    <sold>Sold</sold>
+    <bought>Bought</bought>
     
     <td>Touchdowns</td>
     <intcpt>Interceptions</intcpt>
@@ -194,15 +207,24 @@
 </cc>
 
 <profile>
+    <coach>
+        <teams_total>Teams total</teams_total>
+        <teams_active>Teams active</teams_active>
+        <teams_notready>Teams not ready</teams_notready>
+        <teams_retired>Teams retired</teams_retired>
+        <avgteam_elo>Average ELO per team</avgteam_elo>
+        <avgteam_tv>Average TV per team</avgteam_tv>
+        <avgteam_ff>Average FF per team</avgteam_ff>
+    </coach>
+
+    <star>
+        <hiredby>Hired by</hiredby>
+    </star>
+
     <player>
         <about>About player</about>
-            <pos>Position</pos>
-            <bought>Bought</bought>
-        
         <profile>Player profile</profile>
-        
         <best>Match best</best>
-        <playedmatches>Played matches</playedmatches>
     </player>
     
     <team>
@@ -232,14 +254,7 @@
         <box_info>
             <title>Team info and statistics</title>
             
-            <gp><![CDATA[Games&nbsp;played]]></gp>
-            <pct_won><![CDATA[PCT&nbsp;won]]></pct_won>
-            <tours_won><![CDATA[Tours&nbsp;won]]></tours_won>
-            <ws><![CDATA[Win&nbsp;streak]]></ws>
-            <ls><![CDATA[Lose&nbsp;streak]]></ls>
-            <ds><![CDATA[Draw&nbsp;streak]]></ds>
             <ltour><![CDATA[Latest&nbsp;tour]]></ltour>
-            <toursplayed><![CDATA[Tours&nbsp;played]]></toursplayed>
         </box_info>
         
         <box_tm>
@@ -257,6 +272,14 @@
             <ready_state>Set ready state</ready_state>
             <retire>Retire team</retire>
             <delete>Delete team</delete>
+
+            <!-- Strings used within action boxes -->
+            <fdescs>
+                <thing>Thing</thing>
+                <teamready>Team ready?</teamready>
+                <retire>Retire team?</retire>
+                <suredeleteteam>Are you sure you wish to delete this team?</suredeleteteam>
+            </fdescs>
 
             <desc>
                 <hire_player>

@@ -594,10 +594,10 @@ private function _HHMerc($DETAILED)
         array_push($mdat, $o);
     }
     $fields = array(
-        'date_played'   => array('desc' => 'Hire date'), 
-        'tour'          => array('desc' => 'Tournament'),
-        'opponent'      => array('desc' => 'Opponent team'), 
-        'skills' => array('desc' => 'Add. skills'), 
+        'date_played'   => array('desc' => $lng->getTrn('common/dateplayed')), 
+        'tour'          => array('desc' => $lng->getTrn('common/tournament')),
+        'opponent'      => array('desc' => $lng->getTrn('common/opponent')), 
+        'skills' => array('desc' => $lng->getTrn('common/skills')), 
         'cp'     => array('desc' => 'Cp'), 
         'td'     => array('desc' => 'Td'), 
         'intcpt' => array('desc' => 'Int'), 
@@ -606,9 +606,9 @@ private function _HHMerc($DETAILED)
         'si'     => array('desc' => 'Si'), 
         'ki'     => array('desc' => 'Ki'), 
         'mvp'    => array('desc' => 'MVP'), 
-        'score'  => array('desc' => 'Score', 'nosort' => true),
-        'result' => array('desc' => 'Result', 'nosort' => true),
-        'match'  => array('desc' => 'Match', 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true), 
+        'score'  => array('desc' => $lng->getTrn('common/score'), 'nosort' => true),
+        'result' => array('desc' => $lng->getTrn('common/result'), 'nosort' => true),
+        'match'  => array('desc' => $lng->getTrn('common/match'), 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true), 
     );
     HTMLOUT::sort_table(
         "<a name='tp_mhhanc'>".$lng->getTrn('common/merchh')."</a>", 
@@ -693,7 +693,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 if (in_array($team->f_race_id, $racesHasNecromancer)) {
                     ?>
                     <td>Necromancer</td>
-                    <td>Yes</td>
+                    <td><?php echo $lng->getTrn('common/yes');?></td>
                     <?php                
                 }
                 if (!in_array($team->f_race_id, $racesNoApothecary)) {
@@ -722,36 +722,36 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td colspan=2><hr></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('profile/team/box_info/gp');?></td>
+                    <td><?php echo $lng->getTrn('common/played');?></td>
                     <td><?php echo $team->mv_played; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('profile/team/box_info/pct_won');?></td>
+                    <td>WIN%</td>
                     <td><?php echo sprintf("%1.1f", $team->rg_win_pct).'%'; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $lng->getTrn('profile/team/box_info/tours_won');?></td>
+                    <td>ELO</td>
+                    <td><?php echo (($team->rg_elo) ? sprintf("%1.2f", $team->rg_elo) : '<i>N/A</i>'); ?></td>
+                </tr>
+                <tr>
+                    <td>W/L/D</td>
+                    <td><?php echo "$team->mv_won/$team->mv_lost/$team->mv_draw"; ?></td>
+                </tr>
+                <tr>
+                    <td>W/L/D <?php echo $lng->getTrn('common/streaks');?></td>
+                    <td><?php echo "$team->rg_swon/$team->rg_slost/$team->rg_sdraw"; ?></td>
+                </tr>
+                <tr>
+                    <td><?php echo $lng->getTrn('common/wontours');?></td>
                     <td><?php echo $team->wt_cnt; ?></td>
                 </tr>
-                <tr>
-                    <td><?php echo $lng->getTrn('profile/team/box_info/ws');?></td>
-                    <td><?php echo $team->rg_swon; ?></td>
-                </tr>
-                <tr>
-                    <td><?php echo $lng->getTrn('profile/team/box_info/ls');?></td>
-                    <td><?php echo $team->rg_slost; ?></td>
-                </tr>
-                <tr>
-                    <td><?php echo $lng->getTrn('profile/team/box_info/ds');?></td>
-                    <td><?php echo $team->rg_sdraw; ?></td>
+                <tr valign="top">
+                    <td><?php echo $lng->getTrn('common/playedtours');?></td>
+                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>'.$lng->getTrn('common/none').'</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/ltour');?></td>
                     <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>'.$lng->getTrn('common/none').'</i>'; ?></td>
-                </tr>
-                <tr valign="top">
-                    <td><?php echo $lng->getTrn('profile/team/box_info/toursplayed');?></td>
-                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>'.$lng->getTrn('common/none').'</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
                 </tr>
                 <?php
                 if (Module::isRegistered('Prize')) {
@@ -1040,7 +1040,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         }
                         ?>
                         <hr><br>
-                        Thing:<br>
+                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/thing');?>:<br>
                         <select name="thing">
                         <?php
                         $DISABLE = true;
@@ -1066,7 +1066,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/drop_goods');
                         ?>
                         <hr><br>
-                        Thing:<br>
+                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/thing');?>:<br>
                         <select name="thing">
                         <?php
                         $DISABLE = true;
@@ -1092,7 +1092,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/ready_state');
                         ?>
                         <hr><br>
-                        Team ready? 
+                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/teamready');?>
                         <input type="checkbox" name="bool" value="1" <?php echo ($team->rdy) ? 'CHECKED' : '';?>>
                         <input type="hidden" name="type" value="ready_state">
                         <?php
@@ -1106,7 +1106,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         echo $lng->getTrn('profile/team/box_tm/desc/retire');
                         ?>
                         <hr><br>
-                        <?php echo $lng->getTrn('common/retire');?>?
+                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/retire');?>
                         <input type="checkbox" name="bool" value="1">
                         <input type="hidden" name="type" value="retire">
                         <?php
@@ -1123,7 +1123,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         }
                         ?>
                         <hr><br>
-                        Are you sure you wish to delete this team?
+                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/suredeleteteam');?>
                         <input type="checkbox" name="bool" value="1" <?php echo ($DISABLE) ? 'DISABLED' : '';?>>
                         <input type="hidden" name="type" value="delete">
                         <?php
