@@ -844,7 +844,7 @@ public static function generateEStable($obj)
             echo "<tr><td colspan='4'><br><b>$def[group]</b></td></tr>\n";
             $grp = $def['group'];
         }
-        echo "<tr><td>$ESf</td><td align='right'>".$obj->{"mv_$ESf"}."</td><td align='right'>".sprintf("%1.2f",$objAVG->{"mv_$ESf"})."</td><td style='padding-left:10px;'>".$def['desc']."</td></tr>\n";
+        echo "<tr valign='top'><td>$ESf</td><td align='right'>".$obj->{"mv_$ESf"}."</td><td align='right'>".sprintf("%1.2f",$objAVG->{"mv_$ESf"})."</td><td style='padding-left:10px;'>".$def['desc']."</td></tr>\n";
     }
     echo "</table>";
 }

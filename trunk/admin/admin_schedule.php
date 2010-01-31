@@ -82,8 +82,10 @@ if (isset($_POST['button'])) {
             for ($i = 0; $i < $teamsCount/2; $i++) {
                 list($exitStatus, $mid) = Match::create(array('team1_id' => $team_ids[$i*2], 'team2_id' => $team_ids[$i*2+1], 'round' => $rnd, 'f_tour_id' => (int) $_POST['existTour']));
                 $status &= !$exitStatus;
+                if ($exitStatus)
+                    break;
             }
-            status($status);
+            status($status, $exitStatus ? Match::$T_CREATE_ERROR_MSGS[$exitStatus] : null);
         }
         // Create new tour...
         else {
