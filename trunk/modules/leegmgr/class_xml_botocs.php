@@ -46,6 +46,7 @@ class XML_BOTOCS implements ModuleInterface
     //players
     public $players;
 
+    public $cyroster = '';
 
     /***************
      * Methods 
@@ -75,6 +76,7 @@ class XML_BOTOCS implements ModuleInterface
         $this->name = $team->name;
         $this->coach_name = $team->f_cname;
         $this->createRoster();
+        $this->createCyRoster();
 
     }
 
@@ -239,7 +241,8 @@ class XML_BOTOCS implements ModuleInterface
             if ( isset($_GET["jm"]) ) $jm = $_GET["jm"];
             else $jm = 0;
             $roster = new XML_BOTOCS( $team_id, $jm );
-            Print $roster->roster;
+            if ( !isset($_GET["cy"]) ) Print $roster->roster;
+            Else Print $roster->cyroster;
         }
         else
         {
@@ -271,6 +274,16 @@ class XML_BOTOCS implements ModuleInterface
     }
     
     public static function triggerHandler($type, $argv){}
+
+    /*
+     * Cyanide Roster
+     */
+
+    function createCyRoster() {
+
+        $this->cyroster .= "This is a test Cyanide roster.";
+
+    }
     
 }
 
