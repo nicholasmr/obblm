@@ -27,11 +27,11 @@ require('lib/game_data_lrb6x.php');
 #Halfling Chef reduced price is now 100,000
 
 $DEA['Necromantic']['players']['Flesh Golem']['cost'] = 110000;
-$DEA['Necromantic']['players']['Necromantic Werewolf'] = $DEA['Necromantic']['players']['Werewolf'];
-$DEA['Norse']['players']['Norse Werewolf'] = $DEA['Norse']['players']['Ulfwerener'];
-$DEA['Norse']['players']['Yhetee'] = $DEA['Norse']['players']['Snow Troll'];
-$DEA['Norse']['players']['Catcher'] = $DEA['Norse']['players']['Runner'];
-$DEA['Norse']['players']['Blitzer'] = $DEA['Norse']['players']['Berserker'];
+$DEA['Necromantic']['players']['Necromantic Werewolf'] = $DEA['Necromantic']['players']['Werewolf']; unset($DEA['Necromantic']['players']['Werewolf']);
+$DEA['Norse']['players']['Norse Werewolf'] = $DEA['Norse']['players']['Ulfwerener']; unset($DEA['Norse']['players']['Ulfwerener']);
+$DEA['Norse']['players']['Yhetee'] = $DEA['Norse']['players']['Snow Troll']; unset($DEA['Norse']['players']['Snow Troll']);
+$DEA['Norse']['players']['Catcher'] = $DEA['Norse']['players']['Runner']; unset($DEA['Norse']['players']['Runner']);
+$DEA['Norse']['players']['Blitzer'] = $DEA['Norse']['players']['Berserker']; unset($DEA['Norse']['players']['Berserker']);
 
 // Changes in star players from LRB5b to LRB6.
 
