@@ -790,7 +790,7 @@ class Player
         $input['type'] = $JM ? PLAYER_TYPE_JOURNEY : PLAYER_TYPE_NORMAL;
         foreach (array('ach_ma', 'ach_st', 'ach_ag', 'ach_av', 'extra_spp') as $f) {$input[$f] = 0;}
 
-        $query = "INSERT INTO teams (".implode(',',array_keys($input)).") VALUES (".implode(',', array_values($input)).")";
+        $query = "INSERT INTO players (".implode(',',array_keys($input)).") VALUES (".implode(',', array_values($input)).")";
         if (mysql_query($query)) {
             $pid = mysql_insert_id();
             $team->dtreasury(-1 * $price);
