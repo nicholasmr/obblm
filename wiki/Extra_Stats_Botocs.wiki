@@ -118,7 +118,7 @@ Note: these are only recorded for a player with the kick skill. The only other t
 ||kickoffs||kck||Number of times this player kicked off||
 ||kick_distance||kck_dist||Distance the ball was kicked in squares.||
 
-===Dice stats ===
+===Dice stats===
 
 Note: Might be fun to see how lucky a player is
 
