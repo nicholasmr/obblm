@@ -1,4 +1,7 @@
 <?php
+
+$addMatchToFFA = false; # Must declare here since we use it later to set default FFA tour selection.
+
 if (isset($_POST['button'])) {
 
     /*
@@ -256,7 +259,7 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
         $body .= '<optgroup label="Existing FFA">';
         foreach ($tours as $trid => $desc) {
             if ($desc['type'] == TT_FFA) {
-                $body .= "<option value='$trid' ".(($desc['locked']) ? 'DISABLED' : '').">".$divisions[$desc['f_did']]['dname'].": $desc[tname]".(($desc['locked']) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
+                $body .= "<option value='$trid' ".(($desc['locked']) ? 'DISABLED' : '')." ".(($addMatchToFFA && isset($_POST['existTour']) && $trid == $_POST['existTour']) ? 'SELECTED' : '').">".$divisions[$desc['f_did']]['dname'].": $desc[tname]".(($desc['locked']) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
             }
         }
         $body .= '</optgroup>';
@@ -264,13 +267,11 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
         $body .= '<br><br>';
         $body .= '<b>'.$lng->getTrn('admin/schedule/as_type').'</b><br>';
         $body .= '<select name="round">';
-        foreach (array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') as $r => $d) {
-            $body .= "<option value='$r'>$d</option>\n";
-        }
-        $pure_rounds = array();
-        for ($i=1;$i<30;$i++) $pure_rounds[$i] = "Round #$i match";
-        foreach ($pure_rounds as $r => $d) {
-            $body .= "<option value='$r'>$d</option>\n";
+        foreach (
+                array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') 
+                + array_combine(range(1,15), array_strpack("Round #%s match", range(1,15)))
+            as $r => $d) {
+                $body .= "<option value='$r' ".(($addMatchToFFA && isset($_POST['round']) && $r == $_POST['round']) ? 'SELECTED' : '').">$d</option>\n";
         }
         $body .= '</select>';
         $BOX_FFA = HTMLOUT::assistantBox($body);
