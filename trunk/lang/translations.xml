@@ -733,12 +733,22 @@
     <name>Nombre</name>
     <status>Estado</status>
     <desc>Descripción</desc>
-    <ready>Preparado</ready>
     <upload>Subir</upload>
     <all>Todo</all>
     <select>Seleccionar</select>
     <stats>Estadísticas</stats>
     <general>General</general>
+    <value>Valor</value>
+    <amount>Cantidad</amount>
+    <ach>Logros</ach>
+    <page>Página</page>
+    <retired>Retirado</retired>
+    <skills>Habilidades</skills>
+    <injs>Heridas</injs>
+    <pos>Posición</pos>
+    <price>Precio</price>
+    <number>Número</number>
+    <opponent>Oponente</opponent>
     
     <needhelp>¿Necesitas ayuda?</needhelp>
     <picof>Imagen de</picof>
@@ -747,6 +757,12 @@
     <recentmatches>Partidos recientes</recentmatches>
     <upcomingmatches>Próximos partidos</upcomingmatches>
     <dateplayed>Fecha de juego</dateplayed>
+<datecreated>Fecha de creación</datecreated>
+    <home>Casa</home>
+    <away>Fuera</away>
+    <score>Tanteo</score>
+    <gate>Entrada</gate>
+    <result>Resultado</result>
     
     <starhh>Histórico de contratación de Jugadores Estrella</starhh>
     <merchh>Histórico de contratación de mercenarios</merchh>
@@ -757,10 +773,23 @@
     <league>Liga</league>
     
     <player>Jugador</player>
+     <players>Jugadores</players>
     <team>Equipo</team>
+    <teams>Equipos</teams>
     <coach>Entrenador</coach>
+    <coaches>Entrenadores</coaches>
     <race>Raza</race>
+    <races>Razas</races>
     <star>Estrella</star>
+    <stars>Estrellas</stars>
+    
+    <won>Ganados</won>
+    <lost>Perdidos</lost>
+    <draw>Empates</draw>
+    <streaks>Rachas</streaks>
+    <played>Jugados</played>
+    <playedtours>Torneos jugados</playedtours>
+    <wontours>Torneos ganados</wontours>
     
     <td>Touchdowns</td>
     <intcpt>Intercepciones</intcpt>
@@ -776,13 +805,21 @@
     <uploadnew>Subir nueva imagen</uploadnew>
     <notice_simul><![CDATA[<i>Nota</i>: Las dos tablas mostradas abajo se ordenan simultaneamente.]]></notice_simul>
     <notice_spp><![CDATA[<i>Nota</i>: <b>Si</b>los jugadores estrella pudiesen ganar PE tendrian la cantidad correspondiente a la columna PE.]]></notice_spp>
-    
+    <sortedagainst>Ordenado por</sortedagainst>
     <!-- nodeSelector() -->
     <displayfrom>Mostrar de</displayfrom>
     <type>Tipo</type>
         <active>Activo</active>
         <alltime>Total</alltime>
     <sgrp>Grupo de estadísticas</sgrp>
+
+<!-- ES -->
+    <extrastats>Estadísticas extra</extrastats>
+    <stat>Estadística</stat>
+    <!-- use "all-time" string from nodeSelect() translation -->
+    <matchavg><![CDATA[Media&nbsp;por partido.]]></matchavg> <!-- "Match avg." -->
+        
+    
 </common>
 
 <!-- Link names for menu elements -->
@@ -841,7 +878,6 @@
     <posted>Publicado</posted>
     <by>por</by>
     <lastedit>Última edición</lastedit>
-    <value>Valor</value>
 </main>
 
 <cc>
@@ -869,16 +905,29 @@
 </cc>
 
 <profile>
+
+ <coach>
+        <teams_total>Equipos totales</teams_total>
+        <teams_active>Equipos activos</teams_active>
+        <teams_notready>Equipos no disponibles</teams_notready>
+        <teams_retired>Equipos retirados</teams_retired>
+        <avgteam_elo>ELO medio por equipo</avgteam_elo>
+        <avgteam_tv>VE media por equipo</avgteam_tv>
+        <avgteam_ff>FH medio por equipo</avgteam_ff>
+    </coach>
+
+    <star>
+        <hiredby>Contratado por</hiredby>
+    </star>
+
+
     <player>
         <about>Sobre el jugador</about>
-            <pos>Posición</pos>
-            <bought>Contratado</bought>
         
         <profile>Perfil de jugador</profile>
         
-        <ach>Logros</ach>
         <best>Mejor partido</best>
-        <playedmatches>Partidos jugados</playedmatches>
+        
     </player>
     
     <team>
@@ -907,15 +956,9 @@
 
         <box_info>
             <title>Información y estadísticas del equipo</title>
-            
-            <gp><![CDATA[Partidos&nbsp;jugados]]></gp>
-            <pct_won><![CDATA[PCT&nbsp;ganados]]></pct_won>
-            <tours_won><![CDATA[Torneos&nbsp;ganados]]></tours_won>
-            <ws><![CDATA[Racha&nbsp;ganadora]]></ws>
-            <ls><![CDATA[Racha&nbsp;perdedora]]></ls>
-            <ds><![CDATA[Racha&nbsp;de empates]]></ds>
+           
             <ltour><![CDATA[Torneo&nbsp;más reciente]]></ltour>
-            <toursplayed><![CDATA[Torneos&nbsp;jugados]]></toursplayed>
+           
         </box_info>
         
         <box_tm>
@@ -933,7 +976,15 @@
             <ready_state>Marcar como disponible para jugar</ready_state>
             <retire>Retirar equipo</retire>
             <delete>Borrar equipo</delete>
-
+            
+ <!-- Strings used within action boxes -->
+            <fdescs>
+                <thing>Cosa</thing>
+                <teamready>¿Equipo disponible?</teamready>
+                <retire>¿Retirar equipo?</retire>
+                <suredeleteteam>¿Estás seguro de que quieres borrar este equipo?</suredeleteteam>
+            </fdescs>
+            
             <desc>
                 <hire_player>
                 <![CDATA[
@@ -1069,6 +1120,236 @@
         </box_admin>
     </team>
 </profile>
+<standings>
+    <team>
+        <tblTitle2>Continuación de las estadísticas totales (detalles del equipo)</tblTitle2>
+    </team>
+</standings>
+
+<matches>
+    <tours>    
+        <!-- none used - all are in "common". -->
+    </tours>
+    <tourmatches>
+        <roundtypes>
+            <final>Final</final>
+            <thirdPlayoff>Partido por el tercer puesto</thirdPlayoff>
+            <semi>Semifinales</semi>
+            <quarter>Cuartos de final</quarter>
+            <rnd16>Round of 16</rnd16>
+            <rnd>Ronda</rnd>
+        </roundtypes>
+        
+        <matchdelete><![CDATA[¿Estás seguro de que quieres borrar el partido?\n\nAVISO:\nA no ser que el partido no haya sido jugado aún, esta acción es irreversible y afectará al contenido de las subsiguientes actas de partido de ambos equipos.\nSe recomienda no borrar partidos a no ser que sean para testear o sepas bien lo que estas haciendo.]]></matchdelete>
+        <reset_notice><![CDATA[¿Estás seguro de que quieres resetear el partido?\n\nAVISO:\nResetear un partido borra el acta del mismo.\nResetear un partido en el que uno o ambos de los equipos participantes han jugado partidos subsiguientes puede generar errores en los estados de los jugadores en las actasde los siguientes partidos.]]></reset_notice>
+    </tourmatches>
+
+    <!-- Subsection: match report(s) -->
+    <report>
+        
+        <!-- General -->
+        <clickforhelp>Necesitas ayuda?</clickforhelp>
+        <notplayed>Aun no jugado</notplayed>
+        <report>Acta</report>
+        
+        <help>
+        <![CDATA[
+        <b>Preliminary info</b><br>
+        First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
+        Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
+        Secondly, OBBLM supports the submission of a wide range of different player stats. 
+        The commonly recorded player match stats are submitted via. the primary match report along with general match information whilst the <i>extra stats</i> are submitted on a separate submission page - follow the below extra stats link on the primary report page.
+        Please note that you <i>must</i> submit the primary report before submitting the extra player stats.<br>
+        <br>
+        <b>Game information fields</b><br>
+        The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
+        <br>
+        <b>Sportsmanship points</b><br>
+        Yelling, screaming, cursing at the dice, disturbing the opponent in his turn and not turning up on gaming night may be punished by giving negative sportsmanship points. Acting like a gentleman and taking a defeat with a smile may be embraced by giving positive sportsmanship points.
+        If your league on the other hand makes the needle on the evil-o-meter jump into the red area constantly, it may be more natural applying the sportsmanship points system the other way around - embracing bad manners with positive sportsmanship points.<br>
+        <br>
+        <b>Casualties in general</b><br>
+        OBBLM can keep track of <i>team casualties</i>, which is the sum of the individual player casualties, opponent self-inflicted injuries, die on a fumble in sprints and crowd killings (and possibly other things of your leagues' choice).
+        Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
+        <br>
+        <b>Player skills</b><br>
+        When you roll 2D6 for player improvements remember to record the results in the <i>IR</i> fields. 
+        Then, once the match report has been submitted, OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
+        If the improvement roll fields are <i>consistently</i> left as 0 the player in question may select among all skills whenever enough SPP is gained.<br>
+        <br>
+        <b>Player injuries</b><br>
+        If a player sustains multiple injuries simply utilize the second and third injury columns "ageing 1" and "ageing 2". 
+        The <i>only</i> difference between the ordinary "inj" column and the ageing columns is that injuries recorded as ageing injuries do not imply a MNG.<br>
+        <br>
+        <b>Incomes</b><br>
+        A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
+        If you spended more than you made in a match then simply prefix - (minus).
+        <br><br>
+        Remember these factors when you calculate:<br>
+        <ul>
+            <li>Spiraling expenses</li>
+            <li>Treasury spend on inducements</li>
+            <li>Hiring costs of star players and mercenaries</li>
+            <li>Team winnings</li>
+            <li>Tournament winnings, if the game was a final</li>
+            <li>Sponsorship deal from Bloodweiser</li>
+        </ul>
+        ]]>
+        </help>
+
+        <!-- Subsecs of team page -->
+        <info>Información del Partido</info>
+            <stadium>Estadio</stadium>
+            <fans>Fans (Espectadores de carne y hueso)</fans>
+            
+        <results>Resultados del partido</results>
+            <treas>Tesoreria</treas>
+            <ff>Factor de hinchas</ff>
+            <smp>Puntos de deportividad</smp>
+                <pts>puntos</pts>
+            <tcas>Bajas totales causadas</tcas>
+            <fame>FAMA</fame>
+            <tv>VE</tv>
+            
+        <summary>Sumario del partido</summary>
+    </report>
+</matches>
+
+<rules>
+    <intro>
+    <![CDATA[
+    OBBLM soporta las reglas <a href="http://www.bloodbowlonline.com/LivingRulebook5.pdf">LRB5</a>, pero estas se pueden cambiar modificando el archivo <i>settings.php</i> 
+    <br><br>
+    Esta instalación de OBBLM usa las siguientes reglas:
+    <br><br>
+    ]]>
+    </intro>
+    <rule>Regla</rule>
+    <val>Valor</val>
+    
+    <yes>Si</yes>
+    <no>No</no>
+    <unlimited>Ilimitado</unlimited>
+    <refundptc>% devolución</refundptc>
+    
+    <rr_price>Precios estáticos de las segundas oportunidades</rr_price>
+    <ap_price>Precio del médico</ap_price>
+    <ff_price>Precio del factor de hinchas</ff_price>
+    <ac_price>Precio de los ayudantes del entrenador</ac_price>
+    <cl_price>Precio de las animadoras</cl_price>
+    <init_ts>Tesorería inicial</init_ts>
+    <init_rr>Segundas Oportunidades iniciales</init_rr>
+    <init_ff>Factor de Hinchas inicial</init_ff>
+    <init_ac>Ayudantes del entrenador iniciales</init_ac>
+    <init_cl>Animadoras iniciales</init_cl>
+    <max_rr>Segundas oportunidades máximas</max_rr>
+    <max_ff>Factor de Hinchas máximo</max_ff>
+    <max_ac>Ayudantes del entrenador máximos</max_ac>
+    <max_cl>Animadoras máximas</max_cl>
+    <max_jm>Límite de Independientes</max_jm>
+    <max_pl>Número máximo de jugadores en el equipo</max_pl>
+    <refund>Devolución de dinero por venta o despido de jugadores</refund>
+    <enable_lrb6>Activar extensiones LRB6</enable_lrb6>
+    <enable_post_ff>Permitir la compra de Factor de Hinchas tras el primer partido</enable_post_ff>
+    
+</rules>
+<about>
+    <intro>Introducción</intro>
+    <intro_txt>
+    <![CDATA[
+    OBBLM is a Blood Bowl league manager that works by coaches submitting match data after each played match in a tournament. 
+    League commissioners (admins) may create tournaments and include certain coaches' teams to participate in a tournament. 
+    When a tournament is created, the two coaches participating in any match may submit a match report to the system. 
+    The manager will thereby be able to update tournament stats and team details - including giving the team coach access to chose new player skills etc.
+    The order in which tournament matches are played/submitted does not matter, and if the need may arise, league commissioners are able to delete unplayed matches.
+    <br><br>
+    <b>The Coach Corner:</b><br>
+        When you have received a password from a league commissioner, and you have logged on, your personal coach corner will be activated in the menu bar. 
+        At your coach corner you will be able to create new teams, and change your password, e-mail and your coach name.
+        <br><br>
+        <b>Team page</b><br>
+        At your team page you may manage your team. 
+        This includes buying and selling players, choosing player skills when your player has the required amount of SPP, and buying other goods for your team.
+        <br>
+        At your team page you will be presented with your team roster. To view player details select the "toggle roster view"-link below the roster.
+        <br><br>
+    <b>Submitting a played match:</b><br>
+        Once a match has been played, you must let the system know by submitting the match data in the <i>tournaments</i> section. 
+        This can under agreement be done by either team's coach. Only the two participating team coaches and league commissioners have edit access to the match reports.
+    ]]>
+    </intro_txt>
+
+    <faq>FAQ</faq>
+    <faq_txt>
+    <![CDATA[
+    <i>Q:</i>
+    I can't seem to save a player's injury when submitting match data.<br>
+    <i>A:</i>
+    OBBLM will refuse to save a specific injury if the sum of the characteristic thereby will drop below the allowed default - 2 limit.
+    <br><br>
+    
+    <i>Q:</i>
+    I'm not able to select the achieved characteristic I wish?<br>
+    <i>A:</i>
+    You are by rule not allowed to select any further achieved characteristics if it leads to the player having more than default + 2 of that characteristic.
+    <br><br>
+
+    <i>Q:</i>
+    I have saved a match with wrong match data, and now OBBLM has created a new match with the wrong contestants. How do I correct this?<br>
+    <i>A:</i>
+    First you delete the falsely created match, and then you resave the old match with the correct match data, which recreates the new match.
+    <br><br>
+    
+    <i>Q:</i>
+    I can't seem to save -1 fan factor when submitting match data?<br>
+    <i>A:</i>
+    OBBLM will refuse to save any further negative fan factor values if your team already has 0 fan factor.
+    <br><br>
+    
+    <i>Q:</i>
+    Re-roll prices are no longer doubled?<br>
+    <i>A:</i>
+    Have you switched on the setting "static re-rolls prices"? 
+    If not, what you experience is due to your league having started on a new tournament, in which no matches yet have been played. The RR-prices will become doubled again once the first match has been played.
+    <br><br>
+    
+    <i>Q:</i>
+    I have suddenly a dead player alive again on my roster?<br>
+    <i>A:</i>
+    Re-save the match in which the player died.
+    <br><br>
+                    
+    <i>Q:</i>
+    I see only fields on the match submitting pages for the inducements stars and mercenaries, where are the others?<br>
+    <i>A:</i>
+    Such fields do not exist yet. If you wish to document these match details, you can write them in the match summary.
+    <br><br>
+    
+    <i>Q:</i>
+    I'm having trouble uploading pictures. How can i resolves this?<br>
+    <i>A:</i>
+    OBBLM supports only .gif, .jpg, .jpeg and .png file types. Still having trouble? Try a mozilla browser.
+    <br><br>
+
+    <i>Q:</i>
+    After hiring a journeyman he stays on my roster even though he has already competed in a match. Why is this so?<br>
+    <i>A:</i>
+    OBBLM does not automatically fire journeymen after their first match. You must do so yourself the same way as ordinary players are fired (via. the team page).
+    <br><br>
+
+    <i>Q:</i>
+    I would like to create my own tournament ranking system. How do I do this?<br>
+    <i>A:</i>
+    Please see the <i>settings.php</i> file.
+    <br><br>
+
+    <i>Q:</i>
+    How do I heal all of a team's MNGs?<br>
+    <i>A:</i>
+    Simply open the match report from the team's latest played match, and reassign the injuries sustained as ageing injuries - these do not result in MNGs.
+    ]]>
+    </faq_txt>
+</about>
 
 </es>
 
