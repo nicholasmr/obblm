@@ -113,10 +113,11 @@ public static function installProcsAndFuncs($install = true)
     // MV syncs 
     $common_fields_keys = 'td,cp,intcpt,bh,si,ki,mvp,cas,tdcas,spp';
     $common_fields = 'IFNULL(SUM(td),0), IFNULL(SUM(cp),0), IFNULL(SUM(intcpt),0), IFNULL(SUM(bh),0), IFNULL(SUM(si),0), IFNULL(SUM(ki),0), IFNULL(SUM(mvp),0), IFNULL(SUM(bh+si+ki),0), IFNULL(SUM(bh+si+ki+td),0), IFNULL(SUM(cp*1+(bh+si+ki)*2+intcpt*2+td*3+mvp*5),0)';
-    $mstat_fields_suffix_player = 'FROM matches,match_data WHERE matches.match_id = match_data.f_match_id AND match_data.f_player_id = pid AND match_data.mg IS FALSE AND matches.f_tour_id = trid';
-    $mstat_fields_suffix_team   = 'FROM matches WHERE f_tour_id = trid AND (team1_id = tid OR team2_id = tid)';
-    $mstat_fields_suffix_coach  = 'FROM matches,teams WHERE f_tour_id = trid AND (team1_id = tid OR team2_id = tid) AND teams.owned_by_coach_id = cid';
-    $mstat_fields_suffix_race   = 'FROM matches,teams WHERE f_tour_id = trid AND (team1_id = tid OR team2_id = tid) AND teams.f_race_id = rid';
+    $mstat_fields_suffix__common = 'matches.f_tour_id = trid AND matches.date_played IS NOT NULL';
+    $mstat_fields_suffix_player = "FROM matches,match_data WHERE $mstat_fields_suffix__common AND matches.match_id = match_data.f_match_id AND match_data.f_player_id = pid AND match_data.mg IS FALSE";
+    $mstat_fields_suffix_team   = "FROM matches WHERE $mstat_fields_suffix__common AND (team1_id = tid OR team2_id = tid)";
+    $mstat_fields_suffix_coach  = "FROM matches,teams WHERE $mstat_fields_suffix__common AND (team1_id = tid OR team2_id = tid) AND teams.owned_by_coach_id = cid";
+    $mstat_fields_suffix_race   = "FROM matches,teams WHERE $mstat_fields_suffix__common AND (team1_id = tid OR team2_id = tid) AND teams.f_race_id = rid";
     $mstat_fields = '
         SET played = IFNULL((SELECT SUM(IF(team1_id = tid OR team2_id = tid, 1, 0)) REGEX_REPLACE_HERE), 0), 
             won    = IFNULL((SELECT SUM(IF((team1_id = tid AND team1_score > team2_score) OR (team2_id = tid AND team2_score > team1_score), 1, 0)) REGEX_REPLACE_HERE), 0), 
