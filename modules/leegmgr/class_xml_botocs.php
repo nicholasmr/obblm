@@ -242,7 +242,14 @@ class XML_BOTOCS implements ModuleInterface
             else $jm = 0;
             $roster = new XML_BOTOCS( $team_id, $jm );
             if ( !isset($_GET["cy"]) ) Print $roster->roster;
-            Else Print $roster->cyroster;
+            Else
+            {
+                #Specify the header so that the browser is prompted to download the replay.rep file.
+                header('Content-type: application/octec-stream');
+                header('Content-Disposition: attachment; filename=team.db');
+                #Whatever is printed to the screen will be in the file.
+                Print $roster->cyroster;
+            }
         }
         else
         {
