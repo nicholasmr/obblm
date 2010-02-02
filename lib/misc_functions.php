@@ -163,6 +163,7 @@ function rule_dict(array $sortRule) {
         'date_played' => 'date played',
         'wt_cnt'      => 'WT',
         'sdiff'       => 'score diff.',
+#        'cdiff'       => 'tcas diff.',
         'tdcas'       => '{td+cas}',
         'swon'        => 'SW',
         'slost'       => 'SL',
