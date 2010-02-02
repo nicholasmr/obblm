@@ -777,7 +777,7 @@ class Player
             self::T_CREATE_ERROR__JM_LIMIT_REACHED   => $JM && $team->isJMLimitReached(),
             // Is position valid to make a journeyman? 
             // Journeymen may be made from those positions, from which 16 players of the position is allowed on a team.
-            self::T_CREATE_ERROR__INVALID_JM_POS     => $DEA[$team->f_rname]['players'][get_alt_col('game_data_players', 'pos_id', (int) $input['f_pos_id'], 'pos')]['qty'] < (($rules['enable_lrb6']) ? 12 : 16),
+            self::T_CREATE_ERROR__INVALID_JM_POS     => $JM && $DEA[$team->f_rname]['players'][get_alt_col('game_data_players', 'pos_id', (int) $input['f_pos_id'], 'pos')]['qty'] < (($rules['enable_lrb6']) ? 12 : 16),
         );
         foreach ($errors as $exitStatus => $halt) {
             if ($halt && !($FORCE && in_array($exitStatus, $ignoreableErrors))) return array($exitStatus, null);
