@@ -8,7 +8,7 @@ define('ACTIVATION', 'retired');
 define('NOT_ACTIVATED', 1);
 define('IS_ACTIVATED', 0);
 define('ACCESS', 'ring');
-define('ACCESS_LEVEL', 2);
+define('ACCESS_LEVEL', Coach::T_RING_GLOBAL_NONE);
 
 // Error messages *NOTE: Error messages are not concatenated as only one needs to be seen by the user.
 define('USERNAME_ERROR', 'The username already exists or must be at least 3 characters long.');
