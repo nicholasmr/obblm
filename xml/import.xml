@@ -29,7 +29,6 @@
         <wt>0</wt>     <!-- Won tournaments -->
         <gf>0</gf>     <!-- Goals by team -->
         <ga>0</ga>     <!-- Goals against team -->
-        <tcas>0</tcas> <!-- Total team CAS -->
 
         <!-- Players -->
         <players>

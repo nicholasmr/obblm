@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -82,10 +82,7 @@ define('T_HTMLBOX_OTHER', 5);
 
 // General OBBLM routines and data structures.
 require_once('settings.php');
-require_once('lib/game_data.php'); # LRB5
-if ($rules['enable_lrb6']) {
-	require_once('lib/game_data_lrb6.php'); # LRB6
-}
+require_once('lib/game_data_lrb6.php'); # LRB6
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
 

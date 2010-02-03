@@ -27,7 +27,6 @@
         <xs:element name="wt" type="xs:nonNegativeInteger" />
         <xs:element name="gf" type="xs:nonNegativeInteger" />
         <xs:element name="ga" type="xs:nonNegativeInteger" />
-        <xs:element name="tcas" type="xs:nonNegativeInteger" />
 
         <xs:element name="players">
         <xs:complexType>

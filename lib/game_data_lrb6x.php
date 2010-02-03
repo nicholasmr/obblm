@@ -21,6 +21,8 @@
  *
  */
 
+require('lib/game_data.php'); # LRB5
+
 /*
  * Game data replacement for LRB6 experimental rules (LRB5b).
  */

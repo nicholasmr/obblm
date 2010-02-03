@@ -25,9 +25,11 @@ This page allows access to OBBLM back-end maintenance and synchronisation routin
 <form method="POST">
     <b>DB synchronisation procedures:</b><br>
     <INPUT TYPE=RADIO NAME="act" VALUE="syncAll()"><i>syncAll()</i> - Synchronises all stats, relations and dynamic properties - may take a few minutes!<br>
+    <!--
     <INPUT TYPE=RADIO NAME="act" VALUE="syncAllMVs()"><i>syncAllMVs()</i> - Synchronises all stats.<br>
     <INPUT TYPE=RADIO NAME="act" VALUE="syncAllDProps()"><i>syncAllDProps()</i> - Synchronises all dynamic properties (TVs, PVs etc.).<br>
     <INPUT TYPE=RADIO NAME="act" VALUE="syncAllRels()"><i>syncAllRels()</i> - Synchronises all object (player, team, coach) ownership relations.<br>
+    -->
     <br><b>DB maitenance:</b><br>
     <INPUT TYPE=RADIO NAME="act" VALUE="gdsync">Synchronise the PHP-stored BB game data (<i>lib/game_data*.php</i> files) with DB. <u>Run this when</u> having changed the BB game data files.<br>
     <INPUT TYPE=RADIO NAME="act" VALUE="funcs">Re-install DB back-end procedures and functions. <u>Run this when</u> having altered the "house ranking systems" rule definitions defined in <i>settings.php</i>.<br>

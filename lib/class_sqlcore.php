@@ -69,8 +69,8 @@ public static function mkHRS(array $HRSs)
     global $CT_cols, $core_tables;
     
     $allowed_fields = array(
-        'mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki', 'cas', 'tdcas', 'tcas', 'smp', 'elo', 
-        'gf', 'ga', 'sdiff', 'won', 'lost', 'draw', 'swon', 'slost', 'sdraw', 'played', 'win_pct',
+        'mvp', 'cp', 'td', 'intcpt', 'bh', 'si', 'ki', 'cas', 'tdcas', 'smp', 'elo', 
+        'gf', 'ga', 'sdiff', 'tcasf', 'tcasa', 'tcdiff', 'won', 'lost', 'draw', 'swon', 'slost', 'sdraw', 'played', 'win_pct',
     );
     $query = 'CREATE FUNCTION getPTS(tid '.$CT_cols[T_OBJ_TEAM].', trid '.$CT_cols[T_NODE_TOURNAMENT].')
         RETURNS '.$CT_cols['pts'].'
@@ -125,7 +125,8 @@ public static function installProcsAndFuncs($install = true)
             draw   = IFNULL((SELECT SUM(IF((team1_id = tid OR team2_id = tid) AND team1_score = team2_score, 1, 0)) REGEX_REPLACE_HERE), 0), 
             gf     = IFNULL((SELECT SUM(IF(team1_id = tid, team1_score, IF(team2_id = tid, team2_score, 0))) REGEX_REPLACE_HERE), 0), 
             ga     = IFNULL((SELECT SUM(IF(team1_id = tid, team2_score, IF(team2_id = tid, team1_score, 0))) REGEX_REPLACE_HERE), 0),  
-            tcas   = IFNULL((SELECT SUM(IF(team1_id = tid, tcas1, IF(team2_id = tid, tcas2, 0))) REGEX_REPLACE_HERE), 0), 
+            tcasf  = IFNULL((SELECT SUM(IF(team1_id = tid, tcas1, IF(team2_id = tid, tcas2, 0))) REGEX_REPLACE_HERE), 0), 
+            tcasa  = IFNULL((SELECT SUM(IF(team1_id = tid, tcas2, IF(team2_id = tid, tcas1, 0))) REGEX_REPLACE_HERE), 0),  
             smp    = IFNULL((SELECT SUM(IF(team1_id = tid, smp1, IF(team2_id = tid, smp2, 0))) REGEX_REPLACE_HERE), 0),
             ff     = IFNULL((SELECT SUM(IF(team1_id = tid, ffactor1, IF(team2_id = tid, ffactor2, 0))) REGEX_REPLACE_HERE), 0)
     ';
@@ -836,7 +837,7 @@ public static function installProcsAndFuncs($install = true)
             ELSE
                 UPDATE mv_players '.$mstat_fields_stars.' WHERE f_pid = pid AND f_trid = trid;
             END IF;
-            UPDATE mv_players SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_pid = pid AND f_trid = trid;
+            UPDATE mv_players SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED), tcdiff = CAST(tcasf-tcasa AS SIGNED) WHERE f_pid = pid AND f_trid = trid;
             
             /* ES */
             DELETE FROM mv_es_players WHERE f_pid = pid AND f_trid = trid; 
@@ -867,7 +868,7 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data 
                 WHERE match_data.f_team_id = tid AND match_data.f_tour_id = trid;
             UPDATE mv_teams '.$mstat_fields_team.' WHERE f_tid = tid AND f_trid = trid;
-            UPDATE mv_teams SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_tid = tid AND f_trid = trid;
+            UPDATE mv_teams SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED), tcdiff = CAST(tcasf-tcasa AS SIGNED) WHERE f_tid = tid AND f_trid = trid;
             UPDATE mv_teams SET pts = getPTS(f_tid, f_trid) WHERE f_tid = tid AND f_trid = trid;
 
             /* ES */
@@ -896,7 +897,7 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data
                 WHERE match_data.f_coach_id = cid AND match_data.f_tour_id = trid;
             UPDATE mv_coaches '.$mstat_fields_coach.' WHERE f_cid = cid AND f_trid = trid;
-            UPDATE mv_coaches SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_cid = cid AND f_trid = trid;
+            UPDATE mv_coaches SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED), tcdiff = CAST(tcasf-tcasa AS SIGNED) WHERE f_cid = cid AND f_trid = trid;
 
             /* ES */
             DELETE FROM mv_es_coaches WHERE f_cid = cid AND f_trid = trid; 
@@ -924,7 +925,7 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data
                 WHERE match_data.f_race_id = rid AND match_data.f_tour_id = trid;
             UPDATE mv_races '.$mstat_fields_race.' WHERE f_rid = rid AND f_trid = trid;
-            UPDATE mv_races SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED) WHERE f_rid = rid AND f_trid = trid;
+            UPDATE mv_races SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED), tcdiff = CAST(tcasf-tcasa AS SIGNED) WHERE f_rid = rid AND f_trid = trid;
 
             /* ES */
             DELETE FROM mv_es_races WHERE f_rid = rid AND f_trid = trid; 

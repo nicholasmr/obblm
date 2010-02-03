@@ -39,12 +39,12 @@ require('header.php');
 <small>
 <?php
 if (isset($_POST['version'])) {
-    echo ($upgradeMsgs = upgrade_database($_POST['version']))
+    echo ($upgradeMsgs = upgrade_database($_POST['version'], array('lrb' => isset($_POST['lrb']) ? $_POST['lrb'] : false)))
         ? "<br><b><font color='green'>Done</font></b>"
         : "<br><b><font color='red'>Error</font></b>";
         
     echo "<br><br><b>IMPORTANT</b>:<br><ul>";
-    echo array_strpack('<li>%s</li>', array_merge($upgradeMsgs,array('You are required to visit the <a href="index.php?section=admin&amp;subsec=cpanel">OBBLM core panel</a> in the admin menu and run the "syncAll()" DB synchronisation procedure in order to syncronize all statistics.')), "\n");
+    echo array_strpack('<li>%s</li>', $upgradeMsgs, "\n");
     echo "</ul><br><hr>";
 }
 ?>
@@ -59,7 +59,14 @@ Now, click the appropriate SQL code to run depending on the version upgrade you 
 
 <br>
 <form method="POST">
-    <INPUT TYPE=RADIO NAME="version" VALUE="075-080">v 0.75 to v 0.80<br>
+<table border='1' style='font-size:small; mergin: 5px;'>
+    <tr style='font-weight:bold;'><td></td><td>Version upgrade</td><td>Required upgrade parameters</td></tr>
+    <tr>
+        <td><INPUT TYPE=RADIO NAME="version" VALUE="075-080"></td>
+        <td>0.75 to 0.80</td>
+        <td>The <u>current</u> 0.75 LRB used is: LRB5<INPUT TYPE=RADIO NAME="lrb" VALUE="5"> LRB5b/LRB6x<INPUT TYPE=RADIO NAME="lrb" VALUE="6x"></td>
+    </tr>
+</table>
     <br>
     <input type="submit" name='submit' value="Run upgrade SQLs">
 </form>
