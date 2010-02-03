@@ -163,8 +163,8 @@ public static function isInHOF($pid)
 
 public static function makeList($ALLOW_EDIT) {
     
-    global $lng;
-    HTMLOUT::frame_begin();
+    global $lng, $coach, $settings;
+    HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
     title($lng->getTrn('name', __CLASS__));
     
     /* A new entry was sent. Add it to system */

@@ -235,8 +235,8 @@ public static function main($argv)
 public static function makeList($ALLOW_EDIT)
 {
     
-    global $lng;
-    HTMLOUT::frame_begin();
+    global $lng, $coach, $settings;
+    HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
     title($lng->getTrn('name', 'Prize'));
     
     /* A new entry was sent. Add it to system */
@@ -331,6 +331,7 @@ public static function makeList($ALLOW_EDIT)
     }
     
     Prize::printList(false, $ALLOW_EDIT);
+    HTMLOUT::frame_end();
 }
 
 // Prints prizes list for a given tour_id or all tours.
@@ -383,7 +384,6 @@ public static function printList($trid, $ALLOW_EDIT)
             <?php
         }
     }
-    HTMLOUT::frame_end();
 }
 }
 
