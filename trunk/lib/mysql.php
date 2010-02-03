@@ -96,7 +96,6 @@ $core_tables = array(
         'wt_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'gf_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         'ga_0'      => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
-        'tcas_0'    => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
         // Relations
         'f_rname' => $CT_cols['name'],
         'f_cname' => $CT_cols['name'],
@@ -306,7 +305,6 @@ $mv_commoncols = array(
     'si'        => 'SMALLINT UNSIGNED',
     'cas'       => 'SMALLINT UNSIGNED',
     'tdcas'     => 'SMALLINT UNSIGNED',
-    'tcas'      => 'SMALLINT UNSIGNED',
     'smp'       => 'SMALLINT SIGNED',
     'spp'       => 'SMALLINT UNSIGNED',
     'ff'        => 'SMALLINT SIGNED',
@@ -318,6 +316,9 @@ $mv_commoncols = array(
     'ga'        => 'SMALLINT UNSIGNED',
     'gf'        => 'SMALLINT UNSIGNED',
     'sdiff'     => 'SMALLINT SIGNED',
+    'tcasa'     => 'SMALLINT UNSIGNED',
+    'tcasf'     => 'SMALLINT UNSIGNED',
+    'tcdiff'    => 'SMALLINT SIGNED',
 );
 $core_tables['mv_players'] = array(
     'f_pid' => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
@@ -506,7 +507,7 @@ $relations_obj = array(
 $objFields_init = array(
     T_OBJ_TEAM => array(
         'won' => 'won_0', 'lost' => 'lost_0', 'draw' => 'draw_0', 'played' => 'played_0',
-        'wt_cnt' => 'wt_0', 'gf' => 'gf_0', 'ga' => 'ga_0', 'tcas' => 'tcas_0'
+        'wt_cnt' => 'wt_0', 'gf' => 'gf_0', 'ga' => 'ga_0', 
     ),
 );
 // Object property extra (addition) fields
@@ -706,9 +707,25 @@ function setup_database() {
     return true;
 }
 
-function upgrade_database($version)
+function upgrade_database($version, $opts)
 {
     $conn = mysql_up();
+    
+    switch ($version) {
+        case '075-080':
+            # Migrating position IDs correctly requires having loaded the correct LRB used in the v0.75 league.
+            global $DEA, $stars, $skillarray; # Make global so that below include()s will overwrite their values.
+            switch ($opts['lrb']) {
+                case '5':  require('lib/game_data.php'); break; # Load LRB5
+                case '6x': require('lib/game_data_lrb6x.php'); break; # Load LRB6x
+                default: break; # LRB6 already loaded by default.
+            }
+            break;
+            
+        default:
+            break;
+    }
+
     require_once('lib/class_sqlcore.php');
     require_once('lib/mysql_upgrade_queries.php');
         
@@ -756,6 +773,21 @@ function upgrade_database($version)
     echo (SQLCore::installTableIndexes())
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
+   
+    switch ($version) {
+        case '075-080':
+            # Convert league to LRB6.
+            global $DEA, $stars, $skillarray; # Make global so that below include()s will overwrite their values.
+            require('lib/game_data_lrb6.php'); # Load LRB6.
+            SQLCore::syncGameData();
+            
+        default:
+            break;
+    }
+   
+    echo (mysql_query("CALL syncAll()"))
+        ? "<font color='green'>OK &mdash; synchronised all dynamic stats and properties</font><br>\n"
+        : "<font color='red'>FAILED &mdash; could not synchronise all dynamic stats and properties</font><br>\n";
    
     // Done!
     mysql_close($conn);

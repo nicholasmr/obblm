@@ -26,7 +26,6 @@ if (isset($_FILES['xmlfile'])) {
         'wt_0' => 'wt',
         'gf_0' => 'gf',
         'ga_0' => 'ga',
-        'tcas_0' => 'tcas',
     );
 
     foreach ($xmlteams->team as $t) {

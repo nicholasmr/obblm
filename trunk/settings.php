@@ -60,7 +60,7 @@ $settings['default_fp_league'] = 1;        // ID of default league to show on fr
  *****************/
 
 /*
-    The default OBBLM rule set is the rule set provided by the LRB 5.
+    The default OBBLM rule set is the rule set provided by the LRB6.
     Please use the boolean values "true" and "false" wherever default values are boolean.
 */
 
@@ -87,18 +87,6 @@ $rules['cost_fan_factor']       = 10000;    // Default is 10000.
 $rules['cost_ass_coaches']      = 10000;    // Default is 10000.
 $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
 
-/*
-    Enable LRB6 rule set.
-
-    IMPORTANT: If you decide to switch to LRB6 whilst using LRB5 you must:
-        - Go to the "Admin -> OBBLM core panel" menu and execute, in the below order (after setting the below "enable_lrb6" = true):
-            * DB maitenance: Synchronise the PHP-stored BB game data (lib/game_data*.php files) with DB
-            * DB synchronisation procedures: syncAll()
-        - Be aware of, and manually correct, players with changed base stats (def. skills & def. characteristics) with illegal skills or characteristic values.
- */
-
-$rules['enable_lrb6'] = true; // Default is true.
-
 /*****************
  * House ranking systems
  *****************/
@@ -107,40 +95,42 @@ $rules['enable_lrb6'] = true; // Default is true.
     In the case of the already implemented ranking systems not fitting the needs of your league, you may define house ranking systems.
     The fields/properties which you may sort teams against are:
     
-        mvp, cp, td, intcpt, bh, si, ki, cas (sum of player cas), tcas (total team cas), tdcas (td + player cas),
-        played, won, lost, draw, win_pct, gf (total score made by this team), ga (total score made against this team),
-        sdiff (equals to the arithmetic value of gf - ga), smp (sportsmanship points), pts (points)
+        mvp, cp, td, intcpt, bh, si, ki, cas (sum of PLAYER cas), tdcas ("td" + "cas"), 
+        tcasf (total TEAM cas by this team), tcasa (total TEAM cas against this team), tcdiff (equals to the arithmetic value of "tcasf" - "tcasa"), 
+        gf (total score made by this team), ga (total score made against this team), sdiff (equals to the arithmetic value of "gf" - "ga")
+        played, won, lost, draw, win_pct, smp (sportsmanship points), pts (points)
         
-    The last field, points, is a special field which is defined to be the value of some arithmetical combination of other fields.
+    The last field, points, is a special field displayed in tournament standings which is defined to be the value of some arithmetical combination of other fields.
     For example, a typical points field could be constructed as so: points = '3*[won] + 2*[draw] + 1*[lost]'
-    But, you may of course use any of the above fields. 
+    But, you may of course use any of the above listed fields. 
 
     The fields you will be defining, in order to make a working ranking system, are:
     
-        rule:
+        the rule:
+        ---------
             This field must take the form of: 
                 array('+field1', '-field2', '+field3')
             This should be interpreted as:
                 Sort first    by least of field1
                 Sort secondly by most  of field2
                 Sort at last  by least of field3
-            Note: "+" prefix indicates least of and "-" most of. You may NOT omit any prefixes. They are required for every field!
-            Note: You may define as many entries in the rule you want. It's not limited to = 3, like in this example. 
+            Note: "+" prefix indicates least of (ascending) and "-" most of (descending). You may NOT omit the +/- prefixes. They are required for every field!
+            Note: You may define as many entries in the rule you want. It's not limited to 3, like in this example. 
             
         points:
+        -------
             This field must take the form of:
                 'X*[field1] + Y*[field2] + [field3]'
-            Where X and Y may by either integers, floating point numbers or another fields. 
+            Where X and Y may by either integers, floating point numbers or another field itself. 
             A points definition does not have to be a linear combination of fields, points = '[field1]/([field2]*[field3])' is 100% valid.
-            Note: non-numeric fields may of course not be used in the points definition.
         
-    PLEASE NOTE: If you do not need the points field, because it is not included in the rule field of your ranking system, 
-    then simply leave the "points" definition be equal to '' (that's two single quotes only).
+            PLEASE NOTE: If you do not need the points field, because it is not included in the rule field of your ranking system, 
+            then simply leave the "points" definition be equal to '' (that's two single quotes only).
     
     IMPORTANT!!!
     Once you have changed the below ranking systems you must notify OBBLM. 
     This is done via the admin menu: Admin -> OBBLM core panel. 
-    Here you msut select the "Re-install DB back-end procedures and functions" under "DB maitenance".
+    Here you must select the "Re-install DB back-end procedures and functions" under "DB maintenance".
 */
 
 // Rule 1

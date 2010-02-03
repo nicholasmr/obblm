@@ -59,7 +59,6 @@ class Team
     public $wt_0   = 0;
     public $gf_0   = 0;
     public $ga_0   = 0;
-    public $tcas_0 = 0;
 
     /***************
      * Methods
@@ -491,7 +490,7 @@ class Team
     public static $createEXPECTED = array(
         'name','owned_by_coach_id','f_race_id','f_lid','f_did',
         'treasury', 'apothecary', 'rerolls', 'ff_bought', 'ass_coaches', 'cheerleaders',
-        'won_0','lost_0','draw_0','played_0','wt_0','gf_0','ga_0','tcas_0','imported',
+        'won_0','lost_0','draw_0','played_0','wt_0','gf_0','ga_0','imported',
     );
 
     public static function create(array $input) {

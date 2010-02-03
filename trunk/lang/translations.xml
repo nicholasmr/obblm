@@ -513,42 +513,7 @@
 </matches>
 
 <rules>
-    <intro>
-    <![CDATA[
-    OBBLM supports the rules of <a href="http://www.bloodbowlonline.com/LivingRulebook5.pdf">LRB5</a>, but can be customized by editing the <i>settings.php</i> file.
-    <br><br>
-    OBBLM is currently set to use the following rules:
-    <br><br>
-    ]]>
-    </intro>
-    <rule>Rule</rule>
-    <val>Value</val>
-    
-    <yes>Yes</yes>
-    <no>No</no>
-    <unlimited>Unlimited</unlimited>
-    <refundptc>% refund</refundptc>
-    
-    <rr_price>Static re-roll prices</rr_price>
-    <ap_price>Price of apothecary</ap_price>
-    <ff_price>Price of fan factor</ff_price>
-    <ac_price>Price of assistant coaches</ac_price>
-    <cl_price>Price of cheerleaders</cl_price>
-    <init_ts>Initial treasury</init_ts>
-    <init_rr>Initial re-rolls</init_rr>
-    <init_ff>Initial fan factor</init_ff>
-    <init_ac>Initial assistant coaches</init_ac>
-    <init_cl>Initial cheerleaders</init_cl>
-    <max_rr>Maximum re-rolls</max_rr>
-    <max_ff>Maximum fan factor</max_ff>
-    <max_ac>Maximum assistant coaches</max_ac>
-    <max_cl>Maximum cheerleaders</max_cl>
-    <max_jm>Journeymen limit</max_jm>
-    <max_pl>Maximum players on team</max_pl>
-    <refund>Player refund (on firing/selling)</refund>
-    <enable_lrb6>Enable LRB6 extensions</enable_lrb6>
-    <enable_post_ff>Allow post first game FF purchase</enable_post_ff>
-    
+    <!-- None -->
 </rules>
 
 <about>
@@ -702,8 +667,7 @@
 
 </en-GB>
 
-
-<!-- Spanish is only PARTLY implemented -->
+<!-- Spanish -->
 
 <es>
 
@@ -1216,43 +1180,9 @@
 </matches>
 
 <rules>
-    <intro>
-    <![CDATA[
-    OBBLM soporta las reglas <a href="http://www.bloodbowlonline.com/LivingRulebook5.pdf">LRB5</a>, pero estas se pueden cambiar modificando el archivo <i>settings.php</i> 
-    <br><br>
-    Esta instalación de OBBLM usa las siguientes reglas:
-    <br><br>
-    ]]>
-    </intro>
-    <rule>Regla</rule>
-    <val>Valor</val>
-    
-    <yes>Si</yes>
-    <no>No</no>
-    <unlimited>Ilimitado</unlimited>
-    <refundptc>% devolución</refundptc>
-    
-    <rr_price>Precios estáticos de las segundas oportunidades</rr_price>
-    <ap_price>Precio del médico</ap_price>
-    <ff_price>Precio del factor de hinchas</ff_price>
-    <ac_price>Precio de los ayudantes del entrenador</ac_price>
-    <cl_price>Precio de las animadoras</cl_price>
-    <init_ts>Tesorería inicial</init_ts>
-    <init_rr>Segundas Oportunidades iniciales</init_rr>
-    <init_ff>Factor de Hinchas inicial</init_ff>
-    <init_ac>Ayudantes del entrenador iniciales</init_ac>
-    <init_cl>Animadoras iniciales</init_cl>
-    <max_rr>Segundas oportunidades máximas</max_rr>
-    <max_ff>Factor de Hinchas máximo</max_ff>
-    <max_ac>Ayudantes del entrenador máximos</max_ac>
-    <max_cl>Animadoras máximas</max_cl>
-    <max_jm>Límite de Independientes</max_jm>
-    <max_pl>Número máximo de jugadores en el equipo</max_pl>
-    <refund>Devolución de dinero por venta o despido de jugadores</refund>
-    <enable_lrb6>Activar extensiones LRB6</enable_lrb6>
-    <enable_post_ff>Permitir la compra de Factor de Hinchas tras el primer partido</enable_post_ff>
-    
+    <!-- None -->
 </rules>
+
 <about>
     <intro>Introducción</intro>
     <intro_txt>

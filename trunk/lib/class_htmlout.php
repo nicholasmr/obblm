@@ -260,7 +260,9 @@ public static function standings($obj, $node, $node_id, array $opts)
                 'tv' => array('desc' => $lng->getTrn('common/value'), 'kilo' => true, 'suffix' => 'k'),                
             );
             $fields_after = array(
-                'mv_tcas' => array('desc' => 'tcas'), 
+                'mv_tcasa' => array('desc' => 'tcasa'), 
+                'mv_tcasf' => array('desc' => 'tcasf'), 
+                'mv_tcdiff' => array('desc' => 'tcdiff'), 
             	'mv_smp' => array('desc' => 'SMP'),
             );
             if ($ALL_TIME) {
@@ -327,6 +329,9 @@ public static function standings($obj, $node, $node_id, array $opts)
                 'name' => array('desc' => $lng->getTrn('common/coach'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
             );
             $fields_after = array(
+                'mv_tcasa' => array('desc' => 'tcasa'), 
+                'mv_tcasf' => array('desc' => 'tcasf'), 
+                'mv_tcdiff' => array('desc' => 'tcdiff'), 
             	'mv_smp' => array('desc' => 'SMP'),
             );
             if ($sel_node == T_NODE_TOURNAMENT) {
@@ -787,7 +792,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                     if (array_key_exists('kilo', $a) && $a['kilo'])
                         $cpy /= 1000;
                         $cpy = (string) $cpy;
-                    if (is_numeric($cpy) && !ctype_digit($cpy))
+                    if (is_numeric($cpy) && !ctype_digit(($cpy[0] == '-') ? substr($cpy,1) : $cpy))
                         $cpy = sprintf("%1.2f", $cpy);
                     if (array_key_exists('suffix', $a) && $a['suffix'])
                         $cpy .= $a['suffix'];
