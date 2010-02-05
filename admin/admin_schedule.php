@@ -167,9 +167,12 @@ title($lng->getTrn('menu/admin_menu/schedule'));
            success: function(tid){
                 TID = tid;
                 TNAME = name;
-                document.getElementById("team_verify").innerHTML = (TID > 0) 
-                    ? '<font color="green">OK</font>, <a href="javascript:void(0);" onClick="addTeam();"><?php echo $lng->getTrn("common/add");?></a>' 
-                    : '<font color="red">Does not exist</font>';
+                if (TID > 0) {
+                    addTeam();
+                }
+                else {
+                    document.getElementById("team_verify").innerHTML = '<font color="red">Does not exist</font>';
+                }
            }
          });
     }
@@ -195,6 +198,8 @@ title($lng->getTrn('menu/admin_menu/schedule'));
         SL.options[SL.length] = new Option(name, tid);
         SL.size++;
         TEAMS.value = TEAMS.value.concat( ((TEAMS.value.length == 0) ? '' : ',')+tid );
+        
+        document.getElementById("team_verify").innerHTML = '';
     }
     
     function removeLastTeam()
@@ -290,7 +295,15 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
     <br>
     
     <b><?php echo $lng->getTrn('admin/schedule/add_team');?>:</b><br>    
-    <input id='team' type="text" name="team" size="30" maxlength="50"> <a href='javascript:void(0);' onClick="verifyTeam(document.getElementById('team').value);">Verify</a> <span id='team_verify'></span><br>
+    <script>
+        $(document).ready(function(){
+            var options, a;
+            options = { serviceUrl:'handler.php?type=teamautocomplete' };
+            a = $('#team').autocomplete(options);
+        });
+    </script>
+    
+    <input id='team' type="text" name="team" size="30" maxlength="50"> <a href='javascript:void(0);' onClick="verifyTeam(document.getElementById('team').value);"><?php echo $lng->getTrn('common/add');?></a> <span id='team_verify'></span><br>
     <?php
     print "<br><br>";
     print "<b>".$lng->getTrn('admin/schedule/teams_selected').":</b><br>";
