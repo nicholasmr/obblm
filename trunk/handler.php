@@ -93,7 +93,23 @@ switch ($_GET['type'])
     
     /* Veridy team name - AJAX use */
     case 'verifyteam':
-        echo (isset($_POST['tname']) && is_numeric($tid = get_alt_col('teams', 'name', $_POST['tname'], 'team_id'))) ? $tid : '0';
+        if (isset($_POST['tname'])) {
+            if (get_magic_quotes_gpc()) {
+                $_POST['tname'] = stripslashes($_POST['tname']);
+            }
+            echo is_numeric($tid = get_alt_col('teams', 'name', $_POST['tname'], 'team_id')) ? $tid : '0';
+        }
+        break;
+
+    /* Team name autocompletion - AJAX */
+    case 'teamautocomplete':
+        $query = "SELECT team_id AS 'id', name FROM teams WHERE name LIKE '$_GET[query]%'";
+        $result = mysql_query($query);
+        $teams = array();
+        while($row = mysql_fetch_assoc($result)) {
+            $teams[$row['id']] = $row['name'];
+        }
+        echo json_encode(array('query' => $_GET['query'], 'suggestions' => array_values($teams), 'data' => array_keys($teams)));
         break;
 
     default:
