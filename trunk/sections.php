@@ -65,15 +65,7 @@ function sec_main() {
     
     MTS('Main start');
 
-    # Default league.
-    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid'])) ? $coach->settings['home_lid'] : $settings['default_fp_league'];
-    # Update league view?
-    if (isset($_POST['lid'])) $sel_lid = (int) $_POST['lid'];
-    else if (isset($_SESSION['fp_lid'])) $sel_lid = $_SESSION['fp_lid'];
-    # Save league view.
-    $_SESSION['fp_lid'] = $sel_lid;
-
-    setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $sel_lid)); # Force load league settings.
+    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector(array('loadLeagueSettings' => true));
     $IS_GLOBAL_ADMIN = (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN);
     
     /*
@@ -105,7 +97,7 @@ function sec_main() {
      */
 
     ?>
-    <div class="main_head"><?php echo $settings['site_name']; ?></div>
+    <div class="main_head"><?php echo $settings['league_name']; ?></div>
     <div class='main_leftColumn'>
         <div class="main_leftColumn_head">
             <?php
@@ -113,13 +105,7 @@ function sec_main() {
             echo $settings['welcome'];
             echo "</div>\n";
             echo "<div class='main_leftColumn_left'>\n";
-            if (count($leagues) > 1) {
-                echo "<form name='lid_selector' method='POST' style='display:inline; margin:0px;'>".$lng->getTrn('common/league')." <select name='lid' onChange='document.lid_selector.submit();'>";
-                foreach ($leagues as $lid => $desc) {
-                    echo "<option value='$lid' ".(($lid == $sel_lid) ? 'SELECTED' : '').">$desc[lname]</option>";
-                }
-                echo "</select></form>\n";
-            }
+            echo $HTML_LeagueSelector;
             echo "</div>\n";
             echo "<div class='main_leftColumn_right'>\n";
             if (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN) {echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";}
@@ -376,9 +362,12 @@ function sec_objhandler() {
 
 function sec_rules() {
 
-    global $rules, $lng;
+    global $lng, $settings;
     title($lng->getTrn('menu/rules'));
-    readfile('LEAGUERULES');
+    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector(array('loadLeagueSettings' => true));
+    echo $HTML_LeagueSelector;
+    echo "<br><br>";
+    echo $settings['rules'];
 }
 
 /*************************
