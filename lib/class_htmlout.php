@@ -260,8 +260,8 @@ public static function standings($obj, $node, $node_id, array $opts)
                 'tv' => array('desc' => $lng->getTrn('common/value'), 'kilo' => true, 'suffix' => 'k'),                
             );
             $fields_after = array(
-                'mv_tcasa' => array('desc' => 'tcasa'), 
                 'mv_tcasf' => array('desc' => 'tcasf'), 
+                'mv_tcasa' => array('desc' => 'tcasa'), 
                 'mv_tcdiff' => array('desc' => 'tcdiff'), 
             	'mv_smp' => array('desc' => 'SMP'),
             );
@@ -329,8 +329,8 @@ public static function standings($obj, $node, $node_id, array $opts)
                 'name' => array('desc' => $lng->getTrn('common/coach'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
             );
             $fields_after = array(
-                'mv_tcasa' => array('desc' => 'tcasa'), 
                 'mv_tcasf' => array('desc' => 'tcasf'), 
+                'mv_tcasa' => array('desc' => 'tcasa'), 
                 'mv_tcdiff' => array('desc' => 'tcdiff'), 
             	'mv_smp' => array('desc' => 'SMP'),
             );
