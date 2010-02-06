@@ -4,7 +4,7 @@
  * MySQL database settings 
  **************************/
 
-$db_name   = 'obblmdb';
+$db_name   = 'level10';
 $db_user   = 'root';
 $db_passwd = '';
 $db_host   = 'localhost';

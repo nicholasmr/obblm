@@ -328,11 +328,12 @@ $pdf->SetFont('Tahoma', '', 8);
 $merc = array(0=>'No Merc');
 $i=0;
 if ($_POST) {
-  foreach ($DEA[$team->race]["players"] as $p => $m) {
+  foreach ($DEA[$team->f_rname]["players"] as $p => $m) {
     $i++;
     array_push($merc, $m);
     $pos[$i] = $p;
   }
+  $postvars = array(); # initialize.
   foreach ($_POST as $postkey => $postvalue) {
     if ($postkey == "Submit") continue;
     if ($postvalue == "0") continue;
@@ -370,10 +371,9 @@ if ($_POST) {
     unset($star_array_tmp[0]);
     foreach ($star_array_tmp as $sid) {
       $s = new Star($sid);
-      $s->setStats(false, false, false);
-      
-      $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>implode(', ',$s->skills),
-            'cp'=>$s->cp, 'td'=>$s->td, 'int'=>$s->intcpt, 'cas'=>$s->cas, 'mvp'=>$s->mvp, 'spp'=>$s->spp, 'value'=>$pdf->Mf($s->cost));
+      $s->setSkills(true);
+      $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>$s->skills,
+            'cp'=>$s->mv_cp, 'td'=>$s->mv_td, 'int'=>$s->mv_intcpt, 'cas'=>$s->mv_cas, 'mvp'=>$s->mv_mvp, 'spp'=>$s->mv_spp, 'value'=>$pdf->Mf($s->cost));
       $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
       $ind_cost += $s->cost;
     }
@@ -382,7 +382,7 @@ if ($_POST) {
   // Then Mercs
   if (is_array($merc_array_tmp)) {
     unset($merc[0]);
-    $r=$team->race;
+    $r=$team->f_rname;
     $i=0;
     unset($merc_array_tmp[0]);
     foreach ($merc_array_tmp as $mpos) {
@@ -392,9 +392,9 @@ if ($_POST) {
       $m['st'] = $DEA[$r]['players'][$mpos]['st'];
       $m['ag'] = $DEA[$r]['players'][$mpos]['ag'];
       $m['av'] = $DEA[$r]['players'][$mpos]['av'];
-      $m['skillarr'] = $DEA[$r]['players']["$mpos"]['Def skills'];
-      if (!in_array('Loner', $m['skillarr'])) array_unshift($m['skillarr'], 'Loner');	// Adding Loner unless already in array
-      $m['skills'] = implode(', ',$m['skillarr']);
+      $m['skillarr'] = $DEA[$r]['players']["$mpos"]['def'];
+      if (!in_array(99, $m['skillarr'])) array_unshift($m['skillarr'], 99);	// Adding Loner unless already in array
+      $m['skills'] = skillsTrans($m['skillarr']);
       $m['cost'] = $DEA[$r]['players'][$mpos]['cost'] + MERC_EXTRA_COST;
       if (isset($postvars["Extra$i"])) {
         $m['cost'] += MERC_EXTRA_SKILL_COST;

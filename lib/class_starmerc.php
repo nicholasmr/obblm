@@ -30,6 +30,7 @@ class Star
     // General
     public $star_id = 0;
     public $icon    = '';
+    public $skills = array();
     
     /***************
      * Methods
@@ -41,14 +42,15 @@ class Star
             Creates a star object with up-to-date fields/stats reflecting the star's participation in every match.
         */
 
-        $this->setStats(T_OBJ_STAR, $sid, false, false, false);
+        $this->star_id = $sid;
+        $this->setStats(false, false, false);
         global $stars;
         $this->icon = PLAYER_ICONS.'/'.$stars[$this->name]['icon'].'.png';
     }
     
-    public function setStats($obj, $obj_id, $node, $node_id, $setAvg = false)
+    public function setStats($node, $node_id, $setAvg = false)
     {
-        foreach (Stats::getAllStats(T_OBJ_STAR, $obj_id, $node, $node_id, $setAvg) as $key => $val) {
+        foreach (Stats::getAllStats(T_OBJ_STAR, $this->star_id, $node, $node_id, $setAvg) as $key => $val) {
             $this->$key = $val;
         }
     }
@@ -66,6 +68,14 @@ class Star
         $ret['cas'] = $ret['bh+ki+si'];
         unset($ret['bh+ki+si']);
         return $ret;
+    }
+    
+    public function setSkills($makeString = false)
+    {
+        $query = "SELECT skills FROM game_data_stars WHERE star_id = $this->star_id";
+        $result = mysql_query($query);
+        list($skillsstr) = mysql_fetch_row($result);
+        $this->skills = ($makeString) ? skillsTrans($skillsstr) : (empty($skillsstr) ? array() : explode(',', $skillsstr));
     }
     
     public function getHireHistory($obj, $obj_id, $node, $node_id)
