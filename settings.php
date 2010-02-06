@@ -13,47 +13,11 @@ $db_host   = 'localhost';
  * OBBLM global settings 
  *************************/
 
-$settings['site_name'] = 'UNNAMED BBL';     // Name of the site or the league name if only one league is being managed.
-$settings['forum_url'] = 'http://localhost';// URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
-$settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
-$settings['lang'] = 'en-GB';                // Deafult visitor language. Existing: en-GB, es.
-$settings['welcome'] = 'Please replace this line in your <i>settings</i> file with your own league greeting message.';
+// For local settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
 
-$settings['entries'] = array(
-    'messageboard'      => 5,   // Number of entries on the main page messageboard.
-    'latestgames'       => 5,   // Number of entries in the main page table "latest games".
-    'standings_players' => 30,  // Number of entries on the general players stadings table.
-    'standings_teams'   => 30,  // Number of entries on the general teams   stadings table.
-    'standings_coaches' => 30,  // Number of entries on the general coaches stadings table.
-);
-
-$settings['fp_standings'] = array(
-    # This would display a standings box of the top 6 teams in tournament with ID=1.
-    1 => array(
-        'length' => 6,
-        'fields' => array(
-            'Name' => 'name', 'PTS' => 'mv_pts', 'CAS' => 'mv_cas', 
-            'W' => 'mv_won', 'L' => 'mv_lost', 'D' => 'mv_draw', 'GF' => 'mv_gf', 'GA' => 'mv_ga'
-        ),
-    ),
-);
-
-$settings['fp_leaders'] = array(
-    'mv_cas' => array('title' => 'Most casualties',    'length' => 5),
-#    'mv_td'  => array('title' => 'Most touchdowns',    'length' => 5),
-#    'mv_cp'  => array('title' => 'Most completions',   'length' => 5),
-#    'mv_ki'  => array('title' => 'Most killed',        'length' => 5),
-);
-
-
-$settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
-$settings['show_stars_mercs']      = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.
-$settings['fp_team_news']          = true;  // Default is true. Show team news on front page.
-$settings['fp_links']              = true;  // Default is true. Generate coach, team and player links on the front page?
-$settings['hide_retired']		   = false; // Defailt is false. Hides retired coaches and teams from standings tables.
-
-$settings['default_leagues']   = array(1); // When creating a coach the coach will automatically become a regular coach in leauges with these IDs.
-$settings['default_fp_league'] = 1;        // ID of default league to show on front page when not logged in/coach has not selected a home league.
+$settings['site_name'] = 'BB portal';     // Site name.
+$settings['default_visitor_league'] = 1;  // ID of default league to show on front page when not logged in/coach has not selected a home league.
+$settings['default_leagues'] = array(1);  // When creating a coach the coach will automatically become a regular coach in leauges with these IDs.
 
 /*****************
  * OBBLM rule set
@@ -82,6 +46,10 @@ $rules['max_fan_factor']        = 9;        // Default is 9.
 $rules['max_ass_coaches']       = -1;       // Default is -1.
 $rules['max_cheerleaders']      = -1;       // Default is -1.
 
+/* 
+    Whenever the below cost values are changed you must run the 
+    "Re-install DB back-end procedures and functions" under "DB maintenance" from the "Admin -> Core panel".
+*/
 $rules['cost_apothecary']       = 50000;    // Default is 50000.
 $rules['cost_fan_factor']       = 10000;    // Default is 10000.
 $rules['cost_ass_coaches']      = 10000;    // Default is 10000.
@@ -127,21 +95,28 @@ $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
             PLEASE NOTE: If you do not need the points field, because it is not included in the rule field of your ranking system, 
             then simply leave the "points" definition be equal to '' (that's two single quotes only).
     
+    -------------------------------------------------------------------------------------------------
+    
     IMPORTANT!!!
+    
     Once you have changed the below ranking systems you must notify OBBLM. 
     This is done via the admin menu: Admin -> OBBLM core panel. 
-    Here you must select the "Re-install DB back-end procedures and functions" under "DB maintenance".
+    Here you must: 
+        - ALWAYS select the "Re-install DB back-end procedures and functions" under "DB maintenance".
+        - IF changes have been made to a points definition which is used in a tournament, you must also run "syncAll()" under "DB synchronisation procedures".
+    ALSO:
+        - IF changing/deleting rule numbers you must always make sure tournaments are up-to-date with the correct ranking system. This may be done via. the admin menu "Admin -> Management: Tournaments".
 */
 
-// Rule 1
+// Rule #1
 $hrs[1]['rule']   = array('-pts', '-td', '+smp');    // Sort teams against: most points, then most TDs and then least sportsmanship points.
 $hrs[1]['points'] = '3*[won] + 2*[draw] + 1*[lost]'; // The definition of points.
 
-// Rule 2
+// Rule #2
 $hrs[2]['rule']   = array('-pts', '-ki', '-mvp'); // Sort teams against: most points, then most killed and then by most MVPs.
 $hrs[2]['points'] = '2*[gf] - 1*[ga]';            // The definition of points.
 
-// Rule 3
+// Rule #3
 $hrs[3]['rule']   = array('-sdiff', '-smp'); // Sort teams against: largest score difference, then most sportsmanship points.
 $hrs[3]['points'] = '';                      // Points not used.
 

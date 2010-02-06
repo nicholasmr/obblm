@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -401,6 +401,31 @@ public static function standings($obj, $node, $node_id, array $opts)
     );
 
     return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? $objs : true;
+}
+
+public static function simpleLeagueSelector(array $opts)
+{
+    global $lng, $leagues, $coach, $settings;
+    
+    $lids = array_keys($leagues); # Used multiple times below to determine selected FP league.
+    # Default league.
+    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], $lids)) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
+    # Update league view?
+    if (isset($_POST['SLS_lid']) && in_array($_POST['SLS_lid'], $lids)) $sel_lid = (int) $_POST['SLS_lid'];
+    else if (isset($_SESSION['SLS_lid']) && in_array($_SESSION['SLS_lid'], $lids)) $sel_lid = $_SESSION['SLS_lid'];
+    # Save league view.
+    $_SESSION['SLS_lid'] = $sel_lid;
+    
+    $HTMLselector = "<form name='SLS' method='POST' style='display:inline; margin:0px;'>".$lng->getTrn('common/league')." <select name='SLS_lid' onChange='document.SLS.submit();'>\n";
+    foreach ($leagues as $lid => $desc) {
+        $HTMLselector .= "<option value='$lid' ".(($lid == $sel_lid) ? 'SELECTED' : '').">$desc[lname]</option>\n";
+    }
+    $HTMLselector .= "</select></form>\n";
+    
+    if (isset($opts['loadLeagueSettings']) && $opts['loadLeagueSettings'])
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $sel_lid)); # Force load league settings.
+        
+    return array($sel_lid, $HTMLselector);
 }
 
 public static function nodeSelector(array $opts, $prefix = '')

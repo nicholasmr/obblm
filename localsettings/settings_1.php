@@ -1,14 +1,15 @@
 <?php
 
 /*************************
- * OBBLM settings for league with ID = 1
+ * Local settings for league with ID = 1
  *************************/
 
-$settings['site_name'] = 'My league';       // Name of the site or the league name if only one league is being managed.
-$settings['forum_url'] = 'http://localhost';// URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
-$settings['stylesheet'] = 1;                // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
-$settings['lang'] = 'en-GB';                // Deafult language. Existing: en-GB.
-$settings['welcome'] = 'Please replace this line in your <i>settings</i> file with your own league greeting message.';
+$settings['league_name'] = 'Placeholder title for league with ID = 1'; // Name of the site or the league name if only one league is being managed.
+$settings['forum_url'] = 'http://localhost'; // URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
+$settings['stylesheet'] = 1;                 // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
+$settings['lang'] = 'en-GB';                 // Deafult language. Existing: en-GB, es.
+$settings['welcome'] = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league greeting message for the league with ID = 1';
+$settings['rules'] = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
 
 $settings['entries'] = array(
     'messageboard'      => 5,   // Number of entries on the main page messageboard.
@@ -19,10 +20,11 @@ $settings['entries'] = array(
 );
 
 $settings['fp_standings'] = array(
-    # This would display a standings box of the top 6 teams in tournament with ID=1.
+    # This would display a standings box of the top 6 teams in tournament with ID = 1.
     1 => array(
         'length' => 6,
         'fields' => array(
+            # Displayed table column name => OBBLM field name.
             'Name' => 'name', 'PTS' => 'mv_pts', 'CAS' => 'mv_cas', 
             'W' => 'mv_won', 'L' => 'mv_lost', 'D' => 'mv_draw', 'GF' => 'mv_gf', 'GA' => 'mv_ga'
         ),

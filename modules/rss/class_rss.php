@@ -193,7 +193,7 @@ class RSSfeed implements ModuleInterface
         preg_match('/(\w*)/', strtolower($_SERVER["SERVER_PROTOCOL"]), $matches); 
         $protocol = $matches[0].$s;
         $rss = new RSSfeed(
-            $settings['site_name'].' feed', 
+            $settings['league_name'].' feed', 
             $protocol."://".$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI']), 
             'Blood bowl league RSS feed',
             'en-EN', 

@@ -996,7 +996,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                             elseif ($p->is_sold)
                                 $color = COLOR_HTML_SOLD;
 
-                            echo "<option value='$p->player_id' ".(isset($color) ? "style='background-color: $color;'" : '').">$p->name</option>\n";
+                            echo "<option value='$p->player_id' ".(isset($color) ? "style='background-color: $color;'" : '').">$p->nr $p->name</option>\n";
                             $DISABLE = false;
                         }
                         ?>

@@ -71,6 +71,7 @@ function setupGlobalVars($type, $opts = array()) {
         case T_SETUP_GLOBAL_VARS__COMMON:
             $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
             list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false, $extraFields = array(T_NODE_TOURNAMENT => array('locked' => 'locked', 'type' => 'type', 'f_did' => 'f_did'), T_NODE_DIVISION => array('f_lid' => 'f_lid'), T_NODE_LEAGUE => array('tie_teams' => 'tie_teams')));
+            setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS);
             $_LANGUAGE = (is_object($coach) && isset($coach->settings['lang'])) ? $coach->settings['lang'] : $settings['lang'];
             if (!is_object($lng)) {
                 $lng = new Translations($_LANGUAGE);
@@ -78,7 +79,6 @@ function setupGlobalVars($type, $opts = array()) {
             else {
                 $lng->setLanguage($_LANGUAGE);
             }
-            setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS);
             break;
             
         case T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES:
@@ -95,12 +95,15 @@ function setupGlobalVars($type, $opts = array()) {
                 $id = $coach->settings['home_lid'];
             }
             else {
-                $id = '';
+                $id = isset($settings['default_visitor_league']) ? $settings['default_visitor_league'] : '';
             }
 
-            $file = str_replace("ID", $id, $file);
-            if ($localsettings = file_exists($file) ? $file : false) {
-                include($localsettings);                
+            $settingsFile = str_replace("ID", $id, $file);
+            if ($localsettings = file_exists($settingsFile) ? $settingsFile : false) {
+                include($localsettings);
+            }
+            else {
+                include(str_replace("ID", 'none', $file)); # Empty settings file.
             }
             break;
             

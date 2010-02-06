@@ -264,7 +264,7 @@ class Message extends TextSubSys
         $result = mysql_query("SELECT txt_id 
             FROM texts
             WHERE type = ".T_TEXT_MSG." AND (f_id2 = ".self::T_BROADCAST." OR ".(($lid) ? "f_id2 = $lid" : 'TRUE').") 
-            ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
+            ORDER BY date DESC LIMIT $n");
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($m, new Message($row['txt_id']));
@@ -336,7 +336,7 @@ class MatchSummary extends TextSubSys
             AND txt IS NOT NULL 
             AND txt != '' 
             ".(($lid) ? "AND f_lid = $lid" : '')." 
-            ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
+            ORDER BY date_played DESC LIMIT $n";
 
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
@@ -399,7 +399,7 @@ class TeamNews extends TextSubSys
         
         $query = "SELECT txt_id FROM texts, teams 
             WHERE f_id = team_id AND type = ".T_TEXT_TNEWS.(($tid) ? " AND f_id = $tid " : '').(($lid) ? " AND teams.f_lid = $lid " : ''). " 
-            ORDER BY date DESC ".(($n) ? " LIMIT $n " : '');
+            ORDER BY date DESC LIMIT $n";
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {

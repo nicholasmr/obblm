@@ -15,3 +15,8 @@ lid:    League ID
 did:    Division ID
 trid:   Tournament ID
 mid:    Match ID
+
+Writing modules:
+----------------
+
+You may want to refer to the example module "modules/example/class_module_example.php" and the modules header file "modules/modsheader.php".
