@@ -1,5 +1,6 @@
 <?php
 
+// DO NOT DELETE THIS FILE!!!
 // Use this local settigns file for leagues which have no local settings file.
 
 $settings['league_name'] = 'No settings file exists for the selected league';

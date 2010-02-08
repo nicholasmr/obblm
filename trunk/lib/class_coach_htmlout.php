@@ -34,7 +34,7 @@ public static function dispTeamList()
         NOTE: We do NOT show teams not having played any matches!
     */
     
-    list($sel_node, $sel_node_id, $sel_state) = HTMLOUT::nodeSelector(array('state' => true),'');
+    list($sel_node, $sel_node_id, $sel_state) = HTMLOUT::nodeSelector(array('state' => true));
     $q = 'SELECT coach_id AS "coach_id", coaches.name AS "name", coaches.retired AS "retired", team_cnt AS "team_cnt"
         FROM matches, teams, coaches, tours, divisions 
         WHERE 

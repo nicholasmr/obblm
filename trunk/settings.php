@@ -4,23 +4,23 @@
  * MySQL database settings 
  **************************/
 
-$db_name   = 'obblmdb';
+$db_name   = 'level10';
 $db_user   = 'root';
 $db_passwd = '';
 $db_host   = 'localhost';
 
-/*************************
- * OBBLM global settings 
- *************************/
-
 // For local settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
+
+/*************************
+ * Global settings 
+ *************************/
 
 $settings['site_name'] = 'BB portal';     // Site name.
 $settings['default_visitor_league'] = 1;  // ID of default league to show on front page when not logged in/coach has not selected a home league.
 $settings['default_leagues'] = array(1);  // When creating a coach the coach will automatically become a regular coach in leauges with these IDs.
 
 /*****************
- * OBBLM rule set
+ * Global rules
  *****************/
 
 /*
@@ -50,6 +50,7 @@ $rules['max_cheerleaders']      = -1;       // Default is -1.
     Whenever the below cost values are changed you must run the 
     "Re-install DB back-end procedures and functions" under "DB maintenance" from the "Admin -> Core panel".
 */
+
 $rules['cost_apothecary']       = 50000;    // Default is 50000.
 $rules['cost_fan_factor']       = 10000;    // Default is 10000.
 $rules['cost_ass_coaches']      = 10000;    // Default is 10000.

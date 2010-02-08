@@ -88,9 +88,14 @@ function setupGlobalVars($type, $opts = array()) {
         case T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS:
             // Local league settings exist?
             $file = "localsettings/settings_ID.php";
+            // Selected
             if (isset($opts['lid']) && is_numeric($opts['lid'])) {
                 $id = $opts['lid'];
             }
+            else if ($_lid = HTMLOUT::getSelectedNodeLid()) { 
+                $id = $_lid;
+            }
+            // Defaults
             else if (is_object($coach) && isset($coach->settings['home_lid'])) {
                 $id = $coach->settings['home_lid'];
             }
