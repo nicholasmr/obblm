@@ -83,7 +83,7 @@ class Coach
             $this->settings[$key] = $val;
         }
         global $settings;
-        $init = array('theme' => 1, 'lang' => $settings['lang'], 'home_lid' => null); // Setting values which must be initialized if not stored/saved in mysql.
+        $init = array('theme' => 1, 'lang' => Translations::fallback, 'home_lid' => null); // Setting values which must be initialized if not stored/saved in mysql.
         foreach ($init as $key => $val) {
             if (!array_key_exists($key, $this->settings) || !isset($this->settings[$key]))
                 $this->settings[$key] = $val;
