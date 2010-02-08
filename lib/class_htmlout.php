@@ -164,7 +164,7 @@ public static function standings($obj, $node, $node_id, array $opts)
     $extra['noHelp'] = false;
     
     $enableRaceSelector = ($obj == T_OBJ_PLAYER || $obj == T_OBJ_TEAM && (!isset($opts['teams_from']) || $opts['teams_from'] != T_OBJ_RACE));
-    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp) = HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true),'');
+    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp) = HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true));
     $filter_node = array($sel_node => $sel_node_id);
     $filter_race = ($sel_race != T_RACE_ALL) ? array(T_OBJ_RACE => $sel_race) : array();
     $SGRP_GEN = ($sel_sgrp == 'GENERAL');
@@ -403,6 +403,9 @@ public static function standings($obj, $node, $node_id, array $opts)
     return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? $objs : true;
 }
 
+const T_NSStr__node    = 'NS_node';
+const T_NSStr__node_id = 'NS_node_id';
+
 public static function simpleLeagueSelector(array $opts)
 {
     global $lng, $leagues, $coach, $settings;
@@ -411,10 +414,15 @@ public static function simpleLeagueSelector(array $opts)
     # Default league.
     $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], $lids)) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
     # Update league view?
-    if (isset($_POST['SLS_lid']) && in_array($_POST['SLS_lid'], $lids)) $sel_lid = (int) $_POST['SLS_lid'];
-    else if (isset($_SESSION['SLS_lid']) && in_array($_SESSION['SLS_lid'], $lids)) $sel_lid = $_SESSION['SLS_lid'];
+    if (isset($_POST['SLS_lid']) && in_array($_POST['SLS_lid'], $lids)) {
+        $sel_lid = (int) $_POST['SLS_lid'];
+    }
+    else if ($_lid = self::getSelectedNodeLid()) { 
+        $sel_lid = $_lid;
+    }
     # Save league view.
-    $_SESSION['SLS_lid'] = $sel_lid;
+    $_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
+    $_SESSION[self::T_NSStr__node_id] = (int) $sel_lid;
     
     $HTMLselector = "<form name='SLS' method='POST' style='display:inline; margin:0px;'>".$lng->getTrn('common/league')." <select name='SLS_lid' onChange='document.SLS.submit();'>\n";
     foreach ($leagues as $lid => $desc) {
@@ -428,16 +436,36 @@ public static function simpleLeagueSelector(array $opts)
     return array($sel_lid, $HTMLselector);
 }
 
-public static function nodeSelector(array $opts, $prefix = '')
+public static function getSelectedNodeLid()
+{
+    global $leagues;
+    
+    $lids = array_keys($leagues);
+    $_lid = false;
+    
+    if (isset($_SESSION[self::T_NSStr__node_id]) && (int) $_SESSION[self::T_NSStr__node_id] > 0) { 
+        $_lid = ((int) $_SESSION[self::T_NSStr__node] != T_NODE_LEAGUE) 
+            ? get_parent_id((int) $_SESSION[self::T_NSStr__node], (int) $_SESSION[self::T_NSStr__node_id], T_NODE_LEAGUE) 
+            : (int) $_SESSION[self::T_NSStr__node_id];
+            
+        if (!in_array($_lid, $lids)) {
+            $_lid = false;
+        }
+    }
+            
+    return $_lid;
+}
+
+public static function nodeSelector(array $opts)
 {
     global $lng, $raceididx, $coach;
 
     // Set defaults
-    $s_node     = "${prefix}_node";
-    $s_node_id  = "${prefix}_node_id";
-    $s_state    = "${prefix}_state";
-    $s_race     = "${prefix}_race";
-    $s_sgrp     = "${prefix}_sgrp";
+    $s_node     = self::T_NSStr__node;
+    $s_node_id  = self::T_NSStr__node_id;
+    $s_state    = "NS_state";
+    $s_race     = "NS_race";
+    $s_sgrp     = "NS_sgrp";
     
     // Options
     $setState = (array_key_exists('state', $opts) && $opts['state']);

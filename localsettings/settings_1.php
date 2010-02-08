@@ -19,6 +19,7 @@ $settings['entries'] = array(
     'standings_coaches' => 30,  // Number of entries on the general coaches stadings table.
 );
 
+// Front Page (FP) tournament standings boxes
 $settings['fp_standings'] = array(
     # This would display a standings box of the top 6 teams in tournament with ID = 1.
     1 => array(
@@ -31,11 +32,17 @@ $settings['fp_standings'] = array(
     ),
 );
 
+// Front Page (FP) leaders boxes
 $settings['fp_leaders'] = array(
-    'mv_cas' => array('title' => 'Most casualties',    'length' => 5),
-#    'mv_td'  => array('title' => 'Most touchdowns',    'length' => 5),
-#    'mv_cp'  => array('title' => 'Most completions',   'length' => 5),
-#    'mv_ki'  => array('title' => 'Most killed',        'length' => 5),
+    /* 
+        Note, you can NOT make expressions out of leader fields e.g.:
+            'mv_cas+mv_td' => array('title' => 'Most CAS+TD', 'length' => 5)
+    */
+    
+    'mv_cas' => array('title' => 'Most casualties',  'length' => 5),
+#    'mv_td'  => array('title' => 'Most touchdowns',  'length' => 5),
+#    'mv_cp'  => array('title' => 'Most completions', 'length' => 5),
+#    'mv_ki'  => array('title' => 'Most killed',      'length' => 5),
 );
 
 $settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
