@@ -105,6 +105,15 @@ class UPLOAD_BOTOCS implements ModuleInterface
         if ( !$this->matchEntry ( $this->hometeam_id, $this->homeplayers ) ) return false;
         if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
 
+        $query = "UPDATE matches SET tcas1 = (SELECT SUM(inflicted_bhs+inflicted_sis+inflicted_kills+inflicted_foul_bhs+inflicted_foul_sis+inflicted_foul_kills) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),
+                                     tcas2 = (SELECT SUM(inflicted_bhs+inflicted_sis+inflicted_kills+inflicted_foul_bhs+inflicted_foul_sis+inflicted_foul_kills) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)";
+
+        if ( !mysql_query( $query ) )
+        {
+            $this->error = "Failed to report the TCAS.  Error: ".mysql_error();
+            return false;
+        }
+
         $match = new Match( $this->match_id );
         $match->finalizeMatchSubmit(); # Must be run AFTER ALL match data has been submitted. This syncs stats.
         $match->setLocked(true);
