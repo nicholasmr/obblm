@@ -155,7 +155,7 @@ class Registration implements ModuleInterface
                 'name' => $this->username,
                 'passwd' => $this->password,
                 'mail' => $this->email,
-                'def_leagues' => $settings['default_leagues'],
+                'def_leagues' => array(),#$settings['default_leagues'],
                 'ring' => ACCESS_LEVEL,
                 'realname' => '',
                 'phone' => '',
