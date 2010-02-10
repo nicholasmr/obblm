@@ -250,8 +250,8 @@ public static function installProcsAndFuncs($install = true)
     ';
         # Needs $matches_setup_rels.
     $matches_pts = '
-        UPDATE mv_teams SET pts = getPTS(tid1, trid) WHERE f_tid = tid1;
-        UPDATE mv_teams SET pts = getPTS(tid2, trid) WHERE f_tid = tid2;
+        UPDATE mv_teams SET pts = getPTS(tid1, trid) WHERE f_trid = trid AND f_tid = tid1;
+        UPDATE mv_teams SET pts = getPTS(tid2, trid) WHERE f_trid = trid AND f_tid = tid2;
     ';
     
         # Needs $matches_setup_rels.
@@ -280,9 +280,9 @@ public static function installProcsAndFuncs($install = true)
         UPDATE teams SET teams.swon = swon, teams.sdraw = sdraw, teams.slost = slost WHERE teams.team_id = tid2;
 
         CALL getStreaks('.T_OBJ_TEAM.', tid1, trid, swon,sdraw,slost);
-        UPDATE mv_teams SET mv_teams.swon = swon, mv_teams.sdraw = sdraw, mv_teams.slost = slost WHERE mv_teams.f_tid = tid1;
+        UPDATE mv_teams SET mv_teams.swon = swon, mv_teams.sdraw = sdraw, mv_teams.slost = slost WHERE mv_teams.f_trid = trid AND mv_teams.f_tid = tid1;
         CALL getStreaks('.T_OBJ_TEAM.', tid2, trid, swon,sdraw,slost);
-        UPDATE mv_teams SET mv_teams.swon = swon, mv_teams.sdraw = sdraw, mv_teams.slost = slost WHERE mv_teams.f_tid = tid2;
+        UPDATE mv_teams SET mv_teams.swon = swon, mv_teams.sdraw = sdraw, mv_teams.slost = slost WHERE mv_teams.f_trid = trid AND mv_teams.f_tid = tid2;
         
         CALL getStreaks('.T_OBJ_COACH.', cid1, NULL, swon,sdraw,slost);
         UPDATE coaches SET coaches.swon = swon, coaches.sdraw = sdraw, coaches.slost = slost WHERE coaches.coach_id = cid1;
@@ -290,9 +290,9 @@ public static function installProcsAndFuncs($install = true)
         UPDATE coaches SET coaches.swon = swon, coaches.sdraw = sdraw, coaches.slost = slost WHERE coaches.coach_id = cid2;
 
         CALL getStreaks('.T_OBJ_COACH.', cid1, trid, swon,sdraw,slost);
-        UPDATE mv_coaches SET mv_coaches.swon = swon, mv_coaches.sdraw = sdraw, mv_coaches.slost = slost WHERE mv_coaches.f_cid = cid1;
+        UPDATE mv_coaches SET mv_coaches.swon = swon, mv_coaches.sdraw = sdraw, mv_coaches.slost = slost WHERE mv_coaches.f_trid = trid AND mv_coaches.f_cid = cid1;
         CALL getStreaks('.T_OBJ_COACH.', cid2, trid, swon,sdraw,slost);
-        UPDATE mv_coaches SET mv_coaches.swon = swon, mv_coaches.sdraw = sdraw, mv_coaches.slost = slost WHERE mv_coaches.f_cid = cid2;
+        UPDATE mv_coaches SET mv_coaches.swon = swon, mv_coaches.sdraw = sdraw, mv_coaches.slost = slost WHERE mv_coaches.f_trid = trid AND mv_coaches.f_cid = cid2;
     ';
         # Needs $matches_setup_rels.
     $matches_MVs = '
@@ -480,10 +480,10 @@ public static function installProcsAndFuncs($install = true)
                 UPDATE coaches SET elo = Rc1 WHERE coach_id = cid1;
                 UPDATE coaches SET elo = Rc2 WHERE coach_id = cid2;                
             ELSE
-                UPDATE mv_teams   SET elo = Rt1 WHERE f_tid = tid1;
-                UPDATE mv_teams   SET elo = Rt2 WHERE f_tid = tid2;
-                UPDATE mv_coaches SET elo = Rc1 WHERE f_cid = cid1;
-                UPDATE mv_coaches SET elo = Rc2 WHERE f_cid = cid2;
+                UPDATE mv_teams   SET elo = Rt1 WHERE f_trid = trid AND f_tid = tid1;
+                UPDATE mv_teams   SET elo = Rt2 WHERE f_trid = trid AND f_tid = tid2;
+                UPDATE mv_coaches SET elo = Rc1 WHERE f_trid = trid AND f_cid = cid1;
+                UPDATE mv_coaches SET elo = Rc2 WHERE f_trid = trid AND f_cid = cid2;
             END IF;
             
             RETURN TRUE;
@@ -675,6 +675,17 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             RETURN IFNULL(100*(won+draw/2)/played,0);
         END', 
+
+        /* 
+         *  Sync all points (PTS)
+         */        
+        
+        'CREATE PROCEDURE syncAllPTS()
+            NOT DETERMINISTIC
+            CONTAINS SQL
+        BEGIN
+            UPDATE mv_teams SET pts = getPTS(f_tid, f_trid);
+        END',
 
         /* 
          *  Object relations
@@ -869,7 +880,6 @@ public static function installProcsAndFuncs($install = true)
                 WHERE match_data.f_team_id = tid AND match_data.f_tour_id = trid;
             UPDATE mv_teams '.$mstat_fields_team.' WHERE f_tid = tid AND f_trid = trid;
             UPDATE mv_teams SET win_pct = winPct(won,lost,draw,played), sdiff = CAST(gf-ga AS SIGNED), tcdiff = CAST(tcasf-tcasa AS SIGNED) WHERE f_tid = tid AND f_trid = trid;
-            UPDATE mv_teams SET pts = getPTS(f_tid, f_trid) WHERE f_tid = tid AND f_trid = trid;
 
             /* ES */
             DELETE FROM mv_es_teams WHERE f_tid = tid AND f_trid = trid; 
@@ -1119,10 +1129,10 @@ public static function installProcsAndFuncs($install = true)
             '.$matches_tourDProps.'
             '.$matches_teamDProps.'
             '.$matches_team_cnt.'
-            '.$matches_pts.'
             '.$matches_wt_cnt.'
             '.$matches_streaks.'
             '.$matches_win_pct.'
+            '.$matches_pts. /* Must be last since the PTS field definition may else depend on other not yet calcualted fields. */ '
             IF played THEN
                 CALL syncELOTour(NULL);
                 CALL syncELOTour(trid);
@@ -1147,6 +1157,8 @@ public static function installProcsAndFuncs($install = true)
             CALL syncAllTeamCnts(); #SELECT "Team cnts done";
             CALL syncAllStreaks();  #SELECT "Streaks done";
             CALL syncAllELOs();     #SELECT "ELO done";
+            /* Must be last since the PTS field definition may else depend on other not yet calcualted fields. */
+            CALL syncAllPTS();      #SELECT "PTS done";
         END',
     );
     global $hrs;

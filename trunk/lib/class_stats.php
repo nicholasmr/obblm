@@ -83,6 +83,8 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
         T_OBJ_RACE   => 'mv_es_races',
     );
 
+    $HAVING = isset($filters['having']) ? $filters['having'] : array();
+    unset($filters['having']);
     $ALL_TIME = (count(array_intersect(array_keys($filters),array_keys($relations_node))) == 0);
     
     global $cols_mv, $objFields_val0, $val0; # Dirty but efficient trick to make global from within function.
@@ -153,6 +155,7 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
     $query .= " 
         GROUP BY ".$relations_obj[$obj]['id']." 
         ".((!empty($sortRule))  ? ' ORDER BY '.implode(', ', $sortRule) : '')." 
+        ".((true) ? '' : '')."
         ".((is_numeric($n))     ? " LIMIT $n" : '')." 
     ";
 

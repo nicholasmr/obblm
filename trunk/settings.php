@@ -67,7 +67,7 @@ $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
         mvp, cp, td, intcpt, bh, si, ki, cas (sum of PLAYER cas), tdcas ("td" + "cas"), 
         tcasf (total TEAM cas by this team), tcasa (total TEAM cas against this team), tcdiff (equals to the arithmetic value of "tcasf" - "tcasa"), 
         gf (total score made by this team), ga (total score made against this team), sdiff (equals to the arithmetic value of "gf" - "ga")
-        played, won, lost, draw, win_pct, smp (sportsmanship points), pts (points)
+        played, won, lost, draw, win_pct, elo, smp (sportsmanship points), pts (points)
         
     The last field, points, is a special field displayed in tournament standings which is defined to be the value of some arithmetical combination of other fields.
     For example, a typical points field could be constructed as so: points = '3*[won] + 2*[draw] + 1*[lost]'
