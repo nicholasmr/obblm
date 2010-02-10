@@ -456,6 +456,10 @@ public static function getSelectedNodeLid()
     return $_lid;
 }
 
+// Node Selector constants
+const T_NS__ffilter_ineqn_gt = 1; # Greater than.
+const T_NS__ffilter_ineqn_lt = 2; # Less than.
+
 public static function nodeSelector(array $opts)
 {
     global $lng, $raceididx, $coach;
@@ -466,11 +470,16 @@ public static function nodeSelector(array $opts)
     $s_state    = "NS_state";
     $s_race     = "NS_race";
     $s_sgrp     = "NS_sgrp";
+        # Field filter
+    $s_ffilter  = "NS_ffilter__field"; # Field name, e.g. "mv_played".
+    $s_ffilter  = "NS_ffilter__ineqn"; # inequality direction (">" or "<"), self::T_NS__ffilter_ineqn_* values.
+    $s_ffilter  = "NS_ffilter__limit"; # RHS of ineqn, e.g. "20" in the expression mv_played > 20
     
     // Options
     $setState = (array_key_exists('state', $opts) && $opts['state']);
     $setRace = (array_key_exists('race', $opts) && $opts['race']);
     $setSGrp = (array_key_exists('sgrp', $opts) && $opts['sgrp']);
+    $setFFilter = (array_key_exists('ffilter', $opts) && $opts['ffilter']);
 
     // Defaults
     $def_node    = T_NODE_LEAGUE;
