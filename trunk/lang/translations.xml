@@ -788,9 +788,9 @@
 
 <!-- Link names for menu elements -->
 <menu>
-    <login>Login</login>
+    <login>Conectar</login>
     <logout>Desconectar</logout>
-    <home>Home</home>
+    <home>Inicio</home>
     <cc>Rincón del entrenador</cc>
     <teams>Equipos</teams>
     <coaches>Entrenadores</coaches>
@@ -830,13 +830,13 @@
     <loginname>Nombre de Entrenador</loginname>
     <passwd>Contraseña</passwd>
     <remember>Recordarme</remember>
-    <loginbutton>Login</loginbutton>
+    <loginbutton>Conectar</loginbutton>
 </login>
 
 <main>
     <!-- has no <name> tag! -->
     <newmsg>Nuevo mensaje</newmsg>
-    <broadcast>Publicar mensaje para todas las ligar?</broadcast>
+    <broadcast>¿Publicar mensaje para todas las ligar?</broadcast>
     <nowelcome>Aún no has creado el mensaje de bienvenida</nowelcome>
     <more>más</more>
     <posted>Publicado</posted>
@@ -849,7 +849,7 @@
 
     <!-- <stats> defined in <common> block -->
 
-    <coach_teams>Equipos del entrenador</coach_teams>
+    <coach_teams>Tus Equipos</coach_teams>
 
     <profile>Perfil</profile>        
         <photo>Foto del entrenador</photo>
@@ -937,13 +937,13 @@
             <rename_team>Renombrar equipo</rename_team>
             <buy_goods>Comprar bienes de equipo</buy_goods>
             <drop_goods>Deshacerse de bienes de equipo</drop_goods>
-            <ready_state>Marcar como disponible para jugar</ready_state>
+            <ready_state>Marcar "equipo disponible"</ready_state>
             <retire>Retirar equipo</retire>
             <delete>Borrar equipo</delete>
             
  <!-- Strings used within action boxes -->
             <fdescs>
-                <thing>Cosa</thing>
+                <thing>Bien</thing>
                 <teamready>¿Equipo disponible?</teamready>
                 <retire>¿Retirar equipo?</retire>
                 <suredeleteteam>¿Estás seguro de que quieres borrar este equipo?</suredeleteteam>
@@ -979,7 +979,7 @@
                 </rename_player>
                 <renumber_player>
                 <![CDATA[
-                Renumerar un jugador.
+                Cambiar el dorsal de un jugador.
                 ]]>
                 </renumber_player>
                 <rename_team>
@@ -1023,61 +1023,61 @@
         <box_admin>
             <title>Herramientas de administrador</title>
 
-            <unhire_journeyman>Un-hire journeymen</unhire_journeyman>
-            <unsell_player>Un-fire player</unsell_player>
-            <unbuy_goods>Un-buy team goods</unbuy_goods>
-            <bank>Gold bank</bank>
-            <chown>Change ownership</chown>
-            <spp>Manage extra player SPP</spp>
-            <dval>Manage extra player value</dval>
-            <extra_skills>Manage extra player skills</extra_skills>
-            <ach_skills>Remove ach. player skills</ach_skills>
+            <unhire_journeyman>Deshacer contratación de independiente</unhire_journeyman>
+            <unsell_player>Deshacer despido de jugador</unsell_player>
+            <unbuy_goods>Deshacer compra de bienes de equipo</unbuy_goods>
+            <bank>Tesorería</bank>
+            <chown>Cambiar dueño</chown>
+            <spp>Gestionar PE extra de jugador</spp>
+            <dval>Gestionar valor extra de jugador</dval>
+            <extra_skills>Gestionar habilidades extra de jugador</extra_skills>
+            <ach_skills>Eliminar habilidades conseguidas por jugador</ach_skills>
 
             <desc>
                 <unhire_journeyman>
                 <![CDATA[
-                Regret permanently hiring a journeyman.<br>
-                This only works on players from a 0-16 allowed position on your team's roster.
+                Deshacer la contratación permanente de un independiente.<br>
+				Esto solo funciona con jugadores de la posición que permite 0-16 jugadores de tu lista de equipo.
                 ]]>
                 </unhire_journeyman>
                 <unsell_player>
                 <![CDATA[
-                Regret firing a player.
+                ¿Te arrepientes de despedir a un jugador?.
                 ]]>
                 </unsell_player>
                 <unbuy_goods>
                 <![CDATA[
-                Regret buying team goods.
+                ¿Te arrepientes de comprar bienes de equipo?.
                 ]]>
                 </unbuy_goods>
                 <bank>
                 <![CDATA[
-                Make changes to team's treasury.
+                Hacer cambios en la tesorería del equipo.
                 ]]>
                 </bank>
                 <chown>
                 <![CDATA[
-                Change this team's ownership.
+                Asignar el equipo a otro dueño.
                 ]]>
                 </chown>
                 <spp>
                 <![CDATA[
-                Manage a player's extra SPP.
+                Gestionar los PE extra de un jugador.
                 ]]>
                 </spp>
                 <dval>
                 <![CDATA[
-                Change a player's value by a certain amount.
+                Cambiar el valor monetario de un jugador.
                 ]]>
                 </dval>
                 <extra_skills>
                 <![CDATA[
-                Manage a player's extra skills.
+                Gestionar las habilidades extra de un jugador.
                 ]]>
                 </extra_skills>
                 <ach_skills>
                 <![CDATA[
-                Remove a players achieved skills. This makes the player able to rechoose a skill.
+                Borrar habilidades adquiridas por un jugador. Esto permite volver a seleccionar habilidades.
                 ]]>
                 </ach_skills>
             </desc>
@@ -1100,7 +1100,7 @@
             <thirdPlayoff>Partido por el tercer puesto</thirdPlayoff>
             <semi>Semifinales</semi>
             <quarter>Cuartos de final</quarter>
-            <rnd16>Round of 16</rnd16>
+            <rnd16>Octavos de final</rnd16>
             <rnd>Ronda</rnd>
         </roundtypes>
         
@@ -1118,45 +1118,45 @@
         
         <help>
         <![CDATA[
-        <b>Preliminary info</b><br>
-        First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
-        Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
-        Secondly, OBBLM supports the submission of a wide range of different player stats. 
-        The commonly recorded player match stats are submitted via. the primary match report along with general match information whilst the <i>extra stats</i> are submitted on a separate submission page - follow the below extra stats link on the primary report page.
-        Please note that you <i>must</i> submit the primary report before submitting the extra player stats.<br>
+        <b>Información preliminar</b><br>
+		En primer lugar debes saber que OBBLM permite hacer cambios a un acta de partido ya guardada, incluso despues de que los equipos del acta hayan jugado partidos subsiguientes.
+        Por lo tanto, si por ejemplo indicaste un valor de tesoreria &Delta; incorrecto o algún dato de jugador erroneo, puedes corregir los errores simplemente cambiandolos en el acta, y guardandola.<br>
+		En segundo lugar, OBBLM permite la introducción de una amplia gama de estadísticas de jugadores.
+        Las estadísticas más comunes se envian en el acta de partido, mientras que las <i>estadísticas extra</i> se envian a traves de una página diferente. El link a esta página esta indicado como Estadisticas Extra de jugador, justo debajo del campo Fans.
+        <i>Debes</i> enviar primero el acta principal antes de enviar las estadísticas extra.<br>
         <br>
-        <b>Game information fields</b><br>
-        The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
+        <b>Datos de información del partido</b><br>
+        El propósito de estos campos es simplemente archivar información general del partido. No tienen <i>ninguna</i> relación con ingresos o cualquier otro dato de los equipos.<br>
         <br>
-        <b>Sportsmanship points</b><br>
-        Yelling, screaming, cursing at the dice, disturbing the opponent in his turn and not turning up on gaming night may be punished by giving negative sportsmanship points. Acting like a gentleman and taking a defeat with a smile may be embraced by giving positive sportsmanship points.
-        If your league on the other hand makes the needle on the evil-o-meter jump into the red area constantly, it may be more natural applying the sportsmanship points system the other way around - embracing bad manners with positive sportsmanship points.<br>
+        <b>Puntos de deportividad</b><br>
+        Quejarse, gritar, maldecir los dados, molestar al oponente en su turno o simplemente no acudir a la cita del partido puede castigarse mediante puntos de deportividad negativos. Actuar como un caballero y encajar una derrota con una sonrisa puede premiarse con puntos de deportividad positivos.
+		Si, por el contrario, vuestra liga es perversa y maligna, puede resultaros más natural aplicar el sistema puntos de deportividad al revés: premiando la mala educación con puntos de deportividad positivos.<br>
         <br>
-        <b>Casualties in general</b><br>
-        OBBLM can keep track of <i>team casualties</i>, which is the sum of the individual player casualties, opponent self-inflicted injuries, die on a fumble in sprints and crowd killings (and possibly other things of your leagues' choice).
-        Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
+        <b>Bajas en general</b><br>
+		OBBLM puede llevar la cuenta de las <i>bajas de equipo</i>, que es la suma de las bajas causadas por jugadores, las heridas autoinfligidas por el oponente, las muertes al caerse esquivando o forzando y las bajas causadas por los fans (y cualquier otra forma de muerte usada en vuestra liga).
+        Respecto a las bajas causadas por <i>cada jugador</i>, OBBLM puede llevar el registro de los diferentes tipos de baja (herido, herido grave y muerto), asi que, por favor, haz uso de estas opciones en vez de añadir todas las bajas como muertes.<br>
         <br>
-        <b>Player skills</b><br>
-        When you roll 2D6 for player improvements remember to record the results in the <i>IR</i> fields. 
-        Then, once the match report has been submitted, OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
-        If the improvement roll fields are <i>consistently</i> left as 0 the player in question may select among all skills whenever enough SPP is gained.<br>
+        <b>Habilidades de jugador</b><br>
+        Cuando haces una tirada de 2D6 para las subidas de habilidad de un jugador, recuerda indicar el resultado de la misma en los campos <i>IR</i> (improvement roll). 
+        Posteriormente, una vez que el acta de partido haya sido enviada, OBBLM te permitirá elegir nuevas habilidades para los jugadores en la página del equipo si han conseguido los PE suficientes.<br>
+        Si el jugador consigue PEs y los campos de la tirada de subida se dejan a 0 <i>consistentemente</i>, el jugador en cuestión podrá elegir cualquier habilidad (como si hubiese sacado dobles en la tirada).<br>
         <br>
-        <b>Player injuries</b><br>
-        If a player sustains multiple injuries simply utilize the second and third injury columns "ageing 1" and "ageing 2". 
-        The <i>only</i> difference between the ordinary "inj" column and the ageing columns is that injuries recorded as ageing injuries do not imply a MNG.<br>
+        <b>Heridas sufridas</b><br>
+        Si un jugador sufre multiples heridas (e.g. regenera o se usa el médico), utiliza la segunda y tercera columnas de heridas: "ageing 1" y "ageing 2". 
+        La <i>única</i> diferencia entre el campo "inj" y los campos "ageing" es que las heridas marcadas como ageing no implican una perdida del siguiente partido (MNG, Miss Next Game).<br>
         <br>
-        <b>Incomes</b><br>
-        A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
-        If you spended more than you made in a match then simply prefix - (minus).
+        <b>Ingresos</b><br>
+        Los ingresos de un equipo se deben calcular manualmente para representar <i>todos</i> los cambios de la tesoreria a lo largo del partido y durante su secuencia posterior. OBBLM no hace los cálculos de tesorería por ti (el plugin del Botocs si lo hace).
+        Si gastaste más de lo ingresado, simplemente indicalo poniendo una cantidad negativa.
         <br><br>
-        Remember these factors when you calculate:<br>
+        Recuerda lo siguiente al hacer los cálculos:<br>
         <ul>
-            <li>Spiraling expenses</li>
-            <li>Treasury spend on inducements</li>
-            <li>Hiring costs of star players and mercenaries</li>
-            <li>Team winnings</li>
-            <li>Tournament winnings, if the game was a final</li>
-            <li>Sponsorship deal from Bloodweiser</li>
+            <li>Regla de Espiral de Gastos</li>
+            <li>Tesorería gastada en incentivos</li>
+            <li>Coste de la contratación de Jugadores Estrella y Mercenarios</li>
+            <li>Ganancias del partido</li>
+            <li>Ganancias del torneo si el partido era una final.</li>
+            <li>Acuerdo de esponsor con Bloodweiser (por ganar la copa Blood Bowl)</li>
         </ul>
         ]]>
         </help>
@@ -1187,96 +1187,96 @@
     <intro>Introducción</intro>
     <intro_txt>
     <![CDATA[
-    OBBLM is a Blood Bowl league manager that works by coaches submitting match data after each played match in a tournament. 
-    League commissioners (admins) may create tournaments and include certain coaches' teams to participate in a tournament. 
-    When a tournament is created, the two coaches participating in any match may submit a match report to the system. 
-    The manager will thereby be able to update tournament stats and team details - including giving the team coach access to chose new player skills etc.
-    The order in which tournament matches are played/submitted does not matter, and if the need may arise, league commissioners are able to delete unplayed matches.
+    OBBLM es un gestor de ligas de Blood Bowl online que funciona mediante el registro de actas de partido por parte de los entrenadores participantes.
+    Los comisarios de liga (admins) pueden crear torneos y asignar equipos de los entrenadores para que participen en ellos.
+	Cuando se crea un torneo, los dos entrenadores participantes en cualquier partido del torneo pueden registrar el acta del partido en el sistema.
+	A partir de ese registro, el gestor actualizará las estadísticas del torneo y los detalles de los equipos, y dará a los entrenadores la posibilidad de gestionar sus equipos, eligiendo nuevas habilidades para los jugadores, etc. 
+    El orden en que se juegan los partidos de los torneos no es necesariamente relevante, y si surge la necesidad, los comisarios de liga pueden borrar partidos no jugados. 
     <br><br>
-    <b>The Coach Corner:</b><br>
-        When you have received a password from a league commissioner, and you have logged on, your personal coach corner will be activated in the menu bar. 
-        At your coach corner you will be able to create new teams, and change your password, e-mail and your coach name.
+    <b>Rincón del Entrenador:</b><br>
+        Cuando hayas recibido la contraseña de acceso por parte de un comisario de liga, y te hayas conectado al sistema, tu Rincón del Entrenador personal se activará en la barra de menú.
+        En tu Rincón, podrás crear nuevos equipos y cambiar los datos de tu perfil.
         <br><br>
-        <b>Team page</b><br>
-        At your team page you may manage your team. 
-        This includes buying and selling players, choosing player skills when your player has the required amount of SPP, and buying other goods for your team.
+        <b>Hoja de Equipo</b><br>
+        En tu hoja de equipo gestionas todo lo relativo a tu equipo.
+		Esto incluye el fichaje y despido de jugadores, la elección de habilidades cuando tus jugadores adquieran Puntos de Estrellato, y la compra de otros bienes de equipo (rerolls, médico, etc)
         <br>
-        At your team page you will be presented with your team roster. To view player details select the "toggle roster view"-link below the roster.
+        En tu hoja de equipo podrás ver la plantilla de tu equipo. Para ver más detalles sobre la misma selecciona el link "Cambiar vista de plantilla"
         <br><br>
-    <b>Submitting a played match:</b><br>
-        Once a match has been played, you must let the system know by submitting the match data in the <i>tournaments</i> section. 
-        This can under agreement be done by either team's coach. Only the two participating team coaches and league commissioners have edit access to the match reports.
+    <b>Registrar un acta de partido:</b><br>
+        una vez que hayas jugado un partido, debes registrarlo en el sistema introduciendo los datos del acta en la sección <i>torneos</i>.
+		Esto puede ser realizado por cualquiera de los dos entrenadores participantes en el partido, así que poneos de acuerdo para ello. Solo los dos entrenadores y los comisarios de liga tienen acceso de edición a las actas de partido.
     ]]>
     </intro_txt>
 
     <faq>FAQ</faq>
     <faq_txt>
     <![CDATA[
-    <i>Q:</i>
-    I can't seem to save a player's injury when submitting match data.<br>
-    <i>A:</i>
-    OBBLM will refuse to save a specific injury if the sum of the characteristic thereby will drop below the allowed default - 2 limit.
+    <i>P:</i>
+    No soy capaz de salvar los datos del acta de partido de una herida sufrida por un jugador.<br>
+    <i>R:</i>
+    OBBLM no salvará los datos de una herida si la carácteristica afectada baja por debajo del límite establecido por las reglas (-2).
     <br><br>
     
-    <i>Q:</i>
-    I'm not able to select the achieved characteristic I wish?<br>
-    <i>A:</i>
-    You are by rule not allowed to select any further achieved characteristics if it leads to the player having more than default + 2 of that characteristic.
+    <i>P:</i>
+    ¿No puedo seleccionar la subida de característica que deseo?<br>
+    <i>R:</i>
+    Las reglas no permiten las subidas de características superiores al valor inicial +2.
     <br><br>
 
-    <i>Q:</i>
-    I have saved a match with wrong match data, and now OBBLM has created a new match with the wrong contestants. How do I correct this?<br>
-    <i>A:</i>
-    First you delete the falsely created match, and then you resave the old match with the correct match data, which recreates the new match.
+    <i>P:</i>
+    He salvado un acta de partido con datos erroneos, y ahora OBBLM ha creado un nuevo partido con entrenadores incorrectos. ¿Como lo corrijo?<br>
+    <i>R:</i>
+    Primero, borra el partido erroneo, y luego vuelve a salvar el partido inicial con los datos correctos. Esto recreará correctamente el partido. 
     <br><br>
     
-    <i>Q:</i>
-    I can't seem to save -1 fan factor when submitting match data?<br>
-    <i>A:</i>
-    OBBLM will refuse to save any further negative fan factor values if your team already has 0 fan factor.
+    <i>P:</i>
+    No puedo guardar un resultado de factor de hinchas de -1 en el acta de partido.<br>
+    <i>R:</i>
+    OBBLM no permite valores de factor de hinchas negativos si tu equipo ya tiene factor de hinchas 0.
     <br><br>
     
-    <i>Q:</i>
-    Re-roll prices are no longer doubled?<br>
-    <i>A:</i>
-    Have you switched on the setting "static re-rolls prices"? 
-    If not, what you experience is due to your league having started on a new tournament, in which no matches yet have been played. The RR-prices will become doubled again once the first match has been played.
+    <i>P:</i>
+    Los precios de las Segundas oportunidades (SO) no son dobles.<br>
+    <i>R:</i>
+    ¿Has activado la opción "static re-rolls prices" en el archivo de opciones?
+    Si no lo has hecho, lo que sucede es que tu liga ha iniciado un nuevo torneo en el que no se han jugado nuevos partidos. Los precios de SO se doblarán una vez se haya jugado el primer partido.
     <br><br>
     
-    <i>Q:</i>
-    I have suddenly a dead player alive again on my roster?<br>
-    <i>A:</i>
-    Re-save the match in which the player died.
+    <i>P:</i>
+    De repente un jugador que estaba muerto aparece como vivo en la plantilla.<br>
+    <i>R:</i>
+    Salva de nuevo el acta de partido en el que el jugador murió.
     <br><br>
                     
-    <i>Q:</i>
-    I see only fields on the match submitting pages for the inducements stars and mercenaries, where are the others?<br>
-    <i>A:</i>
-    Such fields do not exist yet. If you wish to document these match details, you can write them in the match summary.
+    <i>P:</i>
+    En el acta solo veo campos de incentivos de Mercenarios y Jugadores Estrella, ¿Donde están los demás incentivos?<br>
+    <i>R:</i>
+    Esos campos no exiten aún. Si quieres documentar esos detalles, puedes hacerlo en el sumario del partido.
     <br><br>
     
-    <i>Q:</i>
-    I'm having trouble uploading pictures. How can i resolves this?<br>
-    <i>A:</i>
-    OBBLM supports only .gif, .jpg, .jpeg and .png file types. Still having trouble? Try a mozilla browser.
+    <i>P:</i>
+    Tengo problemas al subir imagenes.<br>
+    <i>R:</i>
+    OBBLM solo soporta los formatos .gif, .jpg. .jpeg y .png. Si aún así sigues teniendo problemas, intentalo con un navegador mozilla.
     <br><br>
 
-    <i>Q:</i>
-    After hiring a journeyman he stays on my roster even though he has already competed in a match. Why is this so?<br>
-    <i>A:</i>
-    OBBLM does not automatically fire journeymen after their first match. You must do so yourself the same way as ordinary players are fired (via. the team page).
+    <i>P:</i>
+    Trás adquirir un independiente, este permanece en la plantilla del equipo, a pesar de que ya ha jugado un partido. ¿Por qué?<br>
+    <i>R:</i>
+    OBBLM no despide a los independientes automáticamente tras su primer partido, ya que puedes querer ficharlos permanentemente. Debes despedirlo tu mismo tal y como se despiden todos los jugadores (en la hoja de equipo). 
     <br><br>
 
-    <i>Q:</i>
-    I would like to create my own tournament ranking system. How do I do this?<br>
-    <i>A:</i>
-    Please see the <i>settings.php</i> file.
+    <i>P:</i>
+    Quiero crear my propio sistema de puntuación para torneos. ¿Como puedo hacerlo?<br>
+    <i>R:</i>
+    Existen instrucciones para ello en el archivo <i>settings.php</i>.
     <br><br>
 
-    <i>Q:</i>
-    How do I heal all of a team's MNGs?<br>
-    <i>A:</i>
-    Simply open the match report from the team's latest played match, and reassign the injuries sustained as ageing injuries - these do not result in MNGs.
+    <i>P:</i>
+    ¿Como curo las heridas que impiden jugar el siguiente partido? (En caso de final de temporada, por ejemplo)<br>
+    <i>R:</i>
+    Simplemente abre el acta de partido y reasigna las heridas como "ageing". Estas no hacen perder el siguiente partido.
     ]]>
     </faq_txt>
 </about>
