@@ -116,7 +116,7 @@ class Registration implements ModuleInterface
             $this->error = PASSWORD_ERROR;
             $status = false;
         }
-        else $this->password = md5( $this->password );
+#        else $this->password = md5( $this->password );
 
         return $status;
 
@@ -148,10 +148,32 @@ class Registration implements ModuleInterface
     public function create() {
 
         $status = true;
-        $query = sprintf( "INSERT INTO %s ( %s, %s, %s, %s, %s ) VALUES ( '%s', '%s', '%s', %d, %d )",
+        global $settings;
+
+        Coach::create(
+            $input = array(
+                'name' => $this->username,
+                'passwd' => $this->password,
+                'mail' => $this->email,
+                'def_leagues' => $settings['default_leagues'],
+                'ring' => ACCESS_LEVEL,
+                'realname' => '',
+                'phone' => '',
+                'settings' => array('lang' => $settings['lang'])
+            )
+        );
+        #Input: name, realname, passwd, mail, phone, ring, settings, def_leagues (array of LIDs)
+
+#        $query = sprintf( "INSERT INTO %s ( %s, %s, %s, %s, %s ) VALUES ( '%s', '%s', '%s', %d, %d )",
+#                 USERTABLE,
+#                 USERNAME, PASSWORD, EMAIL, ACTIVATION, ACCESS,
+#                 mysql_real_escape_string($this->username), $this->password, mysql_real_escape_string($this->email), NOT_ACTIVATED, ACCESS_LEVEL );
+
+        $query = sprintf( "UPDATE %s SET %s = %d WHERE %s = '%s' LIMIT 1",
                  USERTABLE,
-                 USERNAME, PASSWORD, EMAIL, ACTIVATION, ACCESS,
-                 mysql_real_escape_string($this->username), $this->password, mysql_real_escape_string($this->email), NOT_ACTIVATED, ACCESS_LEVEL );
+                 ACTIVATION, NOT_ACTIVATED, 
+                 USERNAME, mysql_real_escape_string($this->username) );
+
 
         $results = mysql_query($query);
         if ( !$results )
