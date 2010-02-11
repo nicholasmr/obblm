@@ -115,6 +115,7 @@
         <active>Active</active>
         <alltime>All-time</alltime>
     <sgrp>Stats group</sgrp>
+    <having>Having</having>
     
     <!-- ES -->
     <extrastats>Extra stats</extrastats>
@@ -776,6 +777,7 @@
         <active>Activo</active>
         <alltime>Total</alltime>
     <sgrp>Grupo de estadísticas</sgrp>
+    <having>Teniendo</having>
 
 <!-- ES -->
     <extrastats>Estadísticas extra</extrastats>
