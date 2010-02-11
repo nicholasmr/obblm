@@ -137,6 +137,33 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
     );
 }
 
+/* 
+    Shared by standings() and nodeSelector(). 
+    These are the default fields (general/regular stats) in standings() and the "having" filters of nodeSelector().
+    
+    mv_ fields are accumulated stats from MV tables. rg_ (regular) are regular/static/all-time fields from non mv-tables (players, teams, coaches etc.)
+*/
+
+public static $fields = array(
+    'mv_won'     => array('desc' => 'W'),
+    'mv_draw'    => array('desc' => 'D'),
+    'mv_lost'    => array('desc' => 'L'),
+    'mv_played'  => array('desc' => 'GP'),
+    'rg_win_pct' => array('desc' => 'WIN%'),
+    'rg_swon'    => array('desc' => 'SW'),
+    'rg_sdraw'   => array('desc' => 'SD'),
+    'rg_slost'   => array('desc' => 'SL'),
+    'mv_gf'      => array('desc' => 'GF'),
+    'mv_ga'      => array('desc' => 'GA'),
+    'mv_td'      => array('desc' => 'Td'),
+    'mv_cp'      => array('desc' => 'Cp'),
+    'mv_intcpt'  => array('desc' => 'Int'),
+    'mv_cas'     => array('desc' => 'Cas'),
+    'mv_bh'      => array('desc' => 'BH'),
+    'mv_si'      => array('desc' => 'Si'),
+    'mv_ki'      => array('desc' => 'Ki'),
+);
+
 public static function standings($obj, $node, $node_id, array $opts)
 {
     /*
@@ -164,9 +191,10 @@ public static function standings($obj, $node, $node_id, array $opts)
     $extra['noHelp'] = false;
     
     $enableRaceSelector = ($obj == T_OBJ_PLAYER || $obj == T_OBJ_TEAM && (!isset($opts['teams_from']) || $opts['teams_from'] != T_OBJ_RACE));
-    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp) = HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true));
+    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp, $sel_ff_field, $sel_ff_ineq, $sel_ff_limit) = HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true, 'ffilter' => true));
     $filter_node = array($sel_node => $sel_node_id);
     $filter_race = ($sel_race != T_RACE_ALL) ? array(T_OBJ_RACE => $sel_race) : array();
+    $filter_having = array('having' => array($sel_ff_field.(($sel_ff_ineq == self::T_NS__ffilter_ineq_gt) ? '>=' : '<=').$sel_ff_limit));
     $SGRP_GEN = ($sel_sgrp == 'GENERAL');
 
     $manualSort = isset($_GET["sort$opts[GET_SS]"]);
@@ -179,26 +207,7 @@ public static function standings($obj, $node, $node_id, array $opts)
     echo '<br><a href="'.$opts['url'].'&amp;pms='.(($set_avg) ? 0 : 1).'"><b>'.$lng->getTrn('common/'.(($set_avg) ? 'ats' : 'pms'))."</b></a><br><br>\n";
 
     // Common $obj type fields.
-    # mv_ fields are accumulated stats from MV tables. rg_ (regular) are regular/static/all-time fields from non mv-tables (players, teams, coaches etc.)
-    $fields = array(
-        'mv_won'     => array('desc' => 'W'),
-        'mv_draw'    => array('desc' => 'D'),
-        'mv_lost'    => array('desc' => 'L'),
-        'mv_played'  => array('desc' => 'GP'),
-        'rg_win_pct' => array('desc' => 'WIN%'),
-        'rg_swon'    => array('desc' => 'SW'),
-        'rg_sdraw'   => array('desc' => 'SD'),
-        'rg_slost'   => array('desc' => 'SL'),
-        'mv_gf'      => array('desc' => 'GF'),
-        'mv_ga'      => array('desc' => 'GA'),
-        'mv_td'      => array('desc' => 'Td'),
-        'mv_cp'      => array('desc' => 'Cp'),
-        'mv_intcpt'  => array('desc' => 'Int'),
-        'mv_cas'     => array('desc' => 'Cas'),
-        'mv_bh'      => array('desc' => 'BH'),
-        'mv_si'      => array('desc' => 'Si'),
-        'mv_ki'      => array('desc' => 'Ki'),
-    );
+    $fields = self::$fields;
     
     // Was a different (non-general) stats group selected?
     if (!$SGRP_GEN) {
@@ -250,7 +259,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 unset($fields["rg_s$f"]);
                 unset($fields["mv_s$f"]);
             }
-            $objs = Stats::getRaw(T_OBJ_PLAYER, $filter_node+$filter_race, $settings['entries']['standings_players'], $sortRule, $set_avg);
+            $objs = Stats::getRaw(T_OBJ_PLAYER, $filter_node+$filter_having+$filter_race, $settings['entries']['standings_players'], $sortRule, $set_avg);
             break;
 
         case STATS_TEAM:
@@ -284,17 +293,17 @@ public static function standings($obj, $node, $node_id, array $opts)
             {
                 case T_OBJ_COACH:
                     $fields_before['f_rname'] = array('desc' => $lng->getTrn('common/race'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_race+array(T_OBJ_COACH => (int) $opts['teams_from_id']), false, $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+$filter_race+array(T_OBJ_COACH => (int) $opts['teams_from_id']), false, $sortRule, $set_avg);
                     break;
 
                 case T_OBJ_RACE:
                     $fields_before['f_cname'] = array('desc' => $lng->getTrn('common/coach'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+array(T_OBJ_RACE => (int) $opts['teams_from_id']), $settings['entries']['standings_teams'], $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+array(T_OBJ_RACE => (int) $opts['teams_from_id']), $settings['entries']['standings_teams'], $sortRule, $set_avg);
                     break;
 
                 // All teams
                 default:
-                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_race, $settings['entries']['standings_teams'], $sortRule, $set_avg);
+                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+$filter_race, $settings['entries']['standings_teams'], $sortRule, $set_avg);
             }
             break;
 
@@ -319,7 +328,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 unset($fields["rg_s$f"]);
                 unset($fields["mv_s$f"]);
             }
-            $objs = Stats::getRaw(T_OBJ_RACE, $filter_node, false, $sortRule, $set_avg);
+            $objs = Stats::getRaw(T_OBJ_RACE, $filter_node+$filter_having, false, $sortRule, $set_avg);
 
             break;
 
@@ -342,7 +351,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 $fields_before['rg_team_cnt'] = array('desc' => $lng->getTrn('common/teams'));
                 $fields_after['rg_elo'] = array('desc' => 'ELO');
             }
-            $objs = Stats::getRaw(T_OBJ_COACH, $filter_node, $settings['entries']['standings_coaches'], $sortRule, $set_avg);
+            $objs = Stats::getRaw(T_OBJ_COACH, $filter_node+$filter_having, $settings['entries']['standings_coaches'], $sortRule, $set_avg);
             // OPTIONALLY hide retired coaches.
             if ($settings['hide_retired']) {$objs = array_filter($objs, create_function('$obj', 'return !$obj["retired"];'));}
             break;
@@ -369,7 +378,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             unset($fields["rg_win_pct"]);
             
             $extra['dashed'] = array('condField' => 'mv_played', 'fieldVal' => 0, 'noDashFields' => array('name'));
-            $objs = Stats::getRaw(T_OBJ_STAR, $filter_node, false, $sortRule, $set_avg);
+            $objs = Stats::getRaw(T_OBJ_STAR, $filter_node+$filter_having, false, $sortRule, $set_avg);
 
             break;
     }
@@ -457,8 +466,8 @@ public static function getSelectedNodeLid()
 }
 
 // Node Selector constants
-const T_NS__ffilter_ineqn_gt = 1; # Greater than.
-const T_NS__ffilter_ineqn_lt = 2; # Less than.
+const T_NS__ffilter_ineq_gt = 1; # Greater than.
+const T_NS__ffilter_ineq_lt = 2; # Less than.
 
 public static function nodeSelector(array $opts)
 {
@@ -471,9 +480,9 @@ public static function nodeSelector(array $opts)
     $s_race     = "NS_race";
     $s_sgrp     = "NS_sgrp";
         # Field filter
-    $s_ffilter  = "NS_ffilter__field"; # Field name, e.g. "mv_played".
-    $s_ffilter  = "NS_ffilter__ineqn"; # inequality direction (">" or "<"), self::T_NS__ffilter_ineqn_* values.
-    $s_ffilter  = "NS_ffilter__limit"; # RHS of ineqn, e.g. "20" in the expression mv_played > 20
+    $s_ffilter_field = "NS_ffilter__field"; # Field name, e.g. "mv_played".
+    $s_ffilter_ineq  = "NS_ffilter__ineq"; # inequality direction (">=" or "<="), self::T_NS__ffilter_ineq_* values.
+    $s_ffilter_limit = "NS_ffilter__limit"; # RHS of ineq, e.g. "20" in the expression mv_played > 20
     
     // Options
     $setState = (array_key_exists('state', $opts) && $opts['state']);
@@ -487,6 +496,9 @@ public static function nodeSelector(array $opts)
     $def_state   = T_STATE_ALLTIME;
     $def_race    = T_RACE_ALL;
     $def_sgrp    = 'GENERAL';
+    $def_ffilter_field = 'mv_played';
+    $def_ffilter_ineq  = self::T_NS__ffilter_ineq_gt;
+    $def_ffilter_limit = '0';
 
     $NEW = isset($_POST['select']);
     $_SESSION[$s_state] = ($NEW && $setState) ? (int) $_POST['state_in'] : (isset($_SESSION[$s_state]) ? $_SESSION[$s_state] : $def_state);
@@ -497,6 +509,10 @@ public static function nodeSelector(array $opts)
     $_SESSION[$s_node_id] = ($NEW) 
         ? (int) $_POST[$rel[$_SESSION[$s_node]].'_in']
         : (isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : $def_node_id);
+        
+    $_SESSION[$s_ffilter_field] = ($NEW && $setFFilter) ? $_POST['ffilter_field_in'] : (isset($_SESSION[$s_ffilter_field]) ? $_SESSION[$s_ffilter_field] : $def_ffilter_field);
+    $_SESSION[$s_ffilter_ineq]  = ($NEW && $setFFilter) ? $_POST['ffilter_ineq_in']  : (isset($_SESSION[$s_ffilter_ineq])  ? $_SESSION[$s_ffilter_ineq]  : $def_ffilter_ineq);
+    $_SESSION[$s_ffilter_limit] = ($NEW && $setFFilter) ? $_POST['ffilter_limit_in'] : (isset($_SESSION[$s_ffilter_limit]) ? $_SESSION[$s_ffilter_limit] : $def_ffilter_limit);
     
     // Fetch contents of node selector
     list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false);
@@ -587,6 +603,23 @@ public static function nodeSelector(array $opts)
         </select>
         <?php
     }
+    if ($setFFilter) {
+        echo $lng->getTrn('common/having');
+        ?>
+        <select name="ffilter_field_in" id="ffilter_field_in">
+            <?php
+            foreach (self::$fields as $f => $desc) {
+                echo "<option value='$f'".(($_SESSION[$s_ffilter_field] == $f) ? 'SELECTED' : '').">$desc[desc]</option>\n";
+            }
+            ?>
+        </select>
+        <select name="ffilter_ineq_in" id="ffilter_ineq_in">
+            <option value="<?php echo self::T_NS__ffilter_ineq_gt;?>" <?php echo ($_SESSION[$s_ffilter_ineq] == self::T_NS__ffilter_ineq_gt) ? 'SELECTED' : '';?>>>=</option>
+            <option value="<?php echo self::T_NS__ffilter_ineq_lt;?>" <?php echo ($_SESSION[$s_ffilter_ineq] == self::T_NS__ffilter_ineq_lt) ? 'SELECTED' : '';?>><=</option>
+        </select>
+        <input type='text' name="ffilter_limit_in" id="ffilter_limit_in" size='2' value="<?php echo $_SESSION[$s_ffilter_limit];?>">
+        <?php
+    }
     ?>
     &nbsp;
     <input type="submit" name="select" value="<?php echo $lng->getTrn('common/select');?>">
@@ -621,6 +654,9 @@ public static function nodeSelector(array $opts)
         ($setState) ? $_SESSION[$s_state] : false, 
         ($setRace) ? $_SESSION[$s_race] : false,
         ($setSGrp) ? $_SESSION[$s_sgrp] : false,
+        ($setFFilter) ? $_SESSION[$s_ffilter_field] : false,
+        ($setFFilter) ? $_SESSION[$s_ffilter_ineq]  : false,
+        ($setFFilter) ? $_SESSION[$s_ffilter_limit] : false,
     );
 }
 
