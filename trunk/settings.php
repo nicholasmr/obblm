@@ -140,6 +140,7 @@ $settings['modules_enabled'] = array(
     'UPLOAD_BOTOCS' => true, # Allow upload of a BOTOCS match
     'XML_BOTOCS'    => true, # BOTOCS XML export of team
     'Registration'  => true, # Allows users to register on the site.
+    'Search'        => true, # Search for coaches and teams.
 );
 
 ?>
