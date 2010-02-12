@@ -645,10 +645,16 @@ public static function nodeSelector(array $opts)
     }
     if ($setFFilter) {
         echo $lng->getTrn('common/having');
+        $FFilterFields = self::_getDefFields($obj, $_SESSION[$s_node], $_SESSION[$s_node_id]);
+        if (!in_array($_SESSION[$s_ffilter_field], array_keys($FFilterFields))) {
+            $_SESSION[$s_ffilter_field] = $def_ffilter_field;
+            $_SESSION[$s_ffilter_ineq]  = $def_ffilter_ineq;
+            $_SESSION[$s_ffilter_limit] = $def_ffilter_limit;
+        }
         ?>
         <select name="ffilter_field_in" id="ffilter_field_in">
             <?php
-            foreach (self::_getDefFields($obj, $_SESSION[$s_node], $_SESSION[$s_node_id]) as $f => $desc) {
+            foreach ($FFilterFields as $f => $desc) {
                 echo "<option value='$f'".(($_SESSION[$s_ffilter_field] == $f) ? 'SELECTED' : '').">$desc[desc]</option>\n";
             }
             ?>
