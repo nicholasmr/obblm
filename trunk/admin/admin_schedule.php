@@ -298,7 +298,7 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
     <script>
         $(document).ready(function(){
             var options, a;
-            options = { serviceUrl:'handler.php?type=teamautocomplete' };
+            options = { minChars:2, serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM; ?>' };
             a = $('#team').autocomplete(options);
         });
     </script>
