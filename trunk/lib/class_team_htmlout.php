@@ -35,7 +35,7 @@ public static function dispTeamList()
     */
     
     list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(array('race' => true, 'state' => true));
-    $q = 'SELECT _RRP AS "team_id", owned_by_coach_id, f_race_id, teams.name AS "name", f_cname, f_rname, tv, teams.rdy AS "rdy", teams.retired AS "retired" 
+    $q = 'SELECT _RRP AS "team_id", owned_by_coach_id, f_race_id, teams.name AS "tname", f_cname, f_rname, tv, teams.rdy AS "rdy", teams.retired AS "retired" 
         FROM matches, teams, tours, divisions 
         WHERE 
             matches._RRP = teams.team_id AND 
@@ -76,7 +76,7 @@ public static function dispTeamList()
     echo '</td></td>';
     echo "<tr><td>".$lng->getTrn('common/teams').": $cnt</td></td>";
     echo '</table></center><br>';
-    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') LIMIT '.(($page-1)*T_HTML_TEAMS_PER_PAGE).', '.(($page)*T_HTML_TEAMS_PER_PAGE);
+    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY tname ASC LIMIT '.(($page-1)*T_HTML_TEAMS_PER_PAGE).', '.(($page)*T_HTML_TEAMS_PER_PAGE);
     
     $teams = array();
     $result = mysql_query($queryGet);
@@ -90,7 +90,7 @@ public static function dispTeamList()
 
     $fields = array(
         'logo'    => array('desc' => 'Logo', 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id'), 'nosort' => true),
-        'name'    => array('desc' => $lng->getTrn('common/name'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
+        'tname'    => array('desc' => $lng->getTrn('common/name'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
         'f_cname' => array('desc' => $lng->getTrn('common/coach'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
         'rdy'     => array('desc' => $lng->getTrn('common/ready'), 'nosort' => true),
         'retired' => array('desc' => $lng->getTrn('common/retired'), 'nosort' => true),
