@@ -35,7 +35,7 @@ public static function dispTeamList()
     */
     
     list($sel_node, $sel_node_id, $sel_state) = HTMLOUT::nodeSelector(array('state' => true));
-    $q = 'SELECT coach_id AS "coach_id", coaches.name AS "name", coaches.retired AS "retired", team_cnt AS "team_cnt"
+    $q = 'SELECT coach_id AS "coach_id", coaches.name AS "cname", coaches.retired AS "retired", team_cnt AS "team_cnt"
         FROM matches, teams, coaches, tours, divisions 
         WHERE 
             teams.owned_by_coach_id = coaches.coach_id AND 
@@ -74,7 +74,7 @@ public static function dispTeamList()
     echo '</td></td>';
     echo "<tr><td>".$lng->getTrn('common/coaches').": $cnt</td></td>";
     echo '</table></center><br>';
-    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') LIMIT '.(($page-1)*T_HTML_COACHES_PER_PAGE).', '.(($page)*T_HTML_COACHES_PER_PAGE);
+    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY cname ASC LIMIT '.(($page-1)*T_HTML_COACHES_PER_PAGE).', '.(($page)*T_HTML_COACHES_PER_PAGE);
     
     $coaches = array();
     $result = mysql_query($queryGet);
@@ -84,9 +84,9 @@ public static function dispTeamList()
     }
 
     $fields = array(
-        'name'    => array('desc' => $lng->getTrn('common/name'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
+        'cname'    => array('desc' => $lng->getTrn('common/name'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
         'team_cnt' => array('desc' => $lng->getTrn('common/teams'), 'nosort' => true),
-        'retired' => array('desc' => $lng->getTrn('common/retired'), 'nosort' => true),
+        'retired'  => array('desc' => $lng->getTrn('common/retired'), 'nosort' => true),
     );
 
     HTMLOUT::sort_table(

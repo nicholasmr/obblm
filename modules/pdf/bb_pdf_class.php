@@ -307,7 +307,7 @@ function FitTextInCell($h, $cellpx, $fontsize, $txt) {
 
 // Adding space as thousand divider for numbers
 function Mf($m) {
-  $r=number_format($m,0,'.',' ');
+  $r=number_format((double) $m,0,'.',' ');
   return $r;
 }
 
@@ -329,7 +329,7 @@ function Image($file,$x,$y,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=
         }
         $type=strtolower($type);
         $mqr=get_magic_quotes_runtime();
-        set_magic_quotes_runtime(0);
+#        set_magic_quotes_runtime(0);
         if($type=='jpg' || $type=='jpeg')
             $info=$this->_parsejpg($file);
         elseif($type=='png'){
@@ -344,7 +344,7 @@ function Image($file,$x,$y,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=
                 $this->Error('Unsupported image type: '.$type);
             $info=$this->$mtd($file);
         }
-        set_magic_quotes_runtime($mqr);
+#        set_magic_quotes_runtime($mqr);
         
         if ($isMask){
       $info['cs']="DeviceGray"; // try to force grayscale (instead of indexed)
