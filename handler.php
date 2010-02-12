@@ -90,6 +90,10 @@ switch ($_GET['type'])
         Module::run('Gallery', array()); 
         break;
 
+    /* Search */
+    case 'search':
+        Module::run('Search', array()); 
+        break;
     
     /* Veridy team name - AJAX use */
     case 'verifyteam':
@@ -101,15 +105,30 @@ switch ($_GET['type'])
         }
         break;
 
-    /* Team name autocompletion - AJAX */
-    case 'teamautocomplete':
-        $query = "SELECT team_id AS 'id', name FROM teams WHERE name LIKE '$_GET[query]%'";
-        $result = mysql_query($query);
-        $teams = array();
-        while($row = mysql_fetch_assoc($result)) {
-            $teams[$row['id']] = $row['name'];
+    /* Name autocompletion - AJAX */
+    case 'autocomplete':
+    
+        $objs = array();
+        switch ($_GET['obj']) {
+
+            case T_OBJ_COACH:
+                $query = "SELECT coach_id AS 'id', name FROM coaches WHERE name LIKE '$_GET[query]%' ORDER BY name ASC";
+                $result = mysql_query($query);
+                while($row = mysql_fetch_assoc($result)) {
+                    $objs[$row['id']] = $row['name'];
+                }
+                break;
+        
+            case T_OBJ_TEAM:
+                $query = "SELECT team_id AS 'id', name FROM teams WHERE name LIKE '%$_GET[query]%' ORDER BY name ASC";
+                $result = mysql_query($query);
+                while($row = mysql_fetch_assoc($result)) {
+                    $objs[$row['id']] = $row['name'];
+                }
+                break;
+        
         }
-        echo json_encode(array('query' => $_GET['query'], 'suggestions' => array_values($teams), 'data' => array_keys($teams)));
+        echo json_encode(array('query' => $_GET['query'], 'suggestions' => array_values($objs), 'data' => array_keys($objs)));
         break;
 
     default:

@@ -110,4 +110,10 @@ Module::register(array(
     'filesLoadTime' => array('gallery/class_gallery.php')
 ));
 
+Module::register(array(
+    'class'         => 'Search', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('search/class_search.php')
+));
+
 ?>
