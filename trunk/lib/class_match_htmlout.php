@@ -26,7 +26,7 @@
 # Don't touch - order denpendant entries!!!
 $T_MOUT_REL = array('nr' => '#', 'name' => 'Name', 'pos' => 'Position',);
 $T_MOUT_ACH = array_combine($T_PMD_ACH, array('MVP','Cp','Td','Int','BH','SI','Ki',));
-$T_MOUT_IR = array_combine($T_PMD_IR, array('IR D1','IR D2',));
+$T_MOUT_IR = array_combine($T_PMD_IR, array('IR1 D1','IR1 D2','IR2 D1','IR2 D2','IR3 D1','IR3 D2',));
 $T_MOUT_INJ = array_combine($T_PMD_INJ, array('Inj','Ageing 1','Ageing 2'));
 
 class Match_HTMLOUT extends Match
@@ -316,8 +316,12 @@ public static function report() {
                     $_POST['bh_' . $p->player_id]       = 0;
                     $_POST['si_' . $p->player_id]       = 0;
                     $_POST['ki_' . $p->player_id]       = 0;
-                    $_POST['ir_d1_' . $p->player_id]    = 0;
-                    $_POST['ir_d2_' . $p->player_id]    = 0;
+                    $_POST['ir1_d1_' . $p->player_id]   = 0;
+                    $_POST['ir1_d2_' . $p->player_id]   = 0;
+                    $_POST['ir2_d1_' . $p->player_id]   = 0;
+                    $_POST['ir2_d2_' . $p->player_id]   = 0;
+                    $_POST['ir3_d1_' . $p->player_id]   = 0;
+                    $_POST['ir3_d2_' . $p->player_id]   = 0;
                     $_POST['inj_' . $p->player_id]      = NONE;
                     $_POST['agn1_' . $p->player_id]     = NONE;
                     $_POST['agn2_' . $p->player_id]     = NONE;
@@ -332,8 +336,12 @@ public static function report() {
                     'bh'      => $_POST['bh_' . $p->player_id],
                     'si'      => $_POST['si_' . $p->player_id],
                     'ki'      => $_POST['ki_' . $p->player_id],
-                    'ir_d1'   => $_POST['ir_d1_' . $p->player_id],
-                    'ir_d2'   => $_POST['ir_d2_' . $p->player_id],
+                    'ir1_d1'  => $_POST['ir1_d1_' . $p->player_id],
+                    'ir1_d2'  => $_POST['ir1_d2_' . $p->player_id],
+                    'ir2_d1'  => $_POST['ir2_d1_' . $p->player_id],
+                    'ir2_d2'  => $_POST['ir2_d2_' . $p->player_id],
+                    'ir3_d1'  => $_POST['ir3_d1_' . $p->player_id],
+                    'ir3_d2'  => $_POST['ir3_d2_' . $p->player_id],
                     'inj'     => $_POST['inj_' . $p->player_id],
                     'agn1'    => $_POST['agn1_' . $p->player_id],
                     'agn2'    => $_POST['agn2_' . $p->player_id],
@@ -361,8 +369,12 @@ public static function report() {
                         'bh'      => $_POST["bh_$sid"],
                         'si'      => $_POST["si_$sid"],
                         'ki'      => $_POST["ki_$sid"],
-                        'ir_d1'   => 0,
-                        'ir_d2'   => 0,
+                        'ir1_d1'  => 0,
+                        'ir1_d2'  => 0,
+                        'ir2_d1'  => 0,
+                        'ir2_d2'  => 0,
+                        'ir3_d1'  => 0,
+                        'ir3_d2'  => 0,
                         'inj'     => NONE,
                         'agn1'    => NONE,
                         'agn2'    => NONE,
@@ -395,8 +407,12 @@ public static function report() {
                         'bh'      => $_POST["bh$idm"],
                         'si'      => $_POST["si$idm"],
                         'ki'      => $_POST["ki$idm"],
-                        'ir_d1'   => 0,
-                        'ir_d2'   => 0,
+                        'ir1_d1'  => 0,
+                        'ir1_d2'  => 0,
+                        'ir2_d1'  => 0,
+                        'ir2_d2'  => 0,
+                        'ir3_d1'  => 0,
+                        'ir3_d2'  => 0,
                         'inj'     => NONE,
                         'agn1'    => NONE,
                         'agn2'    => NONE,

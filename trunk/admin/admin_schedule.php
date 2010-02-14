@@ -43,7 +43,7 @@ if (isset($_POST['button'])) {
         array(!$nameSet && !$addMatchToFFA, "Please fill out the tournament name."),
         array($nameSet && get_alt_col('tours', 'name', $_POST['name'], 'tour_id'), "Tournament name already in use."),
         array(!$teams_OK['d'], 'You may not schedule matches between teams from different divisions in the selected league.'),
-        array(!$teams_OK['l'], 'You may not schedule matches between teams from different leagues.'),
+        array(!$teams_OK['l'], 'You may not schedule matches between teams from different leagues OR one or more of the selected teams are not from the chosen league.'),
         array($leagues[$lid]['ring'] != Coach::T_RING_LOCAL_ADMIN, 'You do not have the rights to schedule matches in the selected league.'),
         array($_POST['type'] == TT_RROBIN && $teamsCount < 3, 'Please select at least 3 teams'),
         array($_POST['type'] == TT_FFA && ($teamsCount % 2 != 0), 'Please select an even number of teams'),
@@ -230,7 +230,9 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
         <select name='did'>
             <?php
             foreach ($divisions as $did => $desc) {
-                echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
+                if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+                    echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
+                }
             }
             ?>
         </select>
@@ -263,7 +265,7 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
         $body .= '</optgroup>';
         $body .= '<optgroup label="Existing FFA">';
         foreach ($tours as $trid => $desc) {
-            if ($desc['type'] == TT_FFA) {
+            if ($desc['type'] == TT_FFA && $leagues[$divisions[$desc['f_did']]['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
                 $body .= "<option value='$trid' ".(($desc['locked']) ? 'DISABLED' : '')." ".(($addMatchToFFA && isset($_POST['existTour']) && $trid == $_POST['existTour']) ? 'SELECTED' : '').">".$divisions[$desc['f_did']]['dname'].": $desc[tname]".(($desc['locked']) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
             }
         }

@@ -160,6 +160,7 @@ private function _newTeam($ALLOW_EDIT)
         if (get_magic_quotes_gpc()) {
             $_POST['name'] = stripslashes($_POST['name']);
         }
+        @list($lid,$did) = explode(',',$_POST['lid_did']);
         list($exitStatus, $tid) = Team::create(array(
             'name' => $_POST['name'], 
             'owned_by_coach_id' => (int) $this->coach_id, 
@@ -172,23 +173,15 @@ private function _newTeam($ALLOW_EDIT)
             'cheerleaders' => $rules['initial_cheerleaders'],
             'won_0' => 0, 'lost_0' => 0, 'draw_0' => 0, 'played_0' => 0, 'wt_0' => 0, 'gf_0' => 0, 'ga_0' => 0,
             'imported' => 0,
-            'f_lid' => (int) $_POST['lid'],
-            'f_did' => isset($_POST['did']) ? (int) $_POST['did'] : Team::T_NO_DIVISION_TIE,
+            'f_lid' => (int) $lid,
+            'f_did' => isset($did) ? (int) $did : Team::T_NO_DIVISION_TIE,
             ));
         status(!$exitStatus, $exitStatus ? Team::$T_CREATE_ERROR_MSGS[$exitStatus] : null);
     }
 
     // Show new team form.
-    echo "<br><br>";
     ?>
-    <script language="JavaScript" type="text/javascript">
-    var tieLIDs = new Array(<?php echo implode(',', array_map(create_function('$lid,$desc', 'return ($desc["tie_teams"]) ? "\'$lid\'" : -1;'), array_keys($leagues), array_values($leagues)));?>);
-    function setDivState(selectedLID)
-    {
-        document.getElementById('divisionsSelector').disabled = (-1 == tieLIDs.indexOf(selectedLID));
-    }
-    </script>
-    
+    <br><br>
     <form method="POST">
     <b><?php echo $lng->getTrn('common/name');?>:</b> <br>
     <input type="text" name="name" size="20" maxlength="50">
@@ -201,37 +194,29 @@ private function _newTeam($ALLOW_EDIT)
         ?>
     </select>
     <br><br>
-    <b><?php echo $lng->getTrn('common/league');?>:</b> <br>
-    <select name="lid" id="leaguesSelector" onChange="setDivState(this.options[this.selectedIndex].value);">
+    <b><?php echo $lng->getTrn('common/league').'/'.$lng->getTrn('common/division');?>:</b> <br>
+    <select name="lid_did">
         <?php
-        $PREVENT_SUBMISSION = true; # If coach for some reason is not a member of any leagues then prevent creating team (team's much be a member of a league).
-        foreach ($leagues as $lid => $desc) {
-            if ($desc['ring'] >= Coach::T_RING_LOCAL_REGULAR) {
-                $PREVENT_SUBMISSION = false; 
-                echo "<option value='$lid'>$desc[lname]</option>";
+        foreach ($leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, $this->coach_id, array(T_NODE_LEAGUE => array('tie_teams' => 'tie_teams'))) as $lid => $lstruct) {
+            if ($lstruct['desc']['tie_teams']) {
+                echo "<OPTGROUP LABEL='".$lng->getTrn('common/league').": ".$lstruct['desc']['lname']."'>\n";
+                foreach ($lstruct as $did => $dstruct) {
+                    if ($did != 'desc') {
+                        echo "<option value='$lid,$did'>".$lng->getTrn('common/division').": ".$dstruct['desc']['dname']."</option>";
+                    }
+                }
+                echo "</OPTGROUP>\n";
             }
-        }
-        ?>
-    </select>
-    <br><br>
-    <b><?php echo $lng->getTrn('common/division');?>:</b> <br>
-    <select name="did" id="divisionsSelector">
-        <?php
-        foreach ($divisions as $did => $desc) {
-            if ($leagues[$desc['f_lid']]['ring'] >= Coach::T_RING_LOCAL_REGULAR && $leagues[$desc['f_lid']]['tie_teams']) {
-                echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>";
+            else {
+                echo "<option value='$lid'>".$lng->getTrn('common/league').": ".$lstruct['desc']['lname']."</option>";
             }
         }
         ?>
     </select>
     <br><br>    
     <input type='hidden' name='type' value='newteam'>
-    <input type="submit" name="new_team" value="<?php echo $lng->getTrn('common/create');?>" <?php echo ($PREVENT_SUBMISSION) ? 'DISABLED' : '';?>>
+    <input type="submit" name="new_team" value="<?php echo $lng->getTrn('common/create');?>" <?php echo (count($leagues) == 0) ? 'DISABLED' : '';?>>
     </form>
-    <script language="JavaScript" type="text/javascript">
-    var LID_selector = document.getElementById('leaguesSelector');
-    setDivState(LID_selector.options[LID_selector.selectedIndex].value);
-    </script>
     <?php
 }
 

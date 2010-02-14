@@ -72,7 +72,7 @@ function sec_main() {
      *  Was any main board actions made?
      */
 
-    if (isset($_POST['type']) && is_object($coach) && ($IS_GLOBAL_ADMIN || isset($leagues[$sel_lid]) && $leagues[$sel_lid] == Coach::T_RING_LOCAL_ADMIN)) {
+    if (isset($_POST['type']) && is_object($coach) && ($IS_GLOBAL_ADMIN || isset($leagues[$sel_lid]) && $leagues[$sel_lid]['ring'] == Coach::T_RING_LOCAL_ADMIN)) {
         if (get_magic_quotes_gpc()) {
             if (isset($_POST['title'])) $_POST['title'] = stripslashes($_POST['title']);
             if (isset($_POST['txt']))   $_POST['txt']   = stripslashes($_POST['txt']);
@@ -108,7 +108,9 @@ function sec_main() {
             echo $HTML_LeagueSelector;
             echo "</div>\n";
             echo "<div class='main_leftColumn_right'>\n";
-            if (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN) {echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";}
+            if (is_object($coach) && ($leagues[$sel_lid]['ring'] == Coach::T_RING_LOCAL_ADMIN || $coach->ring == Coach::T_RING_GLOBAL_ADMIN)) {
+                echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";
+            }
             if (Module::isRegistered('RSSfeed')) {echo "<a href='handler.php?type=rss'>RSS</a>\n";}
             echo "</div>\n";
             ?>

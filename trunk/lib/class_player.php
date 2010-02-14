@@ -213,20 +213,38 @@ class Player
         
         // Now remove those not allowed by the improvement roll the player made.
         $N_allowed_new_skills = $this->mayHaveNewSkill();
-        $query = "SELECT ir_d1 AS 'D1', ir_d2 AS 'D2' FROM match_data, matches WHERE f_match_id = match_id AND f_player_id = $this->player_id AND (ir_d1 != 0 OR ir_d2 != 0) ORDER BY date_played DESC LIMIT $N_allowed_new_skills";
+        $query = "SELECT 
+            ir1_d1 AS 'D11', ir1_d2 AS 'D12',
+            ir2_d1 AS 'D21', ir2_d2 AS 'D22',
+            ir3_d1 AS 'D31', ir3_d2 AS 'D32'
+        FROM match_data, matches WHERE f_match_id = match_id AND f_player_id = $this->player_id AND (ir1_d1 != 0 OR ir1_d2 != 0 OR ir2_d1 != 0 OR ir2_d2 != 0 OR ir3_d1 != 0 OR ir3_d2 != 0) ORDER BY date_played DESC LIMIT $N_allowed_new_skills";
         $result = mysql_query($query);
         $N_latest_skill_rolls = mysql_num_rows($result);
         $allowed = array('N' => false, 'D' => false, 'C' => array());
+        $collected_rolls = 0;
         while ($D6s = mysql_fetch_assoc($result)) {
-            switch ($D6s['D1']+$D6s['D2']) {
-                case 12: $chr = array(ST); break;
-                case 11: $chr = array(AG); break;
-                case 10: $chr = array(MA,AV); break;
-                default: $chr = array(); break;
+            foreach (range(1,3) as $i) {
+                if ($collected_rolls++ > $N_allowed_new_skills) 
+                    break 2;
+                switch ($D6s["D${i}1"]+$D6s["D${i}2"]) {
+                    case 12: $chr = array(ST); break;
+                    case 11: $chr = array(AG); break;
+                    case 10: $chr = array(MA,AV); break;
+                    /* 
+                        Note: Note that unlike some other languages, the continue statement applies to switch and acts similar to break. 
+                        If you have a switch inside a loop and wish to continue to the next iteration of the outer loop, use continue 2.
+                    */
+                    case 0: continue 2; # Skip empty rolls.
+                    default: $chr = array(); break;
+                }
+                $allowed['C'] = array_unique(array_merge($allowed['C'], $chr));
+                $allowed['N'] = true; # May always select a new Normal skill when rolled no matter the outcome.
+                $allowed['D'] |= ($D6s["D${i}1"] == $D6s["D${i}2"]); # May select from Double skills when D6s are equal.
+                /* 
+                    LIMITING... @FIXME
+                */
+                break 2;
             }
-            $allowed['C'] = array_merge($allowed['C'], $chr);
-            $allowed['N'] = true; # May always select a new Normal skill when rolled no matter the outcome.
-            $allowed['D'] |= ($D6s['D1'] == $D6s['D2']); # May select from Double skills when D6s are equal.
         }
         
         /* 
