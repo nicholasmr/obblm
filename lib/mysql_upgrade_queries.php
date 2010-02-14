@@ -72,8 +72,14 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnExists('players', 'position', 'ALTER TABLE players CHANGE COLUMN position f_pos_name VARCHAR(60)'),
         
         // Add improvement rolls.
-        SQLUpgrade::runIfColumnNotExists('match_data', 'ir_d1', 'ALTER TABLE match_data ADD COLUMN ir_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
-        SQLUpgrade::runIfColumnNotExists('match_data', 'ir_d2', 'ALTER TABLE match_data ADD COLUMN ir_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+#        SQLUpgrade::runIfColumnExists('match_data', 'ir_d1', 'ALTER TABLE match_data CHANGE ir_d1 ir1_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+#        SQLUpgrade::runIfColumnExists('match_data', 'ir_d2', 'ALTER TABLE match_data CHANGE ir_d2 ir1_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+        SQLUpgrade::runIfColumnNotExists('match_data', 'ir1_d1', 'ALTER TABLE match_data ADD COLUMN ir1_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+        SQLUpgrade::runIfColumnNotExists('match_data', 'ir1_d2', 'ALTER TABLE match_data ADD COLUMN ir1_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+        SQLUpgrade::runIfColumnNotExists('match_data', 'ir2_d1', 'ALTER TABLE match_data ADD COLUMN ir2_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+        SQLUpgrade::runIfColumnNotExists('match_data', 'ir2_d2', 'ALTER TABLE match_data ADD COLUMN ir2_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+        SQLUpgrade::runIfColumnNotExists('match_data', 'ir3_d1', 'ALTER TABLE match_data ADD COLUMN ir3_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+        SQLUpgrade::runIfColumnNotExists('match_data', 'ir3_d2', 'ALTER TABLE match_data ADD COLUMN ir3_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
         
         'DELETE FROM texts WHERE type = 11', # Match summary comments are deprecated.
         SQLUpgrade::runIfColumnExists('teams', 'sw_0', 'ALTER TABLE teams DROP sw_0'),
