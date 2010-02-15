@@ -105,9 +105,13 @@ class Match
                 $this->$field = '';
         }
     
-        // Other
-        $this->team1_name = get_alt_col('teams', 'team_id', $this->team1_id, 'name');
-        $this->team2_name = get_alt_col('teams', 'team_id', $this->team2_id, 'name');
+        // Relations
+        $query = "SELECT t1.name AS 'team1_name', t2.name AS 'team2_name', t1.f_cname AS 'coach1_name', t2.f_cname AS 'coach2_name', t1.f_rname AS 'race1_name', t2.f_rname AS 'race2_name' 
+                FROM teams AS t1, teams AS t2 WHERE t1.team_id = $this->team1_id AND t2.team_id = $this->team2_id";
+        $result = mysql_query($query);
+        foreach (mysql_fetch_assoc($result) as $col => $val) {
+            $this->$col = $val;
+        }                
 
         // Determine winner's team ID.
         if ($this->team1_score > $this->team2_score) {

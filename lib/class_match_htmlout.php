@@ -446,10 +446,15 @@ public static function report() {
 
     ?>
     <table>
-    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td><?php       echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE);?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td><?php     echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION);?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td><?php   echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT);?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
+    <tr><td></td><td style='text-align: right;'><i><?php echo $lng->getTrn('common/home');?></i></td><td>&mdash;</td><td style='text-align: left;'><i><?php echo $lng->getTrn('common/away');?></i></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/teams');?></b>:</td><td style='text-align: right;'><?php echo "$m->team1_name</td><td> &mdash; </td><td style='text-align: left;'>$m->team2_name";?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/coaches');?></b>:</td><td style='text-align: right;'><?php echo "$m->coach1_name</td><td> &mdash; </td><td style='text-align: left;'>$m->coach2_name";?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/races');?></b>:</td><td style='text-align: right;'><?php echo "$m->race1_name</td><td> &mdash; </td><td style='text-align: left;'>$m->race2_name";?></td></tr>
+    <tr><td colspan="4"><hr></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3"><?php       echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE);?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3"><?php     echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION);?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td colspan="3"><?php   echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT);?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     </table>
     <br>
     <?php HTMLOUT::helpBox($lng->getTrn('matches/report/help'), $lng->getTrn('common/needhelp')); ?>
