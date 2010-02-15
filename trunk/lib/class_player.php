@@ -219,39 +219,41 @@ class Player
             ir3_d1 AS 'D31', ir3_d2 AS 'D32'
         FROM match_data, matches WHERE f_match_id = match_id AND f_player_id = $this->player_id AND (ir1_d1 != 0 OR ir1_d2 != 0 OR ir2_d1 != 0 OR ir2_d2 != 0 OR ir3_d1 != 0 OR ir3_d2 != 0) ORDER BY date_played DESC LIMIT $N_allowed_new_skills";
         $result = mysql_query($query);
-        $N_latest_skill_rolls = mysql_num_rows($result);
-        $allowed = array('N' => false, 'D' => false, 'C' => array());
-        $collected_rolls = 0;
+        $IRs = array();
         while ($D6s = mysql_fetch_assoc($result)) {
             foreach (range(1,3) as $i) {
-                if ($collected_rolls++ > $N_allowed_new_skills) 
-                    break 2;
-                switch ($D6s["D${i}1"]+$D6s["D${i}2"]) {
-                    case 12: $chr = array(ST); break;
-                    case 11: $chr = array(AG); break;
-                    case 10: $chr = array(MA,AV); break;
-                    /* 
-                        Note: Note that unlike some other languages, the continue statement applies to switch and acts similar to break. 
-                        If you have a switch inside a loop and wish to continue to the next iteration of the outer loop, use continue 2.
-                    */
-                    case 0: continue 2; # Skip empty rolls.
-                    default: $chr = array(); break;
+                if ($D6s["D${i}1"]+$D6s["D${i}2"] > 0) {
+                    $IRs[] = array($D6s["D${i}1"], $D6s["D${i}2"]);
+                    if (count($IRs) >= $N_allowed_new_skills) {
+                        break 2;
+                    }
                 }
-                $allowed['C'] = array_unique(array_merge($allowed['C'], $chr));
-                $allowed['N'] = true; # May always select a new Normal skill when rolled no matter the outcome.
-                $allowed['D'] |= ($D6s["D${i}1"] == $D6s["D${i}2"]); # May select from Double skills when D6s are equal.
-                /* 
-                    LIMITING... @FIXME
-                */
-                break 2;
             }
+        }
+        $allowed = array('N' => false, 'D' => false, 'C' => array());
+        foreach (array_reverse($IRs) as $IR) {
+            list($D1,$D2) = $IR;
+            switch ($D1+$D2) {
+                case 12: $chr = array(ST); break;
+                case 11: $chr = array(AG); break;
+                case 10: $chr = array(MA,AV); break;
+                default: $chr = array(); break;
+            }
+            $allowed['C'] = array_unique(array_merge($allowed['C'], $chr));
+            $allowed['N'] = true; # May always select a new Normal skill when rolled no matter the outcome.
+            $allowed['D'] |= ($D1 == $D2); # May select from Double skills when D6s are equal.
+            /* 
+                Normally we allow coaches to selected amongst all player skills the available/new improvement rolls allow, but 
+                instead we now limit the player to select ONE skill at a time for a given improvement roll (in chronological order).
+            */
+            break;
         }
         
         /* 
             If a player has SPPs enough for a new skill but has NOT (ever) improvement rolled 2xD6 according to match_data entries, 
             then allow player to select amongst all possible skills.
         */
-        if ($N_allowed_new_skills > 0 && $N_latest_skill_rolls > 0) {
+        if ($N_allowed_new_skills > 0 && count($IRs) > 0) {
             if (!$allowed['N']) {$this->choosable_skills['norm'] = array();}
             if (!$allowed['D']) {$this->choosable_skills['doub'] = array();}
             $this->choosable_skills['chr'] = array();
