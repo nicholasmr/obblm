@@ -510,7 +510,7 @@ const T_NS__ffilter_ineq_lt = 2; # Less than.
 
 public static function nodeSelector(array $opts)
 {
-    global $lng, $raceididx, $coach;
+    global $lng, $settings, $raceididx, $coach;
 
     // Set defaults
     $s_node     = self::T_NSStr__node;
@@ -636,7 +636,7 @@ public static function nodeSelector(array $opts)
         <select name="sgrp_in" id="sgrp_in">
             <?php
             echo "<option value='GENERAL'>".$lng->getTrn('common/general')."</option>\n";
-            foreach (getESGroups(false) as $f) {
+            foreach (($settings['hide_ES_extensions']) ? array() : getESGroups(false) as $f) {
                 echo "<option value='$f'".(($_SESSION[$s_sgrp] == $f) ? 'SELECTED' : '').">$f</option>\n";
             }
             ?>

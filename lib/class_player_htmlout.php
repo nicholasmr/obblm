@@ -53,7 +53,7 @@ public static function profile($pid)
     if ($pid < 0)
         fatal('Sorry, star players to do have regular player profiles.');
     
-    global $lng, $coach;
+    global $lng, $coach, $settings;
     $p = new self($pid);
     $team = new Team($p->owned_by_team_id);
 
@@ -67,7 +67,9 @@ public static function profile($pid)
     $p->_achievements();
     $p->_matchBest();
     $p->_recentGames();
-    $p->_ES();
+    if (!$settings['hide_ES_extensions']) {
+        $p->_ES();
+    }
 }
 
 private function _handleActions($ALLOW_EDIT)
