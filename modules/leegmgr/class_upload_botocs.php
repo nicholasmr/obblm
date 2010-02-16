@@ -651,27 +651,34 @@ class UPLOAD_BOTOCS implements ModuleInterface
          * 
          **/
 
-        $tourlist = "";
-        foreach (Tour::getTours() as $t)
-            if ($t->type == TT_FFA && !$t->locked) $tourlist .= "<option value='$t->tour_id'>$t->name</option>\n";
-
-        $form = "
-            <!-- The data encoding type, enctype, MUST be specified as below -->
-            <form enctype='multipart/form-data' action='handler.php?type=leegmgr' method='POST'>
-                <!-- MAX_FILE_SIZE must precede the file input field -->
-                <input type='hidden' name='MAX_FILE_SIZE' value='256000' />
-                <!-- Name of input element determines name in $_FILES array -->
-                Send this file: <input name='userfile' type='file' />
-                <select name='ffatours'>
-                    <optgroup label='Existing FFA'>
-                        {$tourlist}
-                    </optgroup>
-                </select>
-                <input type='submit' value='Send File' />
-            </form>
-        ";
-
-        return $form;
+        global $coach;
+        
+        if (is_object($coach)) {
+            # Tours the logged in coach can "see".
+            list(,,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->coach_id, array(T_NODE_TOURNAMENT => array('type' => 'type', 'locked' => 'locked')));
+            $tourlist = "";
+            foreach ($tours as $trid => $t)
+                if ($t['type'] == TT_FFA && !$t['locked']) $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
+                
+            return "
+                <!-- The data encoding type, enctype, MUST be specified as below -->
+                <form enctype='multipart/form-data' action='handler.php?type=leegmgr' method='POST'>
+                    <!-- MAX_FILE_SIZE must precede the file input field -->
+                    <input type='hidden' name='MAX_FILE_SIZE' value='256000' />
+                    <!-- Name of input element determines name in $_FILES array -->
+                    Send this file: <input name='userfile' type='file' />
+                    <select name='ffatours'>
+                        <optgroup label='Existing FFA'>
+                            {$tourlist}
+                        </optgroup>
+                    </select>
+                    <input type='submit' value='Send File' />
+                </form>
+            ";
+        }
+        else {
+            return 'You must login in order to upload a match report.';
+        }
     }
     
     private static function submitForm($userfile, $tour_id, $coach_id ) {
