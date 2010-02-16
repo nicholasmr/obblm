@@ -202,7 +202,7 @@ public static function report() {
     if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
         fatal("Invalid match ID.");
     
-    global $lng, $stars, $rules, $coach, $racesHasNecromancer, $DEA, $T_PMD__ENTRY_EXPECTED;
+    global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     global $leagues,$divisions,$tours;
     
@@ -481,9 +481,15 @@ public static function report() {
                 <b><?php echo $lng->getTrn('matches/report/fans');?></b>&nbsp;
                 <input type="text" name="fans" value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
             </td></tr>
-            <tr><td colspan='<?php echo $CP;?>'>
-                <b>E</b>xtra player <b>S</b>tats (ES) <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id?>&amp;es_report=1">report page here</a>
-            </td></tr>
+            <?php
+            if (!$settings['hide_ES_extensions']) {
+                ?>
+                <tr><td colspan='<?php echo $CP;?>'>
+                    <b>E</b>xtra player <b>S</b>tats (ES) <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id?>&amp;es_report=1">report page here</a>
+                </td></tr>
+                <?php
+            }
+            ?>
             <tr><td class="seperator" colspan='<?php echo $CP;?>'></td></tr>
             <tr class='commonhead'>
                 <td><b><?php echo $lng->getTrn('common/teams');?></b></td>

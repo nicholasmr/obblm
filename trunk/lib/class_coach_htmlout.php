@@ -460,7 +460,7 @@ private function _CCprofile($ALLOW_EDIT)
 
 private function _stats()
 {
-    global $lng;
+    global $lng, $settings;
     ?>
     <div class="row">
         <div class="boxCoachPage">
@@ -533,17 +533,21 @@ private function _stats()
     <br>
     <div class="row"></div>
     <br>
-    <div class="row">
-        <div class="boxWide">
-            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/extrastats'); ?></div>
-            <div class="boxBody" id="ES">
-                <?php
-                HTMLOUT::generateEStable($this);
-                ?>
+    <?php
+    if (!$settings['hide_ES_extensions']) {
+        ?>
+        <div class="row">
+            <div class="boxWide">
+                <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/extrastats'); ?></div>
+                <div class="boxBody" id="ES">
+                    <?php
+                    HTMLOUT::generateEStable($this);
+                    ?>
+                </div>
             </div>
         </div>
-    </div>
-    <?php
+        <?php
+    }
 }
 
 private function _recentGames()

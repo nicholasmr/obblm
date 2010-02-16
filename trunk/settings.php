@@ -18,6 +18,7 @@ $db_host   = 'localhost';
 $settings['site_name'] = 'BB portal';     // Site name.
 $settings['default_visitor_league'] = 1;  // ID of default league to show on front page when not logged in/coach has not selected a home league.
 $settings['default_leagues'] = array(1);  // When creating a coach the coach will automatically become a regular coach in leauges with these IDs.
+$settings['hide_ES_extensions'] = false;  // Default is false. Hides ES (Extra Stats) tables and ES references.
 
 /*****************
  * Global rules
