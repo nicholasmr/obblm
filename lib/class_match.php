@@ -558,14 +558,18 @@ class Match
     const T_CREATE_ERROR__PARENT_TOUR_LOCKED = 4;
     const T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER = 5;
     const T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER = 6;
+    const T_CREATE_ERROR__ILLEGAL_PARENT_LID_OF_TOUR = 7;
+    const T_CREATE_ERROR__ILLEGAL_PARENT_DID_OF_TOUR = 8;
 
     public static $T_CREATE_ERROR_MSGS = array(
-        self::T_CREATE_ERROR__SQL_QUERY_FAIL           => 'SQL query failed.',
-        self::T_CREATE_ERROR__IDENTICAL_TEAM_IDS       => 'Illegal match-up, the passed team IDs are identical.',
-        self::T_CREATE_ERROR__IDENTICAL_PARENT_COACH   => 'Illegal match-up, the passed team\'s parent coaches are identical.',
-        self::T_CREATE_ERROR__PARENT_TOUR_LOCKED       => 'The parent tournament of the match is in a locked state.',
-        self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER   => 'Illegal match-up, the passed teams are not associated with the same league.',
-        self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER => 'Illegal match-up, the passed teams are not associated with the same division.',
+        self::T_CREATE_ERROR__SQL_QUERY_FAIL                => 'SQL query failed.',
+        self::T_CREATE_ERROR__IDENTICAL_TEAM_IDS            => 'Illegal match-up, the passed team IDs are identical.',
+        self::T_CREATE_ERROR__IDENTICAL_PARENT_COACH        => 'Illegal match-up, the passed team\'s parent coaches are identical.',
+        self::T_CREATE_ERROR__PARENT_TOUR_LOCKED            => 'The parent tournament of the match is in a locked state.',
+        self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER        => 'Illegal match-up, the passed teams are not associated with the same league.',
+        self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER      => 'Illegal match-up, the passed teams are not associated with the same division.',
+        self::T_CREATE_ERROR__ILLEGAL_PARENT_LID_OF_TOUR    => 'Illegal tournament ID, the parent league of the selected tournament is different from the league which the teams belong in.',
+        self::T_CREATE_ERROR__ILLEGAL_PARENT_DID_OF_TOUR    => 'Illegal tournament ID, the parent division of the selected tournament is different from the division which the teams belong in.',
     );
     
     public static $T_CREATE_SQL_ERROR = array(
@@ -583,12 +587,22 @@ class Match
 
         global $settings;
     
+        # Used multiple times in error conditions below.
+        $tour__f_lid = (int) get_parent_id(T_NODE_TOURNAMENT, (int) $input['f_tour_id'], T_NODE_LEAGUE);
+        $tour__f_did = (int) get_parent_id(T_NODE_TOURNAMENT, (int) $input['f_tour_id'], T_NODE_DIVISION);
+        $t1__f_lid = (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid');
+        $t2__f_lid = (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid');
+        $t1__f_did = (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_did');
+        $t2__f_did = (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_did');        
+    
         $errors = array(
-            self::T_CREATE_ERROR__IDENTICAL_TEAM_IDS       => (int) $input['team1_id'] == (int) $input['team2_id'],
-            self::T_CREATE_ERROR__IDENTICAL_PARENT_COACH   => (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'owned_by_coach_id') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'owned_by_coach_id'),
-            self::T_CREATE_ERROR__PARENT_TOUR_LOCKED       => (bool) get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'locked'),
-            self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER   => (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_lid') != (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_lid'),
-            self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER => (bool) get_alt_col('leagues', 'lid', get_parent_id(T_NODE_TOURNAMENT, (int) $input['f_tour_id'], T_NODE_LEAGUE), 'tie_teams') && ((int) get_alt_col('teams', 'team_id', $input['team1_id'], 'f_did') != (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'f_did')),
+            self::T_CREATE_ERROR__IDENTICAL_TEAM_IDS         => (int) $input['team1_id'] == (int) $input['team2_id'],
+            self::T_CREATE_ERROR__IDENTICAL_PARENT_COACH     => (int) get_alt_col('teams', 'team_id', $input['team1_id'], 'owned_by_coach_id') == (int) get_alt_col('teams', 'team_id', $input['team2_id'], 'owned_by_coach_id'),
+            self::T_CREATE_ERROR__PARENT_TOUR_LOCKED         => (bool) get_alt_col('tours', 'tour_id', $input['f_tour_id'], 'locked'),
+            self::T_CREATE_ERROR__TEAM_LEAGUE_IDS_DIFFER     => $t1__f_lid != $t2__f_lid,
+            self::T_CREATE_ERROR__TEAM_DIVISION_IDS_DIFFER   => (bool) get_alt_col('leagues', 'lid', $tour__f_lid, 'tie_teams') && ($t1__f_did != $t2__f_did),
+            self::T_CREATE_ERROR__ILLEGAL_PARENT_LID_OF_TOUR => $t1__f_lid != $tour__f_lid || $t2__f_lid != $tour__f_lid,
+            self::T_CREATE_ERROR__ILLEGAL_PARENT_DID_OF_TOUR => (bool) get_alt_col('leagues', 'lid', $tour__f_lid, 'tie_teams') && ($t1__f_did != $tour__f_did || $t2__f_did != $tour__f_did),
         );
         foreach ($errors as $exitStatus => $halt) {
             if ($halt) return array($exitStatus, null);

@@ -15,11 +15,15 @@ if (isset($_POST['button'])) {
     // Shortcut booleans:
     $mkNewFFA       = ($_POST['type'] == TT_FFA && $_POST['existTour'] == -1);
     $addMatchToFFA  = ($_POST['type'] == TT_FFA && $_POST['existTour'] != -1);
-    $nameSet        = (isset($_POST['name']) && !empty($_POST['name']));
+    $nameSet        = (isset($_POST['name']) && !empty($_POST['name']) && !ctype_space($_POST['name']));
 
     /* Error condition definitions. */
     
-    // Here we test for illegal pair-ups due to league and division relations.
+    /* 
+        Here we test for illegal pair-ups due to league and division relations.
+        Normally Match::create() does this too, but we don't want to end up creating a long list of matches first, but 
+        then have to abort because (for example) the last pair of teams are an illegal paring.
+    */
     $teams_OK['l'] = $teams_OK['d'] = true;
     $lid = ($GOT_DID = ($_POST['type'] == TT_RROBIN || $mkNewFFA)) ? get_parent_id(T_NODE_DIVISION, $_POST['did'], T_NODE_LEAGUE) : get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE);
     $did = ($GOT_DID) ? $_POST['did'] : get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_DIVISION);
