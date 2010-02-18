@@ -1269,6 +1269,7 @@ public static function reviseEStables()
     global $ES_fields, $core_tables;
     $MDES = $core_tables['match_data_es'];
     $status = true;
+    $dropped = $added = array();
     
     // Create tables if not existing:
     # This will create all the ES MV (and regular, though not needed) tables with the correct up-to-date fields.
@@ -1286,15 +1287,17 @@ public static function reviseEStables()
         }
         $existingFields[] = $r['Field'];
         if (!in_array($r['Field'], array_keys($ES_fields))) {
+            $dropped[] = $r['Field'];
             $status &= mysql_query("ALTER TABLE match_data_es DROP $r[Field]");
         }
     }
     // Add new fields.
     foreach (array_diff(array_keys($ES_fields), $existingFields) as $newField) {
+        $added[] = $newField;
         $status &= mysql_query("ALTER TABLE match_data_es ADD COLUMN $newField ".$ES_fields[$newField]['type']);
     }
     
-    return $status;
+    return array($status,$added,$dropped);
 }
 
 }
