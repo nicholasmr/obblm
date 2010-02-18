@@ -317,7 +317,9 @@ public static function standings($obj, $node, $node_id, array $opts)
     $manualSort = isset($_GET["sort$opts[GET_SS]"]);
     $sortRule = array_merge(
         ($manualSort) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(), 
-        sort_rule($obj)
+        ($obj == T_OBJ_TEAM && $sel_node == T_NODE_TOURNAMENT && is_object($tr = new Tour($sel_node_id))) 
+            ? array_map(create_function('$val', 'return $val[0]."mv_".substr($val,1);'), $tr->getRSSortRule())
+            : sort_rule($obj)
     );
 
     $set_avg = (isset($_GET['pms']) && $_GET['pms']); // Per match stats?
@@ -448,7 +450,7 @@ public static function standings($obj, $node, $node_id, array $opts)
        $extra
     );
 
-    return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? $objs : true;
+    return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? array($objs, $sortRule) : true;
 }
 
 const T_NSStr__node    = 'NS_node';

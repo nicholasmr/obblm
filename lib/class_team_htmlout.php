@@ -116,7 +116,7 @@ public static function standings($node = false, $node_id = false)
     title($lng->getTrn('menu/statistics_menu/team_stn'));
     echo $lng->getTrn('common/notice_simul')."<br><br>\n";
 
-    $teams = HTMLOUT::standings(STATS_TEAM,$node,$node_id,array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false), 'hidemenu' => false, 'return_objects' => true));
+    list($teams, $sortRule) = HTMLOUT::standings(STATS_TEAM,$node,$node_id,array('url' => urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false), 'hidemenu' => false, 'return_objects' => true));
 
     $fields = array(
         'name'         => array('desc' => $lng->getTrn('common/team'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team_id')),
@@ -135,9 +135,9 @@ public static function standings($node = false, $node_id = false)
         urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false),
         $teams,
         $fields,
-        sort_rule(T_OBJ_TEAM),
-        (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
-        array('noHelp' => true)
+        $sortRule,
+        array(),
+        array('noHelp' => true, 'noSRdisp' => false)
     );
 }
 

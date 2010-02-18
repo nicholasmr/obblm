@@ -170,6 +170,8 @@
     <passwd>Password</passwd>
     <remember>Remember me</remember>
     <loginbutton>Login</loginbutton>
+    <forgotpass>Forgotten password?</forgotpass>
+    
 </login>
 
 <main>
