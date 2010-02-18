@@ -29,6 +29,7 @@ The below list is also used by OBBLM to maintain its list of "Extra stats" (ES) 
 ||pass_attempts||cp_a||Number of pass throw attempts of the ball.||
 ||+completion||cp||Number of completions of throws of the ball (+1 spp)||
 ||interceptions_thrown||cp_int||Number of times the thrower has been intercepted.||
+||safe_throws||cp_st||Number of times an interception was canceled by safe throw.||
 ||pass_distance||cp_dist||Number of squares progression the ball was thrown towards the endzone (this should be multiplied up to give number of paces (x5?)||
 ||dumpoff_attempts||dmp_a||Number of passes thrown which have been dumpoffs (this is informational, pass_attempts includes dump offs).||
 ||dumpoff_completions||dmp||Number of completions from dump offs (as above this is for informational purposes, pass_completions includes dump off completions).||
@@ -183,7 +184,26 @@ As above as the path for outcome of thrall injuries isnt working (or at least my
 
 ||!fed_on||fed_s||Number of times this thrall player has been fed on.||
 
-===Tentacles stats===
+===Skill stats===
 
 ||tentacles_rolls||tent_a||Number of times this player used his tentacles||
 ||tentacles_successes||tent||Number of times this players successfully held another||
+||foul_appearance_rolls||foul_a||Number of times foul appearance was rolled||
+||foul_appearance_successes||foul||Number of times foul appearance succeeded||
+||dauntless_rolls||dau_a||Number of times dauntless was rolled||
+||dauntless_successes||dau||Number of times dauntless succeeded||
+||shadowing_rolls||shad_a||Number of times shadowing was attempted||
+||shadowing_successes||shad||Number of times shadowing succeeded||
+
+
+===Bomb Throwing stats===
+
+
+||bombs_throw_attempts||bomb_a||Number of times a bomb throw attempts||
+||bombs_thrown||bomb_t||Number of times a bomb was thrown||
+||sustained_bomb_effect||sbo_ef||Number of times effected by a bomb||
+||sustained_bomb_stun||sbo_st||Number of times stunned by a bomb||
+||sustained_bomb_ko||sbo_ko||Number of times knocked out by a bomb||
+||sustained_bomb_bh||sbo_bh||Number of times badly hurt by a bomb||
+||sustained_bomb_si||sbo_si||Number of times seriously hurt by a bomb||
+||sustained_bomb_kill||sbo_ki||Number of times killed by a bomb||
