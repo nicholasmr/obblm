@@ -302,9 +302,47 @@ class Coach
         return $retstatus;
     }
     
+    public function setActivationCode($set_AC) 
+    {
+        if ($set_AC) {
+            $AC = md5(date('l jS \of F Y h:i:s A'));
+            return mysql_query("UPDATE coaches SET activation_code = '$AC' WHERE coach_id = $this->coach_id") ? $AC : false;
+        }
+        else {
+            return mysql_query("UPDATE coaches SET activation_code = NULL WHERE coach_id = $id");;
+        }
+    }
+    
+    public function requestPasswdReset() 
+    {
+        $this->setRetired(true); # Prevent future login until activation code is confirmed.
+        $AC = $this->setActivationCode(true);
+        mail($this->mail, 
+        "$_SERVER[SERVER_NAME] password reset request",
+        "Hi $this->name, you have requested a new password at $_SERVER[SERVER_NAME].\nPlease follow this link which will log you on temporarily allowing you to set a new password.", 
+        'From: noreply@'.$_SERVER['SERVER_NAME']."\r\n".'Reply-To: noreply@'.$_SERVER['SERVER_NAME']."\r\n".'X-Mailer: PHP/'.phpversion()
+        );
+    }
+    
     /***************
      * Statics
      ***************/
+
+    public function confirmActivation($cname, $mail, $AC) 
+    {
+        $query = "SELECT mail = '$mail' AND activation_code = '$AC', coach_id, passwd FROM coaches WHERE name = '$cname'";
+        $result = mysql_query($query);
+        list($OK, $cid, $passwd) = mysql_fetch_row($result);
+        if ($OK) {
+            $c = new Coach($cid);
+            $c->setRetired(false);
+            $c->setActivationCode(false);
+            $c->setPasswd($new_passwd = md5($AC));
+            self::login($cid, $new_passwd);
+            return true;
+        }
+        return false;
+    }
 
     const NODE_STRUCT__TREE = 1;
     const NODE_STRUCT__FLAT = 2;

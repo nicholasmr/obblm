@@ -64,6 +64,7 @@ $core_tables = array(
         'ring'      => 'TINYINT UNSIGNED NOT NULL DEFAULT 0', # Global access level
         'settings'  => 'VARCHAR(320) NOT NULL',
         'retired'   => 'BOOLEAN NOT NULL DEFAULT 0',
+        'activation_code' => 'VARCHAR(32) DEFAULT NULL',
         // Dynamic properties (DPROPS)
         'elo'   => $CT_cols['elo'].' DEFAULT NULL', # All-time ELO (across all matches).
         'swon'  => $CT_cols['streak'].' DEFAULT 0',

@@ -116,7 +116,7 @@ public static function profile($cid) {
     title($c->name);
     echo "<hr>";
     $c->_menu($ALLOW_EDIT);
-    switch (isset($_GET['subsec']) ? $_GET['subsec'] : 'stats')
+    switch (isset($_GET['subsec']) ? $_GET['subsec'] : 'teams')
     {
         case 'profile': $c->_CCprofile($ALLOW_EDIT); break;
         case 'stats': $c->_stats(); break;

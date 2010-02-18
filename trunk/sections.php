@@ -30,26 +30,72 @@
 function sec_login() {
 
     global $lng, $settings;
-    title($lng->getTrn('menu/login'));
-    ?>
-    <div class='login'>
-    <form method="POST" action="index.php">
-        <b><?php echo $lng->getTrn('login/loginname');?></b>
-        <input type="text" name="coach" size="20" maxlength="50">
-        &nbsp;&nbsp;
-        <b><?php echo $lng->getTrn('login/passwd');?></b>
-        <input type="password" name="passwd" size="20" maxlength="50">
-        <div style='display: none;'><input type='text' name='hackForHittingEnterToLogin' size='1'></div>
-        <br><br>
-        <b><?php echo $lng->getTrn('login/remember');?></b>
-        <input type='checkbox' name='remember' value='1'>
-        <br><br>
-        <input type="submit" name="login" value="<?php echo $lng->getTrn('login/loginbutton');?>">
-    </form>
-    </div>
-    <?php
-    if (Module::isRegistered('Registration') && $settings['allow_registration']) {
-        echo "<br><a href='handler.php?type=registration'>Register</a>";
+    
+/*    
+    NOT YET IMPLEMENTED !
+
+    $_URL_forgotpass = "index.php?section=login&amp;forgotpass=1";
+    if (isset($_GET['forgotpass'])) {
+        title($lng->getTrn('login/forgotpass'));
+        if (isset($_GET['cid']) && isset($_GET['activation_code'])) {
+            
+        }
+        else if (isset($_POST['coach_AC']) && isset($_POST['email'])) {
+            $cid = get_alt_col('coaches', 'name', $_POST['coach_AC'], 'coach_id');
+            $c = new Coach($cid);
+            $correct_user = ($c->mail == $_POST['email']);
+            status($correct_user, $correct_user ? '' : 'Mismatch between login name and mail address.');
+            if ($correct_user) {
+                $c->requestPasswdReset();
+                echo "<br><br>";
+                echo 'You should shortly recieve an email.';
+            }
+            else {
+                // Return to same page.
+                unset($_POST['coach']);
+                unset($_POST['email']);
+                sec_login();
+            }
+        }
+        else {
+            ?>
+            <form method="POST" action="<?php echo $_URL_forgotpass;?>">
+                <b><?php echo $lng->getTrn('login/loginname');?></b><br>
+                <input type="text" name="coach_AC" size="20" maxlength="50">
+                <br><br>
+                <b>Email</b><br>
+                <input type="text" name="email" size="20" maxlength="50">
+                <br><br>
+                <input type="submit" name="reqAC" value="<?php echo $lng->getTrn('common/submit');?>">
+            </form>
+            <?php 
+        }       
+    }
+    else {
+*/
+    {
+        title($lng->getTrn('menu/login'));
+        ?>
+        <div class='login'>
+        <form method="POST" action="index.php">
+            <b><?php echo $lng->getTrn('login/loginname');?></b>
+            <input type="text" name="coach" size="20" maxlength="50">
+            &nbsp;&nbsp;
+            <b><?php echo $lng->getTrn('login/passwd');?></b>
+            <input type="password" name="passwd" size="20" maxlength="50">
+            <div style='display: none;'><input type='text' name='hackForHittingEnterToLogin' size='1'></div>
+            <br><br>
+            <b><?php echo $lng->getTrn('login/remember');?></b>
+            <input type='checkbox' name='remember' value='1'>
+            <br><br>
+            <input type="submit" name="login" value="<?php echo $lng->getTrn('login/loginbutton');?>">
+        </form>
+        </div>
+        <?php
+#        echo "<a href='$_URL_forgotpass'>".$lng->getTrn('login/forgotpass').'</a><br>';
+        if (Module::isRegistered('Registration') && $settings['allow_registration']) {
+            echo "<br><a href='handler.php?type=registration'>Register</a>";
+        }    
     }
 }
 

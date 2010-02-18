@@ -102,6 +102,7 @@ $upgradeSQLs = array(
         
         SQLUpgrade::runIfColumnNotExists('texts', 'f_id2',  'ALTER TABLE texts ADD COLUMN f_id2 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_id'),
         SQLUpgrade::runIfColumnExists('teams', 'tcas_0',  'ALTER TABLE teams DROP tcas_0'),
+        SQLUpgrade::runIfColumnNotExists('coaches', 'activation_code',  'ALTER TABLE coaches ADD COLUMN activation_code VARCHAR(32) DEFAULT NULL AFTER retired'),
     ),
 );
 
