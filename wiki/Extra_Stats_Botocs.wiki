@@ -142,8 +142,8 @@ The improvement roll info should be used to filter the list of skills for select
 ||+inflicted_bh_spp_casualties||bh||Used to count badly hurts which counted as a spp casuality||
 ||+inflicted_si_spp_casualties||si||Used to count serious injuries which counted as a spp casuality||
 ||+inflicted_kill_spp_casualties||ki||Used to count deaths which counted as a spp casuality||
-||+improvement_roll1||ir_d1||The skill up improvement roll (d1)||
-||+improvement_roll2||ir_d2||The skill up mprovement roll (d2)||
+||+improvement_roll1||ir1_d1,ir2_d1,ir3_d1||The skill up improvement roll (d1)||
+||+improvement_roll2||ir1_d2,ir2_d2,ir3_d2||The skill up mprovement roll (d2)||
 
 
 ===Big Guy stats===
