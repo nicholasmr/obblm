@@ -145,8 +145,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
             'bh'    => $this->extrastats ? 'inflicted_bh_spp_casualties'   : 'casualties',
             'si'    => $this->extrastats ? 'inflicted_si_spp_casualties'   : 'INVALID', # INVALID will fail as obj. prop. below and set field = 0.
             'ki'    => $this->extrastats ? 'inflicted_kill_spp_casualties' : 'INVALID', # INVALID will fail as obj. prop. below and set field = 0.
-            'ir_d1' => 'improvement_roll1',
-            'ir_d2' => 'improvement_roll2',
+            #'ir_d1' => 'improvement_roll1',
+            #'ir_d2' => 'improvement_roll2',
         );
 
         // Start!
@@ -175,6 +175,14 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 $players[$nr]['name']   = $p->attributes()->name;
                 $players[$nr]['star']   = addslashes($p->attributes()->starPlayer);
                 $players[$nr]['merc']   = $p->attributes()->mercenary;
+
+                $players[$nr]['ir1_d1']    = ( isset($p->improvement_roll1->roll1[0]) ) ? $p->improvement_roll1->roll1[0] : 0;
+                $players[$nr]['ir1_d2']    = ( isset($p->improvement_roll2->roll2[0]) ) ? $p->improvement_roll2->roll2[0] : 0;
+                $players[$nr]['ir2_d1']    = ( isset($p->improvement_roll1->roll1[1]) ) ? $p->improvement_roll1->roll1[1] : 0;
+                $players[$nr]['ir2_d2']    = ( isset($p->improvement_roll2->roll2[1]) ) ? $p->improvement_roll2->roll2[1] : 0;
+                $players[$nr]['ir3_d1']    = ( isset($p->improvement_roll1->roll1[2]) ) ? $p->improvement_roll1->roll1[2] : 0;
+                $players[$nr]['ir3_d2']    = ( isset($p->improvement_roll2->roll2[2]) ) ? $p->improvement_roll2->roll2[2] : 0;
+
                 $players[$nr]['inj']    = $p->injuries->injury[0];
                 $players[$nr]['agn1']   = $p->injuries->injury[1];
                 foreach ($reqStats as $name_OBBLM => $name_BOTOCS) {
@@ -286,7 +294,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             }
 
             // Make $player[$f] into $$f. 
-            foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si', 'ir_d1', 'ir_d2') as $f) {
+            foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
                 $$f = $player[$f]; # NOTE: These fields are validated and typecasted correctly already in parse_results(), no further processing needed.
             }
 
@@ -303,7 +311,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
                     $input = array ( 
                         'f_team_id' => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
-                        "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
+                        #"ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
+                        "ir1_d1" => $ir1_d1, "ir1_d2" => $ir1_d2, "ir2_d1" => $ir2_d1, "ir2_d2" => $ir2_d2, "ir3_d1" => $ir3_d1, "ir3_d2"=> $ir3_d2,
                         "inj" => $inj, "agn1" => NONE, "agn2" => $agn1,
                         "skills" => 0, "nr" => $merc_nr,),
                     $player['EPS']
@@ -318,7 +327,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
                     $input = array ( 
                         'f_team_id' => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
-                        "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
+                        #"ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
+                        "ir1_d1" => $ir1_d1, "ir1_d2" => $ir1_d2, "ir2_d1" => $ir2_d1, "ir2_d2" => $ir2_d2, "ir3_d1" => $ir3_d1, "ir3_d2"=> $ir3_d2,
                         "inj" => $inj, "agn1" => $agn1, "agn2" => NONE,),
                     $player['EPS']
                 );
@@ -346,7 +356,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         $input = array ( 
                             'f_team_id' => $team_id,
                             "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
-                            "ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
+                            #"ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
+                            "ir1_d1" => $ir1_d1, "ir1_d2" => $ir1_d2, "ir2_d1" => $ir2_d1, "ir2_d2" => $ir2_d2, "ir3_d1" => $ir3_d1, "ir3_d2"=> $ir3_d2,
                             "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
                         $player['EPS']
                     );
@@ -367,7 +378,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         $input = array ( 
                             'f_team_id' => $team_id,
                             "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, 
-                            "ir_d1" => 0, "ir_d2" => 0,
+                            #"ir_d1" => 0, "ir_d2" => 0,
+                            "ir1_d1" => $ir1_d1, "ir1_d2" => $ir1_d2, "ir2_d1" => $ir2_d1, "ir2_d2" => $ir2_d2, "ir3_d1" => $ir3_d1, "ir3_d2"=> $ir3_d2,
                             "inj" => NONE, "agn1" => NONE, "agn2" => NONE ), 
                         array() # No EPS!
                     );
