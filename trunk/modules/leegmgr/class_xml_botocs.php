@@ -46,7 +46,10 @@ class XML_BOTOCS implements ModuleInterface
     //players
     public $players;
 
+    public $tv = 0;
     public $cyroster = '';
+    public $obblm_team = array();
+    public $cy = 0;
 
     /***************
      * Methods 
@@ -70,13 +73,13 @@ class XML_BOTOCS implements ModuleInterface
             $this->apothecary = $team->apothecary;
                 $this->apothecary = ( $this->apothecary == "1" ) ? "true" : "false";
             $this->treasury = $team->treasury;
+            $this->tv = $team->value; #for cyanide roster only
             
         if ( !$this->checkJourneymen() ) return false;
 
         $this->name = $team->name;
         $this->coach_name = $team->f_cname;
         $this->createRoster();
-        $this->createCyRoster();
 
     }
 
@@ -112,6 +115,58 @@ class XML_BOTOCS implements ModuleInterface
                 $this->roster .= "            <av>".$p->av."</av>\n";
                 $this->roster .= "            <skills>\n";
 
+                //For Cyanide Roster BEGIN
+                $this->obblm_team['players'][$p->nr]['id']			= $p->nr;
+                $this->obblm_team['players'][$p->nr]['name'] 		= $p->name;
+                $this->obblm_team['players'][$p->nr]['type'] 		= $p->pos ;
+                $this->obblm_team['players'][$p->nr]['skin'] 		= 0;//@FIXME need to map race skin number options
+                $this->obblm_team['players'][$p->nr]['age']  		= '100.';
+                $this->obblm_team['players'][$p->nr]['Number']		= $p->nr; //int 1-32 only
+                $this->obblm_team['players'][$p->nr]['MA']			= $p->ma;
+                $this->obblm_team['players'][$p->nr]['ST']			= $p->st;
+                $this->obblm_team['players'][$p->nr]['AG']			= $p->ag;
+                $this->obblm_team['players'][$p->nr]['AV']			= $p->av;
+                $this->obblm_team['players'][$p->nr]['Level']		= 5;
+                $this->obblm_team['players'][$p->nr]['SPP']		= $p->mv_spp;
+                $this->obblm_team['players'][$p->nr]['COST']		= 0;
+                $this->obblm_team['players'][$p->nr]['VALUE']		= $p->value / 1000;
+
+
+                $chrs = array();
+                $extras = empty($p->extra_skills) ? array() : explode(', ', skillsTrans($p->extra_skills));
+
+                if ($p->ach_ma > 0) array_push($chrs, "+$p->ach_ma Ma");
+                if ($p->ach_st > 0) array_push($chrs, "+$p->ach_st St");
+                if ($p->ach_ag > 0) array_push($chrs, "+$p->ach_ag Ag");
+                if ($p->ach_av > 0) array_push($chrs, "+$p->ach_av Av");
+
+                $skillstr = skillsTrans(array_merge($p->ach_nor_skills, $p->ach_dob_skills));
+                $a_skillstr = explode(', ', $skillstr);
+                $cy_skills = array_merge(empty($skillstr) ? array() : $a_skillstr, $extras, $chrs);
+
+                $i = 0;
+
+                $this->obblm_team['players'][$p->nr]['Skills'][0] = false;
+
+                    while ( $i < count( $cy_skills ) && strlen( $cy_skills[0] ) > 0 )
+                    {
+
+                        $this->obblm_team['players'][$p->nr]['Skills'][$i]	= $cy_skills[$i];
+
+                        $i++;
+
+                    }
+
+                $this->obblm_team['players'][$p->nr]['Casualty'][0] = ( $p->is_mng ) ? "Pinched Nerve" : false;
+                $i = ( $this->obblm_team['players'][$p->nr]['Casualty'][0] ) ? 1 : 0;
+                while ( $i < $p->inj_ni )
+                {
+                    $this->obblm_team['players'][$p->nr]['Casualty'][$i] = "Damaged Back";
+                    $i++;
+                }
+                #if ( $p->is_mng ) $this->obblm_team['players'][$p->nr]
+                //For Cyanide Roster END
+
                 $i = 0;
 
                     while ( $i < count( $a_skills ) && strlen( $a_skills[0] ) > 0 )
@@ -123,7 +178,9 @@ class XML_BOTOCS implements ModuleInterface
                         if ( strpos($a_skills[$i], "*") ) $a_skills[$i] = str_replace("*","",$a_skills[$i]);
 				$this->roster .= "                <skill>".htmlspecialchars($a_skills[$i], ENT_NOQUOTES, 'UTF-8')."</skill>\n";
                         $i++;
+
                     }
+
                 $injured = ( $p->is_mng ) ? "true" : "false";
                 $this->roster .= "            </skills>\n";
                 $this->roster .= "            <spp>".$p->mv_spp."</spp>\n";
@@ -131,6 +188,7 @@ class XML_BOTOCS implements ModuleInterface
                 $this->roster .= "            <injured>".$injured."</injured>\n";
                 $this->roster .= "            <value>".$p->value."</value>\n";
                 $this->roster .= "        </player>\n";
+
             }
 
         }
@@ -248,7 +306,8 @@ class XML_BOTOCS implements ModuleInterface
                 header('Content-type: application/octec-stream');
                 header('Content-Disposition: attachment; filename=team.db');
                 #Whatever is printed to the screen will be in the file.
-                Print $roster->cyroster;
+                $roster->createCyRoster();
+                Print $roster->cyroster;                
             }
         }
         else
@@ -288,7 +347,129 @@ class XML_BOTOCS implements ModuleInterface
 
     function createCyRoster() {
 
-        $this->cyroster .= "This is a test Cyanide roster.";
+/*
+    public $noninjplayercount = 0;
+    public $exist_journeyman = false;
+    public $jm = 0;
+    //team
+    public $roster = '';
+    public $team_id = 0;
+    public $games = 0;
+    public $name = '';
+    public $race = '';
+    public $coach_name = '';
+    public $rerolls = 0;
+    public $fan_factor = 0;
+    public $ass_coaches = 0;
+    public $cheerleaders = 0;
+    public $apothecary = "false";
+    public $treasury = 0;
+    //players
+    public $players;
+
+    public $cyroster = '';
+*/
+
+if ( $this->race != "Human" &&
+     $this->race != "Dwarf" &&
+     $this->race != "Chaos" &&
+     $this->race != "Skaven" &&
+     $this->race != "Lizardman" &&
+     $this->race != "Wood Elf" &&
+     $this->race != "Orc" &&
+     $this->race != "Goblin" &&
+     $this->race != "Dark Elf" )
+{
+$this->cyroster = "This is not a valid race.  $this->race";
+return false;
+}
+
+include('cyanide/lib_cy_team_db.php');
+$cy 							= new cyanide;
+$cy_team 						= new cy_team_db;
+
+$obblm_team['race']			= $this->race;
+$obblm_team['id']  			= $this->team_id;
+$obblm_team['name']  			= $this->name;
+$obblm_team['colorid'] 			= 51; //@FIXME need to map cy colors 51 = brown
+$obblm_team['TeamMOTO'] 		= 'Live and Let Die!';
+$obblm_team['TeamBackground'] 	= 'This team is new and needs to prove it can cust the mustard';
+$obblm_team['TeamValue']		= $this->tv / 1000;
+$obblm_team['TeamFanFactor']		= $this->fan_factor;
+$obblm_team['gold']			= $this->treasury;
+$obblm_team['Cheerleaders']		= $this->cheerleaders;
+$obblm_team['apothecary']		= ( $this->apothecary ) ? 1 : 0;
+$obblm_team['rerolls']			= $this->rerolls;
+
+
+//conversions
+$cy->convert_race_id('cyid',$obblm_team['race']);
+
+//BUILD TEAM DATA
+$cy->set_team_constants();
+$cy->set_team_id($obblm_team['id']);
+$cy->set_team_name($obblm_team['name']);
+$cy->set_team_race_id($cy->race['id']);
+$cy->set_team_logo($cy->race['name'].'_01');
+$cy->set_team_color($obblm_team['colorid']);
+$cy->set_team_moto($obblm_team['TeamMOTO']);
+$cy->set_team_background($obblm_team['TeamBackground']);
+$cy->set_team_value($obblm_team['TeamValue']);
+$cy->set_team_fanfactor($obblm_team['TeamFanFactor']);
+$cy->set_team_gold($obblm_team['gold']);
+$cy->set_team_cheerleaders($obblm_team['Cheerleaders']);
+$cy->set_team_apothecary($obblm_team['apothecary']);
+$cy->set_team_rerolls($obblm_team['rerolls']);
+$cy->set_team_rank_constants();
+//Build Race Data
+$cy->set_reroll_price($obblm_team['race']);
+
+$obblm_team['players'] = $this->obblm_team['players'];
+
+
+foreach ($obblm_team['players'] as $i => $player) {
+	$local_id = $player['id'];
+	$cy->add_player_to_array(
+		$local_id,//Player uniq id.. obblm player id should be fine
+		$player['name'],//Players name String limit 50
+		$cy->convert_player_type($player['type']), // blitzer lineman etc
+		$cy->team['ID'],
+		$cy->race['id'],
+		$player['skin'],// skintexture.. 0 Randaom skin; most models only have 3 if your not sure leave 0
+		$player['age'], // age 0 - 100% expresed with decimal but no decimal place. 100. or 001. String
+		$player['Number'],// Player number Int 1-32, higher values should be converted to 1-32
+		$cy->convert_ma($player['MA']),
+		$cy->convert_st($player['ST']),
+		$cy->convert_ag($player['AG']),
+		$cy->convert_av($player['AV']),
+		$player['Level'],//level
+		$player['SPP'], //spp
+		$player['COST'], //player cost
+		$player['VALUE']//player value
+	);
+	//SKILLS
+	foreach ($player['Skills'] as $ii => $skill) {
+		if($skill == False) {
+			
+		} else {
+			$cy->set_player_skills($local_id,$skill);
+		}
+	}
+	//casulalty and injuries
+	foreach ($player['Casualty'] as $ii => $cas) {
+		if($cas == False) {
+			
+		} else {
+			$cy->set_player_casualty($local_id,$cas);
+		}
+	}
+}
+
+        $cy_team->make_cy_roster('modules/leegmgr/cyanide/data/teams/','NotUsed',$cy->players,$cy->team,$cy->race,$cy->player_skills,$cy->casualty);
+        $filename = "modules/leegmgr/cyanide/data/teams/".$obblm_team['name'].".db";
+        $handle = fopen($filename, "r");
+        $this->cyroster = fread($handle, filesize($filename));
+        fclose($handle);
 
     }
     
