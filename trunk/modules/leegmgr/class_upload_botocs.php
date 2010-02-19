@@ -312,7 +312,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         'f_team_id' => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                         #"ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
-                        "ir1_d1" => $ir1_d1, "ir1_d2" => $ir1_d2, "ir2_d1" => $ir2_d1, "ir2_d2" => $ir2_d2, "ir3_d1" => $ir3_d1, "ir3_d2"=> $ir3_d2,
+                        "ir1_d1" => $player['ir1_d1'], "ir1_d2" => $player['ir1_d2'], "ir2_d1" => $player['ir2_d1'], "ir2_d2" => $player['ir2_d2'], "ir3_d1" => $player['ir3_d1'], "ir3_d2"=> $player['ir3_d2'],
                         "inj" => $inj, "agn1" => NONE, "agn2" => $agn1,
                         "skills" => 0, "nr" => $merc_nr,),
                     $player['EPS']
@@ -328,7 +328,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                         'f_team_id' => $team_id,
                         "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                         #"ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
-                        "ir1_d1" => $ir1_d1, "ir1_d2" => $ir1_d2, "ir2_d1" => $ir2_d1, "ir2_d2" => $ir2_d2, "ir3_d1" => $ir3_d1, "ir3_d2"=> $ir3_d2,
+                        "ir1_d1" => $player['ir1_d1'], "ir1_d2" => $player['ir1_d2'], "ir2_d1" => $player['ir2_d1'], "ir2_d2" => $player['ir2_d2'], "ir3_d1" => $player['ir3_d1'], "ir3_d2"=> $player['ir3_d2'],
                         "inj" => $inj, "agn1" => $agn1, "agn2" => NONE,),
                     $player['EPS']
                 );
@@ -634,7 +634,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
     #libxml_use_internal_errors(true);
 
     function valXML() {
-
+return true;
         $xsdfile = ($this->extrastats) ? 'modules/leegmgr/botocsreport_extra.xsd' : 'modules/leegmgr/botocsreport.xsd';
         $tmpfname = tempnam("/tmp", "XML");
 
