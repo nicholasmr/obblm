@@ -357,7 +357,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                             'f_team_id' => $team_id,
                             "mvp" => $mvp, "cp" => $cp, "td" => $td, "intcpt" => $intcpt, "bh" => $bh, "si" => $si, "ki" => $ki, 
                             #"ir_d1" => $ir_d1, "ir_d2" => $ir_d2,
-                            "ir1_d1" => $ir1_d1, "ir1_d2" => $ir1_d2, "ir2_d1" => $ir2_d1, "ir2_d2" => $ir2_d2, "ir3_d1" => $ir3_d1, "ir3_d2"=> $ir3_d2,
+                            "ir1_d1" => $player['ir1_d1'], "ir1_d2" => $player['ir1_d2'], "ir2_d1" => $player['ir2_d1'], "ir2_d2" => $player['ir2_d2'], "ir3_d1" => $player['ir3_d1'], "ir3_d2"=> $player['ir3_d2'],
                             "inj" => $inj, "agn1" => $agn1, "agn2" => NONE ),
                         $player['EPS']
                     );
@@ -379,7 +379,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                             'f_team_id' => $team_id,
                             "mvp" => 0, "cp" => 0,"td" => 0,"intcpt" => 0,"bh" => 0,"si" => 0,"ki" => 0, 
                             #"ir_d1" => 0, "ir_d2" => 0,
-                            "ir1_d1" => $ir1_d1, "ir1_d2" => $ir1_d2, "ir2_d1" => $ir2_d1, "ir2_d2" => $ir2_d2, "ir3_d1" => $ir3_d1, "ir3_d2"=> $ir3_d2,
+                            "ir1_d1" => 0, "ir1_d2" => 0, "ir2_d1" => 0, "ir2_d2" => 0, "ir3_d1" => 0, "ir3_d2"=> 0,
                             "inj" => NONE, "agn1" => NONE, "agn2" => NONE ), 
                         array() # No EPS!
                     );
