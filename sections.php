@@ -190,7 +190,7 @@ function sec_main() {
                 echo "<h3 class='boxTitle$e->cssidx'>$e->title</h3>\n";
                 echo "<div class='boxBody'>\n";
                     $fmtMsg = fmtprint($e->message); # Basic supported syntax: linebreaks.
-                    echo substr($fmtMsg, 0, 300)."<span id='e$j' style='display:none;'>".substr($fmtMsg, 300)."</span><span id='moreLink$j' ".((strlen($fmtMsg) > 300) ? '' : 'style="display:none"')."> ...&nbsp;<a href='javascript:void(0)' onclick=\"fadeOut('moreLink$j');fadeIn('e$j');\">[".$lng->getTrn('main/more')."]</a></span>\n";
+                    echo mb_substr($fmtMsg, 0, 300)."<span id='e$j' style='display:none;'>".mb_substr($fmtMsg, 300)."</span><span id='moreLink$j' ".((strlen($fmtMsg) > 300) ? '' : 'style="display:none"')."> ...&nbsp;<a href='javascript:void(0)' onclick=\"fadeOut('moreLink$j');fadeIn('e$j');\">[".$lng->getTrn('main/more')."]</a></span>\n";
                     echo "<br><hr>\n";
                     echo "<table class='boxTable'><tr>\n";
                         switch ($e->type) 
