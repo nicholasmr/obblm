@@ -50,6 +50,7 @@ class XML_BOTOCS implements ModuleInterface
     public $cyroster = '';
     public $obblm_team = array();
     public $cy = 0;
+    public $cy_teamname = '';
 
     /***************
      * Methods 
@@ -302,11 +303,11 @@ class XML_BOTOCS implements ModuleInterface
             if ( !isset($_GET["cy"]) ) Print $roster->roster;
             Else
             {
-                #Specify the header so that the browser is prompted to download the replay.rep file.
-                header('Content-type: application/octec-stream');
-                header('Content-Disposition: attachment; filename=team.db');
-                #Whatever is printed to the screen will be in the file.
                 $roster->createCyRoster();
+                #Specify the header so that the browser is prompted to download the teamname.db file.
+                header('Content-type: application/octec-stream');
+                header('Content-Disposition: attachment; filename="'.$roster->cy_teamname.'.db"');
+                #Whatever is printed to the screen will be in the file.
                 Print $roster->cyroster;                
             }
         }
@@ -464,9 +465,10 @@ foreach ($obblm_team['players'] as $i => $player) {
 		}
 	}
 }
-
-        $cy_team->make_cy_roster('modules/leegmgr/cyanide/data/teams/','NotUsed',$cy->players,$cy->team,$cy->race,$cy->player_skills,$cy->casualty);
-        $filename = "modules/leegmgr/cyanide/data/teams/".$obblm_team['name'].".db";
+$tempdir = sys_get_temp_dir();
+        $cy_team->make_cy_roster(sys_get_temp_dir()."/",'NotUsed',$cy->players,$cy->team,$cy->race,$cy->player_skills,$cy->casualty);
+        $filename = sys_get_temp_dir()."/".$obblm_team['name'].".db";
+        $this->cy_teamname = $obblm_team['name'];
         $handle = fopen($filename, "r");
         $this->cyroster = fread($handle, filesize($filename));
         fclose($handle);
