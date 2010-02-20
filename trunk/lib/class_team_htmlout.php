@@ -806,14 +806,14 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 }
                 
                 ?>
-                <form method="POST">
-                    <select name="menu_tmanage">
+                <form method="POST" name="menu_tmanage_form">
+                    <select name="menu_tmanage" onchange="document.menu_tmanage_form.submit();">
                         <?php
                         foreach ($tmanage as $opt => $desc)
                             echo "<option value='$opt'" . ($_POST['menu_tmanage'] == $opt ? 'SELECTED' : '') . ">$desc</option>";
                         ?>
                     </select>
-                    <input type="submit" name="tmanage" value="OK">
+                    <!-- <input type="submit" name="tmanage" value="OK"> -->
                 </form>
 
                 <br><i><?php echo $lng->getTrn('common/desc');?>:</i><br><br>
@@ -1170,14 +1170,14 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     }
                     
                     ?>
-                    <form method="POST">
-                        <select name="menu_admintools">
+                    <form method="POST" name="menu_admintools_form">
+                        <select name="menu_admintools" onchange="document.menu_admintools_form.submit();">
                             <?php
                             foreach ($admin_tools as $opt => $desc)
                                 echo "<option value='$opt'" . ($_POST['menu_admintools'] == $opt ? 'SELECTED' : '') . ">$desc</option>";
                             ?>
                         </select>
-                        <input type="submit" name="admintools" value="OK">
+                        <!-- <input type="submit" name="admintools" value="OK"> -->
                     </form>
 
                     <br><i><?php echo $lng->getTrn('common/desc');?>:</i><br><br>
