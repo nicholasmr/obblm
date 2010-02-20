@@ -779,7 +779,7 @@ public static function installProcsAndFuncs($install = true)
             DECLARE cur_p CURSOR FOR SELECT f_player_id,f_tour_id FROM match_data GROUP BY f_player_id,f_tour_id;
             DECLARE cur_t CURSOR FOR SELECT f_team_id,  f_tour_id FROM match_data GROUP BY f_team_id,  f_tour_id;
             DECLARE cur_c CURSOR FOR SELECT f_coach_id, f_tour_id FROM match_data GROUP BY f_coach_id, f_tour_id;
-            DECLARE cur_r CURSOR FOR SELECT f_race_id,  f_tour_id FROM match_data GROUP BY f_race_id,  f_tour_id;
+            DECLARE cur_r CURSOR FOR SELECT f_race_id,  f_tour_id FROM match_data WHERE f_race_id IS NOT NULL GROUP BY f_race_id, f_tour_id;
             DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
             OPEN cur_p;
@@ -835,7 +835,10 @@ public static function installProcsAndFuncs($install = true)
             DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
             DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
             CALL getTourParentNodes(trid, did, lid);
-            CALL getObjParents('.T_OBJ_PLAYER.', pid,tid,cid,rid);
+            /* Non-ordinary players with no parent relations? */
+            IF pid > 0 THEN
+                CALL getObjParents('.T_OBJ_PLAYER.', pid,tid,cid,rid);
+            END IF;
             
             DELETE FROM mv_players WHERE f_pid = pid AND f_trid = trid;
             
