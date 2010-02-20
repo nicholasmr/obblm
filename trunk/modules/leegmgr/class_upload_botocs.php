@@ -634,7 +634,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
     #libxml_use_internal_errors(true);
 
     function valXML() {
-return true;
+
         $xsdfile = ($this->extrastats) ? 'modules/leegmgr/botocsreport_extra.xsd' : 'modules/leegmgr/botocsreport.xsd';
         $tmpfname = tempnam("/tmp", "XML");
 
