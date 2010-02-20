@@ -21,6 +21,7 @@
  *
  */
 
+
 class cy_team_db {
 	var $_db_con;
 	var $file_loc;
@@ -127,8 +128,16 @@ class cy_team_db {
 		$this->insert_player_types_skill_double($_dat_skill_double);
 		$this->insert_player_types_skill_normal($_dat_skill_normal);
 		$this->commit();
+		$this->begin_transaction();
+		$this->reconcile_db();
+		$this->commit();
 		/*Close database*/
 		$this->close_team_db(2);		
+	}
+	private function reconcile_db() {
+		//Set players with MNG (id's 2-9 injuries to Suspended)
+		$sql = "Update Player_Listing SET iMatchSuspended = 1 where ID = (select idPlayer_Listing from Player_Casualties where idPlayer_Casualty_Types in (2,3,4,5,6,7,8,9) )";
+		$this->db_status = $this->_db_con->exec($sql);
 	}
 	private function begin_transaction() {
 		$sql = "BEGIN TRANSACTION";
@@ -257,6 +266,17 @@ class cyanide {
 		$this->team['ID'] = $int;
 	} 
 	public function set_team_name($str) {
+		//lets escape the bad strings
+		$str = str_replace("'","",$str);
+		$str = str_replace("`","",$str);
+		$str = str_replace("\\","",$str);
+		$str = str_replace("<","",$str);
+		$str = str_replace(">","",$str);
+		$str = str_replace("{","",$str);
+		$str = str_replace("}","",$str);
+		$str = str_replace("|","",$str);
+		$str = str_replace('"',"",$str);
+		$str = str_replace('*',"",$str);
 		$this->team['name'] = $str;
 	}
 	public function set_team_race_id($int) {
@@ -606,6 +626,31 @@ class cyanide {
 	}
 	public function convert_ag($int) {
 		return $int * 16.333;
+	}
+	public function get_player_level($int){
+		switch($int) {
+			case ($int > 175):
+				return 7;
+				break;
+			case ($int > 75):
+				return 6;
+				break;
+			case ($int >50):
+				return 5;
+				break;
+			case ($int > 30):
+				return 4;
+				break;
+			case ($int > 15):
+				return 3;
+				break;
+			case ($int > 5):
+				return 2;
+				break;
+			case ($int < 6):
+				return 1;
+				break;
+		}
 	}
 	public function convert_av($int) {
 		switch($int){
