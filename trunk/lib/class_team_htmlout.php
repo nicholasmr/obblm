@@ -240,10 +240,18 @@ private function _handleActions($ALLOW_EDIT)
         case 'newsedit': status($team->editNews($_POST['news_id'], $_POST['txt'])); break;
 
         case 'pic': 
-            if (isset($_FILES[ImageSubSys::$defaultHTMLUploadName.'_stad'])) 
-                status($team->saveStadiumPic(ImageSubSys::$defaultHTMLUploadName.'_stad'));
-            elseif (isset($_FILES[ImageSubSys::$defaultHTMLUploadName.'_logo']))
-                status($team->saveLogo(ImageSubSys::$defaultHTMLUploadName.'_logo'));
+            if ($_POST['add_del'] == 'add') {
+                if ($_POST['pic_obj'] == IMGTYPE_TEAMSTADIUM) 
+                    status($team->saveStadiumPic(ImageSubSys::$defaultHTMLUploadName.'_stad'));
+                elseif ($_POST['pic_obj'] == IMGTYPE_TEAMLOGO)
+                    status($team->saveLogo(ImageSubSys::$defaultHTMLUploadName.'_logo'));
+            } 
+            else {
+                if ($_POST['pic_obj'] == IMGTYPE_TEAMSTADIUM) 
+                    status($team->deleteStadiumPic());
+                elseif ($_POST['pic_obj'] == IMGTYPE_TEAMLOGO)
+                    status($team->deleteLogo());
+            }
             break;
     }
 
