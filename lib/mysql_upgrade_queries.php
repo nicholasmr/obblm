@@ -47,7 +47,7 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNotExists('coaches', 'wt_cnt', 'ALTER TABLE coaches ADD COLUMN wt_cnt SMALLINT UNSIGNED DEFAULT 0'),
         SQLUpgrade::runIfColumnNotExists('coaches', 'elo', 'ALTER TABLE coaches ADD COLUMN elo FLOAT DEFAULT NULL'),
         SQLUpgrade::runIfColumnNotExists('coaches', 'team_cnt', 'ALTER TABLE coaches ADD COLUMN team_cnt TINYINT UNSIGNED DEFAULT 0'),
-        SQLUpgrade::runIfColumnNotExists('players', 'value', 'ALTER TABLE players ADD COLUMN value MEDIUMINT UNSIGNED'),
+        SQLUpgrade::runIfColumnNotExists('players', 'value', 'ALTER TABLE players ADD COLUMN value MEDIUMINT SIGNED'),
         SQLUpgrade::runIfColumnNotExists('players', 'status', 'ALTER TABLE players ADD COLUMN status TINYINT UNSIGNED'),
         SQLUpgrade::runIfColumnNotExists('players', 'date_died', 'ALTER TABLE players ADD COLUMN date_died DATETIME'),
         SQLUpgrade::runIfColumnNotExists('players', 'ma', 'ALTER TABLE players ADD COLUMN ('.implode(', ', array_map(create_function('$f','return "$f TINYINT UNSIGNED DEFAULT 0";'), array('ma','st','ag','av','inj_ma','inj_st','inj_ag','inj_av','inj_ni'))).')'),

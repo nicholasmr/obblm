@@ -1053,7 +1053,11 @@ public static function installProcsAndFuncs($install = true)
                 + ach_st            * 50000
                 + cnt_skills_norm   * 20000
                 + cnt_skills_doub   * 30000
-                + extra_val;
+                + extra_val
+                - inj_ma * '.$rules['value_reduction_ma'].'
+                - inj_av * '.$rules['value_reduction_av'].'
+                - inj_ag * '.$rules['value_reduction_ag'].'
+                - inj_st * '.$rules['value_reduction_st'].';
 
 
             SELECT 
