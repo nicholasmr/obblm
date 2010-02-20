@@ -57,6 +57,16 @@ $rules['cost_fan_factor']       = 10000;    // Default is 10000.
 $rules['cost_ass_coaches']      = 10000;    // Default is 10000.
 $rules['cost_cheerleaders']     = 10000;    // Default is 10000.
 
+/*
+    Whenever a player sustains a stat decrease the players value will be reduced by these amounts.
+*/
+
+$rules['value_reduction_ma'] = 0; // Default is 0.
+$rules['value_reduction_av'] = 0; // Default is 0.
+$rules['value_reduction_ag'] = 0; // Default is 0.
+$rules['value_reduction_st'] = 0; // Default is 0.
+
+
 /*****************
  * House ranking systems
  *****************/

@@ -42,7 +42,7 @@ $CT_cols = array(
     
     'name' => 'VARCHAR(60)', # Widely used for name fields etc.
     'tv' => 'MEDIUMINT UNSIGNED', # Team value
-    'pv' => 'MEDIUMINT UNSIGNED', # Player value
+    'pv' => 'MEDIUMINT SIGNED', # Player value
     'chr' => 'TINYINT UNSIGNED', # ma, st, ag, av (inj, def and ach)
     'elo' => 'FLOAT',
     'team_cnt' => 'TINYINT UNSIGNED', # Teams count for races and coaches.
