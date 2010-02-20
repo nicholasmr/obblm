@@ -421,6 +421,16 @@ class Team
         list($retstatus, $error) = $img->save($name);
         return $retstatus;
     }
+    
+    public function deleteLogo() {
+        $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $this->team_id);
+        return $img->delete();
+    }
+
+    public function deleteStadiumPic() {
+        $img = new ImageSubSys(IMGTYPE_TEAMSTADIUM, $this->team_id);
+        return $img->delete();    
+    }
 
     public function writeNews($txt) {
         return TeamNews::create($txt, $this->team_id);

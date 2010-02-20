@@ -131,6 +131,16 @@ class ImageSubSys
         return array(true, true);
     }
     
+    public function delete()
+    {
+        $fpath = $this->getPath();
+        if ($fpath == NO_PIC || preg_match('/'.str_replace(IMG.'/', '', RACE_ICONS).'/', $fpath)) { # Don't delete NO_PIC file or race icons.
+            return true;
+        }
+        @unlink($fpath);
+        return true;
+    }
+    
     public static function makeBox($obj, $obj_id, $showUploadForm = false, $suffix = false) 
     {
         global $lng;
@@ -146,9 +156,13 @@ class ImageSubSys
             ?>
             <form method='POST' enctype="multipart/form-data">
                 <input type="hidden" name="type" value="pic">
+                <input type="hidden" name="add_del" id="_pic_add_del__<?php echo (($suffix) ? $suffix : '');?>" value="add">
+                <input type="hidden" name="pic_obj" value="<?php echo $obj;?>">
                 <?php echo $lng->getTrn('common/uploadnew');?> (<?php echo "${width}x${height}";?>): <br>
                 <input name="<?php echo self::$defaultHTMLUploadName.(($suffix) ? $suffix : '')?>" type="file"><br>
-                <input type="submit" name="pic_upload" value="<?php echo $lng->getTrn('common/upload');?>">
+                <input type="submit" name="pic_upload" value="<?php echo $lng->getTrn('common/upload');?>"> 
+                | 
+                <input type="submit" name="pic_delete" value="<?php echo $lng->getTrn('common/delete');?>" onClick="document.getElementById('_pic_add_del__<?php echo (($suffix) ? $suffix : '');?>').value='del';"> 
             </form>
             <?php
         }

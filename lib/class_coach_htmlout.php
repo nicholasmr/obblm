@@ -267,7 +267,7 @@ private function _CCprofile($ALLOW_EDIT)
             case 'chlang':      status($this->setSetting('lang', $_POST['new_lang'])); break;
             case 'chhomelid':   status(isset($_POST['new_homelid']) && get_alt_col('leagues', 'lid', (int) $_POST['new_homelid'], 'lid') && $this->setSetting('home_lid', $_POST['new_homelid'])); break;
 
-            case 'pic':         status($this->savePic(false)); break;
+            case 'pic':         status(($_POST['add_del'] == 'add') ? $this->savePic(false) : $this->deletePic()); break;
             case 'coachtext':
                 if (get_magic_quotes_gpc()) {
                     $_POST['coachtext'] = stripslashes($_POST['coachtext']);

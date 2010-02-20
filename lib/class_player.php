@@ -625,6 +625,11 @@ class Player
         return $retstatus;
     }
     
+    public function deletePic() {
+        $img = new ImageSubSys(IMGTYPE_PLAYER, $this->player_id);
+        return $img->delete();    
+    }
+    
     public function getSkillsStr($HTML = false) 
     {
         /**

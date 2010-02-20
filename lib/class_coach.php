@@ -302,6 +302,11 @@ class Coach
         return $retstatus;
     }
     
+    public function deletePic() {
+        $img = new ImageSubSys(IMGTYPE_COACH, $this->coach_id);
+        return $img->delete();    
+    }
+    
     public function setActivationCode($set_AC) 
     {
         if ($set_AC) {

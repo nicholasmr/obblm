@@ -83,7 +83,7 @@ private function _handleActions($ALLOW_EDIT)
     switch ($_POST['type'])
     {
         case 'pic': 
-            status($p->savePic(false));
+            status(($_POST['add_del'] == 'add') ? $p->savePic(false) : $p->deletePic());
             break;
             
         case 'playertext': 
