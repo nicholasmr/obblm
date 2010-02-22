@@ -26,7 +26,7 @@ require('header.php'); // Includes and constants.
 if (!isset($_GET['type']))
     fatal("Sorry. Don't know what to do. Please specify 'type' via GET.");
 
-$COACH_IS_ADMIN = (is_object($coach) && $coach->admin);
+$COACH_IS_ADMIN = (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN);
 
 switch ($_GET['type'])
 {

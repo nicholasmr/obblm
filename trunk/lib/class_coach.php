@@ -70,7 +70,6 @@ class Coach
         $this->setStats(false,false,false);
 
         $this->ring = (int) $this->ring;
-        $this->admin = ($this->ring === self::T_RING_GLOBAL_ADMIN);
         if (empty($this->mail)) $this->mail = '';           # Re-define as empty string, and not numeric zero.
         if (empty($this->phone)) $this->phone = '';         # Re-define as empty string, and not numeric zero.
         if (empty($this->realname)) $this->realname = '';   # Re-define as empty string, and not numeric zero.
@@ -214,6 +213,25 @@ class Coach
         }
         
         return ($managee->ring <= $this->ring && ($MAY_MANAGE_LOCALLY || $this->ring == Coach::T_RING_GLOBAL_ADMIN));
+    }
+    
+    public function isNodeCommish($node, $node_id) {
+    
+        if (!isset($this->_nodeAccess)) {
+            list($this->_nodeAccess[T_NODE_LEAGUE], $this->_nodeAccess[T_NODE_DIVISION], $this->_nodeAccess[T_NODE_TOURNAMENT]) = self::allowedNodeAccess(self::NODE_STRUCT__FLAT, $this->coach_id, array(T_NODE_TOURNAMENT => array('f_did' => 'f_did'), T_NODE_DIVISION => array('f_lid' => 'f_lid')));
+        }
+        list($leagues,$divisions,$tours) = array($this->_nodeAccess[T_NODE_LEAGUE], $this->_nodeAccess[T_NODE_DIVISION], $this->_nodeAccess[T_NODE_TOURNAMENT]);
+        if (isset($this->_nodeAccess[$node][$node_id])) {
+            switch ($node) {
+                case T_NODE_LEAGUE:
+                    return ($leagues[$node_id]['ring'] == self::T_RING_LOCAL_ADMIN);
+                case T_NODE_DIVISION:
+                    return ($leagues[$divisions[$node_id]['f_lid']]['ring'] == self::T_RING_LOCAL_ADMIN);
+                case T_NODE_TOURNAMENT:
+                    return ($leagues[ $divisions[ $tours[$node_id]['f_did'] ]['f_lid'] ]['ring'] == self::T_RING_LOCAL_ADMIN);
+            }
+        }
+        return false;
     }
 
     public function getAdminMenu()
