@@ -55,17 +55,29 @@ function upcomingMatches() {
 public static function tourMatches() 
 {
     global $lng, $coach;
+    global $leagues, $divisions, $tours;
+
+    $trid = $_GET['trid']; # Shortcut for string interpolation.    
+    if (!isset($trid) || !in_array($trid, array_keys($tours))) { # Not set or not viewable -> deny access.
+        fatal('Invalid tournament ID.');
+    }
+    $IS_LOCAL_ADMIN = (is_object($coach) && $leagues[$divisions[$tours[$trid]['f_did']]['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN);
     
     // Admin actions made?
-    if (isset($_GET['action']) && is_object($coach) && $coach->admin) {
+    if (isset($_GET['action']) && $IS_LOCAL_ADMIN) {
         $match = new Match($_GET['mid']);
-        switch ($_GET['action'])
-        {
-            case 'lock':   status($match->setLocked(true)); break;
-            case 'unlock': status($match->setLocked(false)); break;
-            case 'delete': status($match->delete()); break;
-            case 'reset':  status($match->reset()); break;            
+        if ($match->f_tour_id == $trid) {
+            switch ($_GET['action'])
+            {
+                case 'lock':   status($match->setLocked(true)); break;
+                case 'unlock': status($match->setLocked(false)); break;
+                case 'delete': status($match->delete()); break;
+                case 'reset':  status($match->reset()); break;            
+            }
         }
+    }
+    else if (isset($_GET['action'])) {
+        status(false, 'Sorry, you do not have permission to do that.');
     }
     
     ?>
@@ -79,7 +91,6 @@ public static function tourMatches()
     </script>
     <?php
     
-    $trid = $_GET['trid']; # Shortcut for string interpolation.
     $query = "SELECT COUNT(*) FROM matches WHERE f_tour_id = $trid";
     $result = mysql_query($query);
     list($cnt) = mysql_fetch_row($result);
@@ -131,7 +142,7 @@ public static function tourMatches()
             <td>
             <?php
             echo "&nbsp;<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>&nbsp;\n";
-            if (is_object($coach) && $coach->admin) {
+            if ($IS_LOCAL_ADMIN) {
                 echo "<a onclick=\"return match_reset();\" href='$matchURL&amp;action=reset'>".$lng->getTrn('common/reset')."</a>&nbsp;\n";
                 echo "<a onclick=\"return match_delete();\" href='$matchURL&amp;action=delete' style='color:".(!empty($m->date_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('common/delete')."</a>&nbsp;\n";
                 echo "<a href='$matchURL&amp;action=".(($m->locked) ? 'unlock' : 'lock')."'>" . ($m->locked ? $lng->getTrn('common/unlock') : $lng->getTrn('common/lock')) . "</a>&nbsp;\n";
