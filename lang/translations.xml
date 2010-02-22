@@ -1287,4 +1287,673 @@
 
 </es>
 
+<de>
+
+<!-- Commonly used strings -->
+<common>
+    <notitle>Hier den Titel eingeben</notitle>
+    <nobody>--Leer--</nobody>
+    
+    <submit>Absenden</submit>
+    <save>Speichern</save>
+    <create>Anlegen</create>
+    <delete>Speichern</delete>
+    <edit>Ändern</edit>
+    <view>Ansehen</view>
+    <back>Vor</back>
+    <yes>Zurück</yes>
+    <no>Nein</no>
+    <none>Leer</none>
+    <reset>Zurücksetzen</reset>
+    <lock>Sperren</lock>
+    <locked>Gesperrt</locked>
+    <finished>Beendet</finished>
+    <unlock>Unlock</unlock>
+    <add>Hinzufügen</add>
+    <remove>Entfernen</remove>
+    <next>Nächstes</next>
+    <previous>Vorheriges</previous>
+    <name>Name</name>
+    <status>Status</status>
+    <desc>Beschreibung</desc>
+    <upload>Upload</upload>
+    <all>Alle</all>
+    <select>Auswählen</select>
+    <stats>Statistik</stats>
+    <general>Allgemein</general>
+    <value>Wert</value>
+    <amount>Menge</amount>
+    <ach>Errungenschaften</ach>
+    <page>Seite</page>
+    <retired>Im Ruhestand</retired>
+    <skills>Fähigkeiten</skills>
+    <injs>Verletzungen</injs>
+    <pos>Position</pos>
+    <price>Preis</price>
+    <number>Nummer</number>
+    <opponent>Gegner</opponent>
+    
+    <needhelp>Hilfe?</needhelp>
+    <picof>Bild von</picof>
+    <about>Über</about>
+    
+    <recentmatches>Letzte Begegnungen</recentmatches>
+    <upcomingmatches>Nächste Begegnungen</upcomingmatches>
+    <dateplayed>Spieldatum</dateplayed>
+    <datecreated>Erstellungsdatum</datecreated>
+    <home>Zuhause</home>
+    <away>Auswärts</away>
+    <score>Score</score>
+    <gate>Zuschauer</gate>
+    <result>Ergebnis</result>
+    
+    <starhh>Historie angeheuerter Starspieler</starhh>
+    <merchh>Historie angeheuerter Söldner</merchh>
+    
+    <match>Begegnung</match>
+    <tournament>Turnier</tournament>
+    <division>Division</division>
+    <league>Liga</league>
+    
+    <player>Spieler</player>
+    <players>Spieler</players>
+    <team>Mannschaft</team>
+    <teams>Mannschaften</teams>
+    <coach>Trainer</coach>
+    <coaches>Trainer</coaches>
+    <race>Rasse</race>
+    <races>Rassen</races>
+    <star>Star</star>
+    <stars>Stars</stars>
+    
+    <won>Gewonnen</won>
+    <lost>Verloren</lost>
+    <draw>Unentschieden</draw>
+    <streaks>Serie</streaks>
+    <played>Gespielt</played>
+    <playedtours>Turniere gespielt</playedtours>
+    <wontours>Turniere gewonnen</wontours>
+    
+    <ready>Bereit</ready>
+    <dead>Tot!</dead>
+    <sold>Verkauft</sold>
+    <bought>Gekauft</bought>
+    
+    <td>Touchdowns</td>
+    <intcpt>Abgefangene Pässe (INT)</intcpt>
+    <cp>Gelungene Pässe (COMP)</cp>
+    <ki>Getötete Spieler (KI)</ki>
+    <bh>Starke Schmerzen (BH)</bh>
+    <si>Schwere Verletzungen (SI)</si>
+    <cas>Verursachte Spielerausfälle (CAS)</cas>
+    <mvp>Spieler des Tages (MVP)</mvp>
+    
+    <pms>Durchschnittliche Statistiken zu Begegnungen</pms>
+    <ats>All-time Statistiken anzeigen</ats>
+    <uploadnew>Neues Bild hochladen</uploadnew>
+    <notice_simul><![CDATA[<i>Beachte</i>: Beide folgenden Tabellen werden gleichzeitig sortiert.]]></notice_simul>
+    <notice_spp><![CDATA[<i>Beachte</i>: <b>Wenn</b> Star Player SPP verdienen könnten, hätten sie soviele wie in der Spalte SPP.]]></notice_spp>
+    <sortedagainst>Sortiert nach</sortedagainst>
+    
+    <!-- nodeSelector() -->
+    <displayfrom>Anzeigen ab</displayfrom>
+    <type>Typ</type>
+        <active>Aktiv</active>
+        <alltime>Allzeit</alltime>
+    <sgrp>Statistik Gruppierung</sgrp>
+    <having>Sortiert nach</having>
+    
+    <!-- ES -->
+    <extrastats>Extra Statistiken</extrastats>
+    <stat>Statistiken</stat>
+    <!-- use "all-time" string from nodeSelect() translation -->
+    <matchavg><![CDATA[Durchschnitt der Begegnung]]></matchavg> <!-- "Match avg." -->
+    
+</common>
+
+<!-- Link names for menu elements -->
+<menu>
+    <login>Login</login>
+    <logout>Logout</logout>
+    <home>Home</home>
+    <cc>Trainerbereich</cc>
+    <teams>Mannschaften</teams>
+    <coaches>Trainer</coaches>
+    <matches_menu>
+        <name>Begegnungen</name> <!-- top level button text -->
+        <tours>Turniere</tours>
+        <recent>Letzte Begegnungen</recent>
+        <upcoming>Anstehende Begegnungen</upcoming>
+    </matches_menu>
+    <statistics_menu>
+        <name>Statistik</name> <!-- top level button text -->
+        <player_stn>Spieler Rangliste</player_stn>
+        <team_stn>Mannschafts Rangliste</team_stn>
+        <coach_stn>Trainer Rangliste</coach_stn>
+        <race_stn>Rassen Rangliste</race_stn>
+        <star_stn>Starspieler Rangliste</star_stn>
+    </statistics_menu>
+    <admin_menu>
+        <name>Admin</name> <!-- top level button text -->
+        <ld_man>Verwaltung: Ligen &amp; Divisionen</ld_man>
+        <ct_man>Verwaltung: Trainer &amp; Mannschaften</ct_man>
+        <usr_man>Verwaltung: Benutzer</usr_man>
+        <tour_man>Verwaltung: Turniere</tour_man>
+        <import>Mannschaft importieren</import>
+        <schedule>Begegnung ansetzen</schedule>
+        <cpanel>OBBLM Kernbereich</cpanel>
+    </admin_menu>
+    <plugins>Plugins</plugins>
+    
+    <rules>Regeln</rules>
+    <forum>Forum</forum>
+</menu>
+
+<!-- Section translations -->
+<login>
+    <!-- has no <name> tag! -->
+    <loginname>Trainername</loginname>
+    <passwd>Passwort</passwd>
+    <remember>Angemeldet bleiben</remember>
+    <loginbutton>Login</loginbutton>
+    <forgotpass>Passwort vergessen?</forgotpass>
+    
+</login>
+
+<main>
+    <!-- has no <name> tag! -->
+    <newmsg>Neue Nachrichten</newmsg>
+    <broadcast>Nachricht an Ligen senden?</broadcast>
+    <nowelcome>Du hast noch keine Willkommensnachricht eingetragen</nowelcome>
+    <more>mehr</more>
+    <posted>Geschrieben</posted>
+    <by>von</by>
+    <lastedit>Editiert am</lastedit>
+</main>
+
+<cc>
+    <new_team>Neue Mannschaft</new_team>
+
+    <!-- <stats> defined in <common> block -->
+
+    <coach_teams>Trainername</coach_teams>
+
+    <profile>Profil</profile>        
+        <photo>Trainerbild</photo>
+        <coach_info>Information zum Trainer</coach_info>
+            <note_persinfo>Detailierte Informationen stehen nur angemeldeten Benutzern zur Verfügung.</note_persinfo>
+            <new>Neu</new>
+            <old>Alt</old>
+            <current>Aktuell</current>
+            <chpasswd>Passwort ändern</chpasswd>
+            <chphone>Telefonnummer  ändern</chphone>
+            <chmail>E-Mailadresse  ändern</chmail>
+            <chlogin>Namen ändern (login)</chlogin>
+            <chname>Vollständigen Namen ändern</chname>
+            <chtheme>OBBLM Thema ändern</chtheme>
+            <chlang>Sprache ändern</chlang>
+            <chhomelid>Heimliga ändern</chhomelid>
+</cc>
+
+<profile>
+    <coach>
+        <teams_total>Alle Mannschaften</teams_total>
+        <teams_active>Aktive Mannschaften</teams_active>
+        <teams_notready>Nicht bereite Mannschaften</teams_notready>
+        <teams_retired>Mannschaften im Ruhestand</teams_retired>
+        <avgteam_elo>Durchschnittliche ELO pro Mannschaft</avgteam_elo>
+        <avgteam_tv>Durchschnittlicher TV pro Mannschaft</avgteam_tv>
+        <avgteam_ff>Durchschnittliche FF pro Mannschaft</avgteam_ff>
+    </coach>
+
+    <star>
+        <hiredby>Angeheuert von</hiredby>
+    </star>
+
+    <player>
+        <about>Über den Spieler</about>
+        <profile>Spieler Profil</profile>
+        <best>Bester der Begegnung</best>
+    </player>
+    
+    <team>
+        <!-- sub secs. -->
+        
+        <viewtoggle>Ansicht umschalten</viewtoggle>
+        
+        <!-- Team Verwaltung sec. -->
+        <tmanage>Mannschafts Verwaltung + info</tmanage>
+        
+        <!-- About sec. -->
+            <logo>Mannschafts Logo</logo>
+            <stad>Mannschafts Stadion</stad>
+
+        <!-- News sec. -->            
+        <news>News</news>
+            <tnews>Mannschafts News</tnews>
+            <wnews>News schreiben</wnews>
+            <nonews>Noch keine Einträge</nonews>
+        
+        <!-- Recent games sec. -->
+        
+        <!-- Star/merc HH secs. -->
+        
+        <!-- For the three team page boxes -->
+
+        <box_info>
+            <title>Mannschafts Infos und Statistiken</title>
+            
+            <ltour><![CDATA[Letztes&nbsp;Turnier]]></ltour>
+        </box_info>
+        
+        <box_tm>
+            <title>Team Verwaltung</title>
+
+            <hire_player>Spieler anheuern</hire_player>
+            <hire_journeyman>Journeymen anheuern</hire_journeyman>
+            <fire_player>Spieler feuern</fire_player>
+            <unbuy_player>Anheuern eines Spielers rückgängig machen</unbuy_player>
+            <rename_player>Spieler umbenennen</rename_player>
+            <renumber_player>Spieler neue Rückennnummer zuweisen</renumber_player>
+            <rename_team>Mannschaft umbenennen</rename_team>
+            <buy_goods>Ausrüstung kaufen</buy_goods>
+            <drop_goods>Ausrüstung abgeben</drop_goods>
+            <ready_state>Bereitschaft setzen</ready_state>
+            <retire>Mannschaft in Ruhestand versetzen</retire>
+            <delete>Mannschaft löschen</delete>
+
+            <!-- Strings used within action boxes -->
+            <fdescs>
+                <thing>Ding</thing>
+                <teamready>Mannschaft bereit?</teamready>
+                <retire>Mannschaft in den Ruhestand versetzen?</retire>
+                <suredeleteteam>Bist du sicher, dass du diese Mannschaft löschen möchtest?</suredeleteteam>
+            </fdescs>
+
+            <desc>
+                <hire_player>
+                <![CDATA[
+                Einen neuen Spieler anheuern.<br>
+                Ein Journeyman kann gratis angeheuert werden, aber nur die Spieler auf einer der Positionen von denen 0-16 auf dem Roster sein dürfen, können als Journeymen angeheuert werden.
+                ]]>
+                </hire_player>
+                <hire_journeyman>
+                <![CDATA[
+                Einen deiner Journeyman dauerhaft bei deinem Team anstellen.
+                ]]>
+                </hire_journeyman>
+                <fire_player>
+                <![CDATA[
+                Einen Spieler feuern. Refund rate:
+                ]]>
+                </fire_player>
+                <unbuy_player>
+                <![CDATA[
+                Spielerkauf rückgängig machen. 100% Erstattung.<br>
+                Dies ist nur möglich, wenn ein Spieler noch an keinem Spiel teilgenomen hat.
+                ]]>
+                </unbuy_player>
+                <rename_player>
+                <![CDATA[
+                Spieler umbenennen.
+                ]]>
+                </rename_player>
+                <renumber_player>
+                <![CDATA[
+                Spieler neue Rückennnummer zuweisen
+                ]]>
+                </renumber_player>
+                <rename_team>
+                <![CDATA[
+                Deine Mannschaft umbenennen.
+                ]]>
+                </rename_team>
+                <buy_goods>
+                <![CDATA[
+                Ausrüstung kaufen.
+                ]]>
+                </buy_goods>
+                <buy_goods_warn>
+                <![CDATA[
+                <br><br>Bitte beachte, dass die Kosten für Re-Rolls derzeit <font color='red'><b>verdoppelt</b></font> sind.<br>Wenn du beabsichtigst einen Re-Roll zu nicht-doppelten Kosten zu kaufen, kaufe den Re-Roll trotzdem und fordere vom Amdin das zusätzliche Gold wieder deiner Teamkasse gutzuschreiben.
+                ]]>
+                </buy_goods_warn>
+                <drop_goods>
+                <![CDATA[
+                Ausrüstung zurückgeben ohne eine Rückerstattung zu bekommen.
+                ]]>
+                </drop_goods>
+                <ready_state>
+                <![CDATA[
+                Diese Eigenschaft ermöglicht es einem Trainer seine Mannschaft zu kennzeichnen, um anderen Trainern und Mannschaften zu signalisieren, ob man aktuell interessiert ist gegen andere Mannschaften anzutreten.
+                ]]>
+                </ready_state>
+                <retire>
+                <![CDATA[
+                Mannschaft in den Ruhestand versetzen.<br>Mannschaften, die sich im Ruhestand befinden können nicht mehr am Spielbetrieb teilnehmen oder verändert werden .<br>Admins können Mannschaften aus dem Ruhestand zurück holen. Der Ruhestand tritt umgehend in Kraft, wird aber erst sichtbar wenn die <b>Seite neu geladen</b> wird.
+                ]]>
+                </retire>
+                <delete>
+                <![CDATA[
+                Mannschaft löschen.<br>For the sake of keeping league statistics intact you are not allowed to delete teams which have played matches. The deletion takes effect immediately, but will first be visible on <b>next page reload</b>.
+                ]]>
+                </delete>
+            </desc>
+        </box_tm>
+        
+        <box_admin>
+            <title>Admin Werkzeuge</title>
+
+            <unhire_journeyman>Anheuern eines Journeymen rückgängig machen</unhire_journeyman>
+            <unsell_player>Spieler feuern rückgängig machen</unsell_player>
+            <unbuy_goods>Kauf vob Ausrüstung rückgängig machen</unbuy_goods>
+            <bank>Bank</bank>
+            <chown>Eigentümer ändern</chown>
+            <spp>Extra SPP eines Spielers verwalten</spp>
+            <dval>Extra Spielerwert verwalten</dval>
+            <extra_skills>Extra Fähigkeiten verwalten</extra_skills>
+            <ach_skills>Erlangte Fähigkeit eines Spielers entfernen</ach_skills>
+
+            <desc>
+                <unhire_journeyman>
+                <![CDATA[
+                Bedaure einen Journeyman dauerhaft angeheuert zu haben.<br>
+                This only works on players from a 0-16 allowed position on your team's roster.
+                ]]>
+                </unhire_journeyman>
+                <unsell_player>
+                <![CDATA[
+                Bedaure einen Spieler verkauft zu haben.
+                ]]>
+                </unsell_player>
+                <unbuy_goods>
+                <![CDATA[
+                Bedaure Ausrüstung gekauft zu haben.
+                ]]>
+                </unbuy_goods>
+                <bank>
+                <![CDATA[
+                Änderungen an der Mannschaftskasse vornehmen.
+                ]]>
+                </bank>
+                <chown>
+                <![CDATA[
+                Den Eigentümer dieser Mannschaft ändern.
+                ]]>
+                </chown>
+                <spp>
+                <![CDATA[
+                Die extra SPP eines Spielers verwalten.
+                ]]>
+                </spp>
+                <dval>
+                <![CDATA[
+                Den Wert eines Spielers um eine bestimmte Menge ändern.
+                ]]>
+                </dval>
+                <extra_skills>
+                <![CDATA[
+                Die extra Fähigkeiten eines Spielers verwalten.
+                ]]>
+                </extra_skills>
+                <ach_skills>
+                <![CDATA[
+                Eine Fähigkeit eines Spielers entfernen. Der Spieler kann eine neue Fähigkeit auswählen.
+                ]]>
+                </ach_skills>
+            </desc>
+        </box_admin>
+    </team>
+</profile>
+
+<standings>
+    <team>
+        <tblTitle2>All-time Rangliste - Fortsetzung (Mannschaftsdetails)</tblTitle2>
+    </team>
+</standings>
+
+<matches>
+    <tours>    
+        <!-- none used - all are in "common". -->
+    </tours>
+    <tourmatches>
+        <roundtypes>
+            <final>Finale</final>
+            <thirdPlayoff>Spiel um den 3. Platz</thirdPlayoff>
+            <semi>Halbfinale</semi>
+            <quarter>Viertelfinale</quarter>
+            <rnd16>Runde der letzten 16</rnd16>
+            <rnd>Runde</rnd>
+        </roundtypes>
+        
+        <matchdelete><![CDATA[Bist du dir sicher, dass du dieses Spiel löschen willst?\n\nBITTE BEACHTE:\nLöschen kann nicht rückgängig gemacht werden, es sei denn das Spiel wurde noch nicht gespielt. Darüber hinaus hat es Auswirkungen auf den Inhalt der Spielberichte der beiden beteiligten Mannschaften.\nEs wird dringend vom Löschen von Nicht-Test Spielen abgeraten, es sei denn du weisst wirklich was du tust.]]></matchdelete>
+        <reset_notice><![CDATA[Biste du dir sicher, dass du dieses Spiel zurücksetzen willst?\n\nBITTE BEACHTE:\nDas Zurücksetzen eines Spieles löscht alle mit diesem zusammenhängenden Daten.\nSind teilnehmende Mannschaften, bereits bei weiteren Begegnungen angetreten, kann dies zu unkorrekten Status von Spielern in den Spielberichten der folgenden Begegnungen führen.]]></reset_notice>
+    </tourmatches>
+
+    <!-- Subsection: match report(s) -->
+    <report>
+        
+        <!-- General -->
+        <clickforhelp>Hilfe?</clickforhelp>
+        <notplayed>Noch nicht gespielt</notplayed>
+        <report>Bericht</report>
+        
+        <help>
+        <![CDATA[
+        <b>Vorläufige Informationen</b><br>
+        Zuerst einmal ist es wichtig zu wissen, dass OBBLM das erneute Speichern bereits gespeicherte Spielberichte unterstützt - auch dann, wenn die teilnehmenden Mannschaften bereits an weiteren Begegnungen teilgenommen haben.
+        Dies bedeutet, dass man zum Beispiel wenn man einen falschen Kassenstand eingegeben oder einen falschen Wert bei einem Spieler eingetragen hat, kann man diesen Fehler ganz einfach korrigieren, indem man die Werte im Spielbericht korrigiert und diesen erneut speichert.<br>
+        Zum Zweiten, unterstützt OBBLM das Speichern einer grossen Anzahl unterschiedlicher Spielerwerte.
+        Die gängigen Daten zu den Spielern werden zusammen mit den Informationen zur Begegnung im eigentlichen Spielbericht gespeichert, während die <i>extra Informationen</i> auf einer separaten Seite eingetragen werden - Folge hierzu dem "extra stats" Link auf der ersten Seite des Spielberichts.
+        Bitte beachte, dass du zuerst den eigentlichen Spielbericht übermitteln <i>musst</i>, bevor du die zusätzlichen Spielerwerte speichern kannst.<br>
+        <br>
+        <b>Felder für Informationen zu Begegnungen</b><br>
+        Die Funktion dieser Felder ist es lediglich allgemeine Informationen zu einer Begegnung zu speichern. Sie haben daher <i>keine</i> Auswirkungen auf das Einkommen oder die Werte einer Mannschaft.<br>
+        <br>
+        <b>Fair-Play Punkte (Sportsmanship points)</b><br>
+        Brüllen, Schreien, das Verfluchen der Würfel, Stören des Gegener während seines Zuges oder das unentschuldigte Fehlen bei einem Spiel, können mit einer negativen Anzahl an Fair-Play Punkten (Sportsmanship points) geahndet werden. Gute Verlierer und faire Sportsleute hingegen können mit einer positiven Anzahl an Fair-Play Punkten (Sportsmanship points) belohnt werden.
+        Wenn es in deiner Liga allerdings normal ist, dass der eine oder andere immer wieder ausrastet, kann es Sinn machen das Fair-Play System auf die umgekehrte Weise zu nutzen - man belohnt also schlechtes Benehmen mit Fair-Play Punkten.<br>
+        <br>
+        <b>Verletzungen im Allgemeinen</b><br>
+        OBBLM kann die <i>Verletzungen einer Mannschaft</i> speichern, diese sind die Summe der individuellen Verletzungen von Spielern, selbstbeigebrachte Verletzungen, die on a fumble in sprints and Morde durch das Publikum (und natürlich weitere Dinge eurer Wahl).
+        Bezüglich der Verletzungen von <i>individuellen Spieler</i> kann OBBLM auch die verschiedenen Arten der Verletzungen speichern (bh, si and ki), bitte mache Gebrauch von dieser Möglichkeit statt die Verletzungen die ein Spieler verursacht hat als Kills zu speichern.<br>
+        <br>
+        <b>Spieler Fähigkeiten</b><br>
+        Wenn du 2W6 für einen Fähigkeiten Erweiterungswurf eines Spieler würfelst, denke bitte daran dieses Ergebnis in den <i>IR</i> Feldern einzutragen. 
+        Wenn der Spielbericht dann gespeichert wurde, lässt Dich OBBLM die neuen Fähigkeiten auf der Mannschaftsseite auswählen - vorausgesetzt der Spieler hat genügend SPP gesammelt.<br>
+        Wenn das Feld für den Fähigkeiten Erweiterungswurf <i>durchgängig</i> auf 0 gesetzt bleiben, kann der betroffene Spieler immer dann wenn ausreichend viele SPP gesammelt hat aus allen Fähigkeiten auswählen wenn er.<br>
+        <br>
+        <b>Spieler Verletzungen</b><br>
+        Wenn ein Spieler mehrere Verletzungen erleidetbenutze einfach die zweite und dritte Verletzungspalte "ageing 1" und "ageing 2". 
+        Der <i>einzige</i> Unterschied zwischen der normalen "inj" Spalte und der aging Spalte ist, dass Verletzungen die die Folge von Aging sind nicht dazu führen, dass der Spieler bei der nächsten Begegnung nicht teilnehmen darf (MNG).<br>
+        <br>
+        <b>Einkommen</b><br>
+        Das Einkommen einer Mannschaft muss manuell berechnet werden, um die Änderungen der Mannschaftskasse während einen Begegnung in <i>vollem Umfang</i> zu berücksichtigen. OBBLM übernimmt nicht die Berechnung des Einkommens.
+        Wenn du mehr ausgegeben hast, als du in einer Begegnung verdient hast, dann stelle einfach ein - (minus) Zeichen voran.
+        <br><br>
+        Beachte diese Faktoren bei deiner Berechnung:<br>
+        <ul>
+            <li>Schwindelerregende Nebenkosten (Spiraling expenses)</li>
+            <li>Wert auf der Teamkasse, der für inducements ausgegeben wurde</li>
+            <li>Kosten für das anheuern von Starspielern und Söldnern</li>
+            <li>Einnahmen der Mannschaft</li>
+            <li>Turniereinnahmen, wenn die Begegnung ein Finale war</li>
+            <li>Sponsorenvertrag von Bloodweiser</li>
+        </ul>
+        ]]>
+        </help>
+
+        <!-- Subsecs of team page -->
+        <info>Informationen zur Begegnung</info>
+            <stadium>Stadion</stadium>
+            <fans>Fans (RL Zuschauer)</fans>
+            
+        <results>Spielergebnisse</results>
+            <treas>Teamkasse</treas>
+            <ff>Fan Faktor</ff>
+            <smp>Fair-Play Punkte (Sportsmanship points)</smp>
+                <pts>Punkte</pts>
+            <tcas>Gesamtzahl von der Manschaft verursachter Verletzungen (CAS)</tcas>
+            <fame>FAME</fame>
+            <tv>Teamwert (TV)</tv>
+            
+        <summary>Zusammenfassung</summary>
+    </report>
+</matches>
+
+<rules>
+    <!-- None -->
+</rules>
+
+<about>
+    <intro>Einführung</intro>
+    <intro_txt>
+    <![CDATA[
+    OBBLM ist ein Blood Bowl Ligen Verwaltungssystem, bei dem die Trainer die Spielerebnisse nach jeder Begegnung in einem Turnier selbst eintragen. 
+    Liga-Komissare (admins) können Turniere anlegen und dann die Mannschaften von Trainern dem Turnier hinzufügen. 
+    Wenn ein Turnier angelgt ist, können beide an einem Spiel teilnehmenden Trainer den Spielbericht im System eintragen. 
+    Das System aktualisiert und berechnet hierdurch die Turnierstatistiken und die Mannschaftswerte, und gibt Trainer dann z.B. die Möglichkeit neue Spieler-Fähigkeiten auszuwählen.
+    Die Reihenfolge in der Begegnungen gespielt oder eingetragen werden, ist nicht von Bedeutung. Wenn es notwendig ist, kann der Liga-Komissar Begegnungen, die nicht gespielt wurden, löschen.
+    <br><br>
+    <b>Der Trainerbereich:</b><br>
+        Wenn du ein Passwort von einem Liga-Komissar bekommen hast und Dich mit diesem angemeldet hast, erscheint dein persönlicher Trainerbereich in der Navigation. 
+        In deinem Trainerbereich kannst du Mannschaften erstellen und dein Passwort, deine E-Mailadresse sowie deinen Namen ändern.
+        <br><br>
+        <b>Mannschaftsseite</b><br>
+        Auf der Mannschaftsseite kannst du deine Mannschaft verwalten. 
+        Dazu gehört natürlich das kaufen und verkaufen von Spielern, das Auswählen von neuen Fähigkeiten, wenn ein Spieler genug Starspielerpunkte gesammelt hat und das Kaufen weitere Utensilien für deine Mannschaften.
+        <br>
+        Auf deiner Mannschaftsseite wird Dir dein Team Roster dargestellt. Um die Spielerdetails anzusehen, wähle den "Ansicht umschalten"-unter dem Roster.
+        <br><br>
+    <b>Eine Begenung eintragen:</b><br>
+        Nachdem eine Begegnung gespielt wurde, musst du dies dem System mitteilen, indem du einen Spielbereicht im <i>Turniere</i> Bereich einträgst. 
+        Jeder der Trainer der beiden teilnehmenden Mannschaften kann dies tun. Nur die teilnehmenden Trainer und Liga-Komissare haben das Recht Spielberichte ändern zu können.
+    ]]>
+    </intro_txt>
+
+    <faq>Antworten auf häufige Fragen</faq>
+    <faq_txt>
+    <![CDATA[
+    <i>Frage:</i>
+    Ich kann die Verletzung eines Spielers nicht speichern.<br>
+    <i>Antwort:</i>
+    OBBLM verweigert es eine Verletzung zu speichern, wenn die Summe der Spielerwerte hierdurch unter den erlaubten Standardwert sinkt - 2 limit.
+    <br><br>
+    
+    <i>Frage:</i>
+    Ich kann nicht die erreichten Spielerwerte auswählen, die ich haben möchte?<br>
+    <i>Antwort:</i>
+    Du kannst Spielerwerte nicht nicht auswählen, wenn dies dazu führt, dass ein Spieler anschliessend einen um mehr als 2 Punkte höheren Wert hat als er als Startwert hat.
+    <br><br>
+
+    <i>Frage:</i>
+    Ich habe eine Begegnung mit falschen Daten gespeichert, und jetzt hat OBBLM eine neue Begegnung mit den falschen Teilnehmern erstellt. Wie korrigiere ich dies?<br>
+    <i>Antwort:</i>
+    Zuerst löschst du die falsch angelegte Begegnung, und dann speicherst du das alte Spiel erneut mit den korrigierten Daten, und das folgende Spiel wird wieder korrekt angelegt.
+    <br><br>
+    
+    <i>Frage:</i>
+    Ich kann die -1 Fan Faktor in einem Spielbericht nicht speichern?<br>
+    <i>Antwort:</i>
+    OBBLM verweigert das Speichern eines Fan Faktor von kleiner als 0.
+    <br><br>
+    
+    <i>Frage:</i>
+    Die Preise für Re-rolls sind nicht mehr verdoppelt?<br>
+    <i>Antwort:</i>
+    Hast du die Einstellung "static re-rolls prices" eingeschaltet? 
+    Wenn dies nicht der Fall ist, liegt es daran, das in deiner Liga ein neues Turnier angelegt wurde in dem noch keine Begegnungen gespielt wurden. Die Preise für Re-Rolls werden wieder verdoppelt, sobald die erste Begegnung eingetragen worden ist.
+    <br><br>
+    
+    <i>Frage:</i>
+    Einer meiner Spieler, der tot war ist plötzlich wieder lebendig. Was kann ich tun um dies zu korrigieren?<br>
+    <i>Antwort:</i>
+    Speichere das Spiel in dem er gestorben ist erneut.
+    <br><br>
+                    
+    <i>Frage:</i>
+    Ich sehe auf den Spielberichteseiten nur Felder für inducements Starspieler und Söldner, Wo sind die anderen?<br>
+    <i>Antwort:</i>
+    Solche Felder existieren bisher nicht. Du kannst diese Informationen aber in den Details zu einer Begegnung eintragen.
+    <br><br>
+    
+    <i>Frage:</i>
+    Ich habe Schwierigkeiten beim Upload von Bildern. Wie kann ich dieses Problem beheben?<br>
+    <i>Antwort:</i>
+    OBBLM unterstützt nur .gif, .jpg, .jpeg und .png Dateien. Du hast immernoch Probleme? Benutze Mozilla als Browser.
+    <br><br>
+
+    <i>Frage:</i>
+    Nachdem ich einen Journeyman angeheuert habe, bleibt er auf meinem Roster obwohl er schon an einer Begegnung teilnehmen hat. Warum ist dies so?<br>
+    <i>Antwort:</i>
+    OBBLM feurt Journeymen nicht automatisch nach Ihrer ersten Begegnung. Du must dies genauso wie bei normalen Spielern auf der Mannschaftsseite tun.
+    <br><br>
+
+    <i>Frage:</i>
+    Ich möchte mein eigenes Turnier Ranglistensystem erstellen. Wie kann ich das tun?<br>
+    <i>A:</i>
+    Bitte verwende die <i>settings.php</i> Datei.
+    <br><br>
+
+    <i>Frage:</i>
+    Wie kann ich alle Spieler so heilen das sie nicht die nächste Begegnung verpassen (MNG)?<br>
+    <i>Antwort:</i>
+    Öffne einfach den Spielreport der letzten Begegnung der Mannschaft, und weise die Verletzungen als Verletzungen durch Alterung des Spielers aus, da Spieler durch diese Verletzungen nicht die nächste Begegnung verpassen (MNG).
+    ]]>
+    </faq_txt>
+</about>
+
+<!-- NOTE: Translation is NOT supplied for ring 0 (admin, not commisioner) pages. -->
+<admin>
+    <!-- Common -->
+    <prefixes>Die Präfixe + und - bedeuten "Am Wenigsten" und "Am Meisten"</prefixes>
+
+    <!-- Subsec: Schedule matches -->
+    <schedule>
+        <help>
+        <![CDATA[
+            <b>Beim Ansetzen von Begegnungen ist Folgendes zu beachten:</b><br>
+            - Es muss zuerst eine Liga mit einer oder mehr Divisionen angelegt werden, bevor Turniere angelegt werden können (in diesen werden dann die Spiele angesetzt).<br>
+            - Es können mehrere Turniere paralell stattfinden.<br>
+            - Begegnungen müssen NICHT in der vorgeshenen Reihenfolge gespielt werden. Tatsächlich können die Begegnungen in jeder Reihenfolge gespielt werden.<br>
+            <br>
+            <b>Round-Robin (RR) Planung</b>:<br>
+                Bei einem RR Turnier each contestant meets every other contestant in turn.<br>
+                Der gesammte Satz an Begegnungen in der alle Wettbewerber gegeneinander <i>einmal</i> wird <i>bracket</i> genannt.<br>
+                Ein bracket besteht aus mehreren Runden denen jede Mannschaft <i>nur eine Begegnung</i> spielt.<br>
+                Ein bracket kann mehr als einmal in einem RR Turnier angelgt werden.<br>
+                Werden brackets mehrfach angelegt, werden Heim&mdash;Auswärts Paarungen jedes zweite Mal getauscht.<br>
+                Wenn eine ungleiche Anzahl an Mannschaften ausgewählt wird, erhällt jede Mannschaft pro bracket <i>ein</i> Freilos pro Runde.<br>
+            <br>
+            <b>Free For All (FFA) Planung</b>:<br>
+                Das Turniertyp FFA erlaubt es Begegnungen bei Bedarf anzusetzen.<br>
+                Es können entweder bereits angesetzte Begegnungen einem neuen Turnier oder einem add bestehenden FFA Turnier hinzugefügt werden.<br>
+                Wenn nur zwei Teams ausgewählt werden, wird die Begegnung so angelegt, dass die erste Mannschaft das Heimrecht erhält.<br>
+                Wenn mehrer Mannschaften ausgewählt werden, wird die Liste der Mannschaften gemischt und zufällige Heim&mdash;Auswärts Paarung generiert.<br>
+                Es kann nur eine gerade Anzahl an Mannschaften ausgewählt werden.<br>
+                Der FFA Turniertyp kann auch für ein KO Turnier und andere Turniertypen genutzt werden, indem die Begegnungen manuell angelegt werden.<br>
+        ]]>
+        </help>
+        <create_LD>Bitte lege eine Liga + eine oder mehrere Divisionen an, bevor du Begegnungen ansetzt</create_LD>
+        <tour_name>Turniername</tour_name>
+        <rank_sys>Ranglistensystem</rank_sys>
+        <tour_type>Turniertyp</tour_type>
+        <add_team>Mannschaft hinzufügen</add_team>
+        <teams_selected>Ausgewählte Mannschaften</teams_selected>
+        <!-- Tour Types (TT) -->
+            <TT_FFA><![CDATA[FFA <i>(Free For All a.k.a. "Offenes Ligaformat")</i>]]></TT_FFA>
+            <TT_RR>Round-Robin</TT_RR>
+        <!-- RR -->
+            <RR_settings>Round-Robin Einstellungen</RR_settings>
+            <rrobin_rnds><![CDATA[<b>Jedes bracket N-mal anlegen:</b>]]></rrobin_rnds>
+        <!-- FFA -->
+            <FFA_settings>FFA Einstellunegn</FFA_settings>
+            <add_match>Begegnung ... hinzufügen</add_match>
+                <new_tour>Ein neues FFA Turnier</new_tour>
+            <as_type>Als Typ...</as_type>
+    </schedule>
+</admin>
+
+</de>
+
 </translations>
