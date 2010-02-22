@@ -256,7 +256,7 @@ private function _handleActions($ALLOW_EDIT)
     }
 
     // Administrator tools used?
-    if ($coach->admin) {
+    if ($coach->isNodeCommish(T_NODE_LEAGUE, $team->f_lid)) {
 
         switch ($_POST['type']) {
             
@@ -1147,7 +1147,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
             </div>
         </div>
         <?php
-        if ($coach->admin) {
+        if ($coach->isNodeCommish(T_NODE_LEAGUE, $team->f_lid)) {
             ?>
             <div class="boxTeamPage">
                 <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>"><?php echo $lng->getTrn('profile/team/box_admin/title');?></div>

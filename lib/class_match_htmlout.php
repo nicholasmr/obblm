@@ -61,7 +61,7 @@ public static function tourMatches()
     if (!isset($trid) || !in_array($trid, array_keys($tours))) { # Not set or not viewable -> deny access.
         fatal('Invalid tournament ID.');
     }
-    $IS_LOCAL_ADMIN = (is_object($coach) && $leagues[$divisions[$tours[$trid]['f_did']]['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN);
+    $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, (int) $trid));
     
     // Admin actions made?
     if (isset($_GET['action']) && $IS_LOCAL_ADMIN) {

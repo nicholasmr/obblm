@@ -58,7 +58,7 @@ public static function profile($pid)
     $team = new Team($p->owned_by_team_id);
 
     /* Argument(s) passed to generating functions. */
-    $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->admin) && !$team->is_retired);
+    $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->isNodeCommish(T_NODE_LEAGUE, $team->f_lid)) && !$team->is_retired);
     
     /* Player pages consist of the output of these generating functions. */
     $p->_handleActions($ALLOW_EDIT); # Handles any actions/request sent.

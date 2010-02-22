@@ -111,7 +111,7 @@ public static function profile($cid) {
 
     global $lng, $coach;
     $c = new self($cid);
-    $ALLOW_EDIT = (is_object($coach) && ($c->coach_id == $coach->coach_id || $coach->admin)); # Coach (or admin) visting own profile?
+    $ALLOW_EDIT = (is_object($coach) && ($c->coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_COACH, $c->coach_id))); # Coach (or admin) visting own profile?
 
     title($c->name);
     echo "<hr>";
