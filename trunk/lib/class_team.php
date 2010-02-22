@@ -34,6 +34,8 @@ class Team
     public $name              = '';
     public $owned_by_coach_id = 0;
     public $f_race_id         = 0;
+    public $f_lid             = 0;
+    public $f_did             = 0;
     public $f_rname           = '';
     public $f_cname           = '';
     public $treasury          = 0;
