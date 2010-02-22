@@ -653,6 +653,31 @@ class cyanide {
 		}
 		return $out;
 	}
+	public function get_player_level($int){
+		switch($int) {
+			case ($int > 175):
+				return 7;
+				break;
+			case ($int > 75):
+				return 6;
+				break;
+			case ($int >50):
+				return 5;
+				break;
+			case ($int > 30):
+				return 4;
+				break;
+			case ($int > 15):
+				return 3;
+				break;
+			case ($int > 5):
+				return 2;
+				break;
+			case ($int < 6):
+				return 1;
+				break;
+		}
+	}
 	public function add_player_to_array($id,$strName,$idPlayer_Types,$idTeam_Listing,$idRaces,$iSkinTextureVariant,$fAgeing_real,$iNumber,$MV,$ST,$AG,$AV,$idPlayer_Levels,$iExperience,$iSalary,$iValue) {
 		$data = array(
 			"ID" => $id,
