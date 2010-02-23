@@ -21,6 +21,8 @@ $settings['entries'] = array(
 $settings['fp_standings'] = array();
 $settings['fp_leaders'] = array();
 
+$settings['fp_boxes_order'] = array('standings', 'latestgames', 'leaders');
+
 $settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
 $settings['show_stars_mercs']      = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.
 $settings['fp_team_news']          = true;  // Default is true. Show team news on front page.
