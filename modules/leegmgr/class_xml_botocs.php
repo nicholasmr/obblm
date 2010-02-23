@@ -127,8 +127,8 @@ class XML_BOTOCS implements ModuleInterface
                 $this->obblm_team['players'][$p->nr]['ST']			= $p->st;
                 $this->obblm_team['players'][$p->nr]['AG']			= $p->ag;
                 $this->obblm_team['players'][$p->nr]['AV']			= $p->av;
-                $this->obblm_team['players'][$p->nr]['Level']		= 5;
-                $this->obblm_team['players'][$p->nr]['SPP']		= $p->mv_spp;
+                $this->obblm_team['players'][$p->nr]['Level']		= FALSE;
+                $this->obblm_team['players'][$p->nr]['SPP']		      = $p->mv_spp;
                 $this->obblm_team['players'][$p->nr]['COST']		= 0;
                 $this->obblm_team['players'][$p->nr]['VALUE']		= $p->value / 1000;
 
