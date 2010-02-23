@@ -655,6 +655,9 @@ class cyanide {
 	}
 	public function get_player_level($int){
 		switch($int) {
+			case ($int === 0):
+				return 1;
+				break;
 			case ($int > 175):
 				return 7;
 				break;
