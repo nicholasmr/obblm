@@ -681,6 +681,8 @@ class cyanide {
 	public function add_player_to_array($id,$strName,$idPlayer_Types,$idTeam_Listing,$idRaces,$iSkinTextureVariant,$fAgeing_real,$iNumber,$MV,$ST,$AG,$AV,$idPlayer_Levels,$iExperience,$iSalary,$iValue) {
 		if($idPlayer_Levels == FALSE) {
 			$idPlayer_Levels = $this->get_player_level($iExperience);
+		} else {
+			$idPlayer_Levels = $idPlayer_Levels;
 		}
 		$data = array(
 			"ID" => $id,
@@ -727,6 +729,8 @@ class cyanide {
 			"bDead" => 0, // true false,, not needed since we handle death web side 
 			"strLevelUp" => '0'// Related to in game level up NA for obblm since level is handled web side 
 		);
+		echo "spp is : ".$iEperience;
+		echo "level is : ".$data['idPlayer_Levels'];
 		$this->players[$id] = $data;
 	}
 }
