@@ -732,8 +732,7 @@ class cyanide {
 			"bDead" => 0, // true false,, not needed since we handle death web side 
 			"strLevelUp" => '0'// Related to in game level up NA for obblm since level is handled web side 
 		);
-		echo "spp is : ".$iEperience;
-		echo "level is : ".$data['idPlayer_Levels'];
+		
 		$this->players[$id] = $data;
 	}
 }
