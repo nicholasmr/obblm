@@ -287,16 +287,30 @@ class cy_match_db {
 		$rr = $d1 + $d2 +$d3 ;
 		if ($win == true) {
 			if($rr > $cff) {
-				$this->homeff = $cff + 1;
+				$this->homeff = +1;
+			} else {
+				$this->homeff = 0;
 			}
 		} else {
-			if($rr < $cff) {
-				$this->homeff = $cff - 1;
+			if($this->winner == '') {
+				if ($rr > $cff) {
+					$this->homeff = +1;
+				} elseif ($rr < $cff) {
+					$this->homeff = -1;
+				} else {
+					$this->homeff = 0;
+				}
+			} else {
+				if($rr < $cff) {
+					$this->homeff = -1;
+				} else {
+					$this->homeff = 0;
+				}
 			}
 		}
 	}
 	private function set_away_ff_new() {
-		$cff = $this->awayff;
+	$cff = $this->awayff;
 		$d1  = rand(1,6);
 		$d2  = rand(1,6);
 		$win = false;
@@ -309,11 +323,25 @@ class cy_match_db {
 		$rr = $d1 + $d2 +$d3 ;
 		if ($win == true) {
 			if($rr > $cff) {
-				$this->awayff = $cff + 1;
+				$this->awayff = +1;
+			} else {
+				$this->awayff = 0;
 			}
 		} else {
-			if($rr < $cff) {
-				$this->awayff = $cff - 1;
+			if($this->winner == '') {
+				if ($rr > $cff) {
+					$this->awayff = +1;
+				} elseif ($rr < $cff) {
+					$this->awayff = -1;
+				} else {
+					$this->awayff = 0;
+				}
+			} else {
+				if($rr < $cff) {
+					$this->awayff = -1;
+				} else {
+					$this->awayff = 0;
+				}
 			}
 		}
 	}
@@ -326,6 +354,8 @@ class cy_match_db {
 				$players[$row['iNumber']]['ID'] = $row['ID'];
 				$players[$row['iNumber']]['nr'] = $row['iNumber'];
 				$players[$row['iNumber']]['name'] = $row['strName'];
+				$players[$row['iNumber']]['agn1'] = false;
+				$players[$row['iNumber']]['eps'] = array();
 				if($row['bStar'] >= 1) {
 					$players[$row['iNumber']]['star'] = true;
 				} else {
@@ -355,6 +385,7 @@ class cy_match_db {
 				$cas = "";
 				foreach ($this->_db_read->query($this->sql) as $cas) {
 						$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
+						
 				}
 				if(isset($cas['idPlayer_Casualty_Types'])){
 					$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
