@@ -307,10 +307,7 @@ private function _loadPlayers($DETAILED)
     // Filter players depending on settings and view mode.
     $tmp_players = array();
     foreach ($players as $p) {
-        if (
-            !$DETAILED && ($p->is_dead || $p->is_sold) ||
-            $DETAILED && !$settings['show_sold_journeymen'] && $p->is_journeyman && $p->is_sold
-            ) {
+        if (!$DETAILED && ($p->is_dead || $p->is_sold)) {
             continue;
         }
         array_push($tmp_players, $p);
@@ -419,7 +416,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
     
     /* If enabled add stars and summed mercenaries entries to the roster */
     
-    if ($DETAILED && $settings['show_stars_mercs']) {
+    if ($DETAILED) {
     
         $stars = array();
         foreach (Star::getStars(STATS_TEAM, $team->team_id, false, false) as $s) {

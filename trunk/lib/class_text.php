@@ -102,7 +102,7 @@ class TextSubSys
         return mysql_query($query);
     }
     
-    public static function getMainBoardMessages($n, $lid = false) 
+    public static function getMainBoardMessages($n, $lid = false, $get_tnews = true, $get_summaries = true) 
     {
         global $settings;
         $board = array();
@@ -124,24 +124,26 @@ class TextSubSys
         }
 
         // Now we add all game summaries.
-        foreach (MatchSummary::getSummaries($n, $lid) as $r) {
-            $o = (object) array();
-            $m = new Match($r->match_id);
-            // Specific fields:
-            $o->date_mod  = $m->date_modified;
-            $o->match_id  = $m->match_id;
-            // General fields:
-            $o->cssidx    = T_HTMLBOX_INFO; // CSS box index
-            $o->type      = T_TEXT_MATCH_SUMMARY;
-            $o->author    = get_alt_col('coaches', 'coach_id', $m->submitter_id, 'name');
-            $o->title     = "Match: $m->team1_name $m->team1_score&mdash;$m->team2_score $m->team2_name";
-            $o->message   = $m->getText();
-            $o->date      = $m->date_played;
-            array_push($board, $o);
+        if ($get_summaries) {
+            foreach (MatchSummary::getSummaries($n, $lid) as $r) {
+                $o = (object) array();
+                $m = new Match($r->match_id);
+                // Specific fields:
+                $o->date_mod  = $m->date_modified;
+                $o->match_id  = $m->match_id;
+                // General fields:
+                $o->cssidx    = T_HTMLBOX_INFO; // CSS box index
+                $o->type      = T_TEXT_MATCH_SUMMARY;
+                $o->author    = get_alt_col('coaches', 'coach_id', $m->submitter_id, 'name');
+                $o->title     = "Match: $m->team1_name $m->team1_score&mdash;$m->team2_score $m->team2_name";
+                $o->message   = $m->getText();
+                $o->date      = $m->date_played;
+                array_push($board, $o);
+            }
         }
-
+        
         // And finally team news.
-        if ($settings['fp_team_news']) {
+        if ($get_tnews) {
             foreach (TeamNews::getNews(false, $n, $lid) as $t) {
                 $o = (object) array();
                 // Specific fields:

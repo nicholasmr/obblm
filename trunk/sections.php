@@ -118,7 +118,7 @@ function sec_main() {
      *  Was any main board actions made?
      */
 
-    if (isset($_POST['type']) && is_object($coach) && ($IS_GLOBAL_ADMIN || isset($leagues[$sel_lid]) && $leagues[$sel_lid]['ring'] == Coach::T_RING_LOCAL_ADMIN)) {
+    if (isset($_POST['type']) && is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $sel_lid)) {
         if (get_magic_quotes_gpc()) {
             if (isset($_POST['title'])) $_POST['title'] = stripslashes($_POST['title']);
             if (isset($_POST['txt']))   $_POST['txt']   = stripslashes($_POST['txt']);
@@ -154,7 +154,7 @@ function sec_main() {
             echo $HTML_LeagueSelector;
             echo "</div>\n";
             echo "<div class='main_leftColumn_right'>\n";
-            if (is_object($coach) && ($leagues[$sel_lid]['ring'] == Coach::T_RING_LOCAL_ADMIN || $coach->ring == Coach::T_RING_GLOBAL_ADMIN)) {
+            if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $sel_lid)) {
                 echo "<a href='javascript:void(0);' onClick=\"slideToggle('msgnew');\">".$lng->getTrn('main/newmsg')."</a>&nbsp;\n";
             }
             if (Module::isRegistered('RSSfeed')) {echo "<a href='handler.php?type=rss'>RSS</a>\n";}
@@ -185,7 +185,7 @@ function sec_main() {
             To generate this table we create a general array holding the content of both.
         */
         $j = 1;
-        foreach (TextSubSys::getMainBoardMessages($settings['entries']['messageboard'], $sel_lid) as $e) {
+        foreach (TextSubSys::getMainBoardMessages($settings['fp_messageboard']['length'], $sel_lid, $settings['fp_messageboard']['show_team_news'], $settings['fp_messageboard']['show_match_summaries']) as $e) {
             echo "<div class='boxWide'>\n";
                 echo "<h3 class='boxTitle$e->cssidx'>$e->title</h3>\n";
                 echo "<div class='boxBody'>\n";
@@ -238,129 +238,146 @@ function sec_main() {
     </div>
     <?php
     MTS('Board messages generated');
+    
     /*
-        Right column optionally (depending on settings.php) contains standings, latest game results, touchdown and casualties stats.
+        The right hand side column optionally (depending on settings) contains standings, latest game results, touchdown and casualties stats.
         We will now generate the stats, so that they are ready to be printed in correct order.
     */
-    ?>
-    <div class='main_rightColumn'>
-
-    <?php
-    foreach ($settings['fp_boxes_order'] as $boxType) {
     
-    switch ($boxType) {
+    echo "<div class='main_rightColumn'>\n";
+    $boxes_ordered = array();
+    $boxes_unordered = array_merge($settings['fp_standings'], $settings['fp_leaders'], $settings['fp_latestgames']);
+    foreach (range(1, count($boxes_unordered)) as $i) {
+        foreach ($boxes_unordered as $box) {
+            if ($box['box_ID'] != $i) {
+                continue;
+            }
+            # These fields distinguishes the box types.
+            else if (isset($box['fields'])) {$box['dispType'] = 'standings';}
+            else if (isset($box['field']))  {$box['dispType'] = 'leaders';}
+            else if (isset($box['type']))   {$box['dispType'] = 'latestgames';}
+            $boxes_ordered[] = $box;
+        }
+    }
+
+    // Used in the below standings dispType boxes.
+    global $core_tables, $ES_fields;
+    $_MV_COLS = array_merge(array_keys($core_tables['mv_teams']), array_keys($ES_fields));
+    
+    // Let's print those boxes!
+    foreach ($boxes_ordered as $box) {
+    
+    switch ($box['dispType']) {
         
         case 'standings':
-        
-            global $core_tables, $ES_fields;
-            $_MV_COLS = array_merge(array_keys($core_tables['mv_teams']), array_keys($ES_fields));
-            
-            foreach ($settings['fp_standings'] as $trid => $opts) {
-                if (!get_alt_col('tours', 'tour_id', $trid, 'tour_id'))
-                    continue;
-                    
-                $tour = new Tour($trid);
-                $teams = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour->tour_id), $opts['length'], $tour->getRSSortRule(), false);
-                ?>
-                <div class='boxWide'>
-                    <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $opts['title'];?></h3>
-                    <div class='boxBody'>
-                        <table class="boxTable">
-                            <?php
+            if (!get_alt_col('tours', 'tour_id', $box['id'], 'tour_id')) {
+                break;
+            }
+                
+            $tour = new Tour($box['id']);
+            $teams = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour->tour_id), $box['length'], $tour->getRSSortRule(), false);
+            ?>
+            <div class='boxWide'>
+                <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
+                <div class='boxBody'>
+                    <table class="boxTable">
+                        <?php
+                        echo "<tr>\n";
+                        foreach ($box['fields'] as $title => $f) {
+                            echo "<td><i>$title</i></td>\n";
+                        }
+                        echo "</tr>\n";
+                        foreach ($teams as $t) {
                             echo "<tr>\n";
-                            foreach ($opts['fields'] as $title => $f) {
-                                echo "<td><i>$title</i></td>\n";
+                            foreach ($box['fields'] as $title => $f) {
+                                if (in_array($f, $_MV_COLS)) {
+                                    $f = 'mv_'.$f;
+                                }
+                                echo "<td>";
+                                if ($settings['fp_links'] && $f == 'name')
+                                    echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t['team_id'],false,false)."'>$t[name]</a>";
+                                elseif (is_numeric($t[$f]) && !ctype_digit($t[$f]))
+                                    echo sprintf('%1.2f', $t[$f]);
+                                else
+                                    echo $t[$f];
+                                echo "</td>\n";
                             }
                             echo "</tr>\n";
-                            foreach ($teams as $t) {
-                                echo "<tr>\n";
-                                foreach ($opts['fields'] as $title => $f) {
-                                    if (in_array($f, $_MV_COLS)) {
-                                        $f = 'mv_'.$f;
-                                    }
-                                    echo "<td>";
-                                    if ($settings['fp_links'] && $f == 'name')
-                                        echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t['team_id'],false,false)."'>$t[name]</a>";
-                                    elseif (is_numeric($t[$f]) && !ctype_digit($t[$f]))
-                                        echo sprintf('%1.2f', $t[$f]);
-                                    else
-                                        echo $t[$f];
-                                    echo "</td>\n";
-                                }
-                                echo "</tr>\n";
-                            }
-                            ?>
-                        </table>
-                    </div>
+                        }
+                        ?>
+                    </table>
                 </div>
-                <?php
-            }
-            MTS('Standings tables generated');
+            </div>
+            <?php
+            MTS('Standings table generated');
             break;
             
         case 'latestgames':
     
-            if ($settings['entries']['latestgames'] != 0) {
-                ?>
-                <div class="boxWide">
-                    <h3 class='boxTitle1'><?php echo $lng->getTrn('common/recentmatches');?></h3>
-                    <div class='boxBody'>
-                        <table class="boxTable">
-                            <tr>
-                                <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
-                                <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td><td> </td>
-                            </tr>
-                            <?php
-                            foreach (Match::getMatches($settings['entries']['latestgames'], T_NODE_LEAGUE, $sel_lid, false) as $m) {
-                                $home   = ($m->stadium == $m->team1_id) ? 'team1' : 'team2';
-                                $guest  = ($home == 'team1') ? 'team2' : 'team1';
-                                echo "<tr valign='top'>\n";
-                                echo "<td style='text-align: right;'>" . $m->{"{$home}_name"} . "</td>\n";
-                                echo "<td><nobr>" . $m->{"${home}_score"} . "&mdash;" . $m->{"${guest}_score"} . "</nobr></td>\n";
-                                echo "<td style='text-align: left;'>" . $m->{"${guest}_name"} . "</td>\n";
-                                echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
-                                echo "</tr>";
-                            }
-                            ?>
-                        </table>
-                    </div>
-                </div>
-                <?php
+            if ($box['length'] <= 0) {
+                break;
             }
-            MTS('Latest matches table generated');
+            ?>
+            <div class="boxWide">
+                <h3 class='boxTitle1'><?php echo $box['title'];?></h3>
+                <div class='boxBody'>
+                    <table class="boxTable">
+                        <tr>
+                            <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
+                            <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td><td> </td>
+                        </tr>
+                        <?php
+                        switch ($box['type']) {
+                            case 'league':     $_type = T_NODE_LEAGUE; break;
+                            case 'division':   $_type = T_NODE_DIVISION; break;
+                            case 'tournament': $_type = T_NODE_TOURNAMENT; break;
+                            default: $_type = T_NODE_LEAGUE;
+                        }
+                        foreach (Match::getMatches($box['length'], $_type, $box['id'], false) as $m) {
+                            $home   = ($m->stadium == $m->team1_id) ? 'team1' : 'team2';
+                            $guest  = ($home == 'team1') ? 'team2' : 'team1';
+                            echo "<tr valign='top'>\n";
+                            echo "<td style='text-align: right;'>" . $m->{"{$home}_name"} . "</td>\n";
+                            echo "<td><nobr>" . $m->{"${home}_score"} . "&mdash;" . $m->{"${guest}_score"} . "</nobr></td>\n";
+                            echo "<td style='text-align: left;'>" . $m->{"${guest}_name"} . "</td>\n";
+                            echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
+            <?php
+            MTS('Latest matche table generated');
             break;
     
         case 'leaders':
         
-            foreach ($settings['fp_leaders'] as $trid => $boxes) {
-                foreach ($boxes as $f => $opts) {
-                    $f = 'mv_'.$f;
-                    $players = Stats::getRaw(T_OBJ_PLAYER, array(T_NODE_TOURNAMENT => $trid), $opts['length'], array('-'.$f), false)
-                    ?>
-                    <div class="boxWide">
-                        <h3 class='boxTitle1'><?php echo $opts['title'];?></h3>
-                        <div class='boxBody'>
-                            <table class="boxTable">
-                                <tr>
-                                    <td width="100%"><i><?php echo $lng->getTrn('common/name');?></i></td>
-                                    <td><i>#</i></td>
-                                    <td><i><?php echo $lng->getTrn('common/value');?></i></td>
-                                </tr>
-                                <?php
-                                foreach ($players as $p) {
-                                    echo "<tr>\n";
-                                    echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p['player_id'],false,false)."'>$p[name]</a>" : $p['name'])."</td>\n";
-                                    echo "<td>".$p[$f]."</td>\n";
-                                    echo "<td>".$p['value']/1000 ."k</td>\n";
-                                    echo "</tr>";
-                                }
-                                ?>
-                            </table>
-                        </div>
-                    </div>
-                    <?php
-                }
-            }
+            $f = 'mv_'.$box['field'];
+            $players = Stats::getRaw(T_OBJ_PLAYER, array(T_NODE_TOURNAMENT => $box['id']), $box['length'], array('-'.$f), false)
+            ?>
+            <div class="boxWide">
+                <h3 class='boxTitle1'><?php echo $box['title'];?></h3>
+                <div class='boxBody'>
+                    <table class="boxTable">
+                        <tr>
+                            <td width="100%"><i><?php echo $lng->getTrn('common/name');?></i></td>
+                            <td><i>#</i></td>
+                            <td><i><?php echo $lng->getTrn('common/value');?></i></td>
+                        </tr>
+                        <?php
+                        foreach ($players as $p) {
+                            echo "<tr>\n";
+                            echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p['player_id'],false,false)."'>$p[name]</a>" : $p['name'])."</td>\n";
+                            echo "<td>".$p[$f]."</td>\n";
+                            echo "<td>".$p['value']/1000 ."k</td>\n";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
+            <?php
             MTS('Leaders standings generated');
             break;
     }

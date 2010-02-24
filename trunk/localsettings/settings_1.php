@@ -3,26 +3,44 @@
 /*************************
  * Local settings for league with ID = 1
  *************************/
+ 
+/* General */
 
 $settings['league_name'] = 'Placeholder title for league with ID = 1'; // Name of the site or the league name if only one league is being managed.
-$settings['forum_url'] = 'http://localhost'; // URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
-$settings['stylesheet'] = 1;                 // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
-$settings['lang'] = 'en-GB';                 // Deafult language. Existing: en-GB, es, de.
-$settings['welcome'] = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league greeting message for the league with ID = 1';
-$settings['rules'] = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
+$settings['forum_url']   = 'http://localhost'; // URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
+$settings['stylesheet']  = 1;                  // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
+$settings['lang']        = 'en-GB';            // Default language. Existing: en-GB, es, de.
+$settings['fp_links']    = true;               // Default is true. Generate coach, team and player links on the front page?
+$settings['welcome']     = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league greeting message for the league with ID = 1';
+$settings['rules']       = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
 
-$settings['entries'] = array(
-    'messageboard'      => 5,   // Number of entries on the front page (FP) messageboard.
-    'latestgames'       => 5,   // Number of entries on the front page (FP) table "latest games".
-    'standings_players' => 30,  // Number of entries on the general players stadings table.
-    'standings_teams'   => 30,  // Number of entries on the general teams   stadings table.
-    'standings_coaches' => 30,  // Number of entries on the general coaches stadings table.
-);
+/* Standings pages */
 
-// Front Page (FP) tournament standings boxes
+$settings['standings']['length_players'] = 30;  // Number of entries on the general players standings table.
+$settings['standings']['length_teams']   = 30;  // Number of entries on the general teams   standings table.
+$settings['standings']['length_coaches'] = 30;  // Number of entries on the general coaches standings table.
+
+/* Front page messageboard */
+
+$settings['fp_messageboard']['length']               = 5;    // Number of entries on the front page message board.
+$settings['fp_messageboard']['show_team_news']       = true; // Default is true. Show team news on the front page message board.
+$settings['fp_messageboard']['show_match_summaries'] = true; // Default is true. Show match summaries on the front page message board.
+
+/*
+    The below settings define which boxes to show on the right side of the front page.
+    
+    Note, every box MUST have a unique 'box_ID' number.
+    The box IDs are used to determine the order in which the boxes are shown on the front page.
+    The box with 'box_ID' = 1 is shown at the top of the page, the box with 'box_ID' = 2 is displayed underneath it and so forth.
+*/
+
+/* Front page tournament standings boxes */
+
 $settings['fp_standings'] = array(
-    # This will display a standings box of the top 6 teams in tournament with ID = 1.
-    1 => array(
+    # This will display a standings box of the top 6 teams in tournament with ID = 1
+    array(
+        'id'     => 1,
+        'box_ID' => 1,
         'title'  => 'Tournament 1 standings',
         'length' => 6,
         # Format: "Displayed table column name" => "OBBLM field name".
@@ -30,29 +48,40 @@ $settings['fp_standings'] = array(
     ),
 );
 
-// Front Page (FP) leaders boxes
+/* Front page leaders boxes */
+
 $settings['fp_leaders'] = array(
-    /* 
-        Note, you can NOT make expressions out of leader fields e.g.:
-            'cas+td' => array('title' => 'Most CAS+TD', 'length' => 5)
-    */
-    
-    # This will display the below player leaders boxes for the tournament with ID = 1.
-    1 => array(
-        'cas' => array('title' => 'Tournament 1 most casualties',  'length' => 5),
-        'td'  => array('title' => 'Tournament 1 most touchdowns',  'length' => 5),
-        'cp'  => array('title' => 'Tournament 1 most completions', 'length' => 5),
-        'ki'  => array('title' => 'Tournament 1 most killed',      'length' => 5),
-    )
+    # Please note: You can NOT make expressions out of leader fields e.g.: 'field' => 'cas+td'
+    # This will display a 'most CAS' player leaders box for the tournament with ID = 1
+    array(
+        'id'     => 1,
+        'box_ID' => 3,
+        'title'  => 'Tournament ID=1 most casualties',  
+        'field'  => 'cas',
+        'length' => 5,
+    ),
+    # This will display a 'most TD' player leaders box for the tournament with ID = 2
+    array(
+        'id'     => 2,
+        'box_ID' => 4,
+        'title'  => 'Tournament ID=2 most touchdowns',  
+        'field'  => 'td',
+        'length' => 5,
+    ),
 );
 
-// This is the order in which the right side boxes of the front page are displayed.
-$settings['fp_boxes_order'] = array('standings', 'latestgames', 'leaders');
+/* Front page latest games boxes */
 
-$settings['show_sold_journeymen']  = true;  // Default is true. Show sold journeymen on rosters in detailed view mode.
-$settings['show_stars_mercs']      = true;  // Default is true. Show summed up stats for earlier hired star players and mercenaries on rosters in detailed view mode.
-$settings['fp_team_news']          = true;  // Default is true. Show team news on front page.
-$settings['fp_links']              = true;  // Default is true. Generate coach, team and player links on the front page?
-$settings['hide_retired']		   = false; // Default is false. Hides retired coaches and teams from standings tables.
+$settings['fp_latestgames'] = array(
+    # This will display a latest games box for the node (league, division or tournament) with ID = 1
+    array(
+        'id'     => 1,
+        'box_ID' => 2,
+        // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
+        'type'   => 'league', # This sets the node to be a league. I.e. this will make a latest games box for the league with ID = 1
+        'title'  => 'Recent games for league ID = 1',
+        'length' => 5,
+    ),
+);
 
 ?>
