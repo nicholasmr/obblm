@@ -355,7 +355,7 @@ class cy_match_db {
 				$players[$row['iNumber']]['nr'] = $row['iNumber'];
 				$players[$row['iNumber']]['name'] = $row['strName'];
 				$players[$row['iNumber']]['agn1'] = false;
-				$players[$row['iNumber']]['eps'] = array();
+				$players[$row['iNumber']]['EPS'] = array();
 				if($row['bStar'] >= 1) {
 					$players[$row['iNumber']]['star'] = true;
 				} else {
@@ -403,7 +403,7 @@ class cy_match_db {
 				$players[$row['iNumber']]['nr'] = $row['iNumber'];
 				$players[$row['iNumber']]['name'] = $row['strName'];
 				$players[$row['iNumber']]['agn1'] = false;
-				$players[$row['iNumber']]['eps'] = array();
+				$players[$row['iNumber']]['EPS'] = array();
 				if($row['bStar'] >= 1) {
 					$players[$row['iNumber']]['star'] = true;
 				} else {
