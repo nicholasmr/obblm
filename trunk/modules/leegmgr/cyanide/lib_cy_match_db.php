@@ -261,7 +261,7 @@ class cy_match_db {
 		$d1 = rand(1,6);
 		$cash = ($d1 + $this->homefame) *10000;
 		if( ($this->winner == $this->hometeam) OR $this->winner == '') {
-			$cash = $chash + 10000;
+			$cash = $cash + 10000;
 		}
 		$this->homewinnings = $cash;
 	}
