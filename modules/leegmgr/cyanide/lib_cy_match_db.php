@@ -269,7 +269,7 @@ class cy_match_db {
 		$d1 = rand(1,6);
 		$cash = ($d1 + $this->awayfame) *10000;
 		if( ($this->winner == $this->awayteam) OR $this->winner == '') {
-			$cash = $chash + 10000;
+			$cash = $cash + 10000;
 		}
 		$this->awaywinnings = $cash;
 	}
