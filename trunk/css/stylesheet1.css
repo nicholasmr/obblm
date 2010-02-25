@@ -70,11 +70,11 @@ div.boxCoachPage        {float: left; width: 270px; margin: 15px; margin-bottom:
 div.boxTeamPage         {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
 div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 
-.boxTitle1 {background-color: #6699FF; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Team/player/coach/match/etc. info, news, etc. */
-.boxTitle2 {background-color: #99CC99; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Management/actions/more box for ordinary coaches */
+.boxTitle1 {background-color: #6699FF; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Team/player/coach info & team news */
+.boxTitle2 {background-color: #e0a040; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Management/actions/more box for ordinary coaches */
 .boxTitle3 {background-color: #FFBB33; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Management/actions/more box for ordinary admins */
-.boxTitle4 {background-color: #6699FF; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Statistics */
-.boxTitle5 {background-color: #C0C0C0; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Other type */
+.boxTitle4 {background-color: #E87D7D; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Statistics (standings, player leaders, ES) */
+.boxTitle5 {background-color: #99CC99; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Match summaries & recent games */
 .boxBody   {border-top: 1px solid #545454; padding: 10px;}
 table.boxTable {border-spacing: 5px; width: 100%;}
 

@@ -74,7 +74,7 @@ define('T_HTMLBOX_INFO',  1);
 define('T_HTMLBOX_COACH', 2);
 define('T_HTMLBOX_ADMIN', 3);
 define('T_HTMLBOX_STATS', 4);
-define('T_HTMLBOX_OTHER', 5);
+define('T_HTMLBOX_MATCH', 5);
 
 /********************
  *  Dependencies

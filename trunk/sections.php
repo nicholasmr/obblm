@@ -322,7 +322,7 @@ function sec_main() {
             }
             ?>
             <div class="boxWide">
-                <h3 class='boxTitle1'><?php echo $box['title'];?></h3>
+                <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
@@ -360,7 +360,7 @@ function sec_main() {
             $players = Stats::getRaw(T_OBJ_PLAYER, array(T_NODE_TOURNAMENT => $box['id']), $box['length'], array('-'.$f), false)
             ?>
             <div class="boxWide">
-                <h3 class='boxTitle1'><?php echo $box['title'];?></h3>
+                <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
