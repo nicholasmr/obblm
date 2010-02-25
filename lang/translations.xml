@@ -171,7 +171,10 @@
     <remember>Remember me</remember>
     <loginbutton>Login</loginbutton>
     <forgotpass>Forgotten password?</forgotpass>
-    
+        <resetpasswdmail>You should receive an email shortly</resetpasswdmail>
+        <mismatch>Mismatch between login name and mail address</mismatch>
+        <temppasswd>Your password has temporarily been set to:</temppasswd>
+        <setnewpasswd>Please click here to change your password</setnewpasswd>
 </login>
 
 <main>

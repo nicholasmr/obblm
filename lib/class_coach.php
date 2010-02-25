@@ -332,7 +332,7 @@ class Coach
             return mysql_query("UPDATE coaches SET activation_code = '$AC' WHERE coach_id = $this->coach_id") ? $AC : false;
         }
         else {
-            return mysql_query("UPDATE coaches SET activation_code = NULL WHERE coach_id = $id");;
+            return mysql_query("UPDATE coaches SET activation_code = NULL WHERE coach_id = $this->coach_id");
         }
     }
     
@@ -342,30 +342,29 @@ class Coach
         $AC = $this->setActivationCode(true);
         mail($this->mail, 
         "$_SERVER[SERVER_NAME] password reset request",
-        "Hi $this->name, you have requested a new password at $_SERVER[SERVER_NAME].\nPlease follow this link which will log you on temporarily allowing you to set a new password.", 
+        "Hi $this->name, you have requested a new password at $_SERVER[SERVER_NAME].\nPlease follow this link which will log you on temporarily allowing YOU to set a new password: $_SERVER[SERVER_NAME]$_SERVER[REQUEST_URI]&cid=$this->coach_id&activation_code=$AC", 
         'From: noreply@'.$_SERVER['SERVER_NAME']."\r\n".'Reply-To: noreply@'.$_SERVER['SERVER_NAME']."\r\n".'X-Mailer: PHP/'.phpversion()
         );
+    }
+
+    public function confirmActivation($AC)
+    {
+        $query = "SELECT activation_code = '$AC' FROM coaches WHERE coach_id = $this->coach_id";
+        $result = mysql_query($query);
+        list($OK) = mysql_fetch_row($result);
+        if ($OK) {
+            $this->setRetired(false);
+            $this->setActivationCode(false);
+            $this->setPasswd($new_passwd = md5($AC)); # Scramble password.
+            self::login($this->coach_id, $new_passwd);
+            return $new_passwd;
+        }
+        return false;
     }
     
     /***************
      * Statics
      ***************/
-
-    public function confirmActivation($cname, $mail, $AC) 
-    {
-        $query = "SELECT mail = '$mail' AND activation_code = '$AC', coach_id, passwd FROM coaches WHERE name = '$cname'";
-        $result = mysql_query($query);
-        list($OK, $cid, $passwd) = mysql_fetch_row($result);
-        if ($OK) {
-            $c = new Coach($cid);
-            $c->setRetired(false);
-            $c->setActivationCode(false);
-            $c->setPasswd($new_passwd = md5($AC));
-            self::login($cid, $new_passwd);
-            return true;
-        }
-        return false;
-    }
 
     const NODE_STRUCT__TREE = 1;
     const NODE_STRUCT__FLAT = 2;
