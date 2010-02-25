@@ -348,6 +348,10 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             DECLARE status '.$core_tables['players']['status'].' DEFAULT NULL;
 
+            IF !EXISTS(SELECT f_match_id FROM match_data WHERE f_player_id = pid LIMIT 1) THEN
+                RETURN '.NONE.';
+            END IF;
+
             IF mid = -1 OR EXISTS(SELECT match_id FROM matches WHERE match_id = mid AND date_played IS NULL) THEN
                 SELECT inj INTO status FROM match_data, matches WHERE 
                     f_player_id = pid AND
@@ -412,7 +416,7 @@ public static function installProcsAndFuncs($install = true)
             DECLARE ret INT;
             DECLARE done INT DEFAULT 0;
             DECLARE mid '.$CT_cols[T_NODE_MATCH].';
-            DECLARE curA CURSOR FOR SELECT matches.match_id FROM matches WHERE matches.date_played IS NOT NULL ORDER BY matches.date_played ASC;
+            DECLARE curA CURSOR FOR SELECT matches.match_id FROM matches WHERE matches.date_played IS NOT NULL AND matches.match_id != '.T_IMPORT_MID.' ORDER BY matches.date_played ASC;
             DECLARE curB CURSOR FOR SELECT matches.match_id FROM matches WHERE matches.date_played IS NOT NULL AND matches.f_tour_id = trid ORDER BY matches.date_played ASC;
             DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
@@ -1026,7 +1030,7 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
-            DECLARE ach_ma,ach_st,ach_ag,ach_av, def_ma,def_st,def_ag,def_av '.$CT_cols['chr'].';
+            DECLARE ach_ma,ach_st,ach_ag,ach_av, def_ma,def_st,def_ag,def_av '.$CT_cols['chr'].' DEFAULT 0;
             DECLARE cnt_skills_norm, cnt_skills_doub TINYINT UNSIGNED;
             DECLARE extra_val '.$CT_cols['pv'].';
             DECLARE f_pos_id '.$CT_cols['pos_id'].';
@@ -1139,7 +1143,6 @@ public static function installProcsAndFuncs($install = true)
             '.$matches_wt_cnt.'
             '.$matches_streaks.'
             '.$matches_win_pct.'
-            '.$matches_pts. /* Must be last since the PTS field definition may else depend on other not yet calcualted fields. */ '
             IF played THEN
                 CALL syncELOTour(NULL);
                 CALL syncELOTour(trid);
@@ -1147,6 +1150,7 @@ public static function installProcsAndFuncs($install = true)
                 SET ret = syncELOMatch(NULL, mid);
                 SET ret = syncELOMatch(trid, mid);
             END IF;
+            '.$matches_pts. /* Must be last since the PTS field definition may else depend on other not yet calcualted fields. */ '
         END',
         
         /*
