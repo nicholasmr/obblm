@@ -132,7 +132,7 @@ class TextSubSys
                 $o->date_mod  = $m->date_modified;
                 $o->match_id  = $m->match_id;
                 // General fields:
-                $o->cssidx    = T_HTMLBOX_INFO; // CSS box index
+                $o->cssidx    = T_HTMLBOX_MATCH; // CSS box index
                 $o->type      = T_TEXT_MATCH_SUMMARY;
                 $o->author    = get_alt_col('coaches', 'coach_id', $m->submitter_id, 'name');
                 $o->title     = "Match: $m->team1_name $m->team1_score&mdash;$m->team2_score $m->team2_name";
