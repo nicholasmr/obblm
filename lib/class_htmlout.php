@@ -451,10 +451,30 @@ public static function standings($obj, $node, $node_id, array $opts)
     return (array_key_exists('return_objects', $opts) && $opts['return_objects']) ? array($objs, $sortRule) : true;
 }
 
+// We need this so that a new league's settings gets loaded on next page reload when set in the node selector.
+public static function updateNodeSelectorLeagueVars() 
+{
+    global $leagues;
+    
+    /* Simple league selector (SLS) */
+    $lids = array_keys($leagues);
+    if (isset($_POST['SLS_lid']) && in_array($_POST['SLS_lid'], $lids)) {
+        $_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
+        $_SESSION[self::T_NSStr__node_id] = (int) $_POST['SLS_lid'];
+    }
+    
+    /* Advanced node selector (ANS) */
+    if (isset($_POST['ANS'])) {
+        $_SESSION[self::T_NSStr__node] = (int) $_POST['node'];
+        $rel = array(T_NODE_TOURNAMENT => 'tour', T_NODE_DIVISION => 'division', T_NODE_LEAGUE => 'league');
+        $_SESSION[self::T_NSStr__node_id] = (int) $_POST[$rel[$_SESSION[self::T_NSStr__node]].'_in'];
+    }
+}
+
 const T_NSStr__node    = 'NS_node';
 const T_NSStr__node_id = 'NS_node_id';
 
-public static function simpleLeagueSelector(array $opts)
+public static function simpleLeagueSelector()
 {
     global $lng, $leagues, $coach, $settings;
     
@@ -462,10 +482,8 @@ public static function simpleLeagueSelector(array $opts)
     # Default league.
     $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], $lids)) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
     # Update league view?
-    if (isset($_POST['SLS_lid']) && in_array($_POST['SLS_lid'], $lids)) {
-        $sel_lid = (int) $_POST['SLS_lid'];
-    }
-    else if ($_lid = self::getSelectedNodeLid()) { 
+    # NOTE: Form selections updates of $_SESSION node vars are done via self::updateNodeSelectorLeagueVars().
+    if ($_lid = self::getSelectedNodeLid()) { 
         $sel_lid = $_lid;
     }
     # Save league view.
@@ -478,9 +496,6 @@ public static function simpleLeagueSelector(array $opts)
     }
     $HTMLselector .= "</select></form>\n";
     
-    if (isset($opts['loadLeagueSettings']) && $opts['loadLeagueSettings'])
-        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $sel_lid)); # Force load league settings.
-        
     return array($sel_lid, $HTMLselector);
 }
 
@@ -532,7 +547,7 @@ public static function nodeSelector(array $opts)
     
     // Defaults
     $def_node    = T_NODE_LEAGUE;
-    $def_node_id = (is_object($coach) && isset($coach->settings['home_lid'])) ? $coach->settings['home_lid'] : T_NODE_ALL;
+    $def_node_id = (is_object($coach) && isset($coach->settings['home_lid'])) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
     $def_state   = T_STATE_ALLTIME;
     $def_race    = T_RACE_ALL;
     $def_sgrp    = 'GENERAL';
@@ -540,16 +555,14 @@ public static function nodeSelector(array $opts)
     $def_ffilter_ineq  = self::T_NS__ffilter_ineq_gt;
     $def_ffilter_limit = '0';
 
-    $NEW = isset($_POST['select']);
+    $NEW = isset($_POST['ANS']);
     $_SESSION[$s_state] = ($NEW && $setState) ? (int) $_POST['state_in'] : (isset($_SESSION[$s_state]) ? $_SESSION[$s_state] : $def_state);
     $_SESSION[$s_race]  = ($NEW && $setRace)  ? (int) $_POST['race_in']  : (isset($_SESSION[$s_race])  ? $_SESSION[$s_race]  : $def_race);
     $_SESSION[$s_sgrp]  = ($NEW && $setSGrp)  ? $_POST['sgrp_in']        : (isset($_SESSION[$s_sgrp])  ? $_SESSION[$s_sgrp]  : $def_sgrp);
-    $_SESSION[$s_node]  = ($NEW)              ? (int) $_POST['node']     : (isset($_SESSION[$s_node])  ? $_SESSION[$s_node]  : $def_node);
-    $rel = array(T_NODE_TOURNAMENT => 'tour', T_NODE_DIVISION => 'division', T_NODE_LEAGUE => 'league');
-    $_SESSION[$s_node_id] = ($NEW) 
-        ? (int) $_POST[$rel[$_SESSION[$s_node]].'_in']
-        : (isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : $def_node_id);
-        
+    # NOTE: Form selections updates of $_SESSION node vars are done via self::updateNodeSelectorLeagueVars().
+    $_SESSION[$s_node]    = isset($_SESSION[$s_node]) ? $_SESSION[$s_node] : $def_node;
+    $_SESSION[$s_node_id] = isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : $def_node_id;
+
     $_SESSION[$s_ffilter_field] = ($NEW && $setFFilter) ? $_POST['ffilter_field_in'] : (isset($_SESSION[$s_ffilter_field]) ? $_SESSION[$s_ffilter_field] : $def_ffilter_field);
     $_SESSION[$s_ffilter_ineq]  = ($NEW && $setFFilter) ? $_POST['ffilter_ineq_in']  : (isset($_SESSION[$s_ffilter_ineq])  ? $_SESSION[$s_ffilter_ineq]  : $def_ffilter_ineq);
     $_SESSION[$s_ffilter_limit] = ($NEW && $setFFilter) ? $_POST['ffilter_limit_in'] : (isset($_SESSION[$s_ffilter_limit]) ? $_SESSION[$s_ffilter_limit] : $def_ffilter_limit);
@@ -668,6 +681,7 @@ public static function nodeSelector(array $opts)
     }
     ?>
     &nbsp;
+    <input type="hidden" name="ANS" value="1">
     <input type="submit" name="select" value="<?php echo $lng->getTrn('common/select');?>">
     </form>
     <script language="JavaScript" type="text/javascript">
