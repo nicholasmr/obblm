@@ -88,6 +88,8 @@ function setupGlobalVars($type, $opts = array()) {
         case T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS:
             // Local league settings exist?
             $file = "localsettings/settings_ID.php";
+            // Update selected node $_SESSION vars if node selector form submission made (will make HTMLOUT::getSelectedNodeLid(), below, catch the correct league straight as opposed to on second page reload).
+            HTMLOUT::updateNodeSelectorLeagueVars();
             // Selected
             if (isset($opts['lid']) && is_numeric($opts['lid'])) {
                 $id = $opts['lid'];

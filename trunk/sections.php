@@ -111,7 +111,7 @@ function sec_main() {
     
     MTS('Main start');
 
-    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector(array('loadLeagueSettings' => true));
+    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     $IS_GLOBAL_ADMIN = (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN);
     
     /*
@@ -449,7 +449,7 @@ function sec_rules() {
 
     global $lng, $settings;
     title($lng->getTrn('menu/rules'));
-    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector(array('loadLeagueSettings' => true));
+    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     echo $HTML_LeagueSelector;
     echo "<br><br>";
     echo $settings['rules'];
