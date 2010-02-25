@@ -31,34 +31,39 @@ function sec_login() {
 
     global $lng, $settings;
     
-/*    
-    NOT YET IMPLEMENTED !
-
     $_URL_forgotpass = "index.php?section=login&amp;forgotpass=1";
     if (isset($_GET['forgotpass'])) {
-        title($lng->getTrn('login/forgotpass'));
+        if (!isset($_POST['_retry'])) {
+            title($lng->getTrn('login/forgotpass'));
+        }
         if (isset($_GET['cid']) && isset($_GET['activation_code'])) {
-            
+            $c = new Coach($_GET['cid']);
+            status($new_passwd = $c->confirmActivation($_GET['activation_code']));
+            echo "<br><br>";
+            echo $lng->getTrn('login/temppasswd')." <b>$new_passwd</b><br>\n";
+            echo '<a href="'.urlcompile(T_URL_PROFILE,T_OBJ_COACH,$_GET['cid'],false,false).'&amp;subsec=profile">'.$lng->getTrn('login/setnewpasswd').'.</a>';
         }
         else if (isset($_POST['coach_AC']) && isset($_POST['email'])) {
             $cid = get_alt_col('coaches', 'name', $_POST['coach_AC'], 'coach_id');
             $c = new Coach($cid);
             $correct_user = ($c->mail == $_POST['email']);
-            status($correct_user, $correct_user ? '' : 'Mismatch between login name and mail address.');
+            status($correct_user, $correct_user ? '' : $lng->getTrn('login/mismatch'));
             if ($correct_user) {
                 $c->requestPasswdReset();
                 echo "<br><br>";
-                echo 'You should shortly recieve an email.';
+                echo $lng->getTrn('login/resetpasswdmail').'.';
             }
             else {
                 // Return to same page.
                 unset($_POST['coach']);
                 unset($_POST['email']);
+                $_POST['_retry'] = true;
                 sec_login();
             }
         }
         else {
             ?>
+            <br>
             <form method="POST" action="<?php echo $_URL_forgotpass;?>">
                 <b><?php echo $lng->getTrn('login/loginname');?></b><br>
                 <input type="text" name="coach_AC" size="20" maxlength="50">
@@ -72,8 +77,6 @@ function sec_login() {
         }       
     }
     else {
-*/
-    {
         title($lng->getTrn('menu/login'));
         ?>
         <div class='login'>
@@ -92,7 +95,7 @@ function sec_login() {
         </form>
         </div>
         <?php
-#        echo "<a href='$_URL_forgotpass'>".$lng->getTrn('login/forgotpass').'</a><br>';
+        echo "<a href='$_URL_forgotpass'>".$lng->getTrn('login/forgotpass').'</a><br>';
         if (Module::isRegistered('Registration') && $settings['allow_registration']) {
             echo "<br><a href='handler.php?type=registration'>Register</a>";
         }    
