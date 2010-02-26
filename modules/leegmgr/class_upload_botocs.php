@@ -113,8 +113,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
         if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
 
         $query = "UPDATE matches SET 
-            tcas2 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kills) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),
-            tcas1 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kills) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)
+            tcas2 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),
+            tcas1 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)
             WHERE match_id = $this->match_id";
 
         if ( !mysql_query( $query ) )
