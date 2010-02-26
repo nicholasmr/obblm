@@ -63,6 +63,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
     public $revUpdate = false;
     public $extrastats = false;
 
+    public $reporttype = "botocs";
+
 
     function __construct($userfile, $tour_id, $coach_id) {
 
@@ -75,8 +77,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $this->coach_id = $coach_id;
 
         if ( !$this->processFile() ) return false;
-        if ( !$this->valXML() ) return false;
-        if ( !$this->parse_results() ) return false;
+        if ( $this->reporttype == "botocs" )
+        {
+            if ( !$this->valXML() ) return false;
+            if ( !$this->parse_results() ) return false;
+        }
+        else if ( $this->reporttype == "cyanide" )
+            if ( !$this->parse_cy_results() ) return false;
         if ( !$this->checkCoach ( $this->hometeam ) && !$this->checkCoach ( $this->awayteam ) )
         {
             $this->error = "You must be the owner of one of the teams in the report to upload a match.";
@@ -106,8 +113,8 @@ class UPLOAD_BOTOCS implements ModuleInterface
         if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
 
         $query = "UPDATE matches SET 
-            tcas1 = (SELECT SUM(inflicted_bhs+inflicted_sis+inflicted_kills+inflicted_foul_bhs+inflicted_foul_sis+inflicted_foul_kills) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),
-            tcas2 = (SELECT SUM(inflicted_bhs+inflicted_sis+inflicted_kills+inflicted_foul_bhs+inflicted_foul_sis+inflicted_foul_kills) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)
+            tcas2 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kills+sustained_foul_bhs+sustained_foul_sis+sustained_foul_kills) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),
+            tcas1 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kills+sustained_foul_bhs+sustained_foul_sis+sustained_foul_kills) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)
             WHERE match_id = $this->match_id";
 
         if ( !mysql_query( $query ) )
@@ -204,6 +211,51 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 $this->awayscore = $this->awayscore + $this->homescore - $this->awayscore +1;
         }
         
+        return true;
+    }
+
+    function parse_cy_results() {
+
+        include('cyanide/lib_cy_match_db.php');
+
+        #Create a temporary file name that the match report file can be written to.
+        $temp_path = sys_get_temp_dir();
+        $tempname = tempnam($temp_path, "");
+
+        #Open and write the retrieved ZIP file to the temporary file.
+        $f_r = fopen($tempname, 'w+');
+        fwrite($f_r, $this->xmlresults);
+        fseek($f_r, 0);
+        fclose($f_r);
+
+        $cy_parse = new cy_match_db($tempname);
+
+        // Start!
+        $this->hash = md5($this->xmlresults);
+        $this->gate = 0; # Initialize it.
+        $this->winner = $cy_parse->winner;
+
+        foreach (array(0 => 'home', 1 => 'away') as $N => $team) {
+            
+            // Team properties
+            $this->gate += $cy_parse->{"${team}fans"}; #{"${team}team"}
+            $this->{"${team}team"}      = $cy_parse->{"${team}team"};
+            $this->{"${team}score"}     = $cy_parse->{"${team}score"};
+            $this->{"${team}winnings"}  = $cy_parse->{"${team}winnings"};
+            $this->{"${team}ff"}        = (int) $cy_parse->{"${team}ff"};
+            $this->{"${team}fame"}      = (int) $cy_parse->{"${team}fame"};
+            // Player properties
+            $this->{"${team}players"} = $cy_parse->{"${team}players"};
+        }
+        
+        // Check winner and concession to change the score to 2 to 0 in favor of the team that did not concede.
+        if ($this->concession = $cy_parse->concession) {
+            if ( $this->winner == $this->hometeam && $this->homescore <= $this->awayscore )
+                $this->homescore = $this->homescore + $this->awayscore - $this->homescore +1;
+            if ( $this->winner == $this->awayteam && $this->awayscore <= $this->homescore )
+                $this->awayscore = $this->awayscore + $this->homescore - $this->awayscore +1;
+        }
+
         return true;
     }
 
@@ -672,7 +724,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             list(,,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->coach_id, array(T_NODE_TOURNAMENT => array('type' => 'type', 'locked' => 'locked')));
             $tourlist = "";
             foreach ($tours as $trid => $t)
-                if ($t['type'] == TT_FFA && !$t['locked']) $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
+                if ($t['type'] == TT_FFA && !$t['locked'] && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
                 
             return "
                 <!-- The data encoding type, enctype, MUST be specified as below -->
@@ -738,9 +790,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
             {
                 while ($zip_entry = zip_read($zip))
                 {
-                    if (strpos(zip_entry_name($zip_entry),"report.xml") !== false )
+                    if (strpos(zip_entry_name($zip_entry),"report.xml") !== false || strpos(zip_entry_name($zip_entry),"MatchReport.sqlite") !== false)
                     {
                         $this->xmlresults = zip_entry_read($zip_entry, 256000);
+                        if ( zip_entry_name($zip_entry) == "report.xml" ) $this->reporttype = "botocs";
+                        else if ( zip_entry_name($zip_entry) == "MatchReport.sqlite" ) $this->reporttype = "cyanide";
                         zip_entry_close($zip_entry);
                     }
 
@@ -805,9 +859,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $zip_r = zip_open($tempname);
             while ($zip_entry = zip_read($zip_r))
             {
-                if (strpos(zip_entry_name($zip_entry),"replay.rep") !== false )
+                if (strpos(zip_entry_name($zip_entry),"replay.rep") !== false || strpos(zip_entry_name($zip_entry),"Replay_") !== false)
                 {
                     $replay = zip_entry_read($zip_entry, 100000);
+                    if ( strpos(zip_entry_name($zip_entry),"replay.rep") !== false ) $extension = ".rep";
+                    else if ( strpos(zip_entry_name($zip_entry),"Replay_") !== false ) $extension = ".db";
                     zip_entry_close($zip_entry);
                 }
             }
@@ -815,7 +871,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
             #Specify the header so that the browser is prompted to download the replay.rep file.
             header('Content-type: application/octec-stream');
-            header('Content-Disposition: attachment; filename=match'.$mid.'.rep');
+            header('Content-Disposition: attachment; filename=match'.$mid.$extension);
             #Whatever is printed to the screen will be in the file.
             Print $replay;
 
