@@ -381,6 +381,7 @@ class cyanide {
 		$player_type_map['9']['Assassin']=49;
 		$player_type_map['9']['Blitzer']=50;
 		$player_type_map['9']['WitchElf']=51;
+		$player_type_map['9']['Witch Elf']=51;
 		$player_type_map['9']['Horkon Heartripper']=52;
 		$player_type_map['9']['Lineman']=47;
 		
