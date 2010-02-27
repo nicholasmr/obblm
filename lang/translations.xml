@@ -620,7 +620,7 @@
     </faq_txt>
 </about>
 
-<!-- NOTE: Translation is NOT supplied for ring 0 (admin, not commisioner) pages. -->
+<!-- NOTE: Translation is NOT supplied for all admin pages. -->
 <admin>
     <!-- Common -->
     <prefixes>the prefixes + and - specify least of and most of</prefixes>
@@ -1906,7 +1906,7 @@
     </faq_txt>
 </about>
 
-<!-- NOTE: Translation is NOT supplied for ring 0 (admin, not commisioner) pages. -->
+<!-- NOTE: Translation is NOT supplied for all admin pages. -->
 <admin>
     <!-- Common -->
     <prefixes>Die Präfixe + und - bedeuten "Am Wenigsten" und "Am Meisten"</prefixes>
@@ -1958,5 +1958,424 @@
 </admin>
 
 </de>
+
+<fr>
+<!-- Commonly used strings -->
+<common>
+    <notitle>Saisir un titre</notitle>
+    <nobody>--Vide--</nobody>
+    <submit>Soumettre</submit>
+    <save>Enregistrer</save>
+    <create>Creer</create>
+    <delete>Effacer</delete>
+    <edit>Editer</edit>
+    <view>Voir</view>
+    <back>Retour</back>
+    <yes>Oui</yes>
+    <no>Non</no>
+    <none>Rien</none>
+    <reset>Reset</reset>
+    <lock>Verouille</lock>
+    <locked>Verouille</locked>
+    <finished>Terminer</finished>
+    <unlock>Deverouiller</unlock>
+    <add>Ajouter</add>
+    <remove>Retirer</remove>
+    <next>Suivant</next>
+    <previous>Precedent</previous>
+    <name>Nom</name>
+    <status>Status</status>
+    <desc>Description</desc>
+    <upload>Upload</upload>
+    <all>Tous</all>
+    <select>Selectionner</select>
+    <stats>Statistiques</stats>
+    <general>General</general>
+    <value>Valeur</value>
+    <amount>Montant</amount>
+    <ach>Succes</ach>
+    <page>Page</page>
+    <retired>Retraite</retired>
+    <skills>Talents</skills>
+    <injs>Blessures</injs>
+    <pos>Position</pos>
+    <price>Prix</price>
+    <number>Numero</number>
+    <opponent>Adversaire</opponent>
+    <needhelp>Besoin d'aide?</needhelp>
+    <picof>Image de</picof>
+    <about>A propos</about>
+    <recentmatches>Matchs recents</recentmatches>
+    <upcomingmatches>Matchs futurs</upcomingmatches>
+    <dateplayed>Date joue</dateplayed>
+    <datecreated>Date cree</datecreated>
+    <home>Accueil</home>
+    <away>Visiteur</away>
+    <score>Score</score>
+    <gate>Portail</gate>
+    <result>Resultat</result>
+    <starhh>Historique des stars a louer</starhh>
+    <merchh>Historique des mercenaires a louer</merchh>
+    <match>Match</match>
+    <tournament>Tournois</tournament>
+    <division>Division</division>
+    <league>Ligue</league>
+    <player>Joueur</player>
+    <players>Joueurs</players>
+    <team>Equipe</team>
+    <teams>Equipes</teams>
+    <coach>Coach</coach>
+    <coaches>Coachs</coaches>
+    <race>Race</race>
+    <races>Races</races>
+    <star>Star</star>
+    <stars>Stars</stars>
+    <won>Victoires</won>
+    <lost>Defaites</lost>
+    <draw>Nuls</draw>
+    <streaks>Periodes</streaks>
+    <played>Jouee</played>
+    <playedtours>Tours joues</playedtours>
+    <wontours>Tours gagnes</wontours>
+    <ready>Pret</ready>
+    <dead>Mort</dead>
+    <sold>Vendu</sold>
+    <bought>Achete</bought>
+    <td>Touchdowns</td>
+    <intcpt>Interceptions</intcpt>
+    <cp>Reussites</cp>
+    <ki>Tues</ki>
+    <bh>Mauvaise blessure</bh>
+    <si>Gravement blesse</si>
+    <cas>Pertes</cas>
+    <mvp>Meilleur joueur</mvp>
+    <pms>Afficher les stats des matchs</pms>
+    <ats>Afficher toutes les stats</ats>
+    <uploadnew>Envoyer une nouvelle image</uploadnew>
+    <notice_simul>&lt;i&gt;Note&lt;/i&gt;: Les tables ci-dessous sont triees simultanement.</notice_simul>
+    <notice_spp>&lt;i&gt;Note&lt;/i&gt;: &lt;b&gt;Si&lt;/b&gt; les stars peuvent gagner des competences, ils auront le montant correspondant dans la colonne.</notice_spp>
+    <sortedagainst>Trie contre</sortedagainst>
+    <!-- nodeSelector() -->
+    <displayfrom>Afficher depuis</displayfrom>
+    <type>Type</type>
+    <active>Actif</active>
+    <alltime>Historique</alltime>
+    <sgrp>Groupe de stats</sgrp>
+    <having>Avec</having>
+    <!-- ES -->
+    <extrastats>Stats supplementaires</extrastats>
+    <stat>Stat</stat>
+    <!-- use "all-time" string from nodeSelect() translation -->
+    <matchavg>Match&amp;nbsp;moy.</matchavg>
+    <!-- "Match avg." -->
+</common>
+<!-- Link names for menu elements -->
+<menu>
+    <login>Connexion</login>
+    <logout>Deconnexion</logout>
+    <home>Accueil</home>
+    <cc>Coin du Coach</cc>
+    <teams>Equipes</teams>
+    <coaches>Coaches</coaches>
+    <matches_menu>
+    <name>Matchs</name>
+    <!-- top level button text -->
+    <tours>Tournois</tours>
+    <recent>Matchs recents</recent>
+    <upcoming>Matchs futurs</upcoming>
+    </matches_menu>
+    <statistics_menu>
+    <name>Statistiques</name>
+    <!-- top level button text -->
+    <player_stn>Position du Joueur</player_stn>
+    <team_stn>Position de l'Equipe</team_stn>
+    <coach_stn>Position du Coach</coach_stn>
+    <race_stn>Position de la Race</race_stn>
+    <star_stn>Position de la Star</star_stn>
+    </statistics_menu>
+    <admin_menu>
+    <name>Admin</name>
+    <!-- top level button text -->
+    <ld_man>Gerer: Ligues &amp; divisions</ld_man>
+    <ct_man>Gerer: Coachs &amp; equipes</ct_man>
+    <usr_man>Gerer: Utilisateurs</usr_man>
+    <tour_man>Gerer: Tournois</tour_man>
+    <import>Importer une equipe</import>
+    <schedule>Plannifier un match</schedule>
+    <cpanel>OBBLM panneau principal</cpanel>
+    </admin_menu>
+    <plugins>Plugins</plugins>
+    <rules>Regles</rules>
+    <forum>Forum</forum>
+</menu>
+<!-- Section translations -->
+<login>
+    <!-- has no <name> tag! -->
+    <loginname>Nom du Coach</loginname>
+    <passwd>Mot de passe</passwd>
+    <remember>Se rappeler de moi</remember>
+    <loginbutton>Connexion</loginbutton>
+    <forgotpass>Mot de passe oublie?</forgotpass>
+    <resetpasswdmail>Vous recevrez un email bientot</resetpasswdmail>
+    <mismatch>Le nom et l'email ne correspondent pas.</mismatch>
+    <temppasswd>Votre mot de passe temporaire est:</temppasswd>
+    <setnewpasswd>Cliquez ici pour changer votre mot de passe</setnewpasswd>
+</login>
+<main>
+    <!-- has no <name> tag! -->
+    <newmsg>Nouveau message</newmsg>
+    <broadcast>Envoyer un message a toutes les ligues?</broadcast>
+    <nowelcome>Vous n'avez pas mis de message d'accueil.</nowelcome>
+    <more>plus</more>
+    <posted>Poste</posted>
+    <by>par</by>
+    <lastedit>derniere edition</lastedit>
+</main>
+<cc>
+    <new_team>Nouvelle Equipe</new_team>
+    <!-- <stats> defined in <common> block -->
+    <coach_teams>Equipes du Coach</coach_teams>
+    <profile>Profile</profile>
+    <photo>Image du Coach</photo>
+    <coach_info>Information du Coach</coach_info>
+    <note_persinfo>Informations personnels reserves aux utilisateurs connectes</note_persinfo>
+    <new>Nouveau</new>
+    <old>Ancien</old>
+    <current>Actuel</current>
+    <chpasswd>Changer le mot de passe</chpasswd>
+    <chphone>Changer le numero de telephone</chphone>
+    <chmail>Changer l'email</chmail>
+    <chlogin>Changer le login (connexion)</chlogin>
+    <chname>Changer le nom complet</chname>
+    <chtheme>Changer le theme OBBLM</chtheme>
+    <chlang>Changer de langue</chlang>
+    <chhomelid>Changer de league par defaut</chhomelid>
+</cc>
+<profile>
+    <coach>
+    <teams_total>Nombre d'Equipes</teams_total>
+    <teams_active>Equipes actives</teams_active>
+    <teams_notready>Equipes non pretes</teams_notready>
+    <teams_retired>Equipes a la retraite</teams_retired>
+    <avgteam_elo>Moyenne ELO par equipe</avgteam_elo>
+    <avgteam_tv>Valeur moyenne</avgteam_tv>
+    <avgteam_ff>Popularite moyenne</avgteam_ff>
+    </coach>
+    <star>
+    <hiredby>Engagee par</hiredby>
+    </star>
+    <player>
+    <about>A propos du joueur</about>
+    <profile>Profil du joueur</profile>
+    <best>Meilleur match</best>
+    </player>
+    <team>
+    <!-- sub secs. -->
+    <viewtoggle>Passer en vue Liste</viewtoggle>
+    <!-- Team management sec. -->
+    <tmanage>Gestion d'Equipe + info</tmanage>
+    <!-- About sec. -->
+    <logo>Logo d'Equipe</logo>
+    <stad>Stade de l'Equipe</stad>
+    <!-- News sec. -->
+    <news>Articles</news>
+    <tnews>Articles sur l'Equipe</tnews>
+    <wnews>Ecrire un article</wnews>
+    <nonews>Pas d'articles</nonews>
+    <!-- Recent games sec. -->
+    <!-- Star/merc HH secs. -->
+    <!-- For the three team page boxes -->
+    <box_info>
+        <title>Informations et stats sur l'Equipe</title>
+        <ltour>Dernier&amp;nbsp;tour</ltour>
+    </box_info>
+    <box_tm>
+        <title>Gestion de l'Equipe</title>
+        <hire_player>Embaucher un joueur</hire_player>
+        <hire_journeyman>Embaucher un journalier</hire_journeyman>
+        <fire_player>Virer un joueur</fire_player>
+        <unbuy_player>Desembaucher un joueur</unbuy_player>
+        <rename_player>Renommer un joueur</rename_player>
+        <renumber_player>Renumeroter un joueur</renumber_player>
+        <rename_team>Renommer une equipe</rename_team>
+        <buy_goods>Acheter des avantages d'Equipe</buy_goods>
+        <drop_goods>Se separer d'avantages d'Equipe</drop_goods>
+        <ready_state>Pret ou pas?</ready_state>
+        <retire>Mettre l'Equipe en retraite</retire>
+        <delete>Effacer l'Equipe</delete>
+        <!-- Strings used within action boxes -->
+        <fdescs>
+        <thing>Cible</thing>
+        <teamready>Equipe Prete?</teamready>
+        <retire>Retraiter l'Equipe?</retire>
+        <suredeleteteam>Certain de vouloir effacer l'Equipe?</suredeleteteam>
+        </fdescs>
+        <desc>
+        <hire_player>
+            Embaucher un nouveau joueur.&lt;br&gt;
+            Embaucher un journalier est gratuit, mais seul la position 0-16 est eligible.
+            </hire_player>
+        <hire_journeyman>
+            Embaucher un journalier dans l'Equipe en tant que membre definitif.
+            </hire_journeyman>
+        <fire_player>
+            Virer un joueur. Remboursement de :
+            </fire_player>
+        <unbuy_player>
+            Erreur sur l'embauche d'un joueur. Rembourser a 100%.&lt;br&gt;
+            Uniquement sur les joueurs n'ayant jamais joue de match.
+            </unbuy_player>
+        <rename_player>
+            Renommer un joueur.
+            </rename_player>
+        <renumber_player>
+            Renumeroter un joueur.
+            </renumber_player>
+        <rename_team>
+            Renommer votre Equipe.
+            </rename_team>
+        <buy_goods>
+            Acheter des biens d'Equipe.
+            </buy_goods>
+        <buy_goods_warn>
+            &lt;br&gt;&lt;br&gt;Notez que les relances d'Equipes coutent le &lt;font color='red'&gt;&lt;b&gt;double&lt;/b&gt;&lt;/font&gt;.&lt;br&gt;Si vous souhaitez acheter une relance au prix de base, demandez a l'Administrateur un remboursement de la difference.
+            </buy_goods_warn>
+        <drop_goods>
+            Se separer de biens sans remboursement.
+            </drop_goods>
+        <ready_state>
+            Cet attribut d'Equipe indique que l'Equipe accepte les matchs ou non.
+            </ready_state>
+        <retire>
+            Retraiter l'Equipe.&lt;br&gt;Une fois a la retraite, l'Equipe n'est plus gerable.&lt;br&gt;Seul l'Admin peut remettre l'Equipe en service actif. La mise a la retraite est immediate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;.
+            </retire>
+        <delete>
+            Effacer l'Equipe.&lt;br&gt;Pour le bien des statistiques, vous ne pouvez plus effacer d'Equipe ayant jouer un match. L'effacement est immediat mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;.
+            </delete>
+        </desc>
+    </box_tm>
+    <box_admin>
+        <title>Outils d'Admin</title>
+        <unhire_journeyman>Desembaucher un Journalier</unhire_journeyman>
+        <unsell_player>Re-embaucher un Joueur</unsell_player>
+        <unbuy_goods>Desacheter un bien d'Equipe.</unbuy_goods>
+        <bank>Compte en banque</bank>
+        <chown>Changer de proprietaire</chown>
+        <spp>Gerer l'Experience bonus</spp>
+        <dval>Gerer la valeur bonus des joueurs</dval>
+        <extra_skills>Gerer les talents supplémentaires des joueurs</extra_skills>
+        <ach_skills>Retirer des talents de joueurs</ach_skills>
+        <desc>
+        <unhire_journeyman>
+            Revenir sur l'embauche d'un journalier en tant que Joueurs.&lt;br&gt;
+            Ne fonctionne que sur les positions 0-16 de la fiche d'Equipe.
+            </unhire_journeyman>
+        <unsell_player>
+            Revenir sur le licensiement d'un joueur.
+            </unsell_player>
+        <unbuy_goods>
+            Revenir sur l'achat de bien d'Equipe.
+            </unbuy_goods>
+        <bank>
+            Modifier la tresorerie d'Equipe.
+            </bank>
+        <chown>
+            Changer le proprietaire de l'Equipe.
+            </chown>
+        <spp>
+            Gerer l'Experience bonus d'un Joueur.
+            </spp>
+        <dval>
+            Changer la valeur d'un joueur d'un montant.
+            </dval>
+        <extra_skills>
+            Gerer les talents supplementaires d'un joueur.
+            </extra_skills>
+        <ach_skills>
+            Retirer un talent selectionner. Cela permet de choisir un nouveau talent en remplacement.
+            </ach_skills>
+        </desc>
+    </box_admin>
+    </team>
+</profile>
+<standings>
+    <team>
+    <tblTitle2>Position historique, suite (Position d'Equipe)</tblTitle2>
+    </team>
+</standings>
+<matches>
+    <tours>
+    <!-- none used - all are in "common". -->
+    </tours>
+    <tourmatches>
+    <roundtypes>
+        <final>Finale</final>
+        <thirdPlayoff>Finale des perdants</thirdPlayoff>
+        <semi>Demi-finale</semi>
+        <quarter>Quart de finale</quarter>
+        <rnd16>16eme de finale</rnd16>
+        <rnd>Tour</rnd>
+    </roundtypes>
+    <matchdelete>Es te vous sur de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n'a pas encore ete joue, cette action est IRREVERSIBLE et affectera tout les matchs suivants pour les deux equipes.\nIl est conseiller de n'effacer un match que si vous etes conscient des risques.</matchdelete>
+    <reset_notice>Es te vous sur de vouloir REINITIALISER ce match?\n\nATTENTION:\nCette action est IRREVERSIBLE et affectera tout les matchs suivants pour les deux equipes.</reset_notice>
+    </tourmatches>
+    <!-- Subsection: match report(s) -->
+    <report>
+    <!-- General -->
+    <clickforhelp>Besoin d'Aide?</clickforhelp>
+    <notplayed>Pas encore joue</notplayed>
+    <report>repporter</report>
+    <!-- <help></help>  NOT TRANSLATED - defaults to english --> 
+    <!-- Subsecs of team page -->
+    <info>Informations sur les parties</info>
+    <stadium>Stade</stadium>
+    <fans>Fans (Spectateurs)</fans>
+    <results>Resultat du match</results>
+    <treas>Tresorerie</treas>
+    <ff>Facteur de Popularite</ff>
+    <smp>Point de fair-play</smp>
+    <pts>points</pts>
+    <tcas>Pertes total de l'Equipe</tcas>
+    <fame>FAME</fame>
+    <tv>VE</tv>
+    <summary>Resume du match</summary>
+    </report>
+</matches>
+<rules>
+    <!-- None -->
+</rules>
+<about>
+    <intro>Introduction</intro>
+    <!-- <intro_txt></intro_txt> NOT TRANSLATED - defaults to english --> 
+    <faq>Q&amp;R</faq>
+    <!-- <faq_txt></faq_txt> NOT TRANSLATED - defaults to english --> 
+</about>
+<!-- NOTE: Translation is NOT supplied for all admin pages. -->
+<admin>
+    <!-- Common -->
+    <prefixes>Les symboles + et - signifient moins de et plus de, respectivement</prefixes>
+    <!-- Subsec: Schedule matches -->
+    <schedule>
+    <!-- <help></help> NOT TRANSLATED - defaults to english --> 
+    <create_LD>Merci de creer une Ligue et une Division avant de prevoir des matchs</create_LD>
+    <tour_name>Nom du Tournois</tour_name>
+    <rank_sys>Methode de Classement</rank_sys>
+    <tour_type>Type de Tournois</tour_type>
+    <add_team>Ajouter une Equipe</add_team>
+    <teams_selected>Choisir une Equipe</teams_selected>
+    <!-- Tour Types (TT) -->
+    <TT_FFA>FFA &lt;i&gt;(Free For All = "Chacun fait ce qu'il veut")&lt;/i&gt;</TT_FFA>
+    <TT_RR>Par ronde</TT_RR>
+    <!-- RR -->
+    <RR_settings>Parametre des rondes</RR_settings>
+    <rrobin_rnds>&lt;b&gt;Fait l'entre crochet N fois:&lt;/b&gt;</rrobin_rnds>
+    <!-- FFA -->
+    <FFA_settings>Parametre du FFA</FFA_settings>
+    <add_match>Ajouter un match pour...</add_match>
+    <new_tour>Ajouter un tournois FFA</new_tour>
+    <as_type>De type...</as_type>
+    </schedule>
+</admin>
+</fr>
 
 </translations>

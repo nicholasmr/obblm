@@ -9,7 +9,7 @@
 $settings['league_name'] = 'Placeholder title for league with ID = 1'; // Name of the site or the league name if only one league is being managed.
 $settings['forum_url']   = 'http://localhost'; // URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
 $settings['stylesheet']  = 1;                  // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 and 2 are the only existing stylesheets.
-$settings['lang']        = 'en-GB';            // Default language. Existing: en-GB, es, de.
+$settings['lang']        = 'en-GB';            // Default language. Existing: en-GB, es, de, fr.
 $settings['fp_links']    = true;               // Default is true. Generate coach, team and player links on the front page?
 $settings['welcome']     = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league greeting message for the league with ID = 1';
 $settings['rules']       = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
