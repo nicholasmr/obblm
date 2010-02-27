@@ -525,61 +525,61 @@ class cy_match_db {
 	private function set_inj($id) {
 		 switch ( $id ) {
 		 	case 1:
-		 		$out = NONE;
+		 		$out = NULL;
 		 		break;
 		 	case 2: 
-		 		$out = MNG;
+		 		$out = "Miss Next Game";
 		 		break;
 		 	case 3: 
-		 		$out = MNG;
+		 		$out = "Miss Next Game";
 		 		break;
 		 	case 4: 
-		 		$out = MNG;
+		 		$out = "Miss Next Game";
 		 		break;
 		 	case 5: 
-		 		$out = MNG;
+		 		$out = "Miss Next Game";
 		 		break;
 		 	case 6: 
-		 		$out = MNG;
+		 		$out = "Miss Next Game";
 		 		break;
 		 	case 7: 
-		 		$out = MNG;
+		 		$out = "Miss Next Game";
 		 		break;
 		 	case 8: 
-		 		$out = MNG;
+		 		$out = "Miss Next Game";
 		 		break;
 		 	case 9: 
-		 		$out = MNG;
+		 		$out = "Miss Next Game";
 		 		break;
 		 	case 10: 
-		 		$out = NI;
+		 		$out = "Niggling Injury";
 		 		break;
 		 	case 11: 
-		 		$out = NI;
+		 		$out = "Niggling Injury";
 		 		break;
 		 	case 12:
-		 		$out = MA;
+		 		$out = "-1 MA";
 		 		break;
 		 	case 13:
-		 		$out = MA;
+		 		$out = "-1 MA";
 		 		break;
 		 	case 14:
-		 		$out = AV;
+		 		$out = "-1 AV";
 		 		break;
 		 	case 15:
-		 		$out = AV;
+		 		$out = "-1 AV";
 		 		break;
 		 	case 16:
-		 		$out = AG;
+		 		$out = "-1 AG";
 		 		break;
 		 	case 17:
-		 		$out = ST;
+		 		$out = "-1 ST";
 		 		break;
 		 	case 18:
-		 		$out = DEAD;
+		 		$out = "Dead";
 		 		break;
 			default:
-                $out = NONE;
+                $out = NULL;
                 break;
 		 		
 		 		
