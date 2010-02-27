@@ -236,9 +236,9 @@ class XML_BOTOCS implements ModuleInterface
             return false;
         }
 
-        if ( !$p->is_dead && !$p->is_sold && $p->nr == 100 )
+        if ( !$p->is_dead && !$p->is_sold && $p->nr > 89 )
         {
-            Print "Player number 100 is reserved for newly raised zombies.  Please renumber the player.";
+            Print "Player numbers from 90 to 100 is reserved for newly raised zombies and rotters.  Please renumber the player.";
             return false;
         }
 
