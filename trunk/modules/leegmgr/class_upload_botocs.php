@@ -47,6 +47,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         public $hometransferedGold = 0;
         public $homeplayers;
         public $tv_home = 0;
+        public $homerotters = 0;
     public $awayteam = '';
         public $awayscore = 0;
         public $awaywinnings = 0;
@@ -55,6 +56,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         public $awaytransferedGold = 0;
         public $awayplayers;
         public $tv_away = 0;
+        public $awayrotters = 0;
 
     public $hometeam_id = 0;
     public $awayteam_id = 0;
@@ -111,6 +113,19 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         if ( !$this->matchEntry ( $this->hometeam_id, $this->homeplayers ) ) return false;
         if ( !$this->matchEntry ( $this->awayteam_id, $this->awayplayers ) ) return false;
+
+        foreach (array(0 => 'home', 1 => 'away') as $N => $team) {
+            if ( isset($this->{"${team}rotters"}) && $this->{"${team}rotters"} > 0 )
+            {
+                $i = 0;
+                while ( $i < $this->{"${team}rotters"} && !${"team_$team"}->isFull() )
+                {
+                    $this->createRotter( $this->{"${team}team_id"}, ${"team_$team"}->f_rname, 90+$i );
+                    $i++;
+                }
+            }
+        }
+
 
         $query = "UPDATE matches SET 
             tcas2 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),
@@ -173,6 +188,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $this->{"${team}winnings"}  = $results->team[$N]->winnings - $results->team[$N]->transferedGold;
             $this->{"${team}ff"}        = (int) $results->team[$N]->fanfactor;
             $this->{"${team}fame"}      = (int) $results->team[$N]->fame;
+            $this->{"${team}rotters"}      = (int) $results->team[$N]->attributes()->rotters;
             #$this->{"${team}transferedGold"} = (int) $results->team[$N]->transferedGold;
             
             // Player properties
@@ -648,6 +664,33 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 $this->awaywinnings -= 100000;
                 break;
         }
+    }
+
+    function createRotter($team_id, $race, $nr)
+    {
+        global $DEA;
+        $pos_id = $DEA[$race]['players']['Rotter']['pos_id'];
+
+        list($exitStatus, $pid) = Player::create(
+            $input = array(
+                'nr' => $nr, 
+                'f_pos_id' => $pos_id, 
+                'team_id' => $team_id, 
+                'name' => "Rotter".$nr, 
+            ),
+            $opts = array(
+                'free' => true,
+                'force' => true,
+            )
+        );
+
+        if ( !$exitStatus == Player::T_CREATE_SUCCESS )
+        {
+            $this->error = "Failed to add a rotter to the roster.";
+            return false;
+        }
+
+        return true;
     }
 
 
