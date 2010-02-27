@@ -259,7 +259,7 @@ class cy_match_db {
 	}
 	private function set_home_winnings() {
 		$d1 = rand(1,6);
-		$cash = ($d1 + $this->homefame) *10000;
+		$cash = ($d1 + $this->homefame) * 10000;
 		if( ($this->winner == $this->hometeam) OR $this->winner == '') {
 			$cash = $cash + 10000;
 		}
@@ -267,7 +267,7 @@ class cy_match_db {
 	}
 	private function set_away_winnings() {
 		$d1 = rand(1,6);
-		$cash = ($d1 + $this->awayfame) *10000;
+		$cash = ($d1 + $this->awayfame) * 10000;
 		if( ($this->winner == $this->awayteam) OR $this->winner == '') {
 			$cash = $cash + 10000;
 		}
@@ -346,11 +346,21 @@ class cy_match_db {
 		}
 	}
 	private function set_players($t) {
+		$cspp = 0;
+		$nspp = 0;
+		$clevel = 0;
+		$nlevel = 0;
 		if ($t == 'Home') {
 			$this->set_sql(9);
 			
 			$players = '';
 			foreach ($this->_db_read->query($this->sql) as $row) {
+				$cspp = 0;
+				$nspp = 0;
+				$tspp = 0;
+				$clevel = 0;
+				$nlevel = 0;
+				$tcp	= 0; //total casualties for player
 				$players[$row['iNumber']]['ID'] = $row['ID'];
 				$players[$row['iNumber']]['nr'] = $row['iNumber'];
 				$players[$row['iNumber']]['name'] = $row['strName'];
@@ -362,24 +372,36 @@ class cy_match_db {
 					$players[$row['iNumber']]['star'] = false;
 				}
 				$players[$row['iNumber']]['merc'] = false;
-				$players[$row['iNumber']]['ir1_d1'] = rand(1,6);
-				$players[$row['iNumber']]['ir1_d2'] = rand(1,6);
-				$players[$row['iNumber']]['ir2_d1'] = rand(1,6);
-				$players[$row['iNumber']]['ir2_d2'] = rand(1,6);
-				$players[$row['iNumber']]['ir3_d1'] = rand(1,6);
-				$players[$row['iNumber']]['ir3_d2'] = rand(1,6);
+				//get current level
+				$clevel = $row['idPlayer_Levels'];
 				
 				//get player stats
 				$this->sql = "Select * from Home_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['ID']." Limit 1";
 				$stats = '';
 				foreach ($this->_db_read->query($this->sql) as $stats) {
 					$players[$row['iNumber']]['mvp'] = $stats['iMVP'];
-					$players[$row['iNumber']]['cp']  = $stats['Inflicted_iPasses'];
+					if($stats['iMVP'] > 0) {
+						$nspp = $nspp + ($stats['iMVP'] * 5);
+					}
+					$players[$row['iNumber']]['cp']  = $stats['Inflicted_iCatches'];
+					if($stats['Inflicted_iCatches'] > 0) {
+						$nspp = $nspp + ($stats['Inflicted_iCatches'] * 1);
+					}
 					$players[$row['iNumber']]['td']  = $stats['Inflicted_iTouchdowns'];
+					if($stats['Inflicted_iTouchdowns'] > 0) {
+						$nspp = $nspp + ($stats['Inflicted_iTouchdowns'] * 3);
+					}
 					$players[$row['iNumber']]['intcpt'] = $stats['Inflicted_iInterceptions'];
+					if($stats['Inflicted_iInterceptions'] > 0) {
+						$nspp = $nspp + ($stats['Inflicted_iInterceptions'] * 2);
+					}
 					$players[$row['iNumber']]['bh'] = $stats['Inflicted_iCasualties'];
 					$players[$row['iNumber']]['si'] = $stats['Inflicted_iInjuries'];
 					$players[$row['iNumber']]['ki'] = $stats['Inflicted_iDead'];
+					$tcp = $stats['Inflicted_iCasualties'] + $stats['Inflicted_iInjuries'] + $stats['Inflicted_iDead'];
+					if($tcp > 0) {
+						$nspp = $nspp + ($tcp * 2);
+					}
 				}
 				$this->sql = "Select idPlayer_Casualty_Types from Home_Player_Casualties where idPlayer_Listing =".$players[$row['iNumber']]['ID'];
 				$cas = "";
@@ -393,12 +415,37 @@ class cy_match_db {
 				} else {
 					$players[$row['iNumber']]['inj'] = NONE;
 				}
+				$tspp = $cspp + $nspp;
+				$nlevel = $this->get_p_level($tspp);
+				
+				if($nlevel > $clevel) {
+					$players[$row['iNumber']]['ir1_d1'] = rand(1,6);
+					$players[$row['iNumber']]['ir1_d2'] = rand(1,6);
+					$players[$row['iNumber']]['ir2_d1'] = rand(1,6);
+					$players[$row['iNumber']]['ir2_d2'] = rand(1,6);
+					$players[$row['iNumber']]['ir3_d1'] = rand(1,6);
+					$players[$row['iNumber']]['ir3_d2'] = rand(1,6);
+				} else {
+					$players[$row['iNumber']]['ir1_d1'] = false;
+					$players[$row['iNumber']]['ir1_d2'] = false;
+					$players[$row['iNumber']]['ir2_d1'] = false;
+					$players[$row['iNumber']]['ir2_d2'] = false;
+					$players[$row['iNumber']]['ir3_d1'] = false;
+					$players[$row['iNumber']]['ir3_d2'] = false;
+				}
 			}
 			$this->homeplayers = $players;
 		} elseif ($t == 'Away') {
+			
 			$this->set_sql(10);
 			$players = '';
 			foreach ($this->_db_read->query($this->sql) as $row) {
+				$cspp = 0;
+				$nspp = 0;
+				$tspp = 0;
+				$clevel = 0;
+				$nlevel = 0;
+				$tcp	= 0; //total casualties for player
 				$players[$row['iNumber']]['ID'] = $row['ID'];
 				$players[$row['iNumber']]['nr'] = $row['iNumber'];
 				$players[$row['iNumber']]['name'] = $row['strName'];
@@ -410,24 +457,35 @@ class cy_match_db {
 					$players[$row['iNumber']]['star'] = false;
 				}
 				$players[$row['iNumber']]['merc'] = false;
-				$players[$row['iNumber']]['ir1_d1'] = rand(1,6);
-				$players[$row['iNumber']]['ir1_d2'] = rand(1,6);
-				$players[$row['iNumber']]['ir2_d1'] = rand(1,6);
-				$players[$row['iNumber']]['ir2_d2'] = rand(1,6);
-				$players[$row['iNumber']]['ir3_d1'] = rand(1,6);
-				$players[$row['iNumber']]['ir3_d2'] = rand(1,6);
+				$clevel = $row['idPlayer_Levels'];
 				
 				//get player stats
 				$this->sql = "Select * from Away_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['ID']." Limit 1";
 				$stats = '';
 				foreach ($this->_db_read->query($this->sql) as $stats) {
 					$players[$row['iNumber']]['mvp'] = $stats['iMVP'];
-					$players[$row['iNumber']]['cp']  = $stats['Inflicted_iPasses'];
+					if($stats['iMVP'] > 0) {
+						$nspp = $nspp + ($stats['iMVP'] * 5);
+					}
+					$players[$row['iNumber']]['cp']  = $stats['Inflicted_iCatches'];
+					if($stats['Inflicted_iCatches'] > 0) {
+						$nspp = $nspp + ($stats['Inflicted_iCatches'] * 1);
+					}
 					$players[$row['iNumber']]['td']  = $stats['Inflicted_iTouchdowns'];
+					if($stats['Inflicted_iTouchdowns'] > 0) {
+						$nspp = $nspp + ($stats['Inflicted_iTouchdowns'] * 3);
+					}
 					$players[$row['iNumber']]['intcpt'] = $stats['Inflicted_iInterceptions'];
+					if($stats['Inflicted_iInterceptions'] > 0) {
+						$nspp = $nspp + ($stats['Inflicted_iInterceptions'] * 2);
+					}
 					$players[$row['iNumber']]['bh'] = $stats['Inflicted_iCasualties'];
 					$players[$row['iNumber']]['si'] = $stats['Inflicted_iInjuries'];
 					$players[$row['iNumber']]['ki'] = $stats['Inflicted_iDead'];
+					$tcp = $stats['Inflicted_iCasualties'] + $stats['Inflicted_iInjuries'] + $stats['Inflicted_iDead'];
+					if($tcp > 0) {
+						$nspp = $nspp + ($tcp * 2);
+					}
 				}
 				$this->sql = "Select idPlayer_Casualty_Types from Away_Player_Casualties where idPlayer_Listing =".$players[$row['iNumber']]['ID'];
 			
@@ -441,6 +499,24 @@ class cy_match_db {
 					$players[$row['iNumber']]['inj'] = $this->set_inj($players[$row['iNumber']]['inj']);
 				} else {
 					$players[$row['iNumber']]['inj'] = NONE;
+				}
+				$tspp = $cspp + $nspp;
+				$nlevel = $this->get_p_level($tspp);
+				
+				if($nlevel > $clevel) {
+					$players[$row['iNumber']]['ir1_d1'] = rand(1,6);
+					$players[$row['iNumber']]['ir1_d2'] = rand(1,6);
+					$players[$row['iNumber']]['ir2_d1'] = rand(1,6);
+					$players[$row['iNumber']]['ir2_d2'] = rand(1,6);
+					$players[$row['iNumber']]['ir3_d1'] = rand(1,6);
+					$players[$row['iNumber']]['ir3_d2'] = rand(1,6);
+				} else {
+					$players[$row['iNumber']]['ir1_d1'] = false;
+					$players[$row['iNumber']]['ir1_d2'] = false;
+					$players[$row['iNumber']]['ir2_d1'] = false;
+					$players[$row['iNumber']]['ir2_d2'] = false;
+					$players[$row['iNumber']]['ir3_d1'] = false;
+					$players[$row['iNumber']]['ir3_d2'] = false;
 				}
 			}
 			$this->awayplayers = $players;
@@ -510,6 +586,34 @@ class cy_match_db {
 		 }
 		 return $out;
 		
+	}
+	private function get_p_level($int){
+		switch($int) {
+			case ($int === 0):
+				return 1;
+				break;
+			case ($int > 175):
+				return 7;
+				break;
+			case ($int > 75):
+				return 6;
+				break;
+			case ($int >50):
+				return 5;
+				break;
+			case ($int > 30):
+				return 4;
+				break;
+			case ($int > 15):
+				return 3;
+				break;
+			case ($int > 5):
+				return 2;
+				break;
+			case ($int < 6):
+				return 1;
+				break;
+		}
 	}
 	private function set_sql($id){
 		switch($id) {
