@@ -426,16 +426,19 @@ class cy_match_db {
 					$players[$row['iNumber']]['ir3_d1'] = rand(1,6);
 					$players[$row['iNumber']]['ir3_d2'] = rand(1,6);
 				} else {
-					$players[$row['iNumber']]['ir1_d1'] = false;
-					$players[$row['iNumber']]['ir1_d2'] = false;
-					$players[$row['iNumber']]['ir2_d1'] = false;
-					$players[$row['iNumber']]['ir2_d2'] = false;
-					$players[$row['iNumber']]['ir3_d1'] = false;
-					$players[$row['iNumber']]['ir3_d2'] = false;
+					$players[$row['iNumber']]['ir1_d1'] = 0;
+					$players[$row['iNumber']]['ir1_d2'] = 0;
+					$players[$row['iNumber']]['ir2_d1'] = 0;
+					$players[$row['iNumber']]['ir2_d2'] = 0;
+					$players[$row['iNumber']]['ir3_d1'] = 0;
+					$players[$row['iNumber']]['ir3_d2'] = 0;
 				}
 			}
 			
 			$this->homeplayers = $players;
+			echo "<pre>";
+			print_r($this->homeplayers);
+			echo "</pre><hr />";
 		} elseif ($t == 'Away') {
 			
 			$this->set_sql(10);
@@ -512,15 +515,18 @@ class cy_match_db {
 					$players[$row['iNumber']]['ir3_d1'] = rand(1,6);
 					$players[$row['iNumber']]['ir3_d2'] = rand(1,6);
 				} else {
-					$players[$row['iNumber']]['ir1_d1'] = false;
-					$players[$row['iNumber']]['ir1_d2'] = false;
-					$players[$row['iNumber']]['ir2_d1'] = false;
-					$players[$row['iNumber']]['ir2_d2'] = false;
-					$players[$row['iNumber']]['ir3_d1'] = false;
-					$players[$row['iNumber']]['ir3_d2'] = false;
+					$players[$row['iNumber']]['ir1_d1'] = 0;
+					$players[$row['iNumber']]['ir1_d2'] = 0;
+					$players[$row['iNumber']]['ir2_d1'] = 0;
+					$players[$row['iNumber']]['ir2_d2'] = 0;
+					$players[$row['iNumber']]['ir3_d1'] = 0;
+					$players[$row['iNumber']]['ir3_d2'] = 0;
 				}
 			}
 			$this->awayplayers = $players;
+			echo "<pre>";
+			print_r($this->awayplayers);
+			echo "</pre><hr />";
 		}
 	}
 	private function set_inj($id) {
