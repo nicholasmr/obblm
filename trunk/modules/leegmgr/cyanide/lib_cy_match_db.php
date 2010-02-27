@@ -434,6 +434,7 @@ class cy_match_db {
 					$players[$row['iNumber']]['ir3_d2'] = false;
 				}
 			}
+			
 			$this->homeplayers = $players;
 		} elseif ($t == 'Away') {
 			
