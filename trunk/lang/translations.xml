@@ -1300,11 +1300,11 @@
     <submit>Absenden</submit>
     <save>Speichern</save>
     <create>Anlegen</create>
-    <delete>Speichern</delete>
+    <delete>Löschen</delete>
     <edit>Ändern</edit>
     <view>Ansehen</view>
-    <back>Vor</back>
-    <yes>Zurück</yes>
+    <back>Zurück</back>
+    <yes>Ja</yes>
     <no>Nein</no>
     <none>Leer</none>
     <reset>Zurücksetzen</reset>
@@ -1314,8 +1314,8 @@
     <unlock>Unlock</unlock>
     <add>Hinzufügen</add>
     <remove>Entfernen</remove>
-    <next>Nächstes</next>
-    <previous>Vorheriges</previous>
+    <next>Nächste</next>
+    <previous>Vorherige</previous>
     <name>Name</name>
     <status>Status</status>
     <desc>Beschreibung</desc>
@@ -1402,7 +1402,7 @@
     <displayfrom>Anzeigen ab</displayfrom>
     <type>Typ</type>
         <active>Aktiv</active>
-        <alltime>Allzeit</alltime>
+        <alltime>All-Time</alltime>
     <sgrp>Statistik Gruppierung</sgrp>
     <having>Sortiert nach</having>
     
