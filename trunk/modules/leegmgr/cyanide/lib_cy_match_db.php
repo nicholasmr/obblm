@@ -413,7 +413,8 @@ class cy_match_db {
 						$nspp = $nspp + ($players[$row['iNumber']]['intcpt'] * 2);
 					}
 					$players[$row['iNumber']]['bh'] = (int) $stats['Inflicted_iCasualties'];
-					$players[$row['iNumber']]['si'] = (int) $stats['Inflicted_iInjuries'];
+					//$players[$row['iNumber']]['si'] = (int) $stats['Inflicted_iInjuries'];
+					$players[$row['iNumber']]['si'] = 0;
 					$players[$row['iNumber']]['ki'] = (int) $stats['Inflicted_iDead'];
 					$tcp = (int)$players[$row['iNumber']]['bh'] + (int)$players[$row['iNumber']]['si'] + (int)$players[$row['iNumber']]['ki'];
 					if($tcp >= 1) {
@@ -509,7 +510,8 @@ class cy_match_db {
 						$nspp = $nspp + ($players[$row['iNumber']]['intcpt'] * 2);
 					}
 					$players[$row['iNumber']]['bh'] = (int) $stats['Inflicted_iCasualties'];
-					$players[$row['iNumber']]['si'] = (int) $stats['Inflicted_iInjuries'];
+					//$players[$row['iNumber']]['si'] = (int) $stats['Inflicted_iInjuries'];
+					$players[$row['iNumber']]['si'] = 0;
 					$players[$row['iNumber']]['ki'] = (int) $stats['Inflicted_iDead'];
 					$tcp = (int)$players[$row['iNumber']]['bh'] + (int)$players[$row['iNumber']]['si'] + (int)$players[$row['iNumber']]['ki'];
 					if($tcp >= 1) {
