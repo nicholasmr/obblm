@@ -345,25 +345,37 @@ class cy_match_db {
 			}
 		}
 	}
+	public function init_player_array() {
+					
+		}
 	private function set_players($t) {
 		$cspp = 0;
 		$nspp = 0;
+		$tspp = 0;
 		$clevel = 0;
 		$nlevel = 0;
+		$tcp	= 0; //total casualties for player
+		$cspp = 0;
+		$nspp = 0;
+		$tspp = 0;
+		$clevel = 0;
+		$nlevel = 0;
+		$tcp	= 0; //total casualties for player
+					// Init player storage
+		$players = array();
+		$stats   = array();
+		$cas	 = array();
+				
 		if ($t == 'Home') {
 			$this->set_sql(9);
-			
-			$players = '';
 			foreach ($this->_db_read->query($this->sql) as $row) {
-				$cspp = 0;
-				$nspp = 0;
-				$tspp = 0;
-				$clevel = 0;
-				$nlevel = 0;
-				$tcp	= 0; //total casualties for player
-				$players[$row['iNumber']]['ID'] = $row['ID'];
-				$players[$row['iNumber']]['nr'] = $row['iNumber'];
-				$players[$row['iNumber']]['name'] = $row['strName'];
+				
+				$stats   = array();
+				$cas	 = array();
+				$this->init_player_array();
+				$players[$row['iNumber']]['ID'] = (int) $row['ID'];
+				$players[$row['iNumber']]['nr'] = (int) $row['iNumber'];
+				$players[$row['iNumber']]['name'] = (string) $row['strName'];
 				$players[$row['iNumber']]['agn1'] = false;
 				$players[$row['iNumber']]['EPS'] = array();
 				if($row['bStar'] >= 1) {
@@ -373,38 +385,44 @@ class cy_match_db {
 				}
 				$players[$row['iNumber']]['merc'] = false;
 				//get current level
-				$clevel = $row['idPlayer_Levels'];
-				
+				$clevel = (int) $row['idPlayer_Levels'];
+				$cspp = $row['iExperience'];
+				echo $clevel;
 				//get player stats
-				$this->sql = "Select * from Home_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['ID']." Limit 1";
-				$stats = '';
+				$this->sql = "Select * from Home_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['nr']." Limit 1";
 				foreach ($this->_db_read->query($this->sql) as $stats) {
-					$players[$row['iNumber']]['mvp'] = $stats['iMVP'];
-					if($stats['iMVP'] > 0) {
-						$nspp = $nspp + ($stats['iMVP'] * 5);
+					$tcp = 0;
+					$nspp = 0;	
+					$players[$row['iNumber']]['mvp'] = (int) $stats['iMVP'];
+					
+					if($players[$row['iNumber']]['mvp'] > 0) {
+						$nspp = (int)$nspp + (int)($players[$row['iNumber']]['mvp'] * 5);
 					}
-					$players[$row['iNumber']]['cp']  = $stats['Inflicted_iCatches'];
-					if($stats['Inflicted_iCatches'] > 0) {
-						$nspp = $nspp + ($stats['Inflicted_iCatches'] * 1);
+					
+					$players[$row['iNumber']]['cp']  = (int) $stats['Inflicted_iCatches'];
+					
+					if($players[$row['iNumber']]['cp'] > 0) {
+						$nspp = $nspp + ($players[$row['iNumber']]['cp'] * 1);
 					}
-					$players[$row['iNumber']]['td']  = $stats['Inflicted_iTouchdowns'];
-					if($stats['Inflicted_iTouchdowns'] > 0) {
-						$nspp = $nspp + ($stats['Inflicted_iTouchdowns'] * 3);
+					$players[$row['iNumber']]['td']  = (int) $stats['Inflicted_iTouchdowns'];
+					if($players[$row['iNumber']]['td'] > 0) {
+						$nspp = $nspp + ($players[$row['iNumber']]['td'] * 3);
 					}
-					$players[$row['iNumber']]['intcpt'] = $stats['Inflicted_iInterceptions'];
-					if($stats['Inflicted_iInterceptions'] > 0) {
-						$nspp = $nspp + ($stats['Inflicted_iInterceptions'] * 2);
+					$players[$row['iNumber']]['intcpt'] = (int) $stats['Inflicted_iInterceptions'];
+					if($players[$row['iNumber']]['intcpt'] > 0) {
+						$nspp = $nspp + ($players[$row['iNumber']]['intcpt'] * 2);
 					}
-					$players[$row['iNumber']]['bh'] = $stats['Inflicted_iCasualties'];
-					$players[$row['iNumber']]['si'] = $stats['Inflicted_iInjuries'];
-					$players[$row['iNumber']]['ki'] = $stats['Inflicted_iDead'];
-					$tcp = $stats['Inflicted_iCasualties'] + $stats['Inflicted_iInjuries'] + $stats['Inflicted_iDead'];
-					if($tcp > 0) {
+					$players[$row['iNumber']]['bh'] = (int) $stats['Inflicted_iCasualties'];
+					$players[$row['iNumber']]['si'] = (int) $stats['Inflicted_iInjuries'];
+					$players[$row['iNumber']]['ki'] = (int) $stats['Inflicted_iDead'];
+					$tcp = (int)$players[$row['iNumber']]['bh'] + (int)$players[$row['iNumber']]['si'] + (int)$players[$row['iNumber']]['ki'];
+					if($tcp >= 1) {
+						Echo "Setting cas spp to";
 						$nspp = $nspp + ($tcp * 2);
+						echo $nspp;
 					}
 				}
 				$this->sql = "Select idPlayer_Casualty_Types from Home_Player_Casualties where idPlayer_Listing =".$players[$row['iNumber']]['ID'];
-				$cas = "";
 				foreach ($this->_db_read->query($this->sql) as $cas) {
 						$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
 						
@@ -413,11 +431,16 @@ class cy_match_db {
 					$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
 					$players[$row['iNumber']]['inj'] = $this->set_inj($players[$row['iNumber']]['inj']);
 				} else {
-					$players[$row['iNumber']]['inj'] = NONE;
+					$players[$row['iNumber']]['inj'] = NULL;
 				}
+				echo "<br />".$players[$row['iNumber']]['name'];
 				$tspp = $cspp + $nspp;
-				$nlevel = $this->get_p_level($tspp);
+				echo "<br /> current spp is :".$cspp;
+				echo "<br /> new spp is :".$nspp;
+				echo "<br />Spp total is ".$tspp."";
 				
+				$nlevel = $this->get_p_level($tspp);
+				echo "<br />".$nlevel."<hr />";
 				if($nlevel > $clevel) {
 					$players[$row['iNumber']]['ir1_d1'] = rand(1,6);
 					$players[$row['iNumber']]['ir1_d2'] = rand(1,6);
@@ -442,17 +465,13 @@ class cy_match_db {
 		} elseif ($t == 'Away') {
 			
 			$this->set_sql(10);
-			$players = '';
 			foreach ($this->_db_read->query($this->sql) as $row) {
-				$cspp = 0;
-				$nspp = 0;
-				$tspp = 0;
-				$clevel = 0;
-				$nlevel = 0;
-				$tcp	= 0; //total casualties for player
-				$players[$row['iNumber']]['ID'] = $row['ID'];
-				$players[$row['iNumber']]['nr'] = $row['iNumber'];
-				$players[$row['iNumber']]['name'] = $row['strName'];
+				$stats   = array();
+				$cas	 = array();
+				
+				$players[$row['iNumber']]['ID'] = (int) $row['ID'];
+				$players[$row['iNumber']]['nr'] = (int) $row['iNumber'];
+				$players[$row['iNumber']]['name'] = (string) $row['strName'];
 				$players[$row['iNumber']]['agn1'] = false;
 				$players[$row['iNumber']]['EPS'] = array();
 				if($row['bStar'] >= 1) {
@@ -461,52 +480,63 @@ class cy_match_db {
 					$players[$row['iNumber']]['star'] = false;
 				}
 				$players[$row['iNumber']]['merc'] = false;
-				$clevel = $row['idPlayer_Levels'];
-				
+				//get current level
+				$clevel = (int) $row['idPlayer_Levels'];
+				$cspp = $row['iExperience'];
+				echo $clevel;
 				//get player stats
 				$this->sql = "Select * from Away_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['ID']." Limit 1";
-				$stats = '';
-				foreach ($this->_db_read->query($this->sql) as $stats) {
-					$players[$row['iNumber']]['mvp'] = $stats['iMVP'];
-					if($stats['iMVP'] > 0) {
-						$nspp = $nspp + ($stats['iMVP'] * 5);
+			foreach ($this->_db_read->query($this->sql) as $stats) {
+					$tcp = 0;
+					$nspp = 0;	
+					$players[$row['iNumber']]['mvp'] = (int) $stats['iMVP'];
+					
+					if($players[$row['iNumber']]['mvp'] > 0) {
+						$nspp = (int)$nspp + (int)($players[$row['iNumber']]['mvp'] * 5);
 					}
-					$players[$row['iNumber']]['cp']  = $stats['Inflicted_iCatches'];
-					if($stats['Inflicted_iCatches'] > 0) {
-						$nspp = $nspp + ($stats['Inflicted_iCatches'] * 1);
+					
+					$players[$row['iNumber']]['cp']  = (int) $stats['Inflicted_iCatches'];
+					
+					if($players[$row['iNumber']]['cp'] > 0) {
+						$nspp = $nspp + ($players[$row['iNumber']]['cp'] * 1);
 					}
-					$players[$row['iNumber']]['td']  = $stats['Inflicted_iTouchdowns'];
-					if($stats['Inflicted_iTouchdowns'] > 0) {
-						$nspp = $nspp + ($stats['Inflicted_iTouchdowns'] * 3);
+					$players[$row['iNumber']]['td']  = (int) $stats['Inflicted_iTouchdowns'];
+					if($players[$row['iNumber']]['td'] > 0) {
+						$nspp = $nspp + ($players[$row['iNumber']]['td'] * 3);
 					}
-					$players[$row['iNumber']]['intcpt'] = $stats['Inflicted_iInterceptions'];
-					if($stats['Inflicted_iInterceptions'] > 0) {
-						$nspp = $nspp + ($stats['Inflicted_iInterceptions'] * 2);
+					$players[$row['iNumber']]['intcpt'] = (int) $stats['Inflicted_iInterceptions'];
+					if($players[$row['iNumber']]['intcpt'] > 0) {
+						$nspp = $nspp + ($players[$row['iNumber']]['intcpt'] * 2);
 					}
-					$players[$row['iNumber']]['bh'] = $stats['Inflicted_iCasualties'];
-					$players[$row['iNumber']]['si'] = $stats['Inflicted_iInjuries'];
-					$players[$row['iNumber']]['ki'] = $stats['Inflicted_iDead'];
-					$tcp = $stats['Inflicted_iCasualties'] + $stats['Inflicted_iInjuries'] + $stats['Inflicted_iDead'];
-					if($tcp > 0) {
+					$players[$row['iNumber']]['bh'] = (int) $stats['Inflicted_iCasualties'];
+					$players[$row['iNumber']]['si'] = (int) $stats['Inflicted_iInjuries'];
+					$players[$row['iNumber']]['ki'] = (int) $stats['Inflicted_iDead'];
+					$tcp = (int)$players[$row['iNumber']]['bh'] + (int)$players[$row['iNumber']]['si'] + (int)$players[$row['iNumber']]['ki'];
+					if($tcp >= 1) {
+						Echo "Setting cas spp to";
 						$nspp = $nspp + ($tcp * 2);
+						echo $nspp;
 					}
 				}
 				$this->sql = "Select idPlayer_Casualty_Types from Away_Player_Casualties where idPlayer_Listing =".$players[$row['iNumber']]['ID'];
-			
-				$cas = "";
-				foreach ($this->_db_read->query($this->sql) as $cas) {
+			foreach ($this->_db_read->query($this->sql) as $cas) {
 						$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
+						
 				}
 				if(isset($cas['idPlayer_Casualty_Types'])){
-			
 					$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
 					$players[$row['iNumber']]['inj'] = $this->set_inj($players[$row['iNumber']]['inj']);
 				} else {
-					$players[$row['iNumber']]['inj'] = NONE;
+					$players[$row['iNumber']]['inj'] = NULL;
 				}
+				echo "<br />".$players[$row['iNumber']]['name'];
 				$tspp = $cspp + $nspp;
-				$nlevel = $this->get_p_level($tspp);
+				echo "<br /> current spp is :".$cspp;
+				echo "<br /> new spp is :".$nspp;
+				echo "<br />Spp total is ".$tspp."";
 				
+				$nlevel = $this->get_p_level($tspp);
+				echo "<br />".$nlevel."<hr />";
 				if($nlevel > $clevel) {
 					$players[$row['iNumber']]['ir1_d1'] = rand(1,6);
 					$players[$row['iNumber']]['ir1_d2'] = rand(1,6);
@@ -523,11 +553,12 @@ class cy_match_db {
 					$players[$row['iNumber']]['ir3_d2'] = 0;
 				}
 			}
-			$this->awayplayers = $players;
+						$this->awayplayers = $players;
 			echo "<pre>";
 			print_r($this->awayplayers);
 			echo "</pre><hr />";
 		}
+		
 	}
 	private function set_inj($id) {
 		 switch ( $id ) {
@@ -594,9 +625,10 @@ class cy_match_db {
 		 return $out;
 		
 	}
-	private function get_p_level($int){
-		switch($int) {
-			case ($int === 0):
+	public function get_p_level($int){
+		
+		switch($int) {		
+			case 0:
 				return 1;
 				break;
 			case ($int > 175):
@@ -617,10 +649,11 @@ class cy_match_db {
 			case ($int > 5):
 				return 2;
 				break;
-			case ($int < 6):
+			default:
 				return 1;
 				break;
 		}
+		
 	}
 	private function set_sql($id){
 		switch($id) {
