@@ -533,7 +533,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $team_id2 = $this->hometeam_id;
         $team_id1 = $this->awayteam_id;
 
-        $query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 ) AND  ( team2_id = $team_id2 )";
+        $query = "SELECT match_id FROM matches WHERE submitter_id IS NULL AND ( team1_id = $team_id1 ) AND  ( team2_id = $team_id2 ) ORDER BY match_id ASC";
 
         $match_id = mysql_query($query);
         $match_id = mysql_fetch_array($match_id);
