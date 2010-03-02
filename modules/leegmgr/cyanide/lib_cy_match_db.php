@@ -259,19 +259,11 @@ class cy_match_db {
 	}
 	private function set_home_winnings() {
 		$d1 = rand(1,6);
-		$cash = ($d1 + $this->homefame) * 10000;
-		if( ($this->winner == $this->hometeam) OR $this->winner == '') {
-			$cash = $cash + 10000;
-		}
-		$this->homewinnings = $cash;
+		$this->homewinnings = $d1 + ($this->homefame * 10000) +  (( $this->winner != $this->awateam ) ? 10000 : 0);
 	}
 	private function set_away_winnings() {
 		$d1 = rand(1,6);
-		$cash = ($d1 + $this->awayfame) * 10000;
-		if( ($this->winner == $this->awayteam) OR $this->winner == '') {
-			$cash = $cash + 10000;
-		}
-		$this->awaywinnings = $cash;
+		$this->awaywinnings = $d1 + ($this->awayfame * 10000) +  (( $this->winner != $this->hometeam ) ? 10000 : 0);
 	}
 	private function set_home_ff_new() {
 		$cff = $this->homeff;
@@ -292,7 +284,7 @@ class cy_match_db {
 				$this->homeff = 0;
 			}
 		} else {
-			if($this->winner == '') {
+			if($this->winner != $this->awayteam) {
 				if ($rr > $cff) {
 					$this->homeff = +1;
 				} elseif ($rr < $cff) {
@@ -328,7 +320,7 @@ class cy_match_db {
 				$this->awayff = 0;
 			}
 		} else {
-			if($this->winner == '') {
+			if($this->winner != $this->hometeam) {
 				if ($rr > $cff) {
 					$this->awayff = +1;
 				} elseif ($rr < $cff) {
