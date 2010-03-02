@@ -220,7 +220,7 @@ class cy_team_db {
 			if(isset($this->casualty)) {
 				$sql =''; 
 				foreach($this->casualty as $i => $cas) {
-					$sql .= "INSERT INTO player_casualties VALUES (".$i.",".$cas['idPlayer'].",".$cas['idcasualty'].");";
+					$sql .= "INSERT INTO Player_Casualties VALUES (".$i.",".$cas['idPlayer'].",".$cas['idcasualty'].");";
 				}
 				$this->db_status = $this->_db_con->exec($sql);
 			}
