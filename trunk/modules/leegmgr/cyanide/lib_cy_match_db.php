@@ -259,7 +259,7 @@ class cy_match_db {
 	}
 	private function set_home_winnings() {
 		$d1 = rand(1,6);
-		$this->homewinnings = $d1 + ($this->homefame * 10000) +  (( $this->winner != $this->awateam ) ? 10000 : 0);
+		$this->homewinnings = $d1 + ($this->homefame * 10000) +  (( $this->winner != $this->awayteam ) ? 10000 : 0);
 	}
 	private function set_away_winnings() {
 		$d1 = rand(1,6);
