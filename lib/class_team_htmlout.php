@@ -145,6 +145,11 @@ public static function profile($tid)
 {
     global $coach, $settings;
     $t = new self($tid);
+    if ( !isset($t->rg_win_pct ) )
+    {
+        Print "The specified team does not exist.";
+        return false;
+    }
     
     /* Argument(s) passed to generating functions. */
     $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $tid)) && !$t->is_retired); # Show team action boxes?
@@ -545,13 +550,15 @@ private function _menu($ALLOW_EDIT, $DETAILED)
         echo "<li><a href='${url}&amp;subsec=hhmerc' title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
         
         $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$this->team_id&amp;detailed=".($DETAILED ? '1' : '0') : '';
-        $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_enabled']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id" : '';
+        $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_botocs']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id" : '';
+        $cyanide = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_cyanide']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id&amp;cy" : '';
         if ($pdf || $botocs) {
         ?>
         <li><span class="dir">Roster</span>
             <ul>
                 <?php if ($pdf)    { ?><li><a TARGET="_blank" href="<?php echo $pdf;?>">PDF</a></li> <?php } ?>
                 <?php if ($botocs) { ?><li><a TARGET="_blank" href="<?php echo $botocs;?>">BOTOCS-XML</a></li> <?php } ?>
+                <?php if ($cyanide) { ?><li><a TARGET="_blank" href="<?php echo $cyanide;?>">BOTOCS-DB</a></li> <?php } ?>
             </ul>
         </li>
         <?php
