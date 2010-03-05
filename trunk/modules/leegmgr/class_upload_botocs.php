@@ -92,9 +92,18 @@ class UPLOAD_BOTOCS implements ModuleInterface
             return false;
         }
 
+        if ( !$this->checkHash ( $this->hash ) ) return false;
+
+        $this->hometeam_id= $this->checkTeam ( $this->hometeam );
+        $this->awayteam_id=$this->checkTeam ( $this->awayteam );
+        if ( !$this->hometeam_id || !$this->awayteam_id )
+        {
+            $this->error = "One of the teams was not found on the site.";
+            return false;
+        }
+
         if ( !$this->addMatch () )
         {
-            #$this->error = "Failed to create the match.  The most likely reason for this is an illegal matchup.";
             return false;
         }
 
@@ -156,6 +165,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
     }
 
     function parse_results() {
+
+        global $settings;
+        if ( !$settings['leegmgr_botocs'] )
+        {
+            $this->error = "BOTOCS match reports are not permitted in this league.";
+            return false;
+        }
 
         global $ES_fields; # Used by EPS.
 
@@ -232,6 +248,12 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
     function parse_cy_results() {
 
+        global $settings;
+        if ( !$settings['leegmgr_cyanide'] )
+        {
+            $this->error = "Cyanide match reports are not permitted in this league.";
+            return false;
+        }
         include('cyanide/lib_cy_match_db.php');
 
         #Create a temporary file name that the match report file can be written to.
@@ -276,16 +298,6 @@ class UPLOAD_BOTOCS implements ModuleInterface
     }
 
     function addMatch () {
-
-        if ( !$this->checkHash ( $this->hash ) ) return false;
-
-        $this->hometeam_id= $this->checkTeam ( $this->hometeam );
-        $this->awayteam_id=$this->checkTeam ( $this->awayteam );
-        if ( !$this->hometeam_id || !$this->awayteam_id )
-        {
-            $this->error = "One of the teams was not found on the site.";
-            return false;
-        }
 
         global $settings;
 
@@ -764,10 +776,13 @@ class UPLOAD_BOTOCS implements ModuleInterface
         
         if (is_object($coach)) {
             # Tours the logged in coach can "see".
-            list(,,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->coach_id, array(T_NODE_TOURNAMENT => array('type' => 'type', 'locked' => 'locked')));
+            list(,,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->coach_id, array(T_NODE_TOURNAMENT => array('type' => 'type', 'locked' => 'locked', 'f_did' => 'f_did')));
             $tourlist = "";
             foreach ($tours as $trid => $t)
-                if ($t['type'] == TT_FFA && !$t['locked'] && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
+            {
+                $lid = get_alt_col('divisions', 'did', $t['f_did'], 'f_lid');
+                if ($t['type'] == TT_FFA && !$t['locked'] && $_SESSION['NS_node_id'] == $lid && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
+            }
                 
             return "
                 <!-- The data encoding type, enctype, MUST be specified as below -->
