@@ -224,8 +224,8 @@ function status($status, $msg = '') {
     echo "</div>";
 }
 
-function textdate($mysqldate, $noTime = false) {
-    return date("D M j Y".(($noTime) ? '' : ' G:i:s'), strtotime($mysqldate));
+function textdate($mysqldate, $noTime = false, $setSeconds = true) {
+    return date("D M j Y".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), strtotime($mysqldate));
 }
 
 # Micro Time Stamp.
