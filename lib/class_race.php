@@ -71,5 +71,11 @@ public function getGoods($double_RRs = false)
     );
 }
 
+public static function exists($id)
+{
+    global $raceididx;
+    return in_array($id, array_keys($raceididx));
+}
+
 }
 ?>
