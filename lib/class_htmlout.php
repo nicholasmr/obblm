@@ -59,20 +59,23 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
         : $matches = Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, false);
 
     foreach ($matches as $m) {
+        $m->date_played = textdate($m->date_played, false, false);
         $m->score = "$m->team1_score&mdash;$m->team2_score";
         $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>";
         $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+        $m->league_name = get_parent_name(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE);
         if ($FOR_OBJ) {
             $m->result = matchresult_icon($m->result);
         }
     }
 
     $fields = array(
-        'date_played' => array('desc' => $lng->getTrn('common/dateplayed')),
-        'tour_name'   => array('desc' => $lng->getTrn('common/tournament')),
-        'team1_name'  => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id')),
-        'team2_name'  => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id')),
-        'gate'        => array('desc' => $lng->getTrn('common/gate'), 'kilo' => true, 'suffix' => 'k', 'href' => false),
+        'date_played' => array('desc' => $lng->getTrn('common/dateplayed'), 'nosort' => true),
+        'league_name' => array('desc' => $lng->getTrn('common/league'), 'nosort' => true),
+        'tour_name'   => array('desc' => $lng->getTrn('common/tournament'), 'nosort' => true),
+        'team1_name'  => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id'), 'nosort' => true),
+        'team2_name'  => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id'), 'nosort' => true),
+        'gate'        => array('desc' => $lng->getTrn('common/gate'), 'kilo' => true, 'suffix' => 'k', 'href' => false, 'nosort' => true),
         'score'       => array('desc' => $lng->getTrn('common/score'), 'nosort' => true),
     );
     if ($FOR_OBJ) {$fields['result'] = array('desc' => $lng->getTrn('common/result'), 'nosort' => true);}
@@ -114,16 +117,19 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         : Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, true);
 
     foreach ($matches as $m) {
+        $m->date_created = textdate($m->date_created, true);
         $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>";
         $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
+        $m->league_name = get_parent_name(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE);
     }
 
     $fields = array(
-        'date_created'      => array('desc' => $lng->getTrn('common/datecreated')),
-        'tour_name'         => array('desc' => $lng->getTrn('common/tournament')),
-        'team1_name'        => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id')),
-        'team2_name'        => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id')),
-        'mlink'             => array('desc' => $lng->getTrn('common/match'), 'nosort' => true),
+        'date_created'  => array('desc' => $lng->getTrn('common/datecreated'), 'nosort' => true),
+        'league_name'   => array('desc' => $lng->getTrn('common/league'), 'nosort' => true),
+        'tour_name'     => array('desc' => $lng->getTrn('common/tournament'), 'nosort' => true),
+        'team1_name'    => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id'), 'nosort' => true),
+        'team2_name'    => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id'), 'nosort' => true),
+        'mlink'         => array('desc' => $lng->getTrn('common/match'), 'nosort' => true),
     );
 
     HTMLOUT::sort_table(
