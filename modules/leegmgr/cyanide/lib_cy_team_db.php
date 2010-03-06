@@ -354,6 +354,7 @@ class cyanide {
 		$player_type_map['4']['Troll']=26;
 		$player_type_map['4']['Blitzer']=25;
 		$player_type_map['4']['Black Orc']=24;
+		$player_type_map['4']['Black Orc Blocker']=24;
 		$player_type_map['4']['Thrower']=23;
 		$player_type_map['4']['Goblin']=22;
 		$player_type_map['4']['Lineman']=21;
