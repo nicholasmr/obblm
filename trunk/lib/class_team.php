@@ -455,6 +455,13 @@ class Team
      * Statics
      ***************/
 
+    public static function exists($id) 
+    {
+        $result = mysql_query("SELECT COUNT(*) FROM teams WHERE team_id = $id");
+        list($CNT) = mysql_fetch_row($result);
+        return ($CNT == 1);
+    }
+
     public static function getTeams($race_id = false) {
 
         /**

@@ -366,6 +366,13 @@ class Coach
      * Statics
      ***************/
 
+    public static function exists($id) 
+    {
+        $result = mysql_query("SELECT COUNT(*) FROM coaches WHERE coach_id = $id");
+        list($CNT) = mysql_fetch_row($result);
+        return ($CNT == 1);
+    }
+
     const NODE_STRUCT__TREE = 1;
     const NODE_STRUCT__FLAT = 2;
     public static function allowedNodeAccess($NODE_SRUCT, $cid, $extraFields = array())

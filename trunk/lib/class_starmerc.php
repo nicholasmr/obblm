@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2010. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -149,6 +149,11 @@ class Star
         }
         
         return $starObjs;
+    }
+    
+    public static function exists($id)
+    {
+        return get_alt_col('game_data_stars', 'star_id', $id, 'star_id');
     }
 }
 

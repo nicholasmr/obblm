@@ -31,39 +31,40 @@ public static function dispTeamList()
     global $lng;
 
     /*
-        NOTE: We do NOT show teams not having played any matches!
+        NOTE: We do NOT show teams not having played any matches for nodes = {T_NODE_TOURNAMENT, T_NODE_DIVISION}.
     */
-    
+
     list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(array('race' => true, 'state' => true));
-    $q = 'SELECT _RRP AS "team_id", owned_by_coach_id, f_race_id, teams.name AS "tname", f_cname, f_rname, tv, teams.rdy AS "rdy", teams.retired AS "retired" 
-        FROM matches, teams, tours, divisions 
-        WHERE 
-            matches._RRP = teams.team_id AND 
-            matches.f_tour_id = tours.tour_id AND 
-            tours.f_did = divisions.did ';
-    switch ($sel_node)
-    {
-        case false:
-            break;
-        case T_NODE_TOURNAMENT:
-            $q .= "AND tours.tour_id = $sel_node_id";
-            break;
-        case T_NODE_DIVISION:
-            $q .= "AND divisions.did = $sel_node_id";
-            break;
-        case T_NODE_LEAGUE:
-            $q .= "AND divisions.f_lid = $sel_node_id";
-            break;
-    }
-    if ($sel_state == T_STATE_ACTIVE) {
-        $q .= ' AND teams.rdy IS TRUE AND teams.retired IS FALSE';
-    }
-    if ($sel_race != T_RACE_ALL) {
-        $q .= ' AND teams.f_race_id = '.$sel_race;
-    }
-    $_subt1 = '('.preg_replace('/\_RRP/', 'team1_id', $q).')';
-    $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
-    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
+    $ALL_TIME = ($sel_node === false && $sel_node_id === false);
+        
+    $fields = '_RRP AS "team_id", owned_by_coach_id, f_race_id, teams.name AS "tname", f_cname, f_rname, tv, teams.rdy AS "rdy", teams.retired AS "retired"';
+    $where = array();
+    if ($sel_state == T_STATE_ACTIVE) $where[] = 'teams.rdy IS TRUE AND teams.retired IS FALSE';
+    if ($sel_race != T_RACE_ALL) 	  $where[] = "teams.f_race_id = $sel_race";
+    
+    if ($sel_node == T_NODE_LEAGUE || $ALL_TIME) {
+    	    if (!$ALL_TIME) {
+    			$where[] = "f_lid = $sel_node_id";
+         }
+         $where = (count($where) > 0) ? 'WHERE '.implode(' AND ', $where) : '';
+    	    $queryCnt = "SELECT COUNT(*) FROM teams $where";
+	    $queryGet = 'SELECT '.preg_replace('/\_RRP/', 'team_id', $fields).' FROM teams '.$where;
+    	}
+    else {
+	    $q = "SELECT $fields FROM matches, teams, tours, divisions WHERE matches._RRP = teams.team_id AND matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did ";
+	    switch ($sel_node)
+	    {
+	        case false: break;
+	        case T_NODE_TOURNAMENT: $q .= "AND tours.tour_id = $sel_node_id";   break;
+	        case T_NODE_DIVISION:   $q .= "AND divisions.did = $sel_node_id";   break;
+	        case T_NODE_LEAGUE:     $q .= "AND divisions.f_lid = $sel_node_id"; break;
+	    }
+	    $q .= (count($where) > 0 ? ' AND ' : ' ').implode(' AND ', $where).' ';
+	    $_subt1 = '('.preg_replace('/\_RRP/', 'team1_id', $q).')';
+	    $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
+	    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
+	    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY tname ASC';
+    	}
     $result = mysql_query($queryCnt);
     list($cnt) = mysql_fetch_row($result);
     $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_TEAMS_PER_PAGE);
@@ -76,10 +77,13 @@ public static function dispTeamList()
     echo '</td></td>';
     echo "<tr><td>".$lng->getTrn('common/teams').": $cnt</td></td>";
     echo '</table></center><br>';
-    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY tname ASC LIMIT '.(($page-1)*T_HTML_TEAMS_PER_PAGE).', '.(($page)*T_HTML_TEAMS_PER_PAGE);
+    $queryGet .= ' LIMIT '.(($page-1)*T_HTML_TEAMS_PER_PAGE).', '.(($page)*T_HTML_TEAMS_PER_PAGE);
     
     $teams = array();
     $result = mysql_query($queryGet);
+    var_dump($sel_node);
+    var_dump($sel_node_id);
+    echo $queryCnt;
     while ($t = mysql_fetch_object($result)) {
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
         $t->logo = "<img border='0px' height='20' width='20' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
@@ -145,11 +149,6 @@ public static function profile($tid)
 {
     global $coach, $settings;
     $t = new self($tid);
-    if ( !isset($t->rg_win_pct ) )
-    {
-        Print "The specified team does not exist.";
-        return false;
-    }
     
     /* Argument(s) passed to generating functions. */
     $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $tid)) && !$t->is_retired); # Show team action boxes?

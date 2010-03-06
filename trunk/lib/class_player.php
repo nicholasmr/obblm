@@ -683,6 +683,13 @@ class Player
     /***************
      * Statics
      ***************/
+     
+    public static function exists($id) 
+    {
+        $result = mysql_query("SELECT COUNT(*) FROM players WHERE player_id = $id");
+        list($CNT) = mysql_fetch_row($result);
+        return ($CNT == 1);
+    }
 
     public static function getPlayerStatus($player_id, $match_id) {
 

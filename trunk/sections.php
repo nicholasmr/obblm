@@ -435,6 +435,9 @@ function sec_objhandler() {
                     );
                     break;
                 case T_URL_PROFILE:
+                    if (!call_user_func(array($classPrefix, 'exists'), $_GET['obj_id'])) {
+                        fatal("The specified ID does not exist.");
+                    }
                     call_user_func(array("${classPrefix}_HTMLOUT", 'profile'), $_GET['obj_id']);
                     break;
             }
