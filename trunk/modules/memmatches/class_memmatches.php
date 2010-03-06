@@ -183,7 +183,8 @@ private static function getMemMatches($node = false, $node_id = false) {
     );
     $tables         = ($node) ? ',tours,divisions' : ''; # For matches references.
     $tables_wKey    = ($node) ? "$tables WHERE" : '';
-    $where1         = ($node) ? 'matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did AND '.$ref[$node]." = $node_id AND " : ''; # For matches table.
+    $where1         = "matches.match_id > 0 AND ";
+    $where1        .= ($node) ? 'matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did AND '.$ref[$node]." = $node_id AND " : ''; # For matches table.
     $where2         = ($node) ? $ref[$node]." = $node_id AND " : ''; # For match_data table.
     $where1_noAnd   = ($node) ? substr($where1, 0, -4) : '';
     $where2_noAnd   = ($node) ? substr($where2, 0, -4) : '';
