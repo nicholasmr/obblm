@@ -81,9 +81,6 @@ public static function dispTeamList()
     
     $teams = array();
     $result = mysql_query($queryGet);
-    var_dump($sel_node);
-    var_dump($sel_node_id);
-    echo $queryCnt;
     while ($t = mysql_fetch_object($result)) {
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
         $t->logo = "<img border='0px' height='20' width='20' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
