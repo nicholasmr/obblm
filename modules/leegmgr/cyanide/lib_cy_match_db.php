@@ -22,7 +22,7 @@
 
 
 //class tester
-	
+
 //	$file = sys_get_temp_dir().'MatchReport.sqlite';
 //	$cymatch = new cy_match_db($file);
 //
@@ -36,34 +36,34 @@ class cy_match_db {
 	var $homeid;
 	var $awayid;
 	private $sql;
-	 public $winner = '';
-     public $concession = false;
-     public $gate = 0;
-     public $hash = '';
-     public $hometeam = '';
-        public $homescore = 0; //set
-        public $homewinnings = 0;
-        public $homeff = 0;
-        public $homefame = 0;
-        public $hometransferedGold = 0;
-        public $homeplayers;
-        public $tv_home = 0;
-        public $homefans = 0;
-     public $awayteam = '';
-        public $awayscore = 0; // set
-        public $awaywinnings = 0;
-        public $awayff = 0;
-        public $awayfame = 0;
-        public $awaytransferedGold = 0;
-        public $awayplayers;
-        public $awayfans = 0;
-        public $tv_away = 0;
+	public $winner = '';
+	public $concession = false;
+	public $gate = 0;
+	public $hash = '';
+	public $hometeam = '';
+	public $homescore = 0; //set
+	public $homewinnings = 0;
+	public $homeff = 0;
+	public $homefame = 0;
+	public $hometransferedGold = 0;
+	public $homeplayers;
+	public $tv_home = 0;
+	public $homefans = 0;
+	public $awayteam = '';
+	public $awayscore = 0; // set
+	public $awaywinnings = 0;
+	public $awayff = 0;
+	public $awayfame = 0;
+	public $awaytransferedGold = 0;
+	public $awayplayers;
+	public $awayfans = 0;
+	public $tv_away = 0;
 
-    public $hometeam_id = 0;
-    public $awayteam_id = 0;
-    public $match_id = 0;
-	
-	
+	public $hometeam_id = 0;
+	public $awayteam_id = 0;
+	public $match_id = 0;
+
+
 	function __construct($file) {
 		$this->file = $file;
 		$this->db_engine = 2; //PDO = 2 SQLite3 = 1
@@ -108,7 +108,7 @@ class cy_match_db {
 			// set home players array
 			$this->set_players('Home');
 			// set away players array
-			$this->set_players('Away'); 
+			$this->set_players('Away');
 			// set away players array
 			$this->set_gate();
 			//close db
@@ -144,33 +144,37 @@ class cy_match_db {
 		foreach ($this->_db_read->query($this->sql) as $row) {
 			$this->homeid = $row['idTeam_Listing_Home'];
 			$this->awayid = $row['idTeam_Listing_Away'];
-    	}
+		}
 	}
 	private function set_home_team() {
 		$this->set_sql(3);
 		foreach ($this->_db_read->query($this->sql) as $row) {
 			$this->hometeam = $row['strName'];
-    	}
+		}
+		echo "<table border=1><tr><td>Step</td><td>Home Team</td><td>Away Team</td></tr><tr>";
+		echo "<tr><td>Name</td><td>".$this->hometeam."</td>";
 	}
 	private function set_away_team() {
 		$this->set_sql(4);
 		foreach ($this->_db_read->query($this->sql) as $row) {
 			$this->awayteam = $row['strName'];
-    	}
+		}
+		echo "<td>".$this->awayteam."</td></tr>";
 	}
 	private function set_home_score() {
 		$this->set_sql(1);
 		foreach ($this->_db_read->query($this->sql) as $row) {
-			$this->homescore = $row['Home_iScore'];
-    	}
-		
+			$this->homescore = (int)$row['Home_iScore'];
+		}
+		echo "<tr><td>Score</td><td>".$this->homescore."</td>";
+
 	}
 	private function set_away_score() {
 		$this->set_sql(2);
 		foreach ($this->_db_read->query($this->sql) as $row) {
-			$this->awayscore = $row['Away_iScore'];
-    	}
-		
+			$this->awayscore = (int)$row['Away_iScore'];
+		}
+		echo "<td>".$this->awayscore."</td></tr>";
 	}
 	private function set_winner() {
 		if($this->homescore > $this->awayteam) {
@@ -182,10 +186,11 @@ class cy_match_db {
 			//Tie
 			$this->winner = '';
 		} else {
-			$this->error = "There has been a problem match 
+			$this->error = "There has been a problem match
 			winner could not be set";
 		}
-		
+		echo "<tr><td>Winner</td><td colspan=2>".$this->winner."</td></tr>";
+
 	}
 	private function set_concession() {
 		//get home_team_mvp
@@ -198,8 +203,8 @@ class cy_match_db {
 			} else {
 				$this->concession = false;
 			}
-    	}
-		
+		}
+		echo "<tr><td>Concession?</td><td colspan=2>".$this->concession."</td></tr>";
 	}
 	private function set_gate(){
 		//$this->set_sql(6);
@@ -207,7 +212,7 @@ class cy_match_db {
 		//	$this->gate = $row['iSpectators'];
 		//}
 		$this->gate = $this->awayfans + $this->homefans;
-		
+		echo "<tr><td>Gate</td><td colspan=2>".$this->gate."</td></tr>";
 	}
 	private function set_home_tvff() {
 		$this->set_sql(7);
@@ -215,6 +220,7 @@ class cy_match_db {
 			$this->homeff = $row['iPopularity'];
 			$this->tv_home = $row['iValue'];
 		}
+		echo "<tr><td>Current FF</td><td>".$this->homeff."</td>";
 	}
 	private function set_away_tvff() {
 		$this->set_sql(8);
@@ -222,18 +228,19 @@ class cy_match_db {
 			$this->awayff = $row['iPopularity'];
 			$this->tv_away = $row['iValue'];
 		}
+		echo "<td>".$this->awayff."</td></tr>";
 	}
 	private function set_home_fans() {
 		$d1 = rand(1,6);
 		$d2 = rand(1,6);
 		$this->homefans = ($d1 + $d2 + $this->homeff)*1000;
-		
+		echo "<tr><td>Fans</td><td>".$this->homefans."</td>";
 	}
-    private function set_away_fans() {
+	private function set_away_fans() {
 		$d1 = rand(1,6);
 		$d2 = rand(1,6);
 		$this->awayfans = ($d1 + $d2 + $this->awayff)*1000;
-		
+		echo "<td>".$this->awayfans."</td></tr>";
 	}
 	private function set_home_fame() {
 		if($this->homefans <= $this->awayfans) {
@@ -245,6 +252,7 @@ class cy_match_db {
 		} else {
 			$this->error = "There has been a error gathering home team fame. This error should not occrue";
 		}
+		echo "<tr><td>Fame</td><td>".$this->homefame."</td>";
 	}
 	private function set_away_fame() {
 		if($this->awayfans <= $this->homefans) {
@@ -256,25 +264,34 @@ class cy_match_db {
 		} else {
 			$this->error = "There has been a error gathering home team fame. This error should not occrue";
 		}
+		echo "<td>".$this->awayfame."</td></tr>";
 	}
 	private function set_home_winnings() {
 		$d1 = rand(1,6);
 		$this->homewinnings = (($d1 + $this->homefame) * 10000) +  (( $this->winner != $this->awayteam ) ? 10000 : 0);
+		echo "<tr><td>winnings</td><td>".$this->homewinnings."</td>";
 	}
+
 	private function set_away_winnings() {
 		$d1 = rand(1,6);
 		$this->awaywinnings = (($d1 + $this->awayfame) * 10000) +  (( $this->winner != $this->hometeam ) ? 10000 : 0);
+		echo "<td>".$this->awaywinnings."</td></tr>";
 	}
 	private function set_home_ff_new() {
+		echo "<tr><td>FF Roles Home Team</td><td>";
 		$cff = $this->homeff;
 		$d1  = rand(1,6);
+		echo "[".$d1."]";
 		$d2  = rand(1,6);
+		echo "[".$d2."]";
 		$win = false;
 		if($this->winner == $this->hometeam) {
 			$d3 = rand(1,6);
+			echo "[".$d3."]</td>";
 			$win = true;
 		} else {
 			$d3 = 0;
+			echo "</td>";
 		}
 		$rr = $d1 + $d2 +$d3 ;
 		if ($win == true) {
@@ -300,17 +317,24 @@ class cy_match_db {
 				}
 			}
 		}
+		$win = false;
+		echo "<td>Adjust: ".$this->homeff."</td></tr>";
 	}
 	private function set_away_ff_new() {
-	$cff = $this->awayff;
+		echo "<tr><td>FF Roles Away Team</td><td>";
+		$cff = $this->awayff;
 		$d1  = rand(1,6);
+		echo "[".$d1."]";
 		$d2  = rand(1,6);
+		echo "[".$d2."]";
 		$win = false;
 		if($this->winner == $this->awayteam) {
 			$d3 = rand(1,6);
+			echo "[".$d3."]</td>";
 			$win = true;
 		} else {
 			$d3 = 0;
+			echo "</td>";
 		}
 		$rr = $d1 + $d2 +$d3 ;
 		if ($win == true) {
@@ -336,10 +360,12 @@ class cy_match_db {
 				}
 			}
 		}
+		$win = false;
+		echo "<td>Adjust: ".$this->awayff."</td></tr>";
 	}
 	public function init_player_array() {
-					
-		}
+			
+	}
 	private function set_players($t) {
 		$cspp = 0;
 		$nspp = 0;
@@ -353,15 +379,15 @@ class cy_match_db {
 		$clevel = 0;
 		$nlevel = 0;
 		$tcp	= 0; //total casualties for player
-					// Init player storage
+		// Init player storage
 		$players = array();
 		$stats   = array();
 		$cas	 = array();
-				
+
 		if ($t == 'Home') {
 			$this->set_sql(9);
 			foreach ($this->_db_read->query($this->sql) as $row) {
-				
+
 				$stats   = array();
 				$cas	 = array();
 				$this->init_player_array();
@@ -379,20 +405,20 @@ class cy_match_db {
 				//get current level
 				$clevel = (int) $row['idPlayer_Levels'];
 				$cspp = $row['iExperience'];
-				echo $clevel;
+				//echo $clevel;
 				//get player stats
 				$this->sql = "Select * from Home_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['nr']." Limit 1";
 				foreach ($this->_db_read->query($this->sql) as $stats) {
 					$tcp = 0;
-					$nspp = 0;	
+					$nspp = 0;
 					$players[$row['iNumber']]['mvp'] = (int) $stats['iMVP'];
-					
+						
 					if($players[$row['iNumber']]['mvp'] > 0) {
 						$nspp = (int)$nspp + (int)($players[$row['iNumber']]['mvp'] * 5);
 					}
-					
+						
 					$players[$row['iNumber']]['cp']  = (int) $stats['Inflicted_iCatches'];
-					
+						
 					if($players[$row['iNumber']]['cp'] > 0) {
 						$nspp = $nspp + ($players[$row['iNumber']]['cp'] * 1);
 					}
@@ -410,15 +436,15 @@ class cy_match_db {
 					$players[$row['iNumber']]['ki'] = (int) $stats['Inflicted_iDead'];
 					$tcp = (int)$players[$row['iNumber']]['bh'] + (int)$players[$row['iNumber']]['si'] + (int)$players[$row['iNumber']]['ki'];
 					if($tcp >= 1) {
-						Echo "Setting cas spp to";
+						//Echo "Setting cas spp to";
 						$nspp = $nspp + ($tcp * 2);
-						echo $nspp;
+						//echo $nspp;
 					}
 				}
 				$this->sql = "Select idPlayer_Casualty_Types from Home_Player_Casualties where idPlayer_Listing =".$players[$row['iNumber']]['ID'];
 				foreach ($this->_db_read->query($this->sql) as $cas) {
-						$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
-						
+					$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
+
 				}
 				if(isset($cas['idPlayer_Casualty_Types'])){
 					$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
@@ -426,14 +452,14 @@ class cy_match_db {
 				} else {
 					$players[$row['iNumber']]['inj'] = NULL;
 				}
-				echo "<br />".$players[$row['iNumber']]['name'];
+				//echo "<br />".$players[$row['iNumber']]['name'];
 				$tspp = $cspp + $nspp;
-				echo "<br /> current spp is :".$cspp;
-				echo "<br /> new spp is :".$nspp;
-				echo "<br />Spp total is ".$tspp."";
-				
+				//echo "<br /> current spp is :".$cspp;
+				//echo "<br /> new spp is :".$nspp;
+				//echo "<br />Spp total is ".$tspp."";
+
 				$nlevel = $this->get_p_level($tspp);
-				echo "<br />".$nlevel."<hr />";
+				//echo "<br />".$nlevel."<hr />";
 				if($nlevel > $clevel) {
 					$players[$row['iNumber']]['ir1_d1'] = rand(1,6);
 					$players[$row['iNumber']]['ir1_d2'] = rand(1,6);
@@ -450,18 +476,18 @@ class cy_match_db {
 					$players[$row['iNumber']]['ir3_d2'] = 0;
 				}
 			}
-			
+				
 			$this->homeplayers = $players;
-			echo "<pre>";
-			print_r($this->homeplayers);
-			echo "</pre><hr />";
+			//echo "<pre>";
+			//print_r($this->homeplayers);
+			//echo "</pre><hr />";
 		} elseif ($t == 'Away') {
-			
+				
 			$this->set_sql(10);
 			foreach ($this->_db_read->query($this->sql) as $row) {
 				$stats   = array();
 				$cas	 = array();
-				
+
 				$players[$row['iNumber']]['ID'] = (int) $row['ID'];
 				$players[$row['iNumber']]['nr'] = (int) $row['iNumber'];
 				$players[$row['iNumber']]['name'] = (string) $row['strName'];
@@ -476,20 +502,20 @@ class cy_match_db {
 				//get current level
 				$clevel = (int) $row['idPlayer_Levels'];
 				$cspp = $row['iExperience'];
-				echo $clevel;
+				//echo $clevel;
 				//get player stats
 				$this->sql = "Select * from Away_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['ID']." Limit 1";
-			foreach ($this->_db_read->query($this->sql) as $stats) {
+				foreach ($this->_db_read->query($this->sql) as $stats) {
 					$tcp = 0;
-					$nspp = 0;	
+					$nspp = 0;
 					$players[$row['iNumber']]['mvp'] = (int) $stats['iMVP'];
-					
+						
 					if($players[$row['iNumber']]['mvp'] > 0) {
 						$nspp = (int)$nspp + (int)($players[$row['iNumber']]['mvp'] * 5);
 					}
-					
+						
 					$players[$row['iNumber']]['cp']  = (int) $stats['Inflicted_iCatches'];
-					
+						
 					if($players[$row['iNumber']]['cp'] > 0) {
 						$nspp = $nspp + ($players[$row['iNumber']]['cp'] * 1);
 					}
@@ -507,15 +533,15 @@ class cy_match_db {
 					$players[$row['iNumber']]['ki'] = (int) $stats['Inflicted_iDead'];
 					$tcp = (int)$players[$row['iNumber']]['bh'] + (int)$players[$row['iNumber']]['si'] + (int)$players[$row['iNumber']]['ki'];
 					if($tcp >= 1) {
-						Echo "Setting cas spp to";
+						//Echo "Setting cas spp to";
 						$nspp = $nspp + ($tcp * 2);
-						echo $nspp;
+						//echo $nspp;
 					}
 				}
 				$this->sql = "Select idPlayer_Casualty_Types from Away_Player_Casualties where idPlayer_Listing =".$players[$row['iNumber']]['ID'];
-			foreach ($this->_db_read->query($this->sql) as $cas) {
-						$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
-						
+				foreach ($this->_db_read->query($this->sql) as $cas) {
+					$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
+
 				}
 				if(isset($cas['idPlayer_Casualty_Types'])){
 					$players[$row['iNumber']]['inj'] = $cas['idPlayer_Casualty_Types'];
@@ -523,14 +549,14 @@ class cy_match_db {
 				} else {
 					$players[$row['iNumber']]['inj'] = NULL;
 				}
-				echo "<br />".$players[$row['iNumber']]['name'];
+				//echo "<br />".$players[$row['iNumber']]['name'];
 				$tspp = $cspp + $nspp;
-				echo "<br /> current spp is :".$cspp;
-				echo "<br /> new spp is :".$nspp;
-				echo "<br />Spp total is ".$tspp."";
-				
+				//echo "<br /> current spp is :".$cspp;
+				//echo "<br /> new spp is :".$nspp;
+				//echo "<br />Spp total is ".$tspp."";
+
 				$nlevel = $this->get_p_level($tspp);
-				echo "<br />".$nlevel."<hr />";
+				//	echo "<br />".$nlevel."<hr />";
 				if($nlevel > $clevel) {
 					$players[$row['iNumber']]['ir1_d1'] = rand(1,6);
 					$players[$row['iNumber']]['ir1_d2'] = rand(1,6);
@@ -547,81 +573,81 @@ class cy_match_db {
 					$players[$row['iNumber']]['ir3_d2'] = 0;
 				}
 			}
-						$this->awayplayers = $players;
-			echo "<pre>";
-			print_r($this->awayplayers);
-			echo "</pre><hr />";
+			$this->awayplayers = $players;
+			//echo "<pre>";
+			//print_r($this->awayplayers);
+			//echo "</pre><hr />";
 		}
-		
+
 	}
 	private function set_inj($id) {
-		 switch ( $id ) {
-		 	case 1:
-		 		$out = NULL;
-		 		break;
-		 	case 2: 
-		 		$out = "Miss Next Game";
-		 		break;
-		 	case 3: 
-		 		$out = "Miss Next Game";
-		 		break;
-		 	case 4: 
-		 		$out = "Miss Next Game";
-		 		break;
-		 	case 5: 
-		 		$out = "Miss Next Game";
-		 		break;
-		 	case 6: 
-		 		$out = "Miss Next Game";
-		 		break;
-		 	case 7: 
-		 		$out = "Miss Next Game";
-		 		break;
-		 	case 8: 
-		 		$out = "Miss Next Game";
-		 		break;
-		 	case 9: 
-		 		$out = "Miss Next Game";
-		 		break;
-		 	case 10: 
-		 		$out = "Niggling Injury";
-		 		break;
-		 	case 11: 
-		 		$out = "Niggling Injury";
-		 		break;
-		 	case 12:
-		 		$out = "-1 MA";
-		 		break;
-		 	case 13:
-		 		$out = "-1 MA";
-		 		break;
-		 	case 14:
-		 		$out = "-1 AV";
-		 		break;
-		 	case 15:
-		 		$out = "-1 AV";
-		 		break;
-		 	case 16:
-		 		$out = "-1 AG";
-		 		break;
-		 	case 17:
-		 		$out = "-1 ST";
-		 		break;
-		 	case 18:
-		 		$out = "Dead";
-		 		break;
+		switch ( $id ) {
+			case 1:
+				$out = NULL;
+				break;
+			case 2:
+				$out = "Miss Next Game";
+				break;
+			case 3:
+				$out = "Miss Next Game";
+				break;
+			case 4:
+				$out = "Miss Next Game";
+				break;
+			case 5:
+				$out = "Miss Next Game";
+				break;
+			case 6:
+				$out = "Miss Next Game";
+				break;
+			case 7:
+				$out = "Miss Next Game";
+				break;
+			case 8:
+				$out = "Miss Next Game";
+				break;
+			case 9:
+				$out = "Miss Next Game";
+				break;
+			case 10:
+				$out = "Niggling Injury";
+				break;
+			case 11:
+				$out = "Niggling Injury";
+				break;
+			case 12:
+				$out = "-1 MA";
+				break;
+			case 13:
+				$out = "-1 MA";
+				break;
+			case 14:
+				$out = "-1 AV";
+				break;
+			case 15:
+				$out = "-1 AV";
+				break;
+			case 16:
+				$out = "-1 AG";
+				break;
+			case 17:
+				$out = "-1 ST";
+				break;
+			case 18:
+				$out = "Dead";
+				break;
 			default:
-                $out = NULL;
-                break;
-		 		
-		 		
-		 }
-		 return $out;
-		
+				$out = NULL;
+				break;
+				 
+				 
+		}
+		return $out;
+
 	}
 	public function get_p_level($int){
-		
-		switch($int) {		
+
+		switch($int) {
 			case 0:
 				return 1;
 				break;
@@ -647,7 +673,7 @@ class cy_match_db {
 				return 1;
 				break;
 		}
-		
+
 	}
 	private function set_sql($id){
 		switch($id) {
@@ -676,14 +702,14 @@ class cy_match_db {
 				$this->sql = "SELECT iValue, iPopularity from Away_Team_Listing where ID = 1 Limit 1"; // get gate
 				break;
 			case 9;
-				$this->sql = "SELECT * from Home_Player_Listing where idTeam_Listing = ".$this->homeid."";
-				break;
+			$this->sql = "SELECT * from Home_Player_Listing where idTeam_Listing = ".$this->homeid."";
+			break;
 			case 10;
-				$this->sql = "SELECT * from Away_Player_Listing where idTeam_Listing = ".$this->awayid."";
-				break;
-			case 11; 
-				$this->sql ="SELECT idTeam_Listing_Home,idTeam_Listing_Away From Calendar where ID = 1 Limit 1";
-				break;
+			$this->sql = "SELECT * from Away_Player_Listing where idTeam_Listing = ".$this->awayid."";
+			break;
+			case 11;
+			$this->sql ="SELECT idTeam_Listing_Home,idTeam_Listing_Away From Calendar where ID = 1 Limit 1";
+			break;
 		}
 	}
 
