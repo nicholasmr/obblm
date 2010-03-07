@@ -400,13 +400,13 @@ function sec_main() {
 function sec_teamlist() {
     global $lng;
     title($lng->getTrn('menu/teams'));
-    Team_HTMLOUT::dispTeamList();
+    Team_HTMLOUT::dispList();
 }
 
 function sec_coachlist() {
     global $lng;
     title($lng->getTrn('menu/coaches'));
-    Coach_HTMLOUT::dispTeamList();
+    Coach_HTMLOUT::dispList();
 }
 
 function sec_matcheshandler() {

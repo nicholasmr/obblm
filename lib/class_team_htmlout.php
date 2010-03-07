@@ -26,7 +26,7 @@ define('T_HTML_TEAMS_PER_PAGE', 50);
 class Team_HTMLOUT extends Team
 {
 
-public static function dispTeamList()
+public static function dispList()
 {
     global $lng;
 
@@ -43,15 +43,15 @@ public static function dispTeamList()
     if ($sel_race != T_RACE_ALL) 	  $where[] = "teams.f_race_id = $sel_race";
     
     if ($sel_node == T_NODE_LEAGUE || $ALL_TIME) {
-    	    if (!$ALL_TIME) {
-    			$where[] = "f_lid = $sel_node_id";
-         }
-         $where = (count($where) > 0) ? 'WHERE '.implode(' AND ', $where) : '';
-    	    $queryCnt = "SELECT COUNT(*) FROM teams $where";
-	    $queryGet = 'SELECT '.preg_replace('/\_RRP/', 'team_id', $fields).' FROM teams '.$where;
-    	}
+	    if (!$ALL_TIME) {
+			$where[] = "f_lid = $sel_node_id";
+        }
+        $where = (count($where) > 0) ? 'WHERE '.implode(' AND ', $where) : '';
+        $queryCnt = "SELECT COUNT(*) FROM teams $where";
+        $queryGet = 'SELECT '.preg_replace('/\_RRP/', 'team_id', $fields).' FROM teams '.$where.' ORDER BY tname ASC';
+    }
     else {
-	    $q = "SELECT $fields FROM matches, teams, tours, divisions WHERE matches._RRP = teams.team_id AND matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did ";
+        $q = "SELECT $fields FROM matches, teams, tours, divisions WHERE matches._RRP = teams.team_id AND matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did ";
 	    switch ($sel_node)
 	    {
 	        case false: break;
@@ -64,7 +64,8 @@ public static function dispTeamList()
 	    $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
 	    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
 	    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY tname ASC';
-    	}
+    }
+    
     $result = mysql_query($queryCnt);
     list($cnt) = mysql_fetch_row($result);
     $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_TEAMS_PER_PAGE);

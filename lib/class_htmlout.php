@@ -310,9 +310,13 @@ public static function standings($obj, $node, $node_id, array $opts)
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
     
     $extra['noHelp'] = false;
+    $W_TEAMS_FROM = array_key_exists('teams_from', $opts);
     
     $enableRaceSelector = ($obj == T_OBJ_PLAYER || $obj == T_OBJ_TEAM && (!isset($opts['teams_from']) || $opts['teams_from'] != T_OBJ_RACE));
-    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp, $sel_ff_field, $sel_ff_ineq, $sel_ff_limit) = HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true, 'ffilter' => true, 'obj' => $obj));
+    # NO filters for teams of a coach on the coach's teams list.
+    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp, $sel_ff_field, $sel_ff_ineq, $sel_ff_limit) = ($W_TEAMS_FROM && $opts['teams_from'] == T_OBJ_COACH) 
+        ? array(false,false,T_STATE_ALLTIME,T_RACE_ALL,'GENERAL','mv_played',self::T_NS__ffilter_ineq_gt,0)
+        : HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true, 'ffilter' => true, 'obj' => $obj));
     $filter_node = array($sel_node => $sel_node_id);
     $filter_race = ($sel_race != T_RACE_ALL) ? array(T_OBJ_RACE => $sel_race) : array();
     $filter_having = array('having' => array($sel_ff_field.(($sel_ff_ineq == self::T_NS__ffilter_ineq_gt) ? '>=' : '<=').$sel_ff_limit));
@@ -366,7 +370,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             );
 
             // Show teams standings list only for teams owned by... ?
-            switch ((array_key_exists('teams_from', $opts)) ? $opts['teams_from'] : false)
+            switch ($W_TEAMS_FROM ? $opts['teams_from'] : false)
             {
                 case T_OBJ_COACH:
                     $fields_before['f_rname'] = array('desc' => $lng->getTrn('common/race'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
