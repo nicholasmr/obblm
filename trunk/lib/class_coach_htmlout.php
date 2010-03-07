@@ -26,42 +26,49 @@ define('T_HTML_COACHES_PER_PAGE', 50);
 class Coach_HTMLOUT extends Coach
 {
 
-public static function dispTeamList()
+public static function dispList()
 {
     global $lng;
 
     /*
-        NOTE: We do NOT show teams not having played any matches!
+        NOTE: We do NOT show coaches not having played any matches for nodes = {T_NODE_TOURNAMENT, T_NODE_DIVISION}.
     */
+
+    list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(array('state' => true));
+    $ALL_TIME = ($sel_node === false && $sel_node_id === false);
     
-    list($sel_node, $sel_node_id, $sel_state) = HTMLOUT::nodeSelector(array('state' => true));
-    $q = 'SELECT coach_id AS "coach_id", coaches.name AS "cname", coaches.retired AS "retired", team_cnt AS "team_cnt"
-        FROM matches, teams, coaches, tours, divisions 
-        WHERE 
-            teams.owned_by_coach_id = coaches.coach_id AND 
-            matches._RRP = teams.team_id AND 
-            matches.f_tour_id = tours.tour_id AND 
-            tours.f_did = divisions.did ';
-    switch ($sel_node)
-    {
-        case false:
-            break;
-        case T_NODE_TOURNAMENT:
-            $q .= "AND tours.tour_id = $sel_node_id";
-            break;
-        case T_NODE_DIVISION:
-            $q .= "AND divisions.did = $sel_node_id";
-            break;
-        case T_NODE_LEAGUE:
-            $q .= "AND divisions.f_lid = $sel_node_id";
-            break;
-    }
-    if ($sel_state == T_STATE_ACTIVE) {
-        $q .= ' AND coaches.retired IS FALSE';
-    }
-    $_subt1 = '('.preg_replace('/\_RRP/', 'team1_id', $q).')';
-    $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
-    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
+    $fields = 'coach_id AS "coach_id", coaches.name AS "cname", coaches.retired AS "retired", team_cnt AS "team_cnt"';
+    $where = array();
+    if ($sel_state == T_STATE_ACTIVE) $where[] = 'coaches.retired IS FALSE';
+
+    if ($ALL_TIME) {
+        $where = (count($where) > 0) ? 'WHERE '.implode(' AND ', $where) : '';
+	    $queryCnt = "SELECT COUNT(*) FROM coaches $where";
+	    $queryGet = "SELECT $fields FROM coaches $where ORDER BY cname ASC";
+	}
+	else if ($sel_node == T_NODE_LEAGUE) {
+        $where = (count($where) > 0) ? ' AND '.implode(' AND ', $where) : '';
+        # In case of duplicate records in memberships table we search for distinct/"grouped by" values.
+	    $queryCnt = "SELECT COUNT(DISTINCT cid, lid) FROM coaches,memberships WHERE cid = coach_id AND lid = $sel_node_id $where";
+	    $queryGet = "SELECT $fields FROM coaches,memberships WHERE cid = coach_id AND lid = $sel_node_id $where GROUP BY cid, lid ORDER BY cname ASC";
+	}
+    else {
+        $q = "SELECT $fields FROM matches, teams, coaches, tours, divisions 
+              WHERE teams.owned_by_coach_id = coaches.coach_id AND matches._RRP = teams.team_id AND matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did ";
+	    switch ($sel_node)
+	    {
+	        case false: break;
+	        case T_NODE_TOURNAMENT: $q .= "AND tours.tour_id = $sel_node_id";   break;
+	        case T_NODE_DIVISION:   $q .= "AND divisions.did = $sel_node_id";   break;
+	        case T_NODE_LEAGUE:     $q .= "AND divisions.f_lid = $sel_node_id"; break;
+	    }
+	    $q .= (count($where) > 0) ? ' AND '.implode(' AND ', $where).' ' : '';
+	    $_subt1 = '('.preg_replace('/\_RRP/', 'team1_id', $q).')';
+	    $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
+	    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
+	    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY cname ASC';
+    }    
+    
     $result = mysql_query($queryCnt);
     list($cnt) = mysql_fetch_row($result);
     $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_COACHES_PER_PAGE);
@@ -74,7 +81,7 @@ public static function dispTeamList()
     echo '</td></td>';
     echo "<tr><td>".$lng->getTrn('common/coaches').": $cnt</td></td>";
     echo '</table></center><br>';
-    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY cname ASC LIMIT '.(($page-1)*T_HTML_COACHES_PER_PAGE).', '.(($page)*T_HTML_COACHES_PER_PAGE);
+    $queryGet .= ' LIMIT '.(($page-1)*T_HTML_COACHES_PER_PAGE).', '.(($page)*T_HTML_COACHES_PER_PAGE);
     
     $coaches = array();
     $result = mysql_query($queryGet);
