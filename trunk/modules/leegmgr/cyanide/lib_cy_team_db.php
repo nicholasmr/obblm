@@ -708,10 +708,10 @@ class cyanide {
 			"Characteristics_fArmourValue" => $AV, // must be run through function get_cy_AV()
 			"idPlayer_Levels" => $idPlayer_Levels,
 		    "iExperience" => $iExperience, //spp 
-			"idEquipment_Listing_Helmet" => 70, //not sure what to do with the equipment related stuff.
-			"idEquipment_Listing_Pauldron" => 71, // still trying to figure out the details and if these have to be set.
-			"idEquipment_Listing_Gauntlet" => 72, 
-			"idEquipment_Listing_Boot" => 73, 
+			"idEquipment_Listing_Helmet" => 0, //not sure what to do with the equipment related stuff.
+			"idEquipment_Listing_Pauldron" => 0, // still trying to figure out the details and if these have to be set.
+			"idEquipment_Listing_Gauntlet" => 0, 
+			"idEquipment_Listing_Boot" => 0, 
 			"Durability_iHelmet" => 0,  
 			"Durability_iPauldron" => 0, 
 			"Durability_iGauntlet" => 0,
