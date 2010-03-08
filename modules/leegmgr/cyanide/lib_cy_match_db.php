@@ -390,6 +390,8 @@ class cy_match_db {
 
 				$stats   = array();
 				$cas	 = array();
+				$inflicted_pass = (int) 0;
+				
 				$this->init_player_array();
 				$players[$row['iNumber']]['ID'] = (int) $row['ID'];
 				$players[$row['iNumber']]['nr'] = (int) $row['iNumber'];
@@ -417,10 +419,10 @@ class cy_match_db {
 						$nspp = (int)$nspp + (int)($players[$row['iNumber']]['mvp'] * 5);
 					}
 						
-					$players[$row['iNumber']]['cp']  = (int) $stats['Inflicted_iCatches'];
-						
-					if($players[$row['iNumber']]['cp'] > 0) {
-						$nspp = $nspp + ($players[$row['iNumber']]['cp'] * 1);
+					$players[$row['iNumber']]['cp']  = (int) $stats['Inflicted_iPasses'];
+					$inflicted_pass					 = (int) $stats['Inflicted_iPasses'];
+					if($inflicted_pass > 0) {
+						$nspp = $nspp + ($inflicted_pass * 1);
 					}
 					$players[$row['iNumber']]['td']  = (int) $stats['Inflicted_iTouchdowns'];
 					if($players[$row['iNumber']]['td'] > 0) {
@@ -487,7 +489,8 @@ class cy_match_db {
 			foreach ($this->_db_read->query($this->sql) as $row) {
 				$stats   = array();
 				$cas	 = array();
-
+				$inflicted_pass = (int) 0;
+				
 				$players[$row['iNumber']]['ID'] = (int) $row['ID'];
 				$players[$row['iNumber']]['nr'] = (int) $row['iNumber'];
 				$players[$row['iNumber']]['name'] = (string) $row['strName'];
@@ -514,10 +517,11 @@ class cy_match_db {
 						$nspp = (int)$nspp + (int)($players[$row['iNumber']]['mvp'] * 5);
 					}
 						
-					$players[$row['iNumber']]['cp']  = (int) $stats['Inflicted_iCatches'];
-						
-					if($players[$row['iNumber']]['cp'] > 0) {
-						$nspp = $nspp + ($players[$row['iNumber']]['cp'] * 1);
+					$players[$row['iNumber']]['cp']  = (int) $stats['Inflicted_iPasses'];
+					$inflicted_pass 				 = (int) $stats['Inflicted_iPasses'];
+					
+					if($inflicted_pass > 0) {
+						$nspp = $nspp + ($inflicted_pass * 1);
 					}
 					$players[$row['iNumber']]['td']  = (int) $stats['Inflicted_iTouchdowns'];
 					if($players[$row['iNumber']]['td'] > 0) {
