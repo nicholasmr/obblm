@@ -778,10 +778,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
             # Tours the logged in coach can "see".
             list(,,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->coach_id, array(T_NODE_TOURNAMENT => array('type' => 'type', 'locked' => 'locked', 'f_did' => 'f_did')));
             $tourlist = "";
+            $coach_lid = ( isset($_SESSION['NS_node_id']) && $_SESSION['NS_node_id'] > 0 ) ? $_SESSION['NS_node_id'] : 1;
             foreach ($tours as $trid => $t)
             {
                 $lid = get_alt_col('divisions', 'did', $t['f_did'], 'f_lid');
-                if ($t['type'] == TT_FFA && !$t['locked'] && $_SESSION['NS_node_id'] == $lid && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
+                if ($t['type'] == TT_FFA && !$t['locked'] && $coach_lid == $lid && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
             }
                 
             return "
