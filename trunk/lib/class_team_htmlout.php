@@ -555,7 +555,7 @@ private function _menu($ALLOW_EDIT, $DETAILED)
             <ul>
                 <?php if ($pdf)    { ?><li><a TARGET="_blank" href="<?php echo $pdf;?>">PDF</a></li> <?php } ?>
                 <?php if ($botocs) { ?><li><a TARGET="_blank" href="<?php echo $botocs;?>">BOTOCS-XML</a></li> <?php } ?>
-                <?php if ($cyanide) { ?><li><a TARGET="_blank" href="<?php echo $cyanide;?>">BOTOCS-DB</a></li> <?php } ?>
+                <?php if ($cyanide) { ?><li><a TARGET="_blank" href="<?php echo $cyanide;?>">Cyanide-DB</a></li> <?php } ?>
             </ul>
         </li>
         <?php
