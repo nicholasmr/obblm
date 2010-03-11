@@ -406,7 +406,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
 
             $x .= '
             </select>
-            <input type="submit" name="button" value="OK">
+            <input type="submit" name="button" value="OK" onClick="if(!confirm(\''.$lng->getTrn('common/confirm_box').'\')){return false;}">
             <input type="hidden" name="type" value="skill">
             <input type="hidden" name="player" value="'.$p->player_id.'">
             </form>
@@ -801,6 +801,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 );
                 
                 # If one of these are selected from the menu, a JavaScript confirm prompt is displayed before submitting.
+                # Note: Don't add "hire_player" here - players may be un-bought if not having played any games.
                 $tmange_confirm = array('hire_journeyman', 'fire_player', 'buy_goods', 'drop_goods'); 
 
                 // Set default choice.
@@ -1142,7 +1143,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     ?>
                     <br><br>
                     <input type="submit" name="button" value="OK" <?php echo ($DISABLE ? 'DISABLED' : '');?> 
-                        <?php if (in_array($_POST['menu_tmanage'], $tmange_confirm)) {echo "onClick=\"if(!confirm('Are you sure?')){return false;}\"";}?>
+                        <?php if (in_array($_POST['menu_tmanage'], $tmange_confirm)) {echo "onClick=\"if(!confirm('".$lng->getTrn('common/confirm_box')."')){return false;}\"";}?>
                     >
                 </form>
             </div>
