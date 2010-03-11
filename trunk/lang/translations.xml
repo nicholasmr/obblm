@@ -109,6 +109,8 @@
     <notice_spp><![CDATA[<i>Note</i>: <b>If</b> star players could earn SPP they would have the amount correspondng to the SPP column.]]></notice_spp>
     <sortedagainst>Sorted against</sortedagainst>
     
+    <confirm_box>Are you sure?</confirm_box>
+    
     <!-- nodeSelector() -->
     <displayfrom>Display from</displayfrom>
     <type>Type</type>
