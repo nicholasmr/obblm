@@ -757,7 +757,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
         if (!$xml->schemaValidate($xsdfile)) {
             unlink($tmpfname);
             $this->error = "DOMDocument::schemaValidate() Generated Errors!";
+            $this->error .= "<!-- ";
             $this->libxml_display_errors();
+            $this->error .= " -->";
+            $this->error .= "<br><br>The most likely cause of this error is an incorrect match report template.
+                            Please download the appropriate template and regenerate the report.";
             return false;
         }
 
