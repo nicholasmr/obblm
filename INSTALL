@@ -6,22 +6,6 @@ To install this software please edit the settings.php file so that it fits your 
 Afterwards run install.php from a web-browser which will setup MySQL for OBBLM.
 It is recommended that you delete the install.php file when done.
 
------------------------------------
-MYSQL, PHP AND WEBSERVER SETUP HELP
------------------------------------
-
-Here is a small guide if you are not sure on how to actually use and "start" OBBLM:
-
-OBBLM is a web application which means that it is run from a web browser.
-The browser you open must load the OBBLM pages from a webserver, which can be ANY computer with webserver software installed on it.
-The webserver software itself depends on another piece of software to interpret the OBBLM program files. This interpretation software is called PHP.
-Now you are almost ready to go. OBBLM depends on yet another piece of software to store your league data (in a database) for later retrieval. This software is called MySQL.
-By installing all three from above you are all set.
-
-Installation guide for MySQL, PHP and Apache (webserver): http://www.mjmwired.net/resources/mjm-apache-windows.html
-
-Please note that by installing the above dependent software, you are able to use OBBLM without internet access!
-
 ---------
 UPGRADING
 ---------
