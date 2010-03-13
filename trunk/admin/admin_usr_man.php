@@ -163,7 +163,9 @@ Coaches with global access rights are league commissioners in <i>all</i> leagues
         <SELECT NAME="def_leagues[]" MULTIPLE>
         <?php
         foreach ($settings['default_leagues'] as $lid) {
-            echo "<OPTION DISABLED VALUE='$lid'>".get_alt_col('leagues', 'lid', $lid, 'name')." (added to automatically)</OPTION>\n";
+            if (get_alt_col('leagues', 'lid', $lid, 'lid')) {
+                echo "<OPTION DISABLED VALUE='$lid'>".get_alt_col('leagues', 'lid', $lid, 'name')." (added to automatically)</OPTION>\n";
+            }
         }
         foreach ($leagues as $lid => $desc) {
             if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN && !in_array($lid, $settings['default_leagues'])) {
