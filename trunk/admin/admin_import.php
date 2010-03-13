@@ -92,7 +92,10 @@ This page allows you to create a customized team for an existing coach.<br>
 This is useful if you and your league wish to avoid starting from scratch in order to use OBBLM.<br>
 <u>Note</u>: If you discover errors after having imported your team, you can either repair the errors<br> 
 via the admin tools in the coach corner, or simply delete the team and import a new.<br>
-
+<u>Note</u>: The team import feature is <b>not</b> meant to be a way for you to import the entire state of your league, with stats, into OBBLM.<br>
+It's meant to be an easy way of getting your existing teams into OBBLM without having to re-create the teams from scratch ie. buying players, buying team stuff, selecting player skills etc..<br>
+The fact that you may specify won, lost and draw games etc. for a imported team is merely to make the team pages of imported teams reflect the actual team progress - it 
+does not allow you to integreate the imported team's stats with the future collected stats via OBBLM in, for example, the standings tables.
 <hr align="left" width="200px">
 <br>
 Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right click on link --> save as) and uploading it.<br>
