@@ -33,14 +33,14 @@ if (isset($_FILES['xmlfile'])) {
         $t->played_0 = $t->won+$t->lost+$t->draw;
         $t->imported = 1;
         # Add team
-        status($tid = Team::create(array_merge(
+        list($exitStatus, $tid) = Team::create(array_merge(
             array_intersect_key((array) $t, array_fill_keys(Team::$createEXPECTED, null)), # Fields which are correctly named in XMl file.
             array_combine(array_keys($map), array_values(array_intersect_key((array) $t, array_fill_keys(array_values($map), null)))) # Mapped fields.
-        )), 
-        "Created team '$t->name'");
+        ));
+        status(!$exitStatus, $exitStatus ? Team::$T_CREATE_ERROR_MSGS[$exitStatus] : "Created team '$t->name'");
         # Add players
         $ROLLBACK = false;
-        if ($tid) {
+        if (is_numeric($tid) && !$exitStatus) {
             $team = new Team($tid);
             foreach ($t->players->player as $p) {
                 $p = (object) ((array) $p); # Get rid of SimpleXML objects.
@@ -55,22 +55,25 @@ if (isset($_FILES['xmlfile'])) {
                     'nr' => $p->nr, 'f_pos_id' => $p->pos_id, 'name' => $p->name, 'team_id' => $tid
                     ), array('force' => true, 'free' => true)
                 );
-                $status2 = true;
                 if ($status1) {
-                    # The status must be set as the "inj" (not agn) field for EVERY match (import) entry. 
-                    # This is because MySQL may pick a random match data entry from which to get the status from.
-                    $pstatus = $T_INJS_REV[strtoupper($p->status)];
-                    # Injuries
-                    foreach (array('ma', 'st', 'ag', 'av', 'ni') as $inj) {
-                        $agn = $T_INJS_REV[strtoupper($inj)];
-                        while ($p->{$inj}-- > 0) {
-                            $status2 &= Match::ImportEntry($pid, array_merge(array_fill_keys(array_merge($T_PMD_ACH, $T_PMD_IR),0), array_combine($T_PMD_INJ, array($pstatus,$agn,($p->{$inj}-- > 0) ? $agn : NONE))));
-                        }
-                    }
-                    # Set player achievements
-                    $status2 &= Match::ImportEntry($pid, array_merge(array_intersect_key((array) $p, array_fill_keys($T_PMD_ACH,null)), array_combine($T_PMD_INJ,array($pstatus,NONE,NONE)), array_fill_keys($T_PMD_IR,0)));
+                    status(false, Player::$T_CREATE_ERROR_MSGS[$status1]);
+                    break;
                 }
-                status($status1 && $status2, "Added to '$t->name' player '$p->name'");
+
+                $status2 = true;
+                # The status must be set as the "inj" (not agn) field for EVERY match (import) entry. 
+                # This is because MySQL may pick a random match data entry from which to get the status from.
+                $pstatus = $T_INJS_REV[strtoupper($p->status)];
+                # Injuries
+                foreach (array('ma', 'st', 'ag', 'av', 'ni') as $inj) {
+                    $agn = $T_INJS_REV[strtoupper($inj)];
+                    while ($p->{$inj}-- > 0) {
+                        $status2 &= Match::ImportEntry($pid, array_merge(array_fill_keys(array_merge($T_PMD_ACH, $T_PMD_IR),0), array_combine($T_PMD_INJ, array($pstatus,$agn,($p->{$inj}-- > 0) ? $agn : NONE))));
+                    }
+                }
+                # Set player achievements
+                $status2 &= Match::ImportEntry($pid, array_merge(array_intersect_key((array) $p, array_fill_keys($T_PMD_ACH,null)), array_combine($T_PMD_INJ,array($pstatus,NONE,NONE)), array_fill_keys($T_PMD_IR,0)));
+                status($status2, "Added to '$t->name' player '$p->name'");
             }
             
             # Set correct treasury.
