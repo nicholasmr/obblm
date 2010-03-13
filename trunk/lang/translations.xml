@@ -677,7 +677,7 @@
 
 <!-- Spanish -->
 
-<es>
+<es-ES>
 
 <common>
     <notitle>Introduce el título aquí</notitle>
@@ -1290,9 +1290,9 @@
     </faq_txt>
 </about>
 
-</es>
+</es-ES>
 
-<de>
+<de-DE>
 
 <!-- Commonly used strings -->
 <common>
@@ -1959,9 +1959,9 @@
     </schedule>
 </admin>
 
-</de>
+</de-DE>
 
-<fr>
+<fr-FR>
 <!-- Commonly used strings -->
 <common>
     <notitle>Saisir un titre</notitle>
@@ -2378,6 +2378,6 @@
     <as_type>De type...</as_type>
     </schedule>
 </admin>
-</fr>
+</fr-FR>
 
 </translations>
