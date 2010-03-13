@@ -451,10 +451,6 @@ public static function report() {
     title("$m->team1_name - $m->team2_name");
     $CP = 8; // Colspan.
 
-    if (Module::isRegistered('UPLOAD_BOTOCS')) {
-        Print "<center><a href='handler.php?type=leegmgr&amp;replay=".$m->match_id."'>view replay</a></center>";
-    }
-
     ?>
     <table>
     <tr><td></td><td style='text-align: right;'><i><?php echo $lng->getTrn('common/home');?></i></td><td>&mdash;</td><td style='text-align: left;'><i><?php echo $lng->getTrn('common/away');?></i></td></tr>
@@ -466,6 +462,11 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3"><?php     echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION);?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td colspan="3"><?php   echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT);?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
+    <?php
+    if (Module::isRegistered('UPLOAD_BOTOCS')) {
+        echo "<tr><td><b>Replay</b>:</td><td colspan='3'><a href='handler.php?type=leegmgr&amp;replay=$m->match_id'>View replay</a></td></tr>";
+    }
+    ?>
     </table>
     <br>
     <?php HTMLOUT::helpBox($lng->getTrn('matches/report/help'), $lng->getTrn('common/needhelp')); ?>

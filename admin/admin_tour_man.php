@@ -60,7 +60,7 @@ title($lng->getTrn('menu/admin_menu/tour_man'));
         <input type="checkbox" name="lock" value="1">
         <br><br>
         <input type="hidden" name="type" value="lock">
-        <input type="submit" value="OK">
+        <input type="submit" value="OK" <?php echo (empty($manageable_tours)) ? 'DISABLED' : '';?>>
     </form>
     </div>
 </div>
@@ -102,7 +102,7 @@ title($lng->getTrn('menu/admin_menu/tour_man'));
         <br>
 
         <input type="hidden" name="type" value="change">
-        <input type="submit" value="Submit changes" <?php echo (empty($tours)) ? 'DISABLED' : ''?>>
+        <input type="submit" value="Submit changes" <?php echo (empty($manageable_tours)) ? 'DISABLED' : '';?>>
         <br>
     </form>
     </div>
@@ -136,7 +136,7 @@ title($lng->getTrn('menu/admin_menu/tour_man'));
         <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br>
         <br>
         <input type="hidden" name="type" value="delete">
-        <input type="submit" value="Delete" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?> onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
+        <input type="submit" value="Delete" <?php echo ($IS_GLOBAL_ADMIN && !empty($manageable_tours)) ? '' : 'DISABLED';?> onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
     </form>
     </div>
 </div>
