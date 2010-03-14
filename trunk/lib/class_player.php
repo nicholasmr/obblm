@@ -800,7 +800,7 @@ class Player
 
         $errors = array(
             self::T_CREATE_ERROR__UNEXPECTED_INPUT   => $EXPECTED !== array_keys($input),
-            self::T_CREATE_ERROR__TEAM_FULL          => $team->isFull(),
+            self::T_CREATE_ERROR__TEAM_FULL          => !$JM && $team->isFull(),
             self::T_CREATE_ERROR__INVALID_POS        => !$team->isPlayerPosValid((int) $input['f_pos_id']),
             self::T_CREATE_ERROR__POS_LIMIT_REACHED  => !$team->isPlayerBuyable((int) $input['f_pos_id']),
             self::T_CREATE_ERROR__INSUFFICIENT_FUNDS => $team->treasury - ($price = ($JM || $FREE) ? 0 : self::price((int) $input['f_pos_id'])) < 0,
