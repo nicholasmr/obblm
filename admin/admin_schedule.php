@@ -11,7 +11,7 @@ if (isset($_POST['button'])) {
     // Teams
     $team_ids = explode(',', $_POST['teams']);
     $teamsCount = count($team_ids);
-    
+
     // Shortcut booleans:
     $mkNewFFA       = ($_POST['type'] == TT_FFA && $_POST['existTour'] == -1);
     $addMatchToFFA  = ($_POST['type'] == TT_FFA && $_POST['existTour'] != -1);
@@ -169,6 +169,7 @@ title($lng->getTrn('menu/admin_menu/schedule'));
            url: "handler.php?type=verifyteam",
            data: {tname:  name},
            success: function(tid){
+                tid = tid.replace(new RegExp("(\n|\r)", "g" ),'');
                 TID = tid;
                 TNAME = name;
                 if (TID > 0) {
