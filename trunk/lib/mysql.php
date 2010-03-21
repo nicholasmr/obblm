@@ -532,7 +532,11 @@ $objFields_init = array(
 );
 // Object property extra (addition) fields
 $objFields_extra = array(
-    T_OBJ_PLAYER => array('value' => 'extra_val', 'spp' => 'extra_spp'), # We don't include extra_skills since it's a string field.
+    /* 
+        We don't include extra_skills since it's a string field. 
+        Neither extra_value since it's added to normal value field in the SQL core.
+    */
+    T_OBJ_PLAYER => array('spp' => 'extra_spp'), 
 );
 
 // These object fields are averageable
