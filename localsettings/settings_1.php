@@ -37,14 +37,22 @@ $settings['fp_messageboard']['show_match_summaries'] = true; // Default is true.
 /* Front page tournament standings boxes */
 
 $settings['fp_standings'] = array(
-    # This will display a standings box of the top 6 teams in tournament with ID = 1
+    # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
         'id'     => 1,
         'box_ID' => 1,
+        // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
+        'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
+        /* 
+            The house ranking system (HRS) NUMBER to sort the table against. 
+            Note, this is ignored for "type = tournament", since tours have an assigned HRS.
+            Also note that using HRSs with fields such as points (pts) for leagues/divisions standings makes no sense as they are tournament specific fields (i.e. it makes no sense to sum the points for teams across different tours to get the teams' "league/division points", as the points definitions for tours may vary).
+        */
+        'HRS'    => 1, # Note: this must be a existing and valid HRS number from the main settings.php file.
         'title'  => 'Tournament 1 standings',
         'length' => 6,
         # Format: "Displayed table column name" => "OBBLM field name".
-        'fields' => array('Name' => 'name', 'PTS' => 'pts', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga'),
+        'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
     ),
 );
 
@@ -52,18 +60,22 @@ $settings['fp_standings'] = array(
 
 $settings['fp_leaders'] = array(
     # Please note: You can NOT make expressions out of leader fields e.g.: 'field' => 'cas+td'
-    # This will display a 'most CAS' player leaders box for the tournament with ID = 1
+    # This will display a 'most CAS' player leaders box for the node (league, division or tournament) with ID = 1
     array(
         'id'     => 1,
         'box_ID' => 3,
+        // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
+        'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
         'title'  => 'Tournament ID=1 most casualties',  
         'field'  => 'cas',
         'length' => 5,
     ),
-    # This will display a 'most TD' player leaders box for the tournament with ID = 2
+    # This will display a 'most TD' player leaders box for the node (league, division or tournament) with ID = 2
     array(
         'id'     => 2,
         'box_ID' => 4,
+        // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
+        'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
         'title'  => 'Tournament ID=2 most touchdowns',  
         'field'  => 'td',
         'length' => 5,
