@@ -350,12 +350,12 @@ function sec_main() {
                         </tr>
                         <?php
                         foreach (Match::getMatches($box['length'], $box['type'], $box['id'], false) as $m) {
-                            $home   = ($m->stadium == $m->team1_id) ? 'team1' : 'team2';
-                            $guest  = ($home == 'team1') ? 'team2' : 'team1';
                             echo "<tr valign='top'>\n";
-                            echo "<td style='text-align: right;'>" . $m->{"{$home}_name"} . "</td>\n";
-                            echo "<td><nobr>" . $m->{"${home}_score"} . "&mdash;" . $m->{"${guest}_score"} . "</nobr></td>\n";
-                            echo "<td style='text-align: left;'>" . $m->{"${guest}_name"} . "</td>\n";
+                            $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
+                            $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
+                            echo "<td style='text-align: right;'>$t1name</td>\n";
+                            echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
+                            echo "<td style='text-align: left;'>$t2name</td>\n";
                             echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
                             echo "</tr>";
                         }
@@ -377,7 +377,12 @@ function sec_main() {
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
-                            <td width="100%"><i><?php echo $lng->getTrn('common/name');?></i></td>
+                            <td><i><?php echo $lng->getTrn('common/name');?></i></td>
+                            <?php 
+                            if ($box['show_team']) {
+                                ?><td><i><?php echo $lng->getTrn('common/team');?></i></td><?php
+                            }
+                            ?>
                             <td><i>#</i></td>
                             <td><i><?php echo $lng->getTrn('common/value');?></i></td>
                         </tr>
@@ -385,6 +390,9 @@ function sec_main() {
                         foreach ($players as $p) {
                             echo "<tr>\n";
                             echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p['player_id'],false,false)."'>$p[name]</a>" : $p['name'])."</td>\n";
+                            if ($box['show_team']) {
+                                echo "<td>".(($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$p['owned_by_team_id'],false,false)."'>$p[f_tname]</a>" : $p['f_tname'])."</td>\n";
+                            }
                             echo "<td>".$p[$f]."</td>\n";
                             echo "<td>".$p['value']/1000 ."k</td>\n";
                             echo "</tr>";

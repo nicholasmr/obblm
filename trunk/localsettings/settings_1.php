@@ -62,23 +62,25 @@ $settings['fp_leaders'] = array(
     # Please note: You can NOT make expressions out of leader fields e.g.: 'field' => 'cas+td'
     # This will display a 'most CAS' player leaders box for the node (league, division or tournament) with ID = 1
     array(
-        'id'     => 1,
-        'box_ID' => 3,
+        'id'        => 1,
+        'box_ID'    => 3,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
-        'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'  => 'Tournament ID=1 most casualties',  
-        'field'  => 'cas',
-        'length' => 5,
+        'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
+        'title'     => 'Tournament ID=1 most casualties',  
+        'field'     => 'cas',
+        'length'    => 5,
+        'show_team' => true, # Show player's team name?
     ),
     # This will display a 'most TD' player leaders box for the node (league, division or tournament) with ID = 2
     array(
-        'id'     => 2,
-        'box_ID' => 4,
+        'id'        => 2,
+        'box_ID'    => 4,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
-        'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'  => 'Tournament ID=2 most touchdowns',  
-        'field'  => 'td',
-        'length' => 5,
+        'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
+        'title'     => 'Tournament ID=2 most touchdowns',  
+        'field'     => 'td',
+        'length'    => 5,
+        'show_team' => true, # Show player's team name?
     ),
 );
 
