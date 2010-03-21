@@ -258,7 +258,14 @@ function sec_main() {
             # These fields distinguishes the box types.
             else if (isset($box['fields'])) {$box['dispType'] = 'standings';}
             else if (isset($box['field']))  {$box['dispType'] = 'leaders';}
-            else if (isset($box['type']))   {$box['dispType'] = 'latestgames';}
+            else                            {$box['dispType'] = 'latestgames';}
+            switch ($box['type']) {
+                case 'league':     $_type = T_NODE_LEAGUE; break;
+                case 'division':   $_type = T_NODE_DIVISION; break;
+                case 'tournament': $_type = T_NODE_TOURNAMENT; break;
+                default: $_type = T_NODE_LEAGUE;
+            }
+            $box['type'] = $_type;
             $boxes_ordered[] = $box;
         }
     }
@@ -273,12 +280,24 @@ function sec_main() {
     switch ($box['dispType']) {
         
         case 'standings':
-            if (!get_alt_col('tours', 'tour_id', $box['id'], 'tour_id')) {
-                break;
+
+            switch ($box['type']) {
+                case T_NODE_TOURNAMENT:
+                    if (!get_alt_col('tours', 'tour_id', $box['id'], 'tour_id')) {
+                        break 2;
+                    }
+                    $tour = new Tour($box['id']);
+                    $SR = $tour->getRSSortRule();
+                    break;
+                    
+                case T_NODE_DIVISION: 
+                case T_NODE_LEAGUE:
+                default:
+                    global $hrs;
+                    $SR = $hrs[$box['HRS']]['rule'];
+                    break;
             }
-                
-            $tour = new Tour($box['id']);
-            $teams = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour->tour_id), $box['length'], $tour->getRSSortRule(), false);
+            $teams = Stats::getRaw(T_OBJ_TEAM, array($box['type'] => $box['id']), $box['length'], $SR, false);
             ?>
             <div class='boxWide'>
                 <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
@@ -302,7 +321,7 @@ function sec_main() {
                                 elseif (is_numeric($t[$f]) && !ctype_digit($t[$f]))
                                     echo sprintf('%1.2f', $t[$f]);
                                 else
-                                    echo $t[$f];
+                                    echo in_array($f, array('tv')) ? $t[$f]/1000 : $t[$f];
                                 echo "</td>\n";
                             }
                             echo "</tr>\n";
@@ -330,13 +349,7 @@ function sec_main() {
                             <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td><td> </td>
                         </tr>
                         <?php
-                        switch ($box['type']) {
-                            case 'league':     $_type = T_NODE_LEAGUE; break;
-                            case 'division':   $_type = T_NODE_DIVISION; break;
-                            case 'tournament': $_type = T_NODE_TOURNAMENT; break;
-                            default: $_type = T_NODE_LEAGUE;
-                        }
-                        foreach (Match::getMatches($box['length'], $_type, $box['id'], false) as $m) {
+                        foreach (Match::getMatches($box['length'], $box['type'], $box['id'], false) as $m) {
                             $home   = ($m->stadium == $m->team1_id) ? 'team1' : 'team2';
                             $guest  = ($home == 'team1') ? 'team2' : 'team1';
                             echo "<tr valign='top'>\n";
@@ -357,7 +370,7 @@ function sec_main() {
         case 'leaders':
         
             $f = 'mv_'.$box['field'];
-            $players = Stats::getRaw(T_OBJ_PLAYER, array(T_NODE_TOURNAMENT => $box['id']), $box['length'], array('-'.$f), false)
+            $players = Stats::getRaw(T_OBJ_PLAYER, array($box['type'] => $box['id']), $box['length'], array('-'.$f), false)
             ?>
             <div class="boxWide">
                 <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
