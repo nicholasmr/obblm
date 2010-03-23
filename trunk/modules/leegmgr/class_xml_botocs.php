@@ -165,7 +165,7 @@ class XML_BOTOCS implements ModuleInterface
                     $this->obblm_team['players'][$p->nr]['Casualty'][$i] = "Damaged Back";
                     $i++;
                 }
-                #if ( $p->is_mng ) $this->obblm_team['players'][$p->nr]
+                if ( $p->is_mng ) unset($this->obblm_team['players'][$p->nr]);
                 //For Cyanide Roster END
 
                 $i = 0;
