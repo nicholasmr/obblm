@@ -84,6 +84,41 @@ class Registration implements ModuleInterface
                 $this->createResetCode();
                 $this->sendResetemail();
                 break;
+            case "activate":
+
+                if ( !isset($_SESSION['coach_id']) )
+                {
+                    $this->error = "You must be logged in to use this page.";
+                    return false;
+                }
+
+                $coach_id = $_SESSION['coach_id'];
+                $c = new Coach($coach_id);
+                if ( $c->ring != Coach::T_RING_GLOBAL_ADMIN )
+                {
+                    $this->error = "You must be an administrator to access this page.";
+                    return false;
+                }
+
+                $this->username = $username;
+
+                // Check to see if coach name exists.
+                if ( $this->chk_username() || strlen($this->username) < 3 )
+                {
+                    $this->error = USERNAME_RESET_ERROR;
+                    return false;  //Use ->error to display the error message to the user.
+                }
+                else $this->error = "";
+
+                $this->email = get_alt_col(USERTABLE, USERNAME, $this->username, EMAIL);
+                if ( !$this->chk_email() ) return false;
+                if ( !$this->activateUser() ) return false;
+                if ( !$this->sendActivatedemail() )
+                {
+                    $this->error = SEND_EMAIL_ERROR_ACTIVATED;
+                    return false;
+                };
+                break;
 
         }
 
@@ -195,7 +230,7 @@ class Registration implements ModuleInterface
 
         $to      = $this->AdminEmails();
         $subject = EMAIL_SUBJECT;
-        $message = EMAIL_MESSAGE.$this->username.", ".$this->email."\n"."http://".$_SERVER["SERVER_NAME"]."/index.php?section=admin&subsec=ct_man";
+        $message = EMAIL_MESSAGE.$this->username.", ".$this->email."\n"."http://".$_SERVER["SERVER_NAME"]."/handler.php?type=registration&form=activate";
         $headers = 'From: '.$webmaster. "\r\n" .
                    'Reply-To: '.$webmaster. "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
@@ -357,6 +392,36 @@ class Registration implements ModuleInterface
                 Print "</body></html>";
             }
         }
+
+        if ( $form == "activate" )
+        {
+
+            if ( !isset($_SESSION['coach_id']) )
+            {
+                Print "You must be logged in to use this page.";
+                return false;
+            }
+
+            $coach_id = $_SESSION['coach_id'];
+            $c = new Coach($coach_id);
+            if ( $c->ring != Coach::T_RING_GLOBAL_ADMIN )
+            {
+                Print "You must be an administrator to access this page.";
+            }
+
+            if ( isset($_POST['activate_name']) )
+            {
+                $username = $_POST['activate_name'];
+                self::activatesubmitForm($username);
+            }
+            else
+            {
+                Print "<html><body>";
+                Print Registration::activateform();
+                Print "</body></html>";
+            }
+        }
+
         else
         {
 
@@ -434,6 +499,94 @@ class Registration implements ModuleInterface
         $to      = $this->email;
         $subject = 'Password Reset Instructions';
         $message = "Your password reset code is: ".$this->reset_code;
+        $headers = 'From: '.$webmaster. "\r\n" .
+                   'Reply-To: '.$webmaster. "\r\n" .
+                   'X-Mailer: PHP/' . phpversion();
+
+        $mailed = mail($to, $subject, $message, $headers);
+
+        if ( !$mailed ) $status = false;
+
+        return $status;
+
+    }
+
+    /*
+    Activation methods
+    */
+    private static function activateform() {
+
+        /**
+         * Creates an activation form.
+         *
+         * 
+         **/
+
+        $form = "
+        <form method='POST' action='handler.php?type=registration&form=activate'>
+            <div class='boxCommon'>
+                <div class='boxTitle3'>
+                    Activate user
+                </div>
+                <div class='boxBody'>
+                    Username :<br> <input type='text' name='activate_name' size='20' maxlength='50'><br><br>
+                    <br><br>
+                    <input type='submit' name='button' value='Activate'>
+                </div>
+            </div>
+        </form>
+        ";
+
+        return $form;
+
+    }
+
+    private static function activatesubmitForm($username) {
+
+        $register = new Registration($username, '', '',"activate");
+        if ( !$register->error )
+        {
+            Print "The user was successfully activated.";
+            unset($register);
+        }
+        else
+        {
+            Print "<br><b>Error: {$register->error}</b><br>";
+            unset($register);
+            unset($_POST['activate_name']);
+            Registration::main(array());
+        }
+
+    }
+
+    function activateUser() {
+
+        $coach_id = get_alt_col(USERTABLE, USERNAME, $this->username, USERID);
+        $c = new Coach($coach_id);
+        if ( $c->retired == 2 )
+        {
+            mysql_query("UPDATE coaches SET retired = 0 WHERE coach_id = $coach_id");
+        }
+        else
+        {
+            $this->error = ACTIVATION_NOT_NEEDED;
+            return false;
+        }
+
+        return true;
+
+    }
+
+    function sendActivatedemail() {
+
+        $status = true;
+
+        global $settings;
+        $webmaster = $settings['registration_webmaster'];
+
+        $to      = $this->email;
+        $subject = EMAIL_SUBJECT_ACTIVATED;
+        $message = $this->username.EMAIL_MESSAGE_ACTIVATED."http://".$_SERVER["SERVER_NAME"];
         $headers = 'From: '.$webmaster. "\r\n" .
                    'Reply-To: '.$webmaster. "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
