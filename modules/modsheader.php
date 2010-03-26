@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -114,6 +114,12 @@ Module::register(array(
     'class'         => 'Search', 
     'filesRunTime'  => array(),
     'filesLoadTime' => array('search/class_search.php')
+));
+
+Module::register(array(
+    'class'         => 'UserScheduledGames',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('usrsched/class_usrsched.php')
 ));
 
 ?>

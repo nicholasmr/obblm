@@ -95,6 +95,15 @@ switch ($_GET['type'])
         Module::run('Search', array()); 
         break;
     
+    /* User Scheduled Games */
+    case 'userscheduledgames':
+        if(isset($_POST['creategame'])) {
+            Module::run('UserScheduledGames', array('creategame'));
+        } else {
+            Module::run('UserScheduledGames', array('renderAddGamePageHTML'));
+        }
+        break;
+    
     /* Veridy team name - AJAX use */
     case 'verifyteam':
         if (isset($_POST['tname'])) {
