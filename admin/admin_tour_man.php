@@ -24,6 +24,9 @@ if (isset($_POST['type'])) {
         case 'QUIT': break;
         
         case 'change':
+            if (get_magic_quotes_gpc()) {
+                $_POST['tname'] = stripslashes($_POST['tname']);
+            }
             status($t->chRS($_POST['rs']) && $t->chType($_POST['ttype']) && $t->rename($_POST['tname']));
             break;
 
