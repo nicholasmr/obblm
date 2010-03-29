@@ -408,7 +408,7 @@ private function _CCprofile($ALLOW_EDIT)
             <tr>
                 <form method="POST">
                 <td><?php echo $lng->getTrn('cc/chhomelid');?>:</td>
-                <td><?php echo $lng->getTrn('cc/current');?>: <?php echo isset($this->settings['home_lid']) ? $leagues[$this->settings['home_lid']]['lname'] : '<i>'.$lng->getTrn('common/none').'</i>';?></td>
+                <td><?php echo $lng->getTrn('cc/current');?>: <?php echo (isset($leagues[$this->settings['home_lid']])) ? $leagues[$this->settings['home_lid']]['lname'] : '<i>'.$lng->getTrn('common/none').'</i>';?></td>
                 <td>
                     <?php echo $lng->getTrn('cc/new');?>:
                     <select name='new_homelid'>
