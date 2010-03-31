@@ -90,14 +90,16 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNotExists('leagues', 'tie_teams',  'ALTER TABLE leagues ADD COLUMN tie_teams BOOLEAN NOT NULL DEFAULT TRUE'),
         SQLUpgrade::runIfColumnNotExists('teams', 'f_did',  'ALTER TABLE teams ADD COLUMN f_did MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id'),
         SQLUpgrade::runIfColumnNotExists('teams', 'f_lid',  'ALTER TABLE teams ADD COLUMN f_lid MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_did'),
-        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM teams WHERE f_lid != 0', 'UPDATE teams SET f_lid = IFNULL((SELECT d.f_lid FROM matches AS m ,tours AS t,divisions AS d WHERE m.f_tour_id = t.tour_id AND t.f_did = d.did AND (team1_id = team_id OR team2_id = team_id) ORDER BY m.date_played ASC LIMIT 1), 0)'), # Teams are tied to the league in which they played their first match.
-        SQLUpgrade::runIfTrue('SELECT (SELECT COUNT(*) = 1 FROM leagues) AND (SELECT COUNT(*) > 0 FROM teams WHERE f_lid = 0)', 'UPDATE teams SET f_lid = (SELECT lid FROM leagues LIMIT 1) WHERE f_lid = 0'), # If ONLY one leagues exists set the remaining untied team->league ties to this league.
+#        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM teams WHERE f_lid != 0', 'UPDATE teams SET f_lid = IFNULL((SELECT d.f_lid FROM matches AS m ,tours AS t,divisions AS d WHERE m.f_tour_id = t.tour_id AND t.f_did = d.did AND (team1_id = team_id OR team2_id = team_id) ORDER BY m.date_played ASC LIMIT 1), 0)'), # Teams are tied to the league in which they played their first match.
+        SQLUpgrade::runIfColumnNotExists('teams', 'f_lid',  'UPDATE teams SET f_lid = IFNULL((SELECT d.f_lid FROM matches AS m ,tours AS t,divisions AS d WHERE m.f_tour_id = t.tour_id AND t.f_did = d.did AND (team1_id = team_id OR team2_id = team_id) ORDER BY m.date_played ASC LIMIT 1), 0)'), # Teams are tied to the league in which they played their first match.
+        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 1 FROM leagues', 'UPDATE teams SET f_lid = (SELECT lid FROM leagues LIMIT 1) WHERE f_lid = 0'), # If ONLY one leagues exists set the remaining untied team->league ties to this league.
         'CREATE TABLE IF NOT EXISTS memberships (
             cid   MEDIUMINT UNSIGNED NOT NULL,
             lid   MEDIUMINT UNSIGNED NOT NULL,
             ring  TINYINT UNSIGNED NOT NULL DEFAULT 0
         )',
-        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM memberships', 'INSERT INTO memberships (cid,lid,ring) SELECT DISTINCT owned_by_coach_id, f_lid, 2 FROM teams WHERE f_lid != 0'), # Coaches should be regular coach members of the leagues in which their teams are tied.
+#        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM memberships', 'INSERT INTO memberships (cid,lid,ring) SELECT DISTINCT owned_by_coach_id, f_lid, 2 FROM teams WHERE f_lid != 0'), # Coaches should be regular coach members of the leagues in which their teams are tied.
+        SQLUpgrade::runIfColumnNotExists('memberships', 'cid', 'INSERT INTO memberships (cid,lid,ring) SELECT DISTINCT owned_by_coach_id, f_lid, 2 FROM teams WHERE f_lid != 0'), # Coaches should be regular coach members of the leagues in which their teams are tied. NOTE: We just test for the existence of ANY column in the memberships table before populating it (i.e. we only populate it if it was just now created).
         SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM coaches WHERE ring = 5', 'UPDATE coaches SET ring = IF(ring = 0, 5, 0)'), # New rings system.
         
         SQLUpgrade::runIfColumnNotExists('texts', 'f_id2',  'ALTER TABLE texts ADD COLUMN f_id2 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_id'),
