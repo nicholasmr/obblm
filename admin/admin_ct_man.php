@@ -32,6 +32,18 @@ if (isset($_POST['type'])) {
 }
 title($lng->getTrn('menu/admin_menu/ct_man'));
 ?>
+<script>
+    $(document).ready(function(){
+        var options, a1,a2,a3,a4;
+        toptions = { minChars:2, serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM; ?>' };
+        coptions = { minChars:2, serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_COACH; ?>' };
+        a1 = $('#t1').autocomplete(toptions);
+        a2 = $('#t2').autocomplete(toptions);
+        a3 = $('#c1').autocomplete(coptions);
+        a4 = $('#c2').autocomplete(coptions);
+    });
+</script>
+
 <table>
     <tr>
         <td colspan='2'>
@@ -49,7 +61,7 @@ title($lng->getTrn('menu/admin_menu/ct_man'));
                 <div class="boxBody">
                 <form method="POST">
                 Team name:
-                <input type="text" name="name" size="30" maxlength="50"><br><br>
+                <input type="text" name="name" id="t1" size="30" maxlength="50"><br><br>
                 Un-retire (ie. regret retiring) instead of retiring? <input type='checkbox' name='unretire' value='1'><br><br>
                 <input type='submit' value='Retire/unretire'>
                 <input type='hidden' name='type' value='rt'>
@@ -63,7 +75,7 @@ title($lng->getTrn('menu/admin_menu/ct_man'));
                 <div class="boxBody">
                 <form method="POST">
                 Team name:
-                <input type="text" name="name" size="30" maxlength="50"><br><br>
+                <input type="text" name="name" id="t2" size="30" maxlength="50"><br><br>
                 <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
                 <input type='hidden' name='type' value='dt'>
                 </form>
@@ -79,7 +91,7 @@ title($lng->getTrn('menu/admin_menu/ct_man'));
                 <div class="boxBody">
                 <form method="POST">
                 Coach name:
-                <input type="text" name="name" size="30" maxlength="50"><br><br>
+                <input type="text" name="name" id="c1" size="30" maxlength="50"><br><br>
                 Un-retire (ie. regret retiring) instead of retiring? <input type='checkbox' name='unretire' value='1'><br><br>
                 <input type='submit' value='Retire/unretire'>
                 <input type='hidden' name='type' value='rc'>
@@ -93,7 +105,7 @@ title($lng->getTrn('menu/admin_menu/ct_man'));
                 <div class="boxBody">
                 <form method="POST">
                 Coach name:
-                <input type="text" name="name" size="30" maxlength="50"><br><br>
+                <input type="text" name="name" id="c2" size="30" maxlength="50"><br><br>
                 <input type='submit' value='Delete' onclick="if(!confirm('Are you sure you want to delete? This can NOT be undone.')){return false;}">
                 <input type='hidden' name='type' value='dc'>
                 </form>
