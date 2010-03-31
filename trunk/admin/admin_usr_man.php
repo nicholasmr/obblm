@@ -115,7 +115,17 @@ $T_LOCAL_RINGS = array(
 );
 
 ?>
-
+<script>
+    $(document).ready(function(){
+        var options, a1,a2,a3,a4;
+        options = { minChars:2, serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_COACH; ?>' };
+        a1 = $('#coach1').autocomplete(options);
+        a2 = $('#coach2').autocomplete(options);
+        a3 = $('#coach3').autocomplete(options);
+        a4 = $('#coach4').autocomplete(options);
+    });
+</script>
+    
 <b>OBBLM access levels</b><br>
 The user security system is divided into global and local access levels.<br>
 Global access levels are used to tell site administrators apart from <i>regular coach types</i>.<br>
@@ -190,7 +200,7 @@ Coaches with global access rights are league commissioners in <i>all</i> leagues
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name:<br> <input type="text" name="cname" size="20" maxlength="50"><br><br>
+        Coach name:<br> <input type="text" name="cname" id="coach1" size="20" maxlength="50"><br><br>
         Access level:<br>
         <select name="ring">
             <?php
@@ -224,7 +234,7 @@ Coaches with global access rights are league commissioners in <i>all</i> leagues
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name:<br> <input type="text" name="cname" size="20" maxlength="50"><br><br>
+        Coach name:<br> <input type="text" name="cname" id="coach2" size="20" maxlength="50"><br><br>
         Access level:<br>
         <select name="ring">
             <?php
@@ -251,7 +261,7 @@ Coaches with global access rights are league commissioners in <i>all</i> leagues
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name:<br> <input type="text" name="cname" size="20" maxlength="50"><br><br>
+        Coach name:<br> <input type="text" name="cname" id="coach3" size="20" maxlength="50"><br><br>
         <?php
         if (is_object($c)) {
             echo "Access levels of '$c->name' are<br><br>\n";
@@ -283,7 +293,7 @@ Coaches with global access rights are league commissioners in <i>all</i> leagues
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name:<br> <input type="text" name="cname" size="20" maxlength="50"><br><br>
+        Coach name:<br> <input type="text" name="cname" id="coach4" size="20" maxlength="50"><br><br>
         New password:<br> <input type="password" name="passwd" size="20" maxlength="50"><br><br>
         <input type="hidden" name="type" value="ch_passwd">
         <input type="submit" name="button" value="Change password">
