@@ -329,6 +329,11 @@ function sec_main() {
                         ?>
                     </table>
                 </div>
+                <?php
+                if (Module::isRegistered('InFocus')) {
+                    Module::run('InFocus', array('renderHTML', $teams));
+                }
+                ?>
             </div>
             <?php
             MTS('Standings table generated');

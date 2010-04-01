@@ -122,4 +122,10 @@ Module::register(array(
     'filesLoadTime' => array('usrsched/class_usrsched.php')
 ));
 
+Module::register(array(
+    'class'         => 'InFocus', 
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('infocus/class_infocus.php')
+));
+
 ?>
