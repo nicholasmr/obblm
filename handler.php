@@ -103,6 +103,11 @@ switch ($_GET['type'])
             Module::run('UserScheduledGames', array('renderAddGamePageHTML'));
         }
         break;
+        
+    /* PDF Match Report */
+    case 'pdfmatchreport':
+          Module::run('PDFMatchReport', array());
+          break;
     
     /* Veridy team name - AJAX use */
     case 'verifyteam':
