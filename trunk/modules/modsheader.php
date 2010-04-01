@@ -128,4 +128,10 @@ Module::register(array(
     'filesLoadTime' => array('infocus/class_infocus.php')
 ));
 
+Module::register(array(
+    'class'         => 'PDFMatchReport',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('pdfmatchreport/class_pdfmatchreport.php')
+));
+
 ?>
