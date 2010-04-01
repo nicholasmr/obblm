@@ -153,6 +153,7 @@ $settings['modules_enabled'] = array(
     'Registration'       => true, # Allows users to register on the site.
     'Search'             => true, # Search for coaches and teams.
     'UserScheduledGames' => true, # Allows users to schedule games
+    'InFocus'            => false, # Extends the front page standings boxes to include a random team and print info about it.
 );
 
 ?>
