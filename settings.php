@@ -5,7 +5,7 @@
  **************************/
 
 $db_name   = 'fbbl';
-$db_user   = 'root';
+$db_user   = 'nicholas';
 $db_passwd = '';
 $db_host   = 'localhost';
 
