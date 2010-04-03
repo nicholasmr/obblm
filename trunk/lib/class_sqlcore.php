@@ -1193,7 +1193,7 @@ public static function installProcsAndFuncs($install = true)
     }
 
     foreach ($routines as $r) {
-        $status &= (mysql_query($r) or die(mysql_error()."\nCODE:\n-----\n\n".$r));
+        $status &= (mysql_query($r) or die("<b><font color='red'>FATAL ERROR</font></b>: One or more OBBLM MySQL functions/procedures could not be created. This error is <b>most likely</b> due to your database user NOT having the \"CREATE ROUTINE\" privilege. Some web hosts are willing to help you work around this problem by running this install/upgrade script for you. If not, you will have to find another web host allowing \"CREATE ROUTINE\".<br>\n<i>MySQL error (errno ".mysql_errno()."): ". mysql_error().'</i>'));
     }
     
     return $status;
