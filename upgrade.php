@@ -68,7 +68,7 @@ Now, click the appropriate SQL code to run depending on the version upgrade you 
     </tr>
 </table>
     <br>
-    <input type="submit" name='submit' value="Run upgrade SQLs">
+    <input type="submit" name='submit' value="Run upgrade SQLs" onclick="if(!confirm('Please backup your current database if you have not done so already.\n\nAre you sure you wish to continue?')){return false;}">
 </form>
 
 </small>
