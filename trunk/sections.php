@@ -273,6 +273,7 @@ function sec_main() {
     // Used in the below standings dispType boxes.
     global $core_tables, $ES_fields;
     $_MV_COLS = array_merge(array_keys($core_tables['mv_teams']), array_keys($ES_fields));
+    $_MV_RG_INTERSECT = array_intersect(array_keys($core_tables['teams']), array_keys($core_tables['mv_teams']));
     
     // Let's print those boxes!
     foreach ($boxes_ordered as $box) {
@@ -280,21 +281,35 @@ function sec_main() {
     switch ($box['dispType']) {
         
         case 'standings':
-
+            $_BAD_COLS = array(); # Halt on these columns/fields.
             switch ($box['type']) {
                 case T_NODE_TOURNAMENT:
                     if (!get_alt_col('tours', 'tour_id', $box['id'], 'tour_id')) {
                         break 2;
                     }
                     $tour = new Tour($box['id']);
-                    $SR = $tour->getRSSortRule();
+                    $SR = array_map(create_function('$val', 'return $val[0]."mv_".substr($val,1);'), $tour->getRSSortRule());
                     break;
                     
                 case T_NODE_DIVISION: 
+                    $_BAD_COLS = array('elo', 'swon', 'slost', 'sdraw', 'win_pct'); # Divisions do not have pre-calculated, MV, values of these fields.
+                    // Fall through!
                 case T_NODE_LEAGUE:
                 default:
                     global $hrs;
                     $SR = $hrs[$box['HRS']]['rule'];
+                    foreach ($SR as &$f) {
+                        $field = substr($f,1);
+                        if (in_array($field, $_MV_RG_INTERSECT)) {
+                            if (in_array($field, $_BAD_COLS)) { # E.g. divisions have no win_pct record for teams like the mv_teams table (for tours) has.
+                                fatal("Sorry, the element '$field' in your specified house sortrule #$box[HRS] is not supported for your chosen type (ie. tournament/division/league).");
+                            }
+                            $f = $f[0]."rg_".substr($f,1);
+                        }
+                        else {
+                            $f = $f[0]."mv_".substr($f,1);                            
+                        }
+                    }
                     break;
             }
             $teams = Stats::getRaw(T_OBJ_TEAM, array($box['type'] => $box['id']), $box['length'], $SR, false);
