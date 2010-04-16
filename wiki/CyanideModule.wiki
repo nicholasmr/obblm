@@ -1,0 +1,33 @@
+in the /modules/leegmgr/settings.php file you would enable the cyanide reporting there.
+
+Once enabled:
+
+Playing a Match
+Select League : ...
+Click Coach Corner
+Click your team
+Move the mouse over Roster, underneath of the main team roster
+Click Cyanide-DB
+Save the file to:
+[My ]Documents/Blood Bowl/Saves/Teams/
+
+Uploading a match
+Choose which player will upload the match since only one upload is needed.
+The following two files must be zipped.
+-MatchReport.sqlite
+-Replay_.db
+The Match report is located in the following location:
+[My ]Documents/Blood Bowl/
+
+The Replays are in the following location:
+[My ]Documents/Blood Bowl/Saves/Replay
+
+NOTE: The MatchReport.sqlite file is overwritten upon starting a new match.. You have to zip up the file before playing another game.
+
+Select League : ...
+Click Pugins
+Click- Client Match Report Upload
+Browse and select the zip file you just created.
+Select the Tournament you wish to upload the match to.
+Upload the zip file.
+Check Recent Matches to ensure that all went well.
