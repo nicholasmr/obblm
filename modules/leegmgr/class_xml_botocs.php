@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /*
  *  Copyright (c) William Leonard <email protected> 2009. All Rights Reserved.
@@ -143,6 +143,12 @@ class XML_BOTOCS implements ModuleInterface
 
                 $skillstr = skillsTrans(array_merge($p->ach_nor_skills, $p->ach_dob_skills));
                 $a_skillstr = explode(', ', $skillstr);
+                if ($p->f_pos_id == 201) {
+                        array_push($extras, 'Sprint');
+                }
+                if ($p->is_journeyman) {
+                        array_push($extras, 'Loner');
+                }
                 $cy_skills = array_merge(empty($skillstr) ? array() : $a_skillstr, $extras, $chrs);
 
                 $i = 0;
@@ -399,7 +405,7 @@ $obblm_team['TeamValue']		= $this->tv / 1000;
 $obblm_team['TeamFanFactor']		= $this->fan_factor;
 $obblm_team['gold']			= $this->treasury;
 $obblm_team['Cheerleaders']		= $this->cheerleaders;
-$obblm_team['apothecary']		= ( $this->apothecary ) ? 1 : 0;
+$obblm_team['apothecary']		= ( $this->apothecary == "true" ) ? 1 : 0;
 $obblm_team['rerolls']			= $this->rerolls;
 
 
