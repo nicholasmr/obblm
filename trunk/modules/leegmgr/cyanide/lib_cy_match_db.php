@@ -177,7 +177,7 @@ class cy_match_db {
 		echo "<td>".$this->awayscore."</td></tr>";
 	}
 	private function set_winner() {
-		if($this->homescore > $this->awayteam) {
+		if($this->homescore > $this->awayscore) {
 			//winer is home
 			$this->winner = $this->hometeam;
 		} elseif($this->awayscore > $this->homescore) {
