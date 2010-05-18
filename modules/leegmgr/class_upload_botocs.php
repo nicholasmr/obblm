@@ -359,7 +359,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 global $stars;
                 $stname = strval($player['name']);
                 if ( $stname == "Morg ‘n’ Thorg" ) $stname = "Morg 'n' Thorg";
-                if ( $stname == "Brick FarÂ’th" ) $stname = "Brick Far'th (+ Grotty)";
+                if ( $stname == "Brick Far’th" ) $stname = "Brick Far'th (+ Grotty)";
                 if ( $stname == "Grotty" ) $stname = "Grotty (included in Brick Far'th)";
 
                 $f_player_id = $stars[$stname]['id'];
