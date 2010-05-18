@@ -92,8 +92,6 @@ class UPLOAD_BOTOCS implements ModuleInterface
             return false;
         }
 
-        if ( !$this->checkHash ( $this->hash ) ) return false;
-
         $this->hometeam_id= $this->checkTeam ( $this->hometeam );
         $this->awayteam_id=$this->checkTeam ( $this->awayteam );
         if ( !$this->hometeam_id || !$this->awayteam_id )
@@ -101,12 +99,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $this->error = "One of the teams was not found on the site.";
             return false;
         }
-
+        if ( !$this->checkHash ( $this->hash ) ) return false;
         if ( !$this->addMatch () )
         {
             return false;
         }
-
         $team_home = new Team( $this->hometeam_id );
         $this->tv_home = $team_home->value;
         $team_away = new Team( $this->awayteam_id );
@@ -159,7 +156,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
             $this->error = "Failed to upload the replay file with the following error: ".mysql_error();
             return false;
         }
-        #//End add replay
+        //End add replay
         return true;
 
     }
@@ -226,6 +223,11 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
                 $players[$nr]['inj']    = $p->injuries->injury[0];
                 $players[$nr]['agn1']   = $p->injuries->injury[1];
+                //This adds in any SPP casualties that may not have been reported on
+                $total_spp_cas = $p->inflicted_bh_spp_casualties + $p->inflicted_si_spp_casualties + $p->inflicted_kill_spp_casualties;
+                if ($p->casualties > $total_spp_cas )
+                    $p->inflicted_bh_spp_casualties = $p->inflicted_bh_spp_casualties + ($p->casualties - $total_spp_cas);
+
                 foreach ($reqStats as $name_OBBLM => $name_BOTOCS) {
                     $players[$nr][$name_OBBLM] = (isset($p->$name_BOTOCS) ? (int) $p->$name_BOTOCS : 0);
                 }
@@ -301,15 +303,21 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
         global $settings;
 
-        #$revUpdate = false;
-
-        if ( $settings['leegmgr_schedule'] ) $this->match_id = $this->getschMatch();
-
-        if (!$this->match_id) {
-            $this->match_id = $this->getschMatchRev();
-            if ($this->match_id) $this->revUpdate = true;
+        if ( $settings['leegmgr_schedule'] ) {
+            $schmatch_id = $this->getschMatch();    //match id where the home team is the same for OBBLM and the client
+            $revmatch_id = $this->getschMatchRev(); //match id where the match is reversed
+            if ( !$schmatch_id && !revmatch_id ) {
+                $this->match_id = 0; 
+            }
+            else if ( !$schmatch_id || !$revmatch_id ) {
+                $this->match_id = max($schmatch_id, $revmatch_id);
+                if ( $revmatch_id ) $this->revUpdate = true;                
+            }
+            else if ( $schmatch_id && $revmatch_id ) {
+                $this->match_id = min($schmatch_id, $revmatch_id);
+                if ( $revmatch_id < $schmatch_id ) $this->revUpdate = true;
+            }
         }
-
         if ( $this->chkAltSchedule() && !$this->match_id )
         {
             $this->error = "One of the teams has another match scheduled.";
@@ -324,18 +332,12 @@ class UPLOAD_BOTOCS implements ModuleInterface
             }
         }
 
-        unset( $input );
-
         if ( $this->match_id < 1 ) return false;
 
         $match = new Match_BOTOCS($this->match_id);
         $match->setBOTOCSHash($this->hash);
 
-#        if (!$revUpdate) $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor1" => $this->homeff, "ffactor2" => $this->awayff, "fame1" => $this->homefame, "fame2" => $this->awayfame, "income1" => $this->homewinnings, "income2" => $this->awaywinnings, "team1_score" => $this->homescore, "team2_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $tv_home, "tv2" => $tv_away, "comment" => "" ) );
-#        else $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor2" => $this->homeff, "ffactor1" => $this->awayff, "fame2" => $this->homefame, "fame1" => $this->awayfame, "income2" => $this->homewinnings, "income1" => $this->awaywinnings, "team2_score" => $this->homescore, "team1_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $tv_home, "tv1" => $tv_away, "comment" => "" ) );
-
         return true;
-
     }
 
     function matchEntry ( $team_id, $teamPlayers ) {
@@ -357,8 +359,9 @@ class UPLOAD_BOTOCS implements ModuleInterface
                 global $stars;
                 $stname = strval($player['name']);
                 if ( $stname == "Morg ‘n’ Thorg" ) $stname = "Morg 'n' Thorg";
-                if ( $stname == "Brick Far’th" ) $stname = "Brick Far'th (+ Grotty)";
+                if ( $stname == "Brick FarÂ’th" ) $stname = "Brick Far'th (+ Grotty)";
                 if ( $stname == "Grotty" ) $stname = "Grotty (included in Brick Far'th)";
+
                 $f_player_id = $stars[$stname]['id'];
                 $player['inj'] = '';
             }
@@ -366,11 +369,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
             if ( $player['merc'] == "true" )
             {
                 $f_player_id = ID_MERCS;
-            }#continue;
+            }
 
             foreach ( $players as $p  )
             {
-#                if ( $p->nr == $player['nr'] && !$p->is_dead && !$p->is_sold && !$f_player_id ) {
                 if ( $p->nr == $player['nr'] && Match::player_validation($p, $match) && !$f_player_id ) {
                     $f_player_id = $p->player_id;
                     break;
