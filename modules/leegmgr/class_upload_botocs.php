@@ -306,7 +306,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         if ( $settings['leegmgr_schedule'] ) {
             $schmatch_id = $this->getschMatch();    //match id where the home team is the same for OBBLM and the client
             $revmatch_id = $this->getschMatchRev(); //match id where the match is reversed
-            if ( !$schmatch_id && !revmatch_id ) {
+            if ( !$schmatch_id && !$revmatch_id ) {
                 $this->match_id = 0; 
             }
             else if ( !$schmatch_id || !$revmatch_id ) {
