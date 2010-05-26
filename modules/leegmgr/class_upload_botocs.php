@@ -132,11 +132,26 @@ class UPLOAD_BOTOCS implements ModuleInterface
             }
         }
 
+$query = "UPDATE matches SET
+tcas2 = IF(
+        IFNULL((SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),0)=0,
 
+        (SELECT SUM(bh+ki+si) FROM match_data WHERE f_team_id = team2_id AND f_match_id = $this->match_id),
+        (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id)
+    ),
+tcas1 = IF(
+        IFNULL((SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id),0)=0,
+
+        (SELECT SUM(bh+ki+si) FROM match_data WHERE f_team_id = team1_id AND f_match_id = $this->match_id),
+        (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)
+    )
+WHERE match_id = $this->match_id";
+/*
         $query = "UPDATE matches SET 
             tcas2 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),
             tcas1 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)
             WHERE match_id = $this->match_id";
+*/
 
         if ( !mysql_query( $query ) )
         {
