@@ -507,7 +507,7 @@ class cy_match_db {
 				$cspp = $row['iExperience'];
 				//echo $clevel;
 				//get player stats
-				$this->sql = "Select * from Away_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['ID']." Limit 1";
+				$this->sql = "Select * from Away_Statistics_Players where idPlayer_Listing = ".$players[$row['iNumber']]['nr']." Limit 1";
 				foreach ($this->_db_read->query($this->sql) as $stats) {
 					$tcp = 0;
 					$nspp = 0;
