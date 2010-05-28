@@ -943,7 +943,7 @@ WHERE match_id = $this->match_id";
             {
                 if (strpos(zip_entry_name($zip_entry),"replay.rep") !== false || strpos(zip_entry_name($zip_entry),"Replay_") !== false)
                 {
-                    $replay = zip_entry_read($zip_entry, 100000);
+                    $replay = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
                     if ( strpos(zip_entry_name($zip_entry),"replay.rep") !== false ) $extension = ".rep";
                     else if ( strpos(zip_entry_name($zip_entry),"Replay_") !== false ) $extension = ".db";
                     zip_entry_close($zip_entry);
