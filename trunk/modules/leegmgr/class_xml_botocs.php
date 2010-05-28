@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /*
  *  Copyright (c) William Leonard <email protected> 2009. All Rights Reserved.
