@@ -75,13 +75,8 @@ class InFocus implements ModuleInterface
             $starPlayers[] = array('name' => $name, 'spp' => $spp);
         }
 
-        //Local comparison function for sorting the players
-        function compare_spp($objA, $objB) {
-            return ($objA['spp'] < $objB['spp']) ? +1 : -1;
-        }
-
         //Sort the array
-        usort($starPlayers, 'compare_spp');
+        usort($starPlayers, create_function('$objA,$objB', 'return ($objA["spp"] < $objB["spp"]) ? +1 : -1;'));
 
 ?>
     <style type="text/css">
@@ -131,7 +126,7 @@ class InFocus implements ModuleInterface
         }
 
         #inFocusContent DIV.last-inFocus {
-            z-index:9;
+            z-index:9;redeclare compare_spp
         }
     </style>
            <h3 class='boxTitle1' style='border-top: 1px solid;'><?php echo $lng->getTrn('name', 'InFocus'); ?></h3>
