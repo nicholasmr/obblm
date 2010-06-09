@@ -84,6 +84,56 @@ class InFocus implements ModuleInterface
         usort($starPlayers, 'compare_spp');
 
 ?>
+    <style type="text/css">
+        /* InFocus Mod */
+
+        #inFocusBox .leftContentTd{
+            font-weight: bold;
+            padding-right: 1em;
+        }
+
+        #inFocusBox .teamLogo {
+            float: left;
+            margin: 0 36px 0 20px;
+        }
+
+        #inFocusBox .teamName {
+            font-weight: bold;
+        }
+
+        #inFocusContent {
+            position:relative;
+            left: 160px;
+            height: 80px;
+        }
+
+        #inFocusContent P {
+            font-variant: small-caps;
+            font-weight: bold;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        #inFocusContent DIV {
+            position:absolute;
+            top:0;
+            left:0;
+            z-index:8;
+        }
+
+        #inFocusContent DIV.invisible {
+            display: none;
+        }
+
+        #inFocusContent DIV.inFocus {
+            z-index:10;
+            display: inline;
+        }
+
+        #inFocusContent DIV.last-inFocus {
+            z-index:9;
+        }
+    </style>
            <h3 class='boxTitle1' style='border-top: 1px solid;'><?php echo $lng->getTrn('name', 'InFocus'); ?></h3>
                 <div class='boxBody' id="inFocusBox">
                     <div class='teamLogo'>
