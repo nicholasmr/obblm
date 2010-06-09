@@ -286,7 +286,7 @@ $r=$t->f_rname;
 if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Undead')) unset($inducements['Wandering Apothecaries']);
 else unset($inducements['Igor']);
 // Checking LRB6 cheaper Chef for Halfling
-if (($r == 'Halfling')) $inducements['Halfling Master Chef']['cost'] = 50000;
+if (($r == 'Halfling')) $inducements['Halfling Master Chef']['cost'] = 100000;
 // Checking LRB6 cheaper bribes for Goblin
 if (($r == 'Goblin')) $inducements['Bribes']['cost'] = 50000;
 
