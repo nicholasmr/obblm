@@ -280,7 +280,16 @@ class Tour
             
             $status = true;
             for ($i = 1; $i <= $input['rounds']; $i++) {
-                foreach ($robin->{(($i % 2) ? 'tour' : 'tour_inv')} as $ridx => $r) {
+                $rounds = $robin->{(($i % 2) ? 'tour' : 'tour_inv')}; # Invert pair-up?
+                // Shuffle the order of rounds in the bracket seeding, $i.
+                $rounds_k = array_keys($rounds); 
+                $rounds_v = array_values($rounds); 
+                shuffle($rounds_k);
+                shuffle($rounds_v);
+                $rounds = array_combine($rounds_k, $rounds_v);
+                ksort($rounds);
+                // Create new bracket.
+                foreach ($rounds as $ridx => $r) {
                     foreach ($r as $match) { // Depict round's match compets inversely for every other round.
                         list($exitStatus, $mid) = Match::create(array('team1_id' => $match[0], 'team2_id' => $match[1], 'round' => $ridx + ($i-1)*($real_rounds), 'f_tour_id' => $tour_id));
                         $status &= !$exitStatus;
