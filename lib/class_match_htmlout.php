@@ -108,9 +108,10 @@ public static function tourMatches()
     
     $rnd = 0; # Initial round number must be lower than possible round numbers.    
     $cols = 7; # Common columns counter.
+    $ROUND_SORT_DIR = (get_alt_col('tours', 'tour_id', $trid, 'type') == TT_RROBIN) ? 'ASC' : 'DESC'; # Sort differently depeding on tour type.
     $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score 
         FROM matches, teams AS t1, teams AS t2 WHERE f_tour_id = $trid AND team1_id = t1.team_id AND team2_id = t2.team_id 
-        ORDER BY round DESC, date_played DESC, date_created ASC LIMIT ".(($page-1)*self::T_HTML_MATCHES_PER_PAGE).', '.(($page)*self::T_HTML_MATCHES_PER_PAGE);
+        ORDER BY round $ROUND_SORT_DIR, date_played DESC, date_created ASC LIMIT ".(($page-1)*self::T_HTML_MATCHES_PER_PAGE).', '.(($page)*self::T_HTML_MATCHES_PER_PAGE);
     $result = mysql_query($query);
     echo "<table class='tours'>\n";
     while ($m = mysql_fetch_object($result)) {
