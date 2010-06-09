@@ -152,7 +152,7 @@ $settings['modules_enabled'] = array(
     'XML_BOTOCS'         => true, # BOTOCS XML export of team
     'Registration'       => true, # Allows users to register on the site.
     'Search'             => true, # Search for coaches and teams.
-    'UserScheduledGames' => true, # Allows users to schedule games
+    'UserScheduledGames' => false, # Allows users to schedule games
     'PDFMatchReport'     => true, # Generating PDF forms for tabletop match reports.
     'InFocus'            => false, # Extends the front page standings boxes to include a random team and print info about it.
 );
