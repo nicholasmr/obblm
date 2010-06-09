@@ -294,7 +294,7 @@ public static function makeList($ALLOW_EDIT)
                         ?>
                         </td>
                         <td align="right" style="width: 30%;">
-                            <img border='0px' height='100' width='100' alt='player picture' src='<?php echo NO_PIC;?>'>
+                            <img border='0px' height='100' width='100' alt='player picture' src="<?php $img = new ImageSubSys(T_OBJ_PLAYER, $p->player_id); echo $img->getPath();?>">
                         </td>
                     </tr>
                     <tr>
