@@ -243,10 +243,14 @@ private function _handleActions($ALLOW_EDIT)
 
         case 'pic': 
             if ($_POST['add_del'] == 'add') {
-                if ($_POST['pic_obj'] == IMGTYPE_TEAMSTADIUM) 
-                    status($team->saveStadiumPic(ImageSubSys::$defaultHTMLUploadName.'_stad'));
-                elseif ($_POST['pic_obj'] == IMGTYPE_TEAMLOGO)
-                    status($team->saveLogo(ImageSubSys::$defaultHTMLUploadName.'_logo'));
+                if ($_POST['pic_obj'] == IMGTYPE_TEAMSTADIUM) {
+                    list($status, $msg) = $team->saveStadiumPic(ImageSubSys::$defaultHTMLUploadName.'_stad');
+                    status($status, (!$status) ? $msg : '');
+                }
+                elseif ($_POST['pic_obj'] == IMGTYPE_TEAMLOGO) {
+                    list($status, $msg) = $team->saveLogo(ImageSubSys::$defaultHTMLUploadName.'_logo');
+                    status($status, (!$status) ? $msg : '');
+                }
             } 
             else {
                 if ($_POST['pic_obj'] == IMGTYPE_TEAMSTADIUM) 
