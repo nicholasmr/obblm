@@ -415,13 +415,13 @@ class Team
     public function saveLogo($name) {
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $this->team_id);
         list($retstatus, $error) = $img->save($name);
-        return $retstatus;
+        return array($retstatus, $error);
     }
 
     public function saveStadiumPic($name = false) {
         $img = new ImageSubSys(IMGTYPE_TEAMSTADIUM, $this->team_id);
         list($retstatus, $error) = $img->save($name);
-        return $retstatus;
+        return array($retstatus, $error);
     }
     
     public function deleteLogo() {

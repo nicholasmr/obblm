@@ -48,10 +48,13 @@ class ImageSubSys
     // Supported file types.
     private static $supportedExtensions = array(
         # mime type => extension
-        'image/gif'  => 'gif', 
-        'image/jpeg' => 'jpeg',
-        'image/jpg'  => 'jpg',
-        'image/png'  => 'png',
+        'image/jpeg'    => array('jpg','jpeg','jpe'),
+        'image/pjpeg'   => array('jpg'),
+        'image/png'     => array('png'),
+        'image/x-png'   => array('png'),
+        'image/tiff'    => array('tif'),
+        'image/x-tiff'  => array('tif'),
+        'image/gif'     => array('gif'),        
     );
     
     // Type to path mappings.
@@ -73,9 +76,11 @@ class ImageSubSys
 
     public function getPath($rid = false) 
     {
-        foreach (self::$supportedExtensions as $ext) {
-            if (file_exists($filePath = self::$typeToPathMappings[$this->obj].'/'.$this->obj_id.'.'.$ext)) {
-                return $filePath;
+        foreach (self::$supportedExtensions as $exts) {
+            foreach ($exts as $ext) {
+                if (file_exists($filePath = self::$typeToPathMappings[$this->obj].'/'.$this->obj_id.'.'.$ext)) {
+                    return $filePath;
+                }
             }
         }
         
@@ -103,8 +108,9 @@ class ImageSubSys
         if (!isset($_FILES[$file_name]['tmp_name'])) {
             return array(false, 'Internal error: Can\'t find the uploaded file in PHP $_FILES array.');
         }
-        if (!in_array($_FILES[$file_name]['type'], array_keys(self::$supportedExtensions))) {
-            return array(false, 'Sorry, the uploaded file has an unsupported extension. The following extensions are supported: '.implode(', ', array_values(self::$supportedExtensions)));
+        $supportedMIMEs = array_keys(self::$supportedExtensions);
+        if (!in_array($_FILES[$file_name]['type'], $supportedMIMEs)) {
+            return array(false, '"'.$_FILES[$file_name]['type'].'" is an unsupported filetype. The supported filetypes are: '.implode(', ', $supportedMIMEs));
         }
         
         // Create parent dir if non existing.
@@ -112,23 +118,18 @@ class ImageSubSys
             mkdir(self::$typeToPathMappings[$this->obj]);
         }
         
-        // Move file away from temp location.
-        if (move_uploaded_file(
-                $A = $_FILES[$file_name]['tmp_name'], 
-                $B = self::$typeToPathMappings[$this->obj].'/'.$this->obj_id.'.'.self::$supportedExtensions[$_FILES[$file_name]['type']]
-            )) {
-            # If suceeded remove all other possible existing files.
-            foreach (self::$supportedExtensions as $mimeType => $ext) {
-                if ($mimeType != $_FILES[$file_name]['type']) {
-                    @unlink(self::$typeToPathMappings[$this->obj].'/'.$this->obj_id.'.'.$ext);
-                }
+        // Delete all other possible existing files.
+        foreach (self::$supportedExtensions as $mimeType => $exts) {
+            foreach ($exts as $ext) {
+                @unlink(self::$typeToPathMappings[$this->obj].'/'.$this->obj_id.'.'.$ext);
             }
         }
-        else {
-            return array(false, 'Internal error: Failed to move file from "'.$A.'" to "'.$B.'"');
-        }
-        
-        return array(true, true);
+
+        // Move file away from temp location.
+        return move_uploaded_file(
+                $A = $_FILES[$file_name]['tmp_name'], 
+                $B = self::$typeToPathMappings[$this->obj].'/'.$this->obj_id.'.'.self::$supportedExtensions[$_FILES[$file_name]['type']][0]
+            ) ? array(true, true) : array(false, "Internal error: Failed to move file from '$A' to '$B'");
     }
     
     public function delete()
