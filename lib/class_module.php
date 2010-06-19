@@ -83,6 +83,7 @@ class Module
     
     public static function run($class, array $argv)
     {
+        if (!array_key_exists($class, self::$modules)) return null;
         foreach (self::$modules[$class]['filesRunTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
         $module = array_merge(self::$modules[$class], call_user_func(array($class, 'getModuleAttributes'))); # Shortcut.
         global $coach; # Used for fetching stylesheet.
