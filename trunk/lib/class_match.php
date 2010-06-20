@@ -422,19 +422,16 @@ class Match
             $p = new Player($pid);
             $fields = array('inj', 'agn1', 'agn2');
             foreach ($fields as $f) {
-                if (!in_array($input[$f], array_keys($CHR_CONV))) # Allow passed injury unconditionally.
+                $charDecr = $input[$f];
+                // Unconditionally allow injuries.
+                if (!in_array($charDecr, array_keys($CHR_CONV)))
                     continue;
-                
-                if (
-                    // Currently allowed injuries of this kind (= $input[$f]).
-                    $p->chrLimits('inj', $input[$f]) 
-                    // Of the "currently allowed", this amount is contributed to "Currently allowed" by this match. 
-                    // Ie. the sum of the two is the allowed injuries of this kind if we neglect the contributions of this match to the total inj. count.
-                    + $INJS[$CHR_CONV[ $input[$f] ]]
-                    // This is the total inj. amount of this kind (=$input[$f]) which we want to add as recieved inuries from this match.
-                    - count(array_filter($fields, create_function('$x', "global \$incpy; return (\$incpy[\$x]==\$incpy['$f']);"))) 
-                    < 0) {
-                    $input[$f] = NONE; 
+                // Are we trying to save a characteristics decrease that will break the lower limit (defined in Player::chrLimits()) ?
+                $allowed = $p->chrLimits('inj', $charDecr); # Allowed amount.
+                $currentlySaved = $INJS[$CHR_CONV[$charDecr]]; # If match has already been saved this was the old amount which was submitted.
+                $submitted = count(array_filter($fields, create_function('$x', "global \$incpy; return (\$incpy[\$x]==\$incpy['$f']);"))); # New amount submitted.
+                if ($submitted > $allowed+$currentlySaved) {
+                    $input[$f] = MNG; # Save the "bare" MNG (all injs at least give a MNG).
                 }
             }
         }
