@@ -28,6 +28,7 @@ class XML_BOTOCS implements ModuleInterface
      ***************/
 
     public $noninjplayercount = 0;
+    public $rosterplayercount = 0;
     public $exist_journeyman = false;
     public $jm = 0;
     //team
@@ -216,6 +217,7 @@ class XML_BOTOCS implements ModuleInterface
                 return false;
             }
             if ( !$p->is_dead && !$p->is_sold && !$p->is_mng ) $this->noninjplayercount ++;
+            if ( !$p->is_dead && !$p->is_sold ) $this->rosterplayercount ++;
             if ( !$p->is_dead && !$p->is_sold && $p->is_journeyman )
             {
                 $this->exist_journeyman = true;
@@ -248,9 +250,9 @@ class XML_BOTOCS implements ModuleInterface
             return false;
         }
 
-        if ( $this->noninjplayercount > 16 )
+        if ( $this->rosterplayercount > 16 )
         {
-            Print "You have more than 16 players that can participate in the next match.";
+            Print "You have more than 16 players on the roster.  Please remove a player from your roster.";
             return false;
         }
 
