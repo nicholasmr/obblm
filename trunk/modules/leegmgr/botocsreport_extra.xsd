@@ -54,7 +54,7 @@
               <xs:element name="players">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element maxOccurs="16" name="player">
+                    <xs:element maxOccurs="17" name="player">
                       <xs:complexType>
                         <xs:sequence>
                             <xs:element name="pass_attempts" type="t_int0_24" />
