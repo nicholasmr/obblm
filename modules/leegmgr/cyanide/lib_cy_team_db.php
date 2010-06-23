@@ -182,8 +182,52 @@ class cy_team_db {
 	private function insert_player_listings(){
 		$sql = '';
 		foreach ($this->players as $i=> $player) {
-			$sql .= "INSERT INTO 'Player_Listing' VALUES(".$player['ID'].",".$player['idPlayer_Names'].",'".$player['strName']."',".$player['idPlayer_Types'].",".$player['idTeam_Listing'].",".$player['idTeam_Listing_Previous'].",".$player['idRaces'].",".$player['iPlayerColor'].",".$player['iSkinScalePercent'].",".$player['iSkinMeshVariant'].",".$player['iSkinTextureVariant'].",'".$player['fAgeing real']."',".$player['iNumber'].",".$player['Characteristics_fMovementAllowance'].",".$player['Characteristics_fStrength'].",".$player['Characteristics_fAgility'].",".$player['Characteristics_fArmourValue'].",".$player['idPlayer_Levels'].",".$player['iExperience'].",".$player['idEquipment_Listing_Helmet'].",".$player['idEquipment_Listing_Pauldron'].",".$player['idEquipment_Listing_Gauntlet'].",".$player['idEquipment_Listing_Boot'].",".$player['Durability_iHelmet'].",".$player['Durability_iPauldron'].",".$player['Durability_iGauntlet'].",".$player['Durability_iBoot'].",".$player['iSalary'].",".$player['Contract_iDuration'].",".$player['Contract_iSeasonRemaining'].",".$player['idNegotiation_Condition_Types'].",".$player['Negotiation_iRemainingTries'].",".$player['Negotiation_iConditionDemand'].",".$player['iValue'].",".$player['iMatchSuspended'].",".$player['iNbLevelsUp'].",".$player['LevelUp_iRollResult'].",".$player['LevelUp_iRollResult2'].",".$player['LevelUp_bDouble'].",".$player['bGenerated'].",".$player['bStar'].",".$player['bEdited'].",".$player['bDead'].",'".$player['strLevelUp']."');";
-			
+		    $sql .= sprintf("INSERT INTO 'Player_Listing' VALUES(%d,%d,'%s',%d,'%s',%d,%d,%d,%d,%d,%d,'%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,'%s');",
+                    $player['ID'],
+                    $player['idPlayer_Names'],
+                    sqlite_escape_string($player['strName']),
+                    $player['idPlayer_Types'],
+                    sqlite_escape_string($player['idTeam_Listing']),
+                    $player['idTeam_Listing_Previous'],
+                    $player['idRaces'],
+                    $player['iPlayerColor'],
+                    $player['iSkinScalePercent'],
+                    $player['iSkinMeshVariant'],
+                    $player['iSkinTextureVariant'],
+                    sqlite_escape_string($player['fAgeing real']),
+                    $player['iNumber'],
+                    $player['Characteristics_fMovementAllowance'],
+                    $player['Characteristics_fStrength'],
+                    $player['Characteristics_fAgility'],
+                    $player['Characteristics_fArmourValue'],
+                    $player['idPlayer_Levels'],
+                    $player['iExperience'],
+                    $player['idEquipment_Listing_Helmet'],
+                    $player['idEquipment_Listing_Pauldron'],
+                    $player['idEquipment_Listing_Gauntlet'],
+                    $player['idEquipment_Listing_Boot'],
+                    $player['Durability_iHelmet'],
+                    $player['Durability_iPauldron'],
+                    $player['Durability_iGauntlet'],
+                    $player['Durability_iBoot'],
+                    $player['iSalary'],
+                    $player['Contract_iDuration'],
+                    $player['Contract_iSeasonRemaining'],
+                    $player['idNegotiation_Condition_Types'],
+                    $player['Negotiation_iRemainingTries'],
+                    $player['Negotiation_iConditionDemand'],
+                    $player['iValue'],
+                    $player['iMatchSuspended'],
+                    $player['iNbLevelsUp'],
+                    $player['LevelUp_iRollResult'],
+                    $player['LevelUp_iRollResult2'],
+                    $player['LevelUp_bDouble'],
+                    $player['bGenerated'],
+                    $player['bStar'],
+                    $player['bEdited'],
+                    $player['bDead'],
+                    sqlite_escape_string($player['strLevelUp'])
+                );
 		}
 		$this->db_status = $this->_db_con->exec($sql);
 	}
