@@ -53,6 +53,8 @@ class XML_BOTOCS implements ModuleInterface
     public $cy = 0;
     public $cy_teamname = '';
 
+    public $error = '';
+
     /***************
      * Methods 
      ***************/
@@ -312,11 +314,15 @@ class XML_BOTOCS implements ModuleInterface
             Else
             {
                 $roster->createCyRoster();
-                #Specify the header so that the browser is prompted to download the teamname.db file.
-                header('Content-type: application/octec-stream');
-                header('Content-Disposition: attachment; filename="'.$roster->cy_teamname.'.db"');
-                #Whatever is printed to the screen will be in the file.
-                Print $roster->cyroster;                
+                if ( !$roster->error )
+                {
+                    #Specify the header so that the browser is prompted to download the teamname.db file.
+                    header('Content-type: application/octec-stream');
+                    header('Content-Disposition: attachment; filename="'.$roster->cy_teamname.'.db"');
+                    #Whatever is printed to the screen will be in the file.
+                    Print $roster->cyroster;
+                }
+                else Print $roster->error;
             }
         }
         else
@@ -389,7 +395,7 @@ if ( $this->race != "Human" &&
      $this->race != "Goblin" &&
      $this->race != "Dark Elf" )
 {
-$this->cyroster = "This is not a valid race.  $this->race";
+$this->error = "This is not a valid race.  $this->race";
 return false;
 }
 
@@ -437,6 +443,11 @@ $obblm_team['players'] = $this->obblm_team['players'];
 
 
 foreach ($obblm_team['players'] as $i => $player) {
+    if ( $player['Number'] < 1 || $player['Number'] > 32 )
+    {
+        $this->error = "Player numbers must be between 1 and 32 to be valid for this roster output.";
+        return false;
+    }
 	$local_id = $player['id'];
 	$cy->add_player_to_array(
 		$local_id,//Player uniq id.. obblm player id should be fine
