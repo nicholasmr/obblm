@@ -164,7 +164,9 @@ class Registration implements ModuleInterface
 
         $status = true;
         $domain = '';
-        if ( strpos($this->email, '@') ) list($emailuser,$domain) = split("@",$this->email);
+
+        $atpos = strpos($this->email, '@');
+        if ( $atpos ) $domain = substr($this->email, $atpos + 1);
 
         $emailexp = "/^([.0-9a-z_-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i";
 
