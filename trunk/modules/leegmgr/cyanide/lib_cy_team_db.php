@@ -194,7 +194,7 @@ class cy_team_db {
                     $player['iSkinScalePercent'],
                     $player['iSkinMeshVariant'],
                     $player['iSkinTextureVariant'],
-                    sqlite_escape_string($player['fAgeing real']),
+                    $player['fAgeing real'],
                     $player['iNumber'],
                     $player['Characteristics_fMovementAllowance'],
                     $player['Characteristics_fStrength'],
