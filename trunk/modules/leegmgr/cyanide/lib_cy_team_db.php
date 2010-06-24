@@ -194,7 +194,7 @@ class cy_team_db {
                     $player['iSkinScalePercent'],
                     $player['iSkinMeshVariant'],
                     $player['iSkinTextureVariant'],
-                    $player['fAgeing real'],
+                    sqlite_escape_string($player['fAgeing real']),
                     $player['iNumber'],
                     $player['Characteristics_fMovementAllowance'],
                     $player['Characteristics_fStrength'],
@@ -659,42 +659,42 @@ class cyanide {
 	public function convert_av($int) {
 		switch($int){
 			case 0:
-				$out = 0.000;
+				$out = 0;
 				break;
 			case 1: 
-				$out = 0.990;
+				$out = 1;
 				break;
 			case 2: 
-				$out = 2.768;
+				$out = 3;
 			case 3:
-				$out = 8.324;
+				$out = 9;
 				break;
 			case 4:
-			 	$out = 16.657;
+			 	$out = 17;
 			 	break;
 			case 5:
-				$out = 27.768;
+				$out = 28;
 				break;
 			case 6:
-				$out = 41.657;
+				$out = 42;
 				break;
 			case 7:
-				$out = 58.324;
+				$out = 59;
 				break;
 			case 8:
-				$out = 72.213;
+				$out = 73;
 				break;
 			case 9: 
-				$out = 83.324;
+				$out = 84;
 				break;
 			case 10:
-				$out = 91.657;
+				$out = 92;
 				break;
 			case 11:
-				$out = 97.213;
+				$out = 98;
 				break;
 			case 12: 
-				$out = 99.990;
+				$out = 100;
 				break;
 		}
 		return $out;
