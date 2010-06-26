@@ -182,7 +182,7 @@ class cy_team_db {
 	private function insert_player_listings(){
 		$sql = '';
 		foreach ($this->players as $i=> $player) {
-		    $sql .= sprintf("INSERT INTO 'Player_Listing' VALUES(%d,%d,'%s',%d,'%s',%d,%d,%d,%d,%d,%d,'%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,'%s');",
+		    $sql .= sprintf("INSERT INTO 'Player_Listing' VALUES(%d,%d,'%s',%d,'%s',%d,%d,%d,%d,%d,%d,'%s',%d,%d,%d,%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,'%s');",
                     $player['ID'],
                     $player['idPlayer_Names'],
                     sqlite_escape_string($player['strName']),
@@ -659,42 +659,42 @@ class cyanide {
 	public function convert_av($int) {
 		switch($int){
 			case 0:
-				$out = 0;
+				$out = 0.000;
 				break;
 			case 1: 
-				$out = 1;
+				$out = 0.990;
 				break;
 			case 2: 
-				$out = 3;
+				$out = 2.768;
 			case 3:
-				$out = 9;
+				$out = 8.324;
 				break;
 			case 4:
-			 	$out = 17;
+			 	$out = 16.657;
 			 	break;
 			case 5:
-				$out = 28;
+				$out = 27.768;
 				break;
 			case 6:
-				$out = 42;
+				$out = 41.657;
 				break;
 			case 7:
-				$out = 59;
+				$out = 58.324;
 				break;
 			case 8:
-				$out = 73;
+				$out = 72.213;
 				break;
 			case 9: 
-				$out = 84;
+				$out = 83.324;
 				break;
 			case 10:
-				$out = 92;
+				$out = 91.657;
 				break;
 			case 11:
-				$out = 98;
+				$out = 97.213;
 				break;
 			case 12: 
-				$out = 100;
+				$out = 99.990;
 				break;
 		}
 		return $out;
