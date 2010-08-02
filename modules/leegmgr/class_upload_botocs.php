@@ -373,8 +373,8 @@ WHERE match_id = $this->match_id";
             {
                 global $stars;
                 $stname = strval($player['name']);
-                if ( $stname == "Morg ‘n’ Thorg" ) $stname = "Morg 'n' Thorg";
-                if ( $stname == "Brick Far’th" ) $stname = "Brick Far'th (+ Grotty)";
+                if ( strpos ( $stname, "Morg " ) ===  0 ) $stname = "Morg 'n' Thorg";
+                if ( strpos ( $stname, "Brick Far" ) === 0 ) $stname = "Brick Far'th (+ Grotty)";
                 if ( $stname == "Grotty" ) $stname = "Grotty (included in Brick Far'th)";
 
                 $f_player_id = $stars[$stname]['id'];
