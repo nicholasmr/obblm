@@ -432,7 +432,7 @@ class cy_match_db {
 					if($players[$row['iNumber']]['intcpt'] > 0) {
 						$nspp = $nspp + ($players[$row['iNumber']]['intcpt'] * 2);
 					}
-					$players[$row['iNumber']]['bh'] = (int) $stats['Inflicted_iCasualties'];
+					$players[$row['iNumber']]['bh'] = (int) $stats['Inflicted_iCasualties'] - (int)$stats['Inflicted_iDead'];
 					//$players[$row['iNumber']]['si'] = (int) $stats['Inflicted_iInjuries'];
 					$players[$row['iNumber']]['si'] = 0;
 					$players[$row['iNumber']]['ki'] = (int) $stats['Inflicted_iDead'];
@@ -531,7 +531,7 @@ class cy_match_db {
 					if($players[$row['iNumber']]['intcpt'] > 0) {
 						$nspp = $nspp + ($players[$row['iNumber']]['intcpt'] * 2);
 					}
-					$players[$row['iNumber']]['bh'] = (int) $stats['Inflicted_iCasualties'];
+					$players[$row['iNumber']]['bh'] = (int) $stats['Inflicted_iCasualties'] - (int)$stats['Inflicted_iDead'];
 					//$players[$row['iNumber']]['si'] = (int) $stats['Inflicted_iInjuries'];
 					$players[$row['iNumber']]['si'] = 0;
 					$players[$row['iNumber']]['ki'] = (int) $stats['Inflicted_iDead'];
