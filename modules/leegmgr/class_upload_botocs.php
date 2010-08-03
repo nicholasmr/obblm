@@ -109,6 +109,16 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $team_away = new Team( $this->awayteam_id );
         $this->tv_away = $team_away->value;
 
+        if ( $this->tour_id == -1 )
+        {
+            $this->tour_id = $this->get_tour_id();
+            if ( !$this->get_tour_id() )
+            {
+                $this->error = "The Free for All tournament id could not be retrieved.";
+                return false;
+            }
+        }
+
         $this->checkSpiralingExpenses();
 
         if ( !$this->updateMatch () )
@@ -146,12 +156,7 @@ tcas1 = IF(
         (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)
     )
 WHERE match_id = $this->match_id";
-/*
-        $query = "UPDATE matches SET 
-            tcas2 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team1_id AND f_mid = $this->match_id),
-            tcas1 = (SELECT SUM(sustained_bhs+sustained_sis+sustained_kill) FROM match_data_es WHERE f_tid = team2_id AND f_mid = $this->match_id)
-            WHERE match_id = $this->match_id";
-*/
+
 
         if ( !mysql_query( $query ) )
         {
@@ -787,6 +792,17 @@ WHERE match_id = $this->match_id";
         return true;
     }
 
+    function get_tour_id() {
+        $did = get_alt_col('teams', 'team_id', $this->hometeam_id, 'f_did');
+        $query = "SELECT tour_id FROM tours WHERE (f_did = $did) AND (type = 1) AND (locked != 1) ORDER BY tour_id DESC";
+
+        $tour_id = mysql_query($query);
+        $tour_id = mysql_fetch_array($tour_id);
+        $tour_id = $tour_id['tour_id'];
+
+        return ($tour_id > 0) ? $tour_id : false;
+    }
+
     private static function form() {
         
         /**
@@ -964,7 +980,7 @@ WHERE match_id = $this->match_id";
         if ( isset($_FILES['userfile']) && isset($_SESSION['coach_id']) )
         {
             $userfile = $_FILES['userfile'];
-            $tour_id = $_POST['ffatours'];
+            $tour_id = ( isset($_POST['ffatours']) ) ? $_POST['ffatours'] : -1;
             $coach_id = $_SESSION['coach_id'];
             self::submitForm($userfile, $tour_id, $coach_id);
         }
