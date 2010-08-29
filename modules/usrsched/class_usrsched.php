@@ -33,6 +33,8 @@ class UserScheduledGames implements ModuleInterface
      */
     public static function main($argv)
     {
+        global $settings;
+        if ( !$settings['usrsched_enabled'] ) die ("User Scheduler is currently disabled.");
         $func = array_shift($argv);
         return call_user_func_array(array(__CLASS__, $func), $argv);
     }
