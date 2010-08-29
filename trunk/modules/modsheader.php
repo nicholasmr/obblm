@@ -119,7 +119,7 @@ Module::register(array(
 Module::register(array(
     'class'         => 'UserScheduledGames',
     'filesRunTime'  => array(),
-    'filesLoadTime' => array('usrsched/class_usrsched.php')
+    'filesLoadTime' => array('usrsched/settings.php', 'usrsched/class_usrsched.php')
 ));
 
 Module::register(array(
