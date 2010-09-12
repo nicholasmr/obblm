@@ -139,10 +139,14 @@ class XML_BOTOCS implements ModuleInterface
                 $chrs = array();
                 $extras = empty($p->extra_skills) ? array() : explode(', ', skillsTrans($p->extra_skills));
 
-                if ($p->ach_ma > 0) array_push($chrs, "+$p->ach_ma Ma");
-                if ($p->ach_st > 0) array_push($chrs, "+$p->ach_st St");
-                if ($p->ach_ag > 0) array_push($chrs, "+$p->ach_ag Ag");
-                if ($p->ach_av > 0) array_push($chrs, "+$p->ach_av Av");
+                if ($p->ach_ma > 0) array_push($chrs, "+1 Ma");
+                if ($p->ach_ma > 1) array_push($chrs, "+1 Ma");
+                if ($p->ach_st > 0) array_push($chrs, "+1 St");
+                if ($p->ach_st > 1) array_push($chrs, "+1 St");
+                if ($p->ach_ag > 0) array_push($chrs, "+1 Ag");
+                if ($p->ach_ag > 1) array_push($chrs, "+1 Ag");
+                if ($p->ach_av > 0) array_push($chrs, "+1 Av");
+                if ($p->ach_av > 1) array_push($chrs, "+1 Av");
 
                 $skillstr = skillsTrans(array_merge($p->ach_nor_skills, $p->ach_dob_skills));
                 $a_skillstr = explode(', ', $skillstr);
