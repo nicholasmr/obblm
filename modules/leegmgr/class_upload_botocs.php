@@ -427,7 +427,7 @@ WHERE match_id = $this->match_id";
                 continue;
             }
 
-            if ( !$addZombie && Match::player_validation($p, $match) )
+            if ( !$addZombie && ( Match::player_validation($p, $match) || $player['star'] == "true" ) )
                 $match->entry( 
                     $f_player_id,
                     $input = array ( 
