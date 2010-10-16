@@ -12,7 +12,7 @@ namespace OBBLMCyUploader
         private static string page = "handler.php?type=leegmgr";
         private static string username;
         private static string password;
-        private static Boolean debug = false;
+        private static Boolean debug = true;
 
         static void Main(string[] args)
         {
@@ -23,12 +23,11 @@ namespace OBBLMCyUploader
                 username = args[1];
                 password = args[2];
             }
-            else if (debug == true)
+            else if (debug == false)
             {
                 url = "http://www.stuntyleeg.com/";
                 username = "testusername";
                 password = "testpassword";
-                //uploadZip(zipfile);
                 uploadzip uploadZip1 = new uploadzip();
                 uploadZip1.Filename = "C:\\Documents and Settings\\username\\My Documents\\BloodBowl\\Match_2010-07-13_20-12-45.zip";
                 uploadZip1.Password = password;
@@ -48,10 +47,11 @@ namespace OBBLMCyUploader
                 Console.ReadKey(true);
                 Environment.Exit(1);
             }
-            
-            string matchreport = Environment.ExpandEnvironmentVariables("%userprofile%\\My Documents\\BloodBowl\\");
-            string replay = Environment.ExpandEnvironmentVariables("%userprofile%\\My Documents\\BloodBowl\\Saves\\Replays\\");
-            string zipfile = Environment.ExpandEnvironmentVariables("%userprofile%\\My Documents\\BloodBowl\\");
+
+            string mydocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string matchreport = Environment.ExpandEnvironmentVariables(mydocs + "\\BloodBowl\\");
+            string replay = Environment.ExpandEnvironmentVariables(mydocs + "\\BloodBowl\\Saves\\Replays\\");
+            string zipfile = Environment.ExpandEnvironmentVariables(mydocs + "\\BloodBowl\\");
             
             FileSystemWatcher sw_replay = new FileSystemWatcher();
             Console.WriteLine("The replay folder is being monitored.");
