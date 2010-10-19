@@ -2003,31 +2003,46 @@ $racesNoApothecary = array_merge($racesHasNecromancer, array(10,15));
 $inducements = array (
     'Bloodweiser Babes' => array (
         'cost' => 50000,
-        'max'  => 2
+        'max'  => 2,
+        'reduced_cost' => 50000,
+        'reduced_cost_races' => array(),
     ),
     'Bribes' => array (
         'cost' => 100000,
-        'max'  => 3
+        'max'  => 3,
+        'reduced_cost' => 100000,
+        'reduced_cost_races' => array(),
     ),
     'Extra Training' => array (
         'cost' => 100000,
-        'max'  => 4
+        'max'  => 4,
+        'reduced_cost' => 100000,
+        'reduced_cost_races' => array(),
     ),
     'Halfling Master Chef' => array (
         'cost' => 300000,
-        'max'  => 1
+        'max'  => 1,
+        'reduced_cost' => 100000,
+        'reduced_cost_races' => array(7), # Halflings
     ),
     'Wandering Apothecaries' => array (
         'cost' => 100000,
-        'max'  => 2
+        'max'  => 2,
+        'reduced_cost' => 100000,
+        'reduced_cost_races' => array(),
     ),
+    # Igor is only buyable by the teams in $racesNoApothecary from above
     'Igor' => array (
         'cost' => 100000,
-        'max'  => 1
+        'max'  => 1,
+        'reduced_cost' => 100000,
+        'reduced_cost_races' => array(),
     ),
     'Wizard' => array (
         'cost' => 150000,
-        'max'  => 1
+        'max'  => 1,
+        'reduced_cost' => 150000,
+        'reduced_cost_races' => array(),
     )
 );
 

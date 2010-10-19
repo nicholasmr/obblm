@@ -60,7 +60,7 @@ $team_id = $_GET['team_id'];
 if (!get_alt_col('teams', 'team_id', $team_id, 'team_id'))
     fatal("Invalid team ID.");
 
-global $stars, $DEA, $rules, $skillarray, $inducements;
+global $stars, $DEA, $rules, $skillarray, $inducements, $racesNoApothecary;
 
 // Move these constants to header.php?
 define('MAX_STARS', 2);
@@ -282,15 +282,12 @@ echo "    </tr>\n";
 // Regular inducements
 
 $r=$t->f_rname;
+$rid=$t->f_race_id;
 // Checking if team can hire Igor or Wandering Apo
-if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Undead')) unset($inducements['Wandering Apothecaries']);
-else unset($inducements['Igor']);
-// Checking LRB6 cheaper Chef for Halfling
-if (($r == 'Halfling')) $inducements['Halfling Master Chef']['cost'] = 100000;
-// Checking LRB6 cheaper bribes for Goblin
-if (($r == 'Goblin')) $inducements['Bribes']['cost'] = 50000;
+unset($inducements[in_array($rid, $racesNoApothecary) ? 'Wandering Apothecaries' : 'Igor']);
 
 foreach ($inducements as $ind_name => $ind) {
+  $this_cost = $ind[in_array($rid, $ind['reduced_cost_races']) ? 'reduced_cost' : 'cost']; # Reduced cost?
   echo '<tr>';
   print '<td>'.$ind_name.' (0-'.$ind['max'].')</td>';
   echo '<td><SELECT name="'.str_replace(' ','_',$ind_name).'" onChange="this.form.submit()">'; // Changing spaces to underscores for (ugly?) POST workaround
@@ -306,10 +303,10 @@ foreach ($inducements as $ind_name => $ind) {
   }
   print $ind_list;
   echo '</SELECT></td>';
-  echo '<td class="cent2">x</td><td class="cent">'.str_replace('000','',$ind['cost']).'k</td>';
+  echo '<td class="cent2">x</td><td class="cent">'.($this_cost/1000).'k</td>';
   echo '<td class="cent2">=</td>';
-  $ind_cost+=$pi*$ind['cost'];
-  echo '<td class="cent">'.str_replace('000','',$pi*$ind['cost']).'k</td>';
+  $ind_cost+=$pi*$this_cost;
+  echo '<td class="cent">'.($pi*$this_cost/1000).'k</td>';
   echo '</tr>';
 }
 
