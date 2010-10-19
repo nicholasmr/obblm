@@ -47,6 +47,8 @@ class UserScheduledGames implements ModuleInterface
         global $coach;
         global $lng;
         global $tours, $divisions, $leagues;
+        global $settings;
+        $lid_selected = HTMLOUT::getSelectedNodeLid();
         
         if (!is_object($coach)){
             status(false, "You must be logged in to schedule games");
@@ -60,6 +62,9 @@ class UserScheduledGames implements ModuleInterface
             <select name='tour_id'>
                 <?php
                 foreach ($tours as $trid => $tr) {
+                    if ($settings['usersched_local_view'] && $divisions[$tr['f_did']]['f_lid'] != $lid_selected) {
+                        continue;
+                    }
                     if ($tr['type'] == TT_FFA) {
                         echo "<option value='$trid'>".$leagues[$divisions[$tr['f_did']]['f_lid']]['lname'].", ".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
                     }
