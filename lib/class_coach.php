@@ -197,8 +197,8 @@ class Coach
             // Is this coach a commish in a league where the selected coach is a member?
             case T_OBJ_COACH:
                 list($managees_leagues) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $managee->coach_id);
-                foreach (array_intersect_key($mangers_leagues, $managees_leagues)  as $lid => $desc) {
-                    if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+                foreach ($managees_leagues as $lid => $desc) {
+                    if (isset($mangers_leagues[$lid]) && $mangers_leagues[$lid]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
                         $MAY_MANAGE_LOCALLY = true;
                         break;
                     }
