@@ -24,7 +24,7 @@
 require('lib/game_data_lrb6x.php');
 
 // Changes to present teams/positionals from LRB5b to LRB6.
-#Halfling Chef reduced price is now 100,000
+
 
 $DEA['Necromantic']['players']['Flesh Golem']['cost'] = 110000;
 $DEA['Necromantic']['players']['Necromantic Werewolf'] = $DEA['Necromantic']['players']['Werewolf']; unset($DEA['Necromantic']['players']['Werewolf']);
@@ -46,4 +46,9 @@ $stars['Deeproot Strongbranch']['cost']               = 300000;
 $stars['Eldril Sidewinder']['cost']                   = 200000;
 
 ksort($stars, SORT_STRING);
+
+// Changes to inducements
+
+$inducements['Halfling Master Chef']['reduced_cost'] = 100000; # Old LRB5 value.
+
 ?>

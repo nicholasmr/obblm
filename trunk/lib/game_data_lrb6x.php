@@ -524,4 +524,12 @@ $stars['Zzharg Madeye']['races']             = array (2, 21);
 
 ksort($stars, SORT_STRING);
 
+//
+// Changes to inducements
+//
+
+$inducements['Halfling Master Chef']['reduced_cost'] = 50000;
+$inducements['Bribes']['reduced_cost'] = 50000;
+$inducements['Bribes']['reduced_cost_races'] = array(6);
+
 ?>
