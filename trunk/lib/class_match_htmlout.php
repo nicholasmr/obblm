@@ -164,47 +164,87 @@ public static function tours()
     title($lng->getTrn('menu/matches_menu/tours'));
 
     $flist = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, is_object($coach) ? $coach->coach_id : false);
+    $tourObjs = array();
+    $flist_JShides = array();
+    $divsToFoldUp = array();
+        
+    // Run through the tours to see which nodes should be hidden.
+    $ENABLE_LEAG_HIDING = in_array('league', $settings['tourlist_hide_nodes']);
+    $ENABLE_DIV_HIDING  = in_array('division', $settings['tourlist_hide_nodes']);
+    $ENABLE_TOUR_HIDING = in_array('tournament', $settings['tourlist_hide_nodes']);
+    foreach ($flist as $lid => $divs) {
+        $HIDE_LEAG = $ENABLE_LEAG_HIDING;
+        foreach ($divs as $did => $tours) {
+            if ($did == 'desc') continue;
+            $HIDE_DIV = $ENABLE_DIV_HIDING;
+            $FOLDUP_DIV = $settings['tourlist_foldup_fin_divs'];
+            foreach ($tours as $trid => $desc) {
+                if ($trid == 'desc') continue;
+                $tourObjs[$trid] = new Tour($trid);
+                if ($ENABLE_TOUR_HIDING && $tourObjs[$trid]->is_finished) $flist_JShides[] = "trid_$trid";
+                $HIDE_DIV   &= $tourObjs[$trid]->is_finished;
+                $FOLDUP_DIV &= $tourObjs[$trid]->is_finished;
+            }
+            if ($HIDE_DIV) $flist_JShides[] = "did_$did";
+            if ($FOLDUP_DIV) $divsToFoldUp[] = $did;
+            $HIDE_LEAG &= $HIDE_DIV;
+        }
+        if ($HIDE_LEAG) $flist_JShides[] = "lid_$lid";
+    }
+
+    // Print show hidden button.
+    ?>
+    <script language="JavaScript" type="text/javascript">
+        function showFullTourList() 
+        {
+            var hidden=[<?php echo array_strpack("'%s'", $flist_JShides, ',') ?>];
+            for (var h in hidden) {
+                slideToggleFast(hidden[h]+'_head');
+                slideToggleFast(hidden[h]+'_cont');
+            }
+            return;
+        }
+    </script>
+    <?php
+    echo "<a href='javascript:void(0)' onClick='showFullTourList();'>".$lng->getTrn('matches/tours/showhidden')."</a><br>";
 
     // Print fixture list.
-    echo "<table class='tours'>\n";
     foreach ($flist as $lid => $divs) {
-        echo "<tr class='leauges'><td><b>
-        <a href='javascript:void(0);' onClick=\"slideToggleFast('lid_$lid');\"><b>[+/-]</b></a>&nbsp;
-        ".$flist[$lid]['desc']['lname']."
-        </b></td></tr>";
-        echo "<tr><td><div id='lid_$lid'>";
+        # Container
+        echo "<div id='lid_${lid}_cont' class='leaugesNCont' style='".((in_array("lid_${lid}", $flist_JShides)) ? "display:none;" : '')."'>";
+        # Title
+        echo "<div class='leauges'><b><a href='javascript:void(0);' onClick=\"slideToggleFast('lid_$lid');\">[+/-]</a>&nbsp;".$flist[$lid]['desc']['lname']."</b></div>\n";
+        # Body
+        echo "<div id='lid_$lid'>";
     foreach ($divs as $did => $tours) {
         if ($did == 'desc') continue;
-        echo "<table class='tours'>\n";
-        echo "<tr class='divisions'><td><b>
-        <a href='javascript:void(0);' onClick=\"slideToggleFast('did_$did');\"><b>[+/-]</b></a>&nbsp;
-        ".$flist[$lid][$did]['desc']['dname']."
-        </b></td></tr>";
-        echo "<tr><td><div id='did_$did'>";
+        # Container
+        echo "<div id='did_${did}_cont' class='divisionsNCont' style='".((in_array("did_${did}", $flist_JShides)) ? "display:none;" : '')."'>";
+        # Title
+        echo "<div class='divisions'><b><a href='javascript:void(0);' onClick=\"slideToggleFast('did_$did');\">[+/-]</a>&nbsp;".$flist[$lid][$did]['desc']['dname']."</b></div>";
+        # Body
+        echo "<div id='did_$did' ".((in_array($did, $divsToFoldUp)) ? 'style="display:none;"' : '').">";
     foreach ($tours as $trid => $desc) {
         if ($trid == 'desc') continue;
-        ?>
-        <table class='tours'>
-            <tr class='tours'>
-                <td>
-                    &nbsp;&nbsp;<a href='index.php?section=matches&amp;type=tourmatches&amp;trid=<?php echo $trid;?>'><b><?php echo $flist[$lid][$did][$trid]['desc']['tname'];?></b></a>
-                    <?php
-                    $tr = new Tour($trid);
-                    $suffix = '';
-                    if ($tr->is_finished) { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/finished').'</i>&nbsp;&nbsp;';}
-                    if ($tr->locked)      { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/locked').'</i>&nbsp;&nbsp;';}
-                    if (!empty($suffix)) { echo '&nbsp;&nbsp;'.$suffix;}
-                    ?>
-                </td>
-            </tr>
-        </table>
-        <?php
+        # Container
+        echo "<div id='trid_${trid}_cont' class='toursNCont' style='".((in_array("trid_${trid}", $flist_JShides)) ? "display:none;" : '')."'>";
+        # Title
+        echo "<div class='tours'><a href='index.php?section=matches&amp;type=tourmatches&amp;trid=$trid'>".$flist[$lid][$did][$trid]['desc']['tname']."</a>";
+        $tr = $tourObjs[$trid]; # We already have loaded these - reuse them!
+        $suffix = '';
+        if ($tr->is_finished) { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/finished').'</i>&nbsp;&nbsp;';}
+        if ($tr->locked)      { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/locked').'</i>&nbsp;&nbsp;';}
+        if (!empty($suffix)) { echo '&nbsp;&nbsp;'.$suffix;}
+        echo "</div>\n"; # tour title container         
+        echo "</div>\n"; # tour container 
     }
-    echo "</div></td></tr></table>\n";
+    echo "</div>\n"; # div body container 
+    echo "</div>\n"; # div container 
     }
-    echo "</div></td></tr>\n";
+    echo "</div>\n"; # league body container 
+    echo "</div>\n"; # league container 
     }
-    echo "</table>\n";
+    
 }
 
 public static function report() {

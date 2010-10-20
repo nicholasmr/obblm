@@ -117,12 +117,18 @@ table.tours {
     padding-right: 5px;
 }
 
-tr.leauges   {background-color: #659EC7;}
-tr.divisions {background-color: #8BB381;}
-tr.tours     {background-color: #BBBBBB;}
+/* tour lists: titel boxes */
+.leauges     {background-color: #659EC7;}
+.divisions   {background-color: #8BB381;}
+.tours       {background-color: #BBBBBB;}
 td.round     {background-color: #CCCCCC;}
 td.match     {background-color: #DDDDDD;}
 td.seperator {height:15px;}
+
+/* tour lists: node containers */
+div.leaugesNCont     {margin-top:15px; margin-left:10px;}
+div.divisionsNCont   {margin-top:5px;  margin-left:25px;}
+div.toursNCont       {margin-top:0px;  margin-left:10px;}
 
 /* 
  *   Section specific 

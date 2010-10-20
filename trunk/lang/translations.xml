@@ -432,7 +432,8 @@
 </standings>
 
 <matches>
-    <tours>    
+    <tours>
+        <showhidden>Show hidden nodes</showhidden>
         <!-- none used - all are in "common". -->
     </tours>
     <tourmatches>
