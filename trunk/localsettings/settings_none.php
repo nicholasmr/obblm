@@ -10,7 +10,8 @@ $settings['lang']          = 'en-GB';
 $settings['fp_links']      = true;
 $settings['welcome']       = 'Could not find the local league settings file for the selected league at <i>localsettings/settings_&lt;LEAGUE ID&gt;.php</i>';
 $settings['rules']         = 'No settings file exists for the selected league';
-$settings['hide_tourlist_nodes'] = array('league', 'division', 'tournament');
+$settings['tourlist_foldup_fin_divs'] = false;
+$settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament');
 
 $settings['standings']['length_players'] = 30;
 $settings['standings']['length_teams']   = 30;
