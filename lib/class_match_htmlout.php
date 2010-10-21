@@ -325,8 +325,8 @@ public static function report() {
         
         // SECONDLY, look for raised rotters too, do same as above with zombies...
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
-            if (in_array($t->f_race_id, $racesMayRaiseRotters) && isset($_POST["rotterCnt"])) {
-                $N = (int) $_POST["rotterCnt"];
+            if (in_array($t->f_race_id, $racesMayRaiseRotters) && isset($_POST["t${id}rotterCnt"])) {
+                $N = (int) $_POST["t${id}rotterCnt"];
                 foreach (range(1,$N) as $n) {
                     $pos_id = $DEA[$t->f_rname]['players']['Rotter']['pos_id'];
                     list($exitStatus,$pid) = Player::create(
@@ -658,7 +658,7 @@ public static function report() {
                 $maxRotters = 6; # Note there is no real limit for raised rotters.
                 echo "<hr style='width:200px;float:left;'><br>
                 <b>Raised rotters?:</b> 
-                <select name='rotterCnt' onChange='var i = this.options[this.selectedIndex].value; var j=1; for (j=1; j<=$maxRotters; j++) {if (j<=i) {slideDownFast(\"t${id}rotter\"+j);} else {slideUpFast(\"t${id}rotter\"+j);}}' >";
+                <select name='t${id}rotterCnt' onChange='var i = this.options[this.selectedIndex].value; var j=1; for (j=1; j<=$maxRotters; j++) {if (j<=i) {slideDownFast(\"t${id}rotter\"+j);} else {slideUpFast(\"t${id}rotter\"+j);}}' >";
                 foreach (range(0,$maxRotters) as $n) {echo "<option value='$n'>$n</option>";}
                 echo "</select>\n";
                 foreach (range(0,$maxRotters) as $n) {
