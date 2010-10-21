@@ -1,11 +1,34 @@
 <?php
 
+// Race defs
+define('T_RACE_AMAZON', 0);
+define('T_RACE_CHAOS', 1);
+define('T_RACE_CHAOS_DWARF', 2);
+define('T_RACE_DARK_ELF', 3);
+define('T_RACE_DWARF', 4);
+define('T_RACE_ELF', 5);
+define('T_RACE_GOBLIN', 6);
+define('T_RACE_HALFLING', 7);
+define('T_RACE_HIGH_ELF', 8);
+define('T_RACE_HUMAN', 9);
+define('T_RACE_KHEMRI', 10);
+define('T_RACE_LIZARDMAN', 11);
+define('T_RACE_ORC', 12);
+define('T_RACE_NECROMANTIC', 13);
+define('T_RACE_NORSE', 14);
+define('T_RACE_NURGLE', 15);
+define('T_RACE_OGRE', 16);
+define('T_RACE_UNDEAD', 17);
+define('T_RACE_VAMPIRE', 18);
+define('T_RACE_SKAVEN', 19);
+define('T_RACE_WOOD_ELF', 20);
+
 $DEA = array (
 	'Amazon'	=> array (
 		'other'	=> array (
 			'rr_cost' => 50000,
 			'icon' => 'amazon.png',
-			'race_id' => 0, # (Amazon)
+			'race_id' => T_RACE_AMAZON, # (Amazon)
 		),
 		'players'	=> array (
 			'Linewoman'	=> array (
@@ -67,7 +90,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 60000,
 			'icon' => 'chaos.png',
-			'race_id' => 1, # (Chaos)
+			'race_id' => T_RACE_CHAOS, # (Chaos)
 		),
 		'players'	=> array (
 			'Beastman'	=> array (
@@ -116,7 +139,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 70000,
 			'icon' => 'chaosdwarf.png',
-			'race_id' => 2, # (Chaos Dwarf)
+			'race_id' => T_RACE_CHAOS_DWARF, # (Chaos Dwarf)
 		),
 		'players'	=> array (
 			'Hobgoblin'	=> array (
@@ -178,7 +201,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 50000,
 			'icon' => 'darkelf.png',
-			'race_id' => 3, # (Dark Elf)
+			'race_id' => T_RACE_DARK_ELF, # (Dark Elf)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -253,7 +276,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 40000,
 			'icon' => 'dwarf.png',
-			'race_id' => 4, # (Dwarf)
+			'race_id' => T_RACE_DWARF, # (Dwarf)
 		),
 		'players'	=> array (
 			'Blocker'	=> array (
@@ -328,7 +351,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 50000,
 			'icon' => 'elf.png',
-			'race_id' => 5, # (Elf)
+			'race_id' => T_RACE_ELF, # (Elf)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -390,7 +413,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 60000,
 			'icon' => 'goblin.png',
-			'race_id' => 6, # (Goblin)
+			'race_id' => T_RACE_GOBLIN, # (Goblin)
 		),
 		'players'	=> array (
 			'Goblin'	=> array (
@@ -478,7 +501,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 60000,
 			'icon' => 'halfling.png',
-			'race_id' => 7, # (Halfling)
+			'race_id' => T_RACE_HALFLING, # (Halfling)
 		),
 		'players'	=> array (
 			'Halfling'	=> array (
@@ -516,7 +539,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 50000,
 			'icon' => 'highelf.png',
-			'race_id' => 8, # (High Elf)
+			'race_id' => T_RACE_HIGH_ELF, # (High Elf)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -578,7 +601,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 50000,
 			'icon' => 'human.png',
-			'race_id' => 9, # (Human)
+			'race_id' => T_RACE_HUMAN, # (Human)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -653,7 +676,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 70000,
 			'icon' => 'khemri.png',
-			'race_id' => 10, # (Khemri)
+			'race_id' => T_RACE_KHEMRI, # (Khemri)
 		),
 		'players'	=> array (
 			'Skeleton'	=> array (
@@ -715,7 +738,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 60000,
 			'icon' => 'lizardmen.png',
-			'race_id' => 11, # (Lizardman)
+			'race_id' => T_RACE_LIZARDMAN, # (Lizardman)
 		),
 		'players'	=> array (
 			'Skink'	=> array (
@@ -764,7 +787,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 60000,
 			'icon' => 'orc.png',
-			'race_id' => 12, # (Orc)
+			'race_id' => T_RACE_ORC, # (Orc)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -852,7 +875,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 70000,
 			'icon' => 'necromantic.png',
-			'race_id' => 13, # (Necromantic)
+			'race_id' => T_RACE_NECROMANTIC, # (Necromantic)
 		),
 		'players'	=> array (
 			'Zombie'	=> array (
@@ -927,7 +950,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 60000,
 			'icon' => 'norse.png',
-			'race_id' => 14, # (Norse)
+			'race_id' => T_RACE_NORSE, # (Norse)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -1015,7 +1038,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 70000,
 			'icon' => 'nurgle.png',
-			'race_id' => 15, # (Nurgle)
+			'race_id' => T_RACE_NURGLE, # (Nurgle)
 		),
 		'players'	=> array (
 			'Rotter'	=> array (
@@ -1077,7 +1100,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 70000,
 			'icon' => 'ogros.png',
-			'race_id' => 16, # (Ogre)
+			'race_id' => T_RACE_OGRE, # (Ogre)
 		),
 		'players'	=> array (
 			'Snotling'	=> array (
@@ -1114,7 +1137,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 70000,
 			'icon' => 'undead.png',
-			'race_id' => 17, # (Undead)
+			'race_id' => T_RACE_UNDEAD, # (Undead)
 		),
 		'players'	=> array (
 			'Skeleton'	=> array (
@@ -1190,7 +1213,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 70000,
 			'icon' => 'vampire.png',
-			'race_id' => 18, # (Vampire)
+			'race_id' => T_RACE_VAMPIRE, # (Vampire)
 		),
 		'players'	=> array (
 			'Thrall'	=> array (
@@ -1227,7 +1250,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 60000,
 			'icon' => 'skaven.png',
-			'race_id' => 19, # (Skaven)
+			'race_id' => T_RACE_SKAVEN, # (Skaven)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -1302,7 +1325,7 @@ $DEA = array (
 		'other'	=> array (
 			'rr_cost' => 50000,
 			'icon' => 'woodelf.png',
-			'race_id' => 20, # (Wood Elf)
+			'race_id' => T_RACE_WOOD_ELF, # (Wood Elf)
 		),
 		'players'	=> array (
 			'Lineman'	=> array (
@@ -1996,11 +2019,11 @@ $IllegalSkillCombinations = array(
 
 // Instead of purchasing an Apothecary, Necromantic and Undead teams use the services of a Necromancer. 
 // This means these teams may also recieve free zombies.
-$racesHasNecromancer = array(13,17);
+$racesHasNecromancer = array(T_RACE_NECROMANTIC, T_RACE_UNDEAD);
 // Khemri, Necromantic, Nurgle and Undead teams may not purchase or use an Apothecary.
-$racesNoApothecary = array_merge($racesHasNecromancer, array(10,15));
-
-$racesMayRaiseRotters = array(15); # Really, this only applies for players with the skill "Nurgle's Rot".
+$racesNoApothecary = array_merge($racesHasNecromancer, array(T_RACE_NURGLE, T_RACE_KHEMRI));
+// Nurgles players with Nurgle's Rot may raise rotters. Really, this only applies for _players_ (not the race) with the skill "Nurgle's Rot".
+$racesMayRaiseRotters = array(T_RACE_NURGLE);
 
 $inducements = array (
     'Bloodweiser Babes' => array (

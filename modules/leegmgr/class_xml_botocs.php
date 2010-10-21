@@ -69,6 +69,7 @@ class XML_BOTOCS implements ModuleInterface
             $this->players = $team->getPlayers();
             $this->name = $team->name;
             $this->race = $team->f_rname;
+            $this->race_id = $team->f_race_id;
             $this->coach_name = $team->f_cname;
             $this->rerolls = $team->rerolls;
             $this->fan_factor = $team->rg_ff;
@@ -315,7 +316,7 @@ class XML_BOTOCS implements ModuleInterface
             else $jm = 0;
             $roster = new XML_BOTOCS( $team_id, $jm );
             if ( !isset($_GET["cy"]) ) Print $roster->roster;
-            Else
+            else
             {
                 $roster->createCyRoster();
                 if ( !$roster->error )
@@ -348,17 +349,9 @@ class XML_BOTOCS implements ModuleInterface
         );
     }
 
-    public static function getModuleTables()
-    {
-        return array();
-    }
-
-    public static function getModuleUpgradeSQL()
-    {
-        return array();
-    }
-    
-    public static function triggerHandler($type, $argv){}
+    public static function getModuleTables() {return array();}
+    public static function getModuleUpgradeSQL() {return array();}
+    public static function triggerHandler($type, $argv) {}
 
     /*
      * Cyanide Roster
@@ -388,34 +381,51 @@ class XML_BOTOCS implements ModuleInterface
 
     public $cyroster = '';
 */
+global $settings;
 
-if ( $this->race != "Human" &&
-     $this->race != "Dwarf" &&
-     $this->race != "Chaos" &&
-     $this->race != "Skaven" &&
-     $this->race != "Lizardman" &&
-     $this->race != "Wood Elf" &&
-     $this->race != "Orc" &&
-     $this->race != "Goblin" &&
-     $this->race != "Dark Elf" )
-{
-$this->error = "This is not a valid race.  $this->race";
-return false;
+$T_RACES_CYANIDE_1 = array(
+    T_RACE_CHAOS,
+    T_RACE_HUMAN,
+    T_RACE_DWARF,
+    T_RACE_SKAVEN,
+    T_RACE_LIZARDMAN,
+    T_RACE_WOOD_ELF,
+    T_RACE_ORC,
+    T_RACE_GOBLIN,
+    T_RACE_DARK_ELF
+);
+$T_RACES_CYANIDE_2 = array_merge($T_RACES_CYANIDE_1, array(
+    T_RACE_AMAZON,
+    T_RACE_ELF,
+    T_RACE_HALFLING,
+    T_RACE_HIGH_ELF,
+    T_RACE_KHEMRI,
+    T_RACE_NECROMANTIC,
+    T_RACE_NORSE,
+    T_RACE_NURGLE,
+    T_RACE_OGRE,
+    T_RACE_UNDEAD,
+    T_RACE_VAMPIRE,
+));
+
+if (!in_array($this->race_id, ${"T_RACES_CYANIDE_".$settings['leegmgr_cyanide_edition']})) {
+    $this->error = "The race '$this->race' is not a valid Cyanide race in Cyanide edition $settings[leegmgr_cyanide_edition].";
+    return false;
 }
 
 include('cyanide/lib_cy_team_db.php');
-$cy 							= new cyanide;
-$cy_team 						= new cy_team_db;
+$cy 	 = new cyanide;
+$cy_team = new cy_team_db;
 
-$obblm_team['race']			= $this->race;
-$obblm_team['id']  			= $this->team_id;
+$obblm_team['race']			    = $this->race;
+$obblm_team['id']  			    = $this->team_id;
 $obblm_team['name']  			= $this->name;
 $obblm_team['colorid'] 			= 51; //@FIXME need to map cy colors 51 = brown
 $obblm_team['TeamMOTO'] 		= 'Live and Let Die!';
 $obblm_team['TeamBackground'] 	= 'This team is new and needs to prove it can cust the mustard';
 $obblm_team['TeamValue']		= $this->tv / 1000;
-$obblm_team['TeamFanFactor']		= $this->fan_factor;
-$obblm_team['gold']			= $this->treasury;
+$obblm_team['TeamFanFactor']	= $this->fan_factor;
+$obblm_team['gold']			    = $this->treasury;
 $obblm_team['Cheerleaders']		= $this->cheerleaders;
 $obblm_team['apothecary']		= ( $this->apothecary == "true" ) ? 1 : 0;
 $obblm_team['rerolls']			= $this->rerolls;
