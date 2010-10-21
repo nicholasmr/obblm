@@ -410,8 +410,7 @@ public static function report() {
                 }
                 
                 $m->entry($p->player_id, array(
-                    // Regarding MVP: We must check for isset() since checkboxes are not sent at all when not checked! 
-                    'mvp'     => (isset($_POST["mvp_$p->player_id"]) && $_POST["mvp_$p->player_id"]) ? 1 : 0,
+                    'mvp'     => $_POST['mvp_' . $p->player_id],
                     'cp'      => $_POST['cp_' . $p->player_id],
                     'td'      => $_POST['td_' . $p->player_id],
                     'intcpt'  => $_POST['intcpt_' . $p->player_id],
@@ -444,7 +443,7 @@ public static function report() {
                         // Star required input
                         'f_team_id' => $t->team_id,
                         // Regular input
-                        'mvp'     => (isset($_POST["mvp_$sid"]) && $_POST["mvp_$sid"]) ? 1 : 0,
+                        'mvp'     => $_POST["mvp_$sid"],
                         'cp'      => $_POST["cp_$sid"],
                         'td'      => $_POST["td_$sid"],
                         'intcpt'  => $_POST["intcpt_$sid"],
@@ -482,7 +481,7 @@ public static function report() {
                         'nr'        => $i,
                         'skills'    => $_POST["skills$idm"],                    
                         // Regular input
-                        'mvp'     => (isset($_POST["mvp$idm"]) && $_POST["mvp$idm"]) ? 1 : 0,
+                        'mvp'     => $_POST["mvp$idm"],
                         'cp'      => $_POST["cp$idm"],
                         'td'      => $_POST["td$idm"],
                         'intcpt'  => $_POST["intcpt$idm"],
@@ -743,7 +742,11 @@ protected static function _print_player_row($FS, $name, $nr, $pos, $bgcolor, $md
     echo "<td>$nr</td>\n";
     echo "<td>$name</td>\n";
     echo "<td>$pos</td>\n";
-    echo "<td><input type='checkbox' " . ((isset($mdat['mvp']) && $mdat['mvp']) ? 'CHECKED ' : '')." $DIS name='mvp_$FS'></td>\n";
+    // MVP
+    echo "<td><select $DIS name='mvp_$FS'>";
+    foreach (range(0,2) as $n) {echo "<option value='$n' ".((isset($mdat['mvp']) && $mdat['mvp'] == $n) ? 'SELECTED' : '').">$n</option>";}
+    echo "</select>\n";
+    // Rest of ACH.
     foreach (array_diff(array_keys($T_MOUT_ACH), array('mvp')) as $f) {
         echo "<td><input $DIS type='text' onChange='numError(this);' size='1' maxlength='2' name='${f}_$FS' value='".(isset($mdat[$f]) ? $mdat[$f] : 0)."'></td>\n";
     }
