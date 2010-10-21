@@ -64,11 +64,15 @@ $skillarray['E'][113] = $skillididx[113] = 'Animosity';
 // Three new teams in LRB5b.
 //
 
+define('T_RACE_CHAOS_PACT', 21);
+define('T_RACE_SLANN', 22);
+define('T_RACE_UNDERWORLD', 23);
+
 $DEA['Chaos Pact'] = array (
     'other'	=> array (
         'rr_cost' => 70000,
         'icon' => 'chaos.png',
-        'race_id' => 21, # (Chaos Pact)
+        'race_id' => T_RACE_CHAOS_PACT, # (Chaos Pact)
     ),
     'players'	=> array (
   			'Marauder'	=> array (
@@ -169,7 +173,7 @@ $DEA['Slann'] = array (
     'other'	=> array (
         'rr_cost' => 50000,
         'icon' => 'slann.png',
-        'race_id' => 22, # (Slann)
+        'race_id' => T_RACE_SLANN, # (Slann)
     ),
     'players'	=> array (
   			'Lineman'	=> array (
@@ -231,7 +235,7 @@ $DEA['Underworld'] = array (
     'other'	=> array (
         'rr_cost' => 70000,
         'icon' => 'underworld.png',
-        'race_id' => 23, # (Underworld)
+        'race_id' => T_RACE_UNDERWORLD, # (Underworld)
     ),
     'players'	=> array (
   			'Underworld Goblin'	=> array (
