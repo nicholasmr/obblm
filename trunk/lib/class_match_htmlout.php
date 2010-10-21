@@ -254,7 +254,7 @@ public static function report() {
     if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
         fatal("Invalid match ID.");
     
-    global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $DEA, $T_PMD__ENTRY_EXPECTED;
+    global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $racesMayRaiseRotters, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     global $leagues,$divisions,$tours;
     
@@ -319,6 +319,36 @@ public static function report() {
                     $postName = "${f}_t${id}zombie";
                     $_POST["${f}_$pid"] = isset($_POST[$postName]) ? $_POST[$postName] : 0;
                     unset($_POST[$postName]);
+                }
+            }
+        }
+        
+        // SECONDLY, look for raised rotters too, do same as above with zombies...
+        foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
+            if (in_array($t->f_race_id, $racesMayRaiseRotters) && isset($_POST["rotterCnt"])) {
+                $N = (int) $_POST["rotterCnt"];
+                foreach (range(1,$N) as $n) {
+                    $pos_id = $DEA[$t->f_rname]['players']['Rotter']['pos_id'];
+                    list($exitStatus,$pid) = Player::create(
+                        array(
+                            'nr' => $t->getFreePlayerNr(), 
+                            'f_pos_id' => $pos_id, 
+                            'team_id' => $t->team_id, 
+                            'name' => "RAISED ROTTER $n"
+                        ), 
+                        array(
+                            'free' => true,
+                        ));
+
+                    /* 
+                        Knowing the new rotter's PID we relocate the rotter match data to regular player data - this allows us 
+                        to use the same loop for submitting the rotter's match data.
+                    */
+                    foreach ($T_PMD__ENTRY_EXPECTED as $f) {
+                        $postName = "${f}_t${id}rotter$n";
+                        $_POST["${f}_$pid"] = isset($_POST[$postName]) ? $_POST[$postName] : 0;
+                        unset($_POST[$postName]);
+                    }
                 }
             }
         }
@@ -614,16 +644,32 @@ public static function report() {
             // Add raised zombies
             global $racesHasNecromancer;
             if (in_array($t->f_race_id, $racesHasNecromancer)) {
-                echo "Raised zombie? <input type='checkbox' name='t${id}zombie' value='1' onclick='slideToggleFast(\"t${id}zombie\");'><br>\n";
+                echo "<hr style='width:200px;float:left;'><br>
+                <b>Raised zombie?:</b> <input type='checkbox' name='t${id}zombie' value='1' onclick='slideToggleFast(\"t${id}zombie\");'><br>\n";
                 echo "<div id='t${id}zombie' style='display:none;'>\n";
                 echo "<table class='common'>\n";
                 self::_print_player_row("t${id}zombie", 'Raised zombie', '&mdash;', 'Zombie', false, array(), $DIS);
                 echo "</table>\n";
                 echo "</div>\n";
             }
+            // Add raised rotters
+            global $racesMayRaiseRotters;
+            if (in_array($t->f_race_id, $racesMayRaiseRotters)) {
+                $maxRotters = 6; # Note there is no real limit for raised rotters.
+                echo "<hr style='width:200px;float:left;'><br>
+                <b>Raised rotters?:</b> 
+                <select name='rotterCnt' onChange='var i = this.options[this.selectedIndex].value; var j=1; for (j=1; j<=$maxRotters; j++) {if (j<=i) {slideDownFast(\"t${id}rotter\"+j);} else {slideUpFast(\"t${id}rotter\"+j);}}' >";
+                foreach (range(0,$maxRotters) as $n) {echo "<option value='$n'>$n</option>";}
+                echo "</select>\n";
+                foreach (range(0,$maxRotters) as $n) {
+                    echo "<div id='t${id}rotter$n' style='display:none;'><table class='common'>\n";
+                    self::_print_player_row("t${id}rotter$n", "Raised Rotter #$n", '&mdash;', 'Rotter', false, array(), $DIS);
+                    echo "</table></div>\n";                
+                }
+            }
             ?>
 
-            <table style='border-spacing: 10px;'>
+            <table style='border-spacing: 0px 10px;'>
                 <tr><td align="left" valign="top">
                     <b>Star Players</b>: 
                     <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" 

@@ -250,7 +250,9 @@ function existingStarMerc(table_id, id, mdat)
 function fadeIn(id)         { return $('#'+id).fadeIn('slow');}
 function fadeOut(id)        { return $('#'+id).fadeOut('slow');}
 function slideDown(id)      { return $('#'+id).slideDown('slow');}
+function slideDownFast(id)  { return $('#'+id).slideDown('fast');}
 function slideUp(id)        { return $('#'+id).slideUp('slow');}
+function slideUpFast(id)    { return $('#'+id).slideUp('fast');}
 function slideToggle(id)    { return $('#'+id).slideToggle("slow");}
 function slideToggleFast(id){ return $('#'+id).slideToggle("fast");}
 function toggle(id)         { return $('#'+id).toggle("slow");}

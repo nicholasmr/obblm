@@ -2000,6 +2000,8 @@ $racesHasNecromancer = array(13,17);
 // Khemri, Necromantic, Nurgle and Undead teams may not purchase or use an Apothecary.
 $racesNoApothecary = array_merge($racesHasNecromancer, array(10,15));
 
+$racesMayRaiseRotters = array(15); # Really, this only applies for players with the skill "Nurgle's Rot".
+
 $inducements = array (
     'Bloodweiser Babes' => array (
         'cost' => 50000,
