@@ -437,8 +437,8 @@ class cyanide {
                 $player_type_map['18']['Beast of Nurgle']=94;
                 $player_type_map['19']['Snotling']=95;
                 $player_type_map['19']['Ogre']=96;
-                $player_type_map['20']['Vampire']=97;
-                $player_type_map['20']['Thrall']=98;
+                $player_type_map['20']['Thrall']=97;
+                $player_type_map['20']['Vampire']=98;
                 $player_type_map['0']['Zara The Slayer']=99;
                 $player_type_map['0']['Scrappa Sorehead']=100;
                 $player_type_map['0']['Eldril Sidewinder']=101;
@@ -648,7 +648,6 @@ class cyanide {
                 $skills_map['Nurgles Rot']=82;
                 $skills_map['Stakes']=79;
                 $skills_map['Titchy']=83;
-                $skills_map['Animosity']="";
             case 1:
             default:
 		        $skills_map['Strip Ball']=1;
