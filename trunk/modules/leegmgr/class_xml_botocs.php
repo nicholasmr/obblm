@@ -420,7 +420,7 @@ $cy_team = new cy_team_db;
 $obblm_team['race']			    = $this->race;
 $obblm_team['id']  			    = $this->team_id;
 $obblm_team['name']  			= $this->name;
-$obblm_team['colorid'] 			= 51; //@FIXME need to map cy colors 51 = brown
+$obblm_team['colorid'] 			= rand(1,51); //@FIXME need to map cy colors 51 = brown
 $obblm_team['TeamMOTO'] 		= 'Live and Let Die!';
 $obblm_team['TeamBackground'] 	= 'This team is new and needs to prove it can cust the mustard';
 $obblm_team['TeamValue']		= $this->tv / 1000;
