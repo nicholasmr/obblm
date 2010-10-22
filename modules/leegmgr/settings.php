@@ -14,10 +14,10 @@ if ( !isset($settings['leegmgr_extrastats']) )
     $settings['leegmgr_extrastats'] = true; // Enables the reporting of extra stats and the use of the alternate XSD file.
 
 if ( !isset($settings['leegmgr_cyanide']) )
-    $settings['leegmgr_cyanide'] = false; // Setting to false here is preferred as this can be set to true in each specific league.
+    $settings['leegmgr_cyanide'] = true; // Setting to false here is preferred as this can be set to true in each specific league.
     
 if ( !isset($settings['leegmgr_cyanide_edition']) )
-    $settings['leegmgr_cyanide_edition'] = 2; // 1 = the first Cyanide edition, 2 = legendary edition.
+    $settings['leegmgr_cyanide_edition'] = 2; // 1 = the first Cyanide edition, 2 = Legendary edition.
 
 if ( !isset($settings['leegmgr_botocs']) )
     $settings['leegmgr_botocs'] = false; // Setting to false here is preferred as this can be set to true in each specific league.
