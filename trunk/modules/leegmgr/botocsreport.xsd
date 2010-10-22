@@ -110,7 +110,7 @@
   <xs:simpleType name="t_mvp">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="0" />
-      <xs:maxInclusive value="1" />
+      <xs:maxInclusive value="2" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="t_number">
