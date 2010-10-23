@@ -77,6 +77,12 @@ class Player
     public $ag = 0;
     public $av = 0;
     public $st = 0;
+    
+    // Unadjusted Characteristics (adjusted limits are the 1/10 limit and the def +/- 2 limit)
+    public $ma_ua = 0;
+    public $ag_ua = 0;
+    public $av_ua = 0;
+    public $st_ua = 0;
 
     // Base characteristics
     public $def_ma = 0;
@@ -638,23 +644,17 @@ class Player
     
         $this->setSkills();
         $chrs = array();
-        $extras = empty($this->extra_skills) ? array() : explode(', ', skillsTrans($this->extra_skills));
-
-        // First italic-ize extra skills
-        if ($HTML) {
-            array_walk($extras, create_function('&$val,$key', '$val = "<i>$val</i>";'));
-        }
-        else {
-            array_walk($extras, create_function('&$val,$key', '$val = "$val*";'));
-        }
+        $extras = empty($this->extra_skills) ? array() : array_strpack(($HTML) ? '<u>%s</u>' : '%s*', skillsTrans($this->extra_skills));
 
         if ($this->ach_ma > 0) array_push($chrs, "+$this->ach_ma Ma");
         if ($this->ach_st > 0) array_push($chrs, "+$this->ach_st St");
         if ($this->ach_ag > 0) array_push($chrs, "+$this->ach_ag Ag");
         if ($this->ach_av > 0) array_push($chrs, "+$this->ach_av Av");
 
-        $skillstr = skillsTrans(array_merge($this->def_skills, $this->ach_nor_skills, $this->ach_dob_skills));
-        return implode(', ', array_merge(empty($skillstr) ? array() : array($skillstr), $extras, $chrs));
+        $defs = skillsTrans($this->def_skills);
+        if ($HTML) { $defs = array_strpack('<i>%s</i>', $defs); }
+        $skillstr = array_merge($defs, skillsTrans(array_merge($this->ach_nor_skills, $this->ach_dob_skills)));
+        return implode(', ', array_merge($skillstr, $extras, $chrs));
     }
     
     public function getInjsStr($HTML = false) 

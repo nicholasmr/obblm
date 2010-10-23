@@ -20,6 +20,6 @@ if ( !isset($settings['leegmgr_cyanide_edition']) )
     $settings['leegmgr_cyanide_edition'] = 2; // 1 = the first Cyanide edition, 2 = Legendary edition.
 
 if ( !isset($settings['leegmgr_botocs']) )
-    $settings['leegmgr_botocs'] = false; // Setting to false here is preferred as this can be set to true in each specific league.
+    $settings['leegmgr_botocs'] = true; // Setting to false here is preferred as this can be set to true in each specific league.
 
 ?>

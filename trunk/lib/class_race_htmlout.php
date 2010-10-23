@@ -40,7 +40,7 @@ public static function profile($rid)
     $players = array();
     foreach ($roster['players'] as $player => $d) {
         $p = (object) array_merge(array('position' => $player), $d);
-        $p->skills = skillsTrans($p->def);
+        $p->skills = implode(', ', skillsTrans($p->def));
         $p->N = implode('',$p->norm);
         $p->D = implode('',$p->doub);
         $players[] = $p;

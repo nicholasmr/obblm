@@ -360,6 +360,7 @@ class cyanide {
 	}	
 	public function set_reroll_price($str) {
         // These are also defined in $DEA of game_data.php (LRB5 game data).
+		global $settings;
         switch ($settings['leegmgr_cyanide_edition']) 
         {
             case 2:
@@ -392,6 +393,7 @@ class cyanide {
 	}
 	public function convert_player_type($str) {
 		
+		global $settings;
         switch ($settings['leegmgr_cyanide_edition'])
         {
             case 2:
@@ -516,6 +518,7 @@ class cyanide {
 		// type = cyid for the cyinide id
 		//        obbid for obblm id
 		// str  = Race Name string from client
+		global $settings;
 		switch ($settings['leegmgr_cyanide_edition']) 
 		{
 		    case 2:

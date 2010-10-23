@@ -376,6 +376,11 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             elseif ($sub > 1)   $p->{"${chr}_color"} = COLOR_HTML_CHR_GTP1;
             elseif ($sub == -1) $p->{"${chr}_color"} = COLOR_HTML_CHR_EQM1;
             elseif ($sub < -1)  $p->{"${chr}_color"} = COLOR_HTML_CHR_LTM1;
+            
+            if ($p->$chr != $p->{"${chr}_ua"}) {
+                $p->{"${chr}_color"} = COLOR_HTML_CHR_BROKENLIMIT;
+                $p->$chr = $p->{$chr.'_ua'}.' <i>('.$p->$chr.' eff.)</i>';
+            }
         }
         
         /* 
@@ -430,7 +435,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             $s->player_id = $s->star_id;
             $s->nr = 0;
             $s->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$s->icon' alt='player avatar'></td><td><i>Star&nbsp;player</i></td></tr></table>";
-            $s->skills = '<small>'.skillsTrans($s->skills).'</small>';
+            $s->skills = '<small>'.implode(', ', skillsTrans($s->skills)).'</small>';
             $s->injs = '';
             $s->value = 0;
             foreach ($s->getStats(T_OBJ_TEAM,$team->team_id) as $k => $v) {

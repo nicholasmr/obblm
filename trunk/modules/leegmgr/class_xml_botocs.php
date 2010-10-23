@@ -138,7 +138,7 @@ class XML_BOTOCS implements ModuleInterface
 
 
                 $chrs = array();
-                $extras = empty($p->extra_skills) ? array() : explode(', ', skillsTrans($p->extra_skills));
+                $extras = empty($p->extra_skills) ? array() : skillsTrans($p->extra_skills);
 
                 if ($p->ach_ma > 0) array_push($chrs, "+1 Ma");
                 if ($p->ach_ma > 1) array_push($chrs, "+1 Ma");
@@ -150,14 +150,13 @@ class XML_BOTOCS implements ModuleInterface
                 if ($p->ach_av > 1) array_push($chrs, "+1 Av");
 
                 $skillstr = skillsTrans(array_merge($p->ach_nor_skills, $p->ach_dob_skills));
-                $a_skillstr = explode(', ', $skillstr);
                 if ($p->f_pos_id == 201) {
                         array_push($extras, 'Sprint');
                 }
                 if ($p->is_journeyman) {
                         array_push($extras, 'Loner');
                 }
-                $cy_skills = array_merge(empty($skillstr) ? array() : $a_skillstr, $extras, $chrs);
+                $cy_skills = array_merge(empty($skillstr) ? array() : $skillstr, $extras, $chrs);
 
                 $i = 0;
 

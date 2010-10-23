@@ -192,12 +192,14 @@ function rule_dict(array $sortRule) {
 
 function skillsTrans($str) {
     // Translates a commaseperated string of skill IDs to a comma (plus space) seperated skill name string.
-    return implode(', ', array_map(create_function('$s', 'global $skillididx; return $skillididx[$s];'), is_array($str) ? $str : explode(',', $str)));
+    $trans = array_map(create_function('$s', 'global $skillididx; return $skillididx[$s];'), is_array($str) ? $str : explode(',', $str));
+    return is_array($str) ? $trans : implode(', ', $trans);
 }
 
 function racesTrans($str) {
     // Translates a commaseperated string of race IDs to a comma (plus space) seperated race name string.
-    return implode(', ', array_map(create_function('$r', 'global $raceididx; return $raceididx[$r];'), is_array($str) ? $str : explode(',', $str)));
+    $trans = array_map(create_function('$r', 'global $raceididx; return $raceididx[$r];'), is_array($str) ? $str : explode(',', $str));
+    return is_array($str) ? $trans : implode(', ', $trans);
 }
 
 // Prints page title for main section pages.
