@@ -218,6 +218,7 @@ public static function installProcsAndFuncs($install = true)
         /* Player DPROPS */
         DECLARE done INT DEFAULT 0;
         DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
+        DECLARE ma_ua,av_ua,ag_ua,st_ua '.$CT_cols['chr_ua'].';
         DECLARE value '.$CT_cols['pv'].';
         DECLARE status '.$core_tables['players']['status'].';
         DECLARE date_died '.$core_tables['players']['date_died'].'; 
@@ -311,10 +312,11 @@ public static function installProcsAndFuncs($install = true)
             IF NOT done THEN
 
                 /* Update player DPROPS */            
-                CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, value,status,date_died);
+                CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, ma_ua,av_ua,ag_ua,st_ua, value,status,date_died);
                 UPDATE players 
                     SET players.inj_ma = inj_ma, players.inj_av = inj_av, players.inj_ag = inj_ag, players.inj_st = inj_st, players.inj_ni = inj_ni,
                         players.ma = ma, players.av = av, players.ag = ag, players.st = st, 
+                        players.ma_ua = ma_ua, players.av_ua = av_ua, players.ag_ua = ag_ua, players.st_ua = st_ua, 
                         players.value = value, players.status = status, players.date_died = date_died
                     WHERE players.player_id = pid;
 
@@ -970,6 +972,7 @@ public static function installProcsAndFuncs($install = true)
 
             DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
             DECLARE inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st '.$CT_cols['chr'].';
+            DECLARE ma_ua,av_ua,ag_ua,st_ua '.$CT_cols['chr_ua'].';
             DECLARE value '.$CT_cols['pv'].';
             DECLARE status '.$core_tables['players']['status'].';
             DECLARE date_died '.$core_tables['players']['date_died'].';
@@ -998,10 +1001,11 @@ public static function installProcsAndFuncs($install = true)
             REPEAT
                 FETCH cur_p INTO pid;
                 IF NOT done THEN
-                    CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, value,status,date_died);
+                    CALL getPlayerDProps(pid, inj_ma,inj_av,inj_ag,inj_st,inj_ni, ma,av,ag,st, ma_ua,av_ua,ag_ua,st_ua, value,status,date_died);
                     UPDATE players 
                         SET players.inj_ma = inj_ma, players.inj_av = inj_av, players.inj_ag = inj_ag, players.inj_st = inj_st, players.inj_ni = inj_ni,
                             players.ma = ma, players.av = av, players.ag = ag, players.st = st, 
+                            players.ma_ua = ma_ua, players.av_ua = av_ua, players.ag_ua = ag_ua, players.st_ua = st_ua, 
                             players.value = value, players.status = status, players.date_died = date_died
                         WHERE players.player_id = pid; 
                 END IF;
@@ -1023,8 +1027,9 @@ public static function installProcsAndFuncs($install = true)
         
         'CREATE PROCEDURE getPlayerDProps(
             IN pid '.$CT_cols[T_OBJ_PLAYER].',
-            OUT inj_ma '.$CT_cols['chr'].', OUT inj_av '.$CT_cols['chr'].', OUT inj_ag '.$CT_cols['chr'].', OUT inj_st '.$CT_cols['chr'].', OUT inj_ni '.$CT_cols['chr'].',
-            OUT ma '.$CT_cols['chr'].',     OUT av '.$CT_cols['chr'].',     OUT ag '.$CT_cols['chr'].',     OUT st '.$CT_cols['chr'].',
+            OUT inj_ma '.$CT_cols['chr'].',   OUT inj_av '.$CT_cols['chr'].',   OUT inj_ag '.$CT_cols['chr'].',   OUT inj_st '.$CT_cols['chr'].', OUT inj_ni '.$CT_cols['chr'].',
+            OUT ma '.$CT_cols['chr'].',       OUT av '.$CT_cols['chr'].',       OUT ag '.$CT_cols['chr'].',       OUT st '.$CT_cols['chr'].',
+            OUT ma_ua '.$CT_cols['chr_ua'].', OUT av_ua '.$CT_cols['chr_ua'].', OUT ag_ua '.$CT_cols['chr_ua'].', OUT st_ua '.$CT_cols['chr_ua'].',
             OUT value '.$CT_cols['pv'].', OUT status '.$core_tables['players']['status'].', OUT date_died '.$core_tables['players']['date_died'].'
         )
             NOT DETERMINISTIC
@@ -1072,17 +1077,36 @@ public static function installProcsAndFuncs($install = true)
             INTO 
                 def_ma,def_st,def_ag,def_av
             FROM game_data_players WHERE game_data_players.pos_id = f_pos_id;
-            SET ma = (ach_ma + def_ma) - inj_ma;
-            SET st = (ach_st + def_st) - inj_st;
-            SET ag = (ach_ag + def_ag) - inj_ag;
-            SET av = (ach_av + def_av) - inj_av;
-                
+            SET ma_ua = CAST((ach_ma + def_ma) - inj_ma AS SIGNED);
+            SET st_ua = CAST((ach_st + def_st) - inj_st AS SIGNED);
+            SET ag_ua = CAST((ach_ag + def_ag) - inj_ag AS SIGNED);
+            SET av_ua = CAST((ach_av + def_av) - inj_av AS SIGNED);
+            SET ma = calcEffectiveChr(def_ma, ma_ua);
+            SET st = calcEffectiveChr(def_st, st_ua);
+            SET ag = calcEffectiveChr(def_ag, ag_ua);
+            SET av = calcEffectiveChr(def_av, av_ua);
+
             SET status = getPlayerStatus(pid, -1);
             
             IF status = '.DEAD.' THEN
                 SET date_died = (SELECT date_played FROM matches, match_data WHERE f_match_id = match_id AND f_player_id = pid AND inj = '.DEAD.');
             ELSE
                 SET date_died = NULL;
+            END IF;
+        END',
+        
+        // Private function to getPlayerDProps()
+        'CREATE FUNCTION calcEffectiveChr(def '.$CT_cols['chr'].', ua '.$CT_cols['chr_ua'].') 
+            RETURNS '.$CT_cols['chr'].' 
+            DETERMINISTIC
+            NO SQL
+        BEGIN
+            DECLARE diff '.$CT_cols['chr_ua'].';
+            SET diff = CAST(ua - def AS SIGNED);
+            IF diff >= 0 THEN
+                RETURN IF(ua > 10, 10, IF(diff <= 2, ua, def+2));
+            ELSE
+                RETURN IF(ua < 1, 1, IF(diff >= -2, ua, CAST(def-2 AS SIGNED)));
             END IF;
         END',
         

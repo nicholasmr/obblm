@@ -178,7 +178,7 @@ if ($brick_n_grotty) { // Print Grotty and add hidden input field
   $grotty_nr = MAX_STARS + 1;
   echo '<td>'.$s->name.'<input type="hidden" name="Star' . $grotty_nr . '" value="-7"></td>';
   print "<td class=\"cent\">".str_replace('000','',$s->cost)."k</td>\n<td class=\"cent\">".
-        $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".skillsTrans($s->skills)."</small></td>\n";
+        $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".implode(', ',skillsTrans($s->skills))."</small></td>\n";
 //  print "<td>".$s->cp."</td>\n<td>".$s->td."</td>\n<td>".$s->intcpt."</td>\n<td>".$s->cas."</td>\n<td>".$s->bh."</td>\n<td>".$s->si."</td>\n<td>".$s->ki."</td>\n<td>".$s->mvp."</td>\n<td>".$s->spp."</td>\n<td>";
   print "</tr>\n";
 }
@@ -239,9 +239,9 @@ while (isset($_POST["Merc$i"])) {
 		if (!in_array('Loner', $merc[$mid]["def"]))
     	array_unshift($merc[$mid]["def"], 99);  // Adding Loner to default skills if Merc does not have Loner already
     $def_skills = skillsTrans($merc[$mid]["def"]);
-    if ($def_skills == '') $def_skills = '&nbsp;';
+    if (empty($def_skills)) $def_skills[] = '&nbsp;';
     print "        <td>$pos[$mid]</td><td>".str_replace('000','',$cost[$i])."k</td><td class=\"cent\">".$merc[$mid]["ma"]."</td><td class=\"cent\">".$merc[$mid]["st"]."</td>";
-    print "<td class=\"cent\">".$merc[$mid]["ag"]."</td><td class=\"cent\">".$merc[$mid]["av"]."</td><td><small>".$def_skills."</small></td>\n";
+    print "<td class=\"cent\">".$merc[$mid]["ag"]."</td><td class=\"cent\">".$merc[$mid]["av"]."</td><td><small>".implode(', ',$def_skills)."</small></td>\n";
     if ($extra[$i] != false)
       $extra_list[$i] = str_replace('<option>'.$extra[$i].'</option>', '<option selected>'.$extra[$i].'</option>', $extra_list[$i]);
     echo '        <td><SELECT name="Extra'.$i.'" onChange="this.form.submit()">'."\n";

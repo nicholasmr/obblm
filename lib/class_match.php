@@ -402,7 +402,10 @@ class Match
         
         /* 
             Injury corrections
+            
+            THIS IS NO LONGER USED - see issue 462 http://code.google.com/p/obblm/issues/detail?id=462
         */
+        /*
         if ($pid > 0) {
             $INJS = array('ma' => 0, 'av' => 0, 'ag' => 0, 'st' => 0, 'inj' => NONE, 'agn1' => NONE, 'agn2' => NONE);
             if ($PLAYED) {
@@ -435,6 +438,7 @@ class Match
                 }
             }
         }
+        */
 
         /*
             Insert data into MySQL 

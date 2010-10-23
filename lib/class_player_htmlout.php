@@ -33,10 +33,11 @@ define('COLOR_HTML_STARMERC', '#bb99bb');
 define('COLOR_HTML_JOURNEY',  '#99BBBB');
 define('COLOR_HTML_NEWSKILL', '#BBBBBB');
 //-----
-define('COLOR_HTML_CHR_EQP1', '#90EE90'); // Characteristic equal plus one.
+define('COLOR_HTML_CHR_EQP1', '#B3F0B3'); // Characteristic equal plus one.
 define('COLOR_HTML_CHR_GTP1', '#50FF50'); // Characteristic greater than plus one.
 define('COLOR_HTML_CHR_EQM1', '#FF8888'); // Characteristic equal minus one.
 define('COLOR_HTML_CHR_LTM1', '#FF4444'); // Characteristic less than minus one.
+define('COLOR_HTML_CHR_BROKENLIMIT', '#FF9900'); // Characteristic less than minus one.
 
 class Player_HTMLOUT extends Player
 {

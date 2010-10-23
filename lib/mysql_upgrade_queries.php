@@ -5,6 +5,13 @@
 */
 
 $upgradeSQLs = array(
+    '080-090' => array(
+        // UnAjusted (ua) values now stored too.
+        SQLUpgrade::runIfColumnNOTExists('players', 'ma_ua', 'ALTER TABLE players ADD COLUMN ma_ua TINYINT SIGNED'),
+        SQLUpgrade::runIfColumnNOTExists('players', 'st_ua', 'ALTER TABLE players ADD COLUMN st_ua TINYINT SIGNED'),
+        SQLUpgrade::runIfColumnNOTExists('players', 'ag_ua', 'ALTER TABLE players ADD COLUMN ag_ua TINYINT SIGNED'),
+        SQLUpgrade::runIfColumnNOTExists('players', 'av_ua', 'ALTER TABLE players ADD COLUMN av_ua TINYINT SIGNED'),
+    ),
     '075-080' => array(
         # Delete, now modulized, type from texts.
         'DELETE FROM texts WHERE type = 8',
