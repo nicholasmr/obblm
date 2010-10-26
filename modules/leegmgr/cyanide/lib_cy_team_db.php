@@ -640,6 +640,7 @@ class cyanide {
 		if(!isset($this->skill_count)) {
 			$this->skill_count = 1;
 		}
+        global $settings;
         switch($settings['leegmgr_cyanide_edition']) 
         {
             case 2:
