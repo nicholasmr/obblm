@@ -49,9 +49,10 @@ namespace OBBLMCyUploader
             }
 
             string mydocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string matchreport = Environment.ExpandEnvironmentVariables(mydocs + "\\BloodBowl\\");
-            string replay = Environment.ExpandEnvironmentVariables(mydocs + "\\BloodBowl\\Saves\\Replays\\");
-            string zipfile = Environment.ExpandEnvironmentVariables(mydocs + "\\BloodBowl\\");
+            string bbdir = (Directory.Exists(mydocs + "\\BloodBowlLegendary\\")) ? mydocs + "\\BloodBowlLegendary\\" : mydocs + "\\BloodBowl\\";
+            string matchreport = bbdir;
+            string replay = bbdir + "Saves\\Replays\\";
+            string zipfile = bbdir;
             
             FileSystemWatcher sw_replay = new FileSystemWatcher();
             Console.WriteLine("The replay folder is being monitored.");
