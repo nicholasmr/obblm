@@ -109,7 +109,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
         $team_away = new Team( $this->awayteam_id );
         $this->tv_away = $team_away->value;
 
-        if ( $this->tour_id == -1 )
+        if ( $this->tour_id == -1 && $this->match_id < 1 )
         {
             $this->tour_id = $this->get_tour_id();
             if ( !$this->get_tour_id() )
