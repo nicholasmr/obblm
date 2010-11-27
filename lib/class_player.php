@@ -184,40 +184,31 @@ class Player
     
     public function setChoosableSkills() {
 
-        global $DEA, $skillarray, $skillcats;
+        global $DEA, $skillarray, $skillcats, $IllegalSkillCombinations;
+        # Var. format: "$IllegalSkillCombinations as $hasSkill => $dropSkills"
         
         $this->setSkills();
-        $n_skills = $DEA[$this->f_rname]['players'][$this->pos]['norm'];
-        $d_skills = $DEA[$this->f_rname]['players'][$this->pos]['doub'];
-        
-        foreach ($n_skills as $category) {
-            foreach ($skillarray[$category] as $id => $skill) {
-                if (!in_array($id, $this->ach_nor_skills) && !in_array($id, $this->def_skills)) {
-                    array_push($this->choosable_skills[ $skillcats['N']['DEA_idx'] ], $id);
-                }
-            }
+        $current_skills = array_merge($this->def_skills, $this->extra_skills, $this->ach_nor_skills, $this->ach_dob_skills);
+        $illegal_skills_arr = array_intersect_key($IllegalSkillCombinations, array_flip($current_skills)); # Array of arrays of illegal skills.
+        $illegal_skills = array();
+        # Flatten $illegal_skills_arr.
+        foreach ($illegal_skills_arr as $hasSkill => $dropSkills) {
+            $illegal_skills = array_merge($illegal_skills, $dropSkills);
         }
-        foreach ($d_skills as $category) {
-            foreach ($skillarray[$category] as $id => $skill) {
-                if (!in_array($id, $this->ach_dob_skills) && !in_array($id, $this->def_skills)) {
-                    array_push($this->choosable_skills[ $skillcats['D']['DEA_idx'] ], $id);
-                }
+        
+        // Initial population of allowed skills (those not already picked).
+        foreach (array('N', 'D') as $type) {
+            $stype_DEA_idx = $skillcats[$type]['DEA_idx'];
+            foreach ($DEA[$this->f_rname]['players'][$this->pos][$stype_DEA_idx] as $category) {
+                $this->choosable_skills[$stype_DEA_idx] = array_merge(
+                    $this->choosable_skills[$stype_DEA_idx], # self
+                    array_diff($skillarray[$category], $current_skills, $illegal_skills) # Filter away skills we already have and illegal due to skills we already have.
+                );
             }
         }
         $this->choosable_skills['chr'] = array(MA,AG,AV,ST);
         
-        /* Remove illegal combinations: */
-        $all_skills = array_merge($this->def_skills, $this->extra_skills, $this->ach_nor_skills,$this->ach_dob_skills);
-        global $IllegalSkillCombinations;
-        foreach ($IllegalSkillCombinations as $hasSkill => $dropSkills) {
-            if (in_array($hasSkill, $all_skills)) {
-                foreach (array($skillcats['N']['DEA_idx'], $skillcats['D']['DEA_idx']) as $type) {
-                    $this->choosable_skills[$type] = array_filter($this->choosable_skills[$type], create_function('$skill', "return !in_array(\$skill, array(".implode(",",$dropSkills)."));"));
-                }
-            }
-        }
-        
-        // Now remove those not allowed by the improvement roll the player made.
+        // Now remove those skills not allowed by the improvement roll the player made.
         $N_allowed_new_skills = $this->mayHaveNewSkill();
         $query = "SELECT 
             ir1_d1 AS 'D11', ir1_d2 AS 'D12',
@@ -236,7 +227,7 @@ class Player
                 }
             }
         }
-        $allowed = array('N' => false, 'D' => false, 'C' => array());
+        $allowed = $NONE_ALLOWED = array('N' => false, 'D' => false, 'C' => array());
         foreach (array_reverse($IRs) as $IR) {
             list($D1,$D2) = $IR;
             switch ($D1+$D2) {
@@ -270,7 +261,7 @@ class Player
             }
         }
         
-        return true;
+        return !($allowed === $NONE_ALLOWED);
     }
     
     public function mayHaveNewSkill() {
