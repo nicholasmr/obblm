@@ -325,8 +325,7 @@ public static function report() {
         
         // SECONDLY, look for raised rotters too, do same as above with zombies...
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
-            if (in_array($t->f_race_id, $racesMayRaiseRotters) && isset($_POST["t${id}rotterCnt"])) {
-                $N = (int) $_POST["t${id}rotterCnt"];
+            if (in_array($t->f_race_id, $racesMayRaiseRotters) && isset($_POST["t${id}rotterCnt"]) && ($N = (int) $_POST["t${id}rotterCnt"]) > 0) {
                 foreach (range(1,$N) as $n) {
                     $pos_id = $DEA[$t->f_rname]['players']['Rotter']['pos_id'];
                     list($exitStatus,$pid) = Player::create(
