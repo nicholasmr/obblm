@@ -26,6 +26,8 @@ if (isset($_POST['type'])) {
         case 'del_league':      status($IS_GLOBAL_ADMIN && $l->delete()); break;
         case 'del_division':    status($IS_GLOBAL_ADMIN && $d->delete()); break;
     }
+    
+    setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON); # Re-load $leagues, $divisions ...
 }
 
 title($lng->getTrn('menu/admin_menu/ld_man'));
