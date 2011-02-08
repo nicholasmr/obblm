@@ -563,17 +563,18 @@ function mysql_up($do_table_check = false) {
         die("<font color='red'><b>Could not connect to the MySQL server. 
             <ul>
                 <li>Is the MySQL server running?</li>
-                <li>Are the settings in settings.php correct?</li>
+                <li>Are the settings in <i>settings.php</i> correct?</li>
                 <li>Is PHP set up correctly?</li>
             </ul></b></font>");
 
     if (!mysql_select_db($db_name))
-        die("<font color='red'><b>Could not select the database '$db_name'. 
+        die("<font color='red'><b>Could not select the database '$db_name'</b><br><br>
+            Please make sure that:
             <ul>
-                <li>Does the database exist?</li>
-                <li>Does the specified user '$db_user' have the correct privileges?</li>
+                <li>The database '$db_name' exists &mdash; you have to create it yourself!</li>
+                <li>The database user '$db_user' can use the database '$db_name'.</li>
             </ul>
-            Try running the install script again.</b></font>");
+            Please confirm the settings in the <i>settings.php</i> file and try running the install script again.</font>");
 
     // Test if all tables exist.
     if ($do_table_check) {

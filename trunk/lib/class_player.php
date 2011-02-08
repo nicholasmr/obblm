@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -202,7 +202,7 @@ class Player
             foreach ($DEA[$this->f_rname]['players'][$this->pos][$stype_DEA_idx] as $category) {
                 $this->choosable_skills[$stype_DEA_idx] = array_merge(
                     $this->choosable_skills[$stype_DEA_idx], # self
-                    array_diff($skillarray[$category], $current_skills, $illegal_skills) # Filter away skills we already have and illegal due to skills we already have.
+                    array_diff(array_keys($skillarray[$category]), $current_skills, $illegal_skills) # Filter away skills we already have and illegal due to skills we already have.
                 );
             }
         }
