@@ -63,13 +63,29 @@ div.section {
 /*
  *   Box (inner) stylings.
  */
-div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo {margin: 20px; border: 1px solid #545454;}
+div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo {
+    margin: 20px; 
+    border: 1px solid #545454;
+
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+
+	-moz-box-shadow: 3px 4px 10px #999;
+	-webkit-box-shadow: 3px 4px 10px #999;
+	box-shadow: 3px 4px 10px #999;
+}
 div.boxWide             {clear:both;}
 div.boxCommon           {float:left;}
 div.boxCoachPage        {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
 div.boxTeamPage         {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
 div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 
+.boxTitle1,.boxTitle2,.boxTitle3,.boxTitle4,.boxTitle5 {
+	-moz-border-radius: 4px 4px 0 0;
+	-webkit-border-radius: 4px 4px 0 0;
+	border-radius: 4px 4px 0 0;
+}
 .boxTitle1 {background-color: #97A7B7; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Team/player/coach info & team news */
 .boxTitle2 {background-color: #C7DBA9; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Management/actions/more box for ordinary coaches */
 .boxTitle3 {background-color: #FFCC66; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Management/actions/more box for ordinary admins */
