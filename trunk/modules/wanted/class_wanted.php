@@ -271,7 +271,7 @@ public static function makeList($ALLOW_EDIT)
         $p = $x['player'];
     
         ?>    
-        <div style="clear: both; width: 70%; border: 1px solid #545454; margin: 20px auto 20px auto;">
+        <div class="boxWide" style="width: 70%; margin: 20px auto 20px auto;">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('wanted', __CLASS__).": <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)."'>$p->name</a>";?></div>
             <div class="boxBody">
                 <table class="common">

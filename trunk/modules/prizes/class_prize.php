@@ -349,7 +349,7 @@ public static function printList($trid, $ALLOW_EDIT)
     foreach ($tours as $t) {
     
         ?>    
-        <div style="clear: both; width: 70%; border: 1px solid #545454; margin: 20px auto 20px auto;">
+        <div class="boxWide" style="width: 70%; margin: 20px auto 20px auto;">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo "$t->name prizes";?> <a href='javascript:void(0);' onClick="slideToggleFast('<?php echo 'trpr'.$t->tour_id;?>');">[+/-]</a></div>
             <div id="trpr<?php echo $t->tour_id;?>">
             <div class="boxBody">
