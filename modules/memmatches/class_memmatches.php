@@ -56,7 +56,7 @@ public static function main($argv) {
     list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
     foreach (self::getMemMatches($sel_node, $sel_node_id) as $d => $matches) {
         ?>
-        <div style="clear: both; width: 60%; border: 1px solid #545454; margin: 20px auto 20px auto;">
+        <div class="boxWide" style="width: 60%; margin: 20px auto 20px auto;">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn($d, __CLASS__); ?></div>
             <div class="boxBody">
                 <table class="common">
