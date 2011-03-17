@@ -248,26 +248,22 @@ function sec_main() {
     */
     
     echo "<div class='main_rightColumn'>\n";
-    $boxes_ordered = array();
-    $boxes_unordered = array_merge($settings['fp_standings'], $settings['fp_leaders'], $settings['fp_latestgames']);
-    foreach (range(1, count($boxes_unordered)) as $i) {
-        foreach ($boxes_unordered as $box) {
-            if ($box['box_ID'] != $i) {
-                continue;
-            }
-            # These fields distinguishes the box types.
-            else if (isset($box['fields'])) {$box['dispType'] = 'standings';}
-            else if (isset($box['field']))  {$box['dispType'] = 'leaders';}
-            else                            {$box['dispType'] = 'latestgames';}
-            switch ($box['type']) {
-                case 'league':     $_type = T_NODE_LEAGUE; break;
-                case 'division':   $_type = T_NODE_DIVISION; break;
-                case 'tournament': $_type = T_NODE_TOURNAMENT; break;
-                default: $_type = T_NODE_LEAGUE;
-            }
-            $box['type'] = $_type;
-            $boxes_ordered[] = $box;
+    $boxes_all = array_merge($settings['fp_standings'], $settings['fp_leaders'], $settings['fp_latestgames']);
+    usort($boxes_all, create_function('$a,$b', 'return (($a["box_ID"] > $b["box_ID"]) ? 1 : (($a["box_ID"] < $b["box_ID"]) ? -1 : 0) );')); 
+    $boxes = array();
+    foreach ($boxes_all as $box) {
+        # These fields distinguishes the box types.
+        if      (isset($box['fields'])) {$box['dispType'] = 'standings';}
+        else if (isset($box['field']))  {$box['dispType'] = 'leaders';}
+        else                            {$box['dispType'] = 'latestgames';}
+        switch ($box['type']) {
+            case 'league':     $_type = T_NODE_LEAGUE; break;
+            case 'division':   $_type = T_NODE_DIVISION; break;
+            case 'tournament': $_type = T_NODE_TOURNAMENT; break;
+            default: $_type = T_NODE_LEAGUE;
         }
+        $box['type'] = $_type;
+        $boxes[] = $box;
     }
 
     // Used in the below standings dispType boxes.
@@ -276,7 +272,7 @@ function sec_main() {
     $_MV_RG_INTERSECT = array_intersect(array_keys($core_tables['teams']), array_keys($core_tables['mv_teams']));
     
     // Let's print those boxes!
-    foreach ($boxes_ordered as $box) {
+    foreach ($boxes as $box) {
     
     switch ($box['dispType']) {
         
