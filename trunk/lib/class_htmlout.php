@@ -1040,11 +1040,16 @@ public static function helpBox($body, $link = '', $style = '')
     return $ID;
 }
 
+
+# DELETE THIS, IT'S NO LONGER USED (was used on schedule page)!
 private static $assistantBoxIdx = 0;
-public static function assistantBox($body, $style = '')
+public static function assistantBox($title, $body, $style = '')
 {
     $ID = 'assistantBox'.(++self::$assistantBoxIdx);
-    echo "<div id='$ID' class='assistantBox' style='$style'>".$body.'</div>';
+    echo "<div class='boxCommon' style='$style' id='$ID'>\n";
+    echo "<h3 class='boxTitle".T_HTMLBOX_ADMIN."'>".$title."</h3>";
+    echo "<div class='boxBody'>\n$body</div>\n</div>\n";
+#    echo "<div id='$ID' class='assistantBox' style='$style'>".$body.'</div>';
     return $ID;
 }
 
