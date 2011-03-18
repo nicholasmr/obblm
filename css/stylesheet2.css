@@ -93,12 +93,14 @@ table.boxTable {border-spacing: 5px; width: 100%;}
 	line-height:1.4em;
 }
 
+/*
 .assistantBox {
 	border: 2px solid #3D3D3D;
     border-style:dashed;
 	padding:10px;
 	line-height:1.4em;
 }
+*/
 
 /* 
  *   Tables, TRs and TDs 
