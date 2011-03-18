@@ -855,6 +855,75 @@ protected static function report_ES_loadPlayers($mid)
     return $players;
 }
 
+public static function userSched() {
+    global $lng, $coach, $leagues,$divisions,$tours;
+    if (!is_object($coach)){
+        status(false, "You must be logged in to schedule games");
+        return;
+    }
+    status(false, 'Feature under development.');
+    return;
+    /* 
+        THIS SOHULD BE ENABLED/DISABLED PER LEAGUE IN LEAGUE SETTINGS FILES 
+    */
+/*
+    ?>
+    <br><br>
+    <div class='boxWide'>
+        <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo "title";?></h3>
+        <div class='boxBody'>
+            <form method="POST">
+                <b><?php echo $lng->getTrn('common/tournament'); ?></b>
+                    <select name='tour_id'>
+                        <?php
+                        foreach ($tours as $trid => $tr) {
+                            if ($settings['usersched_local_view'] && $divisions[$tr['f_did']]['f_lid'] != $lid_selected) {
+                                continue;
+                            }
+                            if ($tr['type'] == TT_FFA) {
+                                echo "<option value='$trid'>".$leagues[$divisions[$tr['f_did']]['f_lid']]['lname'].", ".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
+                            }
+                        }
+                        ?>
+                    </select>
+                <b><?php echo $lng->getTrn('own_team', 'UserScheduledGames'); ?></b>
+                    <select name='own_team'>
+        <?php
+                //Sort according to name
+                foreach ($coach->getTeams() as $t) {
+                    if (!$t->rdy || $t->is_retired)
+                        continue;
+                    echo "<option value='$t->team_id'>$t->name</option>\n";
+                }
+        ?>
+                    </select>
+
+                <b><?php echo $lng->getTrn('opposing_team', 'UserScheduledGames'); ?></b>
+                    <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50">
+                    <input type="hidden" id='opposing_team' name="opposing_team"> 
+
+                <script>
+                    $(document).ready(function(){
+                        var options, b;
+
+                        options = { 
+                            minChars:2, 
+                                serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>',
+                                onSelect: function(value, data){ $('#opposing_team').val(data); },
+                        };
+                        b = $('#opposing_team_autoselect').autocomplete(options);
+                    });
+                </script>
+
+                <input type="submit" name="creategame" value="<?php echo $lng->getTrn('add_game', 'UserScheduledGames'); ?>">
+            </form>
+        </div>
+    </div>
+    <?php
+*/
+
+}
+
 }
 
 ?>

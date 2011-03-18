@@ -813,6 +813,7 @@ private static function make_menu()
                 <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
                 <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
                 <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a></li>
+                <li><a href="index.php?section=matches&amp;type=usersched"><?php echo $lng->getTrn('menu/matches_menu/usersched');?></a></li>
             </ul>
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/statistics_menu/name');?></span>

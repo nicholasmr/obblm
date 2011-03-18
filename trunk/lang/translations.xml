@@ -140,6 +140,7 @@
         <tours>Tournaments</tours>
         <recent>Recent matches</recent>
         <upcoming>Upcoming matches</upcoming>
+        <usersched>Schedule match</usersched>
     </matches_menu>
     <statistics_menu>
         <name>Statistics</name> <!-- top level button text -->
@@ -634,8 +635,10 @@
         <![CDATA[
             <b>When scheduling matches please note that:</b><br>
             - You must first create a league with one or more divisions before being able to create tournaments (in which matches are scheduled).<br>
+            - You cannot create a tournament without creating at least one match in it.<br>
             - You are free to schedule multiple tournaments running concurrently.<br>
             - You are NOT restricted to playing matches in their scheduled order. In fact, any team may play any scheduled match at any time.<br>
+            - If you have enabled division ties you may only schedule matches between teams from the same division in a given league. If not enabled you can schedule inter-division games. You can never schedule inter-league games.<br>
             <br>
             <b>Round-Robin (RR) scheduling</b>:<br>
                 In a RR tournament each contestant meets every other contestant in turn.<br>
@@ -657,20 +660,20 @@
         <create_LD>Please create a league + division(s) before scheduling matches</create_LD>
         <tour_name>Tournament name</tour_name>
         <rank_sys>Ranking system</rank_sys>
-        <tour_type>Tournament type</tour_type>
+        <sched_type>Schedule</sched_type>
         <add_team>Add team</add_team>
         <teams_selected>Selected teams</teams_selected>
         <!-- Tour Types (TT) -->
-            <TT_FFA><![CDATA[FFA <i>(Free For All a.k.a. "open league format")</i>]]></TT_FFA>
-            <TT_RR>Round-Robin</TT_RR>
+            <TT_FFA><![CDATA[Free-For-All tournament &mdash; with N games in it]]></TT_FFA>
+            <TT_FFA_SINGLE><![CDATA[Free-For-All match &mdash; in an existing FFA tournament]]></TT_FFA_SINGLE>
+            <TT_RR><![CDATA[Round-Robin tournament &mdash; with N games in it]]></TT_RR>
         <!-- RR -->
-            <RR_settings>Round-Robin settings</RR_settings>
-            <rrobin_rnds><![CDATA[<b>Seed the bracket N times:</b>]]></rrobin_rnds>
+            <rrobin_rnds>Seed bracket</rrobin_rnds>
+            <times>times</times>
         <!-- FFA -->
-            <FFA_settings>FFA settings</FFA_settings>
-            <add_match>Add the match to...</add_match>
+            <in_tour>In tournament</in_tour>
                 <new_tour>A new FFA tournament</new_tour>
-            <as_type>As type...</as_type>
+            <as_type>Match type</as_type>
     </schedule>
 </admin>
 
@@ -1160,6 +1163,7 @@
         Si gastaste más de lo ingresado, simplemente indicalo poniendo una cantidad negativa.
         <br><br>
         Recuerda lo siguiente al hacer los cálculos:<br>
+
         <ul>
             <li>Regla de Espiral de Gastos</li>
             <li>Tesorería gastada en incentivos</li>
@@ -1341,6 +1345,7 @@
     
     <needhelp>Hilfe?</needhelp>
     <picof>Bild von</picof>
+
     <about>Über</about>
     
     <recentmatches>Letzte Begegnungen</recentmatches>

@@ -13,8 +13,8 @@ if (isset($_POST['button'])) {
     $teamsCount = count($team_ids);
 
     // Shortcut booleans:
-    $mkNewFFA       = ($_POST['type'] == TT_FFA && $_POST['existTour'] == -1);
-    $addMatchToFFA  = ($_POST['type'] == TT_FFA && $_POST['existTour'] != -1);
+    $mkNewFFA       = ($_POST['type'] == 'FFA_TOUR');
+    $addMatchToFFA  = ($_POST['type'] == 'FFA_SINGLE');
     $nameSet        = (isset($_POST['name']) && !empty($_POST['name']) && !ctype_space($_POST['name']));
 
     /* Error condition definitions. */
@@ -25,7 +25,7 @@ if (isset($_POST['button'])) {
         then have to abort because (for example) the last pair of teams are an illegal paring.
     */
     $teams_OK['l'] = $teams_OK['d'] = true;
-    $lid = ($GOT_DID = ($_POST['type'] == TT_RROBIN || $mkNewFFA)) ? get_parent_id(T_NODE_DIVISION, $_POST['did'], T_NODE_LEAGUE) : get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE);
+    $lid = ($GOT_DID = ($_POST['type'] == 'RR_TOUR' || $mkNewFFA)) ? get_parent_id(T_NODE_DIVISION, $_POST['did'], T_NODE_LEAGUE) : get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_LEAGUE);
     $did = ($GOT_DID) ? $_POST['did'] : get_parent_id(T_NODE_TOURNAMENT, $_POST['existTour'], T_NODE_DIVISION);
     $TIE_TEAMS = get_alt_col('leagues', 'lid', $lid, 'tie_teams');
     foreach ($team_ids as $tid) {
@@ -49,8 +49,8 @@ if (isset($_POST['button'])) {
         array(!$teams_OK['d'], 'You may not schedule matches between teams from different divisions in the selected league.'),
         array(!$teams_OK['l'], 'You may not schedule matches between teams from different leagues OR one or more of the selected teams are not from the chosen league.'),
         array($leagues[$lid]['ring'] != Coach::T_RING_LOCAL_ADMIN, 'You do not have the rights to schedule matches in the selected league.'),
-        array($_POST['type'] == TT_RROBIN && $teamsCount < 3, 'Please select at least 3 teams'),
-        array($_POST['type'] == TT_FFA && ($teamsCount % 2 != 0), 'Please select an even number of teams'),
+        array($_POST['type'] == 'RR_TOUR' && $teamsCount < 3, 'Please select at least 3 teams'),
+        array($_POST['type'] == 'FFA_TOUR' && ($teamsCount % 2 != 0), 'Please select an even number of teams'),
     );
 
     // Print errors.
@@ -70,7 +70,7 @@ if (isset($_POST['button'])) {
         $_POST['name'] = stripslashes($_POST['name']);
     }
     // Shuffle team list if multiple teams are scheduled to play a FFA.
-    if ($_POST['type'] == TT_FFA && $teamsCount > 2) {
+    if ($_POST['type'] == 'FFA_TOUR' && $teamsCount > 2) {
         shuffle($team_ids);
     }
     // When creating a new FFA tour the "rounds" input is intepreted as the round number of the initial match being created in the new tour.
@@ -96,7 +96,11 @@ if (isset($_POST['button'])) {
         }
         // Create new tour...
         else {
-            status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => (int) $_POST['type'], 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
+            switch ($_POST['type']) {
+                case 'FFA_TOUR': $TOUR_TYPE = TT_FFA; break;
+                case 'RR_TOUR': $TOUR_TYPE = TT_RROBIN; break;
+            }
+            status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => $TOUR_TYPE, 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
         }
     }
 }
@@ -104,10 +108,6 @@ if (isset($_POST['button'])) {
 title($lng->getTrn('menu/admin_menu/schedule'));
 ?>
 <script language="JavaScript" type="text/javascript">
-
-    var TT_FFA    = <?php echo TT_FFA; ?>;
-    var TT_RROBIN = <?php echo TT_RROBIN; ?>;
-    var TT_FFA_SINGLE = 'FFA_SINGLE';
 
     function chTour(t)
     {
@@ -117,23 +117,23 @@ title($lng->getTrn('menu/admin_menu/schedule'));
             Expects TT_* PHP constants to be globally available to javascript.
         */
 
-        if (t == TT_FFA) {
-            slideUp('OPTS_FFA_SINGLE');
-            slideDown('OPTS_NEW_TOUR');
-                slideUp('OPTS_RR_SETTINGS');
-                slideDown('OPTS_FFA_SETTINGS');
+        if (t == 'FFA_SINGLE') {
+            fadeOut('OPTS_NEW_TOUR');
+            fadeOut('OPTS_RR_TOUR_SETS');
+            fadeIn('OPTS_FFA_TOUR_SETS');
+            fadeIn('OPTS_FFA_SINGLE_SETS');
         }
-        else if (t == TT_RROBIN) {
-            slideUp('OPTS_FFA_SINGLE');
-            slideDown('OPTS_NEW_TOUR');
-                slideUp('OPTS_FFA_SETTINGS');
-                slideDown('OPTS_RR_SETTINGS');
+        else if (t == 'FFA_TOUR') {
+            fadeOut('OPTS_RR_TOUR_SETS');
+            fadeOut('OPTS_FFA_SINGLE_SETS');
+            fadeIn('OPTS_NEW_TOUR');
+            fadeIn('OPTS_FFA_TOUR_SETS');
         }
-        else if (t == TT_FFA_SINGLE) {
-            slideup('OPTS_NEW_TOUR');
-            slideDown('OPTS_FFA_SINGLE');
-                slideUp('OPTS_FFA_SETTINGS');
-                slideup('OPTS_RR_SETTINGS');
+        else if (t == 'RR_TOUR') {
+            fadeOut('OPTS_FFA_SINGLE_SETS');
+            fadeOut('OPTS_FFA_TOUR_SETS');
+            fadeIn('OPTS_RR_TOUR_SETS');
+            fadeIn('OPTS_NEW_TOUR');
         }
 
         return true;
@@ -205,24 +205,24 @@ title($lng->getTrn('menu/admin_menu/schedule'));
 if (count($leagues) < 0 || count($divisions) < 0) {
     fatal($lng->getTrn('admin/schedule/create_LD'));
 }
-HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needhelp'));
-
+HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), '<b>'.$lng->getTrn('common/needhelp').'</b>');
+$commonStyle = "float:left; width:45%; height:300px; margin:10px;";
 ?><br>
 <form method="POST" name="tourForm">
 
-    <b><?php echo $lng->getTrn('admin/schedule/tour_type');?>:</b><br>
-    <input type="radio" onClick="chTour(this.value);" name="type" value="FFA_SINGLE" CHECKED> FFA match<br>
-    <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_FFA;?>"> <?php echo $lng->getTrn('admin/schedule/TT_FFA');?><br>
-    <input type="radio" onClick="chTour(this.value);" name="type" value="<?php echo TT_RROBIN;?>"> <?php echo $lng->getTrn('admin/schedule/TT_RR');?><br>
-    <br>
-
-    <div style='clear: both;'>
-    <div class='boxCommon'>
+    <div style='margin:7px;'>
+    <b><?php echo $lng->getTrn('admin/schedule/sched_type');?></b><br>
+    <input type="radio" onClick="chTour(this.value);" name="type" value="FFA_SINGLE" CHECKED> <?php echo $lng->getTrn('admin/schedule/TT_FFA_SINGLE');?><br>
+    <input type="radio" onClick="chTour(this.value);" name="type" value="FFA_TOUR""> <?php echo $lng->getTrn('admin/schedule/TT_FFA');?><br>
+    <input type="radio" onClick="chTour(this.value);" name="type" value="RR_TOUR"> <?php echo $lng->getTrn('admin/schedule/TT_RR');?><br>
+    </div>
+    <div style='clear:both;'>
+    <div class='boxCommon' style='<?php echo $commonStyle;?>'>
     <h3 class='boxTitle<?php echo T_HTMLBOX_ADMIN;?>'>Options</h3>
     <div class='boxBody'>
 
         <div id='OPTS_NEW_TOUR'>
-            <b><?php echo $lng->getTrn('common/division');?>:</b><br>
+            <b><?php echo $lng->getTrn('common/division');?></b><br>
             <select name='did'>
                 <?php
                 foreach ($divisions as $did => $desc) {
@@ -233,10 +233,10 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
                 ?>
             </select>
             <br><br>
-            <b><?php echo $lng->getTrn('admin/schedule/tour_name');?>:</b><br>
+            <b><?php echo $lng->getTrn('admin/schedule/tour_name');?></b><br>
             <input type="text" name="name" size="30" maxlength="50">
             <br><br>
-            <b><?php echo $lng->getTrn('admin/schedule/rank_sys');?>:</b> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
+            <b><?php echo $lng->getTrn('admin/schedule/rank_sys');?></b> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
             <select name='rs'>
             <?php
             global $hrs;
@@ -246,7 +246,8 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
             ?>
             </select>
             <br><br>
-        </div>
+        </div> <!-- /OPTS_NEW_TOUR -->
+        
         <?php
         $body = '';
         // FFA settings.
@@ -260,21 +261,21 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
                 $body .= "<option value='$r' ".(($addMatchToFFA && isset($_POST['round']) && $r == $_POST['round']) ? 'SELECTED' : '').">$d</option>\n";
         }
         $body .= '</select>';
-#        echo "<br><br><hr><br>";
-        echo "<div id='OPTS_FFA_SETTINGS'>$body</div>\n";
+        echo "<div id='OPTS_FFA_TOUR_SETS'>$body</div>\n";
         
         // Round robin seed multiplier.
         $body = '';
 #        $body .= '<b>'.$lng->getTrn('admin/schedule/RR_settings').'</b><br><br>';
-        $body .= $lng->getTrn('admin/schedule/rrobin_rnds')."<br>N = <select name='rounds'>";
+        $body .= '<b>'.$lng->getTrn('admin/schedule/rrobin_rnds')."</b><br><select name='rounds'>";
         foreach (range(1, 10) as $i) $body .= "<option value='$i'>$i</option>\n";
-        $body .= "</select>\n";
-        echo "<div id='OPTS_RR_SETTINGS'>$body</div>\n";
+        $body .= "</select>&nbsp;".$lng->getTrn('admin/schedule/times')."\n";
+        echo "<div id='OPTS_RR_TOUR_SETS'>$body</div>\n";
         ?>
-        <div id='OPTS_FFA_SINGLE'>
+        <div id='OPTS_FFA_SINGLE_SETS'>
+            <br>
             <?php
             $body = '';
-            $body .= '<b>'.$lng->getTrn('admin/schedule/add_match').'</b><br>';
+            $body .= '<b>'.$lng->getTrn('admin/schedule/in_tour').'</b><br>';
             $body .= '<select name="existTour">';
             foreach ($tours as $trid => $desc) {
                 if ($desc['type'] == TT_FFA && $leagues[$divisions[$desc['f_did']]['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
@@ -287,11 +288,7 @@ HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), $lng->getTrn('common/needh
         </div>
     </div>
     </div>
-    </div>
-    
-    <div style='clear:both;'>
-    <br>
-    <div class='boxCommon'>
+    <div class='boxCommon' style='<?php echo $commonStyle;?>'>
     <h3 class='boxTitle<?php echo T_HTMLBOX_ADMIN;?>'><?php echo $lng->getTrn('admin/schedule/add_team');?></h3>
     <div class='boxBody'>
     <b><?php echo $lng->getTrn('admin/schedule/add_team');?>:</b><br>    
