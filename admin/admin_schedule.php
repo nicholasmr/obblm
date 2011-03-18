@@ -218,7 +218,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
     </div>
     <div style='clear:both;'>
     <div class='boxCommon' style='<?php echo $commonStyle;?>'>
-    <h3 class='boxTitle<?php echo T_HTMLBOX_ADMIN;?>'>Options</h3>
+    <h3 class='boxTitle<?php echo T_HTMLBOX_ADMIN;?>'><?php echo $lng->getTrn('common/options');?></h3>
     <div class='boxBody'>
 
         <div id='OPTS_NEW_TOUR'>
