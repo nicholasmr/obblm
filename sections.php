@@ -455,6 +455,7 @@ function sec_matcheshandler() {
         case 'report':      Match_HTMLOUT::report(); break;
         case 'recent':      Match_HTMLOUT::recentMatches(); break;
         case 'upcoming':    Match_HTMLOUT::upcomingMatches(); break;
+        case 'usersched':   Match_HTMLOUT::userSched(); break;
     }    
 }
 
