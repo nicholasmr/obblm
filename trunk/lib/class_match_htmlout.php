@@ -856,51 +856,54 @@ protected static function report_ES_loadPlayers($mid)
 }
 
 public static function userSched() {
-    global $lng, $coach, $leagues,$divisions,$tours;
+    global $lng, $coach, $settings, $leagues,$divisions,$tours;
     if (!is_object($coach)){
         status(false, "You must be logged in to schedule games");
         return;
     }
-    status(false, 'Feature under development.');
-    return;
-    /* 
-        THIS SOHULD BE ENABLED/DISABLED PER LEAGUE IN LEAGUE SETTINGS FILES 
-    */
-/*
+    
+    title($lng->getTrn('menu/matches_menu/usersched'));
+    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
+    $LOCK_FORMS = false;
     ?>
-    <br><br>
     <div class='boxWide'>
-        <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo "title";?></h3>
+        <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $lng->getTrn('menu/matches_menu/usersched');?></h3>
         <div class='boxBody'>
+            <?php echo $HTML_LeagueSelector; ?>
             <form method="POST">
-                <b><?php echo $lng->getTrn('common/tournament'); ?></b>
-                    <select name='tour_id'>
-                        <?php
-                        foreach ($tours as $trid => $tr) {
-                            if ($settings['usersched_local_view'] && $divisions[$tr['f_did']]['f_lid'] != $lid_selected) {
-                                continue;
-                            }
-                            if ($tr['type'] == TT_FFA) {
-                                echo "<option value='$trid'>".$leagues[$divisions[$tr['f_did']]['f_lid']]['lname'].", ".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
-                            }
+                <?php echo $lng->getTrn('common/tournament'); ?>
+                <select name='tour_id' id='tour_id'>
+                    <?php
+                    $TOURS_CNT = 0;
+                    foreach ($tours as $trid => $tr) {
+                        if ($divisions[$tr['f_did']]['f_lid'] != $sel_lid) {
+                            continue;
                         }
-                        ?>
-                    </select>
-                <b><?php echo $lng->getTrn('own_team', 'UserScheduledGames'); ?></b>
-                    <select name='own_team'>
-        <?php
-                //Sort according to name
-                foreach ($coach->getTeams() as $t) {
-                    if (!$t->rdy || $t->is_retired)
-                        continue;
-                    echo "<option value='$t->team_id'>$t->name</option>\n";
-                }
-        ?>
-                    </select>
-
-                <b><?php echo $lng->getTrn('opposing_team', 'UserScheduledGames'); ?></b>
-                    <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50">
-                    <input type="hidden" id='opposing_team' name="opposing_team"> 
+                        if ($tr['type'] == TT_FFA) {
+                            echo "<option value='$trid'>".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
+                            $TOURS_CNT++;
+                        }
+                    }
+                    ?>
+                </select>
+                <br>
+                Your team
+                <select name='own_team' id='own_team'>
+                    <?php
+                    $TEAMS_CNT = 0;
+                    //Sort according to name
+                    foreach ($coach->getTeams() as $t) {
+                        if (!$t->rdy || $t->is_retired || $t->f_lid != $sel_lid)
+                            continue;
+                        echo "<option value='$t->team_id'>$t->name</option>\n";
+                        $TEAMS_CNT++;
+                    }
+                    ?>
+                </select>
+                <br>
+                Opposing team
+                <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50">
+                <input type="hidden" id='opposing_team' name="opposing_team"> 
 
                 <script>
                     $(document).ready(function(){
@@ -914,14 +917,31 @@ public static function userSched() {
                         b = $('#opposing_team_autoselect').autocomplete(options);
                     });
                 </script>
-
-                <input type="submit" name="creategame" value="<?php echo $lng->getTrn('add_game', 'UserScheduledGames'); ?>">
+                <br><br>
+                <?php
+                $LOCK_FORMS = !($TOURS_CNT && $TEAMS_CNT) || !$settings['enabled_coach_scheduling'];
+                echo '<input type="submit" name="creategame" value="Schedule match" '.(($LOCK_FORMS) ? 'DISABLED' : '').'>';
+                echo "<br><span style='display:none;' id='scheddis'>Scheduling of matches by coaches in disabled for this league.</span>\n";
+                echo "<br><span style='display:none;' id='noteams'>You do not have any teams which can be scheduled in the selected league.</span>\n";
+                echo "<br><span style='display:none;' id='notours'>No Free-For-All tournaments exist in the selected league.</span>\n";
+                echo "<script>\n";
+                if ($LOCK_FORMS) {
+                    ?>
+                    document.getElementById('tour_id').disabled = 1;
+                    document.getElementById('own_team').disabled = 1;
+                    <?php
+                }
+                if (!$settings['enabled_coach_scheduling']) {
+                    ?>
+                    document.getElementById('scheddis').display = 1;
+                    <?php
+                }
+                echo "</script>\n";
+                ?>
             </form>
         </div>
     </div>
     <?php
-*/
-
 }
 
 }
