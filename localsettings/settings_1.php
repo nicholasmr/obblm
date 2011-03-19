@@ -15,6 +15,7 @@ $settings['welcome']       = 'Please replace this line in your local league sett
 $settings['rules']         = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
 $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the division nodes in the tournament lists section will automatically be folded up if all child tournaments in that division are marked as finished.
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament'); // Default is array('league', 'division', 'tournament'). In the section tournament lists these nodes will be hidden if their contents (children) are finished. Example: If 'division' is chosen here, and all tours in a given division are finished, then the division entry will be hidden.
+$settings['enabled_coach_scheduling'] = false; // Default is false. If true this enables regular coaches to be able to schedule matches between their own teams and others teams in existing Free-For-All tournaments of this league.
 
 /* Standings pages */
 
