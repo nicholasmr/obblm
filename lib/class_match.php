@@ -28,6 +28,14 @@ define('RT_SEMI', 253); # Semi-finals.
 define('RT_QUARTER', 252); # Quarter-finals.
 define('RT_ROUND16', 251); # Round of 16.
 
+$T_ROUNDS = array(
+    RT_FINAL => 'matches/tourmatches/roundtypes/final', 
+    RT_3RD_PLAYOFF => 'matches/tourmatches/roundtypes/thirdPlayoff', 
+    RT_SEMI => 'matches/tourmatches/roundtypes/semi', 
+    RT_QUARTER => 'matches/tourmatches/roundtypes/quarter', 
+    RT_ROUND16 => 'matches/tourmatches/roundtypes/rnd16')
+    + array_combine(range(1,12), array_strpack("matches/tourmatches/roundtypes/rnd%s", range(1,12)));
+
 // Reserved (non-real) matches:
 define('T_IMPORT_MID', -1);
 

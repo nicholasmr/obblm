@@ -862,6 +862,20 @@ public static function userSched() {
         return;
     }
     
+    if (isset($_POST['creategame'])) {
+        list($exitStatus, $mid) = Match::create(array(
+            'team1_id'  => (int) $_POST['own_team'],
+            'team2_id'  => get_alt_col('teams', 'name', $_POST['opposing_team_autocomplete'], 'team_id'),
+            'round'     => (int) $_POST['round'],
+            'f_tour_id' => (int) $_POST['tour_id'],
+        ));
+
+        status(!$exitStatus, $exitStatus ? Match::$T_CREATE_ERROR_MSGS[$exitStatus] : null);
+        if (!$exitStatus) {
+            echo "<a href='index.php?section=matches&amp;type=report&amp;mid=$mid'>Click here to open match report.</a>";
+        }
+    }
+    
     title($lng->getTrn('menu/matches_menu/usersched'));
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     $LOCK_FORMS = false;
@@ -887,6 +901,16 @@ public static function userSched() {
                     ?>
                 </select>
                 <br>
+                <?php
+                echo $lng->getTrn('matches/tourmatches/roundtypes/rnd').'&nbsp;';
+                echo '<select name="round" id="round">';
+                global $T_ROUNDS;
+                foreach ($T_ROUNDS as $r => $d) {
+                    echo "<option value='$r'>".$lng->getTrn($d)."</option>\n";
+                }
+                ?>
+                </select>
+                <br>
                 Your team
                 <select name='own_team' id='own_team'>
                     <?php
@@ -903,8 +927,6 @@ public static function userSched() {
                 <br>
                 Opposing team
                 <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50">
-                <input type="hidden" id='opposing_team' name="opposing_team"> 
-
                 <script>
                     $(document).ready(function(){
                         var options, b;
@@ -912,7 +934,6 @@ public static function userSched() {
                         options = { 
                             minChars:2, 
                                 serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>',
-                                onSelect: function(value, data){ $('#opposing_team').val(data); },
                         };
                         b = $('#opposing_team_autoselect').autocomplete(options);
                     });
@@ -921,21 +942,21 @@ public static function userSched() {
                 <?php
                 $LOCK_FORMS = !($TOURS_CNT && $TEAMS_CNT) || !$settings['enabled_coach_scheduling'];
                 echo '<input type="submit" name="creategame" value="Schedule match" '.(($LOCK_FORMS) ? 'DISABLED' : '').'>';
-                echo "<br><span style='display:none;' id='scheddis'>Scheduling of matches by coaches in disabled for this league.</span>\n";
-                echo "<br><span style='display:none;' id='noteams'>You do not have any teams which can be scheduled in the selected league.</span>\n";
-                echo "<br><span style='display:none;' id='notours'>No Free-For-All tournaments exist in the selected league.</span>\n";
+                echo "<br>\n";
+                echo "<br><span style='display:none;font-weight:bold;' id='scheddis'>- Scheduling of matches by coaches in disabled for the selected league.</span>\n";
+                echo "<span style='display:none;font-weight:bold;' id='noteams'>- You do not have any teams which can be scheduled in the selected league.</span>\n";
+                echo "<span style='display:none;font-weight:bold;' id='notours'>- No Free-For-All tournaments exist in the selected league.</span>\n";
                 echo "<script>\n";
                 if ($LOCK_FORMS) {
                     ?>
                     document.getElementById('tour_id').disabled = 1;
+                    document.getElementById('round').disabled = 1;
                     document.getElementById('own_team').disabled = 1;
                     <?php
                 }
-                if (!$settings['enabled_coach_scheduling']) {
-                    ?>
-                    document.getElementById('scheddis').display = 1;
-                    <?php
-                }
+                if (!$settings['enabled_coach_scheduling']) {?> slideDown('scheddis'); <?php }
+                if ($TOURS_CNT == 0) {?> slideDown('notours'); <?php }
+                if ($TEAMS_CNT == 0) {?> slideDown('noteams'); <?php }
                 echo "</script>\n";
                 ?>
             </form>
