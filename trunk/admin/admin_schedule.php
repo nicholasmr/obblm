@@ -251,21 +251,17 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
         <?php
         $body = '';
         // FFA settings.
-#        $body .= '<b>'.$lng->getTrn('admin/schedule/FFA_settings').'</b><br><br>';
         $body .= '<b>'.$lng->getTrn('admin/schedule/as_type').'</b><br>';
         $body .= '<select name="round">';
-        foreach (
-                array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') 
-                + array_combine(range(1,15), array_strpack("Round #%s match", range(1,15)))
-            as $r => $d) {
-                $body .= "<option value='$r' ".(($addMatchToFFA && isset($_POST['round']) && $r == $_POST['round']) ? 'SELECTED' : '').">$d</option>\n";
+        global $T_ROUNDS;
+        foreach ($T_ROUNDS as $r => $d) {
+                $body .= "<option value='$r' ".(($addMatchToFFA && isset($_POST['round']) && $r == $_POST['round']) ? 'SELECTED' : '').">".$lng->getTrn($d)."</option>\n";
         }
         $body .= '</select>';
         echo "<div id='OPTS_FFA_TOUR_SETS'>$body</div>\n";
         
         // Round robin seed multiplier.
         $body = '';
-#        $body .= '<b>'.$lng->getTrn('admin/schedule/RR_settings').'</b><br><br>';
         $body .= '<b>'.$lng->getTrn('admin/schedule/rrobin_rnds')."</b><br><select name='rounds'>";
         foreach (range(1, 10) as $i) $body .= "<option value='$i'>$i</option>\n";
         $body .= "</select>&nbsp;".$lng->getTrn('admin/schedule/times')."\n";
