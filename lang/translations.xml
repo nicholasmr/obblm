@@ -472,51 +472,6 @@
         <notplayed>Not yet played</notplayed>
         <report>report</report>
         
-        <help>
-        <![CDATA[
-        <b>Preliminary info</b><br>
-        First of all you should know that OBBLM is capable of handling re-saves to the same match report - even after subsequent matches have been played by the same teams.
-        Therefore if you, for example, typed in an incorrect &Delta; treasury value or some wrong player field value, you can correct the errors by simply changing the fields to the wanted values and re-saving.<br>
-        Secondly, OBBLM supports the submission of a wide range of different player stats. 
-        The commonly recorded player match stats are submitted via. the primary match report along with general match information whilst the <i>extra stats</i> are submitted on a separate submission page - follow the below extra stats link on the primary report page.
-        Please note that you <i>must</i> submit the primary report before submitting the extra player stats.<br>
-        <br>
-        <b>Game information fields</b><br>
-        The purpose of these fields is merely to store general match information. They have therefore <i>nothing</i> to do with team incomes or any other team related stats.<br>
-        <br>
-        <b>Sportsmanship points</b><br>
-        Yelling, screaming, cursing at the dice, disturbing the opponent in his turn and not turning up on gaming night may be punished by giving negative sportsmanship points. Acting like a gentleman and taking a defeat with a smile may be embraced by giving positive sportsmanship points.
-        If your league on the other hand makes the needle on the evil-o-meter jump into the red area constantly, it may be more natural applying the sportsmanship points system the other way around - embracing bad manners with positive sportsmanship points.<br>
-        <br>
-        <b>Casualties in general</b><br>
-        OBBLM can keep track of <i>team casualties</i>, which is the sum of the individual player casualties, opponent self-inflicted injuries, die on a fumble in sprints and crowd killings (and possibly other things of your leagues' choice).
-        Regarding <i>individual player</i> casualties OBBLM can also keep track of the different types of injuries inflicted (bh, si and ki), so please use this possibility instead of adding casualties made by a player as kills.<br>
-        <br>
-        <b>Player skills</b><br>
-        When you roll 2D6 for player improvements remember to record the results in the <i>IR</i> fields. 
-        Then, once the match report has been submitted, OBBLM will allow you to pick new player skills from the team pages - if enough SPPs have been gained.<br>
-        If the improvement roll fields are <i>consistently</i> left as 0 the player in question may select among all skills whenever enough SPP is gained.<br>
-        <br>
-        <b>Player injuries</b><br>
-        If a player sustains multiple injuries simply utilize the second and third injury columns "ageing 1" and "ageing 2". 
-        The <i>only</i> difference between the ordinary "inj" column and the ageing columns is that injuries recorded as ageing injuries do not imply a MNG.<br>
-        <br>
-        <b>Incomes</b><br>
-        A team's income must be calculate manually to represent the <i>full</i> change of the team's treasury over the game. OBBLM does not do income calculations for you.
-        If you spended more than you made in a match then simply prefix - (minus).
-        <br><br>
-        Remember these factors when you calculate:<br>
-        <ul>
-            <li>Spiraling expenses</li>
-            <li>Treasury spend on inducements</li>
-            <li>Hiring costs of star players and mercenaries</li>
-            <li>Team winnings</li>
-            <li>Tournament winnings, if the game was a final</li>
-            <li>Sponsorship deal from Bloodweiser</li>
-        </ul>
-        ]]>
-        </help>
-
         <!-- Subsecs of team page -->
         <info>Game information</info>
             <stadium>Stadium</stadium>
@@ -540,101 +495,7 @@
 </rules>
 
 <about>
-    <intro>Introduction</intro>
-    <intro_txt>
-    <![CDATA[
-    OBBLM is a Blood Bowl league manager that works by coaches submitting match data after each played match in a tournament. 
-    League commissioners (admins) may create tournaments and include certain coaches' teams to participate in a tournament. 
-    When a tournament is created, the two coaches participating in any match may submit a match report to the system. 
-    The manager will thereby be able to update tournament stats and team details - including giving the team coach access to chose new player skills etc.
-    The order in which tournament matches are played/submitted does not matter, and if the need may arise, league commissioners are able to delete unplayed matches.
-    <br><br>
-    <b>The Coach Corner:</b><br>
-        When you have received a password from a league commissioner, and you have logged on, your personal coach corner will be activated in the menu bar. 
-        At your coach corner you will be able to create new teams, and change your password, e-mail and your coach name.
-        <br><br>
-        <b>Team page</b><br>
-        At your team page you may manage your team. 
-        This includes buying and selling players, choosing player skills when your player has the required amount of SPP, and buying other goods for your team.
-        <br>
-        At your team page you will be presented with your team roster. To view player details select the "toggle roster view"-link below the roster.
-        <br><br>
-    <b>Submitting a played match:</b><br>
-        Once a match has been played, you must let the system know by submitting the match data in the <i>Matches-->Tournaments</i> section. 
-        This can under agreement be done by either team's coach. Only the two participating team coaches and league commissioners have edit access to the match reports.
-    ]]>
-    </intro_txt>
-
-    <faq>FAQ</faq>
-    <faq_txt>
-    <![CDATA[
-    <i>Q:</i>
-    I can't seem to save a player's injury when submitting match data.<br>
-    <i>A:</i>
-    OBBLM will refuse to save a specific injury if the sum of the characteristic thereby will drop below the allowed default - 2 limit.
-    <br><br>
-    
-    <i>Q:</i>
-    I'm not able to select the achieved characteristic I wish?<br>
-    <i>A:</i>
-    You are by rule not allowed to select any further achieved characteristics if it leads to the player having more than default + 2 of that characteristic.
-    <br><br>
-
-    <i>Q:</i>
-    I have saved a match with wrong match data, and now OBBLM has created a new match with the wrong contestants. How do I correct this?<br>
-    <i>A:</i>
-    First you delete the falsely created match, and then you resave the old match with the correct match data, which recreates the new match.
-    <br><br>
-    
-    <i>Q:</i>
-    I can't seem to save -1 fan factor when submitting match data?<br>
-    <i>A:</i>
-    OBBLM will refuse to save any further negative fan factor values if your team already has 0 fan factor.
-    <br><br>
-    
-    <i>Q:</i>
-    Re-roll prices are no longer doubled?<br>
-    <i>A:</i>
-    Have you switched on the setting "static re-rolls prices"? 
-    If not, what you experience is due to your league having started on a new tournament, in which no matches yet have been played. The RR-prices will become doubled again once the first match has been played.
-    <br><br>
-    
-    <i>Q:</i>
-    I have suddenly a dead player alive again on my roster?<br>
-    <i>A:</i>
-    Re-save the match in which the player died.
-    <br><br>
-                    
-    <i>Q:</i>
-    I see only fields on the match submitting pages for the inducements stars and mercenaries, where are the others?<br>
-    <i>A:</i>
-    Such fields do not exist yet. If you wish to document these match details, you can write them in the match summary.
-    <br><br>
-    
-    <i>Q:</i>
-    I'm having trouble uploading pictures. How can i resolves this?<br>
-    <i>A:</i>
-    OBBLM supports only .gif, .jpg, .jpeg and .png file types. Still having trouble? Try a mozilla browser.
-    <br><br>
-
-    <i>Q:</i>
-    After hiring a journeyman he stays on my roster even though he has already competed in a match. Why is this so?<br>
-    <i>A:</i>
-    OBBLM does not automatically fire journeymen after their first match. You must do so yourself the same way as ordinary players are fired (via. the team page).
-    <br><br>
-
-    <i>Q:</i>
-    I would like to create my own tournament ranking system. How do I do this?<br>
-    <i>A:</i>
-    Please see the <i>settings.php</i> file.
-    <br><br>
-
-    <i>Q:</i>
-    How do I heal all of a team's MNGs?<br>
-    <i>A:</i>
-    Simply open the match report from the team's latest played match, and reassign the injuries sustained as ageing injuries - these do not result in MNGs.
-    ]]>
-    </faq_txt>
+    <!-- None -->
 </about>
 
 <!-- NOTE: Translation is NOT supplied for all admin pages. -->
@@ -644,32 +505,6 @@
 
     <!-- Subsec: Schedule matches -->
     <schedule>
-        <help>
-        <![CDATA[
-            <b>When scheduling matches please note that:</b><br>
-            - You must first create a league with one or more divisions before being able to create tournaments (in which matches are scheduled).<br>
-            - You cannot create a tournament without creating at least one match in it.<br>
-            - You are free to schedule multiple tournaments running concurrently.<br>
-            - You are NOT restricted to playing matches in their scheduled order. In fact, any team may play any scheduled match at any time.<br>
-            - If you have enabled division ties you may only schedule matches between teams from the same division in a given league. If not enabled you can schedule inter-division games. You can never schedule inter-league games.<br>
-            <br>
-            <b>Round-Robin (RR) scheduling</b>:<br>
-                In a RR tournament each contestant meets every other contestant in turn.<br>
-                The entire set of matches in which all contestants meet each other <i>once</i> is called a <i>bracket</i>.<br>
-                A bracket consists of multiple rounds in which each team plays <i>only one match</i>.<br>
-                A bracket may be seeded more than once in a RR tournament.<br>
-                When seeding the bracket multiple times the home&mdash;away pairings are swapped every second time.<br>
-                If an uneven number of teams is selected each team will, in each seeded bracket, receive <i>one</i> bye (walkthrough) in a given round.<br>
-            <br>
-            <b>Free For All (FFA) scheduling</b>:<br>
-                The FFA tournament type allows scheduling matches on-demand.<br>
-                You may either add the scheduled matches to a new tournament or add them to an existing FFA tournament.<br>
-                If only two teams are selected the match is scheduled by setting the first selected team as the home team.<br>
-                If multiple teams are selected the list of teams is shuffled, creating random matches with random home&mdash;away pairings.<br>
-                Only an even number of teams may be selected.<br>
-                The FFA tournament type may also be used to create Knock-Out tournaments and other tournament types by manually scheduling matches.<br>
-        ]]>
-        </help>
         <create_LD>Please create a league + division(s) before scheduling matches</create_LD>
         <tour_name>Tournament name</tour_name>
         <rank_sys>Ranking system</rank_sys>
@@ -1142,52 +977,6 @@
         <notplayed>Aun no jugado</notplayed>
         <report>Acta</report>
         
-        <help>
-        <![CDATA[
-        <b>Información preliminar</b><br>
-		En primer lugar debes saber que OBBLM permite hacer cambios a un acta de partido ya guardada, incluso despues de que los equipos del acta hayan jugado partidos subsiguientes.
-        Por lo tanto, si por ejemplo indicaste un valor de tesoreria &Delta; incorrecto o algún dato de jugador erroneo, puedes corregir los errores simplemente cambiandolos en el acta, y guardandola.<br>
-		En segundo lugar, OBBLM permite la introducción de una amplia gama de estadísticas de jugadores.
-        Las estadísticas más comunes se envian en el acta de partido, mientras que las <i>estadísticas extra</i> se envian a traves de una página diferente. El link a esta página esta indicado como Estadisticas Extra de jugador, justo debajo del campo Fans.
-        <i>Debes</i> enviar primero el acta principal antes de enviar las estadísticas extra.<br>
-        <br>
-        <b>Datos de información del partido</b><br>
-        El propósito de estos campos es simplemente archivar información general del partido. No tienen <i>ninguna</i> relación con ingresos o cualquier otro dato de los equipos.<br>
-        <br>
-        <b>Puntos de deportividad</b><br>
-        Quejarse, gritar, maldecir los dados, molestar al oponente en su turno o simplemente no acudir a la cita del partido puede castigarse mediante puntos de deportividad negativos. Actuar como un caballero y encajar una derrota con una sonrisa puede premiarse con puntos de deportividad positivos.
-		Si, por el contrario, vuestra liga es perversa y maligna, puede resultaros más natural aplicar el sistema puntos de deportividad al revés: premiando la mala educación con puntos de deportividad positivos.<br>
-        <br>
-        <b>Bajas en general</b><br>
-		OBBLM puede llevar la cuenta de las <i>bajas de equipo</i>, que es la suma de las bajas causadas por jugadores, las heridas autoinfligidas por el oponente, las muertes al caerse esquivando o forzando y las bajas causadas por los fans (y cualquier otra forma de muerte usada en vuestra liga).
-        Respecto a las bajas causadas por <i>cada jugador</i>, OBBLM puede llevar el registro de los diferentes tipos de baja (herido, herido grave y muerto), asi que, por favor, haz uso de estas opciones en vez de añadir todas las bajas como muertes.<br>
-        <br>
-        <b>Habilidades de jugador</b><br>
-        Cuando haces una tirada de 2D6 para las subidas de habilidad de un jugador, recuerda indicar el resultado de la misma en los campos <i>IR</i> (improvement roll). 
-        Posteriormente, una vez que el acta de partido haya sido enviada, OBBLM te permitirá elegir nuevas habilidades para los jugadores en la página del equipo si han conseguido los PE suficientes.<br>
-        Si el jugador consigue PEs y los campos de la tirada de subida se dejan a 0 <i>consistentemente</i>, el jugador en cuestión podrá elegir cualquier habilidad (como si hubiese sacado dobles en la tirada).<br>
-        <br>
-        <b>Heridas sufridas</b><br>
-        Si un jugador sufre multiples heridas (e.g. regenera o se usa el médico), utiliza la segunda y tercera columnas de heridas: "ageing 1" y "ageing 2". 
-        La <i>única</i> diferencia entre el campo "inj" y los campos "ageing" es que las heridas marcadas como ageing no implican una perdida del siguiente partido (MNG, Miss Next Game).<br>
-        <br>
-        <b>Ingresos</b><br>
-        Los ingresos de un equipo se deben calcular manualmente para representar <i>todos</i> los cambios de la tesoreria a lo largo del partido y durante su secuencia posterior. OBBLM no hace los cálculos de tesorería por ti (el plugin del Botocs si lo hace).
-        Si gastaste más de lo ingresado, simplemente indicalo poniendo una cantidad negativa.
-        <br><br>
-        Recuerda lo siguiente al hacer los cálculos:<br>
-
-        <ul>
-            <li>Regla de Espiral de Gastos</li>
-            <li>Tesorería gastada en incentivos</li>
-            <li>Coste de la contratación de Jugadores Estrella y Mercenarios</li>
-            <li>Ganancias del partido</li>
-            <li>Ganancias del torneo si el partido era una final.</li>
-            <li>Acuerdo de esponsor con Bloodweiser (por ganar la copa Blood Bowl)</li>
-        </ul>
-        ]]>
-        </help>
-
         <!-- Subsecs of team page -->
         <info>Información del Partido</info>
             <stadium>Estadio</stadium>
@@ -1211,101 +1000,7 @@
 </rules>
 
 <about>
-    <intro>Introducción</intro>
-    <intro_txt>
-    <![CDATA[
-    OBBLM es un gestor de ligas de Blood Bowl online que funciona mediante el registro de actas de partido por parte de los entrenadores participantes.
-    Los comisarios de liga (admins) pueden crear torneos y asignar equipos de los entrenadores para que participen en ellos.
-	Cuando se crea un torneo, los dos entrenadores participantes en cualquier partido del torneo pueden registrar el acta del partido en el sistema.
-	A partir de ese registro, el gestor actualizará las estadísticas del torneo y los detalles de los equipos, y dará a los entrenadores la posibilidad de gestionar sus equipos, eligiendo nuevas habilidades para los jugadores, etc. 
-    El orden en que se juegan los partidos de los torneos no es necesariamente relevante, y si surge la necesidad, los comisarios de liga pueden borrar partidos no jugados. 
-    <br><br>
-    <b>Rincón del Entrenador:</b><br>
-        Cuando hayas recibido la contraseña de acceso por parte de un comisario de liga, y te hayas conectado al sistema, tu Rincón del Entrenador personal se activará en la barra de menú.
-        En tu Rincón, podrás crear nuevos equipos y cambiar los datos de tu perfil.
-        <br><br>
-        <b>Hoja de Equipo</b><br>
-        En tu hoja de equipo gestionas todo lo relativo a tu equipo.
-		Esto incluye el fichaje y despido de jugadores, la elección de habilidades cuando tus jugadores adquieran Puntos de Estrellato, y la compra de otros bienes de equipo (rerolls, médico, etc)
-        <br>
-        En tu hoja de equipo podrás ver la plantilla de tu equipo. Para ver más detalles sobre la misma selecciona el link "Cambiar vista de plantilla"
-        <br><br>
-    <b>Registrar un acta de partido:</b><br>
-        una vez que hayas jugado un partido, debes registrarlo en el sistema introduciendo los datos del acta en la sección <i>torneos</i>.
-		Esto puede ser realizado por cualquiera de los dos entrenadores participantes en el partido, así que poneos de acuerdo para ello. Solo los dos entrenadores y los comisarios de liga tienen acceso de edición a las actas de partido.
-    ]]>
-    </intro_txt>
-
-    <faq>FAQ</faq>
-    <faq_txt>
-    <![CDATA[
-    <i>P:</i>
-    No soy capaz de salvar los datos del acta de partido de una herida sufrida por un jugador.<br>
-    <i>R:</i>
-    OBBLM no salvará los datos de una herida si la carácteristica afectada baja por debajo del límite establecido por las reglas (-2).
-    <br><br>
-    
-    <i>P:</i>
-    ¿No puedo seleccionar la subida de característica que deseo?<br>
-    <i>R:</i>
-    Las reglas no permiten las subidas de características superiores al valor inicial +2.
-    <br><br>
-
-    <i>P:</i>
-    He salvado un acta de partido con datos erroneos, y ahora OBBLM ha creado un nuevo partido con entrenadores incorrectos. ¿Como lo corrijo?<br>
-    <i>R:</i>
-    Primero, borra el partido erroneo, y luego vuelve a salvar el partido inicial con los datos correctos. Esto recreará correctamente el partido. 
-    <br><br>
-    
-    <i>P:</i>
-    No puedo guardar un resultado de factor de hinchas de -1 en el acta de partido.<br>
-    <i>R:</i>
-    OBBLM no permite valores de factor de hinchas negativos si tu equipo ya tiene factor de hinchas 0.
-    <br><br>
-    
-    <i>P:</i>
-    Los precios de las Segundas oportunidades (SO) no son dobles.<br>
-    <i>R:</i>
-    ¿Has activado la opción "static re-rolls prices" en el archivo de opciones?
-    Si no lo has hecho, lo que sucede es que tu liga ha iniciado un nuevo torneo en el que no se han jugado nuevos partidos. Los precios de SO se doblarán una vez se haya jugado el primer partido.
-    <br><br>
-    
-    <i>P:</i>
-    De repente un jugador que estaba muerto aparece como vivo en la plantilla.<br>
-    <i>R:</i>
-    Salva de nuevo el acta de partido en el que el jugador murió.
-    <br><br>
-                    
-    <i>P:</i>
-    En el acta solo veo campos de incentivos de Mercenarios y Jugadores Estrella, ¿Donde están los demás incentivos?<br>
-    <i>R:</i>
-    Esos campos no exiten aún. Si quieres documentar esos detalles, puedes hacerlo en el sumario del partido.
-    <br><br>
-    
-    <i>P:</i>
-    Tengo problemas al subir imagenes.<br>
-    <i>R:</i>
-    OBBLM solo soporta los formatos .gif, .jpg. .jpeg y .png. Si aún así sigues teniendo problemas, intentalo con un navegador mozilla.
-    <br><br>
-
-    <i>P:</i>
-    Trás adquirir un independiente, este permanece en la plantilla del equipo, a pesar de que ya ha jugado un partido. ¿Por qué?<br>
-    <i>R:</i>
-    OBBLM no despide a los independientes automáticamente tras su primer partido, ya que puedes querer ficharlos permanentemente. Debes despedirlo tu mismo tal y como se despiden todos los jugadores (en la hoja de equipo). 
-    <br><br>
-
-    <i>P:</i>
-    Quiero crear my propio sistema de puntuación para torneos. ¿Como puedo hacerlo?<br>
-    <i>R:</i>
-    Existen instrucciones para ello en el archivo <i>settings.php</i>.
-    <br><br>
-
-    <i>P:</i>
-    ¿Como curo las heridas que impiden jugar el siguiente partido? (En caso de final de temporada, por ejemplo)<br>
-    <i>R:</i>
-    Simplemente abre el acta de partido y reasigna las heridas como "ageing". Estas no hacen perder el siguiente partido.
-    ]]>
-    </faq_txt>
+    <!-- None -->
 </about>
 
 </es-ES>
@@ -1762,51 +1457,6 @@
         <notplayed>Noch nicht gespielt</notplayed>
         <report>Bericht</report>
         
-        <help>
-        <![CDATA[
-        <b>Vorläufige Informationen</b><br>
-        Zuerst einmal ist es wichtig zu wissen, dass OBBLM das erneute Speichern bereits gespeicherte Spielberichte unterstützt - auch dann, wenn die teilnehmenden Mannschaften bereits an weiteren Begegnungen teilgenommen haben.
-        Dies bedeutet, dass man zum Beispiel wenn man einen falschen Kassenstand eingegeben oder einen falschen Wert bei einem Spieler eingetragen hat, kann man diesen Fehler ganz einfach korrigieren, indem man die Werte im Spielbericht korrigiert und diesen erneut speichert.<br>
-        Zum Zweiten, unterstützt OBBLM das Speichern einer grossen Anzahl unterschiedlicher Spielerwerte.
-        Die gängigen Daten zu den Spielern werden zusammen mit den Informationen zur Begegnung im eigentlichen Spielbericht gespeichert, während die <i>extra Informationen</i> auf einer separaten Seite eingetragen werden - Folge hierzu dem "extra stats" Link auf der ersten Seite des Spielberichts.
-        Bitte beachte, dass du zuerst den eigentlichen Spielbericht übermitteln <i>musst</i>, bevor du die zusätzlichen Spielerwerte speichern kannst.<br>
-        <br>
-        <b>Felder für Informationen zu Begegnungen</b><br>
-        Die Funktion dieser Felder ist es lediglich allgemeine Informationen zu einer Begegnung zu speichern. Sie haben daher <i>keine</i> Auswirkungen auf das Einkommen oder die Werte einer Mannschaft.<br>
-        <br>
-        <b>Fair-Play Punkte (Sportsmanship points)</b><br>
-        Brüllen, Schreien, das Verfluchen der Würfel, Stören des Gegener während seines Zuges oder das unentschuldigte Fehlen bei einem Spiel, können mit einer negativen Anzahl an Fair-Play Punkten (Sportsmanship points) geahndet werden. Gute Verlierer und faire Sportsleute hingegen können mit einer positiven Anzahl an Fair-Play Punkten (Sportsmanship points) belohnt werden.
-        Wenn es in deiner Liga allerdings normal ist, dass der eine oder andere immer wieder ausrastet, kann es Sinn machen das Fair-Play System auf die umgekehrte Weise zu nutzen - man belohnt also schlechtes Benehmen mit Fair-Play Punkten.<br>
-        <br>
-        <b>Verletzungen im Allgemeinen</b><br>
-        OBBLM kann die <i>Verletzungen einer Mannschaft</i> speichern, diese sind die Summe der individuellen Verletzungen von Spielern, selbstbeigebrachte Verletzungen, die on a fumble in sprints and Morde durch das Publikum (und natürlich weitere Dinge eurer Wahl).
-        Bezüglich der Verletzungen von <i>individuellen Spieler</i> kann OBBLM auch die verschiedenen Arten der Verletzungen speichern (bh, si and ki), bitte mache Gebrauch von dieser Möglichkeit statt die Verletzungen die ein Spieler verursacht hat als Kills zu speichern.<br>
-        <br>
-        <b>Spieler Fähigkeiten</b><br>
-        Wenn du 2W6 für einen Fähigkeiten Erweiterungswurf eines Spieler würfelst, denke bitte daran dieses Ergebnis in den <i>IR</i> Feldern einzutragen. 
-        Wenn der Spielbericht dann gespeichert wurde, lässt Dich OBBLM die neuen Fähigkeiten auf der Mannschaftsseite auswählen - vorausgesetzt der Spieler hat genügend SPP gesammelt.<br>
-        Wenn das Feld für den Fähigkeiten Erweiterungswurf <i>durchgängig</i> auf 0 gesetzt bleiben, kann der betroffene Spieler immer dann wenn ausreichend viele SPP gesammelt hat aus allen Fähigkeiten auswählen wenn er.<br>
-        <br>
-        <b>Spieler Verletzungen</b><br>
-        Wenn ein Spieler mehrere Verletzungen erleidetbenutze einfach die zweite und dritte Verletzungspalte "ageing 1" und "ageing 2". 
-        Der <i>einzige</i> Unterschied zwischen der normalen "inj" Spalte und der aging Spalte ist, dass Verletzungen die die Folge von Aging sind nicht dazu führen, dass der Spieler bei der nächsten Begegnung nicht teilnehmen darf (MNG).<br>
-        <br>
-        <b>Einkommen</b><br>
-        Das Einkommen einer Mannschaft muss manuell berechnet werden, um die Änderungen der Mannschaftskasse während einen Begegnung in <i>vollem Umfang</i> zu berücksichtigen. OBBLM übernimmt nicht die Berechnung des Einkommens.
-        Wenn du mehr ausgegeben hast, als du in einer Begegnung verdient hast, dann stelle einfach ein - (minus) Zeichen voran.
-        <br><br>
-        Beachte diese Faktoren bei deiner Berechnung:<br>
-        <ul>
-            <li>Schwindelerregende Nebenkosten (Spiraling expenses)</li>
-            <li>Wert auf der Teamkasse, der für inducements ausgegeben wurde</li>
-            <li>Kosten für das anheuern von Starspielern und Söldnern</li>
-            <li>Einnahmen der Mannschaft</li>
-            <li>Turniereinnahmen, wenn die Begegnung ein Finale war</li>
-            <li>Sponsorenvertrag von Bloodweiser</li>
-        </ul>
-        ]]>
-        </help>
-
         <!-- Subsecs of team page -->
         <info>Informationen zur Begegnung</info>
             <stadium>Stadion</stadium>
@@ -1830,101 +1480,7 @@
 </rules>
 
 <about>
-    <intro>Einführung</intro>
-    <intro_txt>
-    <![CDATA[
-    OBBLM ist ein Blood Bowl Ligen Verwaltungssystem, bei dem die Trainer die Spielerebnisse nach jeder Begegnung in einem Turnier selbst eintragen. 
-    Liga-Komissare (admins) können Turniere anlegen und dann die Mannschaften von Trainern dem Turnier hinzufügen. 
-    Wenn ein Turnier angelgt ist, können beide an einem Spiel teilnehmenden Trainer den Spielbericht im System eintragen. 
-    Das System aktualisiert und berechnet hierdurch die Turnierstatistiken und die Mannschaftswerte, und gibt Trainer dann z.B. die Möglichkeit neue Spieler-Fähigkeiten auszuwählen.
-    Die Reihenfolge in der Begegnungen gespielt oder eingetragen werden, ist nicht von Bedeutung. Wenn es notwendig ist, kann der Liga-Komissar Begegnungen, die nicht gespielt wurden, löschen.
-    <br><br>
-    <b>Der Trainerbereich:</b><br>
-        Wenn du ein Passwort von einem Liga-Komissar bekommen hast und Dich mit diesem angemeldet hast, erscheint dein persönlicher Trainerbereich in der Navigation. 
-        In deinem Trainerbereich kannst du Mannschaften erstellen und dein Passwort, deine E-Mailadresse sowie deinen Namen ändern.
-        <br><br>
-        <b>Mannschaftsseite</b><br>
-        Auf der Mannschaftsseite kannst du deine Mannschaft verwalten. 
-        Dazu gehört natürlich das kaufen und verkaufen von Spielern, das Auswählen von neuen Fähigkeiten, wenn ein Spieler genug Starspielerpunkte gesammelt hat und das Kaufen weitere Utensilien für deine Mannschaften.
-        <br>
-        Auf deiner Mannschaftsseite wird Dir dein Team Roster dargestellt. Um die Spielerdetails anzusehen, wähle den "Ansicht umschalten"-unter dem Roster.
-        <br><br>
-    <b>Eine Begenung eintragen:</b><br>
-        Nachdem eine Begegnung gespielt wurde, musst du dies dem System mitteilen, indem du einen Spielbereicht im <i>Turniere</i> Bereich einträgst. 
-        Jeder der Trainer der beiden teilnehmenden Mannschaften kann dies tun. Nur die teilnehmenden Trainer und Liga-Komissare haben das Recht Spielberichte ändern zu können.
-    ]]>
-    </intro_txt>
-
-    <faq>Antworten auf häufige Fragen</faq>
-    <faq_txt>
-    <![CDATA[
-    <i>Frage:</i>
-    Ich kann die Verletzung eines Spielers nicht speichern.<br>
-    <i>Antwort:</i>
-    OBBLM verweigert es eine Verletzung zu speichern, wenn die Summe der Spielerwerte hierdurch unter den erlaubten Standardwert sinkt - 2 limit.
-    <br><br>
-    
-    <i>Frage:</i>
-    Ich kann nicht die erreichten Spielerwerte auswählen, die ich haben möchte?<br>
-    <i>Antwort:</i>
-    Du kannst Spielerwerte nicht nicht auswählen, wenn dies dazu führt, dass ein Spieler anschliessend einen um mehr als 2 Punkte höheren Wert hat als er als Startwert hat.
-    <br><br>
-
-    <i>Frage:</i>
-    Ich habe eine Begegnung mit falschen Daten gespeichert, und jetzt hat OBBLM eine neue Begegnung mit den falschen Teilnehmern erstellt. Wie korrigiere ich dies?<br>
-    <i>Antwort:</i>
-    Zuerst löschst du die falsch angelegte Begegnung, und dann speicherst du das alte Spiel erneut mit den korrigierten Daten, und das folgende Spiel wird wieder korrekt angelegt.
-    <br><br>
-    
-    <i>Frage:</i>
-    Ich kann die -1 Fan Faktor in einem Spielbericht nicht speichern?<br>
-    <i>Antwort:</i>
-    OBBLM verweigert das Speichern eines Fan Faktor von kleiner als 0.
-    <br><br>
-    
-    <i>Frage:</i>
-    Die Preise für Re-rolls sind nicht mehr verdoppelt?<br>
-    <i>Antwort:</i>
-    Hast du die Einstellung "static re-rolls prices" eingeschaltet? 
-    Wenn dies nicht der Fall ist, liegt es daran, das in deiner Liga ein neues Turnier angelegt wurde in dem noch keine Begegnungen gespielt wurden. Die Preise für Re-Rolls werden wieder verdoppelt, sobald die erste Begegnung eingetragen worden ist.
-    <br><br>
-    
-    <i>Frage:</i>
-    Einer meiner Spieler, der tot war ist plötzlich wieder lebendig. Was kann ich tun um dies zu korrigieren?<br>
-    <i>Antwort:</i>
-    Speichere das Spiel in dem er gestorben ist erneut.
-    <br><br>
-                    
-    <i>Frage:</i>
-    Ich sehe auf den Spielberichteseiten nur Felder für inducements Starspieler und Söldner, Wo sind die anderen?<br>
-    <i>Antwort:</i>
-    Solche Felder existieren bisher nicht. Du kannst diese Informationen aber in den Details zu einer Begegnung eintragen.
-    <br><br>
-    
-    <i>Frage:</i>
-    Ich habe Schwierigkeiten beim Upload von Bildern. Wie kann ich dieses Problem beheben?<br>
-    <i>Antwort:</i>
-    OBBLM unterstützt nur .gif, .jpg, .jpeg und .png Dateien. Du hast immernoch Probleme? Benutze Mozilla als Browser.
-    <br><br>
-
-    <i>Frage:</i>
-    Nachdem ich einen Journeyman angeheuert habe, bleibt er auf meinem Roster obwohl er schon an einer Begegnung teilnehmen hat. Warum ist dies so?<br>
-    <i>Antwort:</i>
-    OBBLM feurt Journeymen nicht automatisch nach Ihrer ersten Begegnung. Du must dies genauso wie bei normalen Spielern auf der Mannschaftsseite tun.
-    <br><br>
-
-    <i>Frage:</i>
-    Ich möchte mein eigenes Turnier Ranglistensystem erstellen. Wie kann ich das tun?<br>
-    <i>A:</i>
-    Bitte verwende die <i>settings.php</i> Datei.
-    <br><br>
-
-    <i>Frage:</i>
-    Wie kann ich alle Spieler so heilen das sie nicht die nächste Begegnung verpassen (MNG)?<br>
-    <i>Antwort:</i>
-    Öffne einfach den Spielreport der letzten Begegnung der Mannschaft, und weise die Verletzungen als Verletzungen durch Alterung des Spielers aus, da Spieler durch diese Verletzungen nicht die nächste Begegnung verpassen (MNG).
-    ]]>
-    </faq_txt>
+    <!-- None -->
 </about>
 
 <!-- NOTE: Translation is NOT supplied for all admin pages. -->
@@ -1934,30 +1490,6 @@
 
     <!-- Subsec: Schedule matches -->
     <schedule>
-        <help>
-        <![CDATA[
-            <b>Beim Ansetzen von Begegnungen ist Folgendes zu beachten:</b><br>
-            - Es muss zuerst eine Liga mit einer oder mehr Divisionen angelegt werden, bevor Turniere angelegt werden können (in diesen werden dann die Spiele angesetzt).<br>
-            - Es können mehrere Turniere paralell stattfinden.<br>
-            - Begegnungen müssen NICHT in der vorgeshenen Reihenfolge gespielt werden. Tatsächlich können die Begegnungen in jeder Reihenfolge gespielt werden.<br>
-            <br>
-            <b>Round-Robin (RR) Planung</b>:<br>
-                Bei einem RR Turnier each contestant meets every other contestant in turn.<br>
-                Der gesammte Satz an Begegnungen in der alle Wettbewerber gegeneinander <i>einmal</i> wird <i>bracket</i> genannt.<br>
-                Ein bracket besteht aus mehreren Runden denen jede Mannschaft <i>nur eine Begegnung</i> spielt.<br>
-                Ein bracket kann mehr als einmal in einem RR Turnier angelgt werden.<br>
-                Werden brackets mehrfach angelegt, werden Heim&mdash;Auswärts Paarungen jedes zweite Mal getauscht.<br>
-                Wenn eine ungleiche Anzahl an Mannschaften ausgewählt wird, erhällt jede Mannschaft pro bracket <i>ein</i> Freilos pro Runde.<br>
-            <br>
-            <b>Free For All (FFA) Planung</b>:<br>
-                Das Turniertyp FFA erlaubt es Begegnungen bei Bedarf anzusetzen.<br>
-                Es können entweder bereits angesetzte Begegnungen einem neuen Turnier oder einem add bestehenden FFA Turnier hinzugefügt werden.<br>
-                Wenn nur zwei Teams ausgewählt werden, wird die Begegnung so angelegt, dass die erste Mannschaft das Heimrecht erhält.<br>
-                Wenn mehrer Mannschaften ausgewählt werden, wird die Liste der Mannschaften gemischt und zufällige Heim&mdash;Auswärts Paarung generiert.<br>
-                Es kann nur eine gerade Anzahl an Mannschaften ausgewählt werden.<br>
-                Der FFA Turniertyp kann auch für ein KO Turnier und andere Turniertypen genutzt werden, indem die Begegnungen manuell angelegt werden.<br>
-        ]]>
-        </help>
         <create_LD>Bitte lege eine Liga + eine oder mehrere Divisionen an, bevor du Begegnungen ansetzt</create_LD>
         <tour_name>Turniername</tour_name>
         <rank_sys>Ranglistensystem</rank_sys>
@@ -2367,10 +1899,7 @@
     <!-- None -->
 </rules>
 <about>
-    <intro>Introduction</intro>
-    <!-- <intro_txt></intro_txt> NOT TRANSLATED - defaults to english --> 
-    <faq>Q&amp;R</faq>
-    <!-- <faq_txt></faq_txt> NOT TRANSLATED - defaults to english --> 
+    <!-- None -->
 </about>
 <!-- NOTE: Translation is NOT supplied for all admin pages. -->
 <admin>

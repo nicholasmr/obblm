@@ -230,20 +230,6 @@ private function _newTeam($ALLOW_EDIT)
 private function _teams($ALLOW_EDIT)
 {
     global $lng;
-    
-    echo "<br>";
-    if ($ALLOW_EDIT) {
-        HTMLOUT::helpBox(
-            "<b>Your teams</b>
-            <p>
-                This is a list of the teams you coach. Only the teams selected by the league commissioner play in the created leagues. 
-                This means you are free to make a testing team for yourself. 
-                Teams are deletable as long as they are not scheduled to play any matches or have already played.
-            </p>",
-            $lng->getTrn('common/needhelp'), 'width:400px;'
-        );
-    }
-
     $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false).'&amp;subsec=teams';
     HTMLOUT::standings(T_OBJ_TEAM,false,false,array('url' => $url, 'teams_from' => T_OBJ_COACH, 'teams_from_id' => $this->coach_id));
 }

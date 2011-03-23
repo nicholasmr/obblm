@@ -205,7 +205,7 @@ title($lng->getTrn('menu/admin_menu/schedule'));
 if (count($leagues) < 0 || count($divisions) < 0) {
     fatal($lng->getTrn('admin/schedule/create_LD'));
 }
-HTMLOUT::helpBox($lng->getTrn('admin/schedule/help'), '<b>'.$lng->getTrn('common/needhelp').'</b>');
+echo "<b><a href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br>";
 $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
 ?><br>
 <form method="POST" name="tourForm">
