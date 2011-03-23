@@ -508,13 +508,6 @@ function sec_rules() {
 function sec_about() {
 
     global $lng, $credits;
-
-    title($lng->getTrn('about/intro'));
-    echo '<p>'.$lng->getTrn('about/intro_txt').'</p>';
-    
-    title($lng->getTrn('about/faq'));
-    echo '<p>'.$lng->getTrn('about/faq_txt').'</p>';
-    
     title("About OBBLM");
     ?>
     <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -551,6 +544,12 @@ function sec_about() {
         ?>
     </p>
 
+    <?php 
+    title("Documentation");
+    echo "See the <a href='".DOC_URL."'>OBBLM documentation wiki</a>";
+    
+    ?>
+
     <?php title("Disclaimer");?>
     <p>
         By installing and using this software you hereby accept and understand the following disclaimer
@@ -564,7 +563,7 @@ function sec_about() {
 
     <?php title("License");?>
     <p>
-        Copyright (c) Niels Orsleff Justesen and Nicholas Mossor Rathmann 2007-2010. All Rights Reserved.
+        Copyright (c) Niels Orsleff Justesen and Nicholas Mossor Rathmann 2007-2011. All Rights Reserved.
         <br><br>
         OBBLM is free software; you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
