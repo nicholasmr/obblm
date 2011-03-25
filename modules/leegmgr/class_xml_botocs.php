@@ -426,6 +426,7 @@ $obblm_team['TeamValue']		= $this->tv / 1000;
 $obblm_team['TeamFanFactor']	= $this->fan_factor;
 $obblm_team['gold']			    = $this->treasury;
 $obblm_team['Cheerleaders']		= $this->cheerleaders;
+$obblm_team['AssistantCoaches']	= $this->ass_coaches;
 $obblm_team['apothecary']		= ( $this->apothecary == "true" ) ? 1 : 0;
 $obblm_team['rerolls']			= $this->rerolls;
 
@@ -446,6 +447,7 @@ $cy->set_team_value($obblm_team['TeamValue']);
 $cy->set_team_fanfactor($obblm_team['TeamFanFactor']);
 $cy->set_team_gold($obblm_team['gold']);
 $cy->set_team_cheerleaders($obblm_team['Cheerleaders']);
+$cy->set_team_assistantcoaches($obblm_team['AssistantCoaches']);
 $cy->set_team_apothecary($obblm_team['apothecary']);
 $cy->set_team_rerolls($obblm_team['rerolls']);
 $cy->set_team_rank_constants();

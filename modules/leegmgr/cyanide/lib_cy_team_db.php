@@ -156,7 +156,7 @@ class cy_team_db {
 		$this->db_status = $this->_db_con->exec($sql);
 	}
 	private function insert_team_listings(){
-			$sql = "INSERT INTO 'Team_Listing' VALUES(".$this->team['ID'].",'".$this->team['name']."',".$this->team['race_id'].",'".$this->team['strLogo']."',".$this->team['iTeamColor'].",'".$this->team['moto']."','".$this->team['background']."',".$this->team['TV'].",".$this->team['fanfactor'].",".$this->team['gold'].",".$this->team['cheerleaders'].",".$this->team['balms'].",".$this->team['apothecary'].",".$this->team['reroll'] .",".$this->team['edited'].",".$this->team['idlistfilters'].",".$this->team['str_f_background'].",".$this->team['idstrlocalmoto'].",".$this->team['inextpurchas'].");";
+			$sql = "INSERT INTO 'Team_Listing' VALUES(".$this->team['ID'].",'".$this->team['name']."',".$this->team['race_id'].",'".$this->team['strLogo']."',".$this->team['iTeamColor'].",'".$this->team['moto']."','".$this->team['background']."',".$this->team['TV'].",".$this->team['fanfactor'].",".$this->team['gold'].",".$this->team['cheerleaders'].",".$this->team['balms'].",".$this->team['apothecary'].",".$this->team['reroll'] .",".$this->team['edited'].",".$this->team['idlistfilters'].",".$this->team['str_f_background'].",".$this->team['idstrlocalmoto'].",".$this->team['inextpurchas'].",".$this->team['assistantcoaches'].");";
 			$this->db_status = $this->_db_con->exec($sql);
 	}
 	private function insert_team_rankings() {
@@ -333,6 +333,11 @@ class cyanide {
     public function set_team_cheerleaders($int) {
 		$this->team['cheerleaders'] = $int;
 	}
+
+    public function set_team_assistantcoaches($int) {
+		$this->team['assistantcoaches'] = $int;
+	}
+
 	public function set_team_constants(){
 		$this->team['balms'] = 0;
 		$this->team['edited'] = 0;
