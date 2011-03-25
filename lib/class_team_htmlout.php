@@ -545,6 +545,97 @@ private function _menu($ALLOW_EDIT, $DETAILED)
     $team = $this; // Copy. Used instead of $this for readability.
     $url = urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$this->team_id,false,false);
     ?>
+<style type="text/css">  
+#cycolors {     
+width: 128px;      
+height: 112px;     
+position: relative;       
+background-image: url(images/cycolors.jpg);
+background-repeat: no-repeat;
+} 
+
+#cycolors ul {   
+margin: 0;   
+padding: 0;
+padding-bottom:0px;padding-left:0px;padding-right:0px;padding-top:0px;   
+list-style: none;
+} 
+
+#cycolors a {   
+position: absolute;       
+width: 15px;       
+height: 15px;      
+text-indent: -1000em; 
+padding-bottom:0px;padding-left:0px;padding-right:0px;padding-top:0px;
+border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
+}
+
+#cycolors a:hover { border: 1px solid #fff; }
+
+#cycolors .blue1 a {top: 0px;left: 0px;}
+#cycolors .cyan1 a {top: 0px;left: 16px;}
+#cycolors .green1 a {top: 0px;left: 32px;}
+#cycolors .yellow1 a {top: 0px;left: 48px;}
+#cycolors .red1 a {top: 0px;left: 64px;}
+#cycolors .magenta1 a {top: 0px;left: 80px;}
+#cycolors .purple1 a {top: 0px;left: 96px;}
+#cycolors .grey1 a {top: 0px;left: 112px;}
+
+#cycolors .blue2 a {top: 16px;left: 0px;}
+#cycolors .cyan2 a {top: 16px;left: 16px;}
+#cycolors .green2 a {top: 16px;left: 32px;}
+#cycolors .yellow2 a {top: 16px;left: 48px;}
+#cycolors .red2 a {top: 16px;left: 64px;}
+#cycolors .magenta2 a {top: 16px;left: 80px;}
+#cycolors .purple2 a {top: 16px;left: 96px;}
+#cycolors .grey2 a {top: 16px;left: 112px;}
+
+#cycolors .blue3 a {top: 32px;left: 0px;}
+#cycolors .cyan3 a {top: 32px;left: 16px;}
+#cycolors .green3 a {top: 32px;left: 32px;}
+#cycolors .yellow3 a {top: 32px;left: 48px;}
+#cycolors .red3 a {top: 32px;left: 64px;}
+#cycolors .magenta3 a {top: 32px;left: 80px;}
+#cycolors .purple3 a {top: 32px;left: 96px;}
+#cycolors .grey3 a {top: 32px;left: 112px;}
+
+#cycolors .blue4 a {top:48px;left: 0px;}
+#cycolors .cyan4 a {top:48px;left: 16px;}
+#cycolors .green4 a {top:48px;left: 32px;}
+#cycolors .yellow4 a {top:48px;left: 48px;}
+#cycolors .red4 a {top:48px;left: 64px;}
+#cycolors .magenta4 a {top:48px;left: 80px;}
+#cycolors .purple4 a {top:48px;left: 96px;}
+#cycolors .grey4 a {top:48px;left: 112px;}
+
+#cycolors .blue5 a {top:64px;left: 0px;}
+#cycolors .cyan5 a {top:64px;left: 16px;}
+#cycolors .green5 a {top:64px;left: 32px;}
+#cycolors .yellow5 a {top:64px;left: 48px;}
+#cycolors .red5 a {top:64px;left: 64px;}
+#cycolors .magenta5 a {top:64px;left: 80px;}
+#cycolors .purple5 a {top:64px;left: 96px;}
+#cycolors .grey5 a {top:64px;left: 112px;}
+
+#cycolors .blue6 a {top:80px;left: 0px;}
+#cycolors .cyan6 a {top:80px;left: 16px;}
+#cycolors .green6 a {top:80px;left: 32px;}
+#cycolors .yellow6 a {top:80px;left: 48px;}
+#cycolors .red6 a {top:80px;left: 64px;}
+#cycolors .magenta6 a {top:80px;left: 80px;}
+#cycolors .purple6 a {top:80px;left: 96px;}
+#cycolors .grey6 a {top:80px;left: 112px;}
+
+#cycolors .blue7 a {top:96px;left: 0px;}
+#cycolors .cyan7 a {top:96px;left: 16px;}
+#cycolors .green7 a {top:96px;left: 32px;}
+#cycolors .yellow7 a {top:96px;left: 48px;}
+#cycolors .red7 a {top:96px;left: 64px;}
+#cycolors .magenta7 a {top:96px;left: 80px;}
+#cycolors .purple7 a {top:96px;left: 96px;}
+#cycolors .grey7 a {top:96px;left: 112px;}
+
+</style>
     <br>
     <ul id="nav" class="dropdown dropdown-horizontal" style="position:static; z-index:0;">
         <li><a href="<?php echo $url.'&amp;subsec=man';?>"><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
@@ -564,7 +655,76 @@ private function _menu($ALLOW_EDIT, $DETAILED)
             <ul>
                 <?php if ($pdf)    { ?><li><a TARGET="_blank" href="<?php echo $pdf;?>">PDF</a></li> <?php } ?>
                 <?php if ($botocs) { ?><li><a TARGET="_blank" href="<?php echo $botocs;?>">BOTOCS-XML</a></li> <?php } ?>
-                <?php if ($cyanide) { ?><li><a TARGET="_blank" href="<?php echo $cyanide;?>">Cyanide-DB</a></li> <?php } ?>
+                <?php if ($cyanide) { ?><li><span class="dir">Cyanide-DB</span>
+                            <ul>
+                    <div id="cycolors">
+                            <li class="blue1"><a href="<?php echo $cyanide."=0";?>">0</a></li>
+                            <li class="cyan1"><a href="<?php echo $cyanide."=1";?>">1</a></li>
+                            <li class="green1"><a href="<?php echo $cyanide."=2";?>">2</a></li>
+                            <li class="yellow1"><a href="<?php echo $cyanide."=3";?>">3</a></li>
+                            <li class="red1"><a href="<?php echo $cyanide."=4";?>">4</a></li>
+                            <li class="magenta1"><a href="<?php echo $cyanide."=5";?>">5</a></li>
+                            <li class="purple1"><a href="<?php echo $cyanide."=6";?>">6</a></li>
+                            <li class="grey1"><a href="<?php echo $cyanide."=7";?>">7</a></li>
+
+                            <li class="blue2"><a href="<?php echo $cyanide."=8";?>">0</a></li>
+                            <li class="cyan2"><a href="<?php echo $cyanide."=9";?>">1</a></li>
+                            <li class="green2"><a href="<?php echo $cyanide."=10";?>">2</a></li>
+                            <li class="yellow2"><a href="<?php echo $cyanide."=11";?>">3</a></li>
+                            <li class="red2"><a href="<?php echo $cyanide."=12";?>">4</a></li>
+                            <li class="magenta2"><a href="<?php echo $cyanide."=13";?>">5</a></li>
+                            <li class="purple2"><a href="<?php echo $cyanide."=14";?>">6</a></li>
+                            <li class="grey2"><a href="<?php echo $cyanide."=15";?>">7</a></li>
+
+                            <li class="blue3"><a href="<?php echo $cyanide."=16";?>">16</a></li>
+                            <li class="cyan3"><a href="<?php echo $cyanide."=17";?>">17</a></li>
+                            <li class="green3"><a href="<?php echo $cyanide."=18";?>">18</a></li>
+                            <li class="yellow3"><a href="<?php echo $cyanide."=19";?>">19</a></li>
+                            <li class="red3"><a href="<?php echo $cyanide."=20";?>">20</a></li>
+                            <li class="magenta3"><a href="<?php echo $cyanide."=21";?>">21</a></li>
+                            <li class="purple3"><a href="<?php echo $cyanide."=22";?>">22</a></li>
+                            <li class="grey3"><a href="<?php echo $cyanide."=23";?>">23</a></li>
+
+                            <li class="blue4"><a href="<?php echo $cyanide."=24";?>">24</a></li>
+                            <li class="cyan4"><a href="<?php echo $cyanide."=25";?>">25</a></li>
+                            <li class="green4"><a href="<?php echo $cyanide."=26";?>">26</a></li>
+                            <li class="yellow4"><a href="<?php echo $cyanide."=27";?>">27</a></li>
+                            <li class="red4"><a href="<?php echo $cyanide."=28";?>">28</a></li>
+                            <li class="magenta4"><a href="<?php echo $cyanide."=29";?>">29</a></li>
+                            <li class="purple4"><a href="<?php echo $cyanide."=30";?>">30</a></li>
+                            <li class="grey4"><a href="<?php echo $cyanide."=31";?>">31</a></li>
+
+                            <li class="blue5"><a href="<?php echo $cyanide."=32";?>">32</a></li>
+                            <li class="cyan5"><a href="<?php echo $cyanide."=33";?>">33</a></li>
+                            <li class="green5"><a href="<?php echo $cyanide."=34";?>">34</a></li>
+                            <li class="yellow5"><a href="<?php echo $cyanide."=35";?>">35</a></li>
+                            <li class="red5"><a href="<?php echo $cyanide."=36";?>">36</a></li>
+                            <li class="magenta5"><a href="<?php echo $cyanide."=37";?>">37</a></li>
+                            <li class="purple5"><a href="<?php echo $cyanide."=38";?>">38</a></li>
+                            <li class="grey5"><a href="<?php echo $cyanide."=39";?>">39</a></li>
+
+                            <li class="blue6"><a href="<?php echo $cyanide."=40";?>">40</a></li>
+                            <li class="cyan6"><a href="<?php echo $cyanide."=41";?>">41</a></li>
+                            <li class="green6"><a href="<?php echo $cyanide."=42";?>">42</a></li>
+                            <li class="yellow6"><a href="<?php echo $cyanide."=43";?>">43</a></li>
+                            <li class="red6"><a href="<?php echo $cyanide."=44";?>">44</a></li>
+                            <li class="magenta6"><a href="<?php echo $cyanide."=45";?>">45</a></li>
+                            <li class="purple6"><a href="<?php echo $cyanide."=46";?>">46</a></li>
+                            <li class="grey6"><a href="<?php echo $cyanide."=47";?>">47</a></li>
+
+                            <li class="blue7"><a href="<?php echo $cyanide."=48";?>">48</a></li>
+                            <li class="cyan7"><a href="<?php echo $cyanide."=49";?>">49</a></li>
+                            <li class="green7"><a href="<?php echo $cyanide."=50";?>">50</a></li>
+                            <li class="yellow7"><a href="<?php echo $cyanide."=51";?>">51</a></li>
+                            <li class="red7"><a href="<?php echo $cyanide."=52";?>">52</a></li>
+                            <li class="magenta7"><a href="<?php echo $cyanide."=53";?>">53</a></li>
+                            <li class="purple7"><a href="<?php echo $cyanide."=54";?>">54</a></li>
+                            <li class="grey7"><a href="<?php echo $cyanide."=55";?>">55</a></li>
+                    </div> 
+                    </ul>
+                </li>
+
+                <?php } ?>
             </ul>
         </li>
         <?php
@@ -578,7 +738,6 @@ private function _menu($ALLOW_EDIT, $DETAILED)
         ?>
     </ul>
     <br><br>
-    
     <?php
 }
 
