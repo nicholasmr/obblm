@@ -126,17 +126,7 @@ $T_LOCAL_RINGS = array(
     });
 </script>
     
-<b>OBBLM access levels</b><br>
-The user security system is divided into global and local access levels.<br>
-Global access levels are used to tell site administrators apart from <i>regular coach types</i>.<br>
-Local access levels are used to map per-coach access rights in leagues for <i>regular coach types</i>.<br>
-Local access levels are
-<ul>
-    <li>Regular coaches: May manage own teams and submit match reports in which own teams play.</li>
-    <li>League commissioners: Same as <i>regular coaches</i>, but may also schedule matches, view the site log, post messages on the front page board and create new coaches (in the leagues that the coach commissions).</li>
-</ul>
-
-Coaches with global access rights are league commissioners in <i>all</i> leagues and have access to otherwise protected administrator tools.
+<?php echo "<b><a href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br>"; ?>
 
 <div class="boxCommon">
     <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">

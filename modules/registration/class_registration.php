@@ -301,13 +301,13 @@ class Registration implements ModuleInterface
         $form = "
         <form method='POST' action='handler.php?type=registration'>
             <div class='boxCommon'>
-                <div class='boxTitle3'>
+                <div class='boxTitle".T_HTMLBOX_COACH."'>
                     Register
                 </div>
                 <div class='boxBody'>
-                    Username :<br> <input type='text' name='new_name' size='20' maxlength='50'><br><br>
-                    eMail :<br> <input type='text' name='new_mail' size='20' maxlength='129'><br><br>
-                    Password :<br> <input type='password' name='new_passwd' size='20' maxlength='50'><br><br>
+                    Username<br> <input type='text' name='new_name' size='20' maxlength='50'><br><br>
+                    Email<br> <input type='text' name='new_mail' size='20' maxlength='129'><br><br>
+                    Password<br> <input type='password' name='new_passwd' size='20' maxlength='50'><br><br>
                     *Admin activation is required.
                     <br><br>
                     <input type='submit' name='button' value='Create user'>
@@ -538,6 +538,7 @@ class Registration implements ModuleInterface
             </div>
         </form>
         ";
+
 
         return $form;
 

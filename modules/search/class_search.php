@@ -28,12 +28,17 @@ public static function main($argv) # argv = argument vector (array).
         });
     </script>
     
-    <?php echo $lng->getTrn('search_tname', 'Search');?>:<br>
-    <input id='team' type="text" name="team" size="30" maxlength="50"><br>
-    <br>
-    <?php echo $lng->getTrn('search_cname', 'Search');?>:<br>
-    <input id='coach' type="text" name="coach" size="30" maxlength="50"><br>
-    <?php    
+    <div class='boxCommon'>
+        <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('name', 'Search');?></h3>
+        <div class='boxBody'>
+            <?php echo $lng->getTrn('search_tname', 'Search');?><br>
+            <input id='team' type="text" name="team" size="30" maxlength="50"><br>
+            <br>
+            <?php echo $lng->getTrn('search_cname', 'Search');?><br>
+            <input id='coach' type="text" name="coach" size="30" maxlength="50"><br>
+        </div>
+    </div>
+    <?php
 }
 
 public static function getModuleAttributes()

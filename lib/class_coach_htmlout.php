@@ -189,11 +189,15 @@ private function _newTeam($ALLOW_EDIT)
     // Show new team form.
     ?>
     <br><br>
+    <div class='boxCommon'>
+        <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('cc/new_team');?></h3>
+        <div class='boxBody'>
+        
     <form method="POST">
-    <b><?php echo $lng->getTrn('common/name');?>:</b> <br>
+    <?php echo $lng->getTrn('common/name');?><br>
     <input type="text" name="name" size="20" maxlength="50">
     <br><br>
-    <b><?php echo $lng->getTrn('common/race');?>:</b> <br>
+    <?php echo $lng->getTrn('common/race');?><br>
     <select name="rid">
         <?php
         foreach ($raceididx as $rid => $rname)
@@ -201,7 +205,7 @@ private function _newTeam($ALLOW_EDIT)
         ?>
     </select>
     <br><br>
-    <b><?php echo $lng->getTrn('common/league').'/'.$lng->getTrn('common/division');?>:</b> <br>
+    <?php echo $lng->getTrn('common/league').'/'.$lng->getTrn('common/division');?><br>
     <select name="lid_did">
         <?php
         foreach ($leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, $this->coach_id, array(T_NODE_LEAGUE => array('tie_teams' => 'tie_teams'))) as $lid => $lstruct) {
@@ -224,6 +228,8 @@ private function _newTeam($ALLOW_EDIT)
     <input type='hidden' name='type' value='newteam'>
     <input type="submit" name="new_team" value="<?php echo $lng->getTrn('common/create');?>" <?php echo (count($leagues) == 0) ? 'DISABLED' : '';?>>
     </form>
+        </div>
+    </div>
     <?php
 }
 
