@@ -823,21 +823,31 @@ WHERE match_id = $this->match_id";
                 $lid = get_alt_col('divisions', 'did', $t['f_did'], 'f_lid');
                 if ($t['type'] == TT_FFA && !$t['locked'] && $coach_lid == $lid && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
             }
-                
-            return "
+            
+            $form = "
                 <!-- The data encoding type, enctype, MUST be specified as below -->
                 <form enctype='multipart/form-data' action='handler.php?type=leegmgr' method='POST'>
                     <!-- MAX_FILE_SIZE must precede the file input field -->
                     <input type='hidden' name='MAX_FILE_SIZE' value='256000' />
                     <!-- Name of input element determines name in $_FILES array -->
-                    Send this file: <input name='userfile' type='file' />
+                    Send this file <input name='userfile' type='file' /><br>
+                    Save in tournament
                     <select name='ffatours'>
                         <optgroup label='Existing FFA'>
                             {$tourlist}
                         </optgroup>
                     </select>
+                    <br><br>
                     <input type='submit' value='Send File' />
                 </form>
+            ";
+            return "
+            <div class='boxCommon'>
+            <h3 class='boxTitle".T_HTMLBOX_MATCH."'>Upload match</h3>
+            <div class='boxBody'>
+            ".$form."
+            </div>
+            </div>
             ";
         }
         else {

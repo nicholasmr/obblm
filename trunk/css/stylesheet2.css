@@ -136,9 +136,6 @@ div.toursNCont       {margin-top:0px;  margin-left:10px;}
  *   Section specific 
  */
 
-/* Login page */
-div.login {padding-top: 20px; text-align: center;}
-
 /* Main page */
 div.main_head       {clear: both; padding-left: 20px; padding-top: 20px; padding-bottom: 5px; font-size: 18px; background-color: inherit;}
 div.main_foot       {clear: both; font-size: 10px; padding: 30px; padding-top: 20px; background-color: inherit;}
