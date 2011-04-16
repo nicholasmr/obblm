@@ -268,7 +268,9 @@ class Coach
     }
 
     public function setName($name) {
-        if (!isset($name) || empty($name) || get_alt_col('coaches', 'name', $name, 'coach_id')) {return false;} // Don't allow duplicates.
+        if (!isset($name) || empty($name)) {return false;}
+        $result = mysql_query("SELECT coach_id FROM coaches WHERE name = BINARY('".mysql_real_escape_string($name)."')");
+        if ($result && mysql_num_rows($result) > 0) {return false;} // Duplicates not allowed.
         $query = "UPDATE coaches SET name = '".mysql_real_escape_string($name)."' WHERE coach_id = $this->coach_id";
         return (mysql_query($query) && ($this->name = $name) && SQLTriggers::run(T_SQLTRIG_COACH_UPDATE_CHILD_RELS, array('id' => $this->coach_id, 'obj' => $this)));
     }
