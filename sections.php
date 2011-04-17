@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -349,12 +349,13 @@ function sec_main() {
                         }
                         ?>
                     </table>
+                    <?php
+                    if ($box['infocus'] && $box['type'] == T_NODE_TOURNAMENT) {
+                        echo "<hr>";
+                        _infocus($teams);
+                    }                    
+                    ?>
                 </div>
-                <?php
-                if (Module::isRegistered('InFocus')) {
-                    Module::run('InFocus', array('renderHTML', $teams));
-                }
-                ?>
             </div>
             <?php
             MTS('Standings table generated');
@@ -442,6 +443,157 @@ function sec_main() {
         Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either (R), TM and/or (C) Games Workshop Ltd 2000-2006, variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
     </div>
     <?php
+}
+
+$_INFOCUSCNT = 1; # HTML ID for _infocus()
+function _infocus($teams) {
+    
+    //Create a new array of teams to display
+    $ids = array();
+    foreach ($teams as $team) {
+        if (!$team['retired']) {
+            $ids[] = $team['team_id'];
+        }
+    }
+
+    if (empty($teams)) {
+        return;
+    }
+
+    global $lng, $_INFOCUSCNT;
+
+    //Select random team
+    $teamKey = array_rand($ids);
+    $teamId = $ids[$teamKey];
+    $team = new Team($teamId);
+    $teamLink =  "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$teamId,false,false)."'>$team->name</a>";
+
+    //Create $logo_html
+    $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $team->team_id);
+    $logo_html = "<img border='0px' height='60' alt='Team picture' src='".$img->getPath($team->f_race_id)."'>";
+
+    //Create $starPlayers array used to display the three most experienced players on the team
+    $starPlayers = array();
+    foreach ($team->getPlayers() as $p) {
+        if ($p->is_dead || $p->is_sold) {
+            continue;
+        }
+        $starPlayers[] = array('name' => preg_replace('/\s/', '&nbsp;', $p->name), 'spp' => $p->mv_spp);
+    }
+
+    //Sort the array
+    usort($starPlayers, create_function('$objA,$objB', 'return ($objA["spp"] < $objB["spp"]) ? +1 : -1;'));
+    $starPlayers = array_slice($starPlayers, 0, 3); # Show only 3 Star players
+
+    ?>
+    <style type="text/css">
+        /* InFocus Mod */
+        #inFocusBox<?php echo $_INFOCUSCNT;?> .leftContentTd{
+            font-weight: bold;
+            padding-right: 1em;
+        }
+
+        #inFocusBox<?php echo $_INFOCUSCNT;?> .teamLogo {
+            float: left;
+            margin: 0 36px 0 20px;
+        }
+
+        #inFocusBox<?php echo $_INFOCUSCNT;?> .teamName {
+            font-weight: bold;
+        }
+
+        #inFocusContent<?php echo $_INFOCUSCNT;?> {
+            position:relative;
+            left: 160px;
+            height: 80px;
+        }
+
+        #inFocusContent<?php echo $_INFOCUSCNT;?> P {
+            font-weight: bold;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        #inFocusContent<?php echo $_INFOCUSCNT;?> DIV {
+            position:absolute;
+            top:0;
+            left:0;
+            z-index:8;
+        }
+
+        #inFocusContent<?php echo $_INFOCUSCNT;?> DIV.invisible {
+            display: none;
+        }
+
+        #inFocusContent<?php echo $_INFOCUSCNT;?> DIV.inFocus {
+            z-index:10;
+            display: inline;
+        }
+
+        #inFocusContent<?php echo $_INFOCUSCNT;?> DIV.last-inFocus {
+            z-index:9;redeclare compare_spp
+        }
+    </style>
+    <div id="inFocusBox<?php echo $_INFOCUSCNT;?>" >
+        <h3><?php echo $lng->getTrn('main/infocus').': '.$teamLink; ?></h3><br>
+        <div style='clear:both;'>
+            <div class='teamLogo'>
+                <?php echo $logo_html; ?>
+            </div>
+            <div id="inFocusContent<?php echo $_INFOCUSCNT;?>">
+                <div class="inFocus">
+                    <table>
+                        <tr><td class="leftContentTd"><?php echo $lng->getTrn('common/coach'); ?></td><td><?php echo $team->f_cname; ?></td></tr>
+                        <tr><td class="leftContentTd"><?php echo $lng->getTrn('common/race'); ?></td><td><?php echo $team->f_rname; ?></td></tr>
+                        <tr><td class="leftContentTd"><?php echo 'TV'; ?></td><td><?php echo (string)($team->tv / 1000); ?>k</td></tr>
+                    </table>
+                </div>
+                <div class="invisible">
+                    <p><?php echo $lng->getTrn('common/stars'); ?></p>
+                    <table>
+                        <?php
+                        foreach($starPlayers as $player) {
+                            echo "<tr><td class='leftContentTd'>".$player['name']."</td><td>".$player['spp']." spp</td></tr>";
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    /* 
+     * This script creates a slideshow of all <div>s in the "inFocusContent" div
+     * 
+     * Based on an example by Jon Raasch:
+     *
+     * http://jonraasch.com/blog/a-simple-jquery-slideshow
+     */
+    function nextContent<?php echo $_INFOCUSCNT;?>() {
+        var $currentDiv = $('#inFocusContent<?php echo $_INFOCUSCNT;?> DIV.inFocus');
+        var $nextDiv = $currentDiv.next().length ? $currentDiv.next() : $('#inFocusContent<?php echo $_INFOCUSCNT;?> DIV:first');
+        $currentDiv.addClass('last-inFocus');
+
+        //Fade current out
+        $currentDiv.animate({opacity: 0.0}, 500, function() {
+            $currentDiv.removeClass('inFocus last-inFocus');
+            $currentDiv.addClass('invisible');
+        });
+
+        //Fade next in
+        $nextDiv.css({opacity: 0.0})
+            .addClass('inFocus')
+            .animate({opacity: 1.0}, 500, function() {
+            });
+    }
+
+    $(function() {
+        setInterval( "nextContent<?php echo $_INFOCUSCNT;?>()", 5000 );
+    });
+    </script>
+    
+    <?php
+    $_INFOCUSCNT++;
 }
 
 function sec_teamlist() {
