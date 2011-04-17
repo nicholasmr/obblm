@@ -15,7 +15,7 @@ $settings['welcome']       = 'Please replace this line in your local league sett
 $settings['rules']         = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
 $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the division nodes in the tournament lists section will automatically be folded up if all child tournaments in that division are marked as finished.
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament'); // Default is array('league', 'division', 'tournament'). In the section tournament lists these nodes will be hidden if their contents (children) are finished. Example: If 'division' is chosen here, and all tours in a given division are finished, then the division entry will be hidden.
-$settings['enabled_coach_scheduling'] = true; // Default is true. If true this enables regular coaches to be able to schedule matches between their own teams and others teams in existing Free-For-All tournaments of this league.
+$settings['coach_schedule_tours'] = array(); // List of tournament IDs of FFA tours (from this league), in which regular coaches are able to schedule matches between their OWN teams and others teams.
 
 /* Standings pages */
 
@@ -46,7 +46,7 @@ $settings['fp_standings'] = array(
         'box_ID' => 1,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
-        'infocus' => false; # If true AND type is equal to "tournament", a random team from the tournament will be selected and its top players displayed.
+        'infocus' => false, # If true AND type is equal to "tournament", a random team from the tournament will be selected and its top players displayed.
         /* 
             The house ranking system (HRS) NUMBER to sort the table against. 
             Note, this is ignored for "type = tournament", since tours have an assigned HRS.

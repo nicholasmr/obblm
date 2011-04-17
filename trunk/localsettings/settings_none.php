@@ -12,7 +12,7 @@ $settings['welcome']       = 'Could not find the local league settings file for 
 $settings['rules']         = 'No settings file exists for the selected league';
 $settings['tourlist_foldup_fin_divs'] = false;
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament');
-$settings['enabled_coach_scheduling'] = false;
+$settings['coach_schedule_tours'] = array();
 
 $settings['standings']['length_players'] = 30;
 $settings['standings']['length_teams']   = 30;
