@@ -40,7 +40,7 @@ Module::register(array(
 
 Module::register(array(
     'class'         => 'PDFroster', 
-    'filesRunTime'  => array('pdf/settings.php', 'pdf/bb_pdf_class.php'),
+    'filesRunTime'  => array('pdf/bb_pdf_class.php'),
     'filesLoadTime' => array('pdf/pdf_roster.php')
 ));
 
@@ -83,19 +83,19 @@ Module::register(array(
 Module::register(array(
     'class'         => 'UPLOAD_BOTOCS', 
     'filesRunTime'  => array('leegmgr/class_match_botocs.php'),
-    'filesLoadTime' => array('leegmgr/settings.php', 'leegmgr/class_upload_botocs.php')
+    'filesLoadTime' => array('leegmgr/class_upload_botocs.php')
 ));
 
 Module::register(array(
     'class'         => 'XML_BOTOCS', 
     'filesRunTime'  => array(),
-    'filesLoadTime' => array('leegmgr/settings.php', 'leegmgr/class_xml_botocs.php')
+    'filesLoadTime' => array('leegmgr/class_xml_botocs.php')
 ));
 
 Module::register(array(
     'class'         => 'Registration', 
     'filesRunTime'  => array(),
-    'filesLoadTime' => array('registration/settings.php', 'registration/class_registration.php')
+    'filesLoadTime' => array('registration/class_registration.php')
 ));
 
 Module::register(array(

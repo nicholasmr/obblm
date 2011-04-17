@@ -26,4 +26,35 @@ $settings['modules_enabled'] = array(
  * Module settings
  *****************/
 
+/*
+    Registration
+*/
+
+$settings['allow_registration']      = true;                   // Default is true.
+$settings['registration_webmaster'] = "webmaster@example.com"; // Default is "webmaster@example.com".
+$settings['lang'] = 'en-GB'; // Default language for registred user.
+
+/* 
+    Leegmgr
+*/
+
+$settings['leegmgr_enabled']  = true;   // Enables upload of BOTOCS LRB5 application match reports.
+/* 
+    Uploads report to a scheduled match.  The options are [false|true|"strict"]
+    - false does not check for scheduled matches
+    - true checks for scheduled matches and will create a match if not found
+    - "strict" will allow only scheduled matches to be used
+*/
+$settings['leegmgr_schedule'] = true;
+$settings['leegmgr_extrastats'] = true; // Enables the reporting of extra stats and the use of the alternate XSD file.
+$settings['leegmgr_cyanide'] = true; // Setting to false here is preferred as this can be set to true in each specific league.
+$settings['leegmgr_cyanide_edition'] = 2; // 1 = the first Cyanide edition, 2 = Legendary edition.
+$settings['leegmgr_botocs'] = true; // Setting to false here is preferred as this can be set to true in each specific league.
+
+/* 
+    PDF roster & PDF match report
+*/
+
+$settings['enable_pdf_logos'] = true;
+
 ?>

@@ -893,9 +893,11 @@ public static function userSched() {
                         if ($divisions[$tr['f_did']]['f_lid'] != $sel_lid) {
                             continue;
                         }
-                        if ($tr['type'] == TT_FFA && in_array($trid, $settings['coach_schedule_tours'])) {
-                            echo "<option value='$trid'>".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
+                        if ($tr['type'] == TT_FFA) {
                             $TOURS_CNT++;
+                            if (in_array($trid, $settings['coach_schedule_tours'])) {
+                                echo "<option value='$trid'>".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
+                            }
                         }
                     }
                     ?>
