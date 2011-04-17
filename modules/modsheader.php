@@ -117,18 +117,6 @@ Module::register(array(
 ));
 
 Module::register(array(
-    'class'         => 'UserScheduledGames',
-    'filesRunTime'  => array(),
-    'filesLoadTime' => array('usrsched/settings.php', 'usrsched/class_usrsched.php')
-));
-
-Module::register(array(
-    'class'         => 'InFocus', 
-    'filesRunTime'  => array(),
-    'filesLoadTime' => array('infocus/class_infocus.php')
-));
-
-Module::register(array(
     'class'         => 'PDFMatchReport',
     'filesRunTime'  => array(),
     'filesLoadTime' => array('pdfmatchreport/class_pdfmatchreport.php')

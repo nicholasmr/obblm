@@ -84,6 +84,7 @@ define('T_HTMLBOX_MATCH', 5);
 
 // General OBBLM routines and data structures.
 require_once('settings.php');
+require_once('settings_modules.php');
 require_once('lib/game_data_lrb6.php'); # LRB6
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
