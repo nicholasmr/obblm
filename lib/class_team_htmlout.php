@@ -275,7 +275,6 @@ private function _handleActions($ALLOW_EDIT)
                     Module::run('LogSubSys', array('createEntry', T_LOG_GOLDBANK, $coach->coach_id, "Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas"));
                 }
                 break;
-            case 'chown':             status($team->setOwnership((int) $_POST['cid'])); break;
             case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
             case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
             
@@ -1330,7 +1329,6 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         'unsell_player'     => $lng->getTrn($base.'/box_admin/unsell_player'),
                         'unbuy_goods'       => $lng->getTrn($base.'/box_admin/unbuy_goods'),
                         'bank'              => $lng->getTrn($base.'/box_admin/bank'),
-                        'chown'             => $lng->getTrn($base.'/box_admin/chown'),
                         'spp'               => $lng->getTrn($base.'/box_admin/spp'),
                         'dval'              => $lng->getTrn($base.'/box_admin/dval'),
                         'extra_skills'      => $lng->getTrn($base.'/box_admin/extra_skills'),
@@ -1454,26 +1452,6 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 <?php
                                 break;
 
-                            /***************
-                             * Change team ownership
-                             **************/
-                                
-                            case 'chown':
-                                echo $lng->getTrn('profile/team/box_admin/desc/chown');
-                                ?>
-                                <hr><br>
-                                New owner:<br>
-                                <select name="cid">
-                                <?php
-                                foreach (Coach::getCoaches() as $c) {
-                                    echo "<option value='$c->coach_id'>$c->name</option>\n";
-                                }
-                                ?>
-                                </select>
-                                <input type="hidden" name="type" value="chown">
-                                <?php
-                                break;
-                                
                             /***************
                              * Manage extra SPP
                              **************/
