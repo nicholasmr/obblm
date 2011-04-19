@@ -974,8 +974,10 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                         $cpy .= $a['suffix'];
                     if (array_key_exists('color', $a) && $a['color'])
                         $cpy = "<font color='$a[color]'>".$cpy."</font>";
-                    if (array_key_exists('href', $a) && $a['href'])
-                        $cpy  = "<a href='" . $a['href']['link'] . ((isset($a['href']['field'])) ? '&amp;'.$a['href']['field'].'='.$o->{$a['href']['value']} : '') . "'>". $cpy . "</a>";
+                    if (array_key_exists('href', $a) && $a['href']) {
+                        $href = (isset($o->href)) ? $o->href : $a['href'];
+                        $cpy  = "<a href='$href[link]".((isset($href['field'])) ? "&amp;$href[field]=".$o->{$href['value']} : '')."'>".$cpy."</a>";
+                    }
 
                     if (isset($o->{"${f}_color"})) {
                         echo "<td style='background-color: ".$o->{"${f}_color"}."; color: black;'>".$cpy."</td>";
@@ -1005,6 +1007,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
         <?php
         }
     echo "</table>\n";
+
 }
 
 public static function generateEStable($obj)

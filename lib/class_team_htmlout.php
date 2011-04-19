@@ -434,7 +434,8 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             $s->player_id = $s->star_id;
             $s->nr = 0;
             $s->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$s->icon' alt='player avatar'></td><td><i>Star&nbsp;player</i></td></tr></table>";
-            $s->skills = '<small>'.implode(', ', skillsTrans($s->skills)).'</small>';
+            $s->setSkills(true);
+            $s->skills = '<small>'.$s->skills.'</small>';
             $s->injs = '';
             $s->value = 0;
             foreach ($s->getStats(T_OBJ_TEAM,$team->team_id) as $k => $v) {
@@ -442,6 +443,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             }
             $s->is_dead = $s->is_sold = $s->is_mng = $s->is_journeyman = false;
             $s->HTMLbcolor = COLOR_HTML_STARMERC;
+            $s->href = array('link' => urlcompile(T_URL_PROFILE,T_OBJ_STAR,false,false,false), 'field' => 'obj_id', 'value' => 'player_id'); # Like in below $fields def, but with T_OBJ_STAR instead.
             array_push($stars, $s);
         }
         $players = array_merge($players, $stars);
