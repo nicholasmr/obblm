@@ -92,10 +92,11 @@ class Team
         return true;
     }
 
-    public function setOwnership($cid) {
-        $query = "UPDATE teams SET owned_by_coach_id = $cid WHERE team_id = $this->team_id";
-        return mysql_query($query) && ($this->owned_by_coach_id = $cid) && SQLTriggers::run(T_SQLTRIG_TEAM_UPDATE_CHILD_RELS, array('id' => $this->team_id, 'obj' => $this));
-    }
+// No longer supported ! See http://code.google.com/p/obblm/issues/detail?id=463#c5
+#    public function setOwnership($cid) {
+#        $query = "UPDATE teams SET owned_by_coach_id = $cid WHERE team_id = $this->team_id";
+#        return mysql_query($query) && ($this->owned_by_coach_id = $cid) && SQLTriggers::run(T_SQLTRIG_TEAM_UPDATE_CHILD_RELS, array('id' => $this->team_id, 'obj' => $this));
+#    }
     
     public function getPlayers() {
         $this->_players = array();
