@@ -350,7 +350,7 @@ function sec_main() {
                         ?>
                     </table>
                     <?php
-                    if ($box['infocus'] && $box['type'] == T_NODE_TOURNAMENT) {
+                    if ($box['infocus']) {
                         echo "<hr>";
                         _infocus($teams);
                     }                    
