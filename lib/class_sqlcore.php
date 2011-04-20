@@ -81,21 +81,23 @@ public static function mkHRS(array $HRSs)
         SELECT tours.rs INTO rs FROM tours WHERE tour_id = trid;
         IF rs IS NULL THEN
             RETURN NULL;
-        END IF;
-        
-        CASE rs
-    ';
-    foreach ($HRSs as $nr => $rs) {
-        if (empty($rs['points'])) {
-            continue;
+        END IF;';
+        if (!empty($HRSs)) {
+            $query .= '
+            CASE rs
+                ';
+                foreach ($HRSs as $nr => $rs) {
+                    if (empty($rs['points'])) {
+                        continue;
+                    }
+                    $pts = preg_replace('/\[(\w*)\]/', "IFNULL(SUM(\\1),0)", $rs['points']);
+                    $query .= "WHEN $nr THEN RETURN (SELECT $pts FROM mv_teams WHERE f_tid = tid AND f_trid = trid);\n";
+                }
+                $query .= '
+                ELSE RETURN 0;
+            END CASE;';
         }
-        $pts = preg_replace('/\[(\w*)\]/', "IFNULL(SUM(\\1),0)", $rs['points']);
-        $query .= "WHEN $nr THEN RETURN (SELECT $pts FROM mv_teams WHERE f_tid = tid AND f_trid = trid);\n";
-    }
-    $query .= '
-            ELSE RETURN 0;
-        END CASE;
-        
+        $query .= '
         RETURN NULL;
     END';
     
@@ -1217,7 +1219,7 @@ public static function installProcsAndFuncs($install = true)
     }
 
     foreach ($routines as $r) {
-        $status &= (mysql_query($r) or die("<b><font color='red'>FATAL ERROR</font></b>: One or more OBBLM MySQL functions/procedures could not be created. This error is <b>most likely</b> due to your database user NOT having the \"CREATE ROUTINE\" privilege. Some web hosts are willing to help you work around this problem by running this install/upgrade script for you. If not, you will have to find another web host allowing \"CREATE ROUTINE\".<br>\n<i>MySQL error (errno ".mysql_errno()."): ". mysql_error().'</i>'));
+        $status &= (mysql_query($r) or die("<br><b><font color='red'>FATAL ERROR</font></b>: One or more OBBLM MySQL functions/procedures could not be created. This error is <b>most likely</b> due to your database user NOT having the \"CREATE ROUTINE\" privilege. Some web hosts are willing to help you work around this problem by running this install/upgrade script for you. If not, you will have to find another web host allowing \"CREATE ROUTINE\".<br><br>\n<b>MySQL error (errno ".mysql_errno()."):</b><br>". mysql_error().'<br><br><b>The function/procedure SQL code that failed was:</b><br>'.$r.'<br><br><b>Need help?</b> Try seeking help at the <a href="http://code.google.com/p/obblm/issues/list">OBBLM developers site</a>'));
     }
     
     return $status;
