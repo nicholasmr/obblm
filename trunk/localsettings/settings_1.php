@@ -46,7 +46,7 @@ $settings['fp_standings'] = array(
         'box_ID' => 1,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
-        'infocus' => false, # If true AND type is equal to "tournament", a random team from the tournament will be selected and its top players displayed.
+        'infocus' => false, # If true a random team from the standings will be selected and its top players displayed.
         /* 
             The house ranking system (HRS) NUMBER to sort the table against. 
             Note, this is ignored for "type = tournament", since tours have an assigned HRS.
