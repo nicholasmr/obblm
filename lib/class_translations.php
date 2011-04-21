@@ -52,7 +52,7 @@ public function getTrn($key, $doc = false) {
         $doc = self::main;
     }
     if (!in_array($doc, array_keys($this->docs))) {
-        fatal("The translation document '$doc' does not exist. The available documents are: ".implode(', ', array_keys($this->docs)));
+        fatal("Failed to look up key '$key' in the translation document '$doc'. $doc is not loaded/exists. The available documents are: ".implode(', ', array_keys($this->docs)));
     }
 
     $xpath = new DOMXpath($this->docs[$doc]);
