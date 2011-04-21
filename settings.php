@@ -24,29 +24,6 @@ $settings['hide_ES_extensions'] = false;  // Default is false. Hides ES (Extra S
  * Global rules
  *****************/
 
-/*
-    The default OBBLM rule set is the rule set provided by the LRB6.
-    Please use the boolean values "true" and "false" wherever default values are boolean.
-*/
-
-$rules['initial_treasury']      = 1000000;  // Default is 1000000.
-$rules['max_team_players']      = 16;       // Default is 16.
-$rules['static_rerolls_prices'] = false;    // Default is "false". "true" forces re-roll prices to their un-doubled values.
-$rules['player_refund']         = 0;        // Player sell value percentage. Default is 0 = 0%, 0.5 = 50%, and so on.
-$rules['journeymen_limit']      = 11;       // Until a team can field this number of players, it may fill team positions with journeymen.
-$rules['post_game_ff']          = false;    // Default is false. Allows teams to buy and drop fan factor even though their first game has been played.
-
-$rules['initial_rerolls']       = 0;        // Default is 0.
-$rules['initial_fan_factor']    = 0;        // Default is 0.
-$rules['initial_ass_coaches']   = 0;        // Default is 0.
-$rules['initial_cheerleaders']  = 0;        // Default is 0.
-
-// For the below limits, the following applies: -1 = unlimited. 0 = disabled.
-$rules['max_rerolls']           = -1;       // Default is -1.
-$rules['max_fan_factor']        = 9;        // Default is 9.
-$rules['max_ass_coaches']       = -1;       // Default is -1.
-$rules['max_cheerleaders']      = -1;       // Default is -1.
-
 /* 
     Whenever the below cost values are changed you must run the 
     "Re-install DB back-end procedures and functions" under "DB maintenance" from the "Admin -> Core panel".
@@ -65,7 +42,6 @@ $rules['value_reduction_ma'] = 0; // Default is 0.
 $rules['value_reduction_av'] = 0; // Default is 0.
 $rules['value_reduction_ag'] = 0; // Default is 0.
 $rules['value_reduction_st'] = 0; // Default is 0.
-
 
 /*****************
  * House ranking systems

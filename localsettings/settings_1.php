@@ -17,6 +17,31 @@ $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the 
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament'); // Default is array('league', 'division', 'tournament'). In the section tournament lists these nodes will be hidden if their contents (children) are finished. Example: If 'division' is chosen here, and all tours in a given division are finished, then the division entry will be hidden.
 $settings['coach_schedule_tours'] = array(); // List of tournament IDs of FFA tours (from this league), in which regular coaches are able to schedule matches between their OWN teams and others teams.
 
+/* Rules */
+
+/*
+    The default OBBLM rule set is the rule set provided by the LRB6.
+    Please use the boolean values "true" and "false" wherever default values are boolean.
+*/
+
+$rules['initial_treasury']      = 1000000;  // Default is 1000000.
+$rules['max_team_players']      = 16;       // Default is 16.
+$rules['static_rerolls_prices'] = false;    // Default is "false". "true" forces re-roll prices to their un-doubled values.
+$rules['player_refund']         = 0;        // Player sell value percentage. Default is 0 = 0%, 0.5 = 50%, and so on.
+$rules['journeymen_limit']      = 11;       // Until a team can field this number of players, it may fill team positions with journeymen.
+$rules['post_game_ff']          = false;    // Default is false. Allows teams to buy and drop fan factor even though their first game has been played.
+
+$rules['initial_rerolls']       = 0;        // Default is 0.
+$rules['initial_fan_factor']    = 0;        // Default is 0.
+$rules['initial_ass_coaches']   = 0;        // Default is 0.
+$rules['initial_cheerleaders']  = 0;        // Default is 0.
+
+// For the below limits, the following applies: -1 = unlimited. 0 = disabled.
+$rules['max_rerolls']           = -1;       // Default is -1.
+$rules['max_fan_factor']        = 9;        // Default is 9.
+$rules['max_ass_coaches']       = -1;       // Default is -1.
+$rules['max_cheerleaders']      = -1;       // Default is -1.
+
 /* Standings pages */
 
 $settings['standings']['length_players'] = 30;  // Number of entries on the general players standings table.

@@ -77,11 +77,23 @@ class Team
         $this->imported = ($this->imported == 1); // Make boolean.
         $this->value = $this->tv;
         
-        global $rules;
-        $this->mayBuyFF = ($rules['post_game_ff'] || $this->mv_played == 0 || $this->mv_played == $this->played_0);
-        $this->doubleRRprice = (!$rules['static_rerolls_prices'] && $this->mv_played > 0 && $this->mv_played != $this->played_0);
-
         return true;
+    }
+
+    public function doubleRRprice() 
+    {
+        global $rules;
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $this->f_lid)); // Load correct $rules for league.
+        $this->doubleRRprice = (!$rules['static_rerolls_prices'] && $this->mv_played > 0 && $this->mv_played != $this->played_0);
+        return $this->doubleRRprice;
+    }
+
+    public function mayBuyFF()
+    {
+        global $rules;
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $this->f_lid)); // Load correct $rules for league.
+        $this->mayBuyFF = ($rules['post_game_ff'] || $this->mv_played == 0 || $this->mv_played == $this->played_0);
+        return $this->mayBuyFF;
     }
 
     public function setStats($node, $node_id, $set_avg = false)
@@ -139,8 +151,12 @@ class Team
          *  Setting $use_dynamic_RR_prices forces non-doubled RR prices.
          **/
 
+        // Setup correct $rules for when calling $race->getGoods() which uses the $rules['max_*'] entries.
+        global $rules;
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $this->f_lid)); // Load correct $rules for league.
+
         $race = new Race($this->f_race_id);
-        return $race->getGoods($use_dynamic_RR_prices ? $this->doubleRRprice : false);
+        return $race->getGoods($use_dynamic_RR_prices ? $this->doubleRRprice() : false);
     }
 
     public function delete() {
@@ -202,7 +218,7 @@ class Team
             return false;
 
         // Is post game FF purchaseable?
-        if ($thing == 'ff_bought' && !$this->mayBuyFF)
+        if ($thing == 'ff_bought' && !$this->mayBuyFF())
             return false;
 
         // Enough money?
@@ -266,7 +282,7 @@ class Team
         $price = null;
 
         // May drop post FF?
-        if ($thing == 'ff_bought' && !$this->mayBuyFF)
+        if ($thing == 'ff_bought' && !$this->mayBuyFF())
             return false;
 
         if (array_key_exists($thing, $goods))
@@ -329,6 +345,8 @@ class Team
 
         global $rules;
 
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $this->f_lid)); // Load correct $rules for league.
+
         $query = "SELECT (COUNT(*) >= ".$rules['max_team_players'].") FROM players
             WHERE owned_by_team_id = $this->team_id AND date_sold IS NULL AND status NOT IN (".DEAD.")";
         $result = mysql_query($query);
@@ -370,6 +388,7 @@ class Team
     
     public function isJMLimitReached() {
         global $rules;
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $this->f_lid)); // Load correct $rules for league.
         return ($rules['journeymen_limit'] <= (int) SQLFetchField("SELECT COUNT(*) FROM players WHERE owned_by_team_id = $this->team_id AND date_sold IS NULL AND date_died IS NULL AND status = ".NONE));
     }
 
