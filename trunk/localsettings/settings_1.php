@@ -24,13 +24,13 @@ $settings['coach_schedule_tours'] = array(); // List of tournament IDs of FFA to
     Please use the boolean values "true" and "false" wherever default values are boolean.
 */
 
-$rules['initial_treasury']      = 1000000;  // Default is 1000000.
 $rules['max_team_players']      = 16;       // Default is 16.
 $rules['static_rerolls_prices'] = false;    // Default is "false". "true" forces re-roll prices to their un-doubled values.
 $rules['player_refund']         = 0;        // Player sell value percentage. Default is 0 = 0%, 0.5 = 50%, and so on.
 $rules['journeymen_limit']      = 11;       // Until a team can field this number of players, it may fill team positions with journeymen.
 $rules['post_game_ff']          = false;    // Default is false. Allows teams to buy and drop fan factor even though their first game has been played.
 
+$rules['initial_treasury']      = 1000000;  // Default is 1000000.
 $rules['initial_rerolls']       = 0;        // Default is 0.
 $rules['initial_fan_factor']    = 0;        // Default is 0.
 $rules['initial_ass_coaches']   = 0;        // Default is 0.
