@@ -30,7 +30,7 @@ $settings['modules_enabled'] = array(
     Registration
 */
 
-$settings['allow_registration']      = true;                   // Default is true.
+$settings['allow_registration'] = true; // Default is true.
 $settings['registration_webmaster'] = "webmaster@example.com"; // Default is "webmaster@example.com".
 $settings['lang'] = 'en-GB'; // Default language for registred user.
 
@@ -38,7 +38,7 @@ $settings['lang'] = 'en-GB'; // Default language for registred user.
     Leegmgr
 */
 
-$settings['leegmgr_enabled']  = true;   // Enables upload of BOTOCS LRB5 application match reports.
+$settings['leegmgr_enabled'] = true; // Enables upload of BOTOCS LRB5 application match reports.
 /* 
     Uploads report to a scheduled match.  The options are [false|true|"strict"]
     - false does not check for scheduled matches
