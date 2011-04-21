@@ -369,7 +369,7 @@ private function _CCprofile($ALLOW_EDIT)
                     <?php echo $lng->getTrn('cc/new');?>:
                     <select name='new_theme'>
                         <?php
-                        foreach (array(1 => 'Classic', 2 => 'Clean') as $theme => $desc) {
+                        foreach (array(1 => 'Classic') as $theme => $desc) {
                             echo "<option value='$theme'>$theme: $desc</option>\n";
                         }
                         ?>

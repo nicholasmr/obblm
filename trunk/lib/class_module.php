@@ -52,10 +52,9 @@ class Module
     
     public static function register(array $struct)
     {
-        // Disabled? Don't load, return.
+        // Disabled? Don't load, return. If no entry exists then enable! Don't change this behaviour!
         global $settings;
-        if (isset($settings['modules_enabled'][$struct['class']]) && !$settings['modules_enabled'][$struct['class']] 
-        || !isset($settings['modules_enabled'][$struct['class']])) { 
+        if (isset($settings['modules_enabled'][$struct['class']]) && !$settings['modules_enabled'][$struct['class']]) { 
             return;
         }
         
