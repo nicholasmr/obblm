@@ -54,7 +54,8 @@ class Module
     {
         // Disabled? Don't load, return.
         global $settings;
-        if (isset($settings['modules_enabled'][$struct['class']]) && !$settings['modules_enabled'][$struct['class']]) { 
+        if (isset($settings['modules_enabled'][$struct['class']]) && !$settings['modules_enabled'][$struct['class']] 
+        || !isset($settings['modules_enabled'][$struct['class']])) { 
             return;
         }
         
