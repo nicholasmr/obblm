@@ -14,6 +14,23 @@ $settings['tourlist_foldup_fin_divs'] = false;
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament');
 $settings['coach_schedule_tours'] = array();
 
+$rules['max_team_players']      = 16;
+$rules['static_rerolls_prices'] = false;
+$rules['player_refund']         = 0;
+$rules['journeymen_limit']      = 11;
+$rules['post_game_ff']          = false;
+
+$rules['initial_treasury']      = 1000000;
+$rules['initial_rerolls']       = 0;
+$rules['initial_fan_factor']    = 0;
+$rules['initial_ass_coaches']   = 0;
+$rules['initial_cheerleaders']  = 0;
+
+$rules['max_rerolls']           = -1;
+$rules['max_fan_factor']        = 9;
+$rules['max_ass_coaches']       = -1;
+$rules['max_cheerleaders']      = -1;
+
 $settings['standings']['length_players'] = 30;
 $settings['standings']['length_teams']   = 30;
 $settings['standings']['length_coaches'] = 30;
