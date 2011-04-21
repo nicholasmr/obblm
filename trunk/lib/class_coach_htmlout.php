@@ -168,6 +168,7 @@ private function _newTeam($ALLOW_EDIT)
             $_POST['name'] = stripslashes($_POST['name']);
         }
         @list($lid,$did) = explode(',',$_POST['lid_did']);
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
         list($exitStatus, $tid) = Team::create(array(
             'name' => $_POST['name'], 
             'owned_by_coach_id' => (int) $this->coach_id, 

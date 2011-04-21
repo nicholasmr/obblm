@@ -145,8 +145,9 @@ public static function standings($node = false, $node_id = false)
 
 public static function profile($tid)
 {
-    global $coach, $settings;
+    global $coach, $settings, $rules;
     $t = new self($tid);
+    setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $t->f_lid)); // Load correct $rules for league.
     
     /* Argument(s) passed to generating functions. */
     $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $tid)) && !$t->is_retired); # Show team action boxes?
@@ -1225,7 +1226,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <?php
                         $DISABLE = true;
                         foreach ($team->getGoods() as $name => $details) {
-                            if ($name == 'ff_bought' && !$team->mayBuyFF)
+                            if ($name == 'ff_bought' && !$team->mayBuyFF())
                                 continue;
                             if (($team->$name < $details['max'] || $details['max'] == -1) && $team->treasury >= $details['cost']) {
                                 echo "<option value='$name'>" . $details['cost']/1000 . "k | $details[item]</option>\n";
@@ -1251,7 +1252,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <?php
                         $DISABLE = true;
                         foreach ($team->getGoods() as $name => $details) {
-                            if ($name == 'ff_bought' && !$team->mayBuyFF)
+                            if ($name == 'ff_bought' && !$team->mayBuyFF())
                                 continue;
                             if ($team->$name > 0) {
                                 echo "<option value='$name'>$details[item]</option>\n";

@@ -100,8 +100,10 @@ $team_id = $_GET['team_id'];
 if (!get_alt_col('teams', 'team_id', $team_id, 'team_id'))
     fatal("Invalid team ID.");
 
-$team       = new Team($team_id);
-$coach      = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
+$team  = new Team($team_id);
+$coach = isset($_SESSION['logged_in']) ? new Coach($_SESSION['coach_id']) : null;
+
+setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $team->f_lid)); // Load correct $rules for league.
 
 $players = $team->getPlayers();
 

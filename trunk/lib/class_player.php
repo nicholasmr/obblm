@@ -305,6 +305,8 @@ class Player
          **/
     
         global $rules;
+        $lid = get_alt_col('teams', 'team_id̈́', $this->owned_by_team_id, 'f_lid');
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
     
         if ($this->is_sold || $this->is_dead)
             return false;
@@ -330,6 +332,8 @@ class Player
          **/
 
         global $rules;
+        $lid = get_alt_col('teams', 'team_id̈́', $this->owned_by_team_id, 'f_lid');
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
 
         if (!$this->is_sold || $this->is_dead)
             return false;
@@ -764,6 +768,8 @@ class Player
          **/
 
         global $rules, $DEA, $T_ALL_PLAYER_NR;
+        $lid = get_alt_col('teams', 'team_id̈́', $input['team_id'], 'f_lid');
+        setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
 
         // Do these fixes because we can't define class statics using string interpolation for $rules.
         self::$T_CREATE_ERROR_MSGS[self::T_CREATE_ERROR__TEAM_FULL] .= " You have filled all $rules[max_team_players] available positions.";
