@@ -350,7 +350,7 @@ function sec_main() {
                         ?>
                     </table>
                     <?php
-                    if ($box['infocus']) {
+                    if (isset($box['infocus']) && $box['infocus']) {
                         echo "<hr>";
                         _infocus($teams);
                     }                    
