@@ -1,5 +1,11 @@
 <?php
 
+/* 
+    IMPORTANT!
+    Whenever the values og this file are changed you must run the 
+    "Synchronise the PHP-stored BB game data" under "DB maintenance" from the "Admin -> Core panel" menu.
+*/
+
 // Race defs
 define('T_RACE_AMAZON', 0);
 define('T_RACE_CHAOS', 1);
@@ -2070,5 +2076,22 @@ $inducements = array (
         'reduced_cost_races' => array(),
     )
 );
+
+/* 
+    IMPORTANT!
+    Whenever the below values are changed you must run the
+    "Re-install DB back-end procedures and functions" under "DB maintenance" from the "Admin -> Core panel" menu.
+*/
+
+$rules['cost_apothecary']       = 50000;    // Default is 50000.
+$rules['cost_fan_factor']       = 10000;    // Default is 10000.
+$rules['cost_ass_coaches']      = 10000;    // Default is 10000.
+$rules['cost_cheerleaders']     = 10000;    // Default is 10000.
+
+// Whenever a player sustains a stat decrease the players value will be reduced by these amounts.
+$rules['value_reduction_ma'] = 0; // Default is 0.
+$rules['value_reduction_av'] = 0; // Default is 0.
+$rules['value_reduction_ag'] = 0; // Default is 0.
+$rules['value_reduction_st'] = 0; // Default is 0.
 
 ?>

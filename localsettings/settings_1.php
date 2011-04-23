@@ -4,7 +4,9 @@
  * Local settings for league with ID = 1
  *************************/
  
-/* General */
+/*********************
+ *   General
+ *********************/
 
 $settings['league_name']   = 'Placeholder title for league with ID = 1'; // Name of the site or the league name if only one league is being managed.
 $settings['forum_url']     = 'http://localhost'; // URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
@@ -17,12 +19,11 @@ $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the 
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament'); // Default is array('league', 'division', 'tournament'). In the section tournament lists these nodes will be hidden if their contents (children) are finished. Example: If 'division' is chosen here, and all tours in a given division are finished, then the division entry will be hidden.
 $settings['coach_schedule_tours'] = array(); // List of tournament IDs of FFA tours (from this league), in which regular coaches are able to schedule matches between their OWN teams and others teams.
 
-/* Rules */
+/*********************
+ *   Rules
+ *********************/
 
-/*
-    The default OBBLM rule set is the rule set provided by the LRB6.
-    Please use the boolean values "true" and "false" wherever default values are boolean.
-*/
+// Please use the boolean values "true" and "false" wherever default values are boolean.
 
 $rules['max_team_players']      = 16;       // Default is 16.
 $rules['static_rerolls_prices'] = false;    // Default is "false". "true" forces re-roll prices to their un-doubled values.
@@ -42,17 +43,25 @@ $rules['max_fan_factor']        = 9;        // Default is 9.
 $rules['max_ass_coaches']       = -1;       // Default is -1.
 $rules['max_cheerleaders']      = -1;       // Default is -1.
 
-/* Standings pages */
+/*********************
+ *   Standings pages
+ *********************/
 
 $settings['standings']['length_players'] = 30;  // Number of entries on the general players standings table.
 $settings['standings']['length_teams']   = 30;  // Number of entries on the general teams   standings table.
 $settings['standings']['length_coaches'] = 30;  // Number of entries on the general coaches standings table.
 
-/* Front page messageboard */
+/*********************
+ *   Front page messageboard
+ *********************/
 
 $settings['fp_messageboard']['length']               = 5;    // Number of entries on the front page message board.
 $settings['fp_messageboard']['show_team_news']       = true; // Default is true. Show team news on the front page message board.
 $settings['fp_messageboard']['show_match_summaries'] = true; // Default is true. Show match summaries on the front page message board.
+
+/*********************
+ *   Front page boxes
+ *********************/
 
 /*
     The below settings define which boxes to show on the right side of the front page.
@@ -62,7 +71,9 @@ $settings['fp_messageboard']['show_match_summaries'] = true; // Default is true.
     The box with 'box_ID' = 1 is shown at the top of the page, the box with 'box_ID' = 2 is displayed underneath it and so forth.
 */
 
-/* Front page tournament standings boxes */
+/*********************
+ *   Front page: tournament standings boxes
+ *********************/
 
 $settings['fp_standings'] = array(
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
@@ -85,7 +96,9 @@ $settings['fp_standings'] = array(
     ),
 );
 
-/* Front page leaders boxes */
+/*********************
+ *   Front page: leaders boxes
+ *********************/
 
 $settings['fp_leaders'] = array(
     # Please note: You can NOT make expressions out of leader fields e.g.: 'field' => 'cas+td'
@@ -113,7 +126,9 @@ $settings['fp_leaders'] = array(
     ),
 );
 
-/* Front page latest games boxes */
+/*********************
+ *   Front page: latest games boxes
+ *********************/
 
 $settings['fp_latestgames'] = array(
     # This will display a latest games box for the node (league, division or tournament) with ID = 1
