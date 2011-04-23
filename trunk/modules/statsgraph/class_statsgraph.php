@@ -165,6 +165,8 @@ class SGraph implements ModuleInterface
             foreach (range(0, SG_MULTIBAR_HIST_LENGTH_DAYS) as $i) {
                 # Hack (for display purposes) set month -> year, day -> month
                 $range = "(
+                    (YEAR(date_played) = YEAR(SUBDATE(DATE(NOW()), INTERVAL $i DAY))) 
+                    AND
                     (MONTH(date_played) = MONTH(SUBDATE(DATE(NOW()), INTERVAL $i DAY))) 
                     AND 
                     (DAY(date_played) = DAY(SUBDATE(DATE(NOW()), INTERVAL $i DAY)))
