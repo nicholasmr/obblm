@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -43,6 +43,7 @@ define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 define('DOC_URL', 'http://www.nicholasmr.dk/obblmwiki');
 define('DOC_URL_GUIDE', 'http://www.nicholasmr.dk/obblmwiki/index.php?title=User_guide');
+define('DOC_URL_CUSTOM', 'http://www.nicholasmr.dk/obblmwiki/index.php?title=Customization');
 
 /*********************
  *   Node and object types.
@@ -86,9 +87,9 @@ define('T_HTMLBOX_MATCH', 5);
 require_once('lib/settings_default.php'); # Defaults
 require_once('settings.php'); # Overrides
 require_once('localsettings/settings_none.php'); # Defaults. Overrides are league dependant and are not loaded here - see setupGlobalVars()
+require_once('lib/game_data_lrb6.php'); # LRB6 (Module settings might depend on game data, so we include it first)
 require_once('lib/settings_modules_default.php'); # Defaults
 require_once('settings_modules.php'); # Overrides
-require_once('lib/game_data_lrb6.php'); # LRB6
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
 
