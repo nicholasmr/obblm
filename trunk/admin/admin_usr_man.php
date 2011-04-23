@@ -126,7 +126,7 @@ $T_LOCAL_RINGS = array(
     });
 </script>
     
-<?php echo "<b><a href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br>"; ?>
+<?php echo "<b><a TARGET='_blank' href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br>"; ?>
 
 <div class="boxCommon">
     <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">

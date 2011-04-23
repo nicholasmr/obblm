@@ -538,7 +538,7 @@ public static function report() {
     ?>
     </table>
     <br>
-    <?php echo "<b><a href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br><br>"; ?>
+    <?php echo "<b><a TARGET='_blank' href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br><br>"; ?>
     <form method="POST" enctype="multipart/form-data">
         <table class="common">
             <tr class='commonhead'><td colspan="<?php echo $CP;?>"><b><?php echo $lng->getTrn('matches/report/info');?></b></td></tr>
