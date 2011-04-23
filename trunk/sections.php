@@ -437,7 +437,7 @@ function sec_main() {
     </div>
     <div class="main_foot">
         <a href="index.php?section=about">Please doante if you enjoy this software</a><br><br>
-        <a href="http://nicholasmr.dk/index.php?sec=obblm">OBBLM official website</a><br><br>
+        <a TARGET="_blank" href="http://nicholasmr.dk/index.php?sec=obblm">OBBLM official website</a><br><br>
         This web site is completely unofficial and in no way endorsed by Games Workshop Limited.
         <br>
         Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either (R), TM and/or (C) Games Workshop Ltd 2000-2006, variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
@@ -711,7 +711,7 @@ function sec_about() {
 
     <?php 
     title("Documentation");
-    echo "See the <a href='".DOC_URL."'>OBBLM documentation wiki</a>";
+    echo "See the <a TARGET='_blank' href='".DOC_URL."'>OBBLM documentation wiki</a>";
     
     ?>
 
