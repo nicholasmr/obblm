@@ -67,8 +67,10 @@ class UPLOAD_BOTOCS implements ModuleInterface
 
     public $reporttype = "botocs";
 
+    public $success = "";
 
-    function __construct($userfile, $tour_id, $coach_id) {
+
+    function __construct($userfile, $tour_id, $coach_id, $reroll) {
 
         global $settings;
         $this->extrastats = $settings['leegmgr_extrastats'];
@@ -85,7 +87,30 @@ class UPLOAD_BOTOCS implements ModuleInterface
             if ( !$this->parse_results() ) return false;
         }
         else if ( $this->reporttype == "cyanide" )
+        {
             if ( !$this->parse_cy_results() ) return false;
+            if ( $this->winner && !$this->checkCoach($this->winner) )
+            {
+                $this->error = "You must be the winner to upload the match.";
+                return false;
+            }
+            if ( $reroll && $this->checkCoach($this->winner) )
+            {
+                if ( $this->winner == $this->hometeam && $reroll > ($this->homewinnings / 10000 - $this->homefame - 1) )
+                {
+                    $oldwinnings = $this->homewinnings;
+                    $this->homewinnings = (rand(1,6) + $this->homefame + 1) * 10000;
+                    $this->success .= "Rerolled old winnings of ".$oldwinnings." to ".$this->homewinnings;
+                }
+                else if ( $reroll > ($this->awaywinnings / 10000 - $this->awayfame - 1) )
+                {
+                    $oldwinnings = $this->awaywinnings;
+                    $this->awaywinnings = (rand(1,6) + $this->awayfame + 1) * 10000;
+                    $this->success .= "Rerolled old winnings of ".$oldwinnings." to ".$this->awaywinnings;
+                }
+            }
+        }
+
         if ( !$this->checkCoach ( $this->hometeam ) && !$this->checkCoach ( $this->awayteam ) )
         {
             $this->error = "You must be the owner of one of the teams in the report to upload a match.";
@@ -823,7 +848,19 @@ WHERE match_id = $this->match_id";
                 $lid = get_alt_col('divisions', 'did', $t['f_did'], 'f_lid');
                 if ($t['type'] == TT_FFA && !$t['locked'] && $coach_lid == $lid && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
             }
-            
+            global $settings;
+            $cy_reroll = "";
+            if ( $settings['leegmgr_cyanide'] )
+                $cy_reroll = "
+                    Reroll winnings if roll is less than: 
+                    <select name='reroll'>
+                        <option value='2'>2</option>
+                        <option value='3'>3</option>
+                        <option value='4'>4</option>
+                        <option value='5'>5</option>
+                        <option value='6'>6</option>
+                    </select><br>";
+
             $form = "
                 <!-- The data encoding type, enctype, MUST be specified as below -->
                 <form enctype='multipart/form-data' action='handler.php?type=leegmgr' method='POST'>
@@ -837,7 +874,7 @@ WHERE match_id = $this->match_id";
                             {$tourlist}
                         </optgroup>
                     </select>
-                    <br><br>
+                    <br>{$cy_reroll}<br>
                     <input type='submit' value='Send File' />
                 </form>
             ";
@@ -855,12 +892,13 @@ WHERE match_id = $this->match_id";
         }
     }
     
-    private static function submitForm($userfile, $tour_id, $coach_id ) {
+    private static function submitForm($userfile, $tour_id, $coach_id, $reroll ) {
 
-        $upload = new UPLOAD_BOTOCS($userfile, $tour_id, $coach_id);
+        $upload = new UPLOAD_BOTOCS($userfile, $tour_id, $coach_id, $reroll);
         if ( !$upload->error )
         {
             Print "Upload was successful.";
+            Print "<br>".$upload->success;
             unset($upload);
         }
         else
@@ -992,7 +1030,8 @@ WHERE match_id = $this->match_id";
             $userfile = $_FILES['userfile'];
             $tour_id = ( isset($_POST['ffatours']) ) ? $_POST['ffatours'] : -1;
             $coach_id = $_SESSION['coach_id'];
-            self::submitForm($userfile, $tour_id, $coach_id);
+            $reroll = ( isset($_POST['reroll']) ) ? $_POST['reroll']: 2;
+            self::submitForm($userfile, $tour_id, $coach_id, $reroll);
         }
         else
         {
