@@ -317,6 +317,7 @@ class XML_BOTOCS implements ModuleInterface
             if ( !isset($_GET["cy"]) ) Print $roster->roster;
             else
             {
+                if (!class_exists("PDO")) die("PDO must be installed for the Cyanide module to work properly.");
                 $roster->cy = ($_GET["cy"] > 0) ? $_GET["cy"] : 0;
                 $roster->createCyRoster();
                 if ( !$roster->error )
