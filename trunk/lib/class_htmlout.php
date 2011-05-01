@@ -744,6 +744,7 @@ public static function frame_begin($stylesheet = false)
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
+        <script type="text/javascript" src="lib/jquery.expander.js"></script>
         <link type="text/css" href="css/autocomplete.css" rel="stylesheet">
 
         <!-- CSS MENU (./cssmenu extension) -->
