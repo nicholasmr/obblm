@@ -2,7 +2,7 @@
 
 /*
  *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
- *      
+ *
  *
  *  This file is part of OBBLM.
  *
@@ -18,12 +18,12 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *   
+ *
  */
 
 $time_start = microtime(true); # Used by MTS().
 
-/* 
+/*
     Includes, constants, error_reporting() level, session_start(), OBBLM run requirements, MySQL connection, language load.
 */
 require('header.php');
@@ -63,16 +63,17 @@ HTMLOUT::frame_begin(isset($_SESSION['logged_in']) ? $coach->settings['theme'] :
 MTS('Header loaded, login auth, html frame generated');
 
 // Check if a menu-link was picked, and execute section code from sections.php accordingly.
-switch ($_GET['section']) 
+switch ($_GET['section'])
 {
     case 'login':        sec_login();           break;
     case 'admin':        sec_admin();           break;
     case 'teamlist':     sec_teamlist();        break;
     case 'coachlist':    sec_coachlist();       break;
     case 'rules':        sec_rules();           break;
-    case 'about':        sec_about();           break;    
+    case 'about':        sec_about();           break;
     case 'matches':      sec_matcheshandler();  break; // Tournaments, matches, match reports, recent matches, upcoming matches etc.
     case 'objhandler':   sec_objhandler();      break; // Object profiles, object standings.
+    case 'leaguetables': LeagueTables::showTables(); break; // League/Tournament Standings
     default:             sec_main();
 }
 
