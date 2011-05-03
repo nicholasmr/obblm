@@ -307,6 +307,7 @@ $DEA['Underworld'] = array (
 );
 
 // Create race ID index (key:val = id:race_name).
+ksort($DEA, SORT_STRING);
 $raceididx = array();
 foreach (array_keys($DEA) as $race) {
     $raceididx[$DEA[$race]['other']['race_id']] = $race;
@@ -317,7 +318,7 @@ foreach (array_keys($DEA) as $race) {
 //
 
 $stars['Bertha Bigfist'] = array (
-    'id'            => -47, 
+    'id'            => -47,
     'ma'            => 6,
     'st'            => 5,
     'ag'            => 3,
@@ -328,7 +329,7 @@ $stars['Bertha Bigfist'] = array (
     'races'         => array(0, 7, 16)
 );
 $stars['Crazy Igor'] = array (
-    'id'            => -48, 
+    'id'            => -48,
     'ma'            => 6,
     'st'            => 3,
     'ag'            => 3,
@@ -339,7 +340,7 @@ $stars['Crazy Igor'] = array (
     'races'         => array(18, 21)
 );
 $stars['Dolfar Longstride'] = array (
-    'id'            => -49, 
+    'id'            => -49,
     'ma'            => 7,
     'st'            => 3,
     'ag'            => 4,
@@ -351,7 +352,7 @@ $stars['Dolfar Longstride'] = array (
 );
 
 $stars['Fezglitch'] = array (
-    'id'            => -50, 
+    'id'            => -50,
     'ma'            => 4,
     'st'            => 7,
     'ag'            => 3,
@@ -362,7 +363,7 @@ $stars['Fezglitch'] = array (
     'races'         => array(19, 23)
 );
 $stars['Glart Smashrip Jr.'] = array (
-    'id'            => -51, 
+    'id'            => -51,
     'ma'            => 7,
     'st'            => 4,
     'ag'            => 3,
@@ -373,7 +374,7 @@ $stars['Glart Smashrip Jr.'] = array (
     'races'         => array(19, 23)
 );
 $stars['Humerus Carpal'] = array (
-    'id'            => -52, 
+    'id'            => -52,
     'ma'            => 7,
     'st'            => 2,
     'ag'            => 3,
@@ -384,7 +385,7 @@ $stars['Humerus Carpal'] = array (
     'races'         => array(10)
 );
 $stars['Ithaca Benoin'] = array (
-    'id'            => -53, 
+    'id'            => -53,
     'ma'            => 7,
     'st'            => 3,
     'ag'            => 3,
@@ -395,7 +396,7 @@ $stars['Ithaca Benoin'] = array (
     'races'         => array(3, 10)
 );
 $stars['J Earlice'] = array (
-    'id'            => -54, 
+    'id'            => -54,
     'ma'            => 8,
     'st'            => 3,
     'ag'            => 3,
@@ -406,7 +407,7 @@ $stars['J Earlice'] = array (
     'races'         => array(13, 17, 18)
 );
 $stars['Lewdgrip Whiparm'] = array (
-    'id'            => -55, 
+    'id'            => -55,
     'ma'            => 6,
     'st'            => 3,
     'ag'            => 3,
@@ -417,7 +418,7 @@ $stars['Lewdgrip Whiparm'] = array (
     'races'         => array(1, 15, 21)
 );
 $stars['Lottabottol'] = array (
-    'id'            => -56, 
+    'id'            => -56,
     'ma'            => 8,
     'st'            => 3,
     'ag'            => 3,
@@ -428,7 +429,7 @@ $stars['Lottabottol'] = array (
     'races'         => array(11, 22)
 );
 $stars['Quetzal Leap'] = array (
-    'id'            => -57, 
+    'id'            => -57,
     'ma'            => 8,
     'st'            => 2,
     'ag'            => 4,
@@ -439,7 +440,7 @@ $stars['Quetzal Leap'] = array (
     'races'         => array(11, 22)
 );
 $stars['Roxanna Darknail'] = array (
-    'id'            => -58, 
+    'id'            => -58,
     'ma'            => 8,
     'st'            => 3,
     'ag'            => 5,
@@ -450,7 +451,7 @@ $stars['Roxanna Darknail'] = array (
     'races'         => array(0, 3)
 );
 $stars['Sinnedbad'] = array (
-    'id'            => -59, 
+    'id'            => -59,
     'ma'            => 6,
     'st'            => 3,
     'ag'            => 2,
@@ -461,7 +462,7 @@ $stars['Sinnedbad'] = array (
     'races'         => array(10, 17)
 );
 $stars['Soaren Hightower'] = array (
-    'id'            => -60, 
+    'id'            => -60,
     'ma'            => 6,
     'st'            => 3,
     'ag'            => 4,
@@ -472,7 +473,7 @@ $stars['Soaren Hightower'] = array (
     'races'         => array(8)
 );
 $stars['Willow Rosebark'] = array (
-    'id'            => -61, 
+    'id'            => -61,
     'ma'            => 5,
     'st'            => 4,
     'ag'            => 3,
