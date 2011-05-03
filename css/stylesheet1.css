@@ -63,7 +63,7 @@ div.section {
 /*
  *   Box (inner) stylings.
  */
-div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo {
+div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo,div.boxConference {
     margin: 20px; 
     border: 1px solid #545454;
 
@@ -80,6 +80,8 @@ div.boxCommon           {float:left;}
 div.boxCoachPage        {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
 div.boxTeamPage         {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
 div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
+div.boxConference       {margin-top: 0px;}
+div.boxConferenceInner  {white-space:nowrap; margin: 0px; padding: 5px; padding-top: 0px; line-height:175%;}
 
 .boxTitle1,.boxTitle2,.boxTitle3,.boxTitle4,.boxTitle5 {
 	-moz-border-radius: 4px 4px 0 0;
@@ -91,6 +93,7 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 .boxTitle3 {background-color: #BCDD11; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Management/actions/more box for ordinary admins */
 .boxTitle4 {background-color: #F1921A; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Statistics (standings, player leaders, ES) */
 .boxTitle5 {background-color: #669900; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Match summaries & recent games */
+.boxTitleConf {background-color: #679EC9; padding: 6px; font-size: 13px; font-weight: bold; margin-top: 0px;; margin-bottom: 5px;}
 .boxBody   {border-top: 1px solid #545454; padding: 10px;}
 table.boxTable {border-spacing: 5px; width: 100%;}
 
@@ -99,6 +102,15 @@ table.boxTable {border-spacing: 5px; width: 100%;}
 	color: #FFFFFF;
 	border: 2px solid #CC6633;
 	background-color: #4C6260;
+	padding:10px;
+	line-height:1.4em;
+}
+
+/* Other types of boxes. */
+.errorBox {
+	color: #FFFFFF;
+	border: 2px solid #000000;
+	background-color: #800000;
 	padding:10px;
 	line-height:1.4em;
 }

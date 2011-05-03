@@ -71,30 +71,61 @@ switch ($_GET['type'])
    		break;
 
     /* Hall of fame */
-    case 'hof':    
-        Module::run('HOF', array('makeList', $COACH_IS_ADMIN)); 
+    case 'hof':
+        Module::run('HOF', array('makeList', $COACH_IS_ADMIN));
         break;
-        
+
     /* Wanted */
-    case 'wanted': 
-        Module::run('Wanted', array('makeList', $COACH_IS_ADMIN)); 
+    case 'wanted':
+        Module::run('Wanted', array('makeList', $COACH_IS_ADMIN));
         break;
-        
+
     /* Prizes */
-    case 'prize':  
-        Module::run('Prize', array('makeList', $COACH_IS_ADMIN)); 
+    case 'prize':
+        Module::run('Prize', array('makeList', $COACH_IS_ADMIN));
         break;
-        
+
     /* Gallery */
-    case 'gallery':  
-        Module::run('Gallery', array()); 
+    case 'gallery':
+        Module::run('Gallery', array());
         break;
 
     /* Search */
     case 'search':
-        Module::run('Search', array()); 
+        Module::run('Search', array());
         break;
-    
+
+    /* Conference */
+    case 'conference':
+        Module::run('Conference', array('conferenceAdmin'));
+        break;
+
+    /* Name autocompletion - AJAX */
+    case 'confcomplete':
+
+        $objs = array();
+        switch ($_GET['obj']) {
+
+            case T_OBJ_COACH:
+                $query = "SELECT coach_id AS 'id', name FROM coaches WHERE name LIKE '$_GET[query]%' ORDER BY name ASC";
+                $result = mysql_query($query);
+                while($row = mysql_fetch_assoc($result)) {
+                    $objs[$row['id']] = $row['name'];
+                }
+                break;
+
+            case T_OBJ_TEAM:
+                $query = "SELECT team_id AS 'id', name FROM teams WHERE name LIKE '%$_GET[query]%' ORDER BY name ASC";
+                $result = mysql_query($query);
+                while($row = mysql_fetch_assoc($result)) {
+                    $objs[$row['id']] = $row['name'];
+                }
+                break;
+
+        }
+        echo json_encode(array('query' => $_GET['query'], 'suggestions' => array_values($objs), 'data' => array_keys($objs)));
+        break;
+
     /* User Scheduled Games */
     case 'userscheduledgames':
         if(isset($_POST['creategame'])) {
@@ -103,12 +134,12 @@ switch ($_GET['type'])
             Module::run('UserScheduledGames', array('renderAddGamePageHTML'));
         }
         break;
-        
+
     /* PDF Match Report */
     case 'pdfmatchreport':
           Module::run('PDFMatchReport', array());
           break;
-    
+
     /* Veridy team name - AJAX use */
     case 'verifyteam':
         if (isset($_POST['tname'])) {
@@ -121,7 +152,7 @@ switch ($_GET['type'])
 
     /* Name autocompletion - AJAX */
     case 'autocomplete':
-    
+
         $objs = array();
         switch ($_GET['obj']) {
 
@@ -132,7 +163,7 @@ switch ($_GET['type'])
                     $objs[$row['id']] = $row['name'];
                 }
                 break;
-        
+
             case T_OBJ_TEAM:
                 $query = "SELECT team_id AS 'id', name FROM teams WHERE name LIKE '%$_GET[query]%' ORDER BY name ASC";
                 $result = mysql_query($query);
@@ -140,7 +171,7 @@ switch ($_GET['type'])
                     $objs[$row['id']] = $row['name'];
                 }
                 break;
-        
+
         }
         echo json_encode(array('query' => $_GET['query'], 'suggestions' => array_values($objs), 'data' => array_keys($objs)));
         break;

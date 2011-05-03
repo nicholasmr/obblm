@@ -3,7 +3,7 @@
 /*****************
  * Enable/disable modules
  *****************/
- 
+
 // Change value from true to false if you wish to disable a module.
 
 $settings['modules_enabled'] = array(
@@ -20,6 +20,8 @@ $settings['modules_enabled'] = array(
     'Registration'       => true, # Allows users to register on the site.
     'Search'             => true, # Search for coaches and teams.
     'PDFMatchReport'     => true, # Generating PDF forms for tabletop match reports.
+    'LeagueTables'       => false, # Provides league table link on the main menu
+    'Conference'         => false, # Provides support for conferences within tournaments
 );
 
 /*****************
@@ -34,12 +36,12 @@ $settings['allow_registration'] = true; // Default is true.
 $settings['registration_webmaster'] = "webmaster@example.com"; // Default is "webmaster@example.com".
 $settings['lang'] = 'en-GB'; // Default language for registred user.
 
-/* 
+/*
     Leegmgr
 */
 
 $settings['leegmgr_enabled'] = true; // Enables upload of BOTOCS LRB5 application match reports.
-/* 
+/*
     Uploads report to a scheduled match.  The options are [false|true|"strict"]
     - false does not check for scheduled matches
     - true checks for scheduled matches and will create a match if not found
@@ -51,7 +53,7 @@ $settings['leegmgr_cyanide'] = true; // Setting to false here is preferred as th
 $settings['leegmgr_cyanide_edition'] = 2; // 1 = the first Cyanide edition, 2 = Legendary edition.
 $settings['leegmgr_botocs'] = true; // Setting to false here is preferred as this can be set to true in each specific league.
 
-/* 
+/*
     PDF roster & PDF match report
 */
 

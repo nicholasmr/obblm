@@ -24,13 +24,13 @@
 /*
  THIS FILE is used for HTML-helper routines.
  */
- 
+
 // Special dropdown states for nodeSelector().
 define('T_STATE_ALLTIME', 1);
 define('T_STATE_ACTIVE', 2);
 define('T_NODE_ALL', -1);  # All nodes.
 define('T_RACE_ALL', -1);  # All races.
- 
+
 class HTMLOUT
 {
 
@@ -145,15 +145,15 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
 
 private static function _getDefFields($obj, $node, $node_id)
 {
-    /* 
-        Shared use by standings() and nodeSelector(). 
+    /*
+        Shared use by standings() and nodeSelector().
         These are the default fields (general/regular stats) in standings() and the "having" filters of nodeSelector().
-        
+
         mv_ fields are accumulated stats from MV tables. rg_ (regular) are regular/static/all-time fields from non mv-tables (players, teams, coaches etc.)
     */
-    
+
     global $lng;
-    
+
     $fields = array(
         'mv_won'     => array('desc' => 'W'),
         'mv_draw'    => array('desc' => 'D'),
@@ -173,8 +173,8 @@ private static function _getDefFields($obj, $node, $node_id)
         'mv_si'      => array('desc' => 'Si'),
         'mv_ki'      => array('desc' => 'Ki'),
     );
-    
-    // These fields are not summable!!! 
+
+    // These fields are not summable!!!
     //ie. you dont get the division/league value of these fields by summing over the related/underlying tournaments field's values.
     global $objFields_notsum;
         # Look non-summable field and remove them.
@@ -191,7 +191,7 @@ private static function _getDefFields($obj, $node, $node_id)
         foreach ($objFields_notsum as $f) {
             unset($fields["rg_$f"]);
         }
-    }   
+    }
 
     $fields_before = $fields_after = array();
     switch ($obj)
@@ -211,12 +211,12 @@ private static function _getDefFields($obj, $node, $node_id)
 
         case STATS_TEAM:
             $fields_before = array(
-                'tv' => array('desc' => $lng->getTrn('common/value'), 'kilo' => true, 'suffix' => 'k'),                
+                'tv' => array('desc' => $lng->getTrn('common/value'), 'kilo' => true, 'suffix' => 'k'),
             );
             $fields_after = array(
-                'mv_tcasf' => array('desc' => 'tcasf'), 
-                'mv_tcasa' => array('desc' => 'tcasa'), 
-                'mv_tcdiff' => array('desc' => 'tcdiff'), 
+                'mv_tcasf' => array('desc' => 'tcasf'),
+                'mv_tcasa' => array('desc' => 'tcasa'),
+                'mv_tcdiff' => array('desc' => 'tcdiff'),
             	'mv_smp' => array('desc' => 'SMP'),
             );
             if ($ALL_TIME) {
@@ -248,9 +248,9 @@ private static function _getDefFields($obj, $node, $node_id)
 
         case STATS_COACH:
             $fields_after = array(
-                'mv_tcasf' => array('desc' => 'tcasf'), 
-                'mv_tcasa' => array('desc' => 'tcasa'), 
-                'mv_tcdiff' => array('desc' => 'tcdiff'), 
+                'mv_tcasf' => array('desc' => 'tcasf'),
+                'mv_tcasa' => array('desc' => 'tcasa'),
+                'mv_tcdiff' => array('desc' => 'tcdiff'),
             	'mv_smp' => array('desc' => 'SMP'),
             );
             if ($node == T_NODE_TOURNAMENT) {
@@ -265,7 +265,7 @@ private static function _getDefFields($obj, $node, $node_id)
 
         case STATS_STAR:
             $fields_after = array(
-                'mv_mvp' => array('desc' => 'MVP'), 
+                'mv_mvp' => array('desc' => 'MVP'),
                 'mv_spp' => array('desc' => 'SPP'),
             );
             foreach (array('won', 'lost', 'draw', 'ga', 'gf') as $f) {
@@ -279,7 +279,7 @@ private static function _getDefFields($obj, $node, $node_id)
     return array_merge($fields_before, $fields, $fields_after);
 }
 
-private static function _isNodeAllTime($obj, $node, $node_id) 
+private static function _isNodeAllTime($obj, $node, $node_id)
 {
     # Teams may not cross leagues, so a team's league stats is equal to its all-time stats.
     return (!$node || !$node_id || ($node == T_NODE_LEAGUE && $node_id == T_NODE_ALL) || ($obj == T_OBJ_TEAM && $node == T_NODE_LEAGUE));
@@ -308,13 +308,13 @@ public static function standings($obj, $node, $node_id, array $opts)
 
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
-    
+
     $extra['noHelp'] = false;
     $W_TEAMS_FROM = array_key_exists('teams_from', $opts);
-    
+
     $enableRaceSelector = ($obj == T_OBJ_PLAYER || $obj == T_OBJ_TEAM && (!isset($opts['teams_from']) || $opts['teams_from'] != T_OBJ_RACE));
     # NO filters for teams of a coach on the coach's teams list.
-    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp, $sel_ff_field, $sel_ff_ineq, $sel_ff_limit) = ($W_TEAMS_FROM && $opts['teams_from'] == T_OBJ_COACH) 
+    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp, $sel_ff_field, $sel_ff_ineq, $sel_ff_limit) = ($W_TEAMS_FROM && $opts['teams_from'] == T_OBJ_COACH)
         ? array(false,false,T_STATE_ALLTIME,T_RACE_ALL,'GENERAL','mv_played',self::T_NS__ffilter_ineq_gt,0)
         : HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true, 'ffilter' => true, 'obj' => $obj));
     $filter_node = array($sel_node => $sel_node_id);
@@ -326,8 +326,8 @@ public static function standings($obj, $node, $node_id, array $opts)
 
     $manualSort = isset($_GET["sort$opts[GET_SS]"]);
     $sortRule = array_merge(
-        ($manualSort) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(), 
-        ($obj == T_OBJ_TEAM && $sel_node == T_NODE_TOURNAMENT && is_object($tr = new Tour($sel_node_id))) 
+        ($manualSort) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
+        ($obj == T_OBJ_TEAM && $sel_node == T_NODE_TOURNAMENT && is_object($tr = new Tour($sel_node_id)))
             ? array_map(create_function('$val', 'return $val[0]."mv_".substr($val,1);'), $tr->getRSSortRule())
             : sort_rule($obj)
     );
@@ -337,16 +337,16 @@ public static function standings($obj, $node, $node_id, array $opts)
 
     // Common $obj type fields.
     $fields = self::_getDefFields($obj, $sel_node, $sel_node_id);
-    
+
     // Was a different (non-general) stats group selected?
     if (!$SGRP_GEN) {
         $grps_short = getESGroups(true,true);
         $grps_long = getESGroups(true,false);
         $fields_short = $grps_short[$sel_sgrp];
         $fields_long = $grps_long[$sel_sgrp];
-        
+
         $fields = array_combine(
-            array_strpack('mv_%s', $fields_long), 
+            array_strpack('mv_%s', $fields_long),
             array_map(create_function('$f', 'return array("desc" => $f);'), $fields_short)
         );
         $objFields_avg = array_merge($objFields_avg, array_map(create_function('$k', 'return substr($k, 3);'), array_keys($fields)));
@@ -462,17 +462,17 @@ public static function standings($obj, $node, $node_id, array $opts)
 }
 
 // We need this so that a new league's settings gets loaded on next page reload when set in the node selector.
-public static function updateNodeSelectorLeagueVars() 
+public static function updateNodeSelectorLeagueVars()
 {
     global $leagues;
-    
+
     /* Simple league selector (SLS) */
     $lids = array_keys($leagues);
     if (isset($_POST['SLS_lid']) && in_array($_POST['SLS_lid'], $lids)) {
         $_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
         $_SESSION[self::T_NSStr__node_id] = (int) $_POST['SLS_lid'];
     }
-    
+
     /* Advanced node selector (ANS) */
     if (isset($_POST['ANS'])) {
         $_SESSION[self::T_NSStr__node] = (int) $_POST['node'];
@@ -487,45 +487,45 @@ const T_NSStr__node_id = 'NS_node_id';
 public static function simpleLeagueSelector()
 {
     global $lng, $leagues, $coach, $settings;
-    
+
     $lids = array_keys($leagues); # Used multiple times below to determine selected FP league.
     # Default league.
     $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], $lids)) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
     # Update league view?
     # NOTE: Form selections updates of $_SESSION node vars are done via self::updateNodeSelectorLeagueVars().
-    if ($_lid = self::getSelectedNodeLid()) { 
+    if ($_lid = self::getSelectedNodeLid()) {
         $sel_lid = $_lid;
     }
     # Save league view.
     $_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
     $_SESSION[self::T_NSStr__node_id] = (int) $sel_lid;
-    
+
     $HTMLselector = "<form name='SLS' method='POST' style='display:inline; margin:0px;'>".$lng->getTrn('common/league')." <select name='SLS_lid' onChange='document.SLS.submit();'>\n";
     foreach ($leagues as $lid => $desc) {
         $HTMLselector .= "<option value='$lid' ".(($lid == $sel_lid) ? 'SELECTED' : '').">$desc[lname]</option>\n";
     }
     $HTMLselector .= "</select></form>\n";
-    
+
     return array($sel_lid, $HTMLselector);
 }
 
 public static function getSelectedNodeLid()
 {
     global $leagues;
-    
+
     $lids = array_keys($leagues);
     $_lid = false;
-    
-    if (isset($_SESSION[self::T_NSStr__node_id]) && (int) $_SESSION[self::T_NSStr__node_id] > 0) { 
-        $_lid = ((int) $_SESSION[self::T_NSStr__node] != T_NODE_LEAGUE) 
-            ? get_parent_id((int) $_SESSION[self::T_NSStr__node], (int) $_SESSION[self::T_NSStr__node_id], T_NODE_LEAGUE) 
+
+    if (isset($_SESSION[self::T_NSStr__node_id]) && (int) $_SESSION[self::T_NSStr__node_id] > 0) {
+        $_lid = ((int) $_SESSION[self::T_NSStr__node] != T_NODE_LEAGUE)
+            ? get_parent_id((int) $_SESSION[self::T_NSStr__node], (int) $_SESSION[self::T_NSStr__node_id], T_NODE_LEAGUE)
             : (int) $_SESSION[self::T_NSStr__node_id];
-            
+
         if (!in_array($_lid, $lids)) {
             $_lid = false;
         }
     }
-            
+
     return $_lid;
 }
 
@@ -547,14 +547,14 @@ public static function nodeSelector(array $opts)
     $s_ffilter_field = "NS_ffilter__field"; # Field name, e.g. "mv_played".
     $s_ffilter_ineq  = "NS_ffilter__ineq"; # inequality direction (">=" or "<="), self::T_NS__ffilter_ineq_* values.
     $s_ffilter_limit = "NS_ffilter__limit"; # RHS of ineq, e.g. "20" in the expression mv_played > 20
-    
+
     // Options
     $setState = (array_key_exists('state', $opts) && $opts['state']);
     $setRace = (array_key_exists('race', $opts) && $opts['race']);
     $setSGrp = (array_key_exists('sgrp', $opts) && $opts['sgrp']);
     $setFFilter = (array_key_exists('ffilter', $opts) && $opts['ffilter']);
     $obj = ($setFFilter) ? $opts['obj'] : null;
-    
+
     // Defaults
     $def_node    = T_NODE_LEAGUE;
     $def_node_id = (is_object($coach) && isset($coach->settings['home_lid'])) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
@@ -576,10 +576,10 @@ public static function nodeSelector(array $opts)
     $_SESSION[$s_ffilter_field] = ($NEW && $setFFilter) ? $_POST['ffilter_field_in'] : (isset($_SESSION[$s_ffilter_field]) ? $_SESSION[$s_ffilter_field] : $def_ffilter_field);
     $_SESSION[$s_ffilter_ineq]  = ($NEW && $setFFilter) ? $_POST['ffilter_ineq_in']  : (isset($_SESSION[$s_ffilter_ineq])  ? $_SESSION[$s_ffilter_ineq]  : $def_ffilter_ineq);
     $_SESSION[$s_ffilter_limit] = ($NEW && $setFFilter) ? $_POST['ffilter_limit_in'] : (isset($_SESSION[$s_ffilter_limit]) ? $_SESSION[$s_ffilter_limit] : $def_ffilter_limit);
-    
+
     // Fetch contents of node selector
     list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false);
-    
+
     ?>
     <form method="POST">
     <?php echo $lng->getTrn('common/displayfrom');?>
@@ -628,7 +628,7 @@ public static function nodeSelector(array $opts)
         }
         ?>
     </select>
-    <?php 
+    <?php
     if ($setState) {
         echo $lng->getTrn('common/type');
         ?>
@@ -637,8 +637,8 @@ public static function nodeSelector(array $opts)
             echo "<option value='".T_STATE_ALLTIME."' ".(($_SESSION[$s_state] == T_STATE_ALLTIME) ? 'SELECTED' : '').">".$lng->getTrn('common/alltime')."</option>\n";
             echo "<option value='".T_STATE_ACTIVE."'  ".(($_SESSION[$s_state] == T_STATE_ACTIVE) ? 'SELECTED' : '').">".$lng->getTrn('common/active')."</option>\n";
             ?>
-        </select> 
-        <?php 
+        </select>
+        <?php
     }
     if ($setRace) {
         echo $lng->getTrn('common/race');
@@ -719,9 +719,9 @@ public static function nodeSelector(array $opts)
 
     $allNodes = ($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == T_NODE_ALL);
     return array(
-        ($allNodes) ? false : $_SESSION[$s_node], 
-        ($allNodes) ? false : $_SESSION[$s_node_id], 
-        ($setState) ? $_SESSION[$s_state] : false, 
+        ($allNodes) ? false : $_SESSION[$s_node],
+        ($allNodes) ? false : $_SESSION[$s_node_id],
+        ($setState) ? $_SESSION[$s_state] : false,
         ($setRace) ? $_SESSION[$s_race] : false,
         ($setSGrp) ? $_SESSION[$s_sgrp] : false,
         ($setFFilter) ? $_SESSION[$s_ffilter_field] : false,
@@ -807,6 +807,8 @@ private static function make_menu()
         }
         ?>
         <li><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a></li>
+		<?php if (Module::isRegistered('LeagueTables'))    { ?><li><a href="index.php?section=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
+
         <li><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
         <li><a href="index.php?section=coachlist"><?php echo $lng->getTrn('menu/coaches');?></a></li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/matches_menu/name');?></span>
@@ -839,6 +841,7 @@ private static function make_menu()
                 <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('name', 'Comparison');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Gallery'))    { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Conference'))    { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
             </ul>
         </li>
 
@@ -1015,11 +1018,11 @@ public static function generateEStable($obj)
 {
     global $ES_fields, $lng;
     echo "<table>\n";
-    echo "<tr><td><i>".$lng->getTrn('common/stat')."</i></td> 
-        <td><i>".$lng->getTrn('common/alltime')."</i></td> 
-        <td>&nbsp;<i>".$lng->getTrn('common/matchavg')."</i>&nbsp;</td> 
+    echo "<tr><td><i>".$lng->getTrn('common/stat')."</i></td>
+        <td><i>".$lng->getTrn('common/alltime')."</i></td>
+        <td>&nbsp;<i>".$lng->getTrn('common/matchavg')."</i>&nbsp;</td>
         <td><i>".$lng->getTrn('common/desc')."</i></td></tr>\n";
-            echo "<tr><td colspan='4'><hr></td></tr>\n";    
+            echo "<tr><td colspan='4'><hr></td></tr>\n";
     $grp = null;
     $objAVG = clone $obj;
     $objAVG->setStats(false,false,true);
