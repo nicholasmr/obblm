@@ -129,7 +129,7 @@ public static function showTables() {
     if (isset($_POST['tour_id'])) {
     	$tour_id = $_POST['tour_id'];
     }
-
+	$firstTour = 0;
     ?>
     <div class='boxWide'>
         <h3 class='boxTitle2'><?php echo $lng->getTrn('tours', 'LeagueTables');?></h3>
@@ -137,7 +137,11 @@ public static function showTables() {
 			<form method="POST">
 				<select name="tour_id">
 					<?php
-					foreach ($tours as $trid => $desc) {
+					$rTours = array_reverse($tours, true);
+					foreach ($rTours as $trid => $desc) {
+						if ($firstTour == 0) {
+							$firstTour = $trid;
+						}
 						echo "<option value='$trid'" . ($trid==$tour_id ? 'SELECTED' : '') . " >$desc[tname]</option>\n";
 					}
 					?>
@@ -148,10 +152,7 @@ public static function showTables() {
     </div>
     <?php
     if ($tour_id == 0) {
-    	echo "<div class='boxWide'>";
-    	HTMLOUT::helpBox($lng->getTrn('help', 'LeagueTables'));
-    	echo "</div>";
-    	return;
+    	$tour_id = $firstTour;
 	}
 
 	// create the tournament and get the sorting rules
@@ -322,7 +323,6 @@ public static function showUnplayedTeams($unplayedTeams, &$i, $allowedTeams = 0)
 	foreach ($unplayedTeams as $t) {
 		if ($allowedTeams == 0 || in_array($t->team_id, $allowedTeams)) {
 			self::showTeam($t,$i);
-			array_push($teamIds, $t->team_id);
 		}
 	}
 }

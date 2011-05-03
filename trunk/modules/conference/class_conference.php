@@ -274,6 +274,8 @@ public static function tournamentSelector($tour_id) {
 			$manageable_tours[$trid] = $desc;
 		}
 	}
+	$manageable_tours = array_reverse($manageable_tours, true);
+	$firstTour = 0;
     ?>
     <div class='boxWide'>
         <h3 class='boxTitle2'><?php echo $lng->getTrn('tours', 'Conference');?></h3>
@@ -282,6 +284,9 @@ public static function tournamentSelector($tour_id) {
 				<select name="tour_id">
 					<?php
 					foreach ($manageable_tours as $trid => $desc) {
+						if ($firstTour == 0) {
+							$firstTour = $trid;
+						}
 						echo "<option value='$trid'" . ($trid==$tour_id ? 'SELECTED' : '') . " >$desc[tname]</option>\n";
 					}
 					?>
@@ -291,6 +296,7 @@ public static function tournamentSelector($tour_id) {
         </div>
     </div>
     <?php
+    return $firstTour;
 }
 
 /* Main function for displaying conference administration page */
@@ -304,11 +310,11 @@ public static function conferenceAdmin() {
     	$tour_id = $_POST['tour_id'];
     }
 
-    self::tournamentSelector($tour_id);
+    $firstTour = self::tournamentSelector($tour_id);
 
 	// no tournament - they need to select something to see more.
-    if ($tour_id == 0) {
-    	return;
+	if ($tour_id == 0) {
+    	$tour_id = $firstTour;
 	}
 
 	// double check this coach is allowed to administer this tournament
