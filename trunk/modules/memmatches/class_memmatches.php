@@ -75,7 +75,7 @@ public static function main($argv) {
                     <tr>
                         <td align="left" style="width:40%;"><img border='0px' height='30' width='30' alt='team picture' src='<?php echo $img1->getPath();?>'><?php echo $t1->name;?></td>
                         <td align="center">
-                        <?php 
+                        <?php
                         switch ($d)
                         {
                             case 'td':
@@ -93,13 +93,13 @@ public static function main($argv) {
                                 }
                                 echo "<b>$v[1] &nbsp;-&nbsp; $v[2]</b>";
                                 break;
-                                
+
                             case 'svic': echo "<b>$m->team1_score &nbsp;-&nbsp; $m->team2_score</b>"; break;
                             case 'inc': echo '<b>'.($m->income1/1000).'k - '.($m->income2/1000).'k</b>'; break;
                             case 'gate': echo '<b>'.($m->gate/1000).'k</b>'; break;
                             case 'mfans': echo "<b>$m->fans</b>"; break;
                             case 'tvdiff': echo '<b>'.($m->tv1/1000).'k - '.($m->tv2/1000).'k</b>'; break;
-                        } 
+                        }
                         ?>
                         </td>
                         <td align="right" style="width:40%;"><?php echo $t2->name;?><img border='0px' height='30' width='30' alt='team picture' src='<?php echo $img2->getPath();?>'></td>
@@ -107,8 +107,8 @@ public static function main($argv) {
                     <tr>
                         <td align="right" colspan="3">
                         <small>
-                        <i><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?>, <?php echo textdate($m->date_played, true);?></i>, 
-                        <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('view', __CLASS__);?></a> 
+                        <i><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?>, <?php echo textdate($m->date_played, true);?></i>,
+                        <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('view', __CLASS__);?></a>
                         </small>
                         </td>
                     </tr>
@@ -127,24 +127,24 @@ public static function main($argv) {
 }
 
 private static function getMemMatches($node = false, $node_id = false) {
-    
+
     /*
          Creates an array of matches for those matches which:
-         
+
          - Most TDs (sum of both teams)
          - most cp
          - most int
          - Most killed
          - Most CAS
          - Largest score-wise victory
-         - Largest match income 
+         - Largest match income
          - Largest gate
          - Most fans
          - Largest TV difference in which underdog won
      */
-    
+
     $m = array(
-       'td'        => array(), 
+       'td'        => array(),
        'cp'        => array(),
        'intcpt'    => array(),
        'ki'        => array(),
@@ -155,26 +155,26 @@ private static function getMemMatches($node = false, $node_id = false) {
        'gate'      => array(),
        'mfans'     => array(), // most fans
        'tvdiff'    => array(),
-    );        
-    
+    );
+
     /* Queries for finding the matches holding records. */
 
     // For all-time.
-    /*    
+    /*
     $ach = "SELECT f_match_id AS 'match_id', SUM(REPLACE_BY_ACH) as 'sumA' FROM match_data WHERE f_match_id > 0 GROUP BY f_match_id HAVING sumA > 0 AND sumA = (
         SELECT MAX(sumB) FROM (SELECT SUM(REPLACE_BY_ACH) AS 'sumB' FROM match_data WHERE f_match_id > 0 GROUP BY f_match_id) AS tmpTable
     )";
-    $str1 = 'ABS(CAST((team1_score - team2_score) AS SIGNED))';
+    $str1 = 'ABS(CONVERT(team1_score,SIGNED) - CONVERT(team2_score,SIGNED))';
     $str2 = '(SELECT MAX(IF(income1>income2, income1, income2)) FROM matches)';
-    $svic = "SELECT match_id, $str1 FROM matches WHERE $str1 != 0 AND $str1 = (SELECT MAX($str1) AS 'mdiff' FROM matches HAVING mdiff IS NOT NULL)";    
+    $svic = "SELECT match_id, $str1 FROM matches WHERE $str1 != 0 AND $str1 = (SELECT MAX($str1) AS 'mdiff' FROM matches HAVING mdiff IS NOT NULL)";
     $inc = "SELECT match_id, income1, income2 FROM matches WHERE (income1 != 0 OR income2 != 0) AND IF(income1>income2, income1 = $str2, income2 = $str2)";
     $gate = "SELECT match_id, gate FROM matches WHERE gate = (SELECT MAX(gate) FROM matches)";
     $mfans = "SELECT match_id, fans FROM matches WHERE fans = (SELECT MAX(fans) FROM matches)";
     $str3 = '((tv1 > tv2 AND team1_score < team2_score) OR (tv1 < tv2 AND team1_score > team2_score))';
-    $str4 = 'ABS(CAST((tv1 - tv2) AS SIGNED))';
+    $str4 = 'ABS(CONVERT(tv1,SIGNED) - CONVERT(tv2,SIGNED))';
     $tvdiff = "SELECT match_id, $str4 AS tvdiff FROM matches WHERE $str3 AND $str4 = (SELECT MAX($str4) FROM matches WHERE $str3)";
     */
-    
+
     // Node filter
     $ref = array(
         STATS_TOUR      => "f_tour_id",
@@ -188,23 +188,23 @@ private static function getMemMatches($node = false, $node_id = false) {
     $where2         = ($node) ? $ref[$node]." = $node_id AND " : ''; # For match_data table.
     $where1_noAnd   = ($node) ? substr($where1, 0, -4) : '';
     $where2_noAnd   = ($node) ? substr($where2, 0, -4) : '';
-    
+
     // Queries
     $ach = "SELECT f_match_id AS 'match_id', SUM(REPLACE_BY_ACH) as 'sumA' FROM match_data WHERE $where2 f_match_id > 0 GROUP BY f_match_id HAVING sumA > 0 AND sumA = (
         SELECT MAX(sumB) FROM (SELECT SUM(REPLACE_BY_ACH) AS 'sumB' FROM match_data WHERE $where2 f_match_id > 0 GROUP BY f_match_id) AS tmpTable
     )";
-    $str1 = 'ABS(CAST((team1_score - team2_score) AS SIGNED))';
+    $str1 = 'ABS(CONVERT(team1_score,SIGNED) - CONVERT(team2_score,SIGNED))';
     $str2 = "(SELECT MAX(IF(income1>income2, income1, income2)) FROM matches $tables_wKey $where1_noAnd)";
-    $svic = "SELECT match_id, $str1 FROM matches $tables WHERE $where1 $str1 != 0 AND $str1 = (SELECT MAX($str1) AS 'mdiff' FROM matches $tables_wKey $where1_noAnd HAVING mdiff IS NOT NULL)";    
+    $svic = "SELECT match_id, $str1 FROM matches $tables WHERE $where1 $str1 != 0 AND $str1 = (SELECT MAX($str1) AS 'mdiff' FROM matches $tables_wKey $where1_noAnd HAVING mdiff IS NOT NULL)";
     $inc = "SELECT match_id, income1, income2 FROM matches $tables WHERE $where1 (income1 != 0 OR income2 != 0) AND IF(income1>income2, income1 = $str2, income2 = $str2)";
     $gate = "SELECT match_id, gate FROM matches $tables WHERE $where1 gate = (SELECT MAX(gate) FROM matches $tables_wKey $where1_noAnd)";
     $mfans = "SELECT match_id, fans FROM matches $tables WHERE $where1 fans = (SELECT MAX(fans) FROM matches $tables_wKey $where1_noAnd)";
     $str3 = '((tv1 > tv2 AND team1_score < team2_score) OR (tv1 < tv2 AND team1_score > team2_score))';
-    $str4 = 'ABS(CAST((tv1 - tv2) AS SIGNED))';
+    $str4 = 'ABS(CONVERT(tv1,SIGNED) - CONVERT(tv2,SIGNED))';
     $tvdiff = "SELECT match_id, $str4 AS tvdiff FROM matches $tables WHERE $where1 $str3 AND $str4 = (SELECT MAX($str4) FROM matches $tables WHERE $where1 $str3)";
-    
+
     /* Create an array to loop through containing the queries to throw at mysql. */
-    
+
     $qryarr = array();
     foreach (array_keys(array_slice($m, 0, 5)) as $k) {
         $qryarr[$k] = preg_replace('/REPLACE_BY_ACH/', $k, $ach);
@@ -214,9 +214,9 @@ private static function getMemMatches($node = false, $node_id = false) {
     $qryarr['gate'] = $gate;
     $qryarr['mfans'] = $mfans;
     $qryarr['tvdiff'] = $tvdiff;
-    
+
     /* Store match objects for record holding matches. */
-    
+
     foreach ($qryarr as $k => $query) {
         $mObjs = array();
         if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
@@ -230,12 +230,12 @@ private static function getMemMatches($node = false, $node_id = false) {
         objsort($mObjs, array('+date_played'));
         $m[$k] = (count($mObjs) > MAX_MEM_MATCHES) ? array() : $mObjs;
     }
-    
+
     /* Rename CAS key */
-    
+
     $m['cas'] = $m['bh+ki+si'];
     unset($m['bh+ki+si']);
-    
+
     /* Return, baby. */
     return $m;
 }
