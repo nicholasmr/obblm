@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<en-GB>
+
+<name>Memorable matches</name>
+
+<view>View</view>
+<desc>Which matches are worth remembering in terms of most TDs, killed and so on?</desc>
+<filled>More than X matches have the same record or no record exists at all.</filled>
+
+<!-- Most of... -->
+<td>Most touchdowns</td>
+<cp>Most completions</cp>
+<intcpt>Most interceptions</intcpt>
+<ki>Most killed</ki>
+<cas>Most casualties</cas>
+<svic>Largest score-difference</svic>
+<inc>Largest team income</inc>
+<gate>Largest gate</gate>
+<mfans>Most RL fans/spectators</mfans>
+<tvdiff>Largest TV difference in which underdog won</tvdiff>
+
+</en-GB>
