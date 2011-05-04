@@ -807,8 +807,6 @@ private static function make_menu()
         }
         ?>
         <li><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a></li>
-		<?php if (Module::isRegistered('LeagueTables'))    { ?><li><a href="index.php?section=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
-
         <li><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
         <li><a href="index.php?section=coachlist"><?php echo $lng->getTrn('menu/coaches');?></a></li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/matches_menu/name');?></span>
@@ -841,6 +839,7 @@ private static function make_menu()
                 <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('name', 'Comparison');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Gallery'))    { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
+				<?php if (Module::isRegistered('LeagueTables'))    { ?><li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Conference'))    { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
             </ul>
         </li>
