@@ -20,8 +20,8 @@ $settings['modules_enabled'] = array(
     'Registration'       => true, # Allows users to register on the site.
     'Search'             => true, # Search for coaches and teams.
     'PDFMatchReport'     => true, # Generating PDF forms for tabletop match reports.
-    'LeagueTables'       => false, # Provides league table link on the main menu
-    'Conference'         => false, # Provides support for conferences within tournaments
+    'LeagueTables'       => true, # Provides league table link on the main menu
+    'Conference'         => true, # Provides support for conferences within tournaments
 );
 
 /*****************
