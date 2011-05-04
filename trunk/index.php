@@ -73,7 +73,6 @@ switch ($_GET['section'])
     case 'about':        sec_about();           break;
     case 'matches':      sec_matcheshandler();  break; // Tournaments, matches, match reports, recent matches, upcoming matches etc.
     case 'objhandler':   sec_objhandler();      break; // Object profiles, object standings.
-    case 'leaguetables': LeagueTables::showTables(); break; // League/Tournament Standings
     default:             sec_main();
 }
 

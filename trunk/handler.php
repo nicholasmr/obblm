@@ -95,6 +95,12 @@ switch ($_GET['type'])
         Module::run('Search', array());
         break;
 
+    /* League Tables */
+    case 'leaguetables':
+        Module::run('LeagueTables', array('showTables'));
+        break;
+
+
     /* Conference */
     case 'conference':
         Module::run('Conference', array('conferenceAdmin'));
