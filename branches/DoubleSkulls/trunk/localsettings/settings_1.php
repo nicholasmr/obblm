@@ -79,7 +79,7 @@ $settings['fp_standings'] = array(
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
         'id'     => 73,
-        'box_ID' => 2,
+        'box_ID' => 3,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
         'infocus' => true, # If true a random team from the standings will be selected and its top players displayed.
@@ -97,7 +97,7 @@ $settings['fp_standings'] = array(
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
         'id'     => 70,
-        'box_ID' => 5,
+        'box_ID' => 6,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
         'infocus' => true, # If true a random team from the standings will be selected and its top players displayed.
@@ -123,7 +123,7 @@ $settings['fp_leaders'] = array(
     # This will display a 'most CAS' player leaders box for the node (league, division or tournament) with ID = 1
     array(
         'id'        => 73,
-        'box_ID'    => 4,
+        'box_ID'    => 5,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
         'title'     => 'Spr 11 most casualties',
@@ -134,7 +134,7 @@ $settings['fp_leaders'] = array(
     # This will display a 'most TD' player leaders box for the node (league, division or tournament) with ID = 2
     array(
         'id'        => 73,
-        'box_ID'    => 3,
+        'box_ID'    => 4,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
         'title'     => 'Spr 11 most touchdowns',
@@ -152,10 +152,21 @@ $settings['fp_latestgames'] = array(
     # This will display a latest games box for the node (league, division or tournament) with ID = 1
     array(
         'id'     => 1,
-        'box_ID' => 1,
+        'box_ID' => 2,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'league', # This sets the node to be a league. I.e. this will make a latest games box for the league with ID = 1
         'title'  => 'Recent games',
+        'upcoming' => 0, # if set to 0 will show recent games, if set to 1 will show future games.
+        'length' => 5,
+    ),
+    # This will display an  upcoming games box for the node (league, division or tournament) with ID = 1
+    array(
+        'id'     => 1,
+        'box_ID' => 1,
+        // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
+        'type'   => 'league', # This sets the node to be a league. I.e. this will make a latest games box for the league with ID = 1
+        'title'  => 'Upcoming games',
+        'upcoming' => 1, # if set to 0 will show recent games, if set to 1 will show future games.
         'length' => 5,
     ),
 );
