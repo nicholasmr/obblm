@@ -1,23 +1,23 @@
 <?php
 /**************************
- * MySQL database settings 
+ * MySQL database settings
  **************************/
 
-$db_name   = 'obblmdb';
-$db_user   = 'root';
-$db_passwd = '';
+$db_name   = 'talkfan1_slobb';
+$db_user   = 'talkfan1_slobb';
+$db_passwd = '5D.Zi3aR[mdO';
 $db_host   = 'localhost';
 
 // For local settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
 
 /*************************
- * Global settings 
+ * Global settings
  *************************/
 
-$settings['site_name'] = 'My OBBLM portal'; // Site name.
+$settings['site_name'] = 'SLOBB'; // Site name.
 $settings['default_visitor_league'] = 1;    // ID of default league to show on front page when not logged in/coach has not selected a home league.
 $settings['default_leagues'] = array(1);    // When creating a coach the coach will automatically become a regular coach in leauges with these IDs.
-$settings['hide_ES_extensions'] = false;    // Default is false. Hides ES (Extra Stats) tables and ES references.
+$settings['hide_ES_extensions'] = true;    // Default is false. Hides ES (Extra Stats) tables and ES references.
 
 /*****************
  * House ranking systems
@@ -38,5 +38,8 @@ $hrs[3]['rule']   = array('-sdiff', '-smp'); // Sort teams against: largest scor
 $hrs[3]['points'] = '';                      // Points not used.
 
 // Add you own rules here...
+$hrs[4]['rule']   = array('-pts', '-sdiff', '-tcdiff', '-td', '-tcasf', '-smp');    // Sort teams against: most points, then most net TDs and most net Cas.
+$hrs[4]['points'] = '3*[won] + 1*[draw] + 0*[lost]'; // The definition of points.
+
 
 ?>
