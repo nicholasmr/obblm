@@ -1,0 +1,15 @@
+/*************************
+ * DoubleSkulls Customisation of the CSS
+ *************************/
+
+.boxTitleConf {
+	background-color: #679EC9;
+	padding: 6px;
+	font-size: 13px;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+.boxConf {
+	white-space:nowrap; margin: 0px; padding: 5px; padding-top: 0px; line-height:175%; border 0px;
+}

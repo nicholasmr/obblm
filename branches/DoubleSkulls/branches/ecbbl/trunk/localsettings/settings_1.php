@@ -78,8 +78,8 @@ $settings['fp_messageboard']['show_match_summaries'] = true; // Default is true.
 $settings['fp_standings'] = array(
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
-        'id'     => 73,
-        'box_ID' => 2,
+        'id'     => 'prime',
+        'box_ID' => 3,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
         'infocus' => true, # If true a random team from the standings will be selected and its top players displayed.
@@ -89,15 +89,15 @@ $settings['fp_standings'] = array(
             Also note that using HRSs with fields such as points (pts) for leagues/divisions standings makes no sense as they are tournament specific fields (i.e. it makes no sense to sum the points for teams across different tours to get the teams' "league/division points", as the points definitions for tours may vary).
         */
         'HRS'    => 4, # Note: this must be a existing and valid HRS number from the main settings.php file.
-        'title'  => 'Spr 11 standings',
+        'title'  => 'Standings',
         'length' => 8,
         # Format: "Displayed table column name" => "OBBLM field name".
         'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
     ),
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
-        'id'     => 70,
-        'box_ID' => 5,
+        'id'     => 'second',
+        'box_ID' => 6,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
         'infocus' => true, # If true a random team from the standings will be selected and its top players displayed.
@@ -107,7 +107,7 @@ $settings['fp_standings'] = array(
             Also note that using HRSs with fields such as points (pts) for leagues/divisions standings makes no sense as they are tournament specific fields (i.e. it makes no sense to sum the points for teams across different tours to get the teams' "league/division points", as the points definitions for tours may vary).
         */
         'HRS'    => 4, # Note: this must be a existing and valid HRS number from the main settings.php file.
-        'title'  => 'Open League',
+        'title'  => 'Standings',
         'length' => 8,
         # Format: "Displayed table column name" => "OBBLM field name".
         'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
@@ -122,22 +122,22 @@ $settings['fp_leaders'] = array(
     # Please note: You can NOT make expressions out of leader fields e.g.: 'field' => 'cas+td'
     # This will display a 'most CAS' player leaders box for the node (league, division or tournament) with ID = 1
     array(
-        'id'        => 73,
-        'box_ID'    => 4,
+        'id'        => 'prime',
+        'box_ID'    => 5,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Spr 11 most casualties',
+        'title'     => 'Most casualties',
         'field'     => 'cas',
         'length'    => 5,
         'show_team' => true, # Show player's team name?
     ),
     # This will display a 'most TD' player leaders box for the node (league, division or tournament) with ID = 2
     array(
-        'id'        => 73,
-        'box_ID'    => 3,
+        'id'        => 'prime',
+        'box_ID'    => 4,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Spr 11 most touchdowns',
+        'title'     => 'Most touchdowns',
         'field'     => 'td',
         'length'    => 5,
         'show_team' => true, # Show player's team name?
@@ -152,10 +152,21 @@ $settings['fp_latestgames'] = array(
     # This will display a latest games box for the node (league, division or tournament) with ID = 1
     array(
         'id'     => 1,
-        'box_ID' => 1,
+        'box_ID' => 2,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'league', # This sets the node to be a league. I.e. this will make a latest games box for the league with ID = 1
         'title'  => 'Recent games',
+        'upcoming' => 0, # if set to 0 will show recent games, if set to 1 will show future games.
+        'length' => 5,
+    ),
+    # This will display an  upcoming games box for the node (league, division or tournament) with ID = 1
+    array(
+        'id'     => 1,
+        'box_ID' => 1,
+        // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
+        'type'   => 'league', # This sets the node to be a league. I.e. this will make a latest games box for the league with ID = 1
+        'title'  => 'Upcoming games',
+        'upcoming' => 1, # if set to 0 will show recent games, if set to 1 will show future games.
         'length' => 5,
     ),
 );
