@@ -119,24 +119,35 @@ function __construct($conf_id)
 {
 }
 
-public static function styles() {
+public static function showTournamentSelectList($selectedTour, $title) {
+    global $tours;
+	$firstTour = 0;
 echo<<< EOQ
-	<style type="text/css">
-		.boxTitleConf {
-			background-color: #679EC9;
-			padding: 6px;
-			font-size: 13px;
-			font-weight: bold;
-			margin-top: 0px;
-			margin-bottom: 5px;
-		}
-	</style>
+    <div class='boxWide'>
+        <h3 class='boxTitle2'>$title</h3>
+        <div class='boxBody'>
+			<form method="POST">
+				<select name="tour_id">
 EOQ;
+					$rTours = array_reverse($tours, true);
+					foreach ($rTours as $trid => $desc) {
+						if ($firstTour == 0) {
+							$firstTour = $trid;
+						}
+			echo "<option value='$trid'" . ($trid==$selectedTour ? 'SELECTED' : '') . " >$desc[tname]</option>\n";
+					}
+echo<<< EOQ
+				</select>
+				<input type="submit" value="OK">
+			</form>
+        </div>
+    </div>
+EOQ;
+    return $firstTour;
 }
 
 /* This function is the primary one to display a league table */
 public static function showTables() {
-	self::styles();
     global $lng, $tours;
     title($lng->getTrn('name', 'LeagueTables'));
 
@@ -145,31 +156,17 @@ public static function showTables() {
     if (isset($_POST['tour_id'])) {
     	$tour_id = $_POST['tour_id'];
     }
-	$firstTour = 0;
-    ?>
-    <div class='boxWide'>
-        <h3 class='boxTitle2'><?php echo $lng->getTrn('tours', 'LeagueTables');?></h3>
-        <div class='boxBody'>
-			<form method="POST">
-				<select name="tour_id">
-					<?php
-					$rTours = array_reverse($tours, true);
-					foreach ($rTours as $trid => $desc) {
-						if ($firstTour == 0) {
-							$firstTour = $trid;
-						}
-						echo "<option value='$trid'" . ($trid==$tour_id ? 'SELECTED' : '') . " >$desc[tname]</option>\n";
-					}
-					?>
-				</select>
-				<input type="submit" value="OK">
-			</form>
-        </div>
-    </div>
-    <?php
     if ($tour_id == 0) {
-    	$tour_id = $firstTour;
+    	if (Module::isRegistered('LeaguePref')) {
+    		$l_pref= LeaguePref::getLeaguePreferences();
+    		if (isset($l_pref->p_tour)) {
+    			$tour_id = $l_pref->p_tour;
 	}
+    	}
+	}
+
+	$firstTour = self::showTournamentSelectList($tour_id, $lng->getTrn('tours', 'LeagueTables'));
+    if ($tour_id == 0) { $tour_id = $firstTour; }
 
 	// create the tournament and get the sorting rules
 	$tour = new Tour($tour_id);
