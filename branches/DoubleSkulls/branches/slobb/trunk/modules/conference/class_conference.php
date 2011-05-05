@@ -301,7 +301,6 @@ public static function tournamentSelector($tour_id) {
 
 /* Main function for displaying conference administration page */
 public static function conferenceAdmin() {
-	LeagueTables::styles();
     global $lng, $tours, $coach;
     title($lng->getTrn('name', 'Conference'));
     self::handleActions();
@@ -373,7 +372,7 @@ echo<<< EOQ
 		<td>
 		<div class='boxCommon' style='margin-top: 0px; width=325px'>
 			<h4 class='boxTitleConf'>$conf->name <a onclick="return removeConf($conf->conf_id);"><img src="images/remove.png" height="16" width="16" title="remove $conf->name" alt="remove $conf->name"/></a></h4>
-			<div style='white-space:nowrap; margin: 0px; padding: 5px; padding-top: 0px; line-height:175%; border 0px;'>
+			<div class='boxConf'>
 EOQ;
 		self::findTeam($tour->tour_id, $conf->conf_id);
 		foreach($conf->teams as $team) {

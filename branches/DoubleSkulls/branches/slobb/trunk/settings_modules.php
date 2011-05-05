@@ -22,6 +22,8 @@ $settings['modules_enabled'] = array(
     'PDFMatchReport'     => true, # Generating PDF forms for tabletop match reports.
     'LeagueTables'       => true, # Provides league table link on the main menu
     'Conference'         => true, # Provides support for conferences within tournaments
+    'Adverts'         	 => true, # Shows a BB banners across the top
+    'LeaguePref'         => true, # Allows dynamic configuration of league preferences
 );
 
 /*****************
@@ -33,7 +35,7 @@ $settings['modules_enabled'] = array(
 */
 
 $settings['allow_registration'] = true; // Default is true.
-$settings['registration_webmaster'] = "webmaster@example.com"; // Default is "webmaster@example.com".
+$settings['registration_webmaster'] = "webmaster@talkfantasyfootball.org";
 $settings['lang'] = 'en-GB'; // Default language for registred user.
 
 /*
