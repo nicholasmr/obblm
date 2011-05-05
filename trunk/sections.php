@@ -270,6 +270,12 @@ function sec_main() {
     $boxes_all = array_merge($settings['fp_standings'], $settings['fp_leaders'], $settings['fp_latestgames']);
     usort($boxes_all, create_function('$a,$b', 'return (($a["box_ID"] > $b["box_ID"]) ? 1 : (($a["box_ID"] < $b["box_ID"]) ? -1 : 0) );'));
     $boxes = array();
+
+	if (Module::isRegistered('LeaguePref')) {
+		$l_pref= LeaguePref::getLeaguePreferences();
+	}
+
+
     foreach ($boxes_all as $box) {
         # These fields distinguishes the box types.
         if      (isset($box['fields'])) {$box['dispType'] = 'standings';}
@@ -282,6 +288,22 @@ function sec_main() {
             default: $_type = T_NODE_LEAGUE;
         }
         $box['type'] = $_type;
+    	if (Module::isRegistered('LeaguePref')) {
+    		global $tours;
+    		//print_r($tours);
+    		// dynamically switch the front page to show the tables for the preferred tournament
+			switch ($box['id']) {
+				case 'prime':
+					$box['id'] = $l_pref->p_tour ;
+					$box['title'] = $tours[$l_pref->p_tour]['tname'] . " " . $box['title'];
+					break;
+				case 'second':
+					$box['id'] = $l_pref->s_tour ;
+					$box['title'] = $tours[$l_pref->s_tour]['tname'] . " " . $box['title'];
+					break;
+			}
+    	}
+
         $boxes[] = $box;
     }
 

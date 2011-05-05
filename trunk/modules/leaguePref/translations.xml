@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<en-GB>
+
+<name>League Preferences Admininstration</name>
+<menu-lge>League Preferences</menu-lge>
+<help>Using the league prefences league and global administrators can change the touranments displayed on the homepage dynamically. Within the settings_xxx.php file the ID for each box should be set to 'prime' or 'second' to pick up the tournament selected below. 
+<br />In addition the primary tournament will be selected by default on the league tables page, recent matches and upcoming matches.</help>
+
+<lname>League</lname>
+<primeTitle>Primary Tournament</primeTitle>
+<primeHelp>The primary tournament gets automatically selected in a number of tables and lookups</primeHelp>
+<secondTitle>Secondary Tournament</secondTitle>
+<secondHelp>The secondary tournament is used as an alternative to the primary tournament</secondHelp>
+
+<submitText>OK</submitText>
+<submitTitle>Update this league`s preferences</submitTitle>
+
+<failedSave>Unable to save preferences</failedSave>
+<failedValidate>Primary and secondary tournaments must be different</failedValidate>
+<failedSave>Sorry, you don't have permission to update this league</failedSave>
+
+<saved>Updated</saved>
+
+</en-GB>
