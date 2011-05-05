@@ -78,7 +78,7 @@ $settings['fp_messageboard']['show_match_summaries'] = true; // Default is true.
 $settings['fp_standings'] = array(
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
-        'id'     => 73,
+        'id'     => 'prime',
         'box_ID' => 3,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
@@ -89,14 +89,14 @@ $settings['fp_standings'] = array(
             Also note that using HRSs with fields such as points (pts) for leagues/divisions standings makes no sense as they are tournament specific fields (i.e. it makes no sense to sum the points for teams across different tours to get the teams' "league/division points", as the points definitions for tours may vary).
         */
         'HRS'    => 4, # Note: this must be a existing and valid HRS number from the main settings.php file.
-        'title'  => 'Spr 11 standings',
+        'title'  => 'Standings',
         'length' => 8,
         # Format: "Displayed table column name" => "OBBLM field name".
         'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
     ),
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
-        'id'     => 70,
+        'id'     => 'second',
         'box_ID' => 6,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
@@ -107,7 +107,7 @@ $settings['fp_standings'] = array(
             Also note that using HRSs with fields such as points (pts) for leagues/divisions standings makes no sense as they are tournament specific fields (i.e. it makes no sense to sum the points for teams across different tours to get the teams' "league/division points", as the points definitions for tours may vary).
         */
         'HRS'    => 4, # Note: this must be a existing and valid HRS number from the main settings.php file.
-        'title'  => 'Open League',
+        'title'  => 'Standings',
         'length' => 8,
         # Format: "Displayed table column name" => "OBBLM field name".
         'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
@@ -122,22 +122,22 @@ $settings['fp_leaders'] = array(
     # Please note: You can NOT make expressions out of leader fields e.g.: 'field' => 'cas+td'
     # This will display a 'most CAS' player leaders box for the node (league, division or tournament) with ID = 1
     array(
-        'id'        => 73,
+        'id'        => 'prime',
         'box_ID'    => 5,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Spr 11 most casualties',
+        'title'     => 'Most casualties',
         'field'     => 'cas',
         'length'    => 5,
         'show_team' => true, # Show player's team name?
     ),
     # This will display a 'most TD' player leaders box for the node (league, division or tournament) with ID = 2
     array(
-        'id'        => 73,
+        'id'        => 'prime',
         'box_ID'    => 4,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Spr 11 most touchdowns',
+        'title'     => 'Most touchdowns',
         'field'     => 'td',
         'length'    => 5,
         'show_team' => true, # Show player's team name?

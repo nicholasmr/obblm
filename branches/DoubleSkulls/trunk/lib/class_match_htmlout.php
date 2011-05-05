@@ -52,17 +52,17 @@ function upcomingMatches() {
     HTMLOUT::upcomingGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=upcoming', 'n' => MAX_RECENT_GAMES));
 }
 
-public static function tourMatches() 
+public static function tourMatches()
 {
     global $lng, $coach;
     global $leagues, $divisions, $tours;
 
-    $trid = $_GET['trid']; # Shortcut for string interpolation.    
+    $trid = $_GET['trid']; # Shortcut for string interpolation.
     if (!isset($trid) || !in_array($trid, array_keys($tours))) { # Not set or not viewable -> deny access.
         fatal('Invalid tournament ID.');
     }
     $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, (int) $trid));
-    
+
     // Admin actions made?
     if (isset($_GET['action']) && $IS_LOCAL_ADMIN) {
         $match = new Match($_GET['mid']);
@@ -72,14 +72,14 @@ public static function tourMatches()
                 case 'lock':   status($match->setLocked(true)); break;
                 case 'unlock': status($match->setLocked(false)); break;
                 case 'delete': status($match->delete()); break;
-                case 'reset':  status($match->reset()); break;            
+                case 'reset':  status($match->reset()); break;
             }
         }
     }
     else if (isset($_GET['action'])) {
         status(false, 'Sorry, you do not have permission to do that.');
     }
-    
+
     ?>
     <script language="JavaScript" type="text/javascript">
         function match_delete() {
@@ -90,13 +90,13 @@ public static function tourMatches()
         }
     </script>
     <?php
-    
+
     $query = "SELECT COUNT(*) FROM matches WHERE f_tour_id = $trid";
     $result = mysql_query($query);
     list($cnt) = mysql_fetch_row($result);
     $pages = ($cnt == 0) ? 1 : ceil($cnt/self::T_HTML_MATCHES_PER_PAGE);
     global $page;
-    $page = isset($_GET['page']) ? $_GET['page'] : 1; # Page 1 is default, of course.    
+    $page = isset($_GET['page']) ? $_GET['page'] : 1; # Page 1 is default, of course.
     $_url = "?section=matches&amp;type=tourmatches&amp;trid=$trid&amp;";
     title(get_alt_col('tours', 'tour_id', $trid, 'name'));
     echo '<center><table>';
@@ -105,12 +105,12 @@ public static function tourMatches()
     echo '</td></td>';
     echo "<tr><td>    Matches: $cnt</td></td>";
     echo '</table></center>';
-    
-    $rnd = 0; # Initial round number must be lower than possible round numbers.    
+
+    $rnd = 0; # Initial round number must be lower than possible round numbers.
     $cols = 7; # Common columns counter.
     $ROUND_SORT_DIR = (get_alt_col('tours', 'tour_id', $trid, 'type') == TT_RROBIN) ? 'ASC' : 'DESC'; # Sort differently depeding on tour type.
-    $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score 
-        FROM matches, teams AS t1, teams AS t2 WHERE f_tour_id = $trid AND team1_id = t1.team_id AND team2_id = t2.team_id 
+    $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score
+        FROM matches, teams AS t1, teams AS t2 WHERE f_tour_id = $trid AND team1_id = t1.team_id AND team2_id = t2.team_id
         ORDER BY round $ROUND_SORT_DIR, date_played DESC, date_created ASC LIMIT ".(($page-1)*self::T_HTML_MATCHES_PER_PAGE).', '.(($page)*self::T_HTML_MATCHES_PER_PAGE);
     $result = mysql_query($query);
     echo "<table class='tours'>\n";
@@ -156,7 +156,7 @@ public static function tourMatches()
     echo "</table>\n";
 }
 
-public static function tours() 
+public static function tours()
 {
 
     global $rules, $settings, $lng, $coach;
@@ -167,7 +167,7 @@ public static function tours()
     $tourObjs = array();
     $flist_JShides = array();
     $divsToFoldUp = array();
-        
+
     // Run through the tours to see which nodes should be hidden.
     $ENABLE_LEAG_HIDING = in_array('league', $settings['tourlist_hide_nodes']);
     $ENABLE_DIV_HIDING  = in_array('division', $settings['tourlist_hide_nodes']);
@@ -195,7 +195,7 @@ public static function tours()
     // Print show hidden button.
     ?>
     <script language="JavaScript" type="text/javascript">
-        function showFullTourList() 
+        function showFullTourList()
         {
             var hidden=[<?php echo array_strpack("'%s'", $flist_JShides, ',') ?>];
             for (var h in hidden) {
@@ -235,16 +235,16 @@ public static function tours()
         if ($tr->is_finished) { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/finished').'</i>&nbsp;&nbsp;';}
         if ($tr->locked)      { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/locked').'</i>&nbsp;&nbsp;';}
         if (!empty($suffix)) { echo '&nbsp;&nbsp;'.$suffix;}
-        echo "</div>\n"; # tour title container         
-        echo "</div>\n"; # tour container 
+        echo "</div>\n"; # tour title container
+        echo "</div>\n"; # tour container
     }
-    echo "</div>\n"; # div body container 
-    echo "</div>\n"; # div container 
+    echo "</div>\n"; # div body container
+    echo "</div>\n"; # div container
     }
-    echo "</div>\n"; # league body container 
-    echo "</div>\n"; # league container 
+    echo "</div>\n"; # league body container
+    echo "</div>\n"; # league container
     }
-    
+
 }
 
 public static function report() {
@@ -253,16 +253,16 @@ public static function report() {
     $match_id = $_GET['mid'];
     if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
         fatal("Invalid match ID.");
-    
+
     global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $racesMayRaiseRotters, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     global $leagues,$divisions,$tours;
-    
+
     // Create objects
     $m = new Match($match_id);
     $team1 = new Team($m->team1_id);
     $team2 = new Team($m->team2_id);
-    
+
     // Determine visitor privileges.
     $lid = $divisions[$tours[$m->f_tour_id]['f_did']]['f_lid'];
     $ALLOW_EDIT = (!$m->locked && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $leagues[$lid]['ring'] == Coach::T_RING_LOCAL_ADMIN || $coach->isInMatch($m->match_id)));
@@ -280,7 +280,7 @@ public static function report() {
 
     echo '<script language="JavaScript" type="text/javascript">
     var ID_MERCS = '.ID_MERCS.';
-    var ID_STARS_BEGIN = '.ID_STARS_BEGIN.';    
+    var ID_STARS_BEGIN = '.ID_STARS_BEGIN.';
     </script>
     ';
 
@@ -289,30 +289,30 @@ public static function report() {
      * Submitted form?
      *
      *****************/
-     
+
     if (isset($_POST['button']) && $ALLOW_EDIT) {
-    
+
         if (get_magic_quotes_gpc())
             $_POST['summary'] =  stripslashes($_POST['summary']);
-        
+
         MTS('Report submit STARTED');
-        
+
         // FIRST, if any raised zombies are kept we need to create their player objects in order have the correct player- vs. match creation & played dates.
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
             if (in_array($t->f_race_id, $racesHasNecromancer) && isset($_POST["t${id}zombie"])) {
                 $pos_id = $DEA[$t->f_rname]['players']['Zombie']['pos_id'];
                 list($exitStatus,$pid) = Player::create(
                     array(
-                        'nr' => $t->getFreePlayerNr(), 
-                        'f_pos_id' => $pos_id, 
-                        'team_id' => $t->team_id, 
+                        'nr' => $t->getFreePlayerNr(),
+                        'f_pos_id' => $pos_id,
+                        'team_id' => $t->team_id,
                         'name' => 'RAISED ZOMBIE'
-                    ), 
+                    ),
                     array(
                         'free' => true,
                     ));
-                /* 
-                    Knowing the new zombie's PID we relocate the zombie match data to regular player data - this allows us 
+                /*
+                    Knowing the new zombie's PID we relocate the zombie match data to regular player data - this allows us
                     to use the same loop for submitting the zombie's match data.
                 */
                 foreach ($T_PMD__ENTRY_EXPECTED as $f) {
@@ -322,7 +322,7 @@ public static function report() {
                 }
             }
         }
-        
+
         // SECONDLY, look for raised rotters too, do same as above with zombies...
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
             if (in_array($t->f_race_id, $racesMayRaiseRotters) && isset($_POST["t${id}rotterCnt"]) && ($N = (int) $_POST["t${id}rotterCnt"]) > 0) {
@@ -330,17 +330,17 @@ public static function report() {
                     $pos_id = $DEA[$t->f_rname]['players']['Rotter']['pos_id'];
                     list($exitStatus,$pid) = Player::create(
                         array(
-                            'nr' => $t->getFreePlayerNr(), 
-                            'f_pos_id' => $pos_id, 
-                            'team_id' => $t->team_id, 
+                            'nr' => $t->getFreePlayerNr(),
+                            'f_pos_id' => $pos_id,
+                            'team_id' => $t->team_id,
                             'name' => "RAISED ROTTER $n"
-                        ), 
+                        ),
                         array(
                             'free' => true,
                         ));
 
-                    /* 
-                        Knowing the new rotter's PID we relocate the rotter match data to regular player data - this allows us 
+                    /*
+                        Knowing the new rotter's PID we relocate the rotter match data to regular player data - this allows us
                         to use the same loop for submitting the rotter's match data.
                     */
                     foreach ($T_PMD__ENTRY_EXPECTED as $f) {
@@ -351,7 +351,7 @@ public static function report() {
                 }
             }
         }
-        
+
         // Update general match data
         status($m->update(array(
             'submitter_id'  => (int) $_SESSION['coach_id'],
@@ -380,14 +380,14 @@ public static function report() {
 
         // Update match's player data
         foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
-        
+
             /* Save ordinary players */
-        
+
             foreach ($t->getPlayers() as $p) {
-            
+
                 if (!self::player_validation($p, $m))
                     continue;
-                
+
                 // We create zero entries for MNG player(s). This is required!
                 if ($p->getStatus($m->match_id) == MNG) {
                     $_POST['mvp_' . $p->player_id]      = 0;
@@ -407,7 +407,7 @@ public static function report() {
                     $_POST['agn1_' . $p->player_id]     = NONE;
                     $_POST['agn2_' . $p->player_id]     = NONE;
                 }
-                
+
                 $m->entry($p->player_id, array(
                     'mvp'     => $_POST['mvp_' . $p->player_id],
                     'cp'      => $_POST['cp_' . $p->player_id],
@@ -428,9 +428,9 @@ public static function report() {
                 ));
             }
             MTS('Saved all REGULAR player entries in match_data for team '.$id);
-            
-            /* 
-                Save stars entries. 
+
+            /*
+                Save stars entries.
             */
 
             foreach ($stars as $star) {
@@ -465,11 +465,11 @@ public static function report() {
                 }
             }
             MTS('Saved all STAR player entries in match_data for team '.$id);
-            
-            /* 
-                Save mercenary entries. 
+
+            /*
+                Save mercenary entries.
             */
-            
+
             Mercenary::rmMatchEntries($m->match_id, $t->team_id); // Remove all previously saved mercs in this match.
             for ($i = 0; $i <= 50; $i++)  { # We don't expect over 50 mercs. This is just some large random number.
                 $idm = '_'.ID_MERCS.'_'.$i;
@@ -478,7 +478,7 @@ public static function report() {
                         // Merc required input
                         'f_team_id' => $t->team_id,
                         'nr'        => $i,
-                        'skills'    => $_POST["skills$idm"],                    
+                        'skills'    => $_POST["skills$idm"],
                         // Regular input
                         'mvp'     => $_POST["mvp$idm"],
                         'cp'      => $_POST["cp$idm"],
@@ -501,7 +501,7 @@ public static function report() {
             }
             MTS('Saved all STAR player entries in match_data for team '.$id);
         }
-        
+
         $m->finalizeMatchSubmit(); # Required!
         MTS('Report submit ENDED');
 
@@ -510,10 +510,10 @@ public static function report() {
         $team1 = new Team($m->team1_id);
         $team2 = new Team($m->team2_id);
     }
-    
+
     /****************
      *
-     * Generate form 
+     * Generate form
      *
      ****************/
 
@@ -582,7 +582,7 @@ public static function report() {
                 <td><b><?php echo $lng->getTrn('matches/report/fame');?></b></td>
                 <td><b><?php echo $lng->getTrn('matches/report/tv');?></b></td>
             </tr>
-            
+
             <tr><td class='seperator' colspan='<?php echo $CP;?>'></td></tr>
             <?php
             foreach (array(1,2) as $N) {
@@ -603,6 +603,11 @@ public static function report() {
             }
             ?>
         </table>
+        <table class='common'>
+            <tr><td class='seperator' colspan='13'></td></tr>
+            <tr class='commonhead'><td colspan='13'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td></tr>
+            <tr><td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->getText(); ?></textarea></td></tr>
+        </table>
 
         <?php
         $playerFields = array_merge($T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ);
@@ -621,12 +626,12 @@ public static function report() {
                 echo "<td><i>$f</i></td>\n";
             }
             echo "</tr>\n";
-            
+
             foreach ($t->getPlayers() as $p) {
 
                 if (!self::player_validation($p, $m))
                     continue;
-            
+
                 // Fetch player data from match
                 $status = $p->getStatus($m->match_id);
                 $mdat   = $m->getPlayerEntry($p->player_id);
@@ -638,7 +643,7 @@ public static function report() {
                 self::_print_player_row($p->player_id, $p->name, $p->nr, $p->position.(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
             }
             echo "</table>\n";
-            
+
             // Add raised zombies
             global $racesHasNecromancer;
             if (in_array($t->f_race_id, $racesHasNecromancer)) {
@@ -655,22 +660,22 @@ public static function report() {
             if (in_array($t->f_race_id, $racesMayRaiseRotters)) {
                 $maxRotters = 6; # Note there is no real limit for raised rotters.
                 echo "<hr style='width:200px;float:left;'><br>
-                <b>Raised rotters?:</b> 
+                <b>Raised rotters?:</b>
                 <select name='t${id}rotterCnt' onChange='var i = this.options[this.selectedIndex].value; var j=1; for (j=1; j<=$maxRotters; j++) {if (j<=i) {slideDownFast(\"t${id}rotter\"+j);} else {slideUpFast(\"t${id}rotter\"+j);}}' >";
                 foreach (range(0,$maxRotters) as $n) {echo "<option value='$n'>$n</option>";}
                 echo "</select>\n";
                 foreach (range(0,$maxRotters) as $n) {
                     echo "<div id='t${id}rotter$n' style='display:none;'><table class='common'>\n";
                     self::_print_player_row("t${id}rotter$n", "Raised Rotter #$n", '&mdash;', 'Rotter', false, array(), $DIS);
-                    echo "</table></div>\n";                
+                    echo "</table></div>\n";
                 }
             }
             ?>
 
             <table style='border-spacing: 0px 10px;'>
                 <tr><td align="left" valign="top">
-                    <b>Star Players</b>: 
-                    <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" 
+                    <b>Star Players</b>:
+                    <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>"
                     onClick="stars = document.getElementById('stars_<?php echo $id;?>'); addStarMerc(<?php echo $id;?>, stars.options[stars.selectedIndex].value);" <?php echo $DIS; ?>>
                     <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
                         <?php
@@ -684,26 +689,21 @@ public static function report() {
                     <b>Mercenaries</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
                 </td></tr>
             </table>
-            
+
             <table class='common' id='<?php echo "starsmercs_$id";?>'>
             </table>
             <?php
         }
         ?>
-        <table class='common'>
-            <tr><td class='seperator' colspan='13'></td></tr>
-            <tr class='commonhead'><td colspan='13'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td></tr>
-            <tr><td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->getText(); ?></textarea></td></tr>
-        </table>
         <br><center><input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>></center>
     </form>
     <br><br>
     <?php
-    
-    /* 
-        Now, we call javascript routine(s) to fill out stars and mercs rows, if such entries exist in database. 
+
+    /*
+        Now, we call javascript routine(s) to fill out stars and mercs rows, if such entries exist in database.
     */
-    
+
     $i = 0; // Counter. Used to pass PHP-data to Javascript.
     foreach (array(1 => $team1->team_id, 2 => $team2->team_id) as $id => $t) {
         foreach (Star::getStars(STATS_TEAM, $t, STATS_MATCH, $m->match_id) as $s) {
@@ -717,7 +717,7 @@ public static function report() {
             echo "</script>\n";
             $i++;
         }
-        
+
         foreach (Mercenary::getMercsHiredByTeam($t, $m->match_id) as $merc) {
             echo "<script language='JavaScript' type='text/javascript'>\n";
             echo "var mdat$i = [];\n";
@@ -768,7 +768,7 @@ protected static function _print_player_row($FS, $name, $nr, $pos, $bgcolor, $md
     echo "</tr>\n";
 }
 
-public static function report_ES($mid, $DIS) 
+public static function report_ES($mid, $DIS)
 {
     global $lng, $ES_fields;
     $ES_grps = array();
@@ -778,7 +778,7 @@ public static function report_ES($mid, $DIS)
         }
     }
     $players = self::report_ES_loadPlayers($mid);
-    
+
     // Update entries if requested.
     if (!$DIS && isset($_POST['ES_submitted'])) {
         $query = "SELECT tour_id AS 'trid', did, f_lid AS 'lid' FROM matches, tours, divisions WHERE match_id = $mid AND f_tour_id = tour_id AND f_did = did";
@@ -791,7 +791,7 @@ public static function report_ES($mid, $DIS)
         foreach ($teamPlayers as $p) {
             $status &= Match::ESentry(
                 array(
-                    'f_pid' => $p['pid'], 'f_tid' => $p['f_tid'], 'f_cid' => $p['f_cid'], 'f_rid' => $p['f_rid'], 
+                    'f_pid' => $p['pid'], 'f_tid' => $p['f_tid'], 'f_cid' => $p['f_cid'], 'f_rid' => $p['f_rid'],
                     'f_mid' => $mid, 'f_trid' => $NR['trid'], 'f_did' => $NR['did'], 'f_lid' => $NR['lid']
                 ),
                 array_combine(array_keys($ES_fields), array_map(create_function('$f', 'global $p; return (int) $_POST["${f}_$p[pid]"];'), array_keys($ES_fields)))
@@ -801,7 +801,7 @@ public static function report_ES($mid, $DIS)
         status($status);
         $players = self::report_ES_loadPlayers($mid); # Reload!
     }
-    
+
     // Create form
     title('ES submission');
     echo "<center><a href='index.php?section=matches&amp;type=report&amp;mid=$mid'>".$lng->getTrn('common/back')."</a></center>\n";
@@ -809,7 +809,7 @@ public static function report_ES($mid, $DIS)
     echo "<form method='POST'>\n";
     foreach ($players as $teamPlayers) {
         echo "<br>\n";
-        echo "<table style='font-size: small;'>\n"; 
+        echo "<table style='font-size: small;'>\n";
         $COLSPAN = count($teamPlayers)+1; # +1 for field desc.
         $tid = $teamPlayers[0]['f_tid'];
         echo "<tr><td colspan='$COLSPAN'><b><a name='thead$tid'>".get_alt_col('teams', 'team_id', $tid, 'name')."</a></b></td></tr>";
@@ -835,15 +835,15 @@ public static function report_ES($mid, $DIS)
     echo "</form>\n";
 }
 
-protected static function report_ES_loadPlayers($mid) 
+protected static function report_ES_loadPlayers($mid)
 {
     global $ES_fields;
-    $query = "SELECT 
+    $query = "SELECT
             players.player_id AS 'pid', players.owned_by_team_id AS 'f_tid', players.f_cid AS 'f_cid', players.f_rid AS 'f_rid',
             players.name AS 'name', players.nr AS 'nr',
-            ".implode(',', array_keys($ES_fields))." 
+            ".implode(',', array_keys($ES_fields))."
         FROM matches, match_data, players LEFT JOIN match_data_es ON (match_data_es.f_mid = $mid AND players.player_id = match_data_es.f_pid)
-        WHERE 
+        WHERE
             matches.match_id = $mid AND matches.match_id = match_data.f_match_id AND match_data.f_player_id = players.player_id AND (owned_by_team_id = team1_id OR owned_by_team_id = team2_id)
         ORDER BY f_tid ASC, nr ASC";
 #    echo $query;
@@ -861,7 +861,7 @@ public static function userSched() {
         status(false, "You must be logged in to schedule games");
         return;
     }
-    
+
     if (isset($_POST['creategame'])) {
         list($exitStatus, $mid) = Match::create(array(
             'team1_id'  => (int) $_POST['own_team'],
@@ -875,7 +875,7 @@ public static function userSched() {
             echo "<a href='index.php?section=matches&amp;type=report&amp;mid=$mid'>Click here to open match report.</a>";
         }
     }
-    
+
     title($lng->getTrn('menu/matches_menu/usersched'));
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     $LOCK_FORMS = false;
@@ -933,8 +933,8 @@ public static function userSched() {
                     $(document).ready(function(){
                         var options, b;
 
-                        options = { 
-                            minChars:2, 
+                        options = {
+                            minChars:2,
                                 serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>',
                         };
                         b = $('#opposing_team_autoselect').autocomplete(options);

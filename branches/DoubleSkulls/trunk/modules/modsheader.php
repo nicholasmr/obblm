@@ -134,4 +134,16 @@ Module::register(array(
     'filesLoadTime' => array('conference/class_conference.php')
 ));
 
+Module::register(array(
+    'class'         => 'Adverts',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('adverts/class_adverts.php')
+));
+
+Module::register(array(
+    'class'         => 'LeaguePref',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('leaguePref/class_league_pref.php')
+));
+
 ?>

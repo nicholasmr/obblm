@@ -100,10 +100,14 @@ switch ($_GET['type'])
         Module::run('LeagueTables', array('showTables'));
         break;
 
-
     /* Conference */
     case 'conference':
         Module::run('Conference', array('conferenceAdmin'));
+        break;
+
+    /* League Preferences */
+    case 'leaguepref':
+        Module::run('LeaguePref', array('showLeaguePreferences'));
         break;
 
     /* Name autocompletion - AJAX */

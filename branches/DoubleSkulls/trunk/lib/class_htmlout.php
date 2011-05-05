@@ -496,9 +496,9 @@ public static function simpleLeagueSelector()
     if ($_lid = self::getSelectedNodeLid()) {
         $sel_lid = $_lid;
     }
-    # Save league view.
-    $_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
-    $_SESSION[self::T_NSStr__node_id] = (int) $sel_lid;
+		# Save league view.
+		$_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
+		$_SESSION[self::T_NSStr__node_id] = (int) $sel_lid;
 
     $HTMLselector = "<form name='SLS' method='POST' style='display:inline; margin:0px;'>".$lng->getTrn('common/league')." <select name='SLS_lid' onChange='document.SLS.submit();'>\n";
     foreach ($leagues as $lid => $desc) {
@@ -754,10 +754,17 @@ public static function frame_begin($stylesheet = false)
         <script type="text/javascript" src="cssmenu/js/jquery/jquery.js"></script>
         <script type="text/javascript" src="cssmenu/js/jquery/jquery.dropdown.js"></script>
         <![endif]-->
+		<link href="favicon.ico" rel="icon" />
+        <link type="text/css" href="css/stylesheetds.css" rel="stylesheet">
     </head>
     <body>
         <div class="everything">
-            <div class="banner"></div>
+			<?php if (Module::isRegistered('Adverts')) {
+					Adverts::showAdverts();
+				} else {
+				?><div class="banner"></div><?php
+				}
+			?>
             <div class="menu">
                 <?php HTMLOUT::make_menu(); ?>
             </div> <!-- Menu div end -->
@@ -841,6 +848,7 @@ private static function make_menu()
                 <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Gallery'))    { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Conference'))    { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('LeaguePref'))    { ?><li><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('menu-lge', 'LeaguePref');?></a></li><?php } ?>
             </ul>
         </li>
 
