@@ -855,8 +855,15 @@ private static function make_menu()
         <li><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>
         <?php
-        if (!empty($settings['forum_url'])) {
-            ?><li><a href="<?php echo $settings['forum_url'];?>"><?php echo $lng->getTrn('menu/forum');?></a></li><?php
+
+		if (Module::isRegistered('LeaguePref')) {
+			$l_pref= LeaguePref::getLeaguePreferences();
+			$forum_url = $l_pref->forum_url;
+		} else {
+			$forum_url = $settings['forum_url'];
+		}
+        if (!empty($forum_url)) {
+            ?><li><a href="<?php echo $forum_url;?>"><?php echo $lng->getTrn('menu/forum');?></a></li><?php
         }
         ?>
     </ul>

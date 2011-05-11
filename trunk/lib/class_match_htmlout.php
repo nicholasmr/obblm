@@ -52,21 +52,10 @@ function upcomingMatches() {
     HTMLOUT::upcomingGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=upcoming', 'n' => MAX_RECENT_GAMES));
 }
 
-public static function tourMatches()
-{
-    global $lng, $coach;
-    global $leagues, $divisions, $tours;
-
-    $trid = $_GET['trid']; # Shortcut for string interpolation.
-    if (!isset($trid) || !in_array($trid, array_keys($tours))) { # Not set or not viewable -> deny access.
-        fatal('Invalid tournament ID.');
-    }
-    $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, (int) $trid));
-
+public static function matchActions($IS_LOCAL_ADMIN) {
     // Admin actions made?
     if (isset($_GET['action']) && $IS_LOCAL_ADMIN) {
         $match = new Match($_GET['mid']);
-        if ($match->f_tour_id == $trid) {
             switch ($_GET['action'])
             {
                 case 'lock':   status($match->setLocked(true)); break;
@@ -75,21 +64,22 @@ public static function tourMatches()
                 case 'reset':  status($match->reset()); break;
             }
         }
-    }
     else if (isset($_GET['action'])) {
         status(false, 'Sorry, you do not have permission to do that.');
     }
+}
 
-    ?>
-    <script language="JavaScript" type="text/javascript">
-        function match_delete() {
-            return confirm('<?php echo $lng->getTrn('matches/tourmatches/matchdelete'); ?>');
+public static function tourMatches()
+{
+    global $lng, $coach;
+    global $leagues, $divisions, $tours;
+
+    $trid = $_GET['trid']; # Shortcut for string interpolation.
+    if (!isset($trid) || !in_array($trid, array_keys($tours))) { # Not set or not viewable -> deny access.
+        fatal('Invalid tournament ID.');
         }
-        function match_reset() {
-            return confirm('<?php echo $lng->getTrn('matches/tourmatches/reset_notice'); ?>');
-        }
-    </script>
-    <?php
+    $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, (int) $trid));
+	self::matchActions($IS_LOCAL_ADMIN);
 
     $query = "SELECT COUNT(*) FROM matches WHERE f_tour_id = $trid";
     $result = mysql_query($query);
@@ -144,6 +134,16 @@ public static function tourMatches()
             <?php
             echo "&nbsp;<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>&nbsp;\n";
             if ($IS_LOCAL_ADMIN) {
+				?>
+				<script language="JavaScript" type="text/javascript">
+					function match_delete() {
+						return confirm('<?php echo $lng->getTrn('matches/tourmatches/matchdelete'); ?>');
+					}
+					function match_reset() {
+						return confirm('<?php echo $lng->getTrn('matches/tourmatches/reset_notice'); ?>');
+					}
+				</script>
+				<?php
                 echo "<a onclick=\"return match_reset();\" href='$matchURL&amp;action=reset'>".$lng->getTrn('common/reset')."</a>&nbsp;\n";
                 echo "<a onclick=\"return match_delete();\" href='$matchURL&amp;action=delete' style='color:".(!empty($m->date_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('common/delete')."</a>&nbsp;\n";
                 echo "<a href='$matchURL&amp;action=".(($m->locked) ? 'unlock' : 'lock')."'>" . ($m->locked ? $lng->getTrn('common/unlock') : $lng->getTrn('common/lock')) . "</a>&nbsp;\n";
@@ -257,6 +257,10 @@ public static function report() {
     global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $racesMayRaiseRotters, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     global $leagues,$divisions,$tours;
+
+	// Perform actions (delete, lock/unlock and reset). Needs the
+    $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, get_alt_col('matches', 'match_id', $match_id, 'f_tour_id')));
+	self::matchActions($IS_LOCAL_ADMIN);
 
     // Create objects
     $m = new Match($match_id);
@@ -535,7 +539,27 @@ public static function report() {
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
         echo "<tr><td><b>Replay</b>:</td><td colspan='3'><a href='handler.php?type=leegmgr&amp;replay=$m->match_id'>View replay</a></td></tr>";
     }
+	if ($IS_LOCAL_ADMIN) {
     ?>
+		<script language="JavaScript" type="text/javascript">
+			function match_delete() {
+				return confirm('<?php echo $lng->getTrn('matches/tourmatches/matchdelete'); ?>');
+			}
+			function match_reset() {
+				return confirm('<?php echo $lng->getTrn('matches/tourmatches/reset_notice'); ?>');
+			}
+		</script>
+	    <?php
+		$matchURL = "index.php?section=matches&type=report&amp;mid=$m->match_id";
+		$deleteURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$m->f_tour_id&amp;mid=$m->match_id";
+
+		echo "<tr><td><b>Admin:</b></td><td colspan='3'>";
+		echo "<a onclick=\"return match_reset();\" href='$matchURL&amp;action=reset'>".$lng->getTrn('common/reset')."</a>&nbsp;\n";
+		echo "<a onclick=\"return match_delete();\" href='$deleteURL&amp;action=delete' style='color:".(!empty($m->date_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('common/delete')."</a>&nbsp;\n";
+		echo "<a href='$matchURL&amp;action=".(($m->locked) ? 'unlock' : 'lock')."'>" . ($m->locked ? $lng->getTrn('common/unlock') : $lng->getTrn('common/lock')) . "</a>&nbsp;\n";
+		echo "</td></tr>";
+	}
+?>
     </table>
     <br>
     <?php echo "<b><a TARGET='_blank' href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br><br>"; ?>
