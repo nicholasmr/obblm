@@ -46,6 +46,7 @@ class Tour
     public $date_created    = '';
     public $rs              = 0; // Ranking system.
     public $locked          = false;
+    public $coach_schedule_tour = false;
 
     // Other
     public $winner          = null; # Team ID.
@@ -158,22 +159,9 @@ class Tour
         }
     }
     
-    public function rename($name) {
-        return (mysql_query("UPDATE tours SET name = '" . mysql_real_escape_string($name) . "' WHERE tour_id = $this->tour_id"));
-    }
-
-    public function chType($type) {
-        return (mysql_query("UPDATE tours SET type = $type WHERE tour_id = $this->tour_id"));
-    }
-
-    public function chRS($rs) {
-        $query = "UPDATE tours SET rs = $rs WHERE tour_id = $this->tour_id";
+    public function save() {
+        $query = "UPDATE tours SET rs = $this->rs, name = '" . mysql_real_escape_string($this->name) . "', type = $this->type, locked = ".(($this->locked) ? 1 : 0).", coach_schedule_tour = $this->coach_schedule_tour WHERE tour_id = $this->tour_id";
         return mysql_query($query);
-    }
-
-    public function setLocked($lock) {
-        $this->locked = (bool) $lock;
-        return mysql_query("UPDATE tours SET locked = ".(($lock) ? 1 : 0)." WHERE tour_id = $this->tour_id");
     }
 
     /***************
