@@ -3,7 +3,7 @@
 /*************************
  * Local settings for league with ID = 1
  *************************/
- 
+
 /*********************
  *   General
  *********************/
@@ -17,7 +17,6 @@ $settings['welcome']       = 'Please replace this line in your local league sett
 $settings['rules']         = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
 $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the division nodes in the tournament lists section will automatically be folded up if all child tournaments in that division are marked as finished.
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament'); // Default is array('league', 'division', 'tournament'). In the section tournament lists these nodes will be hidden if their contents (children) are finished. Example: If 'division' is chosen here, and all tours in a given division are finished, then the division entry will be hidden.
-$settings['coach_schedule_tours'] = array(); // List of tournament IDs of FFA tours (from this league), in which regular coaches are able to schedule matches between their OWN teams and others teams.
 
 /*********************
  *   Rules
@@ -65,7 +64,7 @@ $settings['fp_messageboard']['show_match_summaries'] = true; // Default is true.
 
 /*
     The below settings define which boxes to show on the right side of the front page.
-    
+
     Note, every box MUST have a unique 'box_ID' number.
     The box IDs are used to determine the order in which the boxes are shown on the front page.
     The box with 'box_ID' = 1 is shown at the top of the page, the box with 'box_ID' = 2 is displayed underneath it and so forth.
@@ -83,8 +82,8 @@ $settings['fp_standings'] = array(
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
         'infocus' => false, # If true a random team from the standings will be selected and its top players displayed.
-        /* 
-            The house ranking system (HRS) NUMBER to sort the table against. 
+        /*
+            The house ranking system (HRS) NUMBER to sort the table against.
             Note, this is ignored for "type = tournament", since tours have an assigned HRS.
             Also note that using HRSs with fields such as points (pts) for leagues/divisions standings makes no sense as they are tournament specific fields (i.e. it makes no sense to sum the points for teams across different tours to get the teams' "league/division points", as the points definitions for tours may vary).
         */
@@ -108,7 +107,7 @@ $settings['fp_leaders'] = array(
         'box_ID'    => 3,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Tournament ID=1 most casualties',  
+        'title'     => 'Tournament ID=1 most casualties',
         'field'     => 'cas',
         'length'    => 5,
         'show_team' => true, # Show player's team name?
@@ -119,7 +118,7 @@ $settings['fp_leaders'] = array(
         'box_ID'    => 4,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Tournament ID=2 most touchdowns',  
+        'title'     => 'Tournament ID=2 most touchdowns',
         'field'     => 'td',
         'length'    => 5,
         'show_team' => true, # Show player's team name?
