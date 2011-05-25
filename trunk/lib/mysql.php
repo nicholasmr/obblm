@@ -39,7 +39,7 @@ $CT_cols = array(
     T_NODE_TOURNAMENT => 'MEDIUMINT UNSIGNED',
     T_NODE_DIVISION   => 'MEDIUMINT UNSIGNED',
     T_NODE_LEAGUE     => 'MEDIUMINT UNSIGNED',
-    
+
     'name' => 'VARCHAR(60)', # Widely used for name fields etc.
     'tv' => 'MEDIUMINT UNSIGNED', # Team value
     'pv' => 'MEDIUMINT SIGNED', # Player value
@@ -196,6 +196,7 @@ $core_tables = array(
         'begun'    => 'BOOLEAN DEFAULT FALSE',
         'finished' => 'BOOLEAN DEFAULT FALSE',
         'winner'   => $CT_cols[T_OBJ_TEAM],
+	   	'coach_schedule_tour' => 'BOOLEAN DEFAULT FALSE',
     ),
     'matches' => array(
         'match_id'      => $CT_cols[T_NODE_MATCH].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -358,7 +359,7 @@ $core_tables['mv_coaches'] = array(
 );
 $core_tables['mv_races'] = array(
     'f_rid' => $CT_cols[T_OBJ_RACE].' NOT NULL',
-    
+
     'team_cnt' => $CT_cols['team_cnt'],
 );
 
@@ -469,7 +470,7 @@ $ES_fields = array(
 "sustained_bomb_si" => array("short" => "sbo_si","type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Bomb Throwing stats", "desc" => "Number of times seriously hurt by a bomb"),
 "sustained_bomb_kill" => array("short" => "sbo_ki","type" => "MEDIUMINT SIGNED NOT NULL DEFAULT 0", "group" => "Bomb Throwing stats", "desc" => "Number of times killed by a bomb"),
 );
-$ES_commoncols = array_merge(array(    
+$ES_commoncols = array_merge(array(
     # Node references
         # array() for compatibility.
     'f_trid' => array('type' => $CT_cols[T_NODE_TOURNAMENT]),
@@ -499,7 +500,7 @@ $core_tables['match_data_es'] = array(
     'f_tid' => $CT_cols[T_OBJ_TEAM],
     'f_cid' => $CT_cols[T_OBJ_COACH],
     'f_rid' => $CT_cols[T_OBJ_RACE],
-    
+
     'f_mid' => $CT_cols[T_NODE_MATCH].' NOT NULL',
 );
 
@@ -532,16 +533,16 @@ $relations_obj = array(
 $objFields_init = array(
     T_OBJ_TEAM => array(
         'won' => 'won_0', 'lost' => 'lost_0', 'draw' => 'draw_0', 'played' => 'played_0',
-        'wt_cnt' => 'wt_0', 'gf' => 'gf_0', 'ga' => 'ga_0', 
+        'wt_cnt' => 'wt_0', 'gf' => 'gf_0', 'ga' => 'ga_0',
     ),
 );
 // Object property extra (addition) fields
 $objFields_extra = array(
-    /* 
-        We don't include extra_skills since it's a string field. 
+    /*
+        We don't include extra_skills since it's a string field.
         Neither extra_value since it's added to normal value field in the SQL core.
     */
-    T_OBJ_PLAYER => array('spp' => 'extra_spp'), 
+    T_OBJ_PLAYER => array('spp' => 'extra_spp'),
 );
 
 // These object fields are averageable
@@ -556,11 +557,11 @@ function mysql_up($do_table_check = false) {
     // Brings up MySQL for use in PHP execution.
 
     global $db_host, $db_user, $db_passwd, $db_name; // From settings.php
-    
+
     $conn = mysql_connect($db_host, $db_user, $db_passwd);
-    
+
     if (!$conn)
-        die("<font color='red'><b>Could not connect to the MySQL server. 
+        die("<font color='red'><b>Could not connect to the MySQL server.
             <ul>
                 <li>Is the MySQL server running?</li>
                 <li>Are the settings in <i>settings.php</i> correct?</li>
@@ -590,7 +591,7 @@ function mysql_up($do_table_check = false) {
         if (count($tables_diff) > 0) {
             die("<font color='red'><b>Could not find all the expected tables in database. Try running the install script again.<br><br>
                 <i>Tables missing:</i><br> ". implode(', ', $tables_diff) ."
-                </b></font>");  
+                </b></font>");
         }
     }
 
@@ -614,9 +615,9 @@ function get_alt_col($V, $X, $Y, $Z) {
 
 
 function get_rows($tbl, array $getFields, $where = array()) {
-    /* 
+    /*
         Useful for when wanting to quickly make objects with basic fields.
-        
+
         Ex: Get all teams' name and ID:
             get_rows('teams', array('team_id', 'name'));
         ...will return an (unsorted) array of objects with the attributes 'team_id' and 'name', found in the teams table.
@@ -639,7 +640,7 @@ function get_parent_id($type, $id, $parent_type) {
     # Don't include tables below $node OR above $parent_node OR parent_node table itself!
     list($zeroEntry) = array_keys($relations);
     $REL_trimmed = array_slice($relations, $type-$zeroEntry, $parent_type-$type);
-    $REL_trimmed_padded = $REL_trimmed; 
+    $REL_trimmed_padded = $REL_trimmed;
     $tables = array_map(create_function('$rl', 'return $rl["tbl"];'), $REL_trimmed);
     array_pop($REL_trimmed);
     array_shift($REL_trimmed_padded);
@@ -660,14 +661,14 @@ function get_list($table, $col, $val, $new_col) {
     $result = mysql_query("SELECT $new_col FROM $table WHERE $col = '$val'");
     if (mysql_num_rows($result) <= 0)
         return array();
-    
+
     $row = mysql_fetch_assoc($result);
     return (empty($row[$new_col])) ? array() : explode(',', $row[$new_col]);
 }
 
 function set_list($table, $col, $val, $new_col, $new_val = array()) {
     $new_val = implode(',', $new_val);
-    if (mysql_query("UPDATE $table SET $new_col = '$new_val' WHERE $col = '$val'")) 
+    if (mysql_query("UPDATE $table SET $new_col = '$new_val' WHERE $col = '$val'"))
         return true;
     else
         return false;
@@ -691,12 +692,12 @@ function setup_database() {
 
     // Create core tables.
     echo "<b>Creating core tables...</b><br>\n";
-    foreach ($core_tables as $tblName => $def) {    
+    foreach ($core_tables as $tblName => $def) {
         echo (Table::createTable($tblName, $def))
             ? "<font color='green'>OK &mdash; $tblName</font><br>\n"
             : "<font color='red'>FAILED &mdash; $tblName</font><br>\n";
     }
-    
+
     // Create tables used by modules.
     echo "<b>Creating module tables...</b><br>\n";
     foreach (Module::createAllRequiredTables() as $module => $tables) {
@@ -708,11 +709,11 @@ function setup_database() {
     }
 
     echo "<b>Other tasks...</b><br>\n";
-    
-    echo (SQLCore::syncGameData()) 
-        ? "<font color='green'>OK &mdash; Synchronize game data with database</font><br>\n" 
+
+    echo (SQLCore::syncGameData())
+        ? "<font color='green'>OK &mdash; Synchronize game data with database</font><br>\n"
         : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
-    
+
     echo (SQLCore::installTableIndexes())
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
@@ -722,16 +723,16 @@ function setup_database() {
         : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
 
     // Create root user and leave welcome message on messageboard
-    echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => Coach::T_RING_GLOBAL_ADMIN, 'mail' => '', 'phone' => '', 'settings' => array(), 'def_leagues' => array()))) 
+    echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => Coach::T_RING_GLOBAL_ADMIN, 'mail' => '', 'phone' => '', 'settings' => array(), 'def_leagues' => array())))
         ? "<font color=green>OK &mdash; root user created.</font><br>\n"
         : "<font color=red>FAILED &mdash; root user was not created.</font><br>\n";
 
     Message::create(array(
-        'f_coach_id' => 1, 
+        'f_coach_id' => 1,
         'f_lid'      => Message::T_BROADCAST,
-        'title'      => 'OBBLM installed!', 
+        'title'      => 'OBBLM installed!',
         'msg'        => 'Congratulations! You have successfully installed Online Blood Bowl League Manager. See "about" and "introduction" for more information.'));
-    
+
     // Done!
     mysql_close($conn);
     return true;
@@ -740,7 +741,7 @@ function setup_database() {
 function upgrade_database($version, $opts)
 {
     $conn = mysql_up();
-    
+
     switch ($version) {
         case '075-080':
             # Migrating position IDs correctly requires having loaded the correct LRB used in the v0.75 league.
@@ -751,21 +752,21 @@ function upgrade_database($version, $opts)
                 default: break; # LRB6 already loaded by default.
             }
             break;
-            
+
         default:
             break;
     }
 
     require_once('lib/class_sqlcore.php');
     require_once('lib/mysql_upgrade_queries.php');
-        
+
     // Modules
     echo "<b>Running SQLs for modules upgrade...</b><br>\n";
     foreach (Module::getAllUpgradeSQLs($version) as $modname => $SQLs) {
         if (empty($SQLs))
             continue;
         $status = true;
-        foreach ($SQLs as $query) {    
+        foreach ($SQLs as $query) {
             $status &= (mysql_query($query) or die(mysql_error()));
         }
         echo ($status) ? "<font color='green'>OK &mdash; SQLs of $modname</font><br>\n" : "<font color='red'>FAILED &mdash; SQLs of $modname</font><br>\n";
@@ -773,24 +774,28 @@ function upgrade_database($version, $opts)
 
     // Core
     echo "<b>Running SQLs for core system upgrade...</b><br>\n";
-        
-    echo (SQLCore::syncGameData()) 
-        ? "<font color='green'>OK &mdash; Synchronized game data with database</font><br>\n" 
+
+    echo (SQLCore::syncGameData())
+        ? "<font color='green'>OK &mdash; Synchronized game data with database</font><br>\n"
         : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
-    
+
     echo (SQLCore::installProcsAndFuncs(true))
         ? "<font color='green'>OK &mdash; created MySQL functions/procedures</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
 
-    $core_SQLs = $upgradeSQLs[$version];
-    $status = true;
-    foreach ($core_SQLs as $query) { $status &= (mysql_query($query) or die(mysql_error()."\n<br>SQL:\n<br>---\n<br>".$query));}
-    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
+	if (isset($upgradeSQLs[$version])) {
+		$core_SQLs = $upgradeSQLs[$version];
+		$status = true;
+		foreach ($core_SQLs as $query) { $status &= (mysql_query($query) or die(mysql_error()."\n<br>SQL:\n<br>---\n<br>".$query));}
+	    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
+    }
 
-    $core_Funcs = $upgradeFuncs[$version];
-    $status = true;
-    foreach ($core_Funcs as $func) { $status &= call_user_func($func);}
-    echo ($status) ? "<font color='green'>OK &mdash; Custom PHP upgrade code (<i>".implode(', ',$core_Funcs)."</i>)</font><br>\n" : "<font color='red'>FAILED &mdash; Custom PHP upgrade code</font><br>\n";
+	if (isset($upgradeFuncs[$version])) {
+		$core_Funcs = $upgradeFuncs[$version];
+		$status = true;
+		foreach ($core_Funcs as $func) { $status &= call_user_func($func);}
+		echo ($status) ? "<font color='green'>OK &mdash; Custom PHP upgrade code (<i>".implode(', ',$core_Funcs)."</i>)</font><br>\n" : "<font color='red'>FAILED &mdash; Custom PHP upgrade code</font><br>\n";
+    }
 
     echo (SQLCore::installMVs(false))
         ? "<font color='green'>OK &mdash; created MV tables</font><br>\n"
@@ -799,27 +804,27 @@ function upgrade_database($version, $opts)
     list($status,$added,$dropped) = SQLCore::reviseEStables();
     echo ($status)
         ? "<font color='green'>OK &mdash; create/update ES tables</font><br>\n" . '<!-- DEV. INFO: Added new cols: '.implode(', ', $added).'. Removed cols: '.implode(', ', $dropped).'.-->'
-        : "<font color='red'>FAILED &mdash; create/update ES tables</font><br>\n";        
-   
+        : "<font color='red'>FAILED &mdash; create/update ES tables</font><br>\n";
+
     echo (SQLCore::installTableIndexes())
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
-   
+
     switch ($version) {
         case '075-080':
             # Convert league to LRB6.
             global $DEA, $stars, $skillarray; # Make global so that below include()s will overwrite their values.
             require('lib/game_data_lrb6.php'); # Load LRB6.
             SQLCore::syncGameData();
-            
+
         default:
             break;
     }
-   
+
     echo (mysql_query("CALL syncAll()"))
         ? "<font color='green'>OK &mdash; synchronised all dynamic stats and properties</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not synchronise all dynamic stats and properties</font><br>\n";
-   
+
     // Done!
     mysql_close($conn);
     return $upgradeMsgs[$version];
@@ -832,7 +837,7 @@ function upgrade_database($version, $opts)
 class SQLUpgrade
 {
     const NONE = 'SELECT \'1\'';
-    
+
     public static function doesColExist($tbl, $col)
     {
         global $db_name;
@@ -841,18 +846,18 @@ class SQLUpgrade
         $row = mysql_fetch_assoc($result);
         return (bool) $row['exists'];
     }
-    
+
     public static function runIfColumnNotExists($tbl, $col, $query)
     {
         return self::doesColExist($tbl, $col) ? self::NONE : $query;
     }
-    
+
     // EXACTLY like runIfColumnNotExists(), but has the logic reversed at the return statement.
     public static function runIfColumnExists($tbl, $col, $query)
     {
         return self::doesColExist($tbl, $col) ? $query : self::NONE;
     }
-    
+
     public static function runIfTrue($evalQuery, $query)
     {
         $result = mysql_query($evalQuery);

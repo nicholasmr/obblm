@@ -2,67 +2,76 @@
 
 $manageable_tours = array();
 foreach ($tours as $trid => $desc) {
-    if ($leagues[$divisions[$desc['f_did']]['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-        $manageable_tours[$trid] = $desc;
-        $manageable_tours[$trid]['f_dname'] = $divisions[$desc['f_did']]['dname'];        
-        $manageable_tours[$trid]['f_lid'] = $lid = $divisions[$desc['f_did']]['f_lid'];
-        $manageable_tours[$trid]['f_lname'] = $leagues[$lid]['lname'];
+	$lid = $divisions[$desc['f_did']]['f_lid'];
+    if ($leagues[$lid]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
+        $manageable_tours[$trid]['tour'] = $selectedTour = new Tour($trid);
+        $manageable_tours[$trid]['name'] = $leagues[$lid]['lname'] . ", " . $divisions[$desc['f_did']]['dname'];
     }
 }
+$manageable_tours = array_reverse($manageable_tours, true);
 
 if (isset($_POST['type'])) {
     if (!in_array($trid = $_POST['trid'], array_keys($manageable_tours))) {
         status(false, 'You do not have the permissions to manage the selected tournament.');
         $_POST['type'] = 'QUIT';
+    } else {
+        $t = $manageable_tours[$trid]['tour'];
+		$selectedTour = $t;
+
     }
-    else {
-        $t = new Tour($trid);
-    }
-    
+
     switch ($_POST['type'])
     {
         case 'QUIT': break;
-        
+
         case 'change':
             if (get_magic_quotes_gpc()) {
                 $_POST['tname'] = stripslashes($_POST['tname']);
             }
-            status($t->chRS($_POST['rs']) && $t->chType($_POST['ttype']) && $t->rename($_POST['tname']));
+            $selectedTour->rs =$_POST['rs'];
+            $selectedTour->type =$_POST['ttype'];
+            $selectedTour->name =$_POST['tname'];
+            $selectedTour->locked = isset($_POST['locked']) ? $_POST['locked'] : 0;
+            $selectedTour->coach_schedule_tour = isset($_POST['coach_schedule_tour']) ? $_POST['coach_schedule_tour'] : 0;
+            status($selectedTour->save());
             break;
 
         case 'delete':
-            $_OK = ($IS_GLOBAL_ADMIN && isset($_POST['delete']) && $_POST['delete']);
-            status($_OK ? $t->delete(true) : false, $_OK ? '' : 'Please mark the agreement box before trying to delete a tournament. Also note that only site admins may use this feature.');
+            status($IS_GLOBAL_ADMIN ? $t->delete(true) : false, $IS_GLOBAL_ADMIN ? '' : 'Note that only site admins may use this feature.');
             break;
 
-        case 'lock':
-            status($t->setLocked(isset($_POST['lock']) && $_POST['lock']));
+        case 'select':
             break;
     }
 }
 
 title($lng->getTrn('menu/admin_menu/tour_man'));
 
-?>
+$tourLongName = $manageable_tours[$selectedTour->tour_id]['name'] . ": " . $selectedTour->name;
 
+echo<<< EOQ
+EOQ;
+?>
 <div class="row">
 
 <div class="boxCommon">
-    <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Lock/unlock tournament</div>
+    <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Select tournament</div>
     <div class="boxBody">
     <form method="POST">
         <b>Tournament</b><br>
         <select name="trid">
             <?php
             foreach ($manageable_tours as $trid => $desc) {
-                echo "<option value='$trid'>$desc[f_lname], $desc[f_dname]: $desc[tname]".(($desc['locked']) ? ' (is locked)' : '')."</option>\n";
+	            $longName = $desc['name'] . ": " . $desc['tour']->name;
+                echo "<option value='$trid'";
+                if ($trid == $selectedTour->tour_id) {
+                	echo " SELECTED";
+                }
+                echo ">$longName"."</option>\n";
             }
             ?>
-        </select><br><br>
-        <b>Set locked state to</b> (locked/unlocked = checked/unchecked):
-        <input type="checkbox" name="lock" value="1">
-        <br><br>
-        <input type="hidden" name="type" value="lock">
+        </select>
+        <input type="hidden" name="type" value="select">
         <input type="submit" value="OK" <?php echo (empty($manageable_tours)) ? 'DISABLED' : '';?>>
     </form>
     </div>
@@ -70,41 +79,41 @@ title($lng->getTrn('menu/admin_menu/tour_man'));
 </div>
 <div class="row">
 <div class="boxCommon">
-    <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Edit existing tournament</div>
+    <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Edit <?php echo $tourLongName;?></div>
     <div class="boxBody">
+<?php
+
+$rnkText= $lng->getTrn('admin/prefixes');
+echo<<< EOQ
     <form id='tourForm' method="POST">
         <br>
-        <b>Edit tournament:</b><br>
-        <select name="trid">
-            <?php
-            foreach ($manageable_tours as $trid => $desc) {
-                echo "<option value='$trid'>$desc[f_lname], $desc[f_dname]: $desc[tname]</option>\n";
-            }
-            ?>
-        </select>
-        <br><br>
-        <hr>
-        <br>
         <b>New name:</b><br>
-        <input type='text' name='tname' length='20' value=''>
+        <input type='text' name='tname' length='20' value='$selectedTour->name'>
         <br><br>
-        <b>New ranking system:</b> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
+        <b>New ranking system:</b> ($rnkText)<br>
         <select name='rs'>
-        <?php
+EOQ;
         global $hrs;
         foreach ($hrs as $idx => $r) {
-            echo "<option value='$idx'>#$idx: ".Tour::getRSstr($idx)."</option>\n";
+	        $selected = $idx == $selectedTour->rs;
+            echo "<option value='$idx'";
+            if ($selected) {
+            	echo " SELECTED ";
+            }
+            echo ">#$idx: ".Tour::getRSstr($idx)."</option>\n";
         }
         ?>
         </select>
 
         <br><br>
         <b>New tournament type:</b><br>
-        <input type="radio" name="ttype" value="<?php echo TT_RROBIN;?>" > Round-Robin<br>
-        <input type="radio" name="ttype" value="<?php echo TT_FFA;?>" CHECKED> FFA<br>
-        <br>
-
+        <input type="radio" name="ttype" value="<?php echo TT_RROBIN ?>" <?php ; if ($selectedTour->type == TT_RROBIN) {echo " CHECKED ";} ?>> Round-Robin<br>
+        <input type="radio" name="ttype" value="<?php echo TT_FFA;  ?>" <?php ; if ($selectedTour->type == TT_FFA) {echo " CHECKED ";} ?>> FFA<br>
+        <br /><input type="checkbox" name="locked" value="1" <?php echo (($selectedTour->locked) ? "CHECKED" : "") ;?> /><b>Locked</b>
+        <br /><input type="checkbox" name="coach_schedule_tour" value="1" <?php echo ($selectedTour->coach_schedule_tour) ? "CHECKED" : "" ; ?> /><b>Coaches can schedule their own matches</b>
+		<br />
         <input type="hidden" name="type" value="change">
+        <input type="hidden" name="trid" value="<?php echo $selectedTour->tour_id; ?>">
         <input type="submit" value="Submit changes" <?php echo (empty($manageable_tours)) ? 'DISABLED' : '';?>>
         <br>
     </form>
@@ -115,18 +124,9 @@ title($lng->getTrn('menu/admin_menu/tour_man'));
     <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">Tournament deletion</div>
     <div class="boxBody">
     <form method="POST">
-        <b>I wish to delete the following tournament</b><br>
-        <select name="trid">
-            <?php
-            foreach ($manageable_tours as $trid => $desc) {
-                echo "<option value='$trid'>$desc[f_lname], $desc[f_dname]: $desc[tname]</option>\n";
-            }
-            ?>
-        </select>
-        <br><br>
-        <b>I have read the below advisement:</b>
-        <input type="checkbox" name="delete" value="1">
-        <br><br>
+
+        <b>I wish to delete the following tournament: <?php echo $tourLongName;?></b>
+        <br><br>
         <b><u>Advisement/warning:</u></b><br>
         This feature is only meant to be used for non-played or empty tournaments and test-tournaments.<br>
         If you decide to delete a proper tournament you should know that this will
@@ -139,6 +139,7 @@ title($lng->getTrn('menu/admin_menu/tour_man'));
         <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br>
         <br>
         <input type="hidden" name="type" value="delete">
+        <input type="hidden" name="trid" value="<?php echo $selectedTour->tour_id; ?>">
         <input type="submit" value="Delete" <?php echo ($IS_GLOBAL_ADMIN && !empty($manageable_tours)) ? '' : 'DISABLED';?> onclick="if(!confirm('Are you absolutely sure you want to delete this tournament?')){return false;}">
     </form>
     </div>

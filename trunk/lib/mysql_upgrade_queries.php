@@ -11,6 +11,7 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNOTExists('players', 'st_ua', 'ALTER TABLE players ADD COLUMN st_ua TINYINT SIGNED'),
         SQLUpgrade::runIfColumnNOTExists('players', 'ag_ua', 'ALTER TABLE players ADD COLUMN ag_ua TINYINT SIGNED'),
         SQLUpgrade::runIfColumnNOTExists('players', 'av_ua', 'ALTER TABLE players ADD COLUMN av_ua TINYINT SIGNED'),
+        SQLUpgrade::runIfColumnNOTExists('tours', 'coach_schedule_tour', 'ALTER TABLE tours ADD COLUMN coach_schedule_tour BOOLEAN DEFAULT FALSE'),
     ),
     '075-080' => array(
         # Delete, now modulized, type from texts.
@@ -20,14 +21,14 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNotExists('match_data', 'mg', 'ALTER TABLE match_data ADD COLUMN mg BOOLEAN NOT NULL DEFAULT FALSE'),
         'UPDATE match_data SET mg = IF(f_player_id < 0, FALSE, IF(getPlayerStatus(f_player_id, f_match_id) = 1, FALSE, TRUE))',
         # Before migrating to using skill IDs we must correct a few skill names.
-        SQLUpgrade::runIfColumnExists('players', 'ach_nor_skills', 'UPDATE players 
+        SQLUpgrade::runIfColumnExists('players', 'ach_nor_skills', 'UPDATE players
             SET ach_nor_skills = REPLACE(ach_nor_skills, "Bone Head", "Bone-Head"),
                 ach_dob_skills = REPLACE(ach_dob_skills, "Bone Head", "Bone-Head")'),
             # We do a double reverse replacement to prevent replacing "Claw/Claws" as "Claw/Claw/Claws"
-        SQLUpgrade::runIfColumnExists('players', 'ach_nor_skills', 'UPDATE players 
+        SQLUpgrade::runIfColumnExists('players', 'ach_nor_skills', 'UPDATE players
             SET ach_nor_skills = REPLACE(REPLACE(ach_nor_skills, "Claw/Claws", "Claws"), "Claws", "Claw/Claws"),
                 ach_dob_skills = REPLACE(REPLACE(ach_dob_skills, "Claw/Claws", "Claws"), "Claws", "Claw/Claws")'),
-                
+
         # Column alterations
         SQLUpgrade::runIfColumnExists('teams', 'elo_0', 'ALTER TABLE teams DROP elo_0'),
         SQLUpgrade::runIfColumnNOTExists('teams', 'played_0', 'ALTER TABLE teams ADD COLUMN played_0 SMALLINT UNSIGNED NOT NULL DEFAULT 0'),
@@ -38,7 +39,7 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNOTExists('teams', 'ff', 'ALTER TABLE teams ADD COLUMN ff TINYINT UNSIGNED'),
         SQLUpgrade::runIfColumnExists('teams', 'fan_factor', 'UPDATE teams SET ff_bought = fan_factor'),
         SQLUpgrade::runIfColumnExists('teams', 'fan_factor', 'ALTER TABLE teams DROP fan_factor'),
-        
+
         // Add DPROPS fields
         SQLUpgrade::runIfColumnNotExists('teams', 'swon', 'ALTER TABLE teams ADD COLUMN swon SMALLINT UNSIGNED DEFAULT 0'),
         SQLUpgrade::runIfColumnNotExists('teams', 'sdraw', 'ALTER TABLE teams ADD COLUMN sdraw SMALLINT UNSIGNED DEFAULT 0'),
@@ -74,10 +75,10 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNotExists('teams', 'f_rname', 'ALTER TABLE teams ADD COLUMN f_rname VARCHAR(60)'),
         SQLUpgrade::runIfColumnNotExists('teams', 'f_cname', 'ALTER TABLE teams ADD COLUMN f_cname VARCHAR(60)'),
 
-        # Migrate to using player position IDs 
+        # Migrate to using player position IDs
         SQLUpgrade::runIfColumnExists('players', 'position', 'UPDATE players,teams,game_data_players SET f_pos_id = pos_id WHERE owned_by_team_id = team_id AND teams.f_race_id = game_data_players.f_race_id AND position = pos'),
         SQLUpgrade::runIfColumnExists('players', 'position', 'ALTER TABLE players CHANGE COLUMN position f_pos_name VARCHAR(60)'),
-        
+
         // Add improvement rolls.
 #        SQLUpgrade::runIfColumnExists('match_data', 'ir_d1', 'ALTER TABLE match_data CHANGE ir_d1 ir1_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
 #        SQLUpgrade::runIfColumnExists('match_data', 'ir_d2', 'ALTER TABLE match_data CHANGE ir_d2 ir1_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
@@ -87,12 +88,12 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNotExists('match_data', 'ir2_d2', 'ALTER TABLE match_data ADD COLUMN ir2_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
         SQLUpgrade::runIfColumnNotExists('match_data', 'ir3_d1', 'ALTER TABLE match_data ADD COLUMN ir3_d1 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
         SQLUpgrade::runIfColumnNotExists('match_data', 'ir3_d2', 'ALTER TABLE match_data ADD COLUMN ir3_d2 TINYINT UNSIGNED NOT NULL DEFAULT 0'),
-        
+
         'DELETE FROM texts WHERE type = 11', # Match summary comments are deprecated.
         SQLUpgrade::runIfColumnExists('teams', 'sw_0', 'ALTER TABLE teams DROP sw_0'),
         SQLUpgrade::runIfColumnExists('teams', 'sd_0', 'ALTER TABLE teams DROP sd_0'),
         SQLUpgrade::runIfColumnExists('teams', 'sl_0', 'ALTER TABLE teams DROP sl_0'),
-        
+
         # New security system.
         SQLUpgrade::runIfColumnNotExists('leagues', 'tie_teams',  'ALTER TABLE leagues ADD COLUMN tie_teams BOOLEAN NOT NULL DEFAULT TRUE'),
         SQLUpgrade::runIfColumnNotExists('teams', 'f_did',  'ALTER TABLE teams ADD COLUMN f_did MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_race_id'),
@@ -108,7 +109,7 @@ $upgradeSQLs = array(
 #        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM memberships', 'INSERT INTO memberships (cid,lid,ring) SELECT DISTINCT owned_by_coach_id, f_lid, 2 FROM teams WHERE f_lid != 0'), # Coaches should be regular coach members of the leagues in which their teams are tied.
         SQLUpgrade::runIfColumnNotExists('memberships', 'cid', 'INSERT INTO memberships (cid,lid,ring) SELECT DISTINCT owned_by_coach_id, f_lid, 2 FROM teams WHERE f_lid != 0'), # Coaches should be regular coach members of the leagues in which their teams are tied. NOTE: We just test for the existence of ANY column in the memberships table before populating it (i.e. we only populate it if it was just now created).
         SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 FROM coaches WHERE ring = 5', 'UPDATE coaches SET ring = IF(ring = 0, 5, 0)'), # New rings system.
-        
+
         SQLUpgrade::runIfColumnNotExists('texts', 'f_id2',  'ALTER TABLE texts ADD COLUMN f_id2 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER f_id'),
         SQLUpgrade::runIfColumnExists('teams', 'tcas_0',  'ALTER TABLE teams DROP tcas_0'),
         SQLUpgrade::runIfColumnNotExists('coaches', 'activation_code',  'ALTER TABLE coaches ADD COLUMN activation_code VARCHAR(32) DEFAULT NULL AFTER retired'),
@@ -143,8 +144,8 @@ function upgrade_075_080_pskills_migrate()
         )
     ") or die(mysql_error()));
     $players = get_rows(
-        'players', 
-        array('player_id', 'ach_nor_skills', 'ach_dob_skills', 'extra_skills'), 
+        'players',
+        array('player_id', 'ach_nor_skills', 'ach_dob_skills', 'extra_skills'),
         array('ach_nor_skills != "" OR ach_dob_skills != "" OR extra_skills != ""')
     );
         foreach ($players as $p) {
@@ -169,18 +170,19 @@ function upgrade_075_080_pskills_migrate()
 }
 
 /*
-    Upgrade messages
+    Upgrade messages '
 */
 
 $upgradeMsgs = array(
 '075-080' => array(
 
 'Teams are now required to be tied to leagues. Upgrading automatically ties teams to the league in which they played their first match.
-Teams which have not yet played any games are therefore not tied to any leagues and you must manually run some SQL code to tie them to a given league, 
-for example running "UPDATE teams SET f_lid = 5 WHERE f_lid = 0", will tie the remaining teams to the league with ID = 5 (you would generally want to do something like that). 
+Teams which have not yet played any games are therefore not tied to any leagues and you must manually run some SQL code to tie them to a given league,
+for example running "UPDATE teams SET f_lid = 5 WHERE f_lid = 0", will tie the remaining teams to the league with ID = 5 (you would generally want to do something like that).
 If you don\'t do this the non-tied teams may not be scheduled to play in any matches!',
 
 ),
+'080-090' => array('The coach_schedule_tours setting is no longer used. For tournaments you wish to allow coaches to schedule the tournament then please use the Management: Tournaments item from the Admin menu'),
 
 );
 

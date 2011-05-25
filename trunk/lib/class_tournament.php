@@ -28,14 +28,14 @@ define('TT_RROBIN', 2); # Round-Robin
 class Tour
 {
 
-    /* 
-        Please note: OBBLM also uses a match's "rounds" field to distinguish ordinary matches from semi-finals and finals. 
+    /*
+        Please note: OBBLM also uses a match's "rounds" field to distinguish ordinary matches from semi-finals and finals.
         This means, that some round numbers are reserved for the above purpose.
         See the constant definitions from class_match.php for reserved round numbers.
     */
 
     /***************
-     * Properties 
+     * Properties
      ***************/
 
     // MySQL stored information
@@ -46,6 +46,7 @@ class Tour
     public $date_created    = '';
     public $rs              = 0; // Ranking system.
     public $locked          = false;
+    public $coach_schedule_tour = false;
 
     // Other
     public $winner          = null; # Team ID.
@@ -54,7 +55,7 @@ class Tour
     public $is_begun        = false; # Tournament contains played matches?
 
     /***************
-     * Methods 
+     * Methods
      ***************/
 
     function __construct($tour_id) {
@@ -68,7 +69,7 @@ class Tour
             $this->$col = ($val) ? $val : 0;
         }
         $this->locked = (bool) $this->locked;
-        
+
         $this->is_empty = $this->empty;
         $this->is_begun = $this->begun;
         $this->is_finished = $this->finished;
@@ -87,7 +88,7 @@ class Tour
                 array_push($matches, new Match($row['match_id']));
             }
         }
-        
+
         return $matches;
     }
 
@@ -100,8 +101,8 @@ class Tour
         $teams = array();
         $team_ids = array();
         $result = mysql_query("SELECT DISTINCT(tids) AS 'tid' FROM (
-            SELECT team1_id AS 'tids' FROM matches WHERE f_tour_id = $this->tour_id 
-                UNION 
+            SELECT team1_id AS 'tids' FROM matches WHERE f_tour_id = $this->tour_id
+                UNION
             SELECT team2_id AS 'tids' FROM matches WHERE f_tour_id = $this->tour_id
             ) AS tbl ORDER BY tids");
         if (mysql_num_rows($result) > 0) {
@@ -115,7 +116,7 @@ class Tour
                 $teams[] = new Team($tid);
             }
         }
-                
+
         return $teams;
     }
 
@@ -123,7 +124,7 @@ class Tour
         global $hrs;
         return isset($hrs[$this->rs]) ? $hrs[$this->rs]['rule'] : array();
     }
-    
+
     public function isRSWithPoints() {
         // Returns bool for wheter or not this tournament's ranking system uses points.
         global $hrs;
@@ -131,11 +132,11 @@ class Tour
     }
 
     public function delete($force = false) {
-    
+
         /**
          * Deletes this tournament, if no matches are assigned to it, unless forced.
          **/
-        
+
         if ($force) {
             $q = array();
             // Don't use the match delete() routines. We do it ourselves.
@@ -157,23 +158,10 @@ class Tour
             return false;
         }
     }
-    
-    public function rename($name) {
-        return (mysql_query("UPDATE tours SET name = '" . mysql_real_escape_string($name) . "' WHERE tour_id = $this->tour_id"));
-    }
 
-    public function chType($type) {
-        return (mysql_query("UPDATE tours SET type = $type WHERE tour_id = $this->tour_id"));
-    }
-
-    public function chRS($rs) {
-        $query = "UPDATE tours SET rs = $rs WHERE tour_id = $this->tour_id";
+    public function save() {
+        $query = "UPDATE tours SET rs = $this->rs, name = '" . mysql_real_escape_string($this->name) . "', type = $this->type, locked = ".(($this->locked) ? 1 : 0).", coach_schedule_tour = $this->coach_schedule_tour WHERE tour_id = $this->tour_id";
         return mysql_query($query);
-    }
-
-    public function setLocked($lock) {
-        $this->locked = (bool) $lock;
-        return mysql_query("UPDATE tours SET locked = ".(($lock) ? 1 : 0)." WHERE tour_id = $this->tour_id");
     }
 
     /***************
@@ -193,24 +181,24 @@ class Tour
 
         $tours = array();
         $result = mysql_query("SELECT tour_id FROM tours ORDER BY date_created DESC");
-        if (mysql_num_rows($result) > 0) {    
+        if (mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($tours, new Tour($row['tour_id']));
             }
         }
-        
+
         return $tours;
     }
 
     public static function getLatestTour() {
-    
+
         /**
          * Returns the tournament object for the latest tournament.
          **/
 
         $result = mysql_query("SELECT tour_id FROM tours ORDER BY date_created DESC LIMIT 1");
 
-        if (mysql_num_rows($result) > 0) {    
+        if (mysql_num_rows($result) > 0) {
             $row = mysql_fetch_assoc($result);
             return (new Tour($row['tour_id']));
         }
@@ -219,9 +207,9 @@ class Tour
         }
 
     }
-    
+
     public static function create(array $input) {
-    
+
         /**
          * Creates a new tournament.
          *
@@ -235,24 +223,24 @@ class Tour
         // Done in in scheduler section code.
 
         /* Create tournament */
-       
+
         // Quit if can't make tournament entry.
         $query = "INSERT INTO tours (name, f_did, type, rs, date_created) VALUES ('" . mysql_real_escape_string($input['name']) . "', $input[did], $input[type], $input[rs], NOW())";
         if (!mysql_query($query)) {
             return false;
         }
         $tour_id = mysql_insert_id();
-                
+
         /* Generate matches depending on type */
-        
+
         // FFA match(es)?
         if ($input['type'] == TT_FFA) {
             $status = true;
             for ($i = 0; $i < count($input['teams'])/2; $i++) {
                  list($exitStatus, $mid) = Match::create(array(
-                    'team1_id'  => $input['teams'][$i*2], 
-                    'team2_id'  => $input['teams'][$i*2+1], 
-                    'round'     => (($input['rounds']) ? $input['rounds'] : 1), 
+                    'team1_id'  => $input['teams'][$i*2],
+                    'team2_id'  => $input['teams'][$i*2+1],
+                    'round'     => (($input['rounds']) ? $input['rounds'] : 1),
                     'f_tour_id' => $tour_id
                 ));
                 $status &= !$exitStatus;
@@ -261,7 +249,7 @@ class Tour
         }
         // Round-Robin?
         elseif ($input['type'] == TT_RROBIN) {
-            
+
             // Quit if can't make tournament schedule.
             $robin = new RRobin();
             if (!$robin->create($input['teams'])) # If can't create Round-Robin tour -> quit.
@@ -277,13 +265,13 @@ class Tour
                     $robin->tour_inv[$ridx][$idx] = array($m[1], $m[0]);
                 }
             }
-            
+
             $status = true;
             for ($i = 1; $i <= $input['rounds']; $i++) {
                 $rounds = $robin->{(($i % 2) ? 'tour' : 'tour_inv')}; # Invert pair-up?
                 // Shuffle the order of rounds in the bracket seeding, $i.
-                $rounds_k = array_keys($rounds); 
-                $rounds_v = array_values($rounds); 
+                $rounds_k = array_keys($rounds);
+                $rounds_v = array_values($rounds);
                 shuffle($rounds_k);
                 shuffle($rounds_v);
                 $rounds = array_combine($rounds_k, $rounds_v);
@@ -296,7 +284,7 @@ class Tour
                     }
                 }
             }
-                
+
             return $status;
         }
 
