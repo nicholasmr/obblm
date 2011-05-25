@@ -154,14 +154,23 @@ function sec_main() {
     /*
      *  Now we are ready to generate the HTML code.
      */
+	if (Module::isRegistered('LeaguePref')) {
+		$l_pref= LeaguePref::getLeaguePreferences();
+		$league_name = $l_pref->league_name;
+		$welcome = $l_pref->welcome;
+	} else {
+		$league_name = $settings['league_name'];
+		$welcome = $settings['welcome'];
+	}
+
 
     ?>
-    <div class="main_head"><?php echo $settings['league_name']; ?></div>
+    <div class="main_head"><?php echo $league_name; ?></div>
     <div class='main_leftColumn'>
         <div class="main_leftColumn_head">
             <?php
             echo "<div class='main_leftColumn_welcome'>\n";
-            echo $settings['welcome'];
+            echo $welcome;
             echo "</div>\n";
             echo "<div class='main_leftColumn_left'>\n";
             echo $HTML_LeagueSelector;
@@ -271,10 +280,6 @@ function sec_main() {
     usort($boxes_all, create_function('$a,$b', 'return (($a["box_ID"] > $b["box_ID"]) ? 1 : (($a["box_ID"] < $b["box_ID"]) ? -1 : 0) );'));
     $boxes = array();
 
-	if (Module::isRegistered('LeaguePref')) {
-		$l_pref= LeaguePref::getLeaguePreferences();
-	}
-
 
     foreach ($boxes_all as $box) {
         # These fields distinguishes the box types.
@@ -294,12 +299,22 @@ function sec_main() {
     		// dynamically switch the front page to show the tables for the preferred tournament
 			switch ($box['id']) {
 				case 'prime':
+					if ($l_pref->p_tour > 0) {
 					$box['id'] = $l_pref->p_tour ;
 					$box['title'] = $tours[$l_pref->p_tour]['tname'] . " " . $box['title'];
+					} else {
+						$box['id'] = 1;
+						$box['title'] = 'Please set league primary tournament';
+					}
 					break;
 				case 'second':
+					if ($l_pref->s_tour > 0) {
 					$box['id'] = $l_pref->s_tour ;
 					$box['title'] = $tours[$l_pref->s_tour]['tname'] . " " . $box['title'];
+					} else {
+						$box['id'] = 1;
+						$box['title'] = 'Please set league secondary tournament';
+					}
 					break;
 			}
     	}
@@ -699,11 +714,17 @@ function sec_objhandler() {
 function sec_rules() {
 
     global $lng, $settings;
+
     title($lng->getTrn('menu/rules'));
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     echo $HTML_LeagueSelector;
     echo "<br><br>";
+	if (Module::isRegistered('LeaguePref')) {
+		$l_pref= LeaguePref::getLeaguePreferences();
+		echo $l_pref->rules;
+	} else {
     echo $settings['rules'];
+}
 }
 
 /*************************
