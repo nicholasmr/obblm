@@ -196,6 +196,7 @@ $core_tables = array(
         'begun'    => 'BOOLEAN DEFAULT FALSE',
         'finished' => 'BOOLEAN DEFAULT FALSE',
         'winner'   => $CT_cols[T_OBJ_TEAM],
+	   	'coach_schedule_tour' => 'BOOLEAN DEFAULT FALSE',
     ),
     'matches' => array(
         'match_id'      => $CT_cols[T_NODE_MATCH].' NOT NULL PRIMARY KEY AUTO_INCREMENT',
@@ -782,15 +783,19 @@ function upgrade_database($version, $opts)
         ? "<font color='green'>OK &mdash; created MySQL functions/procedures</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
 
+	if (isset($upgradeSQLs[$version])) {
     $core_SQLs = $upgradeSQLs[$version];
     $status = true;
     foreach ($core_SQLs as $query) { $status &= (mysql_query($query) or die(mysql_error()."\n<br>SQL:\n<br>---\n<br>".$query));}
     echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
+    }
 
+	if (isset($upgradeFuncs[$version])) {
     $core_Funcs = $upgradeFuncs[$version];
     $status = true;
     foreach ($core_Funcs as $func) { $status &= call_user_func($func);}
     echo ($status) ? "<font color='green'>OK &mdash; Custom PHP upgrade code (<i>".implode(', ',$core_Funcs)."</i>)</font><br>\n" : "<font color='red'>FAILED &mdash; Custom PHP upgrade code</font><br>\n";
+    }
 
     echo (SQLCore::installMVs(false))
         ? "<font color='green'>OK &mdash; created MV tables</font><br>\n"

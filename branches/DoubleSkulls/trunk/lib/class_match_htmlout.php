@@ -919,7 +919,8 @@ public static function userSched() {
                         }
                         if ($tr['type'] == TT_FFA) {
                             $TOURS_CNT++;
-                            if (in_array($trid, $settings['coach_schedule_tours'])) {
+                            $tour = new Tour($trid);
+                            if ($tour->coach_schedule_tour) {
                                 echo "<option value='$trid'>".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
                             }
                         }
@@ -966,11 +967,10 @@ public static function userSched() {
                 </script>
                 <br><br>
                 <?php
-                $LOCK_FORMS = !($TOURS_CNT && $TEAMS_CNT) || empty($settings['coach_schedule_tours']);
+                $LOCK_FORMS = !($TOURS_CNT && $TEAMS_CNT);
                 echo '<input type="submit" name="creategame" value="Schedule match" '.(($LOCK_FORMS) ? 'DISABLED' : '').'>';
                 echo "<br>\n";
-                echo "<br><span style='display:none;font-weight:bold;' id='scheddis'>- Scheduling of matches by coaches in disabled for the selected league.</span>\n";
-                echo "<span style='display:none;font-weight:bold;' id='noteams'>- You do not have any teams which can be scheduled in the selected league.</span>\n";
+                echo "<br><span style='display:none;font-weight:bold;' id='noteams'>- You do not have any teams which can be scheduled in the selected league.</span>\n";
                 echo "<span style='display:none;font-weight:bold;' id='notours'>- No Free-For-All tournaments exist in the selected league.</span>\n";
                 echo "<script>\n";
                 if ($LOCK_FORMS) {
@@ -980,7 +980,6 @@ public static function userSched() {
                     document.getElementById('own_team').disabled = 1;
                     <?php
                 }
-                if (empty($settings['coach_schedule_tours'])) {?> slideDown('scheddis'); <?php }
                 if ($TOURS_CNT == 0) {?> slideDown('notours'); <?php }
                 if ($TEAMS_CNT == 0) {?> slideDown('noteams'); <?php }
                 echo "</script>\n";

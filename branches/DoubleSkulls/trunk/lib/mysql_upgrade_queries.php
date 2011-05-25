@@ -11,6 +11,7 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNOTExists('players', 'st_ua', 'ALTER TABLE players ADD COLUMN st_ua TINYINT SIGNED'),
         SQLUpgrade::runIfColumnNOTExists('players', 'ag_ua', 'ALTER TABLE players ADD COLUMN ag_ua TINYINT SIGNED'),
         SQLUpgrade::runIfColumnNOTExists('players', 'av_ua', 'ALTER TABLE players ADD COLUMN av_ua TINYINT SIGNED'),
+        SQLUpgrade::runIfColumnNOTExists('tours', 'coach_schedule_tour', 'ALTER TABLE tours ADD COLUMN coach_schedule_tour BOOLEAN DEFAULT FALSE'),
     ),
     '075-080' => array(
         # Delete, now modulized, type from texts.
@@ -169,7 +170,7 @@ function upgrade_075_080_pskills_migrate()
 }
 
 /*
-    Upgrade messages
+    Upgrade messages '
 */
 
 $upgradeMsgs = array(
@@ -181,6 +182,7 @@ for example running "UPDATE teams SET f_lid = 5 WHERE f_lid = 0", will tie the r
 If you don\'t do this the non-tied teams may not be scheduled to play in any matches!',
 
 ),
+'080-090' => array('The coach_schedule_tours setting is no longer used. For tournaments you wish to allow coaches to schedule the tournament then please use the Management: Tournaments item from the Admin menu'),
 
 );
 
