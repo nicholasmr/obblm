@@ -62,7 +62,6 @@ $settings['rules']         = '<div class="commonhead">League Officials</div>
 <BR />Team Casualties: Team casualties only include casualties that result in spps for a player. i.e. from blocks. Fouls, crowd pushes, thrown rocks, weapon related injuries, failed dodges, gfi&acute;s etc do not apply.';
 $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the division nodes in the tournament lists section will automatically be folded up if all child tournaments in that division are marked as finished.
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament'); // Default is array('league', 'division', 'tournament'). In the section tournament lists these nodes will be hidden if their contents (children) are finished. Example: If 'division' is chosen here, and all tours in a given division are finished, then the division entry will be hidden.
-$settings['coach_schedule_tours'] = array(67); // List of tournament IDs of FFA tours (from this league), in which regular coaches are able to schedule matches between their OWN teams and others teams.
 
 /*********************
  *   Rules

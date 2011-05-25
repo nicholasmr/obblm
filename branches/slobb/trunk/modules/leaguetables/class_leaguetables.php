@@ -195,6 +195,7 @@ public static function showTables() {
 		$lng->getTrn('table-loss', 'LeagueTables')=> 'mv_lost',
 		$lng->getTrn('table-td', 'LeagueTables') => 'mv_sdiff',
 		$lng->getTrn('table-cas', 'LeagueTables') => 'mv_tcdiff',
+		$lng->getTrn('table-smp', 'LeagueTables') => 'mv_smp',
 		$lng->getTrn('table-points', 'LeagueTables') => 'mv_pts',
 		);
 
@@ -347,6 +348,7 @@ public static function showTeam($t, & $i) {
 	echo "<td><a href='". urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t->team_id,false,false) ."'>" .$t->name ."</a></td>";
 	echo "<td><a href='". urlcompile(T_URL_PROFILE,T_OBJ_RACE,$t->f_race_id,false,false) ."'>" .$t->f_rname ."</a></td>";
 	echo "<td>" . ($t->tv / 1000) . "k</td>";
+	echo "<td>0</td>";
 	echo "<td>0</td>";
 	echo "<td>0</td>";
 	echo "<td>0</td>";

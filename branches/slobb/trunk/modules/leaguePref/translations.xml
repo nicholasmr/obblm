@@ -3,17 +3,31 @@
 
 <name>League Preferences Admininstration</name>
 <menu-lge>League Preferences</menu-lge>
-<help>Using the league prefences league and global administrators can change the touranments displayed on the homepage dynamically. Within the settings_xxx.php file the ID for each box should be set to 'prime' or 'second' to pick up the tournament selected below. 
-<br />In addition the primary tournament will be selected by default on the league tables page, recent matches and upcoming matches.</help>
+<help>Using the league prefences league and global administrators can change some of the settings for a league without modifying the PHP files.</help>
 
 <lname>League</lname>
-<primeTitle>Primary Tournament</primeTitle>
-<primeHelp>The primary tournament gets automatically selected in a number of tables and lookups</primeHelp>
-<secondTitle>Secondary Tournament</secondTitle>
-<secondHelp>The secondary tournament is used as an alternative to the primary tournament</secondHelp>
 
-<submitText>OK</submitText>
-<submitTitle>Update this league`s preferences</submitTitle>
+<prime_title>Primary Tournament</prime_title>
+<prime_help>The primary tournament gets automatically selected in a number of tables and lookups</prime_help>
+
+<second_title>Secondary Tournament</second_title>
+<second_help>The secondary tournament is used as an alternative to the primary tournament</second_help>
+
+<league_name_title>League Name</league_name_title>
+<league_name_help>Name of your league</league_name_help>
+
+<forum_url_title>Forum URL</forum_url_title>
+<forum_url_help>The link to use in the Forum button on the main menu. Leave this blank for no forum.</forum_url_help>
+
+<welcome_title>Welcome</welcome_title>
+<welcome_help>Message to appear at the top of the home page. This can be HTML.</welcome_help>
+
+<rules_title>League Rules</rules_title>
+<rules_help>The rules to display under the Rules menu. This can be HTML.</rules_help>
+
+
+<submit_text>OK</submit_text>
+<submit_title>Update this league`s preferences</submit_title>
 
 <failedSave>Unable to save preferences</failedSave>
 <failedValidate>Primary and secondary tournaments must be different</failedValidate>
