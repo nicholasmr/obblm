@@ -913,14 +913,15 @@ public static function userSched() {
                 <select name='tour_id' id='tour_id'>
                     <?php
                     $TOURS_CNT = 0;
+                    $TOURS_SCHED_CNT = 0;
                     foreach ($tours as $trid => $tr) {
                         if ($divisions[$tr['f_did']]['f_lid'] != $sel_lid) {
                             continue;
                         }
                         if ($tr['type'] == TT_FFA) {
                             $TOURS_CNT++;
-                            $tour = new Tour($trid);
-                            if ($tour->coach_schedule_tour) {
+                            if (get_alt_col('tours', 'tour_id', $trid, 'allow_sched')) { # Don't bother creating entire object for retrieving this field.
+                                $TOURS_SCHED_CNT++;
                                 echo "<option value='$trid'>".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
                             }
                         }
@@ -967,11 +968,12 @@ public static function userSched() {
                 </script>
                 <br><br>
                 <?php
-                $LOCK_FORMS = !($TOURS_CNT && $TEAMS_CNT);
+                $LOCK_FORMS = !($TOURS_SCHED_CNT && $TEAMS_CNT);
                 echo '<input type="submit" name="creategame" value="Schedule match" '.(($LOCK_FORMS) ? 'DISABLED' : '').'>';
-                echo "<br>\n";
-                echo "<br><span style='display:none;font-weight:bold;' id='noteams'>- You do not have any teams which can be scheduled in the selected league.</span>\n";
+                echo "<br>\n<br>";
                 echo "<span style='display:none;font-weight:bold;' id='notours'>- No Free-For-All tournaments exist in the selected league.</span>\n";
+                echo "<span style='display:none;font-weight:bold;' id='nosched'>- No Free-For-All tournaments in the selected league allow coach scheduling.</span>\n";
+                echo "<span style='display:none;font-weight:bold;' id='noteams'>- You do not have any teams which can be scheduled in the selected league.</span>\n";
                 echo "<script>\n";
                 if ($LOCK_FORMS) {
                     ?>
@@ -980,8 +982,9 @@ public static function userSched() {
                     document.getElementById('own_team').disabled = 1;
                     <?php
                 }
-                if ($TOURS_CNT == 0) {?> slideDown('notours'); <?php }
-                if ($TEAMS_CNT == 0) {?> slideDown('noteams'); <?php }
+                if ($TOURS_SCHED_CNT == 0) {?> slideDown('nosched'); <?php }
+                if ($TOURS_CNT == 0)       {?> slideDown('notours'); <?php }
+                if ($TEAMS_CNT == 0)       {?> slideDown('noteams'); <?php }
                 echo "</script>\n";
                 ?>
             </form>

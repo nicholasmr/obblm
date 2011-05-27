@@ -11,7 +11,8 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNOTExists('players', 'st_ua', 'ALTER TABLE players ADD COLUMN st_ua TINYINT SIGNED'),
         SQLUpgrade::runIfColumnNOTExists('players', 'ag_ua', 'ALTER TABLE players ADD COLUMN ag_ua TINYINT SIGNED'),
         SQLUpgrade::runIfColumnNOTExists('players', 'av_ua', 'ALTER TABLE players ADD COLUMN av_ua TINYINT SIGNED'),
-        SQLUpgrade::runIfColumnNOTExists('tours', 'coach_schedule_tour', 'ALTER TABLE tours ADD COLUMN coach_schedule_tour BOOLEAN DEFAULT FALSE'),
+        // Coach scheduling permission
+        SQLUpgrade::runIfColumnNOTExists('tours', 'allow_sched', 'ALTER TABLE tours ADD COLUMN allow_sched BOOLEAN DEFAULT FALSE'),
     ),
     '075-080' => array(
         # Delete, now modulized, type from texts.
@@ -170,20 +171,15 @@ function upgrade_075_080_pskills_migrate()
 }
 
 /*
-    Upgrade messages '
+    Upgrade messages
 */
 
 $upgradeMsgs = array(
 '075-080' => array(
-
 'Teams are now required to be tied to leagues. Upgrading automatically ties teams to the league in which they played their first match.
 Teams which have not yet played any games are therefore not tied to any leagues and you must manually run some SQL code to tie them to a given league,
 for example running "UPDATE teams SET f_lid = 5 WHERE f_lid = 0", will tie the remaining teams to the league with ID = 5 (you would generally want to do something like that).
 If you don\'t do this the non-tied teams may not be scheduled to play in any matches!',
-
 ),
-'080-090' => array('The coach_schedule_tours setting is no longer used. For tournaments you wish to allow coaches to schedule the tournament then please use the Management: Tournaments item from the Admin menu'),
-
 );
-
 ?>
