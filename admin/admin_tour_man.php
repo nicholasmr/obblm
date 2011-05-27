@@ -32,7 +32,7 @@ if (isset($_POST['type'])) {
             $selectedTour->type =$_POST['ttype'];
             $selectedTour->name =$_POST['tname'];
             $selectedTour->locked = isset($_POST['locked']) ? $_POST['locked'] : 0;
-            $selectedTour->coach_schedule_tour = isset($_POST['coach_schedule_tour']) ? $_POST['coach_schedule_tour'] : 0;
+            $selectedTour->allow_sched = isset($_POST['allow_sched']) ? $_POST['allow_sched'] : 0;
             status($selectedTour->save());
             break;
 
@@ -49,8 +49,6 @@ title($lng->getTrn('menu/admin_menu/tour_man'));
 
 $tourLongName = $manageable_tours[$selectedTour->tour_id]['name'] . ": " . $selectedTour->name;
 
-echo<<< EOQ
-EOQ;
 ?>
 <div class="row">
 
@@ -109,9 +107,9 @@ EOQ;
         <b>New tournament type:</b><br>
         <input type="radio" name="ttype" value="<?php echo TT_RROBIN ?>" <?php ; if ($selectedTour->type == TT_RROBIN) {echo " CHECKED ";} ?>> Round-Robin<br>
         <input type="radio" name="ttype" value="<?php echo TT_FFA;  ?>" <?php ; if ($selectedTour->type == TT_FFA) {echo " CHECKED ";} ?>> FFA<br>
-        <br /><input type="checkbox" name="locked" value="1" <?php echo (($selectedTour->locked) ? "CHECKED" : "") ;?> /><b>Locked</b>
-        <br /><input type="checkbox" name="coach_schedule_tour" value="1" <?php echo ($selectedTour->coach_schedule_tour) ? "CHECKED" : "" ; ?> /><b>Coaches can schedule their own matches</b>
-		<br />
+        <br><input type="checkbox" name="locked" value="1" <?php echo (($selectedTour->locked) ? "CHECKED" : "") ;?> /><b>Locked</b>
+        <br><input type="checkbox" name="allow_sched" value="1" <?php echo ($selectedTour->allow_sched) ? "CHECKED" : "" ; ?> /><b>Coaches can schedule their own matches</b>
+		<br><br>
         <input type="hidden" name="type" value="change">
         <input type="hidden" name="trid" value="<?php echo $selectedTour->tour_id; ?>">
         <input type="submit" value="Submit changes" <?php echo (empty($manageable_tours)) ? 'DISABLED' : '';?>>
@@ -126,7 +124,8 @@ EOQ;
     <form method="POST">
 
         <b>I wish to delete the following tournament: <?php echo $tourLongName;?></b>
-        <br><br>
+
+        <br><br>
         <b><u>Advisement/warning:</u></b><br>
         This feature is only meant to be used for non-played or empty tournaments and test-tournaments.<br>
         If you decide to delete a proper tournament you should know that this will

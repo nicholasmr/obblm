@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -46,7 +46,7 @@ class Tour
     public $date_created    = '';
     public $rs              = 0; // Ranking system.
     public $locked          = false;
-    public $coach_schedule_tour = false;
+    public $allow_sched     = false;
 
     // Other
     public $winner          = null; # Team ID.
@@ -160,7 +160,13 @@ class Tour
     }
 
     public function save() {
-        $query = "UPDATE tours SET rs = $this->rs, name = '" . mysql_real_escape_string($this->name) . "', type = $this->type, locked = ".(($this->locked) ? 1 : 0).", coach_schedule_tour = $this->coach_schedule_tour WHERE tour_id = $this->tour_id";
+        $query = "UPDATE tours SET 
+            rs = $this->rs, 
+            name = '" . mysql_real_escape_string($this->name) . "', 
+            type = $this->type, 
+            locked = ".(($this->locked) ? 1 : 0).", 
+            allow_sched = $this->allow_sched 
+        WHERE tour_id = $this->tour_id";
         return mysql_query($query);
     }
 
