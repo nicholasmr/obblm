@@ -211,9 +211,9 @@ public static function tours()
     // Print fixture list.
     foreach ($flist as $lid => $divs) {
         # Container
-        echo "<div id='lid_${lid}_cont' class='leaugesNCont' style='".((in_array("lid_${lid}", $flist_JShides)) ? "display:none;" : '')."'>";
+        echo "<div id='lid_${lid}_cont' class='leaguesNCont' style='".((in_array("lid_${lid}", $flist_JShides)) ? "display:none;" : '')."'>";
         # Title
-        echo "<div class='leauges'><b><a href='javascript:void(0);' onClick=\"slideToggleFast('lid_$lid');\">[+/-]</a>&nbsp;".$flist[$lid]['desc']['lname']."</b></div>\n";
+        echo "<div class='leagues'><b><a href='javascript:void(0);' onClick=\"slideToggleFast('lid_$lid');\">[+/-]</a>&nbsp;".$flist[$lid]['desc']['lname']."</b></div>\n";
         # Body
         echo "<div id='lid_$lid'>";
     foreach ($divs as $did => $tours) {

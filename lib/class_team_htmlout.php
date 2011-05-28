@@ -926,20 +926,20 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td><?php echo $lng->getTrn('common/wontours');?></td>
                     <td><?php echo $team->wt_cnt; ?></td>
                 </tr>
-                <tr valign="top">
-                    <td><?php echo $lng->getTrn('common/playedtours');?></td>
-                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>'.$lng->getTrn('common/none').'</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
-                </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/ltour');?></td>
                     <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>'.$lng->getTrn('common/none').'</i>'; ?></td>
+                </tr>
+                <tr valign="top">
+                    <td><?php echo $lng->getTrn('common/playedtours');?></td>
+                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? $lng->getTrn('common/none') : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
                 </tr>
                 <?php
                 if (Module::isRegistered('Prize')) {
                     ?>
                     <tr valign="top">
-                        <td>Prizes</td>
-                        <td><small><?php $prizes = Module::run('Prize', array('getPrizesString', $team->team_id)); echo (empty($prizes)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $prizes; ?></small></td>
+                        <td><?php echo $lng->getTrn('name', 'Prize');?></td>
+                        <td><small><?php echo Module::run('Prize', array('getPrizesString', T_OBJ_TEAM, $team->team_id));?></small></td>
                     </tr>
                     <?php
                 }

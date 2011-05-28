@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -120,27 +120,70 @@ public static function getPrizesByTour($trid = false, $n = false) {
     return $tours;
 }
 
-
-public static function getPrizesByTeam($tid)
+public static function getPrizes($type, $id, $N = false)
 {
     $prizes = array();
-    
-    $query = "SELECT prize_id FROM prizes WHERE team_id = $tid ORDER BY date DESC";
+    if (!$type && !$id) { # Special case
+        $type = 'ALL';
+    }
+    $_IS_OBJ = in_array($type, array(T_OBJ_COACH, T_OBJ_TEAM));
+    $_LIMIT = ($N && is_numeric($N)) ? " LIMIT $N" : '';
+    $_ORDER_BY__NODE = ' ORDER BY tours.date_created DESC, prizes.type ASC';
+    $_ORDER_BY__OBJ = ' ORDER BY prizes.date DESC, prizes.type ASC';
+    switch ($type) {
+        case T_NODE_LEAGUE:
+            if (!isset($_FROMWHERE)) { 
+                $_FROMWHERE = "FROM prizes,tours,divisions WHERE prizes.tour_id = tours.tour_id AND tours.f_did = divisions.did AND divisions.f_lid = $id";
+            }
+            # Fall through
+        case T_NODE_DIVISION:
+            if (!isset($_FROMWHERE)) { 
+                $_FROMWHERE = "FROM prizes,tours WHERE prizes.tour_id = tours.tour_id AND tours.f_did = $id";
+            }
+            # Fall through
+        case T_NODE_TOURNAMENT:
+            if (!isset($_FROMWHERE)) { 
+                $_FROMWHERE = "FROM prizes,tours WHERE prizes.tour_id = tours.tour_id AND tours.tour_id = $id";
+            }
+            # Fall through
+        case 'ALL':
+            if (!isset($_FROMWHERE)) { 
+                $_FROMWHERE = "FROM prizes,tours WHERE prizes.tour_id = tours.tour_id";
+            }
+            $query = "SELECT prizes.prize_id AS 'prize_id', tours.tour_id AS 'tour_id' ".$_FROMWHERE.$_ORDER_BY__NODE.$_LIMIT;
+            break;
+            
+        case T_OBJ_COACH:
+            $query = "SELECT prize_id FROM prizes, teams WHERE prizes.team_id =  teams.team_id AND owned_by_coach_id = $id".$_ORDER_BY__OBJ.$_LIMIT;
+            break;
+        case T_OBJ_TEAM:
+            $query = "SELECT prize_id FROM prizes WHERE team_id = $id".$_ORDER_BY__OBJ.$_LIMIT;
+            break;
+            
+        default:
+            return array();
+    }
 
     $result = mysql_query($query);
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
-            $prizes[] = new Prize($row['prize_id']);
+            $pr = new Prize($row['prize_id']);
+            if ($_IS_OBJ) {
+                $prizes[] = $pr;
+            }
+            else {
+                $prizes[$row['tour_id']][] = $pr;
+            }
         }
     }
-    
     return $prizes;
 }
 
-public static function getPrizesString($tid) 
+public static function getPrizesString($obj, $id) 
 {
-
-    $prizes = Prize::getPrizesByTeam($tid);
+    global $lng;
+    // ONLY FOR T_OBJ_*
+    $prizes = Prize::getPrizes($obj, $id);
     $str = array();
     $ptypes = Prize::getTypes();
     foreach ($ptypes as $idx => $type) {
@@ -148,7 +191,7 @@ public static function getPrizesString($tid)
         if ($cnt > 0)
             $str[] = $cnt.'x'.$ptypes[$idx];
     }
-    return implode(', ', $str);
+    return empty($str) ? $lng->getTrn('common/none') : implode(', ', $str);
 }
 
 public static function create($type, $tid, $trid, $title, $txt)
@@ -326,32 +369,27 @@ public static function makeList($ALLOW_EDIT)
     
     /* Print the prizes */
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
+    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
     if ($ALLOW_EDIT) {
-        echo "<a href='handler.php?type=prize&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
+        echo "<br><a href='handler.php?type=prize&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
-    Prize::printList(false, $ALLOW_EDIT);
+    Prize::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
     HTMLOUT::frame_end();
 }
 
 // Prints prizes list for a given tour_id or all tours.
-public static function printList($trid, $ALLOW_EDIT)
+public static function printList($node, $node_id, $ALLOW_EDIT)
 {
     global $lng;
-
-    $tours = Prize::getPrizesByTour($trid, false);
-    $PACK = (count($tours) > 1 && !$trid);
-
-    if ($trid && empty($tours[0]->prizes)) {
-        return;
-    }
-    
-    foreach ($tours as $t) {
-    
+    $prizes = Prize::getPrizes($node, $node_id);
+    $FOLD_UP = false; # (count($prizes) > 20);
+    foreach ($prizes as $trid => $tourprizes) {
+        $tname = get_alt_col('tours', 'tour_id', $trid, 'name');
         ?>    
         <div class="boxWide" style="width: 70%; margin: 20px auto 20px auto;">
-            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo "$t->name prizes";?> <a href='javascript:void(0);' onClick="slideToggleFast('<?php echo 'trpr'.$t->tour_id;?>');">[+/-]</a></div>
-            <div id="trpr<?php echo $t->tour_id;?>">
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo "$tname prizes";?> <a href='javascript:void(0);' onClick="slideToggleFast('<?php echo 'trpr'.$trid;?>');">[+/-]</a></div>
+            <div id="trpr<?php echo $trid;?>">
             <div class="boxBody">
                 <table class="common" style='border-spacing: 10px;'>
                     <tr>
@@ -361,13 +399,13 @@ public static function printList($trid, $ALLOW_EDIT)
                     </tr>
                     <?php
                     $ptypes = Prize::getTypes();
-                    foreach ($t->prizes as $idx => $probj) {
+                    foreach ($tourprizes as $pr) {
                         echo "<tr><td colspan='4'><hr></td></td>";
                         echo "<tr>\n";
-                        $delete = ($ALLOW_EDIT) ? '<a href="handler.php?type=prize&amp;action=delete&amp;prid='.$probj->prize_id.'">'.$lng->getTrn('common/delete').'</a>' : '';
-                        echo "<td valign='top'><i>".preg_replace('/\s/', '&nbsp;', $ptypes[$idx])."</i>&nbsp;$delete</td>\n";
-                        echo "<td valign='top'><b>".preg_replace('/\s/', '&nbsp;', get_alt_col('teams', 'team_id', $probj->team_id, 'name'))."</b></td>\n";
-                        echo "<td valign='top'>".$probj->title."<br><br><i>".$probj->txt."</i></td>\n";
+                        $delete = ($ALLOW_EDIT) ? '<a href="handler.php?type=prize&amp;action=delete&amp;prid='.$pr->prize_id.'">'.$lng->getTrn('common/delete').'</a>' : '';
+                        echo "<td valign='top'><i>".preg_replace('/\s/', '&nbsp;', $ptypes[$pr->type])."</i>&nbsp;$delete</td>\n";
+                        echo "<td valign='top'><b>".preg_replace('/\s/', '&nbsp;', get_alt_col('teams', 'team_id', $pr->team_id, 'name'))."</b></td>\n";
+                        echo "<td valign='top'>".$pr->title."<br><br><i>".$pr->txt."</i></td>\n";
                         echo "</tr>\n";
                     }
                     ?>
@@ -376,7 +414,7 @@ public static function printList($trid, $ALLOW_EDIT)
             </div>
         </div>
         <?php
-        if ($PACK) {
+        if ($FOLD_UP) {
             ?>
             <script language="JavaScript" type="text/javascript">
                 document.getElementById('trpr<?php echo $t->tour_id;?>').style.display = 'none';

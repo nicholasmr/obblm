@@ -578,7 +578,8 @@ public static function nodeSelector(array $opts)
     $_SESSION[$s_ffilter_limit] = ($NEW && $setFFilter) ? $_POST['ffilter_limit_in'] : (isset($_SESSION[$s_ffilter_limit]) ? $_SESSION[$s_ffilter_limit] : $def_ffilter_limit);
 
     // Fetch contents of node selector
-    list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false);
+    #list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false);
+    $leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, is_object($coach) ? $coach->coach_id : false);
 
     ?>
     <form method="POST">
@@ -602,29 +603,44 @@ public static function nodeSelector(array $opts)
     :
     <select style='display:none;' name="tour_in" id="tour_in">
         <?php
+        foreach ($leagues as $lid => $divs) {
+        echo "<optgroup class='leagues' label='".$divs['desc']['lname']."'>";
+        foreach ($divs as $did => $tours) {
+        if (!is_numeric($did)) continue; # skip "desc" entry for division
+        echo "<optgroup class='divisions' style='padding-left: 1em;' label='".$tours['desc']['dname']."'>";
         foreach ($tours as $trid => $desc) {
-            echo "<option value='$trid' ".
+            if (!is_numeric($trid)) continue; # skip "desc" entry for division
+            echo "<option style='background-color: white; margin-left: -1em;' value='$trid' ".
                 (($_SESSION[$s_node] == T_NODE_TOURNAMENT && $_SESSION[$s_node_id] == $trid) ? 'SELECTED' : '')
-                .">$desc[tname]</option>\n";
+                .">".$desc['desc']['tname']."</option>\n";
+        }
+        echo "</optgroup>";
+        }
+        echo "</optgroup>";
         }
         ?>
     </select>
     <select style='display:none;' name="division_in" id="division_in">
         <?php
-        foreach ($divisions as $did => $desc) {
-            echo "<option value='$did' ".
+        foreach ($leagues as $lid => $divs) {
+        echo "<optgroup class='leagues' label='".$divs['desc']['lname']."'>";
+        foreach ($divs as $did => $tours) {
+            if (!is_numeric($did)) continue; # skip "desc" entry for division
+            echo "<option style='background-color: white;' value='$did' ".
                 (($_SESSION[$s_node] == T_NODE_DIVISION && $_SESSION[$s_node_id] == $did) ? 'SELECTED' : '')
-                .">$desc[dname]</option>\n";
+                .">".$tours['desc']['dname']."</option>\n";
+        }
+        echo "</optgroup>";
         }
         ?>
     </select>
     <select style='display:none;' name="league_in" id="league_in">
         <?php
-        echo "<option value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
-        foreach ($leagues as $lid => $desc) {
+        echo "<option style='font-weight: bold;' value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
+        foreach ($leagues as $lid => $divs) {
             echo "<option value='$lid' ".
                 (($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == $lid) ? 'SELECTED' : '')
-                .">$desc[lname]</option>\n";
+                .">".$divs['desc']['lname']."</option>\n";
         }
         ?>
     </select>
@@ -645,7 +661,7 @@ public static function nodeSelector(array $opts)
         ?>
         <select name="race_in" id="race_in">
             <?php
-            echo "<option value='".T_RACE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
+            echo "<option style='font-weight: bold;' value='".T_RACE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
             foreach ($raceididx as $rid => $rname) {
                 echo "<option value='$rid'".(($_SESSION[$s_race] == $rid) ? 'SELECTED' : '').">$rname</option>\n";
             }
