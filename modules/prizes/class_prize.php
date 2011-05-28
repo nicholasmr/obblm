@@ -89,37 +89,6 @@ public static function getTypes()
     return array(PRIZE_1ST => 'First place', PRIZE_2ND => 'Second place', PRIZE_3RD => 'Third place', PRIZE_LETHAL => 'Most lethal', PRIZE_FAIR => 'Fair play');
 }
 
-public static function getPrizesByTour($trid = false, $n = false) {
-    
-    $tours = array();
-    
-    if (!$trid) {
-        $query = "SELECT DISTINCT(prizes.tour_id) AS 'tour_id' FROM prizes, tours WHERE prizes.tour_id = tours.tour_id ORDER BY date_created DESC ".(($n) ? " LIMIT $n" : '');
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $tours[] = new Tour($row['tour_id']);
-            }
-        }
-    }
-    else {
-        $tours[] = new Tour($trid);
-    }
-    
-    foreach ($tours as $t) {
-        $t->prizes = array();
-        $query = "SELECT prize_id, type FROM prizes WHERE tour_id = $t->tour_id ORDER BY type ASC";
-        $result = mysql_query($query);
-        if ($result && mysql_num_rows($result) > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $t->prizes[$row['type']] = new Prize($row['prize_id']);
-            }
-        }
-    }
-    
-    return $tours;
-}
-
 public static function getPrizes($type, $id, $N = false)
 {
     $prizes = array();
