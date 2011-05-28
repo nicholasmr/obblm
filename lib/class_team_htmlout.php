@@ -830,6 +830,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
      
     ?>
+    <a name="aanc"></a>
     <div class="boxTeamPage">
         <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><a name='anc'><?php echo $lng->getTrn('profile/team/box_info/title');?></a></div>
         <div class="boxBody">
