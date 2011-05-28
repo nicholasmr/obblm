@@ -223,15 +223,9 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
 
         <div id='OPTS_NEW_TOUR'>
             <b><?php echo $lng->getTrn('common/division');?></b><br>
-            <select name='did'>
-                <?php
-                foreach ($divisions as $did => $desc) {
-                    if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-                        echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
-                    }
-                }
-                ?>
-            </select>
+            <?php
+            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            ?>
             <br><br>
             <b><?php echo $lng->getTrn('admin/schedule/tour_name');?></b><br>
             <input type="text" name="name" size="30" maxlength="50">
@@ -272,13 +266,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
             <?php
             $body = '';
             $body .= '<b>'.$lng->getTrn('admin/schedule/in_tour').'</b><br>';
-            $body .= '<select name="existTour">';
-            foreach ($tours as $trid => $desc) {
-                if ($desc['type'] == TT_FFA && $leagues[$divisions[$desc['f_did']]['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-                    $body .= "<option value='$trid' ".(($desc['locked']) ? 'DISABLED' : '')." ".(($addMatchToFFA && isset($_POST['existTour']) && $trid == $_POST['existTour']) ? 'SELECTED' : '').">".$divisions[$desc['f_did']]['dname'].": $desc[tname]".(($desc['locked']) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
-                }
-            }
-            $body .= '</select>';
+            $body .= HTMLOUT::nodeList(T_NODE_TOURNAMENT,'existTour',null,'',true,array(T_NODE_TOURNAMENT => array('type' => TT_FFA), 'OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)), array('locked' => 1, 'DISSTR' => 'LOCKED &mdash; %name')); 
             echo $body;
             ?>
         </div>

@@ -13,6 +13,7 @@ $upgradeSQLs = array(
         SQLUpgrade::runIfColumnNOTExists('players', 'av_ua', 'ALTER TABLE players ADD COLUMN av_ua TINYINT SIGNED'),
         // Coach scheduling permission
         SQLUpgrade::runIfColumnNOTExists('tours', 'allow_sched', 'ALTER TABLE tours ADD COLUMN allow_sched BOOLEAN DEFAULT FALSE'),
+        'ALTER TABLE tours MODIFY locked BOOLEAN DEFAULT 0 NOT NULL',
     ),
     '075-080' => array(
         # Delete, now modulized, type from texts.
