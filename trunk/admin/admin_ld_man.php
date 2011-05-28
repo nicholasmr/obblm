@@ -42,15 +42,10 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <div class="boxBody">
             <form method="POST">
             In league:<br>
-            <select name='lid'>
-                <?php
-                foreach ($leagues as $lid => $desc) {
-                    if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-                        echo "<option value='$lid'>$desc[lname]</option>\n";
-                    }
-                }
-                ?>
-            </select><br><br>
+            <?php
+            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            ?>
+            <br><br>
             Name:<br>
             <input type="text" name="name"><br><br>
             <input type='submit' value='Create' <?php echo empty($leagues) ? ' DISABLED ' : '';?>>
@@ -65,15 +60,10 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <div class="boxBody">
             <form method="POST">
             Division:<br>
-            <select name='did'>
-                <?php
-                foreach ($divisions as $did => $desc) {
-                    if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-                        echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
-                    }
-                }
-                ?>
-            </select><br><br>
+            <?php
+            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            ?>
+            <br><br>
             New name:<br>
             <input type="text" name="name"><br><br>
             <input type='submit' value='Modify' <?php echo empty($divisions) ? ' DISABLED ' : '';?>>
@@ -88,15 +78,10 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <div class="boxBody">
             <form method="POST">
             Division:<br>
-            <select name='did'>
-                <?php
-                foreach ($divisions as $did => $desc) {
-                    if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-                        echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
-                    }
-                }
-                ?>
-            </select><br><br>
+            <?php
+            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            ?>
+            <br><br>
             <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
             <input type='submit' value='Delete' <?php echo (empty($divisions) || !$IS_GLOBAL_ADMIN) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete devisions when no matches are assigned to it.')){return false;}">
             <input type='hidden' name='type' value='del_division'>
@@ -131,15 +116,10 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <div class="boxBody">
             <form method="POST">
             League:<br>
-            <select name='lid'>
-                <?php
-                foreach ($leagues as $lid => $desc) {
-                    if ($desc['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-                        echo "<option value='$lid'>$desc[lname]</option>\n";
-                    }
-                }
-                ?>
-            </select><br><br>
+            <?php
+            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            ?>
+            <br><br>
             New name:<br>
             <input type="text" name="name"><br><br>
             New location:<br>
@@ -158,13 +138,10 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <div class="boxBody">
             <form method="POST">
             League:<br>
-            <select name='lid' <?php echo (empty($leagues) || !$IS_GLOBAL_ADMIN) ? ' DISABLED ' : '';?>>
-                <?php
-                foreach ($leagues as $lid => $desc) {
-                    echo "<option value='$lid'>$desc[lname]</option>\n";
-                }
-                ?>
-            </select><br><br>
+            <?php
+            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            ?>
+            <br><br>
             <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
             <input type='submit' value='Delete' <?php echo (empty($leagues) || !$IS_GLOBAL_ADMIN) ? ' DISABLED ' : '';?> onclick="if(!confirm('Warning: You should only delete leagues if empty, ie. no divisions/matches assigned to them.')){return false;}">
             <input type='hidden' name='type' value='del_league'>

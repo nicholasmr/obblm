@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -578,7 +578,7 @@ public static function nodeSelector(array $opts)
     $_SESSION[$s_ffilter_limit] = ($NEW && $setFFilter) ? $_POST['ffilter_limit_in'] : (isset($_SESSION[$s_ffilter_limit]) ? $_SESSION[$s_ffilter_limit] : $def_ffilter_limit);
 
     // Fetch contents of node selector
-    $leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, is_object($coach) ? $coach->coach_id : false);
+#    $leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, is_object($coach) ? $coach->coach_id : false);
 
     ?>
     <form method="POST">
@@ -600,50 +600,10 @@ public static function nodeSelector(array $opts)
         ?>
     </select>
     :
-    <select style='display:none;' name="tour_in" id="tour_in">
-        <?php
-        foreach ($leagues as $lid => $divs) {
-        echo "<optgroup class='leagues' label='".$divs['desc']['lname']."'>";
-        foreach ($divs as $did => $tours) {
-        if (!is_numeric($did)) continue; # skip "desc" entry for division
-        echo "<optgroup class='divisions' style='padding-left: 1em;' label='".$tours['desc']['dname']."'>";
-        foreach ($tours as $trid => $desc) {
-            if (!is_numeric($trid)) continue; # skip "desc" entry for division
-            echo "<option style='background-color: white; margin-left: -1em;' value='$trid' ".
-                (($_SESSION[$s_node] == T_NODE_TOURNAMENT && $_SESSION[$s_node_id] == $trid) ? 'SELECTED' : '')
-                .">".$desc['desc']['tname']."</option>\n";
-        }
-        echo "</optgroup>";
-        }
-        echo "</optgroup>";
-        }
-        ?>
-    </select>
-    <select style='display:none;' name="division_in" id="division_in">
-        <?php
-        foreach ($leagues as $lid => $divs) {
-        echo "<optgroup class='leagues' label='".$divs['desc']['lname']."'>";
-        foreach ($divs as $did => $tours) {
-            if (!is_numeric($did)) continue; # skip "desc" entry for division
-            echo "<option style='background-color: white;' value='$did' ".
-                (($_SESSION[$s_node] == T_NODE_DIVISION && $_SESSION[$s_node_id] == $did) ? 'SELECTED' : '')
-                .">".$tours['desc']['dname']."</option>\n";
-        }
-        echo "</optgroup>";
-        }
-        ?>
-    </select>
-    <select style='display:none;' name="league_in" id="league_in">
-        <?php
-        echo "<option style='font-weight: bold;' value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
-        foreach ($leagues as $lid => $divs) {
-            echo "<option value='$lid' ".
-                (($_SESSION[$s_node] == T_NODE_LEAGUE && $_SESSION[$s_node_id] == $lid) ? 'SELECTED' : '')
-                .">".$divs['desc']['lname']."</option>\n";
-        }
-        ?>
-    </select>
     <?php
+    echo self::nodeList(T_NODE_TOURNAMENT, 'tour_in',     ($_SESSION[$s_node] == T_NODE_TOURNAMENT) ? $_SESSION[$s_node_id] : null, 'display:none;');
+    echo self::nodeList(T_NODE_DIVISION,   'division_in', ($_SESSION[$s_node] == T_NODE_DIVISION)   ? $_SESSION[$s_node_id] : null, 'display:none;');
+    echo self::nodeList(T_NODE_LEAGUE,     'league_in',   ($_SESSION[$s_node] == T_NODE_LEAGUE)     ? $_SESSION[$s_node_id] : null, 'display:none;');
     if ($setState) {
         echo $lng->getTrn('common/type');
         ?>
@@ -743,6 +703,110 @@ public static function nodeSelector(array $opts)
         ($setFFilter) ? $_SESSION[$s_ffilter_ineq]  : false,
         ($setFFilter) ? $_SESSION[$s_ffilter_limit] : false,
     );
+}
+
+public static function quoteEsc($str) {
+    return str_replace("'",'&#39;',$str);
+}
+
+private static function _nodeList_filter($filters, $desc)
+{
+    foreach ($filters as $key => $val) {
+        if (!isset($desc[$key]) || $desc[$key] != $val) {
+            return false;
+        }
+    }
+    return true;
+}
+
+public static function nodeList($node, $nameid, $selected_id, $style = '', $no_all = false, $filter = array(), $disCond = array()) 
+{
+    global $coach, $lng;
+    $additionalFields = array();
+    # Init filters to empty if not set
+    foreach (array(T_NODE_LEAGUE,T_NODE_DIVISION,T_NODE_TOURNAMENT) as $n) {
+        if (!isset($filter[$n])) $filter[$n] = array();
+    }
+    # "OTHER" filters may contain non-node field (ie. membership fields): ring
+    $OTHER_FILTER = isset($filter['OTHER']) ? $filter['OTHER'] : array();
+    unset($filter['OTHER']); # Don't pass to allowedNodeAccess() - add to $filter again later...
+    foreach ($filter as $n => $filters) {
+        $_filter_keys = array_keys($filters);
+        # Recombine for allowedNodeAccess() => the returned fields from allowedNodeAccess() the same names as the keys from $filters.
+        $additionalFields[$n] = empty($_filter_keys) ? array() : array_combine($_filter_keys,$_filter_keys); # Don't rereference the field names, make them the same.
+    }
+    $DISSTR = isset($disCond['DISSTR']) ? $disCond['DISSTR'] : '';
+    unset($disCond['DISSTR']);
+    $_filter_keys = array_keys($disCond);
+    $disCond2 = empty($_filter_keys) ? array() : array_combine($_filter_keys,$_filter_keys); # Don't rereference the field names, make them the same.
+    $additionalFields[$node] = array_merge($additionalFields[$node], $disCond2);
+    $leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, is_object($coach) ? $coach->coach_id : false, $additionalFields);
+    # This needs only to be added to the league node filter, since it's always evaluated independant of the $node value.
+    $filter[T_NODE_LEAGUE] = array_merge($filter[T_NODE_LEAGUE], $OTHER_FILTER);
+#    print_r($leagues);
+    $NL = '';
+    $NL .= "<select style='$style' name='$nameid' id='$nameid'>\n";
+    switch ($node) {
+        case T_NODE_TOURNAMENT:
+            foreach ($leagues as $lid => $divs) {
+                if (!self::_nodeList_filter($filter[T_NODE_LEAGUE], $divs['desc'])) continue;
+                $NL .= "<optgroup class='leagues' label='".self::quoteEsc($divs['desc']['lname'])."'>\n";
+                foreach ($divs as $did => $tours) {
+                    if (!is_numeric($did)) continue; # skip "desc" entry for division
+                    if (!self::_nodeList_filter($filter[T_NODE_DIVISION], $tours['desc'])) continue;
+                    $NL .= "<optgroup class='divisions' style='padding-left: 1em;' label='".self::quoteEsc($tours['desc']['dname'])."'>\n";
+                    foreach ($tours as $trid => $desc) {
+                        if (!is_numeric($trid)) continue; # skip "desc" entry for division
+                        if (!self::_nodeList_filter($filter[T_NODE_TOURNAMENT], $desc['desc'])) continue;
+                        $dis = false;
+                        foreach ($disCond as $key => $val) {
+                            if ($desc['desc'][$key] == $val) {$dis = true; break;};
+                        }
+                        $name = self::quoteEsc($desc['desc']['tname']);
+                        $NL .= "<option ".(($dis) ? 'DISABLED' : '')." style='background-color: white; margin-left: -1em;' value='$trid' ".(($selected_id == $trid) ? 'SELECTED' : '').">".(($dis) ? str_replace('%name', $name, $DISSTR) : $name)."</option>\n";
+                    }
+                    $NL .= "</optgroup>\n";
+                }
+                $NL .= "</optgroup>\n";
+            }
+            break;
+        
+        case T_NODE_DIVISION:
+            foreach ($leagues as $lid => $divs) {
+                if (!self::_nodeList_filter($filter[T_NODE_LEAGUE], $divs['desc'])) continue;
+                $NL .= "<optgroup class='leagues' label='".self::quoteEsc($divs['desc']['lname'])."'>\n";
+                foreach ($divs as $did => $tours) {
+                    if (!is_numeric($did)) continue; # skip "desc" entry for division
+                    if (!self::_nodeList_filter($filter[T_NODE_DIVISION], $tours['desc'])) continue;
+                    $dis = false;
+                    foreach ($disCond as $key => $val) {
+                        if ($tours['desc'][$key] == $val) {$dis = true; break;};
+                    }
+                    $name = self::quoteEsc($tours['desc']['dname']);
+                    $NL .= "<option ".(($dis) ? 'DISABLED' : '')." style='background-color: white;' value='$did' ".(($selected_id == $did) ? 'SELECTED' : '').">".(($dis) ? str_replace('%name', $name, $DISSTR) : $name)."</option>\n";
+                }
+                $NL .= "</optgroup>\n";
+            }
+            break;
+            
+        case T_NODE_LEAGUE:
+            if (!$no_all) {
+                $NL .= "<option style='font-weight: bold;' value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
+            }
+            foreach ($leagues as $lid => $divs) {
+                if (!self::_nodeList_filter($filter[T_NODE_LEAGUE], $divs['desc'])) continue;
+                $dis = false;
+                foreach ($disCond as $key => $val) {
+                    if ($divs['desc'][$key] == $val) {$dis = true; break;};
+                }
+                $name = self::quoteEsc($divs['desc']['lname']);
+                $NL .= "<option ".(($dis) ? 'DISABLED' : '')." value='$lid' ".(($selected_id == $lid) ? 'SELECTED' : '').">".(($dis) ? str_replace('%name', $name, $DISSTR) : $name)."</option>\n";
+            }
+            break;
+            
+    }
+    $NL .= "</select>\n";
+    return $NL;
 }
 
 public static function frame_begin($stylesheet = false)

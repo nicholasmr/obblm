@@ -57,18 +57,9 @@ $tourLongName = $manageable_tours[$selectedTour->tour_id]['name'] . ": " . $sele
     <div class="boxBody">
     <form method="POST">
         <b>Tournament</b><br>
-        <select name="trid">
-            <?php
-            foreach ($manageable_tours as $trid => $desc) {
-	            $longName = $desc['name'] . ": " . $desc['tour']->name;
-                echo "<option value='$trid'";
-                if ($trid == $selectedTour->tour_id) {
-                	echo " SELECTED";
-                }
-                echo ">$longName"."</option>\n";
-            }
-            ?>
-        </select>
+        <?php
+        echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',$selectedTour->tour_id,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+        ?>
         <input type="hidden" name="type" value="select">
         <input type="submit" value="OK" <?php echo (empty($manageable_tours)) ? 'DISABLED' : '';?>>
     </form>

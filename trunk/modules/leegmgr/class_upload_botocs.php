@@ -840,14 +840,15 @@ WHERE match_id = $this->match_id";
         
         if (is_object($coach)) {
             # Tours the logged in coach can "see".
-            list(,,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->coach_id, array(T_NODE_TOURNAMENT => array('type' => 'type', 'locked' => 'locked', 'f_did' => 'f_did')));
+#            list(,,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $coach->coach_id, array(T_NODE_TOURNAMENT => array('type' => 'type', 'locked' => 'locked', 'f_did' => 'f_did')));
             $tourlist = "";
-            $coach_lid = ( isset($_SESSION['NS_node_id']) && $_SESSION['NS_node_id'] > 0 ) ? $_SESSION['NS_node_id'] : 1;
-            foreach ($tours as $trid => $t)
-            {
-                $lid = get_alt_col('divisions', 'did', $t['f_did'], 'f_lid');
-                if ($t['type'] == TT_FFA && !$t['locked'] && $coach_lid == $lid && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
-            }
+#            $coach_lid = ( isset($_SESSION['NS_node_id']) && $_SESSION['NS_node_id'] > 0 ) ? $_SESSION['NS_node_id'] : 1;
+#            foreach ($tours as $trid => $t)
+#            {
+#                $lid = get_alt_col('divisions', 'did', $t['f_did'], 'f_lid');
+#                if ($t['type'] == TT_FFA && !$t['locked'] && $coach_lid == $lid && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
+#            }
+            $tourlist = HTMLOUT::nodeList(T_NODE_TOURNAMENT, 'ffatours', false, '', true, array(T_NODE_TOURNAMENT => array('type' => TT_FFA, 'locked' => 0)));
             global $settings;
             $cy_reroll = "";
             if ( $settings['leegmgr_cyanide'] )
@@ -869,11 +870,14 @@ WHERE match_id = $this->match_id";
                     <!-- Name of input element determines name in $_FILES array -->
                     Send this file <input name='userfile' type='file' /><br>
                     Save in tournament
-                    <select name='ffatours'>
+<!--                    <select name='ffatours'>
                         <optgroup label='Existing FFA'>
+-->
                             {$tourlist}
+<!--
                         </optgroup>
                     </select>
+-->
                     <br>{$cy_reroll}<br>
                     <input type='submit' value='Send File' />
                 </form>
