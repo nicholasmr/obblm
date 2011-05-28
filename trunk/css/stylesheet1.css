@@ -140,7 +140,7 @@ table.tours {
 }
 
 /* tour lists: titel boxes */
-.leauges     {background-color: #659EC7;}
+.leagues     {background-color: #659EC7;}
 .divisions   {background-color: #8BB381;}
 .tours       {background-color: #BBBBBB;}
 td.round     {background-color: #CCCCCC;}
@@ -148,7 +148,7 @@ td.match     {background-color: #DDDDDD;}
 td.seperator {height:15px;}
 
 /* tour lists: node containers */
-div.leaugesNCont     {margin-top:15px; margin-left:10px;}
+div.leaguesNCont     {margin-top:15px; margin-left:10px;}
 div.divisionsNCont   {margin-top:5px;  margin-left:25px;}
 div.toursNCont       {margin-top:0px;  margin-left:10px;}
 
