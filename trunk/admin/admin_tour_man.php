@@ -58,7 +58,7 @@ $tourLongName = $manageable_tours[$selectedTour->tour_id]['name'] . ": " . $sele
     <form method="POST">
         <b>Tournament</b><br>
         <?php
-        echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',$selectedTour->tour_id,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+        echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(),array('sel_id'=>$selectedTour->tour_id,'hide_empty'=>array(T_NODE_DIVISION)));
         ?>
         <input type="hidden" name="type" value="select">
         <input type="submit" value="OK" <?php echo (empty($manageable_tours)) ? 'DISABLED' : '';?>>

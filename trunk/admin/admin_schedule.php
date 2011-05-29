@@ -224,7 +224,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
         <div id='OPTS_NEW_TOUR'>
             <b><?php echo $lng->getTrn('common/division');?></b><br>
             <?php
-            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(),array('empty_str' => array(T_NODE_LEAGUE => '', T_NODE_DIVISION => '')));
             ?>
             <br><br>
             <b><?php echo $lng->getTrn('admin/schedule/tour_name');?></b><br>
@@ -266,7 +266,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
             <?php
             $body = '';
             $body .= '<b>'.$lng->getTrn('admin/schedule/in_tour').'</b><br>';
-            $body .= HTMLOUT::nodeList(T_NODE_TOURNAMENT,'existTour',null,'',true,array(T_NODE_TOURNAMENT => array('type' => TT_FFA), 'OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)), array('locked' => 1, 'DISSTR' => 'LOCKED &mdash; %name')); 
+            $body .= HTMLOUT::nodeList(T_NODE_TOURNAMENT,'existTour',array(T_NODE_TOURNAMENT => array('type' => TT_FFA), 'OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)), array('locked' => 1, 'DISSTR' => 'LOCKED &mdash; %name'),array('empty_str' => array(T_NODE_LEAGUE => strtoupper($lng->getTrn('common/empty')).' &mdash; %name', T_NODE_DIVISION => strtoupper($lng->getTrn('common/empty')).' &mdash; %name'))); 
             echo $body;
             ?>
         </div>
