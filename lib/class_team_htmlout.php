@@ -167,7 +167,7 @@ public static function profile($tid)
         case 'man': $t->_actionBoxes($ALLOW_EDIT, $players); break;
         case 'about': $t->_about($ALLOW_EDIT); break;
         case 'news': $t->_news($ALLOW_EDIT); break;
-        case 'recentmatches': $t->_recentGames(); break;
+        case 'games': $t->_games(); break;
     }
     if (isset($_GET['subsec'])){
         ?>
@@ -644,7 +644,7 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
         <li><a href="<?php echo $url.'&amp;subsec=man';?>"><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=news';?>"><?php echo $lng->getTrn('profile/team/news');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=about';?>"><?php echo $lng->getTrn('common/about');?></a></li>
-        <li><a href="<?php echo $url.'&amp;subsec=recentmatches';?>"><?php echo $lng->getTrn('common/recentmatches');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=games';?>"><?php echo $lng->getTrn('profile/team/games');?></a></li>
         <?php
         echo "<li><a href='${url}&amp;subsec=hhstar' title='Show/hide star hire history'>Star HH</a></li>\n";
         echo "<li><a href='${url}&amp;subsec=hhmerc' title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
@@ -1746,13 +1746,16 @@ private function _news($ALLOW_EDIT)
     <?php
 }
 
-private function _recentGames()
+private function _games()
 {
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
 
-    title("<a name='anc'>".$lng->getTrn('common/recentmatches')."</a>");
-    HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=recentmatches', 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
+    title("<a name='anc'>".$lng->getTrn('profile/team/games')."</a>");
+    HTMLOUT::recentGames(T_OBJ_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=games', 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
+    echo "<br>";
+    HTMLOUT::upcomingGames(T_OBJ_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=games', 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'ug'));
+#    upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array $opts)
 }
 
 }

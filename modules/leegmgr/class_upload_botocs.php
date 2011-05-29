@@ -848,7 +848,7 @@ WHERE match_id = $this->match_id";
 #                $lid = get_alt_col('divisions', 'did', $t['f_did'], 'f_lid');
 #                if ($t['type'] == TT_FFA && !$t['locked'] && $coach_lid == $lid && $t['tname'] != "Pandora's Box") $tourlist .= "<option value='$trid'>$t[tname]</option>\n";
 #            }
-            $tourlist = HTMLOUT::nodeList(T_NODE_TOURNAMENT, 'ffatours', false, '', true, array(T_NODE_TOURNAMENT => array('type' => TT_FFA, 'locked' => 0)));
+            $tourlist = HTMLOUT::nodeList(T_NODE_TOURNAMENT, 'ffatours', array(T_NODE_TOURNAMENT => array('type' => TT_FFA, 'locked' => 0)), array(), array('hide_empty'=>array(T_NODE_DIVISION,T_NODE_LEAGUE)));
             global $settings;
             $cy_reroll = "";
             if ( $settings['leegmgr_cyanide'] )

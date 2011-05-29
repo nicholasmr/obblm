@@ -43,7 +43,7 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <form method="POST">
             In league:<br>
             <?php
-            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(),array('empty_str' => array(T_NODE_LEAGUE => '')));
             ?>
             <br><br>
             Name:<br>
@@ -61,7 +61,7 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <form method="POST">
             Division:<br>
             <?php
-            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(), array('empty_str' => array(T_NODE_DIVISION => '', T_NODE_LEAGUE => '')));
             ?>
             <br><br>
             New name:<br>
@@ -79,7 +79,7 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <form method="POST">
             Division:<br>
             <?php
-            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(),array('empty_str' => array(T_NODE_LEAGUE => '', T_NODE_DIVISION => '')));
             ?>
             <br><br>
             <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
@@ -117,7 +117,7 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <form method="POST">
             League:<br>
             <?php
-            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(),array('empty_str' => array(T_NODE_LEAGUE => '')));
             ?>
             <br><br>
             New name:<br>
@@ -139,7 +139,7 @@ title($lng->getTrn('menu/admin_menu/ld_man'));
             <form method="POST">
             League:<br>
             <?php
-            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',null,'',true,array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)));
+            echo HTMLOUT::nodeList(T_NODE_LEAGUE,'lid',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(),array('empty_str' => array(T_NODE_LEAGUE => '')));
             ?>
             <br><br>
             <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>

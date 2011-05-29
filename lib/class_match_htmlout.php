@@ -902,6 +902,7 @@ public static function userSched() {
 
     title($lng->getTrn('menu/matches_menu/usersched'));
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
+    #echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'tour_id',null,'',true,array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 0)));
     $LOCK_FORMS = false;
     ?>
     <div class='boxCommon'>
