@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -154,7 +154,7 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
 
     $query .= " 
         GROUP BY ".$relations_obj[$obj]['id']." 
-        ".((!empty($HAVING)) ? ' HAVING '.implode('AND', $HAVING) : '')."
+        ".((!empty($HAVING)) ? ' HAVING '.implode(' AND ', $HAVING) : '')."
         ".((!empty($sortRule))  ? ' ORDER BY '.implode(', ', $sortRule) : '')." 
         ".((is_numeric($n))     ? " LIMIT $n" : '')." 
     ";

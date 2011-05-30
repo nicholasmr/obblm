@@ -10,6 +10,9 @@ body
     background-image: url(../images/bg2.jpg);
     background-repeat: repeat-y;
     background-position: top center;
+    /* Fancy:
+    background: #0a1e2e url(../images/bg.png) repeat-x;
+    */
     font: 12px Tahoma;
 }
 
@@ -32,7 +35,14 @@ h2
 div.row {width: inherit; clear: both; background-color: inherit;}
 
 /* MAIN container */
-div.everything {width: 1000px; margin: auto; background-color: #eeeeee;} /* Top level container */
+div.everything {
+    width: 1000px; 
+    margin: auto; 
+    background-color: #eeeeee;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+} /* Top level container */
 
 /*
  *   The following three containers are the subsequent main containers within "div.everything".
