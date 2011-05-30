@@ -237,6 +237,7 @@ private function _newTeam($ALLOW_EDIT)
 private function _teams($ALLOW_EDIT)
 {
     global $lng;
+    echo "<br>";
     $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false).'&amp;subsec=teams';
     HTMLOUT::standings(T_OBJ_TEAM,false,false,array('url' => $url, 'teams_from' => T_OBJ_COACH, 'teams_from_id' => $this->coach_id));
 }
