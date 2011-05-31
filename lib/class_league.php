@@ -24,17 +24,17 @@
 class League
 {
 /***************
- * Properties 
+ * Properties
  ***************/
- 
+
 public $lid = 0; // League ID.
 public $tie_teams = true;
 public $name = '';
-public $date = ''; 
+public $date = '';
 public $location = ''; // Physical location of league.
- 
+
 /***************
- * Methods 
+ * Methods
  ***************/
 
 function __construct($lid) {
@@ -43,7 +43,7 @@ function __construct($lid) {
     foreach ($row as $col => $val) {
         $this->$col = ($val) ? $val : 0;
     }
-    
+
     if (!$this->name) {$this->name = '';} # Make $name empty string and not zero when empty in mysql.
     if (!$this->location) {$this->location = '';}
     if (!$this->date) {$this->date = '';}
@@ -85,7 +85,7 @@ public function getDivisions($onlyIds = false)
             array_push($divisions, ($onlyIds) ? $row['did'] : new Division($row['did']));
         }
     }
-    return $divisions;    
+    return $divisions;
 }
 
 public static function getLeagues($onlyIds = false)
@@ -104,5 +104,16 @@ public static function create($name, $location, $tie_teams)
 {
     $query = "INSERT INTO leagues (date, location, name, tie_teams) VALUES (NOW(), '".mysql_real_escape_string($location)."', '".mysql_real_escape_string($name)."', ".((int) $tie_teams).")";
     return (get_alt_col('leagues', 'name', $name, 'lid')) ? false : mysql_query($query);
+}
+
+public static function getLeagueUrl($lid, $l_name = null) {
+	if(!isset($l_name)) {
+		$l_name = get_alt_col('leagues', 'lid', $lid, 'name');
+	}
+	return "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_LEAGUE,$lid) . "\">" . $l_name . "</a>";
+}
+
+public function getUrl() {
+	return getLeagueUrl($this->lid, $this->name);
 }
 }

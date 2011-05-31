@@ -62,8 +62,8 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
         $m->date_played_disp = textdate($m->date_played, false, false);
         $m->score = "$m->team1_score&mdash;$m->team2_score";
         $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>";
-        $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
-        $m->league_name = get_parent_name(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE);
+        $m->tour_name = Tour::getTourUrl($m->f_tour_id);
+        $m->league_name = League::getLeagueUrl(get_parent_id(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE));
         if ($FOR_OBJ) {
             $m->result = matchresult_icon($m->result);
         }
@@ -119,8 +119,8 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
     foreach ($matches as $m) {
         $m->date_created_disp = textdate($m->date_created, true);
         $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>";
-        $m->tour_name = get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');
-        $m->league_name = get_parent_name(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE);
+        $m->tour_name = Tour::getTourUrl($m->f_tour_id);
+        $m->league_name = League::getLeagueUrl(get_parent_id(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE));
     }
 
     $fields = array(
@@ -314,22 +314,12 @@ public static function standings($obj, $node, $node_id, array $opts)
 
     $enableRaceSelector = ($obj == T_OBJ_PLAYER || $obj == T_OBJ_TEAM && (!isset($opts['teams_from']) || $opts['teams_from'] != T_OBJ_RACE));
     # NO filters for teams of a coach on the coach's teams list.
-    $_COACH_TEAM_LIST = ($W_TEAMS_FROM && $opts['teams_from'] == T_OBJ_COACH);
-    if ($_COACH_TEAM_LIST) {
-        list(,,$T_STATE) = HTMLOUT::nodeSelector(array('nonodes' => true, 'state' => true)); # Produces a state selector.
-        $_SELECTOR = array(false,false,$T_STATE,T_RACE_ALL,'GENERAL','mv_played',self::T_NS__ffilter_ineq_gt,0);
-    }
-    else {
-        $_SELECTOR = HTMLOUT::nodeSelector(array('force_node' => array($node,$node_id), 'race' => $enableRaceSelector, 'sgrp' => true, 'ffilter' => true, 'obj' => $obj));
-    }
-    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp, $sel_ff_field, $sel_ff_ineq, $sel_ff_limit) = $_SELECTOR;
+    list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp, $sel_ff_field, $sel_ff_ineq, $sel_ff_limit) = ($W_TEAMS_FROM && $opts['teams_from'] == T_OBJ_COACH)
+        ? array(false,false,T_STATE_ALLTIME,T_RACE_ALL,'GENERAL','mv_played',self::T_NS__ffilter_ineq_gt,0)
+        : HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true, 'ffilter' => true, 'obj' => $obj));
     $filter_node = array($sel_node => $sel_node_id);
     $filter_race = ($sel_race != T_RACE_ALL) ? array(T_OBJ_RACE => $sel_race) : array();
     $filter_having = array('having' => array($sel_ff_field.(($sel_ff_ineq == self::T_NS__ffilter_ineq_gt) ? '>=' : '<=').$sel_ff_limit));
-    if ($_COACH_TEAM_LIST && $sel_state != T_STATE_ALLTIME) {
-        $filter_having['having'][] = 'rdy IS TRUE';
-        $filter_having['having'][] = 'retired IS FALSE';
-    }
     $SGRP_GEN = ($sel_sgrp == 'GENERAL');
 
     $ALL_TIME = self::_isNodeAllTime($obj, $sel_node, $sel_node_id);
@@ -510,11 +500,10 @@ public static function simpleLeagueSelector()
     $_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
     $_SESSION[self::T_NSStr__node_id] = (int) $sel_lid;
 
-    $HTMLselector = $lng->getTrn('common/league').'&nbsp;';
-    $HTMLselector .= "<form name='SLS' method='POST' style='display:inline; margin:0px;'>";
+    $HTMLselector = "<form name='SLS' method='POST' style='display:inline; margin:0px;'>".$lng->getTrn('common/league');
     $HTMLselector .= self::nodeList(T_NODE_LEAGUE, 'SLS_lid',array(),array(),array('sel_id' => $sel_lid, 'extra_tags' => array("onChange='document.SLS.submit();'")));
     $HTMLselector .= "</form>\n";
-    
+
     return array($sel_lid, $HTMLselector);
 }
 
@@ -558,7 +547,6 @@ public static function nodeSelector(array $opts)
     $s_ffilter_limit = "NS_ffilter__limit"; # RHS of ineq, e.g. "20" in the expression mv_played > 20
 
     // Options
-    $hideNodes = (array_key_exists('nonodes', $opts) && $opts['nonodes']); # This is not a "set" option because it was implemented later, and for backwards compabillity (not changing the caller's syntax) we therefore do it this way.
     $setState = (array_key_exists('state', $opts) && $opts['state']);
     $setRace = (array_key_exists('race', $opts) && $opts['race']);
     $setSGrp = (array_key_exists('sgrp', $opts) && $opts['sgrp']);
@@ -568,26 +556,20 @@ public static function nodeSelector(array $opts)
     // Defaults
     $def_node    = T_NODE_LEAGUE;
     $def_node_id = (is_object($coach) && isset($coach->settings['home_lid'])) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
-    $def_state   = T_STATE_ACTIVE; # No longer T_STATE_ALLTIME;
+    $def_state   = T_STATE_ALLTIME;
     $def_race    = T_RACE_ALL;
     $def_sgrp    = 'GENERAL';
     $def_ffilter_field = 'mv_played';
     $def_ffilter_ineq  = self::T_NS__ffilter_ineq_gt;
     $def_ffilter_limit = '0';
 
-    // Forcings
-    $force_node = $force_node_id = false;
-    if (isset($opts['force_node']) && is_numeric($opts['force_node'][0]) && is_numeric($opts['force_node'][1])) {
-        list($force_node,$force_node_id) = $opts['force_node'];
-    }
-
     $NEW = isset($_POST['ANS']);
     $_SESSION[$s_state] = ($NEW && $setState) ? (int) $_POST['state_in'] : (isset($_SESSION[$s_state]) ? $_SESSION[$s_state] : $def_state);
     $_SESSION[$s_race]  = ($NEW && $setRace)  ? (int) $_POST['race_in']  : (isset($_SESSION[$s_race])  ? $_SESSION[$s_race]  : $def_race);
     $_SESSION[$s_sgrp]  = ($NEW && $setSGrp)  ? $_POST['sgrp_in']        : (isset($_SESSION[$s_sgrp])  ? $_SESSION[$s_sgrp]  : $def_sgrp);
     # NOTE: Form selections updates of $_SESSION node vars are done via self::updateNodeSelectorLeagueVars().
-    $_SESSION[$s_node]    = $force_node    ? $force_node    : (isset($_SESSION[$s_node])     ? $_SESSION[$s_node]    : $def_node);
-    $_SESSION[$s_node_id] = $force_node_id ? $force_node_id : (isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id] : $def_node_id);
+    $_SESSION[$s_node]    = isset($_SESSION[$s_node]) ? $_SESSION[$s_node] : $def_node;
+    $_SESSION[$s_node_id] = isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : $def_node_id;
 
     $_SESSION[$s_ffilter_field] = ($NEW && $setFFilter) ? $_POST['ffilter_field_in'] : (isset($_SESSION[$s_ffilter_field]) ? $_SESSION[$s_ffilter_field] : $def_ffilter_field);
     $_SESSION[$s_ffilter_ineq]  = ($NEW && $setFFilter) ? $_POST['ffilter_ineq_in']  : (isset($_SESSION[$s_ffilter_ineq])  ? $_SESSION[$s_ffilter_ineq]  : $def_ffilter_ineq);
@@ -598,11 +580,8 @@ public static function nodeSelector(array $opts)
 
     ?>
     <form method="POST">
-    <?php 
-    echo $lng->getTrn('common/displayfrom');
-
-    ?>
-    <select <?php if ($hideNodes) {echo "style='display:none;'";}?> name="node" onChange="
+    <?php echo $lng->getTrn('common/displayfrom');?>
+    <select name="node" onChange="
         selConst = Number(this.options[this.selectedIndex].value);
         disableall();
         switch(selConst)
@@ -618,12 +597,11 @@ public static function nodeSelector(array $opts)
         }
         ?>
     </select>
+    :
     <?php
-    if (!$hideNodes) {echo ":";}
     echo self::nodeList(T_NODE_TOURNAMENT, 'tour_in',     array(), array(), array('all' => true, 'sel_id' => ($_SESSION[$s_node] == T_NODE_TOURNAMENT) ? $_SESSION[$s_node_id] : null, 'extra_tags' => array('style="display:none;"'),  'hide_empty' => array(T_NODE_DIVISION)));
     echo self::nodeList(T_NODE_DIVISION,   'division_in', array(), array(), array('all' => true, 'sel_id' => ($_SESSION[$s_node] == T_NODE_DIVISION)   ? $_SESSION[$s_node_id] : null, 'extra_tags' => array('style="display:none;"'),  'empty_str' => array(T_NODE_LEAGUE => '')));
     echo self::nodeList(T_NODE_LEAGUE,     'league_in',   array(), array(), array('all' => true, 'sel_id' => ($_SESSION[$s_node] == T_NODE_LEAGUE)     ? $_SESSION[$s_node_id] : null, 'extra_tags' => array('style="display:none;"'),  'empty_str' => array(T_NODE_LEAGUE => ''), 'allow_all' => true));
-
     if ($setState) {
         echo $lng->getTrn('common/type');
         ?>
@@ -700,8 +678,8 @@ public static function nodeSelector(array $opts)
                 case '.T_NODE_LEAGUE.':     open = "league"; break;
             }
         ';
-        if (!$hideNodes) echo "document.getElementById(open+'_in').style.display = 'inline'\n";
         ?>
+        document.getElementById(open+'_in').style.display = 'inline';
         function disableall()
         {
             document.getElementById('tour_in').style.display = 'none';
@@ -744,8 +722,8 @@ private static function _nodeList_filter($filters, $desc)
     return true;
 }
 
-#public static function nodeList($node, $nameid, $selected_id, $style = '', $no_all = false, $filter = array(), $disCond = array()) 
-public static function nodeList($node, $nameid, $filter = array(), $disCond = array(), $opts = array()) 
+#public static function nodeList($node, $nameid, $selected_id, $style = '', $no_all = false, $filter = array(), $disCond = array())
+public static function nodeList($node, $nameid, $filter = array(), $disCond = array(), $opts = array())
 {
     global $coach, $lng;
 
@@ -761,7 +739,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
             $empty_str[$idx] = strtoupper($lng->getTrn('common/empty')).' &mdash; %name';
         }
     }
-    
+
     // Preprocessing
     $additionalFields = array();
     # Init filters to empty if not set
@@ -789,12 +767,12 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
     foreach ($leagues as $lid => $divs) {
         # I.e. only the 'desc' element exists => no divs in league
         $leagues[$lid]['desc']['_empty'] = $empty = (count($divs) == 1);
-        $leagues[$lid]['desc']['_hide'] = ($empty && in_array(T_NODE_LEAGUE, $hide_empty)); 
+        $leagues[$lid]['desc']['_hide'] = ($empty && in_array(T_NODE_LEAGUE, $hide_empty));
         foreach ($divs as $did => $tours) {
             if ($did == 'desc') continue;
             # I.e. only the 'desc' element exists => no tours in division
             $leagues[$lid][$did]['desc']['_empty'] = $empty = (count($tours) == 1);
-            $leagues[$lid][$did]['desc']['_hide'] = ($empty && in_array(T_NODE_DIVISION, $hide_empty)); 
+            $leagues[$lid][$did]['desc']['_hide'] = ($empty && in_array(T_NODE_DIVISION, $hide_empty));
         }
     }
     // Done preprocessing...
@@ -832,7 +810,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
                 $NL .= "</optgroup>\n";
             }
             break;
-        
+
         case T_NODE_DIVISION:
             foreach ($leagues as $lid => $divs) {
                 if (!self::_nodeList_filter($filter[T_NODE_LEAGUE], $divs['desc']) || $divs['desc']['_hide']) continue;
@@ -860,7 +838,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
                 $NL .= "</optgroup>\n";
             }
             break;
-            
+
         case T_NODE_LEAGUE:
             if ($allow_all) {
                 $NL .= "<option style='font-weight: bold;' value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
@@ -881,7 +859,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
                 $NL .= "<option ".(($dis) ? 'DISABLED' : '')." value='$lid' ".(($selected_id == $lid) ? 'SELECTED' : '').">$name</option>\n";
             }
             break;
-            
+
     }
     $NL .= "</select>\n";
     return $NL;
