@@ -306,7 +306,7 @@ class Tour
 			if (Module::isRegistered('LeagueTables'))    {
 				$tourUrl = "<a href=\"handler.php?type=leaguetables&tour_id=". $tour_id . "\">" . $tour_name . "</a>";
 			} else {
-				$tourUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_TOURNAMENT,$lt) . "\">" . $tour_name . "</a>";
+				$tourUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_TOURNAMENT,$tour_id) . "\">" . $tour_name . "</a>";
 			}
 
 			return $tourUrl;
