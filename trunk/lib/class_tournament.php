@@ -160,12 +160,12 @@ class Tour
     }
 
     public function save() {
-        $query = "UPDATE tours SET 
-            rs = $this->rs, 
-            name = '" . mysql_real_escape_string($this->name) . "', 
-            type = $this->type, 
-            locked = ".(($this->locked) ? 1 : 0).", 
-            allow_sched = $this->allow_sched 
+        $query = "UPDATE tours SET
+            rs = $this->rs,
+            name = '" . mysql_real_escape_string($this->name) . "',
+            type = $this->type,
+            locked = ".(($this->locked) ? 1 : 0).",
+            allow_sched = $this->allow_sched
         WHERE tour_id = $this->tour_id";
         return mysql_query($query);
     }
@@ -296,6 +296,30 @@ class Tour
 
         return false; # Return false if tournament type was not recognized.
     }
+
+	# Gets the deep links for a tournament
+    public static function getTourUrl($tour_id, $tour_name = null) {
+		if (isset($tour_id)) {
+			if (!isset($tour_name)) {
+				$tour_name = get_alt_col('tours', 'tour_id', $tour_id, 'name');
+			}
+			if (Module::isRegistered('LeagueTables'))    {
+				$tourUrl = "<a href=\"handler.php?type=leaguetables&tour_id=". $tour_id . "\">" . $tour_name . "</a>";
+			} else {
+				$tourUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_TOURNAMENT,$lt) . "\">" . $tour_name . "</a>";
+			}
+
+			return $tourUrl;
+		} else {
+			return '<i>'.$lng->getTrn('common/none').'</i>';
+		}
+	}
+
+	public function getUrl() {
+		return self::getTourUrl($this->tour_id, $this->name);
+	}
+
+
 }
 
 ?>
