@@ -520,19 +520,15 @@ public static function report() {
      * Generate form
      *
      ****************/
-     $teamUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false) . "\">" . $m->team1_name . "</a>";
-     $teamUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false) . "\">" . $m->team2_name . "</a>";
-     $coachUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team1->owned_by_coach_id,false,false) . "\">" . $team1->f_cname . "</a>";
-     $coachUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team2->owned_by_coach_id,false,false) . "\">" . $team2->f_cname . "</a>";
-     $raceUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team1->f_race_id,false,false) . "\">" . $team1->f_rname . "</a>";
-     $raceUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team2->f_race_id,false,false) . "\">" . $team2->f_rname . "</a>";
-     $leagueUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_LEAGUE,get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE)) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE) . "</a>";
-     $divUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_DIVISION,get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION)) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION) . "</a>";
-     if (Module::isRegistered('LeagueTables'))    {
-     	$tourUrl = "<a href=\"handler.php?type=leaguetables&tour_id=". get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT) . "</a>";
-     } else {
-     	$tourUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_TOURNAMENT,$m->f_tour_id) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT) . "</a>";
-	}
+    $teamUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false) . "\">" . $m->team1_name . "</a>";
+    $teamUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false) . "\">" . $m->team2_name . "</a>";
+    $coachUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team1->owned_by_coach_id,false,false) . "\">" . $team1->f_cname . "</a>";
+    $coachUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team2->owned_by_coach_id,false,false) . "\">" . $team2->f_cname . "</a>";
+    $raceUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team1->f_race_id,false,false) . "\">" . $team1->f_rname . "</a>";
+    $raceUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team2->f_race_id,false,false) . "\">" . $team2->f_rname . "</a>";
+    $leagueUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_LEAGUE,get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE)) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE) . "</a>";
+    $divUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_DIVISION,get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION)) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION) . "</a>";
+    $tourUrl = Tour::getTourUrl(get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT));
 
     title($teamUrl1 . " - " . $teamUrl2);
     $CP = 8; // Colspan.

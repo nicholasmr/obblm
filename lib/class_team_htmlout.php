@@ -36,12 +36,12 @@ public static function dispList()
 
     list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(array('race' => true, 'state' => true));
     $ALL_TIME = ($sel_node === false && $sel_node_id === false);
-        
+
     $fields = '_RRP AS "team_id", owned_by_coach_id, f_race_id, teams.name AS "tname", f_cname, f_rname, tv, teams.rdy AS "rdy", teams.retired AS "retired"';
     $where = array();
     if ($sel_state == T_STATE_ACTIVE) $where[] = 'teams.rdy IS TRUE AND teams.retired IS FALSE';
     if ($sel_race != T_RACE_ALL) 	  $where[] = "teams.f_race_id = $sel_race";
-    
+
     if ($sel_node == T_NODE_LEAGUE || $ALL_TIME) {
 	    if (!$ALL_TIME) {
 			$where[] = "f_lid = $sel_node_id";
@@ -65,7 +65,7 @@ public static function dispList()
 	    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
 	    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY tname ASC';
     }
-    
+
     $result = mysql_query($queryCnt);
     list($cnt) = mysql_fetch_row($result);
     $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_TEAMS_PER_PAGE);
@@ -79,14 +79,15 @@ public static function dispList()
     echo "<tr><td>".$lng->getTrn('common/teams').": $cnt</td></td>";
     echo '</table></center><br>';
     $queryGet .= ' LIMIT '.(($page-1)*T_HTML_TEAMS_PER_PAGE).', '.(($page)*T_HTML_TEAMS_PER_PAGE);
-    
+
     $teams = array();
     $result = mysql_query($queryGet);
     while ($t = mysql_fetch_object($result)) {
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
         $t->logo = "<img border='0px' height='20' width='20' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
         $t->retired = ($t->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
-        $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';   
+        $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
+
         $teams[] = $t;
     }
 
@@ -96,7 +97,7 @@ public static function dispList()
         'f_cname' => array('desc' => $lng->getTrn('common/coach'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
         'rdy'     => array('desc' => $lng->getTrn('common/ready'), 'nosort' => true),
         'retired' => array('desc' => $lng->getTrn('common/retired'), 'nosort' => true),
-        'f_rname' => array('desc' => $lng->getTrn('common/race'), 'nosort' => true),
+        'f_rname' => array('desc' => $lng->getTrn('common/race'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
         'tv'      => array('desc' => 'TV', 'nosort' => true, 'kilo' => true, 'suffix' => 'k'),
     );
 
@@ -148,7 +149,7 @@ public static function profile($tid)
     global $coach, $settings, $rules;
     $t = new self($tid);
     setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $t->f_lid)); // Load correct $rules for league.
-    
+
     /* Argument(s) passed to generating functions. */
     $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $tid)) && !$t->is_retired); # Show team action boxes?
     $DETAILED   = (isset($_GET['detailed']) && $_GET['detailed'] == 1);# Detailed roster view?
@@ -159,8 +160,8 @@ public static function profile($tid)
     $t->_roster($ALLOW_EDIT, $DETAILED, $players);
     $players = $players_backup; # Restore the $players array (_roster() manipulates the passed $players array).
     $t->_menu($ALLOW_EDIT, $DETAILED);
-    
-    switch (isset($_GET['subsec']) ? $_GET['subsec'] : 'man') 
+
+    switch (isset($_GET['subsec']) ? $_GET['subsec'] : 'man')
     {
         case 'hhmerc': $t->_HHMerc($DETAILED); break;
         case 'hhstar': $t->_HHStar($DETAILED); break;
@@ -196,7 +197,7 @@ private function _handleActions($ALLOW_EDIT)
         $_POST['teamtext'] = stripslashes(isset($_POST['teamtext']) ? $_POST['teamtext'] : '');
         $_POST['txt']      = stripslashes(isset($_POST['txt']) ? $_POST['txt'] : '');
     }
-    
+
     $p = (isset($_POST['player']) && $_POST['type'] != 'hire_player') ? new Player($_POST['player']) : null;
 
     switch ($_POST['type']) {
@@ -204,9 +205,9 @@ private function _handleActions($ALLOW_EDIT)
         case 'hire_player':
             list($exitStatus, $pid) = Player::create(
                 array(
-                    'nr'        => $_POST['number'], 
-                    'f_pos_id'  => $_POST['player'], 
-                    'team_id'   => $team->team_id, 
+                    'nr'        => $_POST['number'],
+                    'f_pos_id'  => $_POST['player'],
+                    'team_id'   => $team->team_id,
                     'name'      => $_POST['name']
                 ),
                 array(
@@ -227,8 +228,8 @@ private function _handleActions($ALLOW_EDIT)
         case 'ready_state':     status($team->setReady(isset($_POST['bool']))); break;
         case 'retire':          status(isset($_POST['bool']) && $team->setRetired(true)); break;
         case 'delete':          status(isset($_POST['bool']) && $team->delete()); break;
-        
-        case 'skill':        
+
+        case 'skill':
             $type = null;
             $p->setChoosableSkills();
             if     (in_array($_POST['skill'], $p->choosable_skills['norm'])) $type = 'N';
@@ -242,7 +243,7 @@ private function _handleActions($ALLOW_EDIT)
         case 'newsdel':  status($team->deleteNews($_POST['news_id'])); break;
         case 'newsedit': status($team->editNews($_POST['news_id'], $_POST['txt'])); break;
 
-        case 'pic': 
+        case 'pic':
             if ($_POST['add_del'] == 'add') {
                 if ($_POST['pic_obj'] == IMGTYPE_TEAMSTADIUM) {
                     list($status, $msg) = $team->saveStadiumPic(ImageSubSys::$defaultHTMLUploadName.'_stad');
@@ -252,9 +253,9 @@ private function _handleActions($ALLOW_EDIT)
                     list($status, $msg) = $team->saveLogo(ImageSubSys::$defaultHTMLUploadName.'_logo');
                     status($status, (!$status) ? $msg : '');
                 }
-            } 
+            }
             else {
-                if ($_POST['pic_obj'] == IMGTYPE_TEAMSTADIUM) 
+                if ($_POST['pic_obj'] == IMGTYPE_TEAMSTADIUM)
                     status($team->deleteStadiumPic());
                 elseif ($_POST['pic_obj'] == IMGTYPE_TEAMLOGO)
                     status($team->deleteLogo());
@@ -266,24 +267,24 @@ private function _handleActions($ALLOW_EDIT)
     if ($coach->isNodeCommish(T_NODE_LEAGUE, $team->f_lid)) {
 
         switch ($_POST['type']) {
-            
+
             case 'unhire_journeyman': status($p->unhireJourneyman()); break;
             case 'unsell_player':     status($p->unsell()); break;
             case 'unbuy_goods':       status($team->unbuy($_POST['thing'])); break;
-            case 'bank':              
-                status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000)); 
+            case 'bank':
+                status($team->dtreasury($dtreas = ($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'] * 1000));
                 if (Module::isRegistered('LogSubSys')) {
                     Module::run('LogSubSys', array('createEntry', T_LOG_GOLDBANK, $coach->coach_id, "Coach '$coach->name' (ID=$coach->coach_id) added a treasury delta for team '$team->name' (ID=$team->team_id) of amount = $dtreas"));
                 }
                 break;
             case 'spp':               status($p->dspp(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount'])); break;
             case 'dval':              status($p->dval(($_POST['sign'] == '+' ? 1 : -1) * $_POST['amount']*1000)); break;
-            
+
             case 'extra_skills':
                 $func = ($_POST['sign'] == '+') ? 'addSkill' : 'rmSkill';
-                status($p->$func('E', $_POST['skill'])); 
+                status($p->$func('E', $_POST['skill']));
                 break;
-                
+
             case 'ach_skills':
                 $type = null;
                 if     (in_array($_POST['skill'], $p->ach_nor_skills))  $type = 'N';
@@ -293,19 +294,19 @@ private function _handleActions($ALLOW_EDIT)
                 break;
         }
     }
-    
+
     $team->setStats(false,false,false); # Reload fields in case they changed after team actions made.
 }
 
 private function _loadPlayers($DETAILED)
 {
-    /* 
+    /*
         Lets prepare the players for the roster.
     */
     global $settings;
     $team = $this; // Copy. Used instead of $this for readability.
     $players = $players_org = array();
-    $players_org = $team->getPlayers(); 
+    $players_org = $team->getPlayers();
     // Make two copies: We will be overwriting $players later when the roster has been printed, so that the team actions boxes have the correct untempered player data to work with.
     foreach ($players_org as $p) {
         array_push($players, clone $p);
@@ -319,7 +320,7 @@ private function _loadPlayers($DETAILED)
         array_push($tmp_players, $p);
     }
     $players = $tmp_players;
-    
+
     return array($players, $players_org);
 }
 
@@ -333,23 +334,23 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
      *   Make the players ready for roster printing.
      *
      ******************************/
-     
+
     foreach ($players as $p) {
-    
-        /* 
+
+        /*
             Misc
         */
         $p->name = preg_replace('/\s/', '&nbsp;', $p->name);
         $p->position = preg_replace('/\s/', '&nbsp;', $p->position);
-    
-        /* 
+
+        /*
             Colors
-        */        
-        
+        */
+
         // Fictive player color fields used for creating player table.
         $p->HTMLfcolor = '#000000';
         $p->HTMLbcolor = COLOR_HTML_NORMAL;
-        
+
         if     ($p->is_sold && $DETAILED)   $p->HTMLbcolor = COLOR_HTML_SOLD; # Sold has highest priority.
         elseif ($p->is_dead && $DETAILED)   $p->HTMLbcolor = COLOR_HTML_DEAD;
         elseif ($p->is_mng)                 $p->HTMLbcolor = COLOR_HTML_MNG;
@@ -365,7 +366,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             $p->mv_cas = "$p->mv_bh/$p->mv_si/$p->mv_ki";
             $p->mv_spp = "$p->mv_spp/$p->extra_spp";
         }
-        
+
         // Characteristic's colors
         foreach (array('ma', 'ag', 'av', 'st') as $chr) {
             $sub = $p->$chr - $p->{"def_$chr"};
@@ -376,17 +377,17 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             elseif ($sub > 1)   $p->{"${chr}_color"} = COLOR_HTML_CHR_GTP1;
             elseif ($sub == -1) $p->{"${chr}_color"} = COLOR_HTML_CHR_EQM1;
             elseif ($sub < -1)  $p->{"${chr}_color"} = COLOR_HTML_CHR_LTM1;
-            
+
             if ($p->$chr != $p->{"${chr}_ua"}) {
                 $p->{"${chr}_color"} = COLOR_HTML_CHR_BROKENLIMIT;
                 $p->$chr = $p->{$chr.'_ua'}.' <i>('.$p->$chr.' eff.)</i>';
             }
         }
-        
-        /* 
+
+        /*
             New skills drop-down.
-        */      
-          
+        */
+
         $x = '';
         if ($ALLOW_EDIT && $p->mayHaveNewSkill()) {
             $p->setChoosableSkills();
@@ -405,7 +406,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
                 $x .= "<option value='$s'>".$skillididx[$s]."</option>\n";
             }
             $x .= "</optgroup>\n";
-            
+
             $x .= "<optgroup label='Characteristic increases'>\n";
             foreach ($p->choosable_skills['chr'] as $s) {
                 global $CHR_CONV;
@@ -424,11 +425,11 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         }
         $p->skills .= $x;
     }
-    
+
     /* If enabled add stars and summed mercenaries entries to the roster */
-    
+
     if ($DETAILED) {
-    
+
         $stars = array();
         foreach (Star::getStars(STATS_TEAM, $team->team_id, false, false) as $s) {
             $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
@@ -448,7 +449,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             array_push($stars, $s);
         }
         $players = array_merge($players, $stars);
-        
+
         $smerc = (object) null;
         $smerc->mv_mvp = $smerc->mv_td = $smerc->mv_cp = $smerc->mv_intcpt = $smerc->mv_bh = $smerc->mv_si = $smerc->mv_ki = $smerc->skills = 0;
         foreach (Mercenary::getMercsHiredByTeam($team->team_id) as $merc) {
@@ -488,37 +489,37 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
      ******************************/
 
     title($team->name . (($team->is_retired) ? ' <font color="red"> (Retired)</font>' : ''));
-        
+
     $fields = array(
-        'nr'        => array('desc' => '#'), 
+        'nr'        => array('desc' => '#'),
         'name'      => array('desc' => $lng->getTrn('common/name'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
-        'position'  => array('desc' => $lng->getTrn('common/pos'), 'nosort' => true), 
-        'ma'        => array('desc' => 'Ma'), 
-        'st'        => array('desc' => 'St'), 
-        'ag'        => array('desc' => 'Ag'), 
-        'av'        => array('desc' => 'Av'), 
+        'position'  => array('desc' => $lng->getTrn('common/pos'), 'nosort' => true),
+        'ma'        => array('desc' => 'Ma'),
+        'st'        => array('desc' => 'St'),
+        'ag'        => array('desc' => 'Ag'),
+        'av'        => array('desc' => 'Av'),
         'skills'    => array('desc' => $lng->getTrn('common/skills'), 'nosort' => true),
         'injs'      => array('desc' => $lng->getTrn('common/injs'), 'nosort' => true),
-        'mv_cp'     => array('desc' => 'Cp'), 
-        'mv_td'     => array('desc' => 'Td'), 
-        'mv_intcpt' => array('desc' => 'Int'), 
+        'mv_cp'     => array('desc' => 'Cp'),
+        'mv_td'     => array('desc' => 'Td'),
+        'mv_intcpt' => array('desc' => 'Int'),
         'mv_cas'    => array('desc' => ($DETAILED) ? 'BH/SI/Ki' : 'Cas', 'nosort' => ($DETAILED) ? true : false),
-        'mv_mvp'    => array('desc' => 'MVP'), 
+        'mv_mvp'    => array('desc' => 'MVP'),
         'mv_spp'    => array('desc' => ($DETAILED) ? 'SPP/extra' : 'SPP', 'nosort' => ($DETAILED) ? true : false),
-        'value'     => array('desc' => $lng->getTrn('common/value'), 'kilo' => true, 'suffix' => 'k'),  
+        'value'     => array('desc' => $lng->getTrn('common/value'), 'kilo' => true, 'suffix' => 'k'),
     );
 
     echo "<a href=".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$this->team_id,false,false)."&amp;detailed=".(($DETAILED) ? 0 : 1).">".$lng->getTrn('profile/team/viewtoggle')."</a><br><br>\n";
     HTMLOUT::sort_table(
-        $team->name.' roster', 
-        urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
-        $players, 
-        $fields, 
-        ($DETAILED) ? array('+is_dead', '+is_sold', '+is_mng', '+is_journeyman', '+nr', '+name') : sort_rule('player'), 
+        $team->name.' roster',
+        urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'),
+        $players,
+        $fields,
+        ($DETAILED) ? array('+is_dead', '+is_sold', '+is_mng', '+is_journeyman', '+nr', '+name') : sort_rule('player'),
         (isset($_GET['sort'])) ? array((($_GET['dir'] == 'a') ? '+' : '-') . $_GET['sort']) : array(),
         array('color' => ($DETAILED) ? true : false, 'doNr' => false, 'noHelp' => true)
     );
-    
+
     ?>
     <table class="text">
         <tr>
@@ -537,7 +538,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
             }
             ?>
         </tr>
-    </table> 
+    </table>
     <?php
 }
 
@@ -548,27 +549,27 @@ private function _menu($ALLOW_EDIT, $DETAILED)
     $url = urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$this->team_id,false,false);
     ?>
 <!-- Cyanide module team color style -->
-<style type="text/css">  
-#cycolors {     
-width: 128px;      
-height: 112px;     
-position: relative;       
+<style type="text/css">
+#cycolors {
+width: 128px;
+height: 112px;
+position: relative;
 background-image: url(images/cycolors.jpg);
 background-repeat: no-repeat;
-} 
+}
 
-#cycolors ul {   
-margin: 0;   
+#cycolors ul {
+margin: 0;
 padding: 0;
-padding-bottom:0px;padding-left:0px;padding-right:0px;padding-top:0px;   
+padding-bottom:0px;padding-left:0px;padding-right:0px;padding-top:0px;
 list-style: none;
-} 
+}
 
-#cycolors a {   
-position: absolute;       
-width: 15px;       
-height: 15px;      
-text-indent: -1000em; 
+#cycolors a {
+position: absolute;
+width: 15px;
+height: 15px;
+text-indent: -1000em;
 padding-bottom:0px;padding-left:0px;padding-right:0px;padding-top:0px;
 border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
 }
@@ -648,7 +649,7 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
         <?php
         echo "<li><a href='${url}&amp;subsec=hhstar' title='Show/hide star hire history'>Star HH</a></li>\n";
         echo "<li><a href='${url}&amp;subsec=hhmerc' title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
-        
+
         $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$this->team_id&amp;detailed=".($DETAILED ? '1' : '0') : '';
         $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_botocs']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id" : '';
         $cyanide = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_cyanide']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id&amp;cy" : '';
@@ -723,7 +724,7 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
                             <li class="magenta7"><a href="<?php echo $cyanide."=53";?>">53</a></li>
                             <li class="purple7"><a href="<?php echo $cyanide."=54";?>">54</a></li>
                             <li class="grey7"><a href="<?php echo $cyanide."=55";?>">55</a></li>
-                    </div> 
+                    </div>
                     </ul>
                 </li>
 
@@ -766,36 +767,36 @@ private function _HHMerc($DETAILED)
             (
             ($m->team1_id == $team->team_id && $m->team1_score > $m->team2_score) ||
             ($m->team2_id == $team->team_id && $m->team1_score < $m->team2_score)
-            ) 
+            )
                 ? 'W'
                 : (($m->team1_score == $m->team2_score) ? 'D' : 'L')
         );
-        
+
         array_push($mdat, $o);
     }
     $fields = array(
-        'date_played'   => array('desc' => $lng->getTrn('common/dateplayed')), 
+        'date_played'   => array('desc' => $lng->getTrn('common/dateplayed')),
         'tour'          => array('desc' => $lng->getTrn('common/tournament')),
-        'opponent'      => array('desc' => $lng->getTrn('common/opponent')), 
-        'skills' => array('desc' => $lng->getTrn('common/skills')), 
-        'cp'     => array('desc' => 'Cp'), 
-        'td'     => array('desc' => 'Td'), 
-        'intcpt' => array('desc' => 'Int'), 
-        'cas'    => array('desc' => 'Cas'), 
-        'bh'     => array('desc' => 'BH'), 
-        'si'     => array('desc' => 'Si'), 
-        'ki'     => array('desc' => 'Ki'), 
-        'mvp'    => array('desc' => 'MVP'), 
+        'opponent'      => array('desc' => $lng->getTrn('common/opponent')),
+        'skills' => array('desc' => $lng->getTrn('common/skills')),
+        'cp'     => array('desc' => 'Cp'),
+        'td'     => array('desc' => 'Td'),
+        'intcpt' => array('desc' => 'Int'),
+        'cas'    => array('desc' => 'Cas'),
+        'bh'     => array('desc' => 'BH'),
+        'si'     => array('desc' => 'Si'),
+        'ki'     => array('desc' => 'Ki'),
+        'mvp'    => array('desc' => 'MVP'),
         'score'  => array('desc' => $lng->getTrn('common/score'), 'nosort' => true),
         'result' => array('desc' => $lng->getTrn('common/result'), 'nosort' => true),
-        'match'  => array('desc' => $lng->getTrn('common/match'), 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true), 
+        'match'  => array('desc' => $lng->getTrn('common/match'), 'href' => array('link' => 'index.php?section=matches&amp;type=report', 'field' => 'mid', 'value' => 'match_id'), 'nosort' => true),
     );
     HTMLOUT::sort_table(
-        "<a name='tp_mhhanc'>".$lng->getTrn('common/merchh')."</a>", 
-        urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=hhmerc'.(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
-        $mdat, 
-        $fields, 
-        sort_rule('star_HH'), 
+        "<a name='tp_mhhanc'>".$lng->getTrn('common/merchh')."</a>",
+        urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=hhmerc'.(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'),
+        $mdat,
+        $fields,
+        sort_rule('star_HH'),
         (isset($_GET['sorttp_mhh'])) ? array((($_GET['dirtp_mhh'] == 'a') ? '+' : '-') . $_GET['sorttp_mhh']) : array(),
         array('GETsuffix' => 'tp_mhh', 'doNr' => false,)
     );
@@ -807,7 +808,7 @@ private function _HHStar($DETAILED)
     $team = $this; // Copy. Used instead of $this for readability.
     title("<a name='anc'>".$lng->getTrn('common/starhh')."</a>");
     Star_HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
-        'url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=hhstar'.(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'), 
+        'url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=hhstar'.(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'),
         'GET_SS' => 'tp_shh',)
     );
 }
@@ -817,18 +818,18 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     /******************************
      * Team management
      * ---------------
-     *   
+     *
      * Here we are able to view team stats and manage the team, depending on visitors privileges.
      *
      ******************************/
-     
+
     global $lng, $rules, $settings, $skillarray, $coach, $DEA, $CHR_CONV;
     global $leagues, $divisions;
     global $racesHasNecromancer, $racesNoApothecary;
     global $T_ALLOWED_PLAYER_NR;
     $team = $this; // Copy. Used instead of $this for readability.
     $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
-     
+
     ?>
     <a name="aanc"></a>
     <div class="boxTeamPage">
@@ -845,22 +846,34 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('common/league');?></td>
-                    <td><?php echo isset($leagues[$team->f_lid]) ? $leagues[$team->f_lid]['lname'] : '<i>'.$lng->getTrn('common/none').'</i>';?></td>
+                    <td><?php if (isset($leagues[$team->f_lid])) {
+                    	echo "<a href=\"";
+                    	echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_LEAGUE,$team->f_lid);
+                    	echo "\">" . $leagues[$team->f_lid]['lname'] . "</a>";
+                    } else {
+                    	echo '<i>'.$lng->getTrn('common/none').'</i>';
+                    } ?></td>
                 </tr>
                 <?php
                 if ($team->f_did != self::T_NO_DIVISION_TIE) {
                     ?>
                     <tr>
                         <td><?php echo $lng->getTrn('common/division');?></td>
-                        <td><?php echo isset($divisions[$team->f_did]) ? $divisions[$team->f_did]['dname'] : '<i>'.$lng->getTrn('common/none').'</i>';?></td>
-                    </tr> 
+                        <td><?php if (isset($divisions[$team->f_did])) {
+                    	echo "<a href=\"";
+                    	echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_DIVISION,$team->f_did);
+                    	echo "\">" . $divisions[$team->f_did]['dname'] . "</a>";
+                    } else {
+                    	echo '<i>'.$lng->getTrn('common/none').'</i>';
+                    } ?></td>
+                    </tr>
                     <?php
                 }
-                ?>               
+                ?>
                 <tr>
                     <td><?php echo $lng->getTrn('common/ready');?></td>
                     <td><?php echo ($team->rdy) ? $lng->getTrn('common/yes') : $lng->getTrn('common/no'); ?></td>
-                </tr>                
+                </tr>
                 <tr>
                     <td>TV</td>
                     <td><?php echo $team->tv/1000 . 'k'; ?></td>
@@ -875,7 +888,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     ?>
                     <td>Necromancer</td>
                     <td><?php echo $lng->getTrn('common/yes');?></td>
-                    <?php                
+                    <?php
                 }
                 if (!in_array($team->f_race_id, $racesNoApothecary)) {
                     echo "<td>Apothecary</td>\n";
@@ -928,11 +941,24 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/ltour');?></td>
-                    <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>'.$lng->getTrn('common/none').'</i>'; ?></td>
+                    <td><?php echo Tour::getTourUrl($team->getLatestTour()); ?></td>
                 </tr>
                 <tr valign="top">
                     <td><?php echo $lng->getTrn('common/playedtours');?></td>
-                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? $lng->getTrn('common/none') : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
+                    <td><small><?php $tours = $team->getToursPlayedIn(false);
+                    if (empty($tours)) {
+                    	echo $lng->getTrn('common/none');
+					} else {
+						$first = true;
+						foreach($tours as $tour) {
+							if ($first) {
+								$first = false;
+							} else {
+								echo ", ";
+							}
+							echo $tour->getUrl();
+						}
+					} ?></small></td>
                 </tr>
                 <?php
                 if (Module::isRegistered('Prize')) {
@@ -947,7 +973,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
             </table>
         </div>
     </div>
-    
+
     <?php
     if ($ALLOW_EDIT) {
         ?>
@@ -955,7 +981,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
             <div class="boxTitle<?php echo T_HTMLBOX_COACH;?>"><?php echo $lng->getTrn('profile/team/box_tm/title');?></div>
             <div class="boxBody">
                 <?php
-                
+
                 $base = 'profile/team';
                 $tmanage = array(
                     'hire_player'       => $lng->getTrn($base.'/box_tm/hire_player'),
@@ -971,10 +997,10 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     'retire'            => $lng->getTrn($base.'/box_tm/retire'),
                     'delete'            => $lng->getTrn($base.'/box_tm/delete'),
                 );
-                
+
                 # If one of these are selected from the menu, a JavaScript confirm prompt is displayed before submitting.
                 # Note: Don't add "hire_player" here - players may be un-bought if not having played any games.
-                $tmange_confirm = array('hire_journeyman', 'fire_player', 'buy_goods', 'drop_goods'); 
+                $tmange_confirm = array('hire_journeyman', 'fire_player', 'buy_goods', 'drop_goods');
 
                 // Set default choice.
                 if (!isset($_POST['menu_tmanage'])) {
@@ -986,7 +1012,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 if (isset($_POST['type']) && array_key_exists($_POST['type'], $tmanage)) {
                     $_POST['menu_tmanage'] = $_POST['type'];
                 }
-                
+
                 ?>
                 <form method="POST" name="menu_tmanage_form">
                     <select name="menu_tmanage" onchange="document.menu_tmanage_form.submit();">
@@ -1002,13 +1028,13 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 <form name="form_tmanage" method="POST" enctype="multipart/form-data">
                 <?php
                 $DISABLE = false;
-                
+
                 switch ($_POST['menu_tmanage']) {
-                
+
                     /**************
                      * Hire player
                      **************/
-                        
+
                     case 'hire_player':
                         echo $lng->getTrn('profile/team/box_tm/desc/hire_player');
                         ?>
@@ -1019,9 +1045,9 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         $active_players = array_filter($players, create_function('$p', "return (\$p->is_sold || \$p->is_dead || \$p->is_mng) ? false : true;"));
                         $DISABLE = true;
                         foreach ($DEA[$team->f_rname]['players'] as $pos => $details) {
-                        
+
                             // Show players on the select list if buyable, or if player is a potential journeyman AND team has not reached journeymen limit.
-                            if (($team->isPlayerBuyable($details['pos_id']) && $team->treasury >= $details['cost']) || 
+                            if (($team->isPlayerBuyable($details['pos_id']) && $team->treasury >= $details['cost']) ||
                                 (($details['qty'] == 16 || $details['qty'] == 12) && count($active_players) < $rules['journeymen_limit'])) {
                                 echo "<option value='$details[pos_id]'>" . $details['cost']/1000 . "k | $pos</option>\n";
                                 $DISABLE = false;
@@ -1050,11 +1076,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="hire_player">
                         <?php
                         break;
-                        
+
                     /**************
                      * Hire journeymen
                      **************/
-                    
+
                     case 'hire_journeyman':
                         echo $lng->getTrn('profile/team/box_tm/desc/hire_journeyman');
                         ?>
@@ -1065,7 +1091,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         $DISABLE = true;
                         foreach ($players as $p) {
                             $price = $DEA[$team->f_rname]['players'][$p->pos]['cost'];
-                            if (!$p->is_journeyman || $p->is_sold || $p->is_dead || 
+                            if (!$p->is_journeyman || $p->is_sold || $p->is_dead ||
                                 $team->treasury < $price || !$team->isPlayerBuyable($p->f_pos_id) || $team->isFull()) {
                                 continue;
                             }
@@ -1082,7 +1108,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     /**************
                      * Fire player
                      **************/
-                        
+
                     case 'fire_player':
                         echo $lng->getTrn('profile/team/box_tm/desc/fire_player').' '.$rules['player_refund']*100 . "%.\n";
                         ?>
@@ -1103,11 +1129,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="fire_player">
                         <?php
                         break;
-                        
+
                     /***************
                      * Un-buy player
                      **************/
-                        
+
                     case 'unbuy_player':
                         echo $lng->getTrn('profile/team/box_tm/desc/unbuy_player');
                         ?>
@@ -1127,11 +1153,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="unbuy_player">
                         <?php
                         break;
-                        
+
                     /**************
                      * Rename player
                      **************/
-                        
+
                     case 'rename_player':
                         echo $lng->getTrn('profile/team/box_tm/desc/rename_player');
                         ?>
@@ -1162,7 +1188,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     /**************
                      * Renumber player
                      **************/
-                        
+
                     case 'renumber_player':
                         echo $lng->getTrn('profile/team/box_tm/desc/renumber_player');
                         ?>
@@ -1195,11 +1221,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="renumber_player">
                         <?php
                         break;
-                        
+
                     /**************
                      * Rename team
                      **************/
-                        
+
                     case 'rename_team':
                         echo $lng->getTrn('profile/team/box_tm/desc/rename_team');
                         ?>
@@ -1209,11 +1235,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="rename_team">
                         <?php
                         break;
-                        
+
                     /**************
                      * Buy team goods
                      **************/
-                        
+
                     case 'buy_goods':
                         echo $lng->getTrn('profile/team/box_tm/desc/buy_goods');
                         $goods_temp = $team->getGoods();
@@ -1239,11 +1265,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="buy_goods">
                         <?php
                         break;
-                        
+
                     /**************
                      * Let go (drop) of team goods
                      **************/
-                        
+
                     case 'drop_goods':
                         echo $lng->getTrn('profile/team/box_tm/desc/drop_goods');
                         ?>
@@ -1265,11 +1291,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="drop_goods">
                         <?php
                         break;
-                        
+
                     /**************
                      * Set ready state
                      **************/
-                        
+
                     case 'ready_state':
                         echo $lng->getTrn('profile/team/box_tm/desc/ready_state');
                         ?>
@@ -1279,11 +1305,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="ready_state">
                         <?php
                         break;
-                        
+
                     /***************
                      * Retire
                      **************/
-                        
+
                     case 'retire':
                         echo $lng->getTrn('profile/team/box_tm/desc/retire');
                         ?>
@@ -1293,11 +1319,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="retire">
                         <?php
                         break;
-                        
+
                     /***************
                      * Delete
                      **************/
-                        
+
                     case 'delete':
                         echo $lng->getTrn('profile/team/box_tm/desc/delete');
                         if (!$this->isDeletable()) {
@@ -1310,11 +1336,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         <input type="hidden" name="type" value="delete">
                         <?php
                         break;
-                        
+
                     }
                     ?>
                     <br><br>
-                    <input type="submit" name="button" value="OK" <?php echo ($DISABLE ? 'DISABLED' : '');?> 
+                    <input type="submit" name="button" value="OK" <?php echo ($DISABLE ? 'DISABLED' : '');?>
                         <?php if (in_array($_POST['menu_tmanage'], $tmange_confirm)) {echo "onClick=\"if(!confirm('".$lng->getTrn('common/confirm_box')."')){return false;}\"";}?>
                     >
                 </form>
@@ -1349,7 +1375,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     if (isset($_POST['type']) && array_key_exists($_POST['type'], $admin_tools)) {
                         $_POST['menu_admintools'] = $_POST['type'];
                     }
-                    
+
                     ?>
                     <form method="POST" name="menu_admintools_form">
                         <select name="menu_admintools" onchange="document.menu_admintools_form.submit();">
@@ -1383,7 +1409,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 foreach ($players as $p) {
                                     if ($p->is_sold || $p->is_dead || $p->is_journeyman || $p->qty != 16)
                                         continue;
-                                        
+
                                     echo "<option value='$p->player_id'>$p->name</option>\n";
                                     $DISABLE = false;
                                 }
@@ -1396,7 +1422,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                             /***************
                              * Un-sell player
                              **************/
-                                
+
                             case 'unsell_player':
                                 echo $lng->getTrn('profile/team/box_admin/desc/unsell_player');
                                 ?>
@@ -1416,11 +1442,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 <input type="hidden" name="type" value="unsell_player">
                                 <?php
                                 break;
-                                
+
                             /***************
                              * Un-buy team goods
                              **************/
-                                
+
                             case 'unbuy_goods':
                                 echo $lng->getTrn('profile/team/box_admin/desc/unbuy_goods');
                                 ?>
@@ -1439,11 +1465,11 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 <input type="hidden" name="type" value="unbuy_goods">
                                 <?php
                                 break;
-                                
+
                             /***************
                              * Gold bank
                              **************/
-                                
+
                             case 'bank':
                                 echo $lng->getTrn('profile/team/box_admin/desc/bank');
                                 ?>
@@ -1459,7 +1485,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                             /***************
                              * Manage extra SPP
                              **************/
-                                
+
                             case 'spp':
                                 echo $lng->getTrn('profile/team/box_admin/desc/spp');
                                 ?>
@@ -1489,7 +1515,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                             /***************
                              * Manage extra player value
                              **************/
-                                
+
                             case 'dval':
                                 echo $lng->getTrn('profile/team/box_admin/desc/dval');
                                 ?>
@@ -1520,7 +1546,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                             /***************
                              * Manage extra skills
                              **************/
-                                
+
                             case 'extra_skills':
                                 echo $lng->getTrn('profile/team/box_admin/desc/extra_skills');
                                 ?>
@@ -1561,7 +1587,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                             /***************
                              * Remove achived skills
                              **************/
-                                
+
                             case 'ach_skills':
                                 echo $lng->getTrn('profile/team/box_admin/desc/ach_skills');
                                 ?>
@@ -1642,7 +1668,7 @@ private function _about($ALLOW_EDIT)
 {
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
-    
+
     title("<a name='anc'>".$lng->getTrn('common/about')." $team->name</a>");
     ?>
     <table class='common'>
@@ -1666,9 +1692,9 @@ private function _about($ALLOW_EDIT)
                 <?php
                 $txt = $team->getText();
                 if (empty($txt)) {
-                    $txt = $lng->getTrn('common/nobody'); 
+                    $txt = $lng->getTrn('common/nobody');
                 }
-                
+
                 if ($ALLOW_EDIT) {
                     ?>
                     <form method='POST'>
@@ -1695,7 +1721,7 @@ private function _news($ALLOW_EDIT)
 {
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
-    
+
     title("<a name='anc'>".$lng->getTrn('profile/team/news')."</a>");
     $news = $team->getNews(MAX_TNEWS);
     ?>
@@ -1715,7 +1741,7 @@ private function _news($ALLOW_EDIT)
                     <input type="submit" value="'.$lng->getTrn('common/submit').'">
                 </form></div>
                 <div style="text-align: right;"><p style="display: inline;">'.textdate($n->date, true).
-                (($ALLOW_EDIT) 
+                (($ALLOW_EDIT)
                     ? '&nbsp;'.inlineform(array('type' => 'newsdel', 'news_id' => $n->news_id), "newsForm$n->news_id", $lng->getTrn('common/delete')).
                         "&nbsp; <a href='javascript:void(0);' onClick=\"slideToggle('newsedit".$n->news_id."');\">".$lng->getTrn('common/edit')."</a>"
                     : '')
@@ -1740,7 +1766,7 @@ private function _news($ALLOW_EDIT)
                 <?php
             }
             ?>
-            </div>    
+            </div>
         </div>
     </div>
     <?php
