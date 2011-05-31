@@ -320,7 +320,7 @@ public static function standings($obj, $node, $node_id, array $opts)
         $_SELECTOR = array(false,false,$T_STATE,T_RACE_ALL,'GENERAL','mv_played',self::T_NS__ffilter_ineq_gt,0);
     }
     else {
-        $_SELECTOR = HTMLOUT::nodeSelector(array('race' => $enableRaceSelector, 'sgrp' => true, 'ffilter' => true, 'obj' => $obj));
+        $_SELECTOR = HTMLOUT::nodeSelector(array('force_node' => array($node,$node_id), 'race' => $enableRaceSelector, 'sgrp' => true, 'ffilter' => true, 'obj' => $obj));
     }
     list($sel_node, $sel_node_id, $sel_state, $sel_race, $sel_sgrp, $sel_ff_field, $sel_ff_ineq, $sel_ff_limit) = $_SELECTOR;
     $filter_node = array($sel_node => $sel_node_id);
@@ -575,13 +575,19 @@ public static function nodeSelector(array $opts)
     $def_ffilter_ineq  = self::T_NS__ffilter_ineq_gt;
     $def_ffilter_limit = '0';
 
+    // Forcings
+    $force_node = $force_node_id = false;
+    if (isset($opts['force_node']) && is_numeric($opts['force_node'][0]) && is_numeric($opts['force_node'][1])) {
+        list($force_node,$force_node_id) = $opts['force_node'];
+    }
+
     $NEW = isset($_POST['ANS']);
     $_SESSION[$s_state] = ($NEW && $setState) ? (int) $_POST['state_in'] : (isset($_SESSION[$s_state]) ? $_SESSION[$s_state] : $def_state);
     $_SESSION[$s_race]  = ($NEW && $setRace)  ? (int) $_POST['race_in']  : (isset($_SESSION[$s_race])  ? $_SESSION[$s_race]  : $def_race);
     $_SESSION[$s_sgrp]  = ($NEW && $setSGrp)  ? $_POST['sgrp_in']        : (isset($_SESSION[$s_sgrp])  ? $_SESSION[$s_sgrp]  : $def_sgrp);
     # NOTE: Form selections updates of $_SESSION node vars are done via self::updateNodeSelectorLeagueVars().
-    $_SESSION[$s_node]    = isset($_SESSION[$s_node]) ? $_SESSION[$s_node] : $def_node;
-    $_SESSION[$s_node_id] = isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id]  : $def_node_id;
+    $_SESSION[$s_node]    = $force_node    ? $force_node    : (isset($_SESSION[$s_node])     ? $_SESSION[$s_node]    : $def_node);
+    $_SESSION[$s_node_id] = $force_node_id ? $force_node_id : (isset($_SESSION[$s_node_id])  ? $_SESSION[$s_node_id] : $def_node_id);
 
     $_SESSION[$s_ffilter_field] = ($NEW && $setFFilter) ? $_POST['ffilter_field_in'] : (isset($_SESSION[$s_ffilter_field]) ? $_SESSION[$s_ffilter_field] : $def_ffilter_field);
     $_SESSION[$s_ffilter_ineq]  = ($NEW && $setFFilter) ? $_POST['ffilter_ineq_in']  : (isset($_SESSION[$s_ffilter_ineq])  ? $_SESSION[$s_ffilter_ineq]  : $def_ffilter_ineq);
