@@ -520,20 +520,33 @@ public static function report() {
      * Generate form
      *
      ****************/
+     $teamUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false) . "\">" . $m->team1_name . "</a>";
+     $teamUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false) . "\">" . $m->team2_name . "</a>";
+     $coachUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team1->owned_by_coach_id,false,false) . "\">" . $team1->f_cname . "</a>";
+     $coachUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team2->owned_by_coach_id,false,false) . "\">" . $team2->f_cname . "</a>";
+     $raceUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team1->f_race_id,false,false) . "\">" . $team1->f_rname . "</a>";
+     $raceUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team2->f_race_id,false,false) . "\">" . $team2->f_rname . "</a>";
+     $leagueUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_LEAGUE,get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE)) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE) . "</a>";
+     $divUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_DIVISION,get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION)) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION) . "</a>";
+     if (Module::isRegistered('LeagueTables'))    {
+     	$tourUrl = "<a href=\"handler.php?type=leaguetables&tour_id=". get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT) . "</a>";
+     } else {
+     	$tourUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_TOURNAMENT,$m->f_tour_id) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT) . "</a>";
+	}
 
-    title("$m->team1_name - $m->team2_name");
+    title($teamUrl1 . " - " . $teamUrl2);
     $CP = 8; // Colspan.
 
     ?>
     <table>
     <tr><td></td><td style='text-align: right;'><i><?php echo $lng->getTrn('common/home');?></i></td><td>&mdash;</td><td style='text-align: left;'><i><?php echo $lng->getTrn('common/away');?></i></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/teams');?></b>:</td><td style='text-align: right;'><?php echo "$m->team1_name</td><td> &mdash; </td><td style='text-align: left;'>$m->team2_name";?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/coaches');?></b>:</td><td style='text-align: right;'><?php echo "$m->coach1_name</td><td> &mdash; </td><td style='text-align: left;'>$m->coach2_name";?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/races');?></b>:</td><td style='text-align: right;'><?php echo "$m->race1_name</td><td> &mdash; </td><td style='text-align: left;'>$m->race2_name";?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/teams');?></b>:</td><td style='text-align: right;'><?php echo "$teamUrl1</td><td> &mdash; </td><td style='text-align: left;'>$teamUrl2";?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/coaches');?></b>:</td><td style='text-align: right;'><?php echo "$coachUrl1</td><td> &mdash; </td><td style='text-align: left;'>$coachUrl2";?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/races');?></b>:</td><td style='text-align: right;'><?php echo "$raceUrl1</td><td> &mdash; </td><td style='text-align: left;'>$raceUrl2";?></td></tr>
     <tr><td colspan="4"><hr></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3"><?php       echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE);?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3"><?php     echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION);?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td colspan="3"><?php   echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT);?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3"><?php  echo $leagueUrl; ?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3"><?php     echo $divUrl;?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td colspan="3"><?php   echo $tourUrl;?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
@@ -611,7 +624,7 @@ public static function report() {
             <?php
             foreach (array(1,2) as $N) {
                 echo "<tr>\n";
-                echo "<td>".${"team$N"}->name."</td>\n";
+                echo "<td>".${"teamUrl$N"}."</td>\n";
                 echo "<td><input type='text' name='result$N' value='".((int) $m->{"team${N}_score"})."' size='1' maxlength='2' $DIS></td>\n";
                 echo "<td><input type='text' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
                 echo "<td>";

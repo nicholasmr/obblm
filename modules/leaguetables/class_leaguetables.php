@@ -144,6 +144,8 @@ public static function showTables() {
     $tour_id = 0;
     if (isset($_POST['tour_id'])) {
     	$tour_id = $_POST['tour_id'];
+    } else if (isset($_GET['tour_id'])) {
+    	$tour_id = $_GET['tour_id'];
     }
 	$firstTour = 0;
     ?>
