@@ -446,7 +446,7 @@ public static function report() {
                         // Star required input
                         'f_team_id' => $t->team_id,
                         // Regular input
-                        'mvp'     => $_POST["mvp_$sid"],
+                        'mvp'     => isset($_POST["mvp_$sid"]) ? $_POST["mvp_$sid"] : 0,
                         'cp'      => $_POST["cp_$sid"],
                         'td'      => $_POST["td_$sid"],
                         'intcpt'  => $_POST["intcpt_$sid"],
