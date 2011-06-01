@@ -7,7 +7,7 @@ if (isset($_POST['button'])) {
     /*
         Input validation.
     */
-    
+
     // Teams
     $team_ids = explode(',', $_POST['teams']);
     $teamsCount = count($team_ids);
@@ -18,10 +18,10 @@ if (isset($_POST['button'])) {
     $nameSet        = (isset($_POST['name']) && !empty($_POST['name']) && !ctype_space($_POST['name']));
 
     /* Error condition definitions. */
-    
-    /* 
+
+    /*
         Here we test for illegal pair-ups due to league and division relations.
-        Normally Match::create() does this too, but we don't want to end up creating a long list of matches first, but 
+        Normally Match::create() does this too, but we don't want to end up creating a long list of matches first, but
         then have to abort because (for example) the last pair of teams are an illegal paring.
     */
     $teams_OK['l'] = $teams_OK['d'] = true;
@@ -31,14 +31,16 @@ if (isset($_POST['button'])) {
     foreach ($team_ids as $tid) {
         $query = "SELECT (t.f_did = $did) AS 'in_did', (t.f_lid = $lid) AS 'in_lid' FROM teams AS t WHERE t.team_id = $tid";
         $result = mysql_query($query);
-        $state = mysql_fetch_assoc($result);
-        if (!$state['in_lid']) {
-            $teams_OK['l'] = false;
-            break;
-        }
-        if ($TIE_TEAMS && !$state['in_did']) {
-            $teams_OK['d'] = false;
-            break;
+        if ($result) {
+			$state = mysql_fetch_assoc($result);
+			if (!$state['in_lid']) {
+				$teams_OK['l'] = false;
+				break;
+			}
+			if ($TIE_TEAMS && !$state['in_did']) {
+				$teams_OK['d'] = false;
+				break;
+			}
         }
     }
 
@@ -58,14 +60,14 @@ if (isset($_POST['button'])) {
     foreach ($errors as $e) {
         if ($e[0]) {
             status(false, $e[1]."<br>\n");
-            $STATUS = false;        
+            $STATUS = false;
         }
     }
 
     /*
         Input modification.
     */
-    
+
     if ($nameSet && get_magic_quotes_gpc()) {
         $_POST['name'] = stripslashes($_POST['name']);
     }
@@ -100,7 +102,7 @@ if (isset($_POST['button'])) {
                 case 'FFA_TOUR': $TOUR_TYPE = TT_FFA; break;
                 case 'RR_TOUR': $TOUR_TYPE = TT_RROBIN; break;
             }
-            status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => $TOUR_TYPE, 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
+            status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => $TOUR_TYPE, 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'], 'allow_sched' => 0)));
         }
     }
 }
@@ -113,7 +115,7 @@ title($lng->getTrn('menu/admin_menu/schedule'));
     {
         /*
             Handles the disabling and enabling of form elements depending on what tournament type is chosen.
-            
+
             Expects TT_* PHP constants to be globally available to javascript.
         */
 
@@ -145,8 +147,8 @@ title($lng->getTrn('menu/admin_menu/schedule'));
 
     var TID = false;
     var TNAME = false;
-    
-    function verifyTeam(name) 
+
+    function verifyTeam(name)
     {
         $.ajax({
            type: "POST",
@@ -167,11 +169,11 @@ title($lng->getTrn('menu/admin_menu/schedule'));
          });
     }
 
-    function addTeam() 
+    function addTeam()
     {
         var tid;
         var name;
-        
+
         if (TID == 0) {
             return false;
         }
@@ -188,17 +190,17 @@ title($lng->getTrn('menu/admin_menu/schedule'));
         SL.options[SL.length] = new Option(name, tid);
         SL.size++;
         TEAMS.value = TEAMS.value.concat( ((TEAMS.value.length == 0) ? '' : ',')+tid );
-        
+
         document.getElementById("team_verify").innerHTML = '';
     }
-    
+
     function removeLastTeam()
     {
         SL.options[SL.length-1] = null;
         SL.size--;
         TEAMS.value = TEAMS.value.substr(0, TEAMS.value.lastIndexOf(','));
     }
-    
+
 </script>
 
 <?php
@@ -241,7 +243,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
             </select>
             <br><br>
         </div> <!-- /OPTS_NEW_TOUR -->
-        
+
         <?php
         $body = '';
         // FFA settings.
@@ -253,7 +255,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
         }
         $body .= '</select>';
         echo "<div id='OPTS_FFA_TOUR_SETS'>$body</div>\n";
-        
+
         // Round robin seed multiplier.
         $body = '';
         $body .= '<b>'.$lng->getTrn('admin/schedule/rrobin_rnds')."</b><br><select name='rounds'>";
@@ -266,7 +268,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
             <?php
             $body = '';
             $body .= '<b>'.$lng->getTrn('admin/schedule/in_tour').'</b><br>';
-            $body .= HTMLOUT::nodeList(T_NODE_TOURNAMENT,'existTour',array(T_NODE_TOURNAMENT => array('type' => TT_FFA), 'OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)), array('locked' => 1, 'DISSTR' => 'LOCKED &mdash; %name'),array('empty_str' => array(T_NODE_LEAGUE => strtoupper($lng->getTrn('common/empty')).' &mdash; %name', T_NODE_DIVISION => strtoupper($lng->getTrn('common/empty')).' &mdash; %name'))); 
+            $body .= HTMLOUT::nodeList(T_NODE_TOURNAMENT,'existTour',array(T_NODE_TOURNAMENT => array('type' => TT_FFA), 'OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)), array('locked' => 1, 'DISSTR' => 'LOCKED &mdash; %name'),array('empty_str' => array(T_NODE_LEAGUE => strtoupper($lng->getTrn('common/empty')).' &mdash; %name', T_NODE_DIVISION => strtoupper($lng->getTrn('common/empty')).' &mdash; %name')));
             echo $body;
             ?>
         </div>
@@ -275,7 +277,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
     <div class='boxCommon' style='<?php echo $commonStyle;?>'>
     <h3 class='boxTitle<?php echo T_HTMLBOX_ADMIN;?>'><?php echo $lng->getTrn('admin/schedule/add_team');?></h3>
     <div class='boxBody'>
-    <b><?php echo $lng->getTrn('admin/schedule/add_team');?>:</b><br>    
+    <b><?php echo $lng->getTrn('admin/schedule/add_team');?>:</b><br>
     <script>
         $(document).ready(function(){
             var options, a;
@@ -283,7 +285,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
             a = $('#team').autocomplete(options);
         });
     </script>
-    
+
     <input id='team' type="text" name="team" size="30" maxlength="50"> <a href='javascript:void(0);' onClick="verifyTeam(document.getElementById('team').value);"><?php echo $lng->getTrn('common/add');?></a> <span id='team_verify'></span><br>
     <?php
     print "<br>";
@@ -303,7 +305,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
 
 <script language="JavaScript" type="text/javascript">
     chTour('FFA_SINGLE');
-    
+
     var SL = document.getElementById('selectedlist');
     var TEAMS = document.getElementById('teams');
 </script>
