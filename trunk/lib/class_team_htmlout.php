@@ -87,6 +87,7 @@ public static function dispList()
         $t->logo = "<img border='0px' height='20' width='20' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
         $t->retired = ($t->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
         $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
+
         $teams[] = $t;
     }
 
@@ -96,7 +97,7 @@ public static function dispList()
         'f_cname' => array('desc' => $lng->getTrn('common/coach'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id')),
         'rdy'     => array('desc' => $lng->getTrn('common/ready'), 'nosort' => true),
         'retired' => array('desc' => $lng->getTrn('common/retired'), 'nosort' => true),
-        'f_rname' => array('desc' => $lng->getTrn('common/race'), 'nosort' => true),
+        'f_rname' => array('desc' => $lng->getTrn('common/race'), 'nosort' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id')),
         'tv'      => array('desc' => 'TV', 'nosort' => true, 'kilo' => true, 'suffix' => 'k'),
     );
 
@@ -167,7 +168,7 @@ public static function profile($tid)
         case 'man': $t->_actionBoxes($ALLOW_EDIT, $players); break;
         case 'about': $t->_about($ALLOW_EDIT); break;
         case 'news': $t->_news($ALLOW_EDIT); break;
-        case 'recentmatches': $t->_recentGames(); break;
+        case 'games': $t->_games(); break;
     }
     if (isset($_GET['subsec'])){
         ?>
@@ -644,7 +645,7 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
         <li><a href="<?php echo $url.'&amp;subsec=man';?>"><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=news';?>"><?php echo $lng->getTrn('profile/team/news');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=about';?>"><?php echo $lng->getTrn('common/about');?></a></li>
-        <li><a href="<?php echo $url.'&amp;subsec=recentmatches';?>"><?php echo $lng->getTrn('common/recentmatches');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=games';?>"><?php echo $lng->getTrn('profile/team/games');?></a></li>
         <?php
         echo "<li><a href='${url}&amp;subsec=hhstar' title='Show/hide star hire history'>Star HH</a></li>\n";
         echo "<li><a href='${url}&amp;subsec=hhmerc' title='Show/hide mercenary hire history'>Merc. HH</a></li>\n";
@@ -830,6 +831,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     $JMP_ANC = (isset($_POST['menu_tmanage']) || isset($_POST['menu_admintools'])); # Jump condition MUST be set here due to _POST variables being changed later.
 
     ?>
+    <a name="aanc"></a>
     <div class="boxTeamPage">
         <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><a name='anc'><?php echo $lng->getTrn('profile/team/box_info/title');?></a></div>
         <div class="boxBody">
@@ -844,14 +846,26 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('common/league');?></td>
-                    <td><?php echo isset($leagues[$team->f_lid]) ? $leagues[$team->f_lid]['lname'] : '<i>'.$lng->getTrn('common/none').'</i>';?></td>
+                    <td><?php if (isset($leagues[$team->f_lid])) {
+                    	echo "<a href=\"";
+                    	echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_LEAGUE,$team->f_lid);
+                    	echo "\">" . $leagues[$team->f_lid]['lname'] . "</a>";
+                    } else {
+                    	echo '<i>'.$lng->getTrn('common/none').'</i>';
+                    } ?></td>
                 </tr>
                 <?php
                 if ($team->f_did != self::T_NO_DIVISION_TIE) {
                     ?>
                     <tr>
                         <td><?php echo $lng->getTrn('common/division');?></td>
-                        <td><?php echo isset($divisions[$team->f_did]) ? $divisions[$team->f_did]['dname'] : '<i>'.$lng->getTrn('common/none').'</i>';?></td>
+                        <td><?php if (isset($divisions[$team->f_did])) {
+                    	echo "<a href=\"";
+                    	echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_DIVISION,$team->f_did);
+                    	echo "\">" . $divisions[$team->f_did]['dname'] . "</a>";
+                    } else {
+                    	echo '<i>'.$lng->getTrn('common/none').'</i>';
+                    } ?></td>
                     </tr>
                     <?php
                 }
@@ -925,20 +939,33 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td><?php echo $lng->getTrn('common/wontours');?></td>
                     <td><?php echo $team->wt_cnt; ?></td>
                 </tr>
-                <tr valign="top">
-                    <td><?php echo $lng->getTrn('common/playedtours');?></td>
-                    <td><small><?php $tours = $team->getToursPlayedIn(false); echo (empty($tours)) ? '<i>'.$lng->getTrn('common/none').'</i>' : implode(', ', array_map(create_function('$val', 'return $val->name;'), $tours)); ?></small></td>
-                </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('profile/team/box_info/ltour');?></td>
-                    <td><?php $lt = $team->getLatestTour(); echo ($lt) ? get_alt_col('tours', 'tour_id', $lt, 'name') : '<i>'.$lng->getTrn('common/none').'</i>'; ?></td>
+                    <td><?php echo Tour::getTourUrl($team->getLatestTour()); ?></td>
+                </tr>
+                <tr valign="top">
+                    <td><?php echo $lng->getTrn('common/playedtours');?></td>
+                    <td><small><?php $tours = $team->getToursPlayedIn(false);
+                    if (empty($tours)) {
+                    	echo $lng->getTrn('common/none');
+					} else {
+						$first = true;
+						foreach($tours as $tour) {
+							if ($first) {
+								$first = false;
+							} else {
+								echo ", ";
+							}
+							echo $tour->getUrl();
+						}
+					} ?></small></td>
                 </tr>
                 <?php
                 if (Module::isRegistered('Prize')) {
                     ?>
                     <tr valign="top">
-                        <td>Prizes</td>
-                        <td><small><?php $prizes = Module::run('Prize', array('getPrizesString', $team->team_id)); echo (empty($prizes)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $prizes; ?></small></td>
+                        <td><?php echo $lng->getTrn('name', 'Prize');?></td>
+                        <td><small><?php echo Module::run('Prize', array('getPrizesString', T_OBJ_TEAM, $team->team_id));?></small></td>
                     </tr>
                     <?php
                 }
@@ -1745,13 +1772,16 @@ private function _news($ALLOW_EDIT)
     <?php
 }
 
-private function _recentGames()
+private function _games()
 {
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
 
-    title("<a name='anc'>".$lng->getTrn('common/recentmatches')."</a>");
-    HTMLOUT::recentGames(STATS_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=recentmatches', 'GET_SS' => 'gp'));
+    title("<a name='anc'>".$lng->getTrn('profile/team/games')."</a>");
+    HTMLOUT::recentGames(T_OBJ_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=games', 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
+    echo "<br>";
+    HTMLOUT::upcomingGames(T_OBJ_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=games', 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'ug'));
+#    upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array $opts)
 }
 
 }
