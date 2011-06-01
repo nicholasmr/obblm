@@ -231,7 +231,7 @@ class Tour
         /* Create tournament */
 
         // Quit if can't make tournament entry.
-        $query = "INSERT INTO tours (name, f_did, type, rs, date_created) VALUES ('" . mysql_real_escape_string($input['name']) . "', $input[did], $input[type], $input[rs], NOW())";
+        $query = "INSERT INTO tours (name, f_did, type, rs, date_created, allow_sched) VALUES ('" . mysql_real_escape_string($input['name']) . "', $input[did], $input[type], $input[rs], NOW(), $input[allow_sched])";
         if (!mysql_query($query)) {
             return false;
         }
@@ -256,6 +256,9 @@ class Tour
         // Round-Robin?
         elseif ($input['type'] == TT_RROBIN) {
 
+			if (sizeof($input['teams']) == 0) {
+				return true;
+			}
             // Quit if can't make tournament schedule.
             $robin = new RRobin();
             if (!$robin->create($input['teams'])) # If can't create Round-Robin tour -> quit.
