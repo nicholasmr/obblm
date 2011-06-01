@@ -47,6 +47,7 @@
     <number>Number</number>
     <opponent>Opponent</opponent>
     <options>Options</options>
+    <empty>empty</empty>
     
     <needhelp>Need help?</needhelp>
     <picof>Picture of</picof>
@@ -244,7 +245,7 @@
         <viewtoggle>Toggle roster view</viewtoggle>
         
         <!-- Team management sec. -->
-        <tmanage>Team management + info</tmanage>
+        <tmanage>Management &amp; Stats</tmanage>
         
         <!-- About sec. -->
             <logo>Team's logo</logo>
@@ -256,7 +257,8 @@
             <wnews>Write news</wnews>
             <nonews>No entries exist</nonews>
         
-        <!-- Recent games sec. -->
+        <!-- Games sec. -->
+        <games>Recent &amp; Coming games</games>
         
         <!-- Star/merc HH secs. -->
         

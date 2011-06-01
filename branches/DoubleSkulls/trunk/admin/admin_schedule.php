@@ -31,6 +31,7 @@ if (isset($_POST['button'])) {
     foreach ($team_ids as $tid) {
         $query = "SELECT (t.f_did = $did) AS 'in_did', (t.f_lid = $lid) AS 'in_lid' FROM teams AS t WHERE t.team_id = $tid";
         $result = mysql_query($query);
+        if ($result) {
         $state = mysql_fetch_assoc($result);
         if (!$state['in_lid']) {
             $teams_OK['l'] = false;
@@ -40,6 +41,7 @@ if (isset($_POST['button'])) {
             $teams_OK['d'] = false;
             break;
         }
+    }
     }
 
     $errors = array(
@@ -100,7 +102,7 @@ if (isset($_POST['button'])) {
                 case 'FFA_TOUR': $TOUR_TYPE = TT_FFA; break;
                 case 'RR_TOUR': $TOUR_TYPE = TT_RROBIN; break;
             }
-            status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => $TOUR_TYPE, 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'])));
+            status(Tour::create(array('did' => $_POST['did'], 'name' => $_POST['name'], 'type' => $TOUR_TYPE, 'rs' => (int) $_POST['rs'], 'teams' => $team_ids, 'rounds' => $_POST['rounds'], 'allow_sched' => 0)));
         }
     }
 }
@@ -223,15 +225,9 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
 
         <div id='OPTS_NEW_TOUR'>
             <b><?php echo $lng->getTrn('common/division');?></b><br>
-            <select name='did'>
                 <?php
-                foreach ($divisions as $did => $desc) {
-                    if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-                        echo "<option value='$did'>".$leagues[$desc['f_lid']]['lname'].": $desc[dname]</option>\n";
-                    }
-                }
+            echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(),array('empty_str' => array(T_NODE_LEAGUE => '', T_NODE_DIVISION => '')));
                 ?>
-            </select>
             <br><br>
             <b><?php echo $lng->getTrn('admin/schedule/tour_name');?></b><br>
             <input type="text" name="name" size="30" maxlength="50">
@@ -272,13 +268,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
             <?php
             $body = '';
             $body .= '<b>'.$lng->getTrn('admin/schedule/in_tour').'</b><br>';
-            $body .= '<select name="existTour">';
-            foreach ($tours as $trid => $desc) {
-                if ($desc['type'] == TT_FFA && $leagues[$divisions[$desc['f_did']]['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {
-                    $body .= "<option value='$trid' ".(($desc['locked']) ? 'DISABLED' : '')." ".(($addMatchToFFA && isset($_POST['existTour']) && $trid == $_POST['existTour']) ? 'SELECTED' : '').">".$divisions[$desc['f_did']]['dname'].": $desc[tname]".(($desc['locked']) ? '&nbsp;&nbsp;(LOCKED)' : '')."</option>\n";
-                }
-            }
-            $body .= '</select>';
+            $body .= HTMLOUT::nodeList(T_NODE_TOURNAMENT,'existTour',array(T_NODE_TOURNAMENT => array('type' => TT_FFA), 'OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)), array('locked' => 1, 'DISSTR' => 'LOCKED &mdash; %name'),array('empty_str' => array(T_NODE_LEAGUE => strtoupper($lng->getTrn('common/empty')).' &mdash; %name', T_NODE_DIVISION => strtoupper($lng->getTrn('common/empty')).' &mdash; %name'))); 
             echo $body;
             ?>
         </div>
