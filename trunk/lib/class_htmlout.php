@@ -954,7 +954,22 @@ private static function make_menu()
                     <ul>
                     <?php
                     foreach ($admin_menu as $lnk => $desc) {
-                        echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
+                        if (!is_array($desc)) {
+                            echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
+                        }
+                        else {
+                            ?>
+                            <li><span class="dir"><?php echo $desc['title'];?></span>
+                            <ul>
+                            <?php
+                            foreach ($desc['sub'] as $sub) {
+                                echo "<li><a href='index.php?section=admin&amp;subsec=$lnk&amp;$sub[href]'>$sub[title]</a></li>\n";
+                            }
+                            ?>
+                            </ul>
+                            </li>
+                            <?php
+                        }
                     }
                     ?>
                     </ul>
