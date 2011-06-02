@@ -598,7 +598,7 @@ public static function nodeSelector(array $opts)
 
     ?>
     <form method="POST">
-    <?php 
+    <?php
     echo $lng->getTrn('common/displayfrom');
 
     ?>
@@ -744,8 +744,8 @@ private static function _nodeList_filter($filters, $desc)
     return true;
 }
 
-#public static function nodeList($node, $nameid, $selected_id, $style = '', $no_all = false, $filter = array(), $disCond = array()) 
-public static function nodeList($node, $nameid, $filter = array(), $disCond = array(), $opts = array()) 
+#public static function nodeList($node, $nameid, $selected_id, $style = '', $no_all = false, $filter = array(), $disCond = array())
+public static function nodeList($node, $nameid, $filter = array(), $disCond = array(), $opts = array())
 {
     global $coach, $lng;
 
@@ -761,7 +761,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
             $empty_str[$idx] = strtoupper($lng->getTrn('common/empty')).' &mdash; %name';
         }
     }
-    
+
     // Preprocessing
     $additionalFields = array();
     # Init filters to empty if not set
@@ -789,12 +789,12 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
     foreach ($leagues as $lid => $divs) {
         # I.e. only the 'desc' element exists => no divs in league
         $leagues[$lid]['desc']['_empty'] = $empty = (count($divs) == 1);
-        $leagues[$lid]['desc']['_hide'] = ($empty && in_array(T_NODE_LEAGUE, $hide_empty)); 
+        $leagues[$lid]['desc']['_hide'] = ($empty && in_array(T_NODE_LEAGUE, $hide_empty));
         foreach ($divs as $did => $tours) {
             if ($did == 'desc') continue;
             # I.e. only the 'desc' element exists => no tours in division
             $leagues[$lid][$did]['desc']['_empty'] = $empty = (count($tours) == 1);
-            $leagues[$lid][$did]['desc']['_hide'] = ($empty && in_array(T_NODE_DIVISION, $hide_empty)); 
+            $leagues[$lid][$did]['desc']['_hide'] = ($empty && in_array(T_NODE_DIVISION, $hide_empty));
         }
     }
     // Done preprocessing...
@@ -832,7 +832,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
                 $NL .= "</optgroup>\n";
             }
             break;
-        
+
         case T_NODE_DIVISION:
             foreach ($leagues as $lid => $divs) {
                 if (!self::_nodeList_filter($filter[T_NODE_LEAGUE], $divs['desc']) || $divs['desc']['_hide']) continue;
@@ -860,7 +860,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
                 $NL .= "</optgroup>\n";
             }
             break;
-            
+
         case T_NODE_LEAGUE:
             if ($allow_all) {
                 $NL .= "<option style='font-weight: bold;' value='".T_NODE_ALL."'>-".$lng->getTrn('common/all')."-</option>\n";
@@ -881,7 +881,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
                 $NL .= "<option ".(($dis) ? 'DISABLED' : '')." value='$lid' ".(($selected_id == $lid) ? 'SELECTED' : '').">$name</option>\n";
             }
             break;
-            
+
     }
     $NL .= "</select>\n";
     return $NL;
@@ -1006,6 +1006,7 @@ private static function make_menu()
                 <?php if (Module::isRegistered('Gallery'))    { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Conference'))    { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('LeaguePref'))    { ?><li><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('menu-lge', 'LeaguePref');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('TeamCreator'))    { ?><li><a href="handler.php?type=teamcreator"><?php echo $lng->getTrn('menu-tc', 'TeamCreator');?></a></li><?php } ?>
             </ul>
         </li>
 
