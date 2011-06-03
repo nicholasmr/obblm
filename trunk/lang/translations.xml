@@ -154,10 +154,9 @@
     </statistics_menu>
     <admin_menu>
         <name>Admin</name> <!-- top level button text -->
-        <ld_man>Management: Leagues &amp; divisions</ld_man>
+        <nodes>Management: Leagues, divisions &amp; tournaments</nodes>
         <ct_man>Management: Coaches &amp; teams</ct_man>
         <usr_man>Management: Users</usr_man>
-        <tour_man>Management: Tournaments</tour_man>
         <import>Import team</import>
         <schedule>Schedule matches</schedule>
         <cpanel>OBBLM core panel</cpanel>

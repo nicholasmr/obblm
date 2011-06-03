@@ -96,161 +96,359 @@ public function myMethod()
     return $this->attribute;
 }
 
+/* Generates an array containing all the info needed for each player, to be converted to Javascript */
+public static function addPlayer($pos, $d) {
+	$p = array();
+	$p['position'] = $pos;
+	$p['ma'] = $d['ma'];
+	$p['st'] = $d['ag'];
+	$p['ag'] = $d['ag'];
+	$p['av'] = $d['av'];
+	$p['skills'] = implode(', ', skillsTrans($d['def']));
+	$p['N'] = isset($d['norm']) ? implode('',$d['norm']) : "";
+	$p['D'] = isset($d['doub']) ? implode('',$d['doub']) : "";
+	$p['cost'] = $d['cost'] / 1000;
+	$p['id'] = isset($d['pos_id']) ? $d['pos_id'] : $d['id'];
+	$p['ind'] = isset($d['pos_id']) ? 0 : 1;
+	$p['max'] = isset($d['qty']) ? $d['qty'] : 1;
+	return $p;
+}
+
+/* Generates an array containing all the info needed for each inducement or other team attribute */
+public static function addTeamAttribute($name, $cost, $max) {
+	$att = array();
+	$att['name'] = $name;
+	if ($max == -1) {
+		$max = 16;
+	}
+	$att['max'] = $max;
+	$att['cost'] = $cost;
+	$att['ind'] = 0;
+	return $att;
+}
+
+/* Generates an array containing all the info needed for the teams, to be converted to Javascript */
+public static function getRaceArray() {
+	global $raceididx, $DEA, $stars, $rules, $racesNoApothecary, $inducements;
+
+ 	$races = array();
+	foreach ($raceididx as $rid => $rname) {
+		$race = array();
+		$race['name'] = $rname;
+		$race['rid'] = $rid;
+		$race['apoth'] = !in_array($rid, $racesNoApothecary);
+		$race['players'] = array();
+		$race['others'] = array();
+		foreach ($DEA[$raceididx[$rid]]['players'] as $pos => $d) {
+			$race['players'][] = self::addPlayer($pos, $d);
+		}
+		foreach($stars as $pos => $d) {
+			if (in_array($rid, $d['races'])) {
+				$race['players'][] = self::addPlayer($pos, $d);
+			}
+		}
+		$race['player_count'] = sizeof($race['players']);
+
+		if ($rules['max_rerolls'] <> 0) {
+			$race['others'][] = self::addTeamAttribute('Rerolls',
+								     				   $DEA[$raceididx[$rid]]['other']['rr_cost'] / 1000,
+												       $rules['max_rerolls']);
+		}
+
+		if ($rules['max_fan_factor'] <> 0) {
+			$race['others'][] = self::addTeamAttribute('Fan Factor',
+								     				   10,
+												       $rules['max_fan_factor']);
+		}
+
+		if ($rules['max_cheerleaders'] <> 0) {
+			$race['others'][] = self::addTeamAttribute('Cheerleaders',
+								     				   10,
+												       $rules['max_cheerleaders']);
+		}
+
+		if ($rules['max_ass_coaches'] <> 0) {
+			$race['others'][] = self::addTeamAttribute('Ass Coaches',
+								     				   10,
+												       $rules['max_ass_coaches']);
+		}
+
+		if ($race['apoth']) {
+			$race['others'][] = self::addTeamAttribute('Apothecary',
+								     				   50,
+												       1);
+		}
+
+		foreach($inducements as $name => $d) {
+			$inducement = array();
+			$inducement['name'] = $name;
+			$inducement['max'] = $d['max'];
+			if($race['apoth'] && $name == 'Igor') {
+				continue;
+			} else if (!$race['apoth'] && $name == 'Wandering Apothecaries') {
+				continue;
+			}
+			if (in_array($rid, $d['reduced_cost_races'])) {
+				$inducement['cost'] = $d['reduced_cost'] / 1000;
+			} else {
+				$inducement['cost'] = $d['cost'] / 1000;
+			}
+			$inducement['ind'] = 1;
+			$race['others'][] = $inducement;
+		}
+		$race['other_count'] = sizeof($race['others']);
+
+		$races[] = $race;
+	}
+	return $races;
+}
+
 public static function teamCreator()
 {
-	global $lng, $coach, $raceididx, $leagues, $divisions, $DEA, $stars, $racesNoApothecary, $inducements;
+	global $lng, $coach, $raceididx, $leagues, $rules, $divisions;
     title($lng->getTrn('name', 'TeamCreator'));
     // Show new team form.
-    ?>
+	$easyconvert = new array_to_js();
+	$races = self::getRaceArray();
+	@$easyconvert->add_array($races, 'races');
+	echo $easyconvert->output_all();
+	$maxPlayers = $rules['max_team_players'];
+echo<<< EOQ
 	<script type="text/javascript">
-	function changeRace() {
+
+	function setIdVisible(element, value) {
+		document.getElementById(element).style.visibility=value;
+	}
+
+	function setIdHtml(element, value) {
+		document.getElementById(element).innerHTML=value;
+	}
+
+	function addCellToRow(rowObj, cellValue, colspan) {
+		var cell = rowObj.insertCell(rowObj.cells.length);
+		if (colspan > 1) {
+        	cell.colSpan=colspan;
+        	cell.align="right";
+        	cell.innerHTML = cellValue + "&nbsp;&nbsp;";;
+        } else {
+        	cell.innerHTML = cellValue;
+        }
+		return cell;
+	}
+
+	function makeInput(type, id, value) {
+		return "<input type=\"" + type + "\" id=\"" + id + "\" name=\"" + id + "\" value=\"" + value+ "\" />";
+	}
+
+	function updateQty(id, type, newQty) {
+		var race = races[document.getElementById("rid").value];
+		if (type == 'p') {
+			var players = race['players'];
+		} else {
+			var players = race['others'];
+		}
+		var player = players[id];
+		var divS = "sub" + type + id;
+		var newCost = player["cost"] * newQty;
+		document.getElementById(divS).innerText= newCost;
+		updateTotal();
+	}
+
+	function makeSelect(id, type, max) {
+		var str = "<select id=\"qty" + type + id + "\" name=\"qty" + type + id + "\" onchange=\"updateQty(" + id + ", '" + type + "', this.options[this.selectedIndex].value)\">";
+		for (var i = 0; i <= max; i++) {
+			str += "<option>" + i + "</option>";
+		}
+		str += "</select>";
+		return str;
+	}
+
+	function changeInduce(check) {
+		var oldInduce = document.getElementById('oldInduce');
+		if (check != new Boolean(oldInduce.checked)) {
+			oldInduce.checked = check;
+			var race = races[document.getElementById("rid").value];
+			var pCounts = new Array();
+			var oCounts = new Array();
+			for (var i=0; i < race["player_count"]; i++) {
+				pCounts[i] = getValue('qtyp' + i);
+			}
+			for (i=0; i < race["other_count"]; i++) {
+				oCounts[i] = getValue('qtyo' + i);
+			}
+			changeRace(getValue("rid"));
+			for (var i=0; i < race["player_count"]; i++) {
+				if (pCounts[i] > 0) {
+					try {
+						setIndex('qtyp' + i, pCounts[i]);
+						updateQty(i, 'p', pCounts[i]);
+					} catch (err) {
+					}
+				}
+			}
+			for (i=0; i < race["other_count"]; i++) {
+				if (oCounts[i] > 0) {
+					try {
+						setIndex('qtyo' + i, oCounts[i]);
+						updateQty(i, 'o', oCounts[i]);
+					} catch (err) {
+					}
+				}
+			}
+		}
+	}
+
+	function changeRace(raceId) {
 		var oFormObject = document.forms('form_team');
-		oFormObject.elements['subtype'].value = 'racechange';
-		if(oFormObject.elements['rid'].value > -1) {
+		var race = races[raceId];
+		var players = race["players"];
+		var others = race["others"];
+		var i;
+		var rowIdx;
+		var table = document.getElementById('teamTable');
+		var induce = document.getElementById('induce').checked;
+		while (table.rows.length > 1) {
+			table.deleteRow(1);
+		}
+		document.getElementById("pcnt").innerText=0;
+		document.getElementById("total").innerText=0;
+
+		rowIdx = 0;
+		for (i = 0; i < race["player_count"]; i++) {
+			var player = players[i];
+			if (!induce && player['ind']) {
+				continue;
+			}
+			rowIdx++;
+			var row = table.insertRow(rowIdx);
+			addCellToRow(row, player["position"], 1);
+			addCellToRow(row, player["ma"], 1);
+			addCellToRow(row, player["st"], 1);
+			addCellToRow(row, player["ag"], 1);
+			addCellToRow(row, player["av"], 1);
+			addCellToRow(row, player["skills"], 1);
+			addCellToRow(row, player["N"], 1);
+			addCellToRow(row, player["D"], 1);
+			addCellToRow(row, player["cost"], 1);
+			addCellToRow(row, makeInput('hidden', 'pid' + rowIdx, player["id"]) + makeSelect(i, 'p', player["max"]), 1);
+			addCellToRow(row, "<div id=\"subp" + i + "\"></div>", 1);
+		}
+		for (i = 0; i < race["other_count"]; i++) {
+			var other = others[i];
+			if (!induce && other['ind']) {
+				continue;
+			}
+			rowIdx++;
+			var row = table.insertRow(rowIdx);
+			addCellToRow(row, other["name"], 8);
+			addCellToRow(row, other["cost"], 1);
+			addCellToRow(row, makeInput('hidden', 'oid' + i, other["name"]) + makeSelect(i, 'o', other["max"]), 1);
+			addCellToRow(row, "<div id=\"subo" + i + "\"></div>", 1);
+		}
+	}
+
+	function createTeam() {
+		var oForm = document.forms('form_team');
+		oForm.elements['subtype'].value = 'createTeam';
+		var name = oForm.elements['name'].value;
+		var pCount = oForm.elements['pCnt'].value;
+		var total = oForm.elements['cost'].value;
+		var submit = true;
+
+		if (submit && name.length == 0) {
+			alert('You must enter a team name');
+			submit = false;
+		}
+
+		if(submit && oForm.elements['rid'].value == -1) {
+			alert('You must select a race');
+			submit = false;
+		}
+
+		if (submit && pCount > 16) {
+			alert('You have ' + pCount + ' players, and should have no more than 16.');
+			submit = false;
+		}
+
+		if (submit && pCount < 11) {
+			submit = confirm('You only have ' + pCount + ' players, and should have at least 11. Create anyway?');
+		}
+
+		if (submit && total > 1000) {
+			submit = confirm('You have spent more than $' + total + 'k. Create anyway?');
+		}
+
+		if (submit) {
 			oFormObject.submit();
 		}
 	}
 
-	function change(nextElem) {
-		nextElem.focus();
-		nextElem.select();
+	function setIndex(elem, value) {
+		document.getElementById(elem).selectedIndex = value;
 	}
-	</script>
-	    <form method="POST" id="form_team">
-        <div class='boxBody'>
-<?php
-		if (isset($coach)) {
-?>
-		<?php echo $lng->getTrn('common/name');?><br><input type="text" name="name" size="20" maxlength="50">
-		<br><br><?php echo $lng->getTrn('common/league').'/'.$lng->getTrn('common/division');?><br>
-		<select name="lid_did">
-			<?php
-			foreach ($leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, $coach->coach_id, array(T_NODE_LEAGUE => array('tie_teams' => 'tie_teams'))) as $lid => $lstruct) {
-				if ($lstruct['desc']['tie_teams']) {
-					echo "<OPTGROUP LABEL='".$lng->getTrn('common/league').": ".$lstruct['desc']['lname']."'>\n";
-					foreach ($lstruct as $did => $dstruct) {
-						if ($did != 'desc') {
-							echo "<option value='$lid,$did'>".$lng->getTrn('common/division').": ".$dstruct['desc']['dname']."</option>";
-						}
-					}
-					echo "</OPTGROUP>\n";
-				}
-				else {
-					echo "<option value='$lid'>".$lng->getTrn('common/league').": ".$lstruct['desc']['lname']."</option>";
-				}
-			}
-			?>
-		</select>
-		<br><br>
-<?php
+
+	function getValue(elemId) {
+		try {
+			return document.getElementById(elemId).value;
+		} catch (err) {
+			return "";
 		}
-?>
-	    <b><?php echo $lng->getTrn('common/race');?></b>: <select id="selectRace" name="rid" onchange="changeRace()">
-<?php
+	}
+
+	function getText(elemId) {
+		try {
+			return document.getElementById(elemId).innerText;
+		} catch (err) {
+			return "";
+		}
+	}
+
+	function updateTotal() {
+		var race = races[getValue("rid")];
+		var playerCount = race['player_count'];
+
+		var pCount = 0;
+		var total = 0;
+		var subTot = 0;
+
+		for (var i=0; i < playerCount; i++) {
+			pCount += new Number(getValue('qtyp' + i));
+			subTot = getText('subp' + i);
+			if (!isNaN(subTot)) {
+				total +=  new Number(subTot);
+			}
+		}
+		document.getElementById("pcnt").innerText=pCount;
+		for (var i=0; i < race['other_count']; i++) {
+			subTot = getText('subo' + i);
+			if (!isNaN(subTot)) {
+				total +=  new Number(subTot);
+			}
+		}
+		document.getElementById("total").innerText=total + "k";
+	}
+
+	</script>
+	<form method="POST" id="form_team">
+	<div class='boxWide'>
+		<table class="common"><tr><td>
+		<b>Race</b>: <select id="rid" name="rid" onchange="changeRace(this.options[this.selectedIndex].value)">
+EOQ;
 		echo "<option value='-1'>-select-</option>";
 		$selectedRid = isset($_POST['rid']) ? $_POST['rid'] : -1;
 
-        foreach ($raceididx as $rid => $rname) {
-
-            echo "<option value='$rid'";
-            if ($selectedRid == $rid) { echo " SELECTED "; }
-            echo ">$rname</option>";
+		$i = 0;
+        foreach ($raceididx as $rname) {
+            echo "<option value='$i'>$rname</option>";
+            $i++;
 		}
-        ?>
-	    </select>
-		<input type='hidden' id='subtype' name='subtype' value=''>
-        </div>
-<?php
-		if ($selectedRid > -1) {
-			$race = $DEA[$raceididx[$selectedRid]];
-			$apoth = !in_array($selectedRid, $racesNoApothecary);
-			$other = (object) $race['other'];
-			$other->rr_cost = $other->rr_cost / 1000;
-			foreach ($race['players'] as $player => $d) {
-				$p = (object) array_merge(array('position' => $player), $d);
-				$p->skills = implode(', ', skillsTrans($p->def));
-				$p->N = implode('',$p->norm);
-				$p->D = implode('',$p->doub);
-				$p->cost = $p->cost / 1000;
-				$p->id = $p->pos_id;
-				$players[] = $p;
-			}
-			foreach($stars as $player => $d) {
-				if (in_array($selectedRid, $d['races'])) {
-					$p = (object) array_merge(array('position' => $player), $d);
-					$p->skills = implode(', ', skillsTrans($p->def));
-					$p->N = '';
-					$p->D = '';
-					$p->qty = 1;
-					$p->cost = $p->cost / 1000;
-					$players[] = $p;
-				}
-			}
-
-			$lastPlayerIdx = 2 + sizeof($players);
 echo<<< EOQ
-	<script>
-		function updateTotal() {
-			var oForm = document.forms('form_team');
-			var elem;
-			var elemId;
-			var pCount = 0;
-			var total = 0;
-			var pQtyPatt =new RegExp("pQty");
-			var pQtyCostPatt =new RegExp("QtyCost");
-
-			try {
-				for (var i=0; oForm.length; i++) {
-					elem = oForm.elements[i];
-					if(elem.nodeName == "INPUT") {
-						elemId = elem.id;
-						if (pQtyCostPatt.test(elemId)) {
-							total += new Number(elem.value);
-						} else if (pQtyPatt.test(elemId)) {
-							pCount += new Number(elem.value);
-						}
-					}
-				}
-			} catch (err) {
-				// alert("Error " + err);
-			}
-			if (pCount > 16) {
-				alert('You are only allowed 16 players maximum, and have ' + pCount);
-			}
-			oForm.elements['pCnt'].value = pCount;
-			oForm.elements['cost'].value = total;
-		}
-
-
-		function updateSub(position, maxQtyElem, costElem, qtyStrElem, subElem) {
-			var num = qtyStrElem.value;
-			var cost = costElem.value;
-			var maxQty = maxQtyElem.value;
-			if (isNaN(num)) {
-				alert('This value needs to be a number');
-			} else {
-				if (num > maxQty) {
-					alert('You are not allowed more than ' + maxQty + ' ' + position);
-				}
-				subElem.value = num * cost;
-				updateTotal();
-			}
-		}
-
-		function updateTeamAtt(attributeName, maxQty, cost, qtyStrElem, subElem) {
-			var num = new Number(qtyStrElem.value);
-			if ('Nan' == num) {
-				alert('Not a number');
-			} else if (num > maxQty) {
-				alert('You are not allowed more than ' + maxQty + ' ' + attributeName);
-			} else {
-				subElem.value = num * cost;
-				updateTotal();
-			}
-		}
-	</script>
-
-	<table class="common">
+	    </select></td>
+	    <td align="right" id="indTxt">Inducements:</td><td><input type="checkbox" id="induce" onChange="changeInduce(this.checked)" /><input type="hidden" id="oldInduce" value="false" /></td>
+	    <td align="right"><b># Players</b>:</td><td><div id="pcnt"></div></td><td align="right"><b>Total</b>:</td><td><div id="total"></div></td></tr></table>
+	</div>
+	<div class="boxWide">
+	<table class="common" id="teamTable">
 		<tr class="commonhead">
 			<th>Position</th>
 			<th>MA</th>
@@ -260,138 +458,13 @@ echo<<< EOQ
 			<th>Skills</th>
 			<th>Norm</th>
 			<th>Doub</th>
-			<th>Max</th>
 			<th>$</th>
 			<th>Qty</th>
-			<th>Cost</th>
+			<th>Tot.</th>
 		</tr>
-EOQ;
-			$idx = 0;
-			foreach($players as $player) {
-				$idx++;
-				if ($idx == sizeof($players)) {
-					$next = "this.form.rrs";
-				} else {
-					$next = "this.form.pQty" . ($idx + 1);
-				}
-
-
-echo<<< EOQ
-		<tr>
-			<td>$player->position</td>
-			<td>$player->ma</td>
-			<td>$player->st</td>
-			<td>$player->ag</td>
-			<td>$player->av</td>
-			<td>$player->skills</td>
-			<td>$player->N</td>
-			<td>$player->D</td>
-			<td>$player->qty</td>
-			<td>$player->cost</td>
-			<input type='hidden' id='pId$idx' name='pId$idx' value='$player->id' />
-			<input type='hidden' id='pCost$idx' name='pCost$idx' value='$player->cost' />
-			<input type='hidden' id='pMax$idx' name='pMax$idx' value='$player->qty' />
-			<td><input type='text' id='pQty$idx' name='pQty$idx' value='0' size='2' maxsize="2" onBlur="updateSub('$player->position', this.form.pMax$idx, this.form.pCost$idx, this.form.pQty$idx, this.form.pQtyCost$idx);" /></td>
-			<td><input type='text' id='pQtyCost$idx' name='pQtyCost$idx' value='0' size='3'  maxsize="3" onFocus="change($next);"/></td>
-		</tr>
-EOQ;
-			}
-			$idx++;
-			$next = $idx + 1;
-echo<<< EOQ
-		<tr>
-			<td colspan="8" align="right">Rerolls&nbsp;&nbsp;</td>
-			<td>8</td>
-			<td>$other->rr_cost</td>
-			<td><input type='text' id='rrs' name='rrs' value='0' size='2' onBlur="updateTeamAtt('Rerolls', 8, $other->rr_cost, this.form.rrs, this.form.rrsQtyCost);" /></td>
-			<td><input type='text' id='rrsQtyCost' name='rrsQtyCost' value='0' size='3' onFocus="change(this.form.fans);" /></td>
-		</tr>
-		<tr>
-			<td colspan="8" align="right">Fan Factor&nbsp;&nbsp;</td>
-			<td>9</td>
-			<td>10</td>
-			<td><input type='text' id='fans' name='fans' value='0' size='2' onBlur="updateTeamAtt('Fan Factor', 9, 10, this.form.fans, this.form.fansQtyCost);"  /></td>
-			<td><input type='text' id='fansQtyCost' name='fansQtyCost' value='0' size='3'  onFocus="change(this.form.cl);"/></td>
-		</tr>
-		<tr>
-			<td colspan="8" align="right">Cheerleaders&nbsp;&nbsp;</td>
-			<td>n/a</td>
-			<td>10</td>
-			<td><input type='text' id='cl' name='cl' value='0' size='2' onBlur="updateTeamAtt('Cheerleaders', 100, 10, this.form.cl, this.form.clQtyCost);"  /></td>
-			<td><input type='text' id='clQtyCost' name='clQtyCost' value='0' size='3'  onFocus="change(this.form.ac);"/></td>
-		</tr>
-EOQ;
-		 if($apoth) {
-		 	$next = "this.form.apo";
-		 } else  {
-		 	$next = "this.form.indQ1";
-		 }
-echo<<< EOQ
-		<tr>
-			<td colspan="8" align="right">Assistant Coaches&nbsp;&nbsp;</td>
-			<td>n/a</td>
-			<td>10</td>
-			<td><input type='text' id='ac' name='ac' value='0' size='2' onBlur="updateTeamAtt('Assistant Coaches', 100, 10, this.form.ac, this.form.acQtyCost);"  /></td>
-			<td><input type='text' id='acQtyCost' name='acQtyCost' value='0' size='3'  onFocus="change($next);" /></td>
-		</tr>
-EOQ;
-		 if($apoth) {
-echo<<< EOQ
-		<tr>
-			<td colspan="8" align="right">Apothecary&nbsp;&nbsp;</td>
-			<td>1</td>
-			<td>50</td>
-			<td><input type='text' id='apo' name='apo' value='0' size='2'  onBlur="updateTeamAtt('Apothecary', 1, 50, this.form.apo, this.form.apoQtyCost);"  /></td>
-			<td><input type='text' id='apoQtyCost' name='apoQtyCost' value='0' size='3'  onFocus="change(this.form.indQ1);" /></td>
-		</tr>
-EOQ;
-		 }
-		 $idx = 0;
-		 foreach($inducements as $name => $d) {
-			$inducement = (object) array_merge(array('name' => $name), $d);
-			if($apoth && $inducement->name == 'Igor') {
-				continue;
-			} else if (!$apoth && $inducement->name == 'Wandering Apothecaries') {
-				continue;
-			}
-			if (in_array($selectedRid, $inducement->reduced_cost_races)) {
-				$inducement->cost = $inducement->reduced_cost / 1000;
-			} else {
-				$inducement->cost = $inducement->cost / 1000;
-			}
-			$idx++;
-			if($idx == (sizeof($inducements) -1)) {
-				$next = "this.form.pQty1";
-			} else  {
-				$next = "this.form.indQ" . (1 + $idx);
-			}
-
-
-echo<<< EOQ
-		<tr>
-			<td colspan="8" align="right">$inducement->name&nbsp;&nbsp;</td>
-			<td>$inducement->max</td>
-			<td>$inducement->cost</td>
-			<input type='hidden' id='ind$idx' name='ind$idx' value='$inducement->name' />
-			<td><input type='text' id='indQ$idx' name='indQ$idx' value='0' size='2' onBlur="updateTeamAtt('$inducement->name', $inducement->max, $inducement->cost, indQ$idx, this.form.indQtyCost$idx);"  /></td>
-			<td><input type='text' id='indQtyCost$idx' name='$idx' value='0' size='3'  onFocus="change($next);" /></td>
-		</tr>
-EOQ;
-		 }
-echo<<< EOQ
-		<tr>
-			<td colspan="8" align="right"># Players&nbsp;&nbsp;</td>
-			<td colspan="2"><input type='text' id='pCnt' name='pCnt' value='0' size='2'  onFocus="change(this.form.pQty1);" /></td>
-			<td align="right"><b>Total<b></td>
-			<td><input type='text' id='cost' name='cost' value='0' size='4'  onFocus="change(this.form.pQty1);" /></td>
-		</tr>
-EOQ;
-		}
-?>
 	</table>
+	</div>
 	</form>
-    <?php
+EOQ;
 }
-
 }
-?>
