@@ -249,7 +249,6 @@ public static function makeList($ALLOW_EDIT)
     
     global $lng, $coach, $settings;
     HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
-    title($lng->getTrn('name', 'Prize'));
     
     /* A new entry was sent. Add it to system */
     
@@ -265,10 +264,11 @@ public static function makeList($ALLOW_EDIT)
                 break;
         }
     }
+    title($lng->getTrn('name', 'Prize'));
     
     /* Was a request for a new entry made? */ 
     
-    elseif (isset($_GET['action']) && $ALLOW_EDIT) {
+    if (isset($_GET['action']) && $ALLOW_EDIT) {
         
         switch ($_GET['action'])
         {
@@ -284,26 +284,23 @@ public static function makeList($ALLOW_EDIT)
                 break;
                 
             case 'new':
+                echo "<a href='handler.php?type=prize'><--".$lng->getTrn('common/back')."</a><br><br>";
                 ?>
+                <form name="STS" method="POST" enctype="multipart/form-data">
+                <b><?php echo $lng->getTrn('common/tournament');?>:</b><br>
+                <?php
+                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT, 'trid');
+                ?>
+                <input type='submit' value='<?php echo $lng->getTrn('common/select');?>'>
+                </form>
+                <br>
                 <form method="POST" enctype="multipart/form-data">
-                <b><?php echo $lng->getTrn('tour', __CLASS__);?>:</b><br>
-                <select name="trid">
-                    <?php
-                    $tours = Tour::getTours();
-                    objsort($tours, array('+name'));
-                    foreach ($tours as $tr) {
-                        echo "<option value='$tr->tour_id'>$tr->name</option>\n";
-                    }
-                    ?>
-                </select>
-                <br><br>
                 <b><?php echo $lng->getTrn('team', __CLASS__);?>:</b><br>
                 <select name="tid">
                     <?php
-                    $teams = Team::getTeams();
-                    objsort($teams, array('+name'));
-                    foreach ($teams as $t) {
-                        echo "<option value='$t->team_id'>$t->name</option>\n";
+                    $teams = isset($_POST['trid']) ? Team::getTeams(false,array(get_parent_id(T_NODE_TOURNAMENT, (int) $_POST['trid'], T_NODE_LEAGUE)),true) : array();
+                    foreach ($teams as $tid => $name) {
+                        echo "<option value='$tid'>$name</option>\n";
                     }
                     ?>
                 </select>
@@ -325,7 +322,8 @@ public static function makeList($ALLOW_EDIT)
                 <b><?php echo $lng->getTrn('g_about', __CLASS__);?>:</b><br>
                 <textarea name="txt" rows="15" cols="100"></textarea>
                 <br><br><br>
-                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit" <?php echo (empty($tours) | empty($teams)) ? 'DISABLED' : '';?>>
+                <input type='hidden' name='trid' value='<?php echo $_POST['trid'];?>'>
+                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit" <?php echo empty($teams) ? 'DISABLED' : '';?>>
                 </form>
                 <br>
                 <?php

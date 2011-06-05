@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -482,19 +482,30 @@ class Team
         return ($CNT == 1);
     }
 
-    public static function getTeams($race_id = false) {
+    public static function getTeams($race_id = false, $f_lids = array(), $noObj = false) {
 
         /**
          * Returns an array of all team objects.
          **/
 
         $teams = array();
-
-        $query = "SELECT team_id FROM teams" . (($race_id !== false) ? " WHERE f_race_id=$race_id" : '');
+        $where = array();
+        if ($race_id !== false) { 
+            $where[] = "f_race_id = $race_id";
+        }
+        if (!empty($f_lids)) {
+            $where[] = "f_lid IN (".implode(',',$f_lids).")";
+        }
+        $query = "SELECT team_id,name FROM teams".(!empty($where) ? ' WHERE '.implode(' AND ', $where) : '').' ORDER BY name ASC';
         $result = mysql_query($query);
         if (mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
-                array_push($teams, new Team($row['team_id']));
+                if ($noObj) {
+                    $teams[$row['team_id']] = $row['name'];
+                }
+                else {
+                    array_push($teams, new Team($row['team_id']));
+                }
             }
         }
 
