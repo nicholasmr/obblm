@@ -896,51 +896,48 @@ public static function userSched() {
     }
 
     if (isset($_POST['creategame'])) {
-        list($exitStatus, $mid) = Match::create(array(
-            'team1_id'  => (int) $_POST['own_team'],
-            'team2_id'  => get_alt_col('teams', 'name', $_POST['opposing_team_autocomplete'], 'team_id'),
-            'round'     => (int) $_POST['round'],
-            'f_tour_id' => (int) $_POST['tour_id'],
-        ));
-
-        status(!$exitStatus, $exitStatus ? Match::$T_CREATE_ERROR_MSGS[$exitStatus] : null);
-        if (!$exitStatus) {
-            echo "<a href='index.php?section=matches&amp;type=report&amp;mid=$mid'>Click here to open match report.</a>";
+        // Test input
+        $trid     = (int) $_POST['trid'];
+        $round    = (int) $_POST['round'];
+        $own_team = (int) $_POST['own_team'];
+        $errmsg = '';
+        // Logged in coach has access to the tour?
+        if (!in_array($trid, array_keys($tours))) { 
+            $errmsg = 'You do not have access to the tournament '.$tours[$trid]['tname'];
+        }
+        // Is the team is really owned by the logged in coach?
+        if ($coach->coach_id != get_alt_col('teams', 'team_id', $own_team, 'owned_by_coach_id')) {
+            $errmsg = 'The team '.get_alt_col('teams', 'team_id', $own_team, 'name').' is not owned by you';
+        }
+        // Create match
+        if (!$errmsg) {
+            list($exitStatus, $mid) = Match::create(array(
+                'team1_id'  => $own_team,
+                'team2_id'  => get_alt_col('teams', 'name', $_POST['opposing_team_autocomplete'], 'team_id'),
+                'round'     => $round,
+                'f_tour_id' => $trid,
+            ));
+            status(!$exitStatus, $exitStatus ? Match::$T_CREATE_ERROR_MSGS[$exitStatus] : "<a href='index.php?section=matches&amp;type=report&amp;mid=$mid'>Click here</a> to open the match report");
+            if (!$exitStatus) {
+                echo "<br>";
+            }
+        }
+        else {
+            status(false, $errmsg);
         }
     }
 
     title($lng->getTrn('menu/matches_menu/usersched'));
-    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
-    #echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'tour_id',null,'',true,array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 0)));
     $LOCK_FORMS = false;
     ?>
     <div class='boxCommon'>
         <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $lng->getTrn('menu/matches_menu/usersched');?></h3>
         <div class='boxBody'>
-            <?php echo $HTML_LeagueSelector; ?>
             <form method="POST">
-                <?php echo $lng->getTrn('common/tournament'); ?>
-                <select name='tour_id' id='tour_id'>
-                    <?php
-                    $TOURS_CNT = 0;
-                    $TOURS_SCHED_CNT = 0;
-                    foreach ($tours as $trid => $tr) {
-                        if ($divisions[$tr['f_did']]['f_lid'] != $sel_lid) {
-                            continue;
-                        }
-                        if ($tr['type'] == TT_FFA) {
-                            $TOURS_CNT++;
-                            if (get_alt_col('tours', 'tour_id', $trid, 'allow_sched')) { # Don't bother creating entire object for retrieving this field.
-                                $TOURS_SCHED_CNT++;
-                                echo "<option value='$trid'>".$divisions[$tr['f_did']]['dname'].": $tr[tname]</option>\n";
-                            }
-                        }
-                    }
-                    ?>
-                </select>
-                <br>
-                <?php
-                echo $lng->getTrn('matches/tourmatches/roundtypes/rnd').'&nbsp;';
+                <?php 
+                echo "In tournament "; 
+                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 0)));
+                echo ' as ';
                 echo '<select name="round" id="round">';
                 global $T_ROUNDS;
                 foreach ($T_ROUNDS as $r => $d) {
@@ -948,22 +945,33 @@ public static function userSched() {
                 }
                 ?>
                 </select>
-                <br>
+                <br><br>
                 Your team
+                <?php
+                $teams = array();
+                foreach ($coach->getTeams() as $t) {
+                    if (!$t->rdy || $t->is_retired)
+                        continue;
+                    $teams[$t->f_lid][$t->f_did][] = $t;
+                }
+                ?>
                 <select name='own_team' id='own_team'>
                     <?php
-                    $TEAMS_CNT = 0;
-                    //Sort according to name
-                    foreach ($coach->getTeams() as $t) {
-                        if (!$t->rdy || $t->is_retired || $t->f_lid != $sel_lid)
-                            continue;
-                        echo "<option value='$t->team_id'>$t->name</option>\n";
-                        $TEAMS_CNT++;
+                    foreach ($teams as $lid => $divs) {
+                        echo "<optgroup class='leagues' label='".$leagues[$lid]['lname']."'>\n";
+                        foreach ($divs as $did => $teams) {
+                            echo "<optgroup class='divisions' style='padding-left: 1em;' label='".$divisions[$did]['dname']."'>\n";
+                            foreach ($teams as $t) {
+                                echo "<option style='background-color: white; margin-left: -1em;' value='$t->team_id'>$t->name</option>\n";
+                            }
+                            echo "</optgroup>\n";
+                        }
+                        echo "</optgroup>\n";
                     }
                     ?>
                 </select>
-                <br>
-                Opposing team
+                &nbsp;
+                VS.
                 <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50">
                 <script>
                     $(document).ready(function(){
@@ -976,27 +984,8 @@ public static function userSched() {
                         b = $('#opposing_team_autoselect').autocomplete(options);
                     });
                 </script>
-                <br><br>
-                <?php
-                $LOCK_FORMS = !($TOURS_SCHED_CNT && $TEAMS_CNT);
-                echo '<input type="submit" name="creategame" value="Schedule match" '.(($LOCK_FORMS) ? 'DISABLED' : '').'>';
-                echo "<br>\n<br>";
-                echo "<span style='display:none;font-weight:bold;' id='notours'>- No Free-For-All tournaments exist in the selected league.</span>\n";
-                echo "<span style='display:none;font-weight:bold;' id='nosched'>- No Free-For-All tournaments in the selected league allow coach scheduling.</span>\n";
-                echo "<span style='display:none;font-weight:bold;' id='noteams'>- You do not have any teams which can be scheduled in the selected league.</span>\n";
-                echo "<script>\n";
-                if ($LOCK_FORMS) {
-                    ?>
-                    document.getElementById('tour_id').disabled = 1;
-                    document.getElementById('round').disabled = 1;
-                    document.getElementById('own_team').disabled = 1;
-                    <?php
-                }
-                if ($TOURS_SCHED_CNT == 0) {?> slideDown('nosched'); <?php }
-                if ($TOURS_CNT == 0)       {?> slideDown('notours'); <?php }
-                if ($TEAMS_CNT == 0)       {?> slideDown('noteams'); <?php }
-                echo "</script>\n";
-                ?>
+                <br><br><br>
+                <input type="submit" name="creategame" value="Schedule match" <?php echo empty($teams) ? 'DISABLED' : ''; ?>>
             </form>
         </div>
     </div>
