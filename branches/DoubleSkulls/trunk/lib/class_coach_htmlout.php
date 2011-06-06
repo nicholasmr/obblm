@@ -36,39 +36,39 @@ public static function dispList()
 
     list($sel_node, $sel_node_id, $sel_state, $sel_race) = HTMLOUT::nodeSelector(array('state' => true));
     $ALL_TIME = ($sel_node === false && $sel_node_id === false);
-    
+
     $fields = 'coach_id AS "coach_id", coaches.name AS "cname", coaches.retired AS "retired", team_cnt AS "team_cnt"';
     $where = array();
     if ($sel_state == T_STATE_ACTIVE) $where[] = 'coaches.retired IS FALSE';
 
     if ($ALL_TIME) {
         $where = (count($where) > 0) ? 'WHERE '.implode(' AND ', $where) : '';
-	    $queryCnt = "SELECT COUNT(*) FROM coaches $where";
-	    $queryGet = "SELECT $fields FROM coaches $where ORDER BY cname ASC";
-	}
-	else if ($sel_node == T_NODE_LEAGUE) {
+       $queryCnt = "SELECT COUNT(*) FROM coaches $where";
+       $queryGet = "SELECT $fields FROM coaches $where ORDER BY cname ASC";
+   }
+   else if ($sel_node == T_NODE_LEAGUE) {
         $where = (count($where) > 0) ? ' AND '.implode(' AND ', $where) : '';
         # In case of duplicate records in memberships table we search for distinct/"grouped by" values.
-	    $queryCnt = "SELECT COUNT(DISTINCT cid, lid) FROM coaches,memberships WHERE cid = coach_id AND lid = $sel_node_id $where";
-	    $queryGet = "SELECT $fields FROM coaches,memberships WHERE cid = coach_id AND lid = $sel_node_id $where GROUP BY cid, lid ORDER BY cname ASC";
-	}
+       $queryCnt = "SELECT COUNT(DISTINCT cid, lid) FROM coaches,memberships WHERE cid = coach_id AND lid = $sel_node_id $where";
+       $queryGet = "SELECT $fields FROM coaches,memberships WHERE cid = coach_id AND lid = $sel_node_id $where GROUP BY cid, lid ORDER BY cname ASC";
+   }
     else {
-        $q = "SELECT $fields FROM matches, teams, coaches, tours, divisions 
+        $q = "SELECT $fields FROM matches, teams, coaches, tours, divisions
               WHERE teams.owned_by_coach_id = coaches.coach_id AND matches._RRP = teams.team_id AND matches.f_tour_id = tours.tour_id AND tours.f_did = divisions.did ";
-	    switch ($sel_node)
-	    {
-	        case false: break;
-	        case T_NODE_TOURNAMENT: $q .= "AND tours.tour_id = $sel_node_id";   break;
-	        case T_NODE_DIVISION:   $q .= "AND divisions.did = $sel_node_id";   break;
-	        case T_NODE_LEAGUE:     $q .= "AND divisions.f_lid = $sel_node_id"; break;
-	    }
-	    $q .= (count($where) > 0) ? ' AND '.implode(' AND ', $where).' ' : '';
-	    $_subt1 = '('.preg_replace('/\_RRP/', 'team1_id', $q).')';
-	    $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
-	    $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
-	    $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY cname ASC';
-    }    
-    
+       switch ($sel_node)
+       {
+           case false: break;
+           case T_NODE_TOURNAMENT: $q .= "AND tours.tour_id = $sel_node_id";   break;
+           case T_NODE_DIVISION:   $q .= "AND divisions.did = $sel_node_id";   break;
+           case T_NODE_LEAGUE:     $q .= "AND divisions.f_lid = $sel_node_id"; break;
+       }
+       $q .= (count($where) > 0) ? ' AND '.implode(' AND ', $where).' ' : '';
+       $_subt1 = '('.preg_replace('/\_RRP/', 'team1_id', $q).')';
+       $_subt2 = '('.preg_replace('/\_RRP/', 'team2_id', $q).')';
+       $queryCnt = "SELECT COUNT(*) FROM (($_subt1) UNION DISTINCT ($_subt2)) AS tmp";
+       $queryGet = '('.$_subt1.') UNION DISTINCT ('.$_subt2.') ORDER BY cname ASC';
+    }
+
     $result = mysql_query($queryCnt);
     list($cnt) = mysql_fetch_row($result);
     $pages = ($cnt == 0) ? 1 : ceil($cnt/T_HTML_COACHES_PER_PAGE);
@@ -82,7 +82,7 @@ public static function dispList()
     echo "<tr><td>".$lng->getTrn('common/coaches').": $cnt</td></td>";
     echo '</table></center><br>';
     $queryGet .= ' LIMIT '.(($page-1)*T_HTML_COACHES_PER_PAGE).', '.(($page)*T_HTML_COACHES_PER_PAGE);
-    
+
     $coaches = array();
     $result = mysql_query($queryGet);
     while ($c = mysql_fetch_object($result)) {
@@ -127,7 +127,14 @@ public static function profile($cid) {
     {
         case 'profile': $c->_CCprofile($ALLOW_EDIT); break;
         case 'stats': $c->_stats(); break;
-        case 'newteam': $c->_newTeam($ALLOW_EDIT); break;
+        case 'newteam':  {
+         if (Module::isRegistered('TeamCreator')) {
+            TeamCreator::newTeam($cid);
+         } else {
+            $c->_newTeam($ALLOW_EDIT);
+         }
+         break;
+        }
         case 'teams': $c->_teams($ALLOW_EDIT); break;
         case 'recentmatches': $c->_recentGames(); break;
     }
@@ -170,14 +177,14 @@ private function _newTeam($ALLOW_EDIT)
         @list($lid,$did) = explode(',',$_POST['lid_did']);
         setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
         list($exitStatus, $tid) = Team::create(array(
-            'name' => $_POST['name'], 
-            'owned_by_coach_id' => (int) $this->coach_id, 
-            'f_race_id' => (int) $_POST['rid'], 
-            'treasury' => $rules['initial_treasury'], 
-            'apothecary' => 0, 
-            'rerolls' => $rules['initial_rerolls'], 
-            'ff_bought' => $rules['initial_fan_factor'], 
-            'ass_coaches' => $rules['initial_ass_coaches'], 
+            'name' => $_POST['name'],
+            'owned_by_coach_id' => (int) $this->coach_id,
+            'f_race_id' => (int) $_POST['rid'],
+            'treasury' => $rules['initial_treasury'],
+            'apothecary' => 0,
+            'rerolls' => $rules['initial_rerolls'],
+            'ff_bought' => $rules['initial_fan_factor'],
+            'ass_coaches' => $rules['initial_ass_coaches'],
             'cheerleaders' => $rules['initial_cheerleaders'],
             'won_0' => 0, 'lost_0' => 0, 'draw_0' => 0, 'played_0' => 0, 'wt_0' => 0, 'gf_0' => 0, 'ga_0' => 0,
             'imported' => 0,
@@ -193,7 +200,7 @@ private function _newTeam($ALLOW_EDIT)
     <div class='boxCommon'>
         <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('cc/new_team');?></h3>
         <div class='boxBody'>
-        
+
     <form method="POST">
     <?php echo $lng->getTrn('common/name');?><br>
     <input type="text" name="name" size="20" maxlength="50">
@@ -225,7 +232,7 @@ private function _newTeam($ALLOW_EDIT)
         }
         ?>
     </select>
-    <br><br>    
+    <br><br>
     <input type='hidden' name='type' value='newteam'>
     <input type="submit" name="new_team" value="<?php echo $lng->getTrn('common/create');?>" <?php echo (count($leagues) == 0) ? 'DISABLED' : '';?>>
     </form>
@@ -242,7 +249,7 @@ private function _teams($ALLOW_EDIT)
     HTMLOUT::standings(T_OBJ_TEAM,false,false,array('url' => $url, 'teams_from' => T_OBJ_COACH, 'teams_from_id' => $this->coach_id));
 }
 
-private function _CCprofile($ALLOW_EDIT) 
+private function _CCprofile($ALLOW_EDIT)
 {
     global $lng, $coach, $leagues;
 
@@ -286,7 +293,7 @@ private function _CCprofile($ALLOW_EDIT)
     <?php
     echo $lng->getTrn('cc/note_persinfo');
     echo "<br><br>";
-    
+
     if (is_object($coach) && !$ALLOW_EDIT) { # Logged in but not viewing own coach page.
         ?>
         <table>
@@ -474,15 +481,15 @@ private function _stats()
                 echo "<tr><td>ELO</td><td>".(($this->rg_elo) ? sprintf("%1.2f", $this->rg_elo) : '<i>N/A</i>')."</td></tr>\n";
                 echo "<tr><td>W/L/D</td><td>$this->mv_won/$this->mv_lost/$this->mv_draw</td></tr>\n";
                 echo "<tr><td>W/L/D ".$lng->getTrn('common/streaks')."</td><td>$this->mv_swon/$this->mv_slost/$this->mv_sdraw</td></tr>\n";
-                echo "<tr><td>".$lng->getTrn('common/wontours')."</td><td>$this->wt_cnt</td></tr>\n";            
+                echo "<tr><td>".$lng->getTrn('common/wontours')."</td><td>$this->wt_cnt</td></tr>\n";
                 if (Module::isRegistered('Prize')) {
                     echo "<tr><td>".$lng->getTrn('name', 'Prize')."</td><td><small>".Module::run('Prize', array('getPrizesString', T_OBJ_COACH, $this->coach_id))."</small></td></tr>\n";
                 }
                 echo "<tr><td colspan='2'><hr></td></tr>";
                 $result = mysql_query("
-                    SELECT 
-                        COUNT(*) AS 'teams_total', 
-                        IFNULL(SUM(IF(rdy IS TRUE AND retired IS FALSE,1,0)),0) AS 'teams_active', 
+                    SELECT
+                        COUNT(*) AS 'teams_total',
+                        IFNULL(SUM(IF(rdy IS TRUE AND retired IS FALSE,1,0)),0) AS 'teams_active',
                         IFNULL(SUM(IF(rdy IS FALSE,1,0)),0) AS 'teams_notready',
                         IFNULL(SUM(IF(retired IS TRUE,1,0)),0) AS 'teams_retired',
                         IFNULL(AVG(elo),0) AS 'avg_elo',
@@ -517,7 +524,7 @@ private function _stats()
                     'Cp'  => array('cp', 2),
                     'GF'  => array('gf', 2),
                     'GA'  => array('ga', 2),
-                    'SMP' => array('smp', 2),                
+                    'SMP' => array('smp', 2),
                 );
                 $thisAVG = clone $this;
                 $thisAVG->setStats(false, false, true);
