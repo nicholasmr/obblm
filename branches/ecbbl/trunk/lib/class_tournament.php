@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -46,7 +46,7 @@ class Tour
     public $date_created    = '';
     public $rs              = 0; // Ranking system.
     public $locked          = false;
-    public $coach_schedule_tour = false;
+    public $allow_sched     = false;
 
     // Other
     public $winner          = null; # Team ID.
@@ -160,7 +160,13 @@ class Tour
     }
     
     public function save() {
-        $query = "UPDATE tours SET rs = $this->rs, name = '" . mysql_real_escape_string($this->name) . "', type = $this->type, locked = ".(($this->locked) ? 1 : 0).", coach_schedule_tour = $this->coach_schedule_tour WHERE tour_id = $this->tour_id";
+        $query = "UPDATE tours SET 
+            rs = $this->rs, 
+            name = '" . mysql_real_escape_string($this->name) . "', 
+            type = $this->type, 
+            locked = ".(($this->locked) ? 1 : 0).", 
+            allow_sched = $this->allow_sched 
+        WHERE tour_id = $this->tour_id";
         return mysql_query($query);
     }
 
@@ -225,7 +231,7 @@ class Tour
         /* Create tournament */
        
         // Quit if can't make tournament entry.
-        $query = "INSERT INTO tours (name, f_did, type, rs, date_created) VALUES ('" . mysql_real_escape_string($input['name']) . "', $input[did], $input[type], $input[rs], NOW())";
+        $query = "INSERT INTO tours (name, f_did, type, rs, date_created, allow_sched) VALUES ('" . mysql_real_escape_string($input['name']) . "', $input[did], $input[type], $input[rs], NOW(), $input[allow_sched])";
         if (!mysql_query($query)) {
             return false;
         }
@@ -250,6 +256,9 @@ class Tour
         // Round-Robin?
         elseif ($input['type'] == TT_RROBIN) {
             
+			if (sizeof($input['teams']) == 0) {
+				return true;
+			}
             // Quit if can't make tournament schedule.
             $robin = new RRobin();
             if (!$robin->create($input['teams'])) # If can't create Round-Robin tour -> quit.
@@ -290,6 +299,30 @@ class Tour
 
         return false; # Return false if tournament type was not recognized.
     }
+
+	# Gets the deep links for a tournament
+    public static function getTourUrl($tour_id, $tour_name = null) {
+		if (isset($tour_id)) {
+			if (!isset($tour_name)) {
+				$tour_name = get_alt_col('tours', 'tour_id', $tour_id, 'name');
+}
+			if (Module::isRegistered('LeagueTables'))    {
+				$tourUrl = "<a href=\"handler.php?type=leaguetables&tour_id=". $tour_id . "\">" . $tour_name . "</a>";
+			} else {
+				$tourUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_TOURNAMENT,$tour_id) . "\">" . $tour_name . "</a>";
+			}
+
+			return $tourUrl;
+		} else {
+			return '<i>'.$lng->getTrn('common/none').'</i>';
+		}
+	}
+
+	public function getUrl() {
+		return self::getTourUrl($this->tour_id, $this->name);
+	}
+
+
 }
 
 ?>

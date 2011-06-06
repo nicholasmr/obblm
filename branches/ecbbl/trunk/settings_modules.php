@@ -24,6 +24,7 @@ $settings['modules_enabled'] = array(
     'Conference'         => true, # Provides support for conferences within tournaments
     'Adverts'         	 => true, # Shows a BB banners across the top
     'LeaguePref'         => true, # Allows dynamic configuration of league preferences
+    'TeamCreator'        => true, # Allows coaches to create teams quickly
 );
 
 /*****************

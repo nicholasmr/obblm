@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -127,7 +127,14 @@ public static function profile($cid) {
     {
         case 'profile': $c->_CCprofile($ALLOW_EDIT); break;
         case 'stats': $c->_stats(); break;
-        case 'newteam': $c->_newTeam($ALLOW_EDIT); break;
+        case 'newteam':  {
+         if (Module::isRegistered('TeamCreator')) {
+            TeamCreator::newTeam($cid);
+         } else {
+            $c->_newTeam($ALLOW_EDIT);
+         }
+         break;
+        }
         case 'teams': $c->_teams($ALLOW_EDIT); break;
         case 'recentmatches': $c->_recentGames(); break;
     }
@@ -237,6 +244,7 @@ private function _newTeam($ALLOW_EDIT)
 private function _teams($ALLOW_EDIT)
 {
     global $lng;
+    echo "<br>";
     $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false).'&amp;subsec=teams';
     HTMLOUT::standings(T_OBJ_TEAM,false,false,array('url' => $url, 'teams_from' => T_OBJ_COACH, 'teams_from_id' => $this->coach_id));
 }
@@ -474,6 +482,9 @@ private function _stats()
                 echo "<tr><td>W/L/D</td><td>$this->mv_won/$this->mv_lost/$this->mv_draw</td></tr>\n";
                 echo "<tr><td>W/L/D ".$lng->getTrn('common/streaks')."</td><td>$this->mv_swon/$this->mv_slost/$this->mv_sdraw</td></tr>\n";
                 echo "<tr><td>".$lng->getTrn('common/wontours')."</td><td>$this->wt_cnt</td></tr>\n";            
+                if (Module::isRegistered('Prize')) {
+                    echo "<tr><td>".$lng->getTrn('name', 'Prize')."</td><td><small>".Module::run('Prize', array('getPrizesString', T_OBJ_COACH, $this->coach_id))."</small></td></tr>\n";
+                }
                 echo "<tr><td colspan='2'><hr></td></tr>";
                 $result = mysql_query("
                     SELECT 

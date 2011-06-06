@@ -196,7 +196,7 @@ $core_tables = array(
         'begun'    => 'BOOLEAN DEFAULT FALSE',
         'finished' => 'BOOLEAN DEFAULT FALSE',
         'winner'   => $CT_cols[T_OBJ_TEAM],
-	   	'coach_schedule_tour' => 'BOOLEAN DEFAULT FALSE',
+        'allow_sched' => 'BOOLEAN DEFAULT FALSE',
     ),
     'matches' => array(
         'match_id'      => $CT_cols[T_NODE_MATCH].' NOT NULL PRIMARY KEY AUTO_INCREMENT',

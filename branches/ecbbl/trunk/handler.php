@@ -105,6 +105,11 @@ switch ($_GET['type'])
         Module::run('Conference', array('conferenceAdmin'));
         break;
 
+    /* Team Creator */
+    case 'teamcreator':
+        Module::run('TeamCreator', array('teamCreator'));
+        break;
+
     /* League Preferences */
     case 'leaguepref':
         Module::run('LeaguePref', array('showLeaguePreferences'));

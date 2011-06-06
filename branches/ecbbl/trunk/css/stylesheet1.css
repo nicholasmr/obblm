@@ -10,6 +10,9 @@ body
     background-image: url(../images/bg2.jpg);
     background-repeat: repeat-y;
     background-position: top center;
+    /* Fancy:
+    background: #0a1e2e url(../images/bg.png) repeat-x;
+    */
     font: 12px Tahoma;
 }
 
@@ -32,7 +35,14 @@ h2
 div.row {width: inherit; clear: both; background-color: inherit;}
 
 /* MAIN container */
-div.everything {width: 1000px; margin: auto; background-color: #eeeeee;} /* Top level container */
+div.everything {
+    width: 1000px; 
+    margin: auto; 
+    background-color: #eeeeee;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+} /* Top level container */
 
 /*
  *   The following three containers are the subsequent main containers within "div.everything".
@@ -140,7 +150,7 @@ table.tours {
 }
 
 /* tour lists: titel boxes */
-.leauges     {background-color: #659EC7;}
+.leagues     {background-color: #659EC7;}
 .divisions   {background-color: #8BB381;}
 .tours       {background-color: #BBBBBB;}
 td.round     {background-color: #CCCCCC;}
@@ -148,7 +158,7 @@ td.match     {background-color: #DDDDDD;}
 td.seperator {height:15px;}
 
 /* tour lists: node containers */
-div.leaugesNCont     {margin-top:15px; margin-left:10px;}
+div.leaguesNCont     {margin-top:15px; margin-left:10px;}
 div.divisionsNCont   {margin-top:5px;  margin-left:25px;}
 div.toursNCont       {margin-top:0px;  margin-left:10px;}
 

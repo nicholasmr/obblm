@@ -474,17 +474,27 @@ function showGames($box) {
 		break;
 	}
 	$upcoming = isset($box['upcoming']) ? $box['upcoming'] : false;
+	$matches = Match::getMatches($box['length'], $box['type'], $box['id'], $upcoming)
 	?>
 	<div class="boxWide">
 		<h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
 		<div class='boxBody'>
 			<table class="boxTable">
+				<?php
+				if (sizeof($matches) == 0) {
+				?>
+				<tr>
+					<td style="text-align: center;" width="100%"><i><?php echo $lng->getTrn('main/nomatches');?></i></td><td> </td>
+				</tr>
+				<?php
+				} else {
+				?>
 				<tr>
 					<td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
 					<td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td><td> </td>
 				</tr>
 				<?php
-				foreach (Match::getMatches($box['length'], $box['type'], $box['id'], $upcoming) as $m) {
+					foreach ($matches as $m) {
 					echo "<tr valign='top'>\n";
 					$t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
 					$t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
@@ -497,6 +507,7 @@ function showGames($box) {
 					echo "<td style='text-align: left;'>$t2name</td>\n";
 					echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
 					echo "</tr>";
+				}
 				}
 				?>
 			</table>
