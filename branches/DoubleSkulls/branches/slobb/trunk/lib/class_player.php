@@ -768,7 +768,7 @@ class Player
          **/
 
         global $rules, $DEA, $T_ALL_PLAYER_NR;
-        $lid = get_alt_col('teams', 'team_id̈́', $input['team_id'], 'f_lid');
+        $lid = get_alt_col('teams', 'team_id', $input['team_id'], 'f_lid');
         setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
 
         // Do these fixes because we can't define class statics using string interpolation for $rules.
