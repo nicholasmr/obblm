@@ -385,7 +385,7 @@ EOQ;
 public static function teamCreator() {
    global $coach, $lng;
    title($lng->getTrn('name', 'TeamCreator'));
-   self::newTeam($coach->coach_id);
+   self::newTeam(isset($coach) ? $coach->coach_id : null);
 }
 
 /* Used when accessed from coach profile */
@@ -555,12 +555,16 @@ echo<<< EOQ
          addCellToRow(row, makeInput('hidden', 'oid' + i, other["name"]) + makeSelect(i, 'o', other["max"]), 1);
          addCellToRow(row, "<div id=\"subo" + i + "\"></div>", 1);
       }
-      if(induce) {
-         document.getElementById("createBtnTxt").title="$txtNoInduce";
-         document.getElementById("createBtn").disabled="disabled";
-      } else {
-         document.getElementById("createBtnTxt").title="";
-         document.getElementById("createBtn").disabled="";
+      try {
+         if(induce) {
+            document.getElementById("createBtnTxt").title="$txtNoInduce";
+            document.getElementById("createBtn").disabled="disabled";
+         } else {
+            document.getElementById("createBtnTxt").title="";
+            document.getElementById("createBtn").disabled="";
+         }
+      } catch (err) {
+         // ignore - probably not logged in
       }
    }
 
