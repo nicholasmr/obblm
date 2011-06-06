@@ -146,4 +146,10 @@ Module::register(array(
     'filesLoadTime' => array('leaguePref/class_league_pref.php')
 ));
 
+Module::register(array(
+    'class'         => 'TeamCreator',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('teamcreator/class_team_creator.php')
+));
+
 ?>

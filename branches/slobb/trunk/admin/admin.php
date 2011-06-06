@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -47,9 +47,8 @@ function sec_admin() {
     switch ($_GET['subsec']) 
     {
         case 'usr_man':     include('admin/admin_usr_man.php'); break;
-        case 'tour_man':    include('admin/admin_tour_man.php'); break;
         case 'ct_man':      include('admin/admin_ct_man.php'); break;
-        case 'ld_man':      include('admin/admin_ld_man.php'); break;
+        case 'nodes':       include('admin/admin_nodes.php'); break;
         case 'schedule':    include('admin/admin_schedule.php'); break;
         case 'import':      include('admin/admin_import.php'); break;
         case 'log':         Module::run('LogSubSys', array('logViewPage')); break;

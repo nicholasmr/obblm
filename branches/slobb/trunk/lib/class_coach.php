@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -244,10 +244,13 @@ class Coach
         );
         $ring_com_access = array(
             'schedule' => $lng->getTrn('menu/admin_menu/schedule'), 
+            'nodes' => array('title' => $lng->getTrn('menu/admin_menu/nodes'), 'sub' => array(
+                array('title' => $lng->getTrn('common/tournament'), 'href' => 'node='.T_NODE_TOURNAMENT),
+                array('title' => $lng->getTrn('common/division'),   'href' => 'node='.T_NODE_DIVISION),
+                array('title' => $lng->getTrn('common/league'),     'href' => 'node='.T_NODE_LEAGUE),
+            )), 
             'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 
             'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'), 
-            'ld_man' => $lng->getTrn('menu/admin_menu/ld_man'), 
-            'tour_man' => $lng->getTrn('menu/admin_menu/tour_man'), 
             'import' => $lng->getTrn('menu/admin_menu/import'), 
         );
         $my_admin_menu = array();

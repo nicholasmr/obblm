@@ -21,8 +21,8 @@
  *
  */
 
-if (version_compare(PHP_VERSION, '5.1.0') == -1)
-    die('OBBLM requires PHP version 5.1.0, you are running version '.PHP_VERSION);
+if (version_compare(PHP_VERSION, '5.2.0') == -1)
+    die('OBBLM requires PHP version 5.2.0, you are running version '.PHP_VERSION);
 
 if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
     die('OBBLM requires the PHP configuration directive <i>register_globals</i> set <b>off</b> in the <i>php.ini</i> configuration file. Please contact your web host.');
