@@ -244,13 +244,13 @@ class Coach
         );
         $ring_com_access = array(
             'schedule' => $lng->getTrn('menu/admin_menu/schedule'), 
-            'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 
-            'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'), 
             'nodes' => array('title' => $lng->getTrn('menu/admin_menu/nodes'), 'sub' => array(
                 array('title' => $lng->getTrn('common/tournament'), 'href' => 'node='.T_NODE_TOURNAMENT),
                 array('title' => $lng->getTrn('common/division'),   'href' => 'node='.T_NODE_DIVISION),
                 array('title' => $lng->getTrn('common/league'),     'href' => 'node='.T_NODE_LEAGUE),
             )), 
+            'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 
+            'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'), 
             'import' => $lng->getTrn('menu/admin_menu/import'), 
         );
         $my_admin_menu = array();
