@@ -167,7 +167,7 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             <br><input type="checkbox" id='allow_sched' name="allow_sched" value="1" CHECKED>Coaches may schedule their own matches
 		    <br><br>
             <input type='hidden' name='type' value='mod_tournament'>
-            <input type='submit' value='Create' <?php echo empty($tours) ? ' DISABLED ' : '';?>>
+            <input type='submit' value='Modify' <?php echo empty($tours) ? ' DISABLED ' : '';?>>
             </form>
             </div>
         </div>

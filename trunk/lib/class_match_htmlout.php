@@ -936,7 +936,7 @@ public static function userSched() {
             <form method="POST">
                 <?php 
                 echo "In tournament "; 
-                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 0)));
+                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)));
                 echo ' as ';
                 echo '<select name="round" id="round">';
                 global $T_ROUNDS;
