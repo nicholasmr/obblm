@@ -224,20 +224,20 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
     <div class='boxBody'>
 
         <div id='OPTS_NEW_TOUR'>
-            <b><?php echo $lng->getTrn('common/division');?></b><br>
+            <?php echo $lng->getTrn('common/division');?><br>
             <?php
             echo HTMLOUT::nodeList(T_NODE_DIVISION,'did',array('OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)),array(),array('empty_str' => array(T_NODE_LEAGUE => '', T_NODE_DIVISION => '')));
             ?>
             <br><br>
-            <b><?php echo $lng->getTrn('admin/schedule/tour_name');?></b><br>
+            <?php echo $lng->getTrn('admin/schedule/tour_name');?><br>
             <input type="text" name="name" size="30" maxlength="50">
             <br><br>
-            <b><?php echo $lng->getTrn('admin/schedule/rank_sys');?></b> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
+            <?php echo $lng->getTrn('admin/schedule/rank_sys');?> (<?php echo $lng->getTrn('admin/prefixes');?>)<br>
             <select name='rs'>
             <?php
             global $hrs;
             foreach ($hrs as $idx => $r) {
-                echo "<option value='$idx'>#$idx: ".Tour::getRSstr($idx)."</option>\n";
+                echo "<option value='$idx'>#$idx&nbsp;&nbsp;".Tour::getRSstr($idx)."</option>\n";
             }
             ?>
             </select>
@@ -247,7 +247,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
         <?php
         $body = '';
         // FFA settings.
-        $body .= '<b>'.$lng->getTrn('admin/schedule/as_type').'</b><br>';
+        $body .= $lng->getTrn('admin/schedule/as_type').'<br>';
         $body .= '<select name="round">';
         global $T_ROUNDS;
         foreach ($T_ROUNDS as $r => $d) {
@@ -258,7 +258,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
 
         // Round robin seed multiplier.
         $body = '';
-        $body .= '<b>'.$lng->getTrn('admin/schedule/rrobin_rnds')."</b><br><select name='rounds'>";
+        $body .= $lng->getTrn('admin/schedule/rrobin_rnds')."<br><select name='rounds'>";
         foreach (range(1, 10) as $i) $body .= "<option value='$i'>$i</option>\n";
         $body .= "</select>&nbsp;".$lng->getTrn('admin/schedule/times')."\n";
         echo "<div id='OPTS_RR_TOUR_SETS'>$body</div>\n";
@@ -267,7 +267,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
             <br>
             <?php
             $body = '';
-            $body .= '<b>'.$lng->getTrn('admin/schedule/in_tour').'</b><br>';
+            $body .= $lng->getTrn('admin/schedule/in_tour').'<br>';
             $body .= HTMLOUT::nodeList(T_NODE_TOURNAMENT,'existTour',array(T_NODE_TOURNAMENT => array('type' => TT_FFA), 'OTHER' => array('ring' => Coach::T_RING_LOCAL_ADMIN)), array('locked' => 1, 'DISSTR' => 'LOCKED &mdash; %name'),array('empty_str' => array(T_NODE_LEAGUE => strtoupper($lng->getTrn('common/empty')).' &mdash; %name', T_NODE_DIVISION => strtoupper($lng->getTrn('common/empty')).' &mdash; %name')));
             echo $body;
             ?>
@@ -277,7 +277,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
     <div class='boxCommon' style='<?php echo $commonStyle;?>'>
     <h3 class='boxTitle<?php echo T_HTMLBOX_ADMIN;?>'><?php echo $lng->getTrn('admin/schedule/add_team');?></h3>
     <div class='boxBody'>
-    <b><?php echo $lng->getTrn('admin/schedule/add_team');?>:</b><br>
+    <?php echo $lng->getTrn('admin/schedule/add_team');?><br>
     <script>
         $(document).ready(function(){
             var options, a;
@@ -289,7 +289,7 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
     <input id='team' type="text" name="team" size="30" maxlength="50"> <a href='javascript:void(0);' onClick="verifyTeam(document.getElementById('team').value);"><?php echo $lng->getTrn('common/add');?></a> <span id='team_verify'></span><br>
     <?php
     print "<br>";
-    print "<b>".$lng->getTrn('admin/schedule/teams_selected').":</b><br>";
+    print $lng->getTrn('admin/schedule/teams_selected')."<br>";
     print "<select id='selectedlist' name='selectedlist' size='2' MULTIPLE></select>\n<br>";
     print "<a href='javascript:void(0);' onClick='removeLastTeam();'>".$lng->getTrn('common/remove')."</a><br>";
     print "<input type='hidden' id='teams' name='teams' value=''>";
