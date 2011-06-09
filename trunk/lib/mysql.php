@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -190,7 +190,7 @@ $core_tables = array(
         'type'          => 'TINYINT UNSIGNED',
         'date_created'  => 'DATETIME',
         'rs'            => 'TINYINT UNSIGNED DEFAULT 1',
-        'locked'        => 'BOOLEAN',
+        'locked'        => 'BOOLEAN NOT NULL DEFAULT 0',
         // Dynamic properties (DPROPS)
         'empty'    => 'BOOLEAN DEFAULT TRUE',
         'begun'    => 'BOOLEAN DEFAULT FALSE',
@@ -821,10 +821,12 @@ function upgrade_database($version, $opts)
             break;
     }
 
-    echo (mysql_query("CALL syncAll()"))
-        ? "<font color='green'>OK &mdash; synchronised all dynamic stats and properties</font><br>\n"
-        : "<font color='red'>FAILED &mdash; could not synchronise all dynamic stats and properties</font><br>\n";
-
+    if ($upgradeSettings[$version]['syncall']) {
+        echo (mysql_query("CALL syncAll()"))
+            ? "<font color='green'>OK &mdash; synchronised all dynamic stats and properties</font><br>\n"
+            : "<font color='red'>FAILED &mdash; could not synchronise all dynamic stats and properties</font><br>\n";
+    }
+    
     // Done!
     mysql_close($conn);
     return $upgradeMsgs[$version];

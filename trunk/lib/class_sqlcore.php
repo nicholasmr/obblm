@@ -696,6 +696,17 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             UPDATE mv_teams SET pts = getPTS(f_tid, f_trid);
         END',
+        
+        /*
+         *  Sync tour points (PTS)
+         */
+
+        'CREATE PROCEDURE syncTourPTS(IN trid '.$CT_cols[T_NODE_TOURNAMENT].')
+            NOT DETERMINISTIC
+            CONTAINS SQL
+        BEGIN
+            UPDATE mv_teams SET pts = getPTS(f_tid, trid) WHERE f_trid = trid;
+        END',
 
         /*
          *  Object relations

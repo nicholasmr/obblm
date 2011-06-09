@@ -182,5 +182,11 @@ Teams which have not yet played any games are therefore not tied to any leagues 
 for example running "UPDATE teams SET f_lid = 5 WHERE f_lid = 0", will tie the remaining teams to the league with ID = 5 (you would generally want to do something like that).
 If you don\'t do this the non-tied teams may not be scheduled to play in any matches!',
 ),
+'080-090' => array(),
+);
+
+$upgradeSettings = array(
+'075-080' => array('syncall' => true),
+'080-090' => array('syncall' => false),
 );
 ?>
