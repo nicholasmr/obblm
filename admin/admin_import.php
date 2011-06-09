@@ -118,7 +118,7 @@ You'll also need to know the IDs of the leagues which the teams belong to and li
 Use the IDs from the below table
 <?php title('League and divsision IDs'); ?>
 <table>
-<tr style='font-style:italic;'><td>League</td><td>Division</td><td>League ID</td><td>Division ID</td><td>League requires team-division ties?</td></tr>
+<tr style='font-weight:bold;'><td>League</td><td>Division</td><td>League ID</td><td>Division ID</td><td>League requires team-division ties?</td></tr>
 <?php
 foreach ($divisions as $did => $desc) {
     if ($leagues[$desc['f_lid']]['ring'] == Coach::T_RING_LOCAL_ADMIN) {

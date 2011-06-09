@@ -100,7 +100,7 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             <?php
             global $hrs;
             foreach ($hrs as $idx => $r) {
-                echo "<option value='$idx'>#$idx: ".Tour::getRSstr($idx)."</option>\n";
+                echo "<option value='$idx'>#$idx&nbsp;&nbsp;".Tour::getRSstr($idx)."</option>\n";
             }
             ?>
             </select>
@@ -159,7 +159,7 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             <?php
             global $hrs;
             foreach ($hrs as $idx => $r) {
-                echo "<option value='$idx'>#$idx: ".Tour::getRSstr($idx)."</option>\n";
+                echo "<option value='$idx'>#$idx&nbsp;&nbsp;".Tour::getRSstr($idx)."</option>\n";
             }
             ?>
             </select>
