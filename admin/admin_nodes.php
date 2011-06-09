@@ -55,12 +55,17 @@ if (isset($_POST['type'])) {
             break;
             
         case 'mod_tournament':
+            $syncPTS = ($t->rs != (int) $_POST['rs']);
             $t->rs = $_POST['rs'];
             $t->type = $_POST['tourtype'];
             $t->name = $_POST['name'];
             $t->locked = isset($_POST['locked']) ? $_POST['locked'] : 0;
             $t->allow_sched = isset($_POST['allow_sched']) ? $_POST['allow_sched'] : 0;
             status($t->save());
+            if ($syncPTS) {
+                $OK = $t->syncPTS();
+                status($OK, $OK ? 'Synchronized points for the new ranking system' : 'Failed to Synchronize points for the new ranking system');
+            }
             break;
 
 

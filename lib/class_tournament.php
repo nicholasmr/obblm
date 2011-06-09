@@ -169,6 +169,12 @@ class Tour
         WHERE tour_id = $this->tour_id";
         return mysql_query($query);
     }
+    
+    // Run this to sync. all teams' points in this tournament. 
+    // Use this after having changed the PTS def. (ranking system).
+    public function syncPTS() {
+        return mysql_query("CALL syncTourPTS($this->tour_id)");
+    }
 
     /***************
      * Statics
