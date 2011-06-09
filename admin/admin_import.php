@@ -78,6 +78,7 @@ if (isset($_FILES['xmlfile'])) {
             
             # Set correct treasury.
             $team->dtreasury($t->treasury*1000 - $team->treasury); // $t->treasury + $delta = XML value
+            $team->postImportSync();
         }
         
         if ($ROLLBACK) {
@@ -90,9 +91,11 @@ title($lng->getTrn('menu/admin_menu/import'));
 ?>
 This page allows you to create a customized team for an existing coach.<br> 
 This is useful if you and your league wish to avoid starting from scratch in order to use OBBLM.<br>
-<u>Note</u>: If you discover errors after having imported your team, you can either repair the errors<br> 
+<br>
+<b>Note</b>: If you discover errors after having imported your team, you can either repair the errors<br> 
 via the admin tools in the coach corner, or simply delete the team and import a new.<br>
-<u>Note</u>: The team import feature is <b>not</b> meant to be a way for you to import the entire state of your league, with stats, into OBBLM.<br>
+<br>
+<b>Note</b>: The team import feature is <b>not</b> meant to be a way for you to import the entire state of your league, with stats, into OBBLM.<br>
 It's meant to be an easy way of getting your existing teams into OBBLM without having to re-create the teams from scratch ie. buying players, buying team stuff, selecting player skills etc..<br>
 The fact that you may specify won, lost and draw games etc. for a imported team is merely to make the team pages of imported teams reflect the actual team progress - it 
 does not allow you to integreate the imported team's stats with the future collected stats via OBBLM in, for example, the standings tables.
@@ -107,13 +110,13 @@ Import a team by filling in a <a href="xml/import.xml">XML schema</a> (right cli
     <input type="submit" name="button" value="Import via XML file">
 </form>
 <br>
-<b>Please note</b> that you <i>must</i> run the "syncAll()" synchronization procedure from the <a href='index.php?section=admin&amp;subsec=cpanel'>OBBLM core panel</a> after importing teams.<br>
-<br>
 When importing teams you will need to know the IDs of the respective coaches, races and player positionals.<br>
-Coach IDs can be found in the information section of the Coach's Corner pages.<br>
-Race IDs and the IDs of the player positionals allowed by the race can be found on the race's information pages.<br>
+&mdash; Coach IDs can be found in the information section of the Coach's Corner pages.<br>
+&mdash; Race IDs and the IDs of the player positionals allowed by the race can be found on the race's information pages.<br>
+<br>
 You'll also need to know the IDs of the leagues which the teams belong to and likwise division IDs, if the league in question require teams to be tied to a divsions.<br>
-League and division IDs <i>you</i> may use are<br><br>
+Use the IDs from the below table
+<?php title('League and divsision IDs'); ?>
 <table>
 <tr style='font-style:italic;'><td>League</td><td>Division</td><td>League ID</td><td>Division ID</td><td>League requires team-division ties?</td></tr>
 <?php

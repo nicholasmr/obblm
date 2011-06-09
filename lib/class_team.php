@@ -470,6 +470,11 @@ class Team
         $news = new TeamNews($news_id);
         return $news->edit($new_txt);
     }
+    
+    // Run this after having imported THIS team.
+    public function postImportSync() {
+        return mysql_query("CALL match_sync(0,0,$this->team_id,$this->team_id,0)");
+    }
 
     /***************
      * Statics
