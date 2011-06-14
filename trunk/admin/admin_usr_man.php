@@ -128,6 +128,7 @@ $T_LOCAL_RINGS = array(
     
 <?php echo "<b><a TARGET='_blank' href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br>"; ?>
 
+<div style='float:left; width:100%;'> <!-- ALL -->
 <div class="boxCommon">
     <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">
         Create new coach
@@ -293,4 +294,5 @@ $T_LOCAL_RINGS = array(
 
 </div> <!-- END row 2 -->
 </div> <!-- END Outer -->
+</div> <!-- END ALL -->
 <?php
