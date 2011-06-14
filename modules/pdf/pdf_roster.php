@@ -343,7 +343,7 @@ if ($_POST) {
     if ($postvalue == "-No Extra Skill-") continue;
     $postvars[str_replace('_', ' ',$postkey)] = $postvalue;
   }
-  
+
   $star_array_tmp[0]=0;
   $merc_array_tmp[0]=0;
   while (list($key, $val) = each($postvars)) {
@@ -367,7 +367,7 @@ if ($_POST) {
     elseif ($key == 'Wandering Apothecaries') { $ind_apo = (int) $val; continue; }
     elseif ($key == 'Wizard') { $ind_wiz = (int) $val; continue; }
   }
-  
+
   // Printing stars first
   if (isset($star_array_tmp[1])) {
     unset($star_array_tmp[0]);
@@ -459,7 +459,7 @@ if (isset($ind_card)) { $ind_cost += $ind_card; }
 else $ind_card = '__';
 if (isset($ind_rr)) { $ind_cost += $ind_rr*$inducements['Extra Training']['cost']; }
 else $ind_rr = '__';
-if (isset($ind_chef)) { $ind_cost += $ind_chef*$inducements['Halfling Master Chef']['cost']; }
+if (isset($ind_chef)) { $ind_cost += $ind_chef*$chef_cost;} #Not $inducements['Halfling Master Chef']['cost']; }
 else $ind_chef = '__';
 if (isset($ind_wiz)) { $ind_cost += $ind_wiz*$inducements['Wizard']['cost']; }
 else $ind_wiz = '__';
