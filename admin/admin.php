@@ -55,6 +55,8 @@ function sec_admin() {
         case 'cpanel':      include('admin/admin_cpanel.php'); break;
         default:            fatal('The requested admin page does not exist.');
     }
+    echo "<br><br>";
+    HTMLOUT::dnt();
 }
 
 ?>
