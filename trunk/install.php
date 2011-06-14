@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -24,30 +24,37 @@
 define('T_NO_STARTUP', true);
 require('header.php'); // Includes and constants.
 
-?>
-<html>
-<head>
-</head>
-<body>
-<br>
-<big>
-    <center>
-        <b>OBBLM MySQL setup script</b>
-    </center>
-</big>
-<br>
-<small>
-<?php
+HTMLOUT::frame_begin(false,false);
+title('OBBLM setup');
+
 if (isset($_POST['setup'])) {
-    echo setup_database()
-        ? "<br><b><font color='green'>Done</font></b>"
-        : "<br><b><font color='red'>Error</font></b>";
-    
-    ?>
-    <br><br>
-    Use the coach account 'root' with password 'root' first time you log in.<br> 
-    From there you may enter the administration section and add new users (coaches) including changing the root password.
-    <?php
+    $setupOK = setup_database();
+    if ($setupOK) {
+        echo "<br><b><font color='green'>Finished</font></b>";
+        $helpURL = DOC_URL;
+        echo <<<EOL
+<br><br>
+<b>What now?</b><br>
+&mdash; Please remove the <i>install.php</i> file from your OBBLM folder and <a href='index.php'>continue to the main page</a>.<br> 
+&mdash; Once at the main page login using the coach account 'root' with password 'root'<br>
+&mdash; From there you may enter the <i>administration</i> section and add new users (coaches) including changing the root password.<br>
+&mdash; For further help visit the <a href='$helpURL'>OBBLM wiki</a>.<br>
+<br>
+<b>Need help? Encountering errors?</b><br>
+&mdash; If you are encountering errors please visit <a href='http://code.google.com/p/obblm/issues/list'>code.google.com/p/obblm</a> and create a bug report.<br>
+EOL;
+        echo "<br><br>";
+        HTMLOUT::dnt();
+    }
+    else {
+        echo "<br><b><font color='red'>Failed</font></b>";
+        echo <<<EOL
+<br><br>
+<b>Need help? Encountering errors?</b><br>
+&mdash; If you are encountering errors please visit <a href='http://code.google.com/p/obblm/issues/list'>code.google.com/p/obblm</a> and create a bug report.<br>
+EOL;
+        
+    }
 }
 else {
     ?>
@@ -58,7 +65,5 @@ else {
     </form>
     <?php
 }
+HTMLOUT::frame_end();
 ?>
-</small>
-</body>
-</html>
