@@ -267,13 +267,14 @@ function sec_main() {
     */
     
     echo "<div class='main_rightColumn'>\n";
-    $boxes_all = array_merge($settings['fp_standings'], $settings['fp_leaders'], $settings['fp_latestgames']);
+    $boxes_all = array_merge($settings['fp_standings'], $settings['fp_leaders'], $settings['fp_events'], $settings['fp_latestgames']);
     usort($boxes_all, create_function('$a,$b', 'return (($a["box_ID"] > $b["box_ID"]) ? 1 : (($a["box_ID"] < $b["box_ID"]) ? -1 : 0) );')); 
     $boxes = array();
     foreach ($boxes_all as $box) {
         # These fields distinguishes the box types.
         if      (isset($box['fields'])) {$box['dispType'] = 'standings';}
         else if (isset($box['field']))  {$box['dispType'] = 'leaders';}
+        else if (isset($box['content'])){$box['dispType'] = 'events';}
         else                            {$box['dispType'] = 'latestgames';}
         switch ($box['type']) {
             case 'league':     $_type = T_NODE_LEAGUE; break;
@@ -381,12 +382,14 @@ function sec_main() {
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
+                            <td> </td>
                             <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
                             <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td><td> </td>
                         </tr>
                         <?php
                         foreach (Match::getMatches($box['length'], $box['type'], $box['id'], false) as $m) {
                             echo "<tr valign='top'>\n";
+                            echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
                             $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
                             $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
                             echo "<td style='text-align: right;'>$t1name</td>\n";
@@ -400,7 +403,7 @@ function sec_main() {
                 </div>
             </div>
             <?php
-            MTS('Latest matche table generated');
+            MTS('Latest matches table generated');
             break;
     
         case 'leaders':
@@ -439,6 +442,48 @@ function sec_main() {
             </div>
             <?php
             MTS('Leaders standings generated');
+            break;
+            
+        case 'events':
+            $events = _events($box['content'], $box['type'], $box['id'], $box['length']);
+            ?>
+            <div class="boxWide">
+                <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
+                <div class='boxBody'>
+                    <table class="boxTable">
+                        <?php
+                        $head = array_pop($events);
+                        echo "<tr>\n";
+                        foreach ($head as $col => $name) {
+                            echo "<td><i>$name</i></td>\n";
+                        }
+                        echo "</tr>\n";
+                        foreach ($events as $e) {
+                            echo "<tr>\n";
+                            foreach ($head as $col => $name) {
+                                switch ($col) {
+                                    case 'date':
+                                        $e[$col] = str_replace(' ', '&nbsp;', textdate($e[$col],true));
+                                        break;
+                                    case 'name': 
+                                        if ($settings['fp_links'])
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e['pid'],false,false)."'>$e[name]</a>";
+                                        break;
+                                    case 'tname': 
+                                        if ($settings['fp_links'])
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e['f_tid'],false,false)."'>$e[tname]</a>";
+                                        break;
+                                }
+                                echo "<td>".$e[$col]."</td>\n";
+                            }
+                            echo "</tr>\n";
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
+            <?php
+            MTS('Events box generated');
             break;
     }
     }
@@ -606,6 +651,43 @@ function _infocus($teams) {
     
     <?php
     $_INFOCUSCNT++;
+}
+
+$_T_EVENTS = array('dead', 'sold', 'hired', 'skills', 'wanted', 'hof', 'prizes'); # Allowed events
+function _events($event, $node, $node_id, $N) {
+    global $mv_keys, $_T_EVENTS;
+    if (!in_array($event, $_T_EVENTS)) {
+        return array();
+    }
+    $events = array();
+    $dispColumns = array();
+    switch ($event) {
+        case 'dead':
+            if (!isset($col)) $col = 'date_died';
+        case 'sold':
+            if (!isset($col)) $col = 'date_sold';
+        case 'hired':
+            if (!isset($col)) $col = 'date_bought';
+            $_query = "SELECT player_id AS 'pid', name, owned_by_team_id AS 'f_tid', f_tname AS 'tname', %COL AS 'date' FROM players, mv_players WHERE players.player_id = mv_players.f_pid AND %NODE = $node_id AND %COL IS NOT NULL ORDER BY %COL DESC LIMIT $N";
+            # TRANSLATE NOTE
+            $query = str_replace(array('%COL', '%NODE'), array($col, $mv_keys[$node]), $_query);
+            $result = mysql_query($query);
+            while ($row = mysql_fetch_assoc($result)) {
+                $events[] = $row;
+            }
+            $dispColumns = array('date' => 'Date', 'name' => 'Name', 'tname' => 'Team');
+            break;
+            
+        case 'wanted':
+        case 'prizes':
+        case 'hof':
+            break;
+            
+        case 'skills':
+            break;
+    }
+    $events[] = $dispColumns;
+    return $events;
 }
 
 function sec_teamlist() {

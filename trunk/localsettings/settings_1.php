@@ -126,6 +126,32 @@ $settings['fp_leaders'] = array(
 );
 
 /*********************
+ *   Front page: event boxes
+ *********************/
+
+$settings['fp_events'] = array(
+    /*
+        Event boxes can show for any league, division or tournament the following:
+            dead        - recent dead players
+            sold        - recent sold players
+            hired       - recent hired players
+            skills      - recent player skill picks
+            hof         - recent entries in the Hall Of Fame
+            prizes      - recent given prizes
+            wanted      - recent wanted players
+    */
+    array(
+        'id'        => 1,
+        'box_ID'    => 5,
+        // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
+        'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
+        'title'     => 'Tournament ID=1 latest dead',
+        'content'   => 'dead',
+        'length'    => 5,
+    ),
+);
+
+/*********************
  *   Front page: latest games boxes
  *********************/
 
