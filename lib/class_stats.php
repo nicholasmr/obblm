@@ -58,6 +58,7 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
 {
     global $core_tables, $relations_obj, $relations_node, $objFields_extra, $objFields_init;
     
+    /*
     $mv_keys = array(
         T_OBJ_PLAYER => 'f_pid',
         T_OBJ_STAR   => 'f_pid',
@@ -68,6 +69,9 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
         T_NODE_DIVISION   => 'f_did',
         T_NODE_LEAGUE     => 'f_lid',
     );
+    */
+    global $mv_keys; # Now in lib/mysql.php
+    
     $mv_tables = array(
         T_OBJ_PLAYER => 'mv_players',
         T_OBJ_STAR   => 'mv_players',

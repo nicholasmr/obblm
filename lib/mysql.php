@@ -300,6 +300,17 @@ $core_tables = array(
     MV tables
 */
 
+$mv_keys = array(
+    T_OBJ_PLAYER => 'f_pid',
+    T_OBJ_STAR   => 'f_pid',
+    T_OBJ_TEAM   => 'f_tid',
+    T_OBJ_COACH  => 'f_cid',
+    T_OBJ_RACE   => 'f_rid',
+    T_NODE_TOURNAMENT => 'f_trid',
+    T_NODE_DIVISION   => 'f_did',
+    T_NODE_LEAGUE     => 'f_lid',
+);
+
 // Common:
 $mv_commoncols = array(
     # Node references
