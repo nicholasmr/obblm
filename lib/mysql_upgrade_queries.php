@@ -14,6 +14,7 @@ $upgradeSQLs = array(
         // Coach scheduling permission
         SQLUpgrade::runIfColumnNOTExists('tours', 'allow_sched', 'ALTER TABLE tours ADD COLUMN allow_sched BOOLEAN DEFAULT FALSE'),
         'ALTER TABLE tours MODIFY locked BOOLEAN DEFAULT 0 NOT NULL',
+        SQLUpgrade::runIfColumnNOTExists('players_skills', 'id', 'ALTER TABLE players_skills ADD COLUMN id INT NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST'),
     ),
     '075-080' => array(
         # Delete, now modulized, type from texts.

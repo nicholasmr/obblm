@@ -170,8 +170,8 @@ div.toursNCont       {margin-top:0px;  margin-left:10px;}
 /* Main page */
 div.main_head       {clear: both; padding-left: 20px; padding-top: 20px; padding-bottom: 5px; font-size: 18px; background-color: inherit;}
 div.main_foot       {clear: both; font-size: 10px; padding: 30px; padding-top: 20px; background-color: inherit;}
-div.main_rightColumn {float: right; width: 550px; background-color: inherit;}
-div.main_leftColumn {float: left; width: 570px; background-color: inherit;}
+div.main_rightColumn {float: right; width: 600px; background-color: inherit;}
+div.main_leftColumn {float: left; width: 540px; background-color: inherit;}
     div.main_leftColumn_head     {clear: both; text-align: right; padding-right: 20px; background-color: inherit;} /* Padding should be the same as lcolBox padding. */
         div.main_leftColumn_welcome  {clear: both; padding-left: 20px; padding-top: 3px; padding-bottom: 3px; background-color: inherit; text-align: left;}
         div.main_leftColumn_left  {padding-left: 20px; padding-top: 10px; padding-bottom: 10px; background-color: inherit; text-align: left; float:left;}

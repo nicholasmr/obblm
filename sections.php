@@ -382,19 +382,21 @@ function sec_main() {
                 <div class='boxBody'>
                     <table class="boxTable">
                         <tr>
+                            <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td>
                             <td> </td>
-                            <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
-                            <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td><td> </td>
+                            <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
+                            <td><i><?php echo $lng->getTrn('common/date');?></i></td>
+                            <td> </td>
                         </tr>
                         <?php
                         foreach (Match::getMatches($box['length'], $box['type'], $box['id'], false) as $m) {
                             echo "<tr valign='top'>\n";
-                            echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
                             $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
                             $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
                             echo "<td style='text-align: right;'>$t1name</td>\n";
                             echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
                             echo "<td style='text-align: left;'>$t2name</td>\n";
+                            echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
                             echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
                             echo "</tr>";
                         }
@@ -467,11 +469,22 @@ function sec_main() {
                                         break;
                                     case 'name': 
                                         if ($settings['fp_links'])
-                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e['pid'],false,false)."'>$e[name]</a>";
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e['pid'],false,false)."'>".$e[$col]."</a>";
                                         break;
                                     case 'tname': 
                                         if ($settings['fp_links'])
-                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e['f_tid'],false,false)."'>$e[tname]</a>";
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e['f_tid'],false,false)."'>".$e[$col]."</a>";
+                                        break;
+                                    case 'rname': 
+                                        if ($settings['fp_links'])
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e['f_rid'],false,false)."'>".$e[$col]."</a>";
+                                        break;
+                                    case 'f_pos_name': 
+                                        if ($settings['fp_links'])
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e['f_rid'],false,false)."'>".$e[$col]."</a>";
+                                        break;
+                                    case 'value': 
+                                            $e[$col] = $e[$col]/1000 . 'k';
                                         break;
                                 }
                                 echo "<td>".$e[$col]."</td>\n";
@@ -653,9 +666,9 @@ function _infocus($teams) {
     $_INFOCUSCNT++;
 }
 
-$_T_EVENTS = array('dead', 'sold', 'hired', 'skills', 'wanted', 'hof', 'prizes'); # Allowed events
+$_T_EVENTS = array('dead', 'sold', 'hired', 'skills'); # Allowed events
 function _events($event, $node, $node_id, $N) {
-    global $mv_keys, $_T_EVENTS;
+    global $mv_keys, $_T_EVENTS, $lng;
     if (!in_array($event, $_T_EVENTS)) {
         return array();
     }
@@ -668,22 +681,23 @@ function _events($event, $node, $node_id, $N) {
             if (!isset($col)) $col = 'date_sold';
         case 'hired':
             if (!isset($col)) $col = 'date_bought';
-            $_query = "SELECT player_id AS 'pid', name, owned_by_team_id AS 'f_tid', f_tname AS 'tname', %COL AS 'date' FROM players, mv_players WHERE players.player_id = mv_players.f_pid AND %NODE = $node_id AND %COL IS NOT NULL ORDER BY %COL DESC LIMIT $N";
-            # TRANSLATE NOTE
+            $_query = "SELECT player_id AS 'pid', name, value, owned_by_team_id AS 'f_tid', f_tname AS 'tname', %COL AS 'date' FROM players, mv_players WHERE players.player_id = mv_players.f_pid AND %NODE = $node_id AND %COL IS NOT NULL ORDER BY %COL DESC LIMIT $N";
             $query = str_replace(array('%COL', '%NODE'), array($col, $mv_keys[$node]), $_query);
             $result = mysql_query($query);
             while ($row = mysql_fetch_assoc($result)) {
                 $events[] = $row;
             }
-            $dispColumns = array('date' => 'Date', 'name' => 'Name', 'tname' => 'Team');
+            $dispColumns = array('name' => $lng->getTrn('common/player'), 'value' => $lng->getTrn('common/value'), 'tname' => $lng->getTrn('common/team'), 'date' => $lng->getTrn('common/date'));
             break;
-            
-        case 'wanted':
-        case 'prizes':
-        case 'hof':
-            break;
-            
+
         case 'skills':
+            $query = "SELECT player_id AS 'pid', name, value, f_pos_name, owned_by_team_id AS 'f_tid', f_tname AS 'tname', players.f_rid, f_rname AS 'rname', f_skill_id, players_skills.type FROM players, mv_players, players_skills WHERE players.player_id = mv_players.f_pid AND ".$mv_keys[$node]." = $node_id AND mv_players.f_pid = players_skills.f_pid ORDER BY players_skills.id DESC LIMIT $N";
+            $result = mysql_query($query) or die(mysql_error());
+            while ($row = mysql_fetch_assoc($result)) {
+                $row['skill'] = skillsTrans($row['f_skill_id'])." ($row[type])";
+                $events[] = $row;
+            }
+            $dispColumns = array('skill' => $lng->getTrn('common/skill'), 'name' => $lng->getTrn('common/player'), 'f_pos_name' => $lng->getTrn('common/pos'), 'value' => $lng->getTrn('common/value'), 'tname' => $lng->getTrn('common/team'));
             break;
     }
     $events[] = $dispColumns;
