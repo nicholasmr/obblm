@@ -18,7 +18,7 @@ public static function main($argv) # argv = argument vector (array).
 protected static function _teamsSelect() 
 {
     global $lng;
-    $_SUBMITTED = isset($_POST['team1_as']) && isset($_POST['team2_as']);
+    $_SUBMITTED = isset($_POST['team1_as']) && isset($_POST['team2_as']) && $_POST['team1_as'] && $_POST['team2_as'];
     $t1 = $t2 = '';
     if ($_SUBMITTED) {
         $t1 = $_POST['team1_as'];
@@ -28,26 +28,26 @@ protected static function _teamsSelect()
     <br>
     <center>
     <form method='POST'>
-    <input type="text" id='team1_as' name="team1_as" size="30" maxlength="50" value='<?php echo $t1;?>'>
+    <input type="text" id='team1_as' name="team1_as" size="30" maxlength="50" value="<?php echo $t1;?>">
     <script>
         $(document).ready(function(){
-            var options, b;
+            var options, a;
 
             options = {
-                minChars:2,
+                minChars:3,
                     serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>',
             };
-            b = $('#team1_as').autocomplete(options);
+            a = $('#team1_as').autocomplete(options);
         });
     </script>
         VS.
-    <input type="text" id='team2_as' name="team2_as" size="30" maxlength="50" value='<?php echo $t2;?>'>
+    <input type="text" id='team2_as' name="team2_as" size="30" maxlength="50" value="<?php echo $t2;?>">
     <script>
         $(document).ready(function(){
             var options, b;
 
             options = {
-                minChars:2,
+                minChars:3,
                     serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>',
             };
             b = $('#team2_as').autocomplete(options);
@@ -72,8 +72,9 @@ public static $T_TEAM_PROGRESS = array(
     '1900' => 'Profesional',
     '2200' => 'Unstoppable',
 );
+# These gives some sense of relative scale of what is large values of these properties.
 public static $T_MAX_TV = 2200;
-public static $T_MAX_CAS = 200;
+public static $T_MAX_CAS = 100;
 public static $T_MAX_GF = 80; # Goals for
 public static $T_MAX_PLAYED = 80;
 public static $T_MAX_WON = 80;
@@ -99,17 +100,13 @@ protected static function _compare($tid1, $tid2)
     # http://docs.jquery.com/UI/Progressbar
     ?>
       <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+      <!--
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
       <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-      <script>
-          $(document).ready(function() {
-            $("#progressbar").progressbar({ value: 37 });
-          });
-      </script>
-
+      -->
     <center>
     <table style='width:70%; '>
-        <tr><td> </td>
+        <tr><td style='width:120px;'> </td>
             <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$tid1,false,false);?>"><b><?php echo $t1->name;?></b></a></td>
             <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$tid2,false,false);?>"><b><?php echo $t2->name;?></b></a></td>
         </tr>
@@ -120,10 +117,6 @@ protected static function _compare($tid1, $tid2)
         <tr><td>ELO</td>
             <td><?php self::_bar($t1->rg_elo/self::$T_MAX_ELO *100, $t1->rg_elo, $t1->rg_elo/self::$T_MAX_ELO *100);?></td>
             <td><?php self::_bar($t2->rg_elo/self::$T_MAX_ELO *100, $t2->rg_elo, $t2->rg_elo/self::$T_MAX_ELO *100);?></td>
-        </tr>
-        <tr><td>CAS inflicted</td>
-            <td><?php self::_bar($t1->mv_cas/self::$T_MAX_CAS *100, $t1->mv_cas, $t1->mv_cas/self::$T_MAX_CAS *100);?></td>
-            <td><?php self::_bar($t2->mv_cas/self::$T_MAX_CAS *100, $t2->mv_cas, $t2->mv_cas/self::$T_MAX_CAS *100);?></td>
         </tr>
         <tr><td>Games played</td>
             <td><?php self::_bar($t1->mv_played/self::$T_MAX_PLAYED *100, $t1->mv_played, $t1->mv_played/self::$T_MAX_PLAYED *100);?></td>
@@ -137,6 +130,10 @@ protected static function _compare($tid1, $tid2)
             <td><?php self::_bar($t1->mv_gf/self::$T_MAX_GF *100, $t1->mv_gf, $t1->mv_gf/self::$T_MAX_GF *100);?></td>
             <td><?php self::_bar($t2->mv_gf/self::$T_MAX_GF *100, $t2->mv_gf, $t2->mv_gf/self::$T_MAX_GF *100);?></td>
         </tr>
+        <tr><td>CAS inflicted</td>
+            <td><?php self::_bar($t1->mv_cas/self::$T_MAX_CAS *100, $t1->mv_cas, $t1->mv_cas/self::$T_MAX_CAS *100);?></td>
+            <td><?php self::_bar($t2->mv_cas/self::$T_MAX_CAS *100, $t2->mv_cas, $t2->mv_cas/self::$T_MAX_CAS *100);?></td>
+        </tr>
         <tr><td>CP</td>
             <td><?php self::_bar($t1->mv_cp/self::$T_MAX_CP *100, $t1->mv_cp, $t1->mv_cp/self::$T_MAX_CP *100);?></td>
             <td><?php self::_bar($t2->mv_cp/self::$T_MAX_CP *100, $t2->mv_cp, $t2->mv_cp/self::$T_MAX_CP *100);?></td>
@@ -147,6 +144,8 @@ protected static function _compare($tid1, $tid2)
         </tr>
     </table>
     </center>
+    <br><br>
+    The scales of the bar graphs are static and are relative to what is considered "much" of a given team property.
    
     <?php
 }
@@ -160,7 +159,7 @@ protected static function _bar($pct, $str, $red_pct) {
     $color = "rgb(100%, ".(100-$red_pct)."%, 0%)";
     echo '
     <div class="ui-progressbar ui-widget ui-widget-content ui-corner-all">
-       <div style="width: '.$pct.'%; background: '.$color.';" class="ui-progressbar-value ui-widget-header ui-corner-left">'.$str.'</div>
+       <div style="width: '.$pct.'%; background: '.$color.';" class="ui-progressbar-value ui-widget-header ui-corner-left">&nbsp;'.$str.'</div>
     </div>
     ';
     return;
