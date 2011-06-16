@@ -69,6 +69,7 @@
     <merchh>Mercenary Hire History</merchh>
     
     <match>Match</match>
+    <round>Round</round>
     <tournament>Tournament</tournament>
     <division>Division</division>
     <league>League</league>
