@@ -67,12 +67,12 @@ public static $T_TEAM_PROGRESS = array(
     '0'    => 'Easily beaten',
     '700'  => 'Underdog',
     '1000' => 'Amateur',
-    '1200' => 'Experienced',
-    '1400' => 'Semi-pro',
-    '1700' => 'Profesional',
-    '2000' => 'Unstoppable',
+    '1300' => 'Experienced',
+    '1600' => 'Semi-pro',
+    '1900' => 'Profesional',
+    '2200' => 'Unstoppable',
 );
-public static $T_MAX_TV = 2000;
+public static $T_MAX_TV = 2200;
 public static $T_MAX_CAS = 200;
 public static $T_MAX_GF = 80; # Goals for
 public static $T_MAX_PLAYED = 80;
