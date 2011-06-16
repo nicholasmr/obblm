@@ -132,13 +132,10 @@ switch ($_GET['type'])
         echo json_encode(array('query' => $_GET['query'], 'suggestions' => array_values($objs), 'data' => array_keys($objs)));
         break;
 
-    /* User Scheduled Games */
-    case 'userscheduledgames':
-        if(isset($_POST['creategame'])) {
-            Module::run('UserScheduledGames', array('creategame'));
-        } else {
-            Module::run('UserScheduledGames', array('renderAddGamePageHTML'));
-        }
+    /* Team strength compare */
+    
+    case 'teamcompare':
+        Module::run('TeamCompare', array());
         break;
 
     /* PDF Match Report */

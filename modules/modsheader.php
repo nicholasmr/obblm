@@ -134,4 +134,10 @@ Module::register(array(
     'filesLoadTime' => array('conference/class_conference.php')
 ));
 
+Module::register(array(
+    'class'         => 'TeamCompare',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('teamcompare/class_teamcompare.php')
+));
+
 ?>
