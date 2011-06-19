@@ -163,7 +163,6 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             }
             ?>
             </select>
-
             <br><br>
             Tournament type<br>
             <input type="radio" id='tourtype' name="tourtype" value="<?php echo TT_FFA;  ?>" CHECKED> FFA<br>
@@ -174,6 +173,11 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             <input type='hidden' name='type' value='mod_tournament'>
             <input type='submit' value='Modify' <?php echo empty($tours) ? ' DISABLED ' : '';?>>
             </form>
+            <script>
+                var tours = document.getElementById('trid');
+                var trid = tours.options[tours.selectedIndex].value;
+                adminModTour(trid);
+            </script>
             </div>
         </div>
         </td>

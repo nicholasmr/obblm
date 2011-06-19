@@ -4,8 +4,8 @@
  **************************/
 
 $db_name   = 'obblmdb';
-$db_user   = 'root';
-$db_passwd = '';
+$db_user   = 'obblm';
+$db_passwd = 'obblm';
 $db_host   = 'localhost';
 
 // For local settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
