@@ -3,7 +3,7 @@
 
 <name>Memorable matches</name>
 
-<view>View</view>
+<record>Record</record>
 <desc>Which matches are worth remembering in terms of most TDs, killed and so on?</desc>
 <filled>More than X matches have the same record or no record exists at all.</filled>
 

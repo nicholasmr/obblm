@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -22,6 +22,7 @@
  */
 
 define('MAX_MEM_MATCHES', 3); // For each mem. match category: If the number of matches with equal records exceed this value, no matches are shown at all.
+define('MMATCHES_BREAK', 5); // Break after this number of entries in HTML column.
 
 class Memmatches implements ModuleInterface
 {
@@ -54,9 +55,15 @@ public static function main($argv) {
     title($lng->getTrn('name', __CLASS__));
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
     list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
+    echo "<br>";
+    $_rows = 0;
     foreach (self::getMemMatches($sel_node, $sel_node_id) as $d => $matches) {
+        $_container_style = 'float:left; width:50%;';
+        if ($_rows == 0) {
+            echo "<div style='$_container_style'>";
+        }
         ?>
-        <div class="boxWide" style="width: 60%; margin: 20px auto 20px auto;">
+        <div class="boxWide">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn($d, __CLASS__); ?></div>
             <div class="boxBody">
                 <table class="common">
@@ -108,7 +115,7 @@ public static function main($argv) {
                         <td align="right" colspan="3">
                         <small>
                         <i><?php echo get_alt_col('tours', 'tour_id', $m->f_tour_id, 'name');?>, <?php echo textdate($m->date_played, true);?></i>,
-                        <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('view', __CLASS__);?></a>
+                        <a href="index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>"><?php echo $lng->getTrn('common/view');?></a>
                         </small>
                         </td>
                     </tr>
@@ -123,7 +130,13 @@ public static function main($argv) {
             </div>
         </div>
         <?php
+        if (is_int(($_rows+1)/MMATCHES_BREAK)) {
+            echo "</div>";
+            echo "<div style='$_container_style'>";
+        }
+        $_rows++;
     }
+    echo "</div>";
 }
 
 private static function getMemMatches($node = false, $node_id = false) {

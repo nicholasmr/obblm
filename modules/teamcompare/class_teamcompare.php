@@ -176,7 +176,7 @@ public static function getModuleAttributes()
 }
 
 public static function getModuleTables(){ return array(); }    
-public static function getModuleUpgradeSQL(){}
+public static function getModuleUpgradeSQL(){ return array(); }
 public static function triggerHandler($type, $argv){}
 
 }
