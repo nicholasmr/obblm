@@ -158,9 +158,10 @@ $core_tables = array(
         'ring'  => 'TINYINT UNSIGNED NOT NULL DEFAULT 0', # Local access level
     ),
     'players_skills' => array(
+        'id'         => 'INT NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'f_pid'      => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
         'f_skill_id' => $CT_cols['skill_id'].' NOT NULL',
-        'type' => 'VARCHAR(1)', # N, D or E
+        'type'       => 'VARCHAR(1)', # N, D or E
     ),
     'races' => array(
         'race_id' => $CT_cols[T_OBJ_RACE].' NOT NULL PRIMARY KEY',
