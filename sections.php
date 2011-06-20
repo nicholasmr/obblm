@@ -691,8 +691,8 @@ function _events($event, $node, $node_id, $N) {
             break;
 
         case 'skills':
-            $query = "SELECT player_id AS 'pid', name, value, f_pos_name, owned_by_team_id AS 'f_tid', f_tname AS 'tname', players.f_rid, f_rname AS 'rname', f_skill_id, players_skills.type FROM players, mv_players, players_skills WHERE players.player_id = mv_players.f_pid AND ".$mv_keys[$node]." = $node_id AND mv_players.f_pid = players_skills.f_pid ORDER BY players_skills.id DESC LIMIT $N";
-            $result = mysql_query($query) or die(mysql_error());
+            $query = "SELECT player_id AS 'pid', name, value, f_pos_name, owned_by_team_id AS 'f_tid', f_tname AS 'tname', players.f_rid, f_rname AS 'rname', f_skill_id, players_skills.type FROM players, mv_players, players_skills WHERE players.player_id = mv_players.f_pid AND ".$mv_keys[$node]." = $node_id AND mv_players.f_pid = players_skills.f_pid GROUP BY player_id, f_skill_id ORDER BY players_skills.id DESC LIMIT $N";
+            $result = mysql_query($query);
             while ($row = mysql_fetch_assoc($result)) {
                 $row['skill'] = skillsTrans($row['f_skill_id'])." ($row[type])";
                 $events[] = $row;
