@@ -87,6 +87,72 @@ public static function getHOF($n = false)
     return $HOF;
 }
 
+public static function getHOF2($node, $id, $N = false)
+{
+    $list = array();
+    if (!$node && !$id) { # Special case
+        $node = 'ALL';
+    }
+    $_TBL = 'hof'; # Table name.
+    $_IS_OBJ = in_array($node, array(T_OBJ_COACH, T_OBJ_TEAM));
+    $_LIMIT = ($N && is_numeric($N)) ? " LIMIT $N" : '';
+    $_ORDER_BY__NODE = " ORDER BY $_TBL.date DESC ";
+    $_ORDER_BY__OBJ = " ORDER BY $_TBL.date DESC ";
+    $_COMMON_PLAYERS_FIELDS = "players.owned_by_team_id AS 'f_tid', players.f_tname, players.f_cid, players.f_cname, players.date_died, players.value, players.name, players.f_pos_name"; # From players table.
+    switch ($node) {
+        case T_NODE_LEAGUE:
+            if (!isset($_WHERE)) { 
+                $_WHERE = "AND mv_players.f_lid = $id ";
+            }
+            # Fall through
+        case T_NODE_DIVISION:
+            if (!isset($_WHERE)) { 
+                $_WHERE = "AND mv_players.f_did = $id ";
+            }
+            # Fall through
+        case T_NODE_TOURNAMENT:
+            if (!isset($_WHERE)) { 
+                $_WHERE = "AND mv_players.f_trid = $id "; 
+            }
+            # Fall through
+        case 'ALL':
+            if (!isset($_WHERE)) { 
+                $_WHERE = " ";
+            }
+            $query = "SELECT DISTINCT ${_TBL}_id AS 'id', mv_players.f_lid as 'lid', $_COMMON_PLAYERS_FIELDS FROM $_TBL,mv_players,players WHERE $_TBL.pid = mv_players.f_pid AND mv_players.f_pid = players.player_id ".$_WHERE.$_ORDER_BY__NODE.$_LIMIT;
+            break;
+            
+        case T_OBJ_COACH:
+            $query = "SELECT ${_TBL}_id AS 'id', $_COMMON_PLAYERS_FIELDS FROM $_TBL,players,teams WHERE $_TBL.pid = players.player_id AND players.owned_by_team_id = teams.team_id AND teams.owned_by_coach_id = $id ".$_ORDER_BY__OBJ.$_LIMIT;
+            break;
+        case T_OBJ_TEAM:
+            $query = "SELECT ${_TBL}_id AS 'id', $_COMMON_PLAYERS_FIELDS FROM $_TBL,players       WHERE $_TBL.pid = players.player_id AND players.owned_by_team_id = $id ".$_ORDER_BY__OBJ.$_LIMIT;
+            break;
+            
+        default:
+            return array();
+    }
+
+    $result = mysql_query($query) or die(mysql_error());
+    if ($result && mysql_num_rows($result) > 0) {
+        while ($row = mysql_fetch_assoc($result)) {
+            $entry = new self($row['id']);
+            // Add extra fields to object.
+            unset($row['id']);
+            foreach ($row as $f => $val) {
+                $entry->$f = $val;
+            }
+#            if ($_IS_OBJ) {
+                $list[] = $entry;
+#            }
+#            else {
+#                $list[$row['lid']][] = $entry;
+#            }
+        }
+    }
+    return $list;
+}
+
 public static function create($player_id, $title, $about)
 {
     return (mysql_query("
@@ -258,27 +324,56 @@ public static function makeList($ALLOW_EDIT) {
     /* Print the hall of fame */
     
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
+    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
     if ($ALLOW_EDIT) {
-        echo "<a href='handler.php?type=hof&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
+        echo "<br><a href='handler.php?type=hof&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
-    $HOF = HOF::getHOF();
+    $entries = HOF::getHOF2($sel_node,$sel_node_id);
     
-    foreach ($HOF as $x) {
-        $h = $x['hof'];
-        $p = $x['player'];
-    
+    // USE HTMLOUT::sort_table() instead!!
+/*
+    echo "<br>";
+    echo "<table class='common'>";
+    echo "<tr class='commonhead'><td colspan='9'><b>".$lng->getTrn('name', __CLASS__)."</b></td</tr>";
+    echo "<tr style='font-style:italic;'>
+        <td> </td>
+        <td>".$lng->getTrn('common/player')."</td>
+        <td>".$lng->getTrn('common/value')."</td>
+        <td>".$lng->getTrn('common/dead')."</td>
+        <td>".$lng->getTrn('common/league')."</td>
+        <td>".$lng->getTrn('common/team')."</td>
+        <td>".$lng->getTrn('common/edit')."</td>
+        <td>".$lng->getTrn('common/delete')."</td>
+    </tr>\n";
+    echo "<tr><td colspan='9'><hr></td></tr>";
+    */
+    foreach ($entries as $e) {
+/*    $img = new ImageSubSys(T_OBJ_PLAYER, $e->pid);
+    $imgtag = "<img border='0px' height='30' width='30' alt='player picture' src=".$img->getPath().">";
+    echo "<tr>
+        <td>$imgtag</td>
+        <td>".$e->name."</td>
+        <td>".$e->value/1000 .'k'."</td>
+        <td>".$e->date_died."</td>
+        <td>".$e->lid."</td>
+        <td>".$e->f_tname."</td>
+        <td>".$lng->getTrn('common/edit')."</td>
+        <td>".$lng->getTrn('common/delete')."</td>
+    </tr>\n";
+        continue;
+        */
         ?>    
         <div class="boxWide" style="width: 70%; margin: 20px auto 20px auto;">
-            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)."'>$p->name</a> ".$lng->getTrn('from', __CLASS__)." <a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$p->owned_by_team_id,false,false)."'>$p->f_tname</a>: $h->title";?></div>
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a> ".$lng->getTrn('from', __CLASS__)." <a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e->f_tid,false,false)."'>$e->f_tname</a>: $e->title";?></div>
             <div class="boxBody">
                 <table class="common">
                     <tr>
                         <td align="left" valign="top">
-                            <?php echo $h->about;?>
+                            <?php echo $e->about;?>
                         </td>
                         <td align="right">
-                            <img border='0px' height='100' width='100' alt='player picture' src="<?php $img = new ImageSubSys(T_OBJ_PLAYER, $p->player_id); echo $img->getPath();?>">
+                            <img border='0px' height='100' width='100' alt='player picture' src="<?php $img = new ImageSubSys(T_OBJ_PLAYER, $e->pid); echo $img->getPath();?>">
                         </td>
                     </tr>
                     <tr>
@@ -286,15 +381,15 @@ public static function makeList($ALLOW_EDIT) {
                     </tr>
                     <tr>
                         <td align="left">
-                        <?php echo $lng->getTrn('posted', __CLASS__).' '. $h->date;?>
+                        <?php echo $lng->getTrn('posted', __CLASS__).' '. $e->date;?>
                         </td>
                         <td colspan="2" align="right">
                         <?php
                         if ($ALLOW_EDIT) {
                             ?> 
-                            <a href="handler.php?type=hof&amp;action=edit&amp;hof_id=<?php echo $h->hof_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
+                            <a href="handler.php?type=hof&amp;action=edit&amp;hof_id=<?php echo $e->hof_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
                             &nbsp;
-                            <a href="handler.php?type=hof&amp;action=delete&amp;hof_id=<?php echo $h->hof_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
+                            <a href="handler.php?type=hof&amp;action=delete&amp;hof_id=<?php echo $e->hof_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
                             <?php
                         }
                         ?>
@@ -305,6 +400,7 @@ public static function makeList($ALLOW_EDIT) {
         </div>
         <?php
     }
+    echo "</table>";
     HTMLOUT::frame_end();
 }
 }
