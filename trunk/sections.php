@@ -681,7 +681,7 @@ function _events($event, $node, $node_id, $N) {
             if (!isset($col)) $col = 'date_sold';
         case 'hired':
             if (!isset($col)) $col = 'date_bought';
-            $_query = "SELECT DISTINCT player_id AS 'pid', name, value, owned_by_team_id AS 'f_tid', f_tname AS 'tname', %COL AS 'date' FROM players, mv_players WHERE players.player_id = mv_players.f_pid AND %NODE = $node_id AND %COL IS NOT NULL ORDER BY %COL DESC LIMIT $N";
+            $_query = "SELECT DISTINCT player_id AS 'pid', name, value, owned_by_team_id AS 'f_tid', f_tname AS 'tname', %COL AS 'date' FROM players, mv_players WHERE players.player_id = mv_players.f_pid AND players.type = ".PLAYER_TYPE_NORMAL." AND %NODE = $node_id AND %COL IS NOT NULL ORDER BY %COL DESC LIMIT $N";
             $query = str_replace(array('%COL', '%NODE'), array($col, $mv_keys[$node]), $_query);
             $result = mysql_query($query);
             while ($row = mysql_fetch_assoc($result)) {
