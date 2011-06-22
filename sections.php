@@ -666,40 +666,26 @@ function _infocus($teams) {
     $_INFOCUSCNT++;
 }
 
-$_T_EVENTS = array('dead', 'sold', 'hired', 'skills'); # Allowed events
+$_T_EVENTS = array('dead' => ObjEvent::T_PLAYER_DEAD, 'sold' => ObjEvent::T_PLAYER_SOLD, 'hired' => ObjEvent::T_PLAYER_HIRED, 'skills' => ObjEvent::T_PLAYER_SKILLS); # Allowed events
 function _events($event, $node, $node_id, $N) {
     global $mv_keys, $_T_EVENTS, $lng;
-    if (!in_array($event, $_T_EVENTS)) {
-        return array();
-    }
-    $events = array();
     $dispColumns = array();
     switch ($event) {
         case 'dead':
-            if (!isset($col)) $col = 'date_died';
         case 'sold':
-            if (!isset($col)) $col = 'date_sold';
         case 'hired':
-            if (!isset($col)) $col = 'date_bought';
-            $_query = "SELECT DISTINCT player_id AS 'pid', name, value, owned_by_team_id AS 'f_tid', f_tname AS 'tname', %COL AS 'date' FROM players, mv_players WHERE players.player_id = mv_players.f_pid AND players.type = ".PLAYER_TYPE_NORMAL." AND %NODE = $node_id AND %COL IS NOT NULL ORDER BY %COL DESC LIMIT $N";
-            $query = str_replace(array('%COL', '%NODE'), array($col, $mv_keys[$node]), $_query);
-            $result = mysql_query($query);
-            while ($row = mysql_fetch_assoc($result)) {
-                $events[] = $row;
-            }
             $dispColumns = array('name' => $lng->getTrn('common/player'), 'value' => $lng->getTrn('common/value'), 'tname' => $lng->getTrn('common/team'), 'date' => $lng->getTrn('common/date'));
             break;
 
         case 'skills':
-            $query = "SELECT player_id AS 'pid', name, value, f_pos_name, owned_by_team_id AS 'f_tid', f_tname AS 'tname', players.f_rid, f_rname AS 'rname', f_skill_id, players_skills.type FROM players, mv_players, players_skills WHERE players.player_id = mv_players.f_pid AND ".$mv_keys[$node]." = $node_id AND mv_players.f_pid = players_skills.f_pid GROUP BY player_id, f_skill_id ORDER BY players_skills.id DESC LIMIT $N";
-            $result = mysql_query($query);
-            while ($row = mysql_fetch_assoc($result)) {
-                $row['skill'] = skillsTrans($row['f_skill_id'])." ($row[type])";
-                $events[] = $row;
-            }
             $dispColumns = array('skill' => $lng->getTrn('common/skill'), 'name' => $lng->getTrn('common/player'), 'f_pos_name' => $lng->getTrn('common/pos'), 'value' => $lng->getTrn('common/value'), 'tname' => $lng->getTrn('common/team'));
             break;
+
+        // Event type not existing
+        default:
+          return array();
     }
+    $events = ObjEvent::getRecentEvents($_T_EVENTS[$event], $node, $node_id, $N);
     $events[] = $dispColumns;
     return $events;
 }
