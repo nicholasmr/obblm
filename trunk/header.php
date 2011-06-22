@@ -111,6 +111,7 @@ require_once('lib/class_module.php');
 require_once('lib/class_tablehandler.php');
 require_once('lib/class_image.php');
 require_once('lib/class_translations.php');
+require_once('lib/class_objevent.php');
 
 // External libraries.
 require_once('lib/class_arraytojs.php');
