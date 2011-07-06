@@ -40,6 +40,7 @@ $settings['fp_messageboard']['show_match_summaries'] = true;
 
 $settings['fp_standings']   = array();
 $settings['fp_leaders']     = array();
+$settings['fp_events']      = array();
 $settings['fp_latestgames'] = array();
 
 ?>

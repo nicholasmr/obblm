@@ -46,7 +46,7 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
          );
     */
 
-    global $lng;
+    global $lng, $T_ROUNDS;
 
     $extra = array('doNr' => false, 'noHelp' => true);
 
@@ -67,12 +67,16 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
         if ($FOR_OBJ) {
             $m->result = matchresult_icon($m->result);
         }
+        if (in_array($m->round,array_keys($T_ROUNDS))) {
+            $m->round = $lng->getTrn($T_ROUNDS[$m->round]);
+    }
     }
 
     $fields = array(
         'date_played_disp' => array('desc' => $lng->getTrn('common/dateplayed'), 'nosort' => true),
         'league_name' => array('desc' => $lng->getTrn('common/league'), 'nosort' => true),
         'tour_name'   => array('desc' => $lng->getTrn('common/tournament'), 'nosort' => true),
+        'round'       => array('desc' => $lng->getTrn('common/round'), 'nosort' => false),
         'team1_name'  => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id'), 'nosort' => true),
         'team2_name'  => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id'), 'nosort' => true),
         'gate'        => array('desc' => $lng->getTrn('common/gate'), 'kilo' => true, 'suffix' => 'k', 'href' => false, 'nosort' => true),
@@ -104,7 +108,7 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
          );
     */
 
-    global $lng;
+    global $lng, $T_ROUNDS;
 
     $extra = array('doNr' => false, 'noHelp' => true);
 
@@ -121,12 +125,16 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         $m->mlink = "<a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>".$lng->getTrn('common/view')."</a>";
         $m->tour_name = Tour::getTourUrl($m->f_tour_id);
         $m->league_name = League::getLeagueUrl(get_parent_id(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE));
+        if (in_array($m->round,array_keys($T_ROUNDS))) {
+            $m->round = $lng->getTrn($T_ROUNDS[$m->round]);
+    }
     }
 
     $fields = array(
         'date_created_disp'  => array('desc' => $lng->getTrn('common/datecreated'), 'nosort' => true),
         'league_name'   => array('desc' => $lng->getTrn('common/league'), 'nosort' => true),
         'tour_name'     => array('desc' => $lng->getTrn('common/tournament'), 'nosort' => true),
+        'round'         => array('desc' => $lng->getTrn('common/round'), 'nosort' => false),
         'team1_name'    => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id'), 'nosort' => true),
         'team2_name'    => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id'), 'nosort' => true),
         'mlink'         => array('desc' => $lng->getTrn('common/match'), 'nosort' => true),
@@ -887,7 +895,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
     return $NL;
 }
 
-public static function frame_begin($stylesheet = false)
+public static function frame_begin($stylesheet = false, $menu = true)
 {
     global $settings;
     ?>
@@ -923,7 +931,7 @@ public static function frame_begin($stylesheet = false)
 				}
 			?>
             <div class="menu">
-                <?php HTMLOUT::make_menu(); ?>
+                <?php if ($menu) {HTMLOUT::make_menu();} ?>
             </div> <!-- Menu div end -->
             <div class="section"> <!-- This container holds the section specific content -->
     <?php
@@ -1010,13 +1018,12 @@ private static function make_menu()
             <ul>
                 <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
                 <?php if (Module::isRegistered('Search')){ ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('UserScheduledGames')  && $settings['usrsched_enabled']){ ?><li><a href="handler.php?type=userscheduledgames"><?php echo $lng->getTrn('name', 'UserScheduledGames');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('TeamCompare')){ ?><li><a href="handler.php?type=teamcompare"><?php echo $lng->getTrn('name', 'TeamCompare');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('HOF'))   { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Wanted')){ ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Prize')) { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Comparison')) { ?><li><a href="handler.php?type=comparison"><?php echo $lng->getTrn('name', 'Comparison');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Gallery'))    { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Conference'))    { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
@@ -1246,6 +1253,21 @@ public static function assistantBox($title, $body, $style = '')
     echo "<div class='boxBody'>\n$body</div>\n</div>\n";
 #    echo "<div id='$ID' class='assistantBox' style='$style'>".$body.'</div>';
     return $ID;
+}
+
+public static function dnt()
+{
+    ?>
+    If you enjoy this software please support the further development of it by donating.<br>
+    <br>
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+    <input type="hidden" name="cmd" value="_s-xclick">
+    <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+    ">
+    <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+    <img alt="" border="0" src="https://www.paypal.com/da_DK/i/scr/pixel.gif" width="1" height="1">
+    </form>
+    <?php
 }
 
 }

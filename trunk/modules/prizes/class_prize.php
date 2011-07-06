@@ -86,7 +86,7 @@ public function edit($type, $tid, $trid, $title, $txt)
 
 public static function getTypes() 
 {
-    return array(PRIZE_1ST => 'First place', PRIZE_2ND => 'Second place', PRIZE_3RD => 'Third place', PRIZE_LETHAL => 'Most lethal', PRIZE_FAIR => 'Fair play');
+    return array(PRIZE_1ST => 'First place', PRIZE_2ND => 'Second place', PRIZE_3RD => 'Third place', PRIZE_LETHAL => 'Most lethal', PRIZE_FAIR => 'Fair play', PRIZE_LUCKY => 'Most lucky');
 }
 
 public static function getPrizes($type, $id, $N = false)

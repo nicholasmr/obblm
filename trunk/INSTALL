@@ -2,9 +2,7 @@
 INSTALL
 -------
 
-To install this software please edit the settings.php file so that it fits your needs.
-Afterwards run install.php from a web-browser which will setup MySQL for OBBLM.
-It is recommended that you delete the install.php file when done.
+See http://www.nicholasmr.dk/obblmwiki/index.php?title=Installation
 
 ---------
 UPGRADING
