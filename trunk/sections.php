@@ -154,14 +154,14 @@ function sec_main() {
     /*
      *  Now we are ready to generate the HTML code.
      */
-	if (Module::isRegistered('LeaguePref')) {
-		$l_pref= LeaguePref::getLeaguePreferences();
-		$league_name = $l_pref->league_name;
-		$welcome = $l_pref->welcome;
-	} else {
-		$league_name = $settings['league_name'];
-		$welcome = $settings['welcome'];
-	}
+   if (Module::isRegistered('LeaguePref')) {
+      $l_pref= LeaguePref::getLeaguePreferences();
+      $league_name = $l_pref->league_name;
+      $welcome = $l_pref->welcome;
+   } else {
+      $league_name = $settings['league_name'];
+      $welcome = $settings['welcome'];
+   }
 
 
     ?>
@@ -294,31 +294,30 @@ function sec_main() {
             default: $_type = T_NODE_LEAGUE;
         }
         $box['type'] = $_type;
-    	if (Module::isRegistered('LeaguePref')) {
-    		global $tours;
-    		//print_r($tours);
-    		// dynamically switch the front page to show the tables for the preferred tournament
-			switch ($box['id']) {
-				case 'prime':
-					if ($l_pref->p_tour > 0) {
-						$box['id'] = $l_pref->p_tour ;
-						$box['title'] = $tours[$l_pref->p_tour]['tname'] . " " . $box['title'];
-					} else {
-						$box['id'] = 1;
-						$box['title'] = 'Please set league primary tournament';
-					}
-					break;
-				case 'second':
-					if ($l_pref->s_tour > 0) {
-						$box['id'] = $l_pref->s_tour ;
-						$box['title'] = $tours[$l_pref->s_tour]['tname'] . " " . $box['title'];
-					} else {
-						$box['id'] = 1;
-						$box['title'] = 'Please set league secondary tournament';
-					}
-					break;
-			}
-    	}
+      if (Module::isRegistered('LeaguePref')) {
+         global $tours;
+         // dynamically switch the front page to show the tables for the preferred tournament
+         switch ($box['id']) {
+            case 'prime':
+               if ($l_pref->p_tour > 0) {
+                  $box['id'] = $l_pref->p_tour ;
+                  $box['title'] = $tours[$l_pref->p_tour]['tname'] . " " . $box['title'];
+               } else {
+                  $box['id'] = 1;
+                  $box['title'] = 'Please set league primary tournament';
+               }
+               break;
+            case 'second':
+               if ($l_pref->s_tour > 0) {
+                  $box['id'] = $l_pref->s_tour ;
+                  $box['title'] = $tours[$l_pref->s_tour]['tname'] . " " . $box['title'];
+               } else {
+                  $box['id'] = 1;
+                  $box['title'] = 'Please set league secondary tournament';
+               }
+               break;
+         }
+      }
 
         $boxes[] = $box;
     }
@@ -409,46 +408,15 @@ function sec_main() {
             break;
 
         case 'latestgames':
-			showGames($box);
-			MTS('Latest matches table generated');
+            showGames($box);
+            MTS('Latest matches table generated');
             break;
 
         case 'upcominggames':
-			showGames($box);
+            showGames($box);
             MTS('Upcoming matches table generated');
             break;
-            }
-            ?>
-            <div class="boxWide">
-                <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
-                <div class='boxBody'>
-                    <table class="boxTable">
-                        <tr>
-                            <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td>
-                            <td> </td>
-                            <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
-                            <td><i><?php echo $lng->getTrn('common/date');?></i></td>
-                            <td> </td>
-                        </tr>
-                        <?php
-                        foreach (Match::getMatches($box['length'], $box['type'], $box['id'], false) as $m) {
-                            echo "<tr valign='top'>\n";
-                            $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
-                            $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
-                            echo "<td style='text-align: right;'>$t1name</td>\n";
-                            echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
-                            echo "<td style='text-align: left;'>$t2name</td>\n";
-                            echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
-                            echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
-                            echo "</tr>";
-                        }
-                        ?>
-                    </table>
-                </div>
-            </div>
-            <?php
-            MTS('Latest matches table generated');
-            break;
+
 
         case 'leaders':
 
@@ -487,7 +455,7 @@ function sec_main() {
             <?php
             MTS('Leaders standings generated');
             break;
-            
+
         case 'events':
             $events = _events($box['content'], $box['type'], $box['id'], $box['length']);
             ?>
@@ -509,23 +477,23 @@ function sec_main() {
                                     case 'date':
                                         $e[$col] = str_replace(' ', '&nbsp;', textdate($e[$col],true));
                                         break;
-                                    case 'name': 
+                                    case 'name':
                                         if ($settings['fp_links'])
                                             $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e['pid'],false,false)."'>".$e[$col]."</a>";
                                         break;
-                                    case 'tname': 
+                                    case 'tname':
                                         if ($settings['fp_links'])
                                             $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e['f_tid'],false,false)."'>".$e[$col]."</a>";
                                         break;
-                                    case 'rname': 
+                                    case 'rname':
                                         if ($settings['fp_links'])
                                             $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e['f_rid'],false,false)."'>".$e[$col]."</a>";
                                         break;
-                                    case 'f_pos_name': 
+                                    case 'f_pos_name':
                                         if ($settings['fp_links'])
                                             $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e['f_rid'],false,false)."'>".$e[$col]."</a>";
                                         break;
-                                    case 'value': 
+                                    case 'value':
                                             $e[$col] = $e[$col]/1000 . 'k';
                                         break;
     }
@@ -558,51 +526,59 @@ function sec_main() {
 }
 
 function showGames($box) {
-	global $lng, $settings;
-	if ($box['length'] <= 0) {
-		break;
-	}
-	$upcoming = isset($box['upcoming']) ? $box['upcoming'] : false;
-	$matches = Match::getMatches($box['length'], $box['type'], $box['id'], $upcoming)
-	?>
-	<div class="boxWide">
-		<h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
-		<div class='boxBody'>
-			<table class="boxTable">
-				<?php
-				if (sizeof($matches) == 0) {
-				?>
-				<tr>
-					<td style="text-align: center;" width="100%"><i><?php echo $lng->getTrn('main/nomatches');?></i></td><td> </td>
-				</tr>
-				<?php
-				} else {
-				?>
-				<tr>
-					<td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
-					<td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td><td> </td>
-				</tr>
-				<?php
-					foreach ($matches as $m) {
-						echo "<tr valign='top'>\n";
-						$t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
-						$t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
-						echo "<td style='text-align: right;'>$t1name</td>\n";
-						if ($upcoming) {
-							echo "<td><nobr>?&mdash;?</nobr></td>\n";
-						} else {
-							echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
-						}
-						echo "<td style='text-align: left;'>$t2name</td>\n";
-						echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
-						echo "</tr>";
-					}
-				}
-				?>
-			</table>
-		</div>
-	</div>
-	<?php
+   global $lng, $settings;
+   if ($box['length'] <= 0) {
+      break;
+   }
+   $upcoming = isset($box['upcoming']) ? $box['upcoming'] : false;
+   $matches = Match::getMatches($box['length'], $box['type'], $box['id'], $upcoming)
+   ?>
+   <div class="boxWide">
+      <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
+      <div class='boxBody'>
+         <table class="boxTable">
+            <?php
+            if (sizeof($matches) == 0) {
+            ?>
+            <tr>
+               <td style="text-align: center;" width="100%"><i><?php echo $lng->getTrn('main/nomatches');?></i></td><td> </td>
+            </tr>
+            <?php
+            } else {
+            ?>
+            <tr>
+               <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
+               <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
+               <?php if (!$upcoming) { ?>
+               <td><i><?php echo $lng->getTrn('common/date');?></i></td>
+               <?php } ?>
+               <td>&nbsp;</td>
+            </tr>
+            <?php
+               foreach ($matches as $m) {
+                  echo "<tr valign='top'>\n";
+                  $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
+                  $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
+                  echo "<td style='text-align: right;'>$t1name</td>\n";
+                  if ($upcoming) {
+                     echo "<td><nobr>?&mdash;?</nobr></td>\n";
+                  } else {
+                     echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
+                  }
+                  echo "<td style='text-align: left;'>$t2name</td>\n";
+                  if (!$upcoming) {
+                     echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
+                  }
+
+                  echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
+                  echo "</tr>";
+               }
+            }
+            ?>
+         </table>
+      </div>
+   </div>
+   <?php
 }
 
 $_INFOCUSCNT = 1; # HTML ID for _infocus()
@@ -843,12 +819,12 @@ function sec_rules() {
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     echo $HTML_LeagueSelector;
     echo "<br><br>";
-	if (Module::isRegistered('LeaguePref')) {
-		$l_pref= LeaguePref::getLeaguePreferences();
-		echo $l_pref->rules;
-	} else {
-		echo $settings['rules'];
-	}
+   if (Module::isRegistered('LeaguePref')) {
+      $l_pref= LeaguePref::getLeaguePreferences();
+      echo $l_pref->rules;
+   } else {
+      echo $settings['rules'];
+   }
 }
 
 /*************************
