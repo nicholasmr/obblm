@@ -41,6 +41,7 @@
     <page>Page</page>
     <retired>Retired</retired>
     <skills>Skills</skills>
+    <skill>Skill</skill>
     <injs>Injuries</injs>
     <pos>Position</pos>
     <price>Price</price>
@@ -57,6 +58,7 @@
     <upcomingmatches>Upcoming matches</upcomingmatches>
     <dateplayed>Date played</dateplayed>
     <datecreated>Date created</datecreated>
+    <date>Date</date>
     <home>Home</home>
     <away>Away</away>
     <score>Score</score>
@@ -67,6 +69,7 @@
     <merchh>Mercenary Hire History</merchh>
     
     <match>Match</match>
+    <round>Round</round>
     <tournament>Tournament</tournament>
     <division>Division</division>
     <league>League</league>

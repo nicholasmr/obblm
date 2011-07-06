@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -158,6 +158,7 @@ $core_tables = array(
         'ring'  => 'TINYINT UNSIGNED NOT NULL DEFAULT 0', # Local access level
     ),
     'players_skills' => array(
+        'id'         => 'INT NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'f_pid'      => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
         'f_skill_id' => $CT_cols['skill_id'].' NOT NULL',
         'type' => 'VARCHAR(1)', # N, D or E
@@ -190,7 +191,7 @@ $core_tables = array(
         'type'          => 'TINYINT UNSIGNED',
         'date_created'  => 'DATETIME',
         'rs'            => 'TINYINT UNSIGNED DEFAULT 1',
-        'locked'        => 'BOOLEAN',
+        'locked'        => 'BOOLEAN NOT NULL DEFAULT 0',
         // Dynamic properties (DPROPS)
         'empty'    => 'BOOLEAN DEFAULT TRUE',
         'begun'    => 'BOOLEAN DEFAULT FALSE',
@@ -299,6 +300,17 @@ $core_tables = array(
 /*
     MV tables
 */
+
+$mv_keys = array(
+    T_OBJ_PLAYER => 'f_pid',
+    T_OBJ_STAR   => 'f_pid',
+    T_OBJ_TEAM   => 'f_tid',
+    T_OBJ_COACH  => 'f_cid',
+    T_OBJ_RACE   => 'f_rid',
+    T_NODE_TOURNAMENT => 'f_trid',
+    T_NODE_DIVISION   => 'f_did',
+    T_NODE_LEAGUE     => 'f_lid',
+);
 
 // Common:
 $mv_commoncols = array(
@@ -821,9 +833,11 @@ function upgrade_database($version, $opts)
             break;
     }
    
+    if ($upgradeSettings[$version]['syncall']) {
     echo (mysql_query("CALL syncAll()"))
         ? "<font color='green'>OK &mdash; synchronised all dynamic stats and properties</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not synchronise all dynamic stats and properties</font><br>\n";
+    }
    
     // Done!
     mysql_close($conn);

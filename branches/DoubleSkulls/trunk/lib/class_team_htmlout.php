@@ -734,7 +734,7 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
         <?php
         }
         if (Module::isRegistered('IndcPage')) {
-            echo "<li><a href='handler.php?type=inducements&amp;team_id=$team->team_id'>Induce. try-out</a></li>\n";
+            echo "<li><a href='handler.php?type=inducements&amp;team_id=$team->team_id'>Inducements try-out</a></li>\n";
         }
         if (Module::isRegistered('SGraph')) {
             echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''>Vis. stats</a></li>\n";

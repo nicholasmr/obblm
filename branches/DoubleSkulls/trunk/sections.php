@@ -227,7 +227,7 @@ function sec_main() {
                         switch ($e->type)
                         {
                             case T_TEXT_MATCH_SUMMARY:
-                                echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." " . (isset($e->date_mod) ? "(".$lng->getTrn('main/lastedit')." ".textdate($e->date_mod).") " : '') .$lng->getTrn('main/by')." $e->author</td>\n";
+                                echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." " . ((isset($e->date_mod) && $e->date_mod != $e->date) ? "(".$lng->getTrn('main/lastedit')." ".textdate($e->date_mod).") " : '') .$lng->getTrn('main/by')." $e->author</td>\n";
                                 echo "<td align='right'><a href='index.php?section=matches&amp;type=report&amp;mid=$e->match_id'>".$lng->getTrn('common/view')."</a></td>\n";
                                 break;
                             case  T_TEXT_MSG:
@@ -276,7 +276,7 @@ function sec_main() {
     */
 
     echo "<div class='main_rightColumn'>\n";
-    $boxes_all = array_merge($settings['fp_standings'], $settings['fp_leaders'], $settings['fp_latestgames']);
+    $boxes_all = array_merge($settings['fp_standings'], $settings['fp_leaders'], $settings['fp_events'], $settings['fp_latestgames']);
     usort($boxes_all, create_function('$a,$b', 'return (($a["box_ID"] > $b["box_ID"]) ? 1 : (($a["box_ID"] < $b["box_ID"]) ? -1 : 0) );'));
     $boxes = array();
 
@@ -285,6 +285,7 @@ function sec_main() {
         # These fields distinguishes the box types.
         if      (isset($box['fields'])) {$box['dispType'] = 'standings';}
         else if (isset($box['field']))  {$box['dispType'] = 'leaders';}
+        else if (isset($box['content'])){$box['dispType'] = 'events';}
         else                            {$box['dispType'] = 'latestgames';}
         switch ($box['type']) {
             case 'league':     $_type = T_NODE_LEAGUE; break;
@@ -416,6 +417,38 @@ function sec_main() {
 			showGames($box);
             MTS('Upcoming matches table generated');
             break;
+            }
+            ?>
+            <div class="boxWide">
+                <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
+                <div class='boxBody'>
+                    <table class="boxTable">
+                        <tr>
+                            <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td>
+                            <td> </td>
+                            <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
+                            <td><i><?php echo $lng->getTrn('common/date');?></i></td>
+                            <td> </td>
+                        </tr>
+                        <?php
+                        foreach (Match::getMatches($box['length'], $box['type'], $box['id'], false) as $m) {
+                            echo "<tr valign='top'>\n";
+                            $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
+                            $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
+                            echo "<td style='text-align: right;'>$t1name</td>\n";
+                            echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
+                            echo "<td style='text-align: left;'>$t2name</td>\n";
+                            echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
+                            echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </table>
+                </div>
+            </div>
+            <?php
+            MTS('Latest matches table generated');
+            break;
 
         case 'leaders':
 
@@ -454,12 +487,68 @@ function sec_main() {
             <?php
             MTS('Leaders standings generated');
             break;
+            
+        case 'events':
+            $events = _events($box['content'], $box['type'], $box['id'], $box['length']);
+            ?>
+            <div class="boxWide">
+                <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
+                <div class='boxBody'>
+                    <table class="boxTable">
+                        <?php
+                        $head = array_pop($events);
+                        echo "<tr>\n";
+                        foreach ($head as $col => $name) {
+                            echo "<td><i>$name</i></td>\n";
+    }
+                        echo "</tr>\n";
+                        foreach ($events as $e) {
+                            echo "<tr>\n";
+                            foreach ($head as $col => $name) {
+                                switch ($col) {
+                                    case 'date':
+                                        $e[$col] = str_replace(' ', '&nbsp;', textdate($e[$col],true));
+                                        break;
+                                    case 'name': 
+                                        if ($settings['fp_links'])
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e['pid'],false,false)."'>".$e[$col]."</a>";
+                                        break;
+                                    case 'tname': 
+                                        if ($settings['fp_links'])
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e['f_tid'],false,false)."'>".$e[$col]."</a>";
+                                        break;
+                                    case 'rname': 
+                                        if ($settings['fp_links'])
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e['f_rid'],false,false)."'>".$e[$col]."</a>";
+                                        break;
+                                    case 'f_pos_name': 
+                                        if ($settings['fp_links'])
+                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e['f_rid'],false,false)."'>".$e[$col]."</a>";
+                                        break;
+                                    case 'value': 
+                                            $e[$col] = $e[$col]/1000 . 'k';
+                                        break;
+    }
+                                echo "<td>".$e[$col]."</td>\n";
+                            }
+                            echo "</tr>\n";
+                        }
+    ?>
+                    </table>
+    </div>
+            </div>
+            <?php
+            MTS('Events box generated');
+            break;
     }
     }
     ?>
     </div>
     <div class="main_foot">
-        <a href="index.php?section=about">Please doante if you enjoy this software</a><br><br>
+        <?php
+        HTMLOUT::dnt();
+        ?>
+        <br>
         <a TARGET="_blank" href="http://nicholasmr.dk/index.php?sec=obblm">OBBLM official website</a><br><br>
         This web site is completely unofficial and in no way endorsed by Games Workshop Limited.
         <br>
@@ -667,6 +756,30 @@ function _infocus($teams) {
     $_INFOCUSCNT++;
 }
 
+$_T_EVENTS = array('dead' => ObjEvent::T_PLAYER_DEAD, 'sold' => ObjEvent::T_PLAYER_SOLD, 'hired' => ObjEvent::T_PLAYER_HIRED, 'skills' => ObjEvent::T_PLAYER_SKILLS); # Allowed events
+function _events($event, $node, $node_id, $N) {
+    global $mv_keys, $_T_EVENTS, $lng;
+    $dispColumns = array();
+    switch ($event) {
+        case 'dead':
+        case 'sold':
+        case 'hired':
+            $dispColumns = array('name' => $lng->getTrn('common/player'), 'value' => $lng->getTrn('common/value'), 'tname' => $lng->getTrn('common/team'), 'date' => $lng->getTrn('common/date'));
+            break;
+
+        case 'skills':
+            $dispColumns = array('skill' => $lng->getTrn('common/skill'), 'name' => $lng->getTrn('common/player'), 'f_pos_name' => $lng->getTrn('common/pos'), 'value' => $lng->getTrn('common/value'), 'tname' => $lng->getTrn('common/team'));
+            break;
+
+        // Event type not existing
+        default:
+          return array();
+    }
+    $events = ObjEvent::getRecentEvents($_T_EVENTS[$event], $node, $node_id, $N);
+    $events[] = $dispColumns;
+    return $events;
+}
+
 function sec_teamlist() {
     global $lng;
     title($lng->getTrn('menu/teams'));
@@ -748,16 +861,8 @@ function sec_about() {
 
     global $lng, $credits;
     title("About OBBLM");
+    HTMLOUT::dnt();
     ?>
-    If you enjoy this software, please support the further development of it by donating.<br>
-    <br>
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-    <input type="hidden" name="cmd" value="_s-xclick">
-    <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
-    ">
-    <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-    <img alt="" border="0" src="https://www.paypal.com/da_DK/i/scr/pixel.gif" width="1" height="1">
-    </form>
     <br>
     <p>
         <b>OBBLM version <?php echo OBBLM_VERSION; ?></b><br><br>
