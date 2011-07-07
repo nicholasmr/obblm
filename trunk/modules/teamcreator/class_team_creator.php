@@ -95,7 +95,7 @@ public static function addPlayer($pos, $d) {
    $p = array();
    $p['position'] = $pos;
    $p['ma'] = $d['ma'];
-   $p['st'] = $d['ag'];
+   $p['st'] = $d['st'];
    $p['ag'] = $d['ag'];
    $p['av'] = $d['av'];
    $p['skills'] = implode(', ', skillsTrans($d['def']));
