@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -72,18 +72,65 @@ public function delete()
  * Statics
  ***************/
 
-public static function getWanted($n = false)
+public static function getWanted($node, $id, $N = false)
 {
-    $w = array();
+    $list = array();
+    if (!$node && !$id) { # Special case
+        $node = 'ALL';
+    }
+    $_TBL = 'wanted'; # Table name.
+    $_IS_OBJ = in_array($node, array(T_OBJ_COACH, T_OBJ_TEAM));
+    $_LIMIT = ($N && is_numeric($N)) ? " LIMIT $N" : '';
+    $_ORDER_BY__NODE = " ORDER BY $_TBL.date DESC ";
+    $_ORDER_BY__OBJ = " ORDER BY $_TBL.date DESC ";
+    $_COMMON_PLAYERS_FIELDS = "players.owned_by_team_id AS 'f_tid', players.f_tname, players.f_cid, players.f_cname, players.date_died, players.value, players.name, players.f_pos_name, players.date_died"; # From players table.
+    switch ($node) {
+        case T_NODE_LEAGUE:
+            if (!isset($_WHERE)) { 
+                $_WHERE = "AND mv_players.f_lid = $id ";
+            }
+            # Fall through
+        case T_NODE_DIVISION:
+            if (!isset($_WHERE)) { 
+                $_WHERE = "AND mv_players.f_did = $id ";
+            }
+            # Fall through
+        case T_NODE_TOURNAMENT:
+            if (!isset($_WHERE)) { 
+                $_WHERE = "AND mv_players.f_trid = $id "; 
+            }
+            # Fall through
+        case 'ALL':
+            if (!isset($_WHERE)) { 
+                $_WHERE = " ";
+            }
+            $query = "SELECT DISTINCT ${_TBL}_id AS 'id', mv_players.f_lid as 'lid', $_COMMON_PLAYERS_FIELDS FROM $_TBL,mv_players,players WHERE $_TBL.pid = mv_players.f_pid AND mv_players.f_pid = players.player_id ".$_WHERE.$_ORDER_BY__NODE.$_LIMIT;
+            break;
+            
+        case T_OBJ_COACH:
+            $query = "SELECT ${_TBL}_id AS 'id', $_COMMON_PLAYERS_FIELDS FROM $_TBL,players,teams WHERE $_TBL.pid = players.player_id AND players.owned_by_team_id = teams.team_id AND teams.owned_by_coach_id = $id ".$_ORDER_BY__OBJ.$_LIMIT;
+            break;
+        case T_OBJ_TEAM:
+            $query = "SELECT ${_TBL}_id AS 'id', $_COMMON_PLAYERS_FIELDS FROM $_TBL,players       WHERE $_TBL.pid = players.player_id AND players.owned_by_team_id = $id ".$_ORDER_BY__OBJ.$_LIMIT;
+            break;
+            
+        default:
+            return array();
+    }
 
-    $result = mysql_query("SELECT wanted_id, pid FROM wanted ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
+    $result = mysql_query($query) or die(mysql_error());
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
-            array_push($w, array('wanted' => new Wanted($row['wanted_id']), 'player' => new Player($row['pid'])));
+            $entry = new self($row['id']);
+            // Add extra fields to object.
+            unset($row['id']);
+            foreach ($row as $f => $val) {
+                $entry->$f = $val;
+            }
+            $list[] = $entry;
         }
     }
-    
-    return $w;
+    return $list;
 }
 
 public static function create($player_id, $why, $bounty)
@@ -160,36 +207,35 @@ public static  function isWanted($pid)
     return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
 }
 
-public static function makeList($ALLOW_EDIT)
-{
-    
+public static function makeList($ALLOW_EDIT) {
+
     global $lng, $coach, $settings;
     HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
-    title($lng->getTrn('name', __CLASS__));
     
     /* A new entry was sent. Add it to system */
     
     if (isset($_POST['player_id']) && $ALLOW_EDIT) {
         if (get_magic_quotes_gpc()) {
             $_POST['bounty'] = stripslashes($_POST['bounty']);
-            $_POST['why'] = stripslashes($_POST['why']);
+            $_POST['why']    = stripslashes($_POST['why']);
         }
         switch ($_GET['action'])
         {
             case 'edit':
-                $w = new Wanted($_GET['wanted_id']);
-                status($w->edit($_POST['why'], $_POST['bounty']));
+                $e = new self($_GET['wanted_id']);
+                status($e->edit($_POST['why'], $_POST['bounty']));
                 break;
             
             case 'new':
-                status(Wanted::create($_POST['player_id'], $_POST['why'], $_POST['bounty']));
+                status(self::create($_POST['player_id'], $_POST['why'], $_POST['bounty']));
                 break;
         }
     }
+    title($lng->getTrn('name', __CLASS__));
     
     /* Was a request for a new entry made? */ 
     
-    elseif (isset($_GET['action']) && $ALLOW_EDIT) {
+    if (isset($_GET['action']) && $ALLOW_EDIT) {
         
         // Default schema values. These are empty unless "edit" is chosen.
         $player_id = false;
@@ -200,9 +246,9 @@ public static function makeList($ALLOW_EDIT)
         {
             case 'delete':
                 if (isset($_GET['wanted_id']) && is_numeric($_GET['wanted_id'])) {
-                    $w = new Wanted($_GET['wanted_id']);
-                    status($w->delete());
-                    unset($w);
+                    $e = new self($_GET['wanted_id']);
+                    status($e->delete());
+                    unset($e);
                 }
                 else {
                     fatal('Sorry. You did not specify which wanted-id you wish to delete.');
@@ -211,10 +257,11 @@ public static function makeList($ALLOW_EDIT)
                 
             case 'edit':
                 if (isset($_GET['wanted_id']) && is_numeric($_GET['wanted_id'])) {
-                    $w = new Wanted($_GET['wanted_id']);
-                    $player_id = $w->pid;
-                    $why = $w->why;
-                    $bounty = $w->bounty;
+                    $e = new self($_GET['wanted_id']);
+                    $player_id = $e->pid;
+                    $why = $e->why;
+                    $bounty = $e->bounty;
+                    $_POST['lid'] = get_alt_col('mv_players', 'f_pid', $player_id, 'f_lid');
                 }
                 else {
                     fatal('Sorry. You did not specify which wanted-id you wish to edit.');
@@ -223,31 +270,43 @@ public static function makeList($ALLOW_EDIT)
                 // Fall-through to "new" !!!
 
             case 'new':
+                echo "<a href='handler.php?type=wanted'><-- ".$lng->getTrn('common/back')."</a><br><br>";
+                $_DISABLED = !isset($_POST['lid']) ? 'DISABLED' : '';
+                $node_id = isset($_POST['lid']) ? $_POST['lid'] : null;
                 ?>
+                <form name="STS" method="POST" enctype="multipart/form-data">
+                <b><?php echo $lng->getTrn('common/league');?></b><br>
+                <?php
+                echo HTMLOUT::nodeList(T_NODE_LEAGUE, 'lid', array(), array(), array('sel_id' => $node_id));
+                ?>
+                <input type='submit' value='<?php echo $lng->getTrn('common/select');?>'>
+                </form>
+                <br>
                 <form method="POST">
-                <b><?php echo $lng->getTrn('player', __CLASS__);?>:</b><br>
-                <i><?php echo $lng->getTrn('sort_hint', __CLASS__);?></i><br>
-                <select name="player_id" id="players">
+                <b><?php echo $lng->getTrn('player', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('sort_hint', __CLASS__);?><br>
+                <?php
+                $query = "SELECT player_id, f_tname, name FROM players, mv_players WHERE player_id = f_pid AND f_lid = $node_id ORDER by f_tname ASC, name ASC";
+                $result = mysql_query($query);
+                if ($result && mysql_num_rows($result) == 0) {
+                    $_DISABLED = 'DISABLED';
+                }
+                ?>
+                <select name="player_id" id="players" <?php echo $_DISABLED;?>>
                     <?php
-                    $query = "SELECT player_id, players.name AS 'name', teams.name AS 'team_name' FROM players, teams WHERE owned_by_team_id = team_id ORDER by team_name ASC, name ASC";
-                    $result = mysql_query($query);
                     while ($row = mysql_fetch_assoc($result)) {
-                        echo "<option value='$row[player_id]' ".(($player_id == $row['player_id']) ? 'SELECTED' : '').">$row[team_name]: $row[name] </option>\n";
+                        echo "<option value='$row[player_id]' ".(($player_id == $row['player_id']) ? 'SELECTED' : '').">$row[f_tname]: $row[name] </option>\n";
                     }
                     ?>
-                </select>                
+                </select>           
                 <br><br>
-                <?php echo $lng->getTrn('title', __CLASS__);?><br>
-                <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
-                <input type="text" name="bounty" size="60" maxlength="100" value="<?php echo $bounty;?>">
+                <b><?php echo $lng->getTrn('g_title', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('title', __CLASS__);?><br>
+                <input type="text" name="bounty" size="60" maxlength="100" value="<?php echo $bounty;?>" <?php echo $_DISABLED;?>>
                 <br><br>
-                <?php echo $lng->getTrn('about', __CLASS__);?><br>
-                <b><?php echo $lng->getTrn('g_about', __CLASS__);?>:</b><br>
-                <textarea name="why" rows="15" cols="100"><?php echo $why;?></textarea>
+                <b><?php echo $lng->getTrn('g_about', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('about', __CLASS__);?><br>
+                <textarea name="why" rows="15" cols="100" <?php echo $_DISABLED;?>><?php echo $why;?></textarea>
                 <br><br>
-                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit">
+                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit" <?php echo $_DISABLED;?>>
                 </form>
-
                 <br>
                 <?php
                 echo $lng->getTrn('note', __CLASS__);
@@ -259,26 +318,38 @@ public static function makeList($ALLOW_EDIT)
     }
 
     /* Print the wanted players */
+    
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
+    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
     if ($ALLOW_EDIT) {
-        echo "<a href='handler.php?type=wanted&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
+        echo "<br><a href='handler.php?type=wanted&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
-    $wanted = Wanted::getWanted();
-    
-    foreach ($wanted as $x) {
-        $w = $x['wanted'];
-        $p = $x['player'];
-    
-        ?>    
-        <div class="boxWide" style="width: 70%; margin: 20px auto 20px auto;">
-            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('wanted', __CLASS__).": <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$p->player_id,false,false)."'>$p->name</a>";?></div>
+    self::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
+    HTMLOUT::frame_end();
+}
+
+public static function printList($node, $node_id, $ALLOW_EDIT)
+{
+    global $lng;
+    $entries = self::getWanted($node,$node_id);
+    echo "<table style='table-layout:fixed; width:".(count($entries) == 1 ? 50 : 100)."%;'><tr>"; # The percentage difference is a HTML layout fix.
+    $i = 1;
+    foreach ($entries as $e) {
+        if ($i > 2) {
+            echo "\n</tr>\n<tr>\n";
+            $i = 1;
+        }
+        ?>
+        <td style='width:50%;' valign='top'>
+        <div class="boxWide" style="width: 80%; margin: 20px auto 20px auto;">
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('wanted', __CLASS__).": <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a>";?></div>
             <div class="boxBody">
                 <table class="common">
                     <tr>
                         <td colspan="2" align="left" valign="top">
                             <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
-                            <?php echo $w->bounty;?>
+                            <?php echo $e->bounty;?>
                             <br>
                         </td>
                     </tr>
@@ -287,14 +358,14 @@ public static function makeList($ALLOW_EDIT)
                         <br>
                         <b><?php echo $lng->getTrn('g_about', __CLASS__);?>:</b><br>
                         <?php 
-                        echo $w->why;
-                        if ($p->is_dead) {
+                        echo $e->why;
+                        if ($e->date_died) {
                             echo "<br><br><font color='red'><b>".$lng->getTrn('killed', __CLASS__)."</b></font>\n";
                         }
                         ?>
                         </td>
-                        <td align="right" style="width: 30%;">
-                            <img border='0px' height='100' width='100' alt='player picture' src="<?php $img = new ImageSubSys(T_OBJ_PLAYER, $p->player_id); echo $img->getPath();?>">
+                        <td align="right" style="width: 25%;">
+                            <img border='0px' height='75' width='75' alt='player picture' src="<?php $img = new ImageSubSys(T_OBJ_PLAYER, $e->pid); echo $img->getPath();?>">
                         </td>
                     </tr>
                     <tr>
@@ -302,15 +373,15 @@ public static function makeList($ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td align="left">
-                        <?php echo $lng->getTrn('posted', __CLASS__).' '. $w->date;?>
+                        <?php echo $lng->getTrn('posted', __CLASS__).' '.textdate($e->date,true);?>
                         </td>
                         <td align="right">
                         <?php
                         if ($ALLOW_EDIT) {
                             ?> 
-                            <a href="handler.php?type=wanted&amp;action=edit&amp;wanted_id=<?php echo $w->wanted_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
+                            <a href="handler.php?type=wanted&amp;action=edit&amp;wanted_id=<?php echo $e->wanted_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
                             &nbsp;
-                            <a href="handler.php?type=wanted&amp;action=delete&amp;wanted_id=<?php echo $w->wanted_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
+                            <a href="handler.php?type=wanted&amp;action=delete&amp;wanted_id=<?php echo $e->wanted_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
                             <?php
                         }
                         ?>
@@ -319,10 +390,11 @@ public static function makeList($ALLOW_EDIT)
                 </table>
             </div>
         </div>
+        </td>
         <?php
+        $i++;
     }
-    HTMLOUT::frame_end();
+    echo "</tr></table>";
 }
 }
-
 ?>
