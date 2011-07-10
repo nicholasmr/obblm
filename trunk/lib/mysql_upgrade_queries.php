@@ -5,6 +5,7 @@
 */
 
 $upgradeSQLs = array(
+    '090-091' => array(),
     '080-090' => array(
         // UnAjusted (ua) values now stored too.
         SQLUpgrade::runIfColumnNOTExists('players', 'ma_ua', 'ALTER TABLE players ADD COLUMN ma_ua TINYINT SIGNED'),
@@ -184,10 +185,12 @@ for example running "UPDATE teams SET f_lid = 5 WHERE f_lid = 0", will tie the r
 If you don\'t do this the non-tied teams may not be scheduled to play in any matches!',
 ),
 '080-090' => array(),
+'090-091' => array(),
 );
 
 $upgradeSettings = array(
-'075-080' => array('syncall' => true),
-'080-090' => array('syncall' => false),
+'075-080' => array('syncall' => true,  'sync_gamedata' => true,  'reload_indexes' => true),
+'080-090' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
+'090-091' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 );
 ?>
