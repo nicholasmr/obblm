@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -73,21 +73,7 @@ public function delete()
  * Statics
  ***************/
 
-public static function getHOF($n = false)
-{
-    $HOF = array();
-
-    $result = mysql_query("SELECT hof_id, pid FROM hof ORDER BY date DESC" . (($n) ? " LIMIT $n" : ''));
-    if ($result && mysql_num_rows($result) > 0) {
-        while ($row = mysql_fetch_assoc($result)) {
-            array_push($HOF, array('hof' => new HOF($row['hof_id']), 'player' => new Player($row['pid'])));
-        }
-    }
-    
-    return $HOF;
-}
-
-public static function getHOF2($node, $id, $N = false)
+public static function getHOF($node, $id, $N = false)
 {
     $list = array();
     if (!$node && !$id) { # Special case
@@ -142,12 +128,7 @@ public static function getHOF2($node, $id, $N = false)
             foreach ($row as $f => $val) {
                 $entry->$f = $val;
             }
-#            if ($_IS_OBJ) {
-                $list[] = $entry;
-#            }
-#            else {
-#                $list[$row['lid']][] = $entry;
-#            }
+            $list[] = $entry;
         }
     }
     return $list;
@@ -231,7 +212,6 @@ public static function makeList($ALLOW_EDIT) {
     
     global $lng, $coach, $settings;
     HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
-    title($lng->getTrn('name', __CLASS__));
     
     /* A new entry was sent. Add it to system */
     
@@ -243,19 +223,20 @@ public static function makeList($ALLOW_EDIT) {
         switch ($_GET['action'])
         {
             case 'edit':
-                $h = new HOF($_GET['hof_id']);
-                status($h->edit($_POST['title'], $_POST['about']));
+                $e = new self($_GET['hof_id']);
+                status($e->edit($_POST['title'], $_POST['about']));
                 break;
             
             case 'new':
-                status(HOF::create($_POST['player_id'], $_POST['title'], $_POST['about']));
+                status(self::create($_POST['player_id'], $_POST['title'], $_POST['about']));
                 break;
         }
     }
+    title($lng->getTrn('name', __CLASS__));    
     
     /* Was a request for a new entry made? */ 
     
-    elseif (isset($_GET['action']) && $ALLOW_EDIT) {
+    if (isset($_GET['action']) && $ALLOW_EDIT) {
         
         // Default schema values. These are empty unless "edit" is chosen.
         $player_id = false;
@@ -266,9 +247,9 @@ public static function makeList($ALLOW_EDIT) {
         {
             case 'delete':
                 if (isset($_GET['hof_id']) && is_numeric($_GET['hof_id'])) {
-                    $h = new HOF($_GET['hof_id']);
-                    status($h->delete());
-                    unset($h);
+                    $e = new self($_GET['hof_id']);
+                    status($e->delete());
+                    unset($e);
                 }
                 else {
                     fatal('Sorry. You did not specify which HOF-id you wish to delete.');
@@ -277,10 +258,11 @@ public static function makeList($ALLOW_EDIT) {
                 
             case 'edit':
                 if (isset($_GET['hof_id']) && is_numeric($_GET['hof_id'])) {
-                    $h = new HOF($_GET['hof_id']);
-                    $player_id = $h->pid;
-                    $title = $h->title;
-                    $about = $h->about;
+                    $e = new self($_GET['hof_id']);
+                    $player_id = $e->pid;
+                    $title = $e->title;
+                    $about = $e->about;
+                    $_POST['lid'] = get_alt_col('mv_players', 'f_pid', $player_id, 'f_lid');
                 }
                 else {
                     fatal('Sorry. You did not specify which HOF-id you wish to edit.');
@@ -289,29 +271,42 @@ public static function makeList($ALLOW_EDIT) {
                 // Fall-through to "new" !!!
 
             case 'new':
+                echo "<a href='handler.php?type=hof'><-- ".$lng->getTrn('common/back')."</a><br><br>";
+                $_DISABLED = !isset($_POST['lid']) ? 'DISABLED' : '';
+                $node_id = isset($_POST['lid']) ? $_POST['lid'] : null;
                 ?>
+                <form name="STS" method="POST" enctype="multipart/form-data">
+                <b><?php echo $lng->getTrn('common/league');?></b><br>
+                <?php
+                echo HTMLOUT::nodeList(T_NODE_LEAGUE, 'lid', array(), array(), array('sel_id' => $node_id));
+                ?>
+                <input type='submit' value='<?php echo $lng->getTrn('common/select');?>'>
+                </form>
+                <br>
                 <form method="POST">
-                <b><?php echo $lng->getTrn('player', __CLASS__);?>:</b><br>
-                <i><?php echo $lng->getTrn('sort_hint', __CLASS__);?></i><br>
-                <select name="player_id" id="players">
+                <b><?php echo $lng->getTrn('player', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('sort_hint', __CLASS__);?><br>
+                <?php
+                $query = "SELECT player_id, f_tname, name FROM players, mv_players WHERE player_id = f_pid AND f_lid = $node_id ORDER by f_tname ASC, name ASC";
+                $result = mysql_query($query);
+                if ($result && mysql_num_rows($result) == 0) {
+                    $_DISABLED = 'DISABLED';
+                }
+                ?>
+                <select name="player_id" id="players" <?php echo $_DISABLED;?>>
                     <?php
-                    $query = "SELECT player_id, players.name AS 'name', teams.name AS 'team_name' FROM players, teams WHERE owned_by_team_id = team_id ORDER by team_name ASC, name ASC";
-                    $result = mysql_query($query);
                     while ($row = mysql_fetch_assoc($result)) {
-                        echo "<option value='$row[player_id]' ".(($player_id == $row['player_id']) ? 'SELECTED' : '').">$row[team_name]: $row[name] </option>\n";
+                        echo "<option value='$row[player_id]' ".(($player_id == $row['player_id']) ? 'SELECTED' : '').">$row[f_tname]: $row[name] </option>\n";
                     }
                     ?>
-                </select>                
+                </select>
                 <br><br>
-                <?php echo $lng->getTrn('title', __CLASS__);?><br>
-                <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
-                <input type="text" name="title" size="60" maxlength="100" value="<?php echo $title;?>">
+                <b><?php echo $lng->getTrn('g_title', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('title', __CLASS__);?><br>
+                <input type="text" name="title" size="60" maxlength="100" value="<?php echo $title;?>" <?php echo $_DISABLED;?>>
                 <br><br>
-                <?php echo $lng->getTrn('about', __CLASS__);?><br>
-                <b><?php echo $lng->getTrn('g_about', __CLASS__);?>:</b><br>
-                <textarea name="about" rows="15" cols="100"><?php echo $about;?></textarea>
+                <b><?php echo $lng->getTrn('g_about', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('about', __CLASS__);?><br>
+                <textarea name="about" rows="15" cols="100" <?php echo $_DISABLED;?>><?php echo $about;?></textarea>
                 <br><br>
-                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit">
+                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit" <?php echo $_DISABLED;?>>
                 </form>
                 <?php                
         
@@ -329,42 +324,24 @@ public static function makeList($ALLOW_EDIT) {
         echo "<br><a href='handler.php?type=hof&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
-    $entries = HOF::getHOF2($sel_node,$sel_node_id);
-    
-    // USE HTMLOUT::sort_table() instead!!
-/*
-    echo "<br>";
-    echo "<table class='common'>";
-    echo "<tr class='commonhead'><td colspan='9'><b>".$lng->getTrn('name', __CLASS__)."</b></td</tr>";
-    echo "<tr style='font-style:italic;'>
-        <td> </td>
-        <td>".$lng->getTrn('common/player')."</td>
-        <td>".$lng->getTrn('common/value')."</td>
-        <td>".$lng->getTrn('common/dead')."</td>
-        <td>".$lng->getTrn('common/league')."</td>
-        <td>".$lng->getTrn('common/team')."</td>
-        <td>".$lng->getTrn('common/edit')."</td>
-        <td>".$lng->getTrn('common/delete')."</td>
-    </tr>\n";
-    echo "<tr><td colspan='9'><hr></td></tr>";
-    */
+    self::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
+    HTMLOUT::frame_end();
+}
+
+public static function printList($node, $node_id, $ALLOW_EDIT)
+{
+    global $lng;
+    $entries = self::getHOF($node,$node_id);
+    echo "<table style='table-layout:fixed; width:".(count($entries) == 1 ? 50 : 100)."%;'><tr>"; # The percentage difference is a HTML layout fix.
+    $i = 1;
     foreach ($entries as $e) {
-/*    $img = new ImageSubSys(T_OBJ_PLAYER, $e->pid);
-    $imgtag = "<img border='0px' height='30' width='30' alt='player picture' src=".$img->getPath().">";
-    echo "<tr>
-        <td>$imgtag</td>
-        <td>".$e->name."</td>
-        <td>".$e->value/1000 .'k'."</td>
-        <td>".$e->date_died."</td>
-        <td>".$e->lid."</td>
-        <td>".$e->f_tname."</td>
-        <td>".$lng->getTrn('common/edit')."</td>
-        <td>".$lng->getTrn('common/delete')."</td>
-    </tr>\n";
-        continue;
-        */
-        ?>    
-        <div class="boxWide" style="width: 70%; margin: 20px auto 20px auto;">
+        if ($i > 2) {
+            echo "\n</tr>\n<tr>\n";
+            $i = 1;
+        }
+        ?>
+        <td style='width:50%;' valign='top'>
+        <div class="boxWide" style="width: 80%; margin: 20px auto 20px auto;">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a> ".$lng->getTrn('from', __CLASS__)." <a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e->f_tid,false,false)."'>$e->f_tname</a>: $e->title";?></div>
             <div class="boxBody">
                 <table class="common">
@@ -372,8 +349,8 @@ public static function makeList($ALLOW_EDIT) {
                         <td align="left" valign="top">
                             <?php echo $e->about;?>
                         </td>
-                        <td align="right">
-                            <img border='0px' height='100' width='100' alt='player picture' src="<?php $img = new ImageSubSys(T_OBJ_PLAYER, $e->pid); echo $img->getPath();?>">
+                        <td align="right" style='width:25%;'>
+                            <img border='0px' height='75' width='75' alt='player picture' src="<?php $img = new ImageSubSys(T_OBJ_PLAYER, $e->pid); echo $img->getPath();?>">
                         </td>
                     </tr>
                     <tr>
@@ -381,7 +358,7 @@ public static function makeList($ALLOW_EDIT) {
                     </tr>
                     <tr>
                         <td align="left">
-                        <?php echo $lng->getTrn('posted', __CLASS__).' '. $e->date;?>
+                        <?php echo $lng->getTrn('posted', __CLASS__).' '. textdate($e->date,true);?>
                         </td>
                         <td colspan="2" align="right">
                         <?php
@@ -398,11 +375,11 @@ public static function makeList($ALLOW_EDIT) {
                 </table>
             </div>
         </div>
+        </td>
         <?php
+        $i++;
     }
-    echo "</table>";
-    HTMLOUT::frame_end();
+    echo "</tr></table>";
 }
 }
-
 ?>

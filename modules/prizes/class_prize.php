@@ -152,9 +152,9 @@ public static function getPrizesString($obj, $id)
 {
     global $lng;
     // ONLY FOR T_OBJ_*
-    $prizes = Prize::getPrizes($obj, $id);
+    $prizes = self::getPrizes($obj, $id);
     $str = array();
-    $ptypes = Prize::getTypes();
+    $ptypes = self::getTypes();
     foreach ($ptypes as $idx => $type) {
         $cnt = count(array_filter($prizes, create_function('$p', 'return ($p->type == '.$idx.');')));
         if ($cnt > 0)
@@ -165,7 +165,7 @@ public static function getPrizesString($obj, $id)
 
 public static function create($type, $tid, $trid, $title, $txt)
 {
-    if (!in_array($type, array_keys(Prize::getTypes())))
+    if (!in_array($type, array_keys(self::getTypes())))
         return false;
 
     // Delete if already exists for type and tour.
@@ -260,7 +260,7 @@ public static function makeList($ALLOW_EDIT)
         switch ($_GET['action'])
         {
             case 'new':
-                status(Prize::create($_POST['ptype'], $_POST['tid'], $_POST['trid'], $_POST['title'], $_POST['txt']));
+                status(self::create($_POST['ptype'], $_POST['tid'], $_POST['trid'], $_POST['title'], $_POST['txt']));
                 break;
         }
     }
@@ -284,10 +284,11 @@ public static function makeList($ALLOW_EDIT)
                 break;
                 
             case 'new':
-                echo "<a href='handler.php?type=prize'><--".$lng->getTrn('common/back')."</a><br><br>";
+                echo "<a href='handler.php?type=prize'><-- ".$lng->getTrn('common/back')."</a><br><br>";
+                $_DISABLED = !isset($_POST['trid']) ? 'DISABLED' : '';
                 ?>
                 <form name="STS" method="POST" enctype="multipart/form-data">
-                <b><?php echo $lng->getTrn('common/tournament');?>:</b><br>
+                <b><?php echo $lng->getTrn('common/tournament');?></b><br>
                 <?php
                 echo HTMLOUT::nodeList(T_NODE_TOURNAMENT, 'trid');
                 ?>
@@ -295,8 +296,8 @@ public static function makeList($ALLOW_EDIT)
                 </form>
                 <br>
                 <form method="POST" enctype="multipart/form-data">
-                <b><?php echo $lng->getTrn('team', __CLASS__);?>:</b><br>
-                <select name="tid">
+                <b><?php echo $lng->getTrn('team', __CLASS__);?></b><br>
+                <select name="tid" <?php echo $_DISABLED;?>>
                     <?php
                     $teams = isset($_POST['trid']) ? Team::getTeams(false,array(get_parent_id(T_NODE_TOURNAMENT, (int) $_POST['trid'], T_NODE_LEAGUE)),true) : array();
                     foreach ($teams as $tid => $name) {
@@ -305,25 +306,23 @@ public static function makeList($ALLOW_EDIT)
                     ?>
                 </select>
                 <br><br>
-                <b><?php echo $lng->getTrn('kind', __CLASS__);?>:</b><br>
-                <select name="ptype">
+                <b><?php echo $lng->getTrn('kind', __CLASS__);?></b><br>
+                <select name="ptype" <?php echo $_DISABLED;?>>
                     <?php
-                    foreach (Prize::getTypes() as $ptype => $desc) {
+                    foreach (self::getTypes() as $ptype => $desc) {
                         echo "<option value='$ptype'>$desc</option>\n";
                     }
                     ?>
                 </select>
                 <br><br>
-                <?php echo $lng->getTrn('title', __CLASS__);?><br>
-                <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
-                <input type="text" name="title" size="60" maxlength="100" value="">
+                <?php echo '<b>'.$lng->getTrn('g_title', __CLASS__).'</b> &mdash; '.$lng->getTrn('title', __CLASS__);?><br>
+                <input type="text" name="title" size="60" maxlength="100" value="" <?php echo $_DISABLED;?>>
                 <br><br>
-                <?php echo $lng->getTrn('about', __CLASS__);?><br>
-                <b><?php echo $lng->getTrn('g_about', __CLASS__);?>:</b><br>
-                <textarea name="txt" rows="15" cols="100"></textarea>
+                <?php echo '<b>'.$lng->getTrn('g_about', __CLASS__).'</b> &mdash; '.$lng->getTrn('about', __CLASS__);?><br>
+                <textarea name="txt" rows="15" cols="100" <?php echo $_DISABLED;?>></textarea>
                 <br><br><br>
-                <input type='hidden' name='trid' value='<?php echo $_POST['trid'];?>'>
-                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit" <?php echo empty($teams) ? 'DISABLED' : '';?>>
+                <input type='hidden' name='trid' value='<?php echo $_DISABLED ? 0 : $_POST['trid'];?>'>
+                <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit" <?php echo $_DISABLED;?>>
                 </form>
                 <br>
                 <?php
@@ -341,7 +340,7 @@ public static function makeList($ALLOW_EDIT)
         echo "<br><a href='handler.php?type=prize&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
-    Prize::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
+    self::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
     HTMLOUT::frame_end();
 }
 
@@ -349,7 +348,7 @@ public static function makeList($ALLOW_EDIT)
 public static function printList($node, $node_id, $ALLOW_EDIT)
 {
     global $lng;
-    $prizes = Prize::getPrizes($node, $node_id);
+    $prizes = self::getPrizes($node, $node_id);
     $FOLD_UP = false; # (count($prizes) > 20);
     foreach ($prizes as $trid => $tourprizes) {
         $tname = get_alt_col('tours', 'tour_id', $trid, 'name');
@@ -360,17 +359,17 @@ public static function printList($node, $node_id, $ALLOW_EDIT)
             <div class="boxBody">
                 <table class="common" style='border-spacing: 10px;'>
                     <tr>
-                        <td><b>Prize&nbsp;type</b></td>
-                        <td align='center'><b>Team</b></td>
+                        <td style='width:25%;'><b>Prize&nbsp;type</b></td>
+                        <td><b>Team</b></td>
                         <td><b>About</b></td>
                     </tr>
                     <?php
-                    $ptypes = Prize::getTypes();
+                    $ptypes = self::getTypes();
                     foreach ($tourprizes as $pr) {
                         echo "<tr><td colspan='4'><hr></td></td>";
                         echo "<tr>\n";
-                        $delete = ($ALLOW_EDIT) ? '<a href="handler.php?type=prize&amp;action=delete&amp;prid='.$pr->prize_id.'">'.$lng->getTrn('common/delete').'</a>' : '';
-                        echo "<td valign='top'><i>".preg_replace('/\s/', '&nbsp;', $ptypes[$pr->type])."</i>&nbsp;$delete</td>\n";
+                        $delete = ($ALLOW_EDIT) ? '&nbsp;<a href="handler.php?type=prize&amp;action=delete&amp;prid='.$pr->prize_id.'">'.$lng->getTrn('common/delete').'</a>' : '';
+                        echo "<td valign='top'>".preg_replace('/\s/', '&nbsp;', $ptypes[$pr->type])."&nbsp;$delete</td>\n";
                         echo "<td valign='top'><b>".preg_replace('/\s/', '&nbsp;', get_alt_col('teams', 'team_id', $pr->team_id, 'name'))."</b></td>\n";
                         echo "<td valign='top'>".$pr->title."<br><br><i>".$pr->txt."</i></td>\n";
                         echo "</tr>\n";
