@@ -21,26 +21,25 @@
  *
  */
 
-class HOF implements ModuleInterface
+class Wanted implements ModuleInterface
 {
-
 /***************
  * Properties 
  ***************/
 
-public $hof_id      = 0;
+public $wanted_id   = 0;
 public $pid         = 0;
 public $date        = '';
-public $title       = '';
-public $about       = '';
+public $why         = '';
+public $bounty      = '';
 
 /***************
  * Methods 
  ***************/    
 
-function __construct($hof_id) 
+function __construct($wanted_id) 
 {
-    $result = mysql_query("SELECT * FROM hof WHERE hof_id = $hof_id");
+    $result = mysql_query("SELECT * FROM wanted WHERE wanted_id = $wanted_id");
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
             foreach ($row as $key => $val) {
@@ -50,14 +49,14 @@ function __construct($hof_id)
     }
 }
 
-public function edit($title, $about) 
+public function edit($why, $bounty) 
 {
-    if (mysql_query("UPDATE hof SET 
-                    title = '".mysql_real_escape_string($title)."', 
-                    about = '".mysql_real_escape_string($about)."' 
-                    WHERE hof_id = $this->hof_id")) {
-        $this->title = $title;
-        $this->about = $about;
+    if (mysql_query("UPDATE wanted SET 
+                    why = '".mysql_real_escape_string($why)."', 
+                    bounty = '".mysql_real_escape_string($bounty)."' 
+                    WHERE wanted_id = $this->wanted_id")) {
+        $this->why = $why;
+        $this->bounty = $bounty;
         return true;
     }
     else
@@ -66,25 +65,25 @@ public function edit($title, $about)
 
 public function delete()
 {
-    return (mysql_query("DELETE FROM hof WHERE hof_id = $this->hof_id"));
+    return (mysql_query("DELETE FROM wanted WHERE wanted_id = $this->wanted_id"));
 }
 
 /***************
  * Statics
  ***************/
 
-public static function getHOF($node, $id, $N = false)
+public static function getWanted($node, $id, $N = false)
 {
     $list = array();
     if (!$node && !$id) { # Special case
         $node = 'ALL';
     }
-    $_TBL = 'hof'; # Table name.
+    $_TBL = 'wanted'; # Table name.
     $_IS_OBJ = in_array($node, array(T_OBJ_COACH, T_OBJ_TEAM));
     $_LIMIT = ($N && is_numeric($N)) ? " LIMIT $N" : '';
     $_ORDER_BY__NODE = " ORDER BY $_TBL.date DESC ";
     $_ORDER_BY__OBJ = " ORDER BY $_TBL.date DESC ";
-    $_COMMON_PLAYERS_FIELDS = "players.owned_by_team_id AS 'f_tid', players.f_tname, players.f_cid, players.f_cname, players.date_died, players.value, players.name, players.f_pos_name"; # From players table.
+    $_COMMON_PLAYERS_FIELDS = "players.owned_by_team_id AS 'f_tid', players.f_tname, players.f_cid, players.f_cname, players.date_died, players.value, players.name, players.f_pos_name, players.date_died"; # From players table.
     switch ($node) {
         case T_NODE_LEAGUE:
             if (!isset($_WHERE)) { 
@@ -134,14 +133,14 @@ public static function getHOF($node, $id, $N = false)
     return $list;
 }
 
-public static function create($player_id, $title, $about)
+public static function create($player_id, $why, $bounty)
 {
-    return (mysql_query("
-            INSERT INTO hof 
-            (pid, title, about, date) 
-            VALUES 
-            ($player_id, '".mysql_real_escape_string($title)."', '".mysql_real_escape_string($about)."', NOW())
-            "));
+        return (mysql_query("
+                INSERT INTO wanted 
+                (pid, why, bounty, date) 
+                VALUES 
+                ($player_id, '".mysql_real_escape_string($why)."', '".mysql_real_escape_string($bounty)."', NOW())
+                "));
 }
 
 /***************
@@ -150,7 +149,7 @@ public static function create($player_id, $title, $about)
 
 public static function main($argv) 
 {
-    // func may be "isInHOF" or "makeList".
+    // func may be "isWanted" or "makeList".
     $func = array_shift($argv);
     return call_user_func_array(array(__CLASS__, $func), $argv);
 }
@@ -159,7 +158,7 @@ public static function getModuleAttributes()
 {
     return array(
         'author'     => 'Nicholas Mossor Rathmann',
-        'moduleName' => 'Hall of fame',
+        'moduleName' => 'Wanted',
         'date'       => '2008',
         'setCanvas'  => false,
     );
@@ -168,12 +167,12 @@ public static function getModuleAttributes()
 public static function getModuleTables()
 {
     return array(
-        'hof' => array(
-            'hof_id' => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+        'wanted' => array(
+            'wanted_id' => 'MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
             'pid'    => 'MEDIUMINT UNSIGNED',
             'date'   => 'DATETIME',
-            'title'  => 'TEXT',
-            'about'  => 'TEXT',
+            'why'    => 'TEXT',
+            'bounty' => 'TEXT',
         )
     );
 }
@@ -182,16 +181,16 @@ public static function getModuleUpgradeSQL()
 {
     return array(
         '075-080' => array(
-            'CREATE TABLE IF NOT EXISTS hof
+            'CREATE TABLE IF NOT EXISTS wanted
             (
-                    hof_id  MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    pid     MEDIUMINT UNSIGNED,
-                    date    DATETIME,
-                    title   TEXT,
-                    about   TEXT
+                    wanted_id   MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    pid         MEDIUMINT UNSIGNED,
+                    date        DATETIME,
+                    why         TEXT,
+                    bounty      TEXT
             )',
-            'INSERT INTO hof (pid, date, title, about) SELECT f_id, date, txt2, txt FROM texts WHERE type = 5 ORDER BY date ASC',
-            'DELETE FROM texts WHERE type = 5',
+            'INSERT INTO wanted (pid, date, why, bounty) SELECT f_id, date, txt, txt2 FROM texts WHERE type = 6 ORDER BY date ASC',
+            'DELETE FROM texts WHERE type = 6',
         ),
     );
 }
@@ -202,14 +201,14 @@ public static function triggerHandler($type, $argv){}
  * main() related.
  ***************/
 
-public static function isInHOF($pid) 
+public static  function isWanted($pid) 
 {
-    $query = "SELECT pid FROM hof WHERE pid = $pid";
+    $query = "SELECT pid FROM wanted WHERE pid = $pid";
     return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
 }
 
 public static function makeList($ALLOW_EDIT) {
-    
+
     global $lng, $coach, $settings;
     HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
     
@@ -217,22 +216,22 @@ public static function makeList($ALLOW_EDIT) {
     
     if (isset($_POST['player_id']) && $ALLOW_EDIT) {
         if (get_magic_quotes_gpc()) {
-            $_POST['title'] = stripslashes($_POST['title']);
-            $_POST['about'] = stripslashes($_POST['about']);
+            $_POST['bounty'] = stripslashes($_POST['bounty']);
+            $_POST['why']    = stripslashes($_POST['why']);
         }
         switch ($_GET['action'])
         {
             case 'edit':
-                $e = new self($_GET['hof_id']);
-                status($e->edit($_POST['title'], $_POST['about']));
+                $e = new self($_GET['wanted_id']);
+                status($e->edit($_POST['why'], $_POST['bounty']));
                 break;
             
             case 'new':
-                status(self::create($_POST['player_id'], $_POST['title'], $_POST['about']));
+                status(self::create($_POST['player_id'], $_POST['why'], $_POST['bounty']));
                 break;
         }
     }
-    title($lng->getTrn('name', __CLASS__));    
+    title($lng->getTrn('name', __CLASS__));
     
     /* Was a request for a new entry made? */ 
     
@@ -240,38 +239,38 @@ public static function makeList($ALLOW_EDIT) {
         
         // Default schema values. These are empty unless "edit" is chosen.
         $player_id = false;
-        $title = '';
-        $about = '';
+        $bounty = '';
+        $why = '';
         
         switch ($_GET['action'])
         {
             case 'delete':
-                if (isset($_GET['hof_id']) && is_numeric($_GET['hof_id'])) {
-                    $e = new self($_GET['hof_id']);
+                if (isset($_GET['wanted_id']) && is_numeric($_GET['wanted_id'])) {
+                    $e = new self($_GET['wanted_id']);
                     status($e->delete());
                     unset($e);
                 }
                 else {
-                    fatal('Sorry. You did not specify which HOF-id you wish to delete.');
+                    fatal('Sorry. You did not specify which wanted-id you wish to delete.');
                 }                
                 break;
                 
             case 'edit':
-                if (isset($_GET['hof_id']) && is_numeric($_GET['hof_id'])) {
-                    $e = new self($_GET['hof_id']);
+                if (isset($_GET['wanted_id']) && is_numeric($_GET['wanted_id'])) {
+                    $e = new self($_GET['wanted_id']);
                     $player_id = $e->pid;
-                    $title = $e->title;
-                    $about = $e->about;
+                    $why = $e->why;
+                    $bounty = $e->bounty;
                     $_POST['lid'] = get_alt_col('mv_players', 'f_pid', $player_id, 'f_lid');
                 }
                 else {
-                    fatal('Sorry. You did not specify which HOF-id you wish to edit.');
+                    fatal('Sorry. You did not specify which wanted-id you wish to edit.');
                 }
                 
                 // Fall-through to "new" !!!
 
             case 'new':
-                echo "<a href='handler.php?type=hof'><-- ".$lng->getTrn('common/back')."</a><br><br>";
+                echo "<a href='handler.php?type=wanted'><-- ".$lng->getTrn('common/back')."</a><br><br>";
                 $_DISABLED = !isset($_POST['lid']) ? 'DISABLED' : '';
                 $node_id = isset($_POST['lid']) ? $_POST['lid'] : null;
                 ?>
@@ -298,30 +297,32 @@ public static function makeList($ALLOW_EDIT) {
                         echo "<option value='$row[player_id]' ".(($player_id == $row['player_id']) ? 'SELECTED' : '').">$row[f_tname]: $row[name] </option>\n";
                     }
                     ?>
-                </select>
+                </select>           
                 <br><br>
                 <b><?php echo $lng->getTrn('g_title', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('title', __CLASS__);?><br>
-                <input type="text" name="title" size="60" maxlength="100" value="<?php echo $title;?>" <?php echo $_DISABLED;?>>
+                <input type="text" name="bounty" size="60" maxlength="100" value="<?php echo $bounty;?>" <?php echo $_DISABLED;?>>
                 <br><br>
                 <b><?php echo $lng->getTrn('g_about', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('about', __CLASS__);?><br>
-                <textarea name="about" rows="15" cols="100" <?php echo $_DISABLED;?>><?php echo $about;?></textarea>
+                <textarea name="why" rows="15" cols="100" <?php echo $_DISABLED;?>><?php echo $why;?></textarea>
                 <br><br>
                 <input type="submit" value="<?php echo $lng->getTrn('submit', __CLASS__);?>" name="Submit" <?php echo $_DISABLED;?>>
                 </form>
-                <?php                
+                <br>
+                <?php
+                echo $lng->getTrn('note', __CLASS__);
         
                 return;
                 break;
 
         }
     }
-    
-    /* Print the hall of fame */
+
+    /* Print the wanted players */
     
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
     list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
     if ($ALLOW_EDIT) {
-        echo "<br><a href='handler.php?type=hof&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
+        echo "<br><a href='handler.php?type=wanted&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
     self::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
@@ -331,7 +332,7 @@ public static function makeList($ALLOW_EDIT) {
 public static function printList($node, $node_id, $ALLOW_EDIT)
 {
     global $lng;
-    $entries = self::getHOF($node,$node_id);
+    $entries = self::getWanted($node,$node_id);
     echo "<table style='table-layout:fixed; width:".(count($entries) == 1 ? 50 : 100)."%;'><tr>"; # The percentage difference is a HTML layout fix.
     $i = 1;
     foreach ($entries as $e) {
@@ -342,14 +343,28 @@ public static function printList($node, $node_id, $ALLOW_EDIT)
         ?>
         <td style='width:50%;' valign='top'>
         <div class="boxWide" style="width: 80%; margin: 20px auto 20px auto;">
-            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a> ".$lng->getTrn('from', __CLASS__)." <a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e->f_tid,false,false)."'>$e->f_tname</a>: $e->title";?></div>
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('wanted', __CLASS__).": <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a>";?></div>
             <div class="boxBody">
                 <table class="common">
                     <tr>
-                        <td align="left" valign="top">
-                            <?php echo $e->about;?>
+                        <td colspan="2" align="left" valign="top">
+                            <b><?php echo $lng->getTrn('g_title', __CLASS__);?>:</b><br>
+                            <?php echo $e->bounty;?>
+                            <br>
                         </td>
-                        <td align="right" style='width:25%;'>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="top">
+                        <br>
+                        <b><?php echo $lng->getTrn('g_about', __CLASS__);?>:</b><br>
+                        <?php 
+                        echo $e->why;
+                        if ($e->date_died) {
+                            echo "<br><br><font color='red'><b>".$lng->getTrn('killed', __CLASS__)."</b></font>\n";
+                        }
+                        ?>
+                        </td>
+                        <td align="right" style="width: 25%;">
                             <img border='0px' height='75' width='75' alt='player picture' src="<?php $img = new ImageSubSys(T_OBJ_PLAYER, $e->pid); echo $img->getPath();?>">
                         </td>
                     </tr>
@@ -358,15 +373,15 @@ public static function printList($node, $node_id, $ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td align="left">
-                        <?php echo $lng->getTrn('posted', __CLASS__).' '. textdate($e->date,true);?>
+                        <?php echo $lng->getTrn('posted', __CLASS__).' '.textdate($e->date,true);?>
                         </td>
-                        <td colspan="2" align="right">
+                        <td align="right">
                         <?php
                         if ($ALLOW_EDIT) {
                             ?> 
-                            <a href="handler.php?type=hof&amp;action=edit&amp;hof_id=<?php echo $e->hof_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
+                            <a href="handler.php?type=wanted&amp;action=edit&amp;wanted_id=<?php echo $e->wanted_id;?>"><?php echo $lng->getTrn('edit', __CLASS__);?></a>
                             &nbsp;
-                            <a href="handler.php?type=hof&amp;action=delete&amp;hof_id=<?php echo $e->hof_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
+                            <a href="handler.php?type=wanted&amp;action=delete&amp;wanted_id=<?php echo $e->wanted_id;?>"><?php echo $lng->getTrn('del', __CLASS__);?></a> 
                             <?php
                         }
                         ?>
