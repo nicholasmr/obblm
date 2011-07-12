@@ -376,7 +376,7 @@ public static function report() {
             'fame2'         => (int) $_POST['fame2'],
             'tv1'           => (int) $_POST['tv1']*1000,
             'tv2'           => (int) $_POST['tv2']*1000,
-        )));
+        )), 'Saving match report');
         if (!empty($_POST['summary'])) {
             $m->saveText($_POST['summary']); # Save summery.
         }
@@ -393,42 +393,43 @@ public static function report() {
                     continue;
 
                 // We create zero entries for MNG player(s). This is required!
+                $pid = $p->player_id; # Shortcut
                 if ($p->getStatus($m->match_id) == MNG) {
-                    $_POST['mvp_' . $p->player_id]      = 0;
-                    $_POST['cp_' . $p->player_id]       = 0;
-                    $_POST['td_' . $p->player_id]       = 0;
-                    $_POST['intcpt_' . $p->player_id]   = 0;
-                    $_POST['bh_' . $p->player_id]       = 0;
-                    $_POST['si_' . $p->player_id]       = 0;
-                    $_POST['ki_' . $p->player_id]       = 0;
-                    $_POST['ir1_d1_' . $p->player_id]   = 0;
-                    $_POST['ir1_d2_' . $p->player_id]   = 0;
-                    $_POST['ir2_d1_' . $p->player_id]   = 0;
-                    $_POST['ir2_d2_' . $p->player_id]   = 0;
-                    $_POST['ir3_d1_' . $p->player_id]   = 0;
-                    $_POST['ir3_d2_' . $p->player_id]   = 0;
-                    $_POST['inj_' . $p->player_id]      = NONE;
-                    $_POST['agn1_' . $p->player_id]     = NONE;
-                    $_POST['agn2_' . $p->player_id]     = NONE;
+                    $_POST["mvp_$pid"]      = 0;
+                    $_POST["cp_$pid"]       = 0;
+                    $_POST["td_$pid"]       = 0;
+                    $_POST["intcpt_$pid"]   = 0;
+                    $_POST["bh_$pid"]       = 0;
+                    $_POST["si_$pid"]       = 0;
+                    $_POST["ki_$pid"]       = 0;
+                    $_POST["ir1_d1_$pid"]   = 0;
+                    $_POST["ir1_d2_$pid"]   = 0;
+                    $_POST["ir2_d1_$pid"]   = 0;
+                    $_POST["ir2_d2_$pid"]   = 0;
+                    $_POST["ir3_d1_$pid"]   = 0;
+                    $_POST["ir3_d2_$pid"]   = 0;
+                    $_POST["inj_$pid"]      = NONE;
+                    $_POST["agn1_$pid"]     = NONE;
+                    $_POST["agn2_$pid"]     = NONE;
                 }
 
                 $m->entry($p->player_id, array(
-                    'mvp'     => $_POST['mvp_' . $p->player_id],
-                    'cp'      => $_POST['cp_' . $p->player_id],
-                    'td'      => $_POST['td_' . $p->player_id],
-                    'intcpt'  => $_POST['intcpt_' . $p->player_id],
-                    'bh'      => $_POST['bh_' . $p->player_id],
-                    'si'      => $_POST['si_' . $p->player_id],
-                    'ki'      => $_POST['ki_' . $p->player_id],
-                    'ir1_d1'  => $_POST['ir1_d1_' . $p->player_id],
-                    'ir1_d2'  => $_POST['ir1_d2_' . $p->player_id],
-                    'ir2_d1'  => $_POST['ir2_d1_' . $p->player_id],
-                    'ir2_d2'  => $_POST['ir2_d2_' . $p->player_id],
-                    'ir3_d1'  => $_POST['ir3_d1_' . $p->player_id],
-                    'ir3_d2'  => $_POST['ir3_d2_' . $p->player_id],
-                    'inj'     => $_POST['inj_' . $p->player_id],
-                    'agn1'    => $_POST['agn1_' . $p->player_id],
-                    'agn2'    => $_POST['agn2_' . $p->player_id],
+                    'mvp'     => $_POST["mvp_$pid"], # NOT checkbox
+                    'cp'      => $_POST["cp_$pid"],
+                    'td'      => $_POST["td_$pid"],
+                    'intcpt'  => $_POST["intcpt_$pid"],
+                    'bh'      => $_POST["bh_$pid"],
+                    'si'      => $_POST["si_$pid"],
+                    'ki'      => $_POST["ki_$pid"],
+                    'ir1_d1'  => $_POST["ir1_d1_$pid"],
+                    'ir1_d2'  => $_POST["ir1_d2_$pid"],
+                    'ir2_d1'  => $_POST["ir2_d1_$pid"],
+                    'ir2_d2'  => $_POST["ir2_d2_$pid"],
+                    'ir3_d1'  => $_POST["ir3_d1_$pid"],
+                    'ir3_d2'  => $_POST["ir3_d2_$pid"],
+                    'inj'     => $_POST["inj_$pid"],
+                    'agn1'    => $_POST["agn1_$pid"],
+                    'agn2'    => $_POST["agn2_$pid"],
                 ));
             }
             MTS('Saved all REGULAR player entries in match_data for team '.$id);
@@ -446,7 +447,7 @@ public static function report() {
                         // Star required input
                         'f_team_id' => $t->team_id,
                         // Regular input
-                        'mvp'     => isset($_POST["mvp_$sid"]) ? $_POST["mvp_$sid"] : 0,
+                        'mvp'     => (isset($_POST["mvp_$sid"]) && $_POST["mvp_$sid"]) ? 1 : 0, # Checkbox
                         'cp'      => $_POST["cp_$sid"],
                         'td'      => $_POST["td_$sid"],
                         'intcpt'  => $_POST["intcpt_$sid"],
@@ -475,7 +476,7 @@ public static function report() {
             */
 
             Mercenary::rmMatchEntries($m->match_id, $t->team_id); // Remove all previously saved mercs in this match.
-            for ($i = 0; $i <= 50; $i++)  { # We don't expect over 50 mercs. This is just some large random number.
+            for ($i = 0; $i <= 20; $i++)  { # We don't expect over 20 mercs. This is just some large random number.
                 $idm = '_'.ID_MERCS.'_'.$i;
                 if (isset($_POST["team$idm"]) && $_POST["team$idm"] == $id) {
                     $m->entry(ID_MERCS, array(
@@ -484,7 +485,7 @@ public static function report() {
                         'nr'        => $i,
                         'skills'    => $_POST["skills$idm"],
                         // Regular input
-                        'mvp'     => $_POST["mvp$idm"],
+                        'mvp'     => (isset($_POST["mvp$idm"]) && $_POST["mvp$idm"]) ? 1 : 0, # Checkbox
                         'cp'      => $_POST["cp$idm"],
                         'td'      => $_POST["td$idm"],
                         'intcpt'  => $_POST["intcpt$idm"],
@@ -503,7 +504,7 @@ public static function report() {
                     ));
                 }
             }
-            MTS('Saved all STAR player entries in match_data for team '.$id);
+            MTS('Saved all MERC player entries in match_data for team '.$id);
         }
 
         $m->finalizeMatchSubmit(); # Required!
