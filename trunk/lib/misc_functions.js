@@ -103,7 +103,7 @@ function addStarMerc(table_id, id)
         x[0] = 'Mercenary' + '<input type="hidden" id="team'+idm+'" name="team'+idm+'" value="'+table_id+'">';
         x[1] = 'depends on position';
         x[2] = '<input type="text" onChange="numError(this);" size="1" maxlength="2" value="0" id="skills'+idm+'" name="skills'+idm+'">';
-        x[3] = '<INPUT TYPE="CHECKBOX" id="mvp'+idm+'" NAME="mvp'+idm+'">';
+        x[3] = '<INPUT TYPE="CHECKBOX" id="mvp'+idm+'" NAME="mvp'+idm+'" value="1">';
         x[4] = '<input type="text" onChange="numError(this);" size="1" maxlength="2" value="0" id="cp'+idm+'" name="cp'+idm+'">';
         x[5] = '<input type="text" onChange="numError(this);" size="1" maxlength="2" value="0" id="td'+idm+'" name="td'+idm+'">';
         x[6] = '<input type="text" onChange="numError(this);" size="1" maxlength="2" value="0" id="intcpt'+idm+'" name="intcpt'+idm+'">';
@@ -129,7 +129,7 @@ function addStarMerc(table_id, id)
         x[0] = pos + '<input type="hidden" id="team_'+id+'" name="team_'+id+'" value="'+table_id+'">';
         x[1] = phpStars[pos]['cost']/1000+'k';
         x[2] = 'N/A';
-        x[3] = '<INPUT TYPE="CHECKBOX" id="mvp_'+id+'" NAME="mvp_'+id+'">';
+        x[3] = '<INPUT TYPE="CHECKBOX" id="mvp_'+id+'" NAME="mvp_'+id+'" value="1">';
         x[4] = '<input type="text" onChange="numError(this);" size="1" maxlength="2" id="cp_'+id+'" name="cp_'+id+'" value="0">';
         x[5] = '<input type="text" onChange="numError(this);" size="1" maxlength="2" id="td_'+id+'" name="td_'+id+'" value="0">';
         x[6] = '<input type="text" onChange="numError(this);" size="1" maxlength="2" id="intcpt_'+id+'" name="intcpt_'+id+'" value="0">';

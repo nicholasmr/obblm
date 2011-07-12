@@ -465,29 +465,29 @@ function sec_main() {
                             foreach ($head as $col => $name) {
                                 switch ($col) {
                                     case 'date':
-                                        $e[$col] = str_replace(' ', '&nbsp;', textdate($e[$col],true));
+                                        $e->$col = str_replace(' ', '&nbsp;', textdate($e->$col,true));
                                         break;
                                     case 'name': 
                                         if ($settings['fp_links'])
-                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e['pid'],false,false)."'>".$e[$col]."</a>";
+                                            $e->$col = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>".$e->$col."</a>";
                                         break;
                                     case 'tname': 
                                         if ($settings['fp_links'])
-                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e['f_tid'],false,false)."'>".$e[$col]."</a>";
+                                            $e->$col = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e->f_tid,false,false)."'>".$e->$col."</a>";
                                         break;
                                     case 'rname': 
                                         if ($settings['fp_links'])
-                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e['f_rid'],false,false)."'>".$e[$col]."</a>";
+                                            $e->$col = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e->f_rid,false,false)."'>".$e->$col."</a>";
                                         break;
                                     case 'f_pos_name': 
                                         if ($settings['fp_links'])
-                                            $e[$col] = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e['f_rid'],false,false)."'>".$e[$col]."</a>";
+                                            $e->$col = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_RACE,$e->f_rid,false,false)."'>".$e->$col."</a>";
                                         break;
                                     case 'value': 
-                                            $e[$col] = $e[$col]/1000 . 'k';
+                                            $e->$col = $e->$col/1000 . 'k';
                                         break;
                                 }
-                                echo "<td>".$e[$col]."</td>\n";
+                                echo "<td>".$e->$col."</td>\n";
                             }
                             echo "</tr>\n";
                         }
