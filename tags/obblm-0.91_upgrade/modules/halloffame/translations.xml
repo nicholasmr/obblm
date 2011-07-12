@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<en-GB>
+
+<name>Hall of fame</name>
+
+<player>Player</player>
+<sort_hint>Hint: clicking on the dropdown and pressing any letter on the keyboard scrolls the dropdown down to the first team name beginning with that letter.</sort_hint>
+<submit>Submit</submit>
+<new>New entry</new>
+<edit>Edit</edit>
+<del>Delete</del>
+<from>from</from>
+<posted>Posted</posted>
+
+<g_title>Title</g_title>
+<g_about>General description</g_about>
+
+<desc><![CDATA[Welcome to the hall of fame.<br>Here league commissioners may exercise their power by giving publicity to players of noteworthy achievements.]]></desc>
+<title><![CDATA[A short description of what the player has achieved, for example in which area the achievement has been made in.]]></title>
+<about><![CDATA[About the player's achievement in detail. If the player has received an bonus (extra) skill, you could also write about that.]]></about>
+
+</en-GB>
