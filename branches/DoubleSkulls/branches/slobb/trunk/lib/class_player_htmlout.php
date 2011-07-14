@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -123,7 +123,7 @@ private function _head($team)
         $i++;
     }
     if (count($players) > 1) {
-        echo "<center><a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$players[$prev]->player_id,false,false)."'>[".$lng->getTrn('common/previous')."]</a> &nbsp;|&nbsp; <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$players[$next]->player_id,false,false)."'>[".$lng->getTrn('common/next')."]</a></center><br>";
+        echo "<center><a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$players[$prev]->player_id,false,false)."'>".$lng->getTrn('common/previous')."</a> &nbsp;|&nbsp; <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$players[$next]->player_id,false,false)."'>".$lng->getTrn('common/next')."</a></center><br>";
     }
 }
 
@@ -214,7 +214,7 @@ private function _about($ALLOW_EDIT)
                         ?>
                         <tr>
                             <td><b>Vis. stats</b></td>
-                            <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''><b>".$lng->getTrn('common/view')."</b></a>\n";?></td>
+                            <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''>".$lng->getTrn('common/view')."</a>\n";?></td>
                         </tr>
                         <?php                    
                     }
