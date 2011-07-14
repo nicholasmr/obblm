@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -158,6 +158,7 @@ $core_tables = array(
         'ring'  => 'TINYINT UNSIGNED NOT NULL DEFAULT 0', # Local access level
     ),
     'players_skills' => array(
+        'id'         => 'INT NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'f_pid'      => $CT_cols[T_OBJ_PLAYER].' NOT NULL',
         'f_skill_id' => $CT_cols['skill_id'].' NOT NULL',
         'type' => 'VARCHAR(1)', # N, D or E
@@ -190,7 +191,7 @@ $core_tables = array(
         'type'          => 'TINYINT UNSIGNED',
         'date_created'  => 'DATETIME',
         'rs'            => 'TINYINT UNSIGNED DEFAULT 1',
-        'locked'        => 'BOOLEAN',
+        'locked'        => 'BOOLEAN NOT NULL DEFAULT 0',
         // Dynamic properties (DPROPS)
         'empty'    => 'BOOLEAN DEFAULT TRUE',
         'begun'    => 'BOOLEAN DEFAULT FALSE',
@@ -299,6 +300,17 @@ $core_tables = array(
 /*
     MV tables
 */
+
+$mv_keys = array(
+    T_OBJ_PLAYER => 'f_pid',
+    T_OBJ_STAR   => 'f_pid',
+    T_OBJ_TEAM   => 'f_tid',
+    T_OBJ_COACH  => 'f_cid',
+    T_OBJ_RACE   => 'f_rid',
+    T_NODE_TOURNAMENT => 'f_trid',
+    T_NODE_DIVISION   => 'f_did',
+    T_NODE_LEAGUE     => 'f_lid',
+);
 
 // Common:
 $mv_commoncols = array(
@@ -773,11 +785,13 @@ function upgrade_database($version, $opts)
     }
 
     // Core
-    echo "<b>Running SQLs for core system upgrade...</b><br>\n";
+    echo "<b>Running tasks for core system upgrade...</b><br>\n";
         
+    if ($upgradeSettings[$version]['sync_gamedata']) {
     echo (SQLCore::syncGameData()) 
         ? "<font color='green'>OK &mdash; Synchronized game data with database</font><br>\n" 
         : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
+    }
     
     echo (SQLCore::installProcsAndFuncs(true))
         ? "<font color='green'>OK &mdash; created MySQL functions/procedures</font><br>\n"
@@ -787,7 +801,8 @@ function upgrade_database($version, $opts)
     $core_SQLs = $upgradeSQLs[$version];
     $status = true;
     foreach ($core_SQLs as $query) { $status &= (mysql_query($query) or die(mysql_error()."\n<br>SQL:\n<br>---\n<br>".$query));}
-    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font><br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font><br>\n";
+		$cnt = "(".count($core_SQLs)." total)";
+	    echo ($status) ? "<font color='green'>OK &mdash; Core SQLs</font> $cnt<br>\n" : "<font color='red'>FAILED &mdash; Core SQLs</font> $cnt<br>\n";
     }
 
 	if (isset($upgradeFuncs[$version])) {
@@ -797,7 +812,8 @@ function upgrade_database($version, $opts)
     echo ($status) ? "<font color='green'>OK &mdash; Custom PHP upgrade code (<i>".implode(', ',$core_Funcs)."</i>)</font><br>\n" : "<font color='red'>FAILED &mdash; Custom PHP upgrade code</font><br>\n";
     }
 
-    echo (SQLCore::installMVs(false))
+    if ($upgradeSettings[$version]['syncall']) {
+        echo (SQLCore::installMVs())
         ? "<font color='green'>OK &mdash; created MV tables</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not create MV tables</font><br>\n";
 
@@ -805,10 +821,13 @@ function upgrade_database($version, $opts)
     echo ($status)
         ? "<font color='green'>OK &mdash; create/update ES tables</font><br>\n" . '<!-- DEV. INFO: Added new cols: '.implode(', ', $added).'. Removed cols: '.implode(', ', $dropped).'.-->'
         : "<font color='red'>FAILED &mdash; create/update ES tables</font><br>\n";        
+    }
    
+    if ($upgradeSettings[$version]['reload_indexes']) {
     echo (SQLCore::installTableIndexes())
         ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
+    }
    
     switch ($version) {
         case '075-080':
@@ -821,9 +840,11 @@ function upgrade_database($version, $opts)
             break;
     }
    
+    if ($upgradeSettings[$version]['syncall']) {
     echo (mysql_query("CALL syncAll()"))
         ? "<font color='green'>OK &mdash; synchronised all dynamic stats and properties</font><br>\n"
         : "<font color='red'>FAILED &mdash; could not synchronise all dynamic stats and properties</font><br>\n";
+    }
    
     // Done!
     mysql_close($conn);

@@ -5,6 +5,7 @@
 */
 
 $upgradeSQLs = array(
+    '090-091' => array(),
     '080-090' => array(
         // UnAjusted (ua) values now stored too.
         SQLUpgrade::runIfColumnNOTExists('players', 'ma_ua', 'ALTER TABLE players ADD COLUMN ma_ua TINYINT SIGNED'),
@@ -14,6 +15,7 @@ $upgradeSQLs = array(
         // Coach scheduling permission
         SQLUpgrade::runIfColumnNOTExists('tours', 'allow_sched', 'ALTER TABLE tours ADD COLUMN allow_sched BOOLEAN DEFAULT FALSE'),
         'ALTER TABLE tours MODIFY locked BOOLEAN DEFAULT 0 NOT NULL',
+        SQLUpgrade::runIfColumnNOTExists('players_skills', 'id', 'ALTER TABLE players_skills ADD COLUMN id INT NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST'),
     ),
     '075-080' => array(
         # Delete, now modulized, type from texts.
@@ -182,5 +184,13 @@ Teams which have not yet played any games are therefore not tied to any leagues 
 for example running "UPDATE teams SET f_lid = 5 WHERE f_lid = 0", will tie the remaining teams to the league with ID = 5 (you would generally want to do something like that). 
 If you don\'t do this the non-tied teams may not be scheduled to play in any matches!',
 ),
+'080-090' => array(),
+'090-091' => array(),
+);
+
+$upgradeSettings = array(
+'075-080' => array('syncall' => true,  'sync_gamedata' => true,  'reload_indexes' => true),
+'080-090' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
+'090-091' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 );
 ?>

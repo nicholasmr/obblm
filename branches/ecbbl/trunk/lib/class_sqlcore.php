@@ -665,8 +665,10 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
+            DECLARE won_0, draw_0, lost_0, played_0 SMALLINT UNSIGNED DEFAULT 0;
             IF obj = '.T_OBJ_TEAM.' THEN
-                RETURN (SELECT winPct(SUM(won),SUM(lost),SUM(draw),SUM(played)) FROM mv_teams WHERE f_tid = obj_id);
+                SELECT teams.won_0, teams.draw_0, teams.lost_0, teams.played_0 INTO won_0, draw_0, lost_0, played_0 FROM teams WHERE teams.team_id = obj_id;
+                RETURN (SELECT winPct(SUM(won)+won_0,SUM(lost)+lost_0,SUM(draw)+draw_0,SUM(played)+played_0) FROM mv_teams WHERE f_tid = obj_id);
             ELSEIF obj = '.T_OBJ_COACH.' THEN
                 RETURN (SELECT winPct(SUM(won),SUM(lost),SUM(draw),SUM(played)) FROM mv_coaches WHERE f_cid = obj_id);
             ELSEIF obj = '.T_OBJ_RACE.' THEN
@@ -693,6 +695,17 @@ public static function installProcsAndFuncs($install = true)
             CONTAINS SQL
         BEGIN
             UPDATE mv_teams SET pts = getPTS(f_tid, f_trid);
+        END',
+
+        /*
+         *  Sync tour points (PTS)
+         */
+
+        'CREATE PROCEDURE syncTourPTS(IN trid '.$CT_cols[T_NODE_TOURNAMENT].')
+            NOT DETERMINISTIC
+            CONTAINS SQL
+        BEGIN
+            UPDATE mv_teams SET pts = getPTS(f_tid, trid) WHERE f_trid = trid;
         END',
 
         /*
@@ -1284,7 +1297,7 @@ public static function installTableIndexes()
     return $status;
 }
 
-public static function installMVs($delIfExists) {
+public static function installMVs() {
 
     global $core_tables;
     $status = true;
@@ -1292,9 +1305,10 @@ public static function installMVs($delIfExists) {
         if (!preg_match('/^mv\_/', $name))
             continue;
 
-        if ($delIfExists) {
-            $status &= mysql_query("DROP TABLE IF EXISTS $name");
-        }
+        // Done in Table::createTable() automatically
+        #if ($delIfExists) {
+        #    $status &= mysql_query("DROP TABLE IF EXISTS $name");
+        #}
         $status &= Table::createTable($name,$core_tables[$name]);
     }
 
@@ -1310,7 +1324,7 @@ public static function reviseEStables()
 
     // Create tables if not existing:
     # This will create all the ES MV (and regular, though not needed) tables with the correct up-to-date fields.
-    self::installMVs(true);
+    self::installMVs();
     # Create, if not exists, the match_data_es table.
     Table::createTableIfNotExists('match_data_es', $MDES);
 

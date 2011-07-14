@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2010. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
  *      
  *
  *  This file is part of OBBLM.
@@ -23,38 +23,26 @@
 
 define('T_NO_STARTUP', true);
 require('header.php');
-
-?>
-<html>
-<head>
-</head>
-<body>
-<br>
-<big>
-    <center>
-        <b>OBBLM MySQL upgrade script</b>
-    </center>
-</big>
-<br>
-<small>
-<?php
+HTMLOUT::frame_begin(false,false);
+title("OBBLM upgrade script");
 if (isset($_POST['version'])) {
-    echo ($upgradeMsgs = upgrade_database($_POST['version'], array('lrb' => isset($_POST['lrb']) ? $_POST['lrb'] : false)))
-        ? "<br><b><font color='green'>Done</font></b>"
-        : "<br><b><font color='red'>Error</font></b>";
-        
+    $upgradeMsgs = upgrade_database($_POST['version'], array('lrb' => isset($_POST['lrb']) ? $_POST['lrb'] : false));
+    echo "<br><b><font color='green'>Finished</font></b>";
+    if (!empty($upgradeMsgs)) {
     echo "<br><br><b>IMPORTANT</b>:<br><ul>";
     echo array_strpack('<li>%s</li>', $upgradeMsgs, "\n");
-    echo "</ul><br><hr>";
+        echo "</ul>";
+}
+    echo "<br><hr><br>";
 }
 ?>
 Please make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid AND that the rules fields of the old settings file are consistant with the new settings file for those fields which are common.<br><br>
 Now, click the appropriate SQL code to run depending on the version upgrade you are doing.<br><br>
 <b>Please note:</b>
 <ul>
-<li>ALWAYS make sure you have a backup/dump of your OBBLM database before running the upgrade script.</li>
+<li><b>ALWAYS</b> make sure you have a backup/dump of your OBBLM database before running the upgrade script.</li>
 <li>If upgrading across two or more versions simply run the SQL code for the next version, one after the other until the latest version is reached.</li>
-<li>If upgrading <i>from</i> versions previous of v. 0.75 you must consult the <i>INSTALL</i> file and run the listed SQL queries <u>manually</u>.</li>
+<li>If upgrading <i>from</i> versions <i>previous</i> of v. 0.75 you must consult the <i>INSTALL</i> file and run the listed SQL queries <u>manually</u>.</li>
 </ul>
 
 <br>
@@ -62,9 +50,14 @@ Now, click the appropriate SQL code to run depending on the version upgrade you 
 <table border='1' style='font-size:small; mergin: 5px;'>
     <tr style='font-weight:bold;'><td></td><td>Version upgrade</td><td>Required upgrade parameters</td></tr>
     <tr>
+        <td><INPUT TYPE=RADIO NAME="version" VALUE="090-091"></td>
+        <td>0.90 to 0.91</td>
+        <td><i>None</i></td>
+    </tr>
+    <tr>
         <td><INPUT TYPE=RADIO NAME="version" VALUE="080-090"></td>
         <td>0.80 to 0.90</td>
-        <td>&mdash;</td>
+        <td><i>None</i></td>
     </tr>
     <tr>
         <td><INPUT TYPE=RADIO NAME="version" VALUE="075-080"></td>
@@ -75,7 +68,8 @@ Now, click the appropriate SQL code to run depending on the version upgrade you 
     <br>
     <input type="submit" name='submit' value="Run upgrade SQLs" onclick="if(!confirm('Please backup your current database if you have not done so already.\n\nAre you sure you wish to continue?')){return false;}">
 </form>
+    <br>
+<?php
+HTMLOUT::dnt();
+HTMLOUT::frame_end();
 
-</small>
-</body>
-</html>
