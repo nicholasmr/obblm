@@ -135,6 +135,12 @@ Module::register(array(
 ));
 
 Module::register(array(
+    'class'         => 'TeamCompare',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('teamcompare/class_teamcompare.php')
+));
+
+Module::register(array(
     'class'         => 'Adverts',
     'filesRunTime'  => array(),
     'filesLoadTime' => array('adverts/class_adverts.php')

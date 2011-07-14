@@ -95,7 +95,7 @@ public static function addPlayer($pos, $d) {
    $p = array();
    $p['position'] = $pos;
    $p['ma'] = $d['ma'];
-   $p['st'] = $d['ag'];
+   $p['st'] = $d['st'];
    $p['ag'] = $d['ag'];
    $p['av'] = $d['av'];
    $p['skills'] = implode(', ', skillsTrans($d['def']));
@@ -508,7 +508,7 @@ echo<<< EOQ
 
    function changeRace(raceId) {
       if (raceId < 0) return;
-      var oFormObject = document.forms('form_team');
+      var oFormObject = document.forms['form_team'];
       var race = races[raceId];
       var players = race["players"];
       var others = race["others"];
@@ -594,7 +594,7 @@ echo<<< EOQ
    }
 
    function createTeam() {
-      var oForm = document.forms('form_team');
+      var oForm = document.forms['form_team'];
       var spend = new Number(document.getElementById("total").innerText);
       var pCount = new Number(document.getElementById("pcnt").innerText);
       var tName = document.getElementById("tname").value;

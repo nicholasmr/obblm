@@ -128,17 +128,18 @@ $T_LOCAL_RINGS = array(
     
 <?php echo "<b><a TARGET='_blank' href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br>"; ?>
 
+<div style='float:left; width:100%;'> <!-- ALL -->
 <div class="boxCommon">
     <div class="boxTitle<?php echo T_HTMLBOX_ADMIN;?>">
         Create new coach
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name (login):<br> <input type="text" name="name" size="20" maxlength="50"><br><br>
-        Full name:<br> <input type="text" name="realname" size="20" maxlength="50"><br><br>
-        Mail (optional):<br> <input type="text" name="mail" size="20" maxlength="129"><br><br>
-        Phone (optional):<br> <input type="text" name="phone" size="20" maxlength="129"><br><br>
-        Password:<br> <input type="password" name="passwd" size="20" maxlength="50"><br><br>
+        Coach name (login)<br> <input type="text" name="name" size="20" maxlength="50"><br><br>
+        Full name<br> <input type="text" name="realname" size="20" maxlength="50"><br><br>
+        Mail (optional)<br> <input type="text" name="mail" size="20" maxlength="129"><br><br>
+        Phone (optional)<br> <input type="text" name="phone" size="20" maxlength="129"><br><br>
+        Password<br> <input type="password" name="passwd" size="20" maxlength="50"><br><br>
         Language<br>
         <select name='lang'>
             <?php
@@ -148,7 +149,7 @@ $T_LOCAL_RINGS = array(
             ?>
         </select>
         <br><br>
-        Global site access level:<br>
+        Global site access level<br>
         <select name="ring">
             <?php
             foreach ($T_GLOBAL_RINGS as $r => $desc) {
@@ -159,7 +160,7 @@ $T_LOCAL_RINGS = array(
             ?>
         </select>
         <br><br>
-        Local (league) access:<br>
+        Local (league) access<br>
         <SELECT NAME="def_leagues[]" MULTIPLE>
         <?php
         foreach ($settings['default_leagues'] as $lid) {
@@ -190,8 +191,8 @@ $T_LOCAL_RINGS = array(
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name:<br> <input type="text" name="cname" id="coach1" size="20" maxlength="50"><br><br>
-        Access level:<br>
+        Coach name<br> <input type="text" name="cname" id="coach1" size="20" maxlength="50"><br><br>
+        Access level<br>
         <select name="ring">
             <?php
             foreach ($T_LOCAL_RINGS as $r => $desc) {
@@ -224,8 +225,8 @@ $T_LOCAL_RINGS = array(
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name:<br> <input type="text" name="cname" id="coach2" size="20" maxlength="50"><br><br>
-        Access level:<br>
+        Coach name<br> <input type="text" name="cname" id="coach2" size="20" maxlength="50"><br><br>
+        Access level<br>
         <select name="ring">
             <?php
             foreach ($T_GLOBAL_RINGS as $r => $desc) {
@@ -251,7 +252,7 @@ $T_LOCAL_RINGS = array(
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name:<br> <input type="text" name="cname" id="coach3" size="20" maxlength="50"><br><br>
+        Coach name<br> <input type="text" name="cname" id="coach3" size="20" maxlength="50"><br><br>
         <?php
         if (is_object($c)) {
             echo "Access levels of '$c->name' are<br><br>\n";
@@ -283,8 +284,8 @@ $T_LOCAL_RINGS = array(
     </div>
     <div class="boxBody">
         <form method="POST">
-        Coach name:<br> <input type="text" name="cname" id="coach4" size="20" maxlength="50"><br><br>
-        New password:<br> <input type="password" name="passwd" size="20" maxlength="50"><br><br>
+        Coach name<br> <input type="text" name="cname" id="coach4" size="20" maxlength="50"><br><br>
+        New password<br> <input type="password" name="passwd" size="20" maxlength="50"><br><br>
         <input type="hidden" name="type" value="ch_passwd">
         <input type="submit" name="button" value="Change password">
         </form>
@@ -293,4 +294,5 @@ $T_LOCAL_RINGS = array(
 
 </div> <!-- END row 2 -->
 </div> <!-- END Outer -->
+</div> <!-- END ALL -->
 <?php
