@@ -55,12 +55,17 @@ if (isset($_POST['type'])) {
             break;
             
         case 'mod_tournament':
+            $syncPTS = ($t->rs != (int) $_POST['rs']);
             $t->rs = $_POST['rs'];
             $t->type = $_POST['tourtype'];
             $t->name = $_POST['name'];
             $t->locked = isset($_POST['locked']) ? $_POST['locked'] : 0;
             $t->allow_sched = isset($_POST['allow_sched']) ? $_POST['allow_sched'] : 0;
             status($t->save());
+            if ($syncPTS) {
+                $OK = $t->syncPTS();
+                status($OK, $OK ? 'Synchronized points for the new ranking system' : 'Failed to Synchronize points for the new ranking system');
+            }
             break;
 
 
@@ -95,7 +100,7 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             <?php
             global $hrs;
             foreach ($hrs as $idx => $r) {
-                echo "<option value='$idx'>#$idx: ".Tour::getRSstr($idx)."</option>\n";
+                echo "<option value='$idx'>#$idx&nbsp;&nbsp;".Tour::getRSstr($idx)."</option>\n";
             }
             ?>
             </select>
@@ -154,11 +159,10 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             <?php
             global $hrs;
             foreach ($hrs as $idx => $r) {
-                echo "<option value='$idx'>#$idx: ".Tour::getRSstr($idx)."</option>\n";
+                echo "<option value='$idx'>#$idx&nbsp;&nbsp;".Tour::getRSstr($idx)."</option>\n";
             }
             ?>
             </select>
-
             <br><br>
             Tournament type<br>
             <input type="radio" id='tourtype' name="tourtype" value="<?php echo TT_FFA;  ?>" CHECKED> FFA<br>
@@ -167,8 +171,13 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             <br><input type="checkbox" id='allow_sched' name="allow_sched" value="1" CHECKED>Coaches may schedule their own matches
 		    <br><br>
             <input type='hidden' name='type' value='mod_tournament'>
-            <input type='submit' value='Create' <?php echo empty($tours) ? ' DISABLED ' : '';?>>
+            <input type='submit' value='Modify' <?php echo empty($tours) ? ' DISABLED ' : '';?>>
             </form>
+            <script>
+                var tours = document.getElementById('trid');
+                var trid = tours.options[tours.selectedIndex].value;
+                adminModTour(trid);
+            </script>
             </div>
         </div>
         </td>

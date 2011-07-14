@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2009. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2011. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -139,7 +139,7 @@ class TextSubSys
                 $o->message   = $m->getText();
                 $o->date      = $m->date_played;
                 array_push($board, $o);
-            }
+        }
         }
         
         // And finally team news.
@@ -156,9 +156,9 @@ class TextSubSys
                 $o->message   = $t->txt;
                 $o->date      = $t->date;
                 array_push($board, $o);
-            }
         }
-
+        }
+        
         // Last touch on the board.
         if (!empty($board)) {
             objsort($board, array('-date'));
