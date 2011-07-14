@@ -1297,7 +1297,7 @@ public static function installTableIndexes()
     return $status;
 }
 
-public static function installMVs($delIfExists) {
+public static function installMVs() {
 
     global $core_tables;
     $status = true;
@@ -1305,9 +1305,10 @@ public static function installMVs($delIfExists) {
         if (!preg_match('/^mv\_/', $name))
             continue;
 
-        if ($delIfExists) {
-            $status &= mysql_query("DROP TABLE IF EXISTS $name");
-        }
+        // Done in Table::createTable() automatically
+        #if ($delIfExists) {
+        #    $status &= mysql_query("DROP TABLE IF EXISTS $name");
+        #}
         $status &= Table::createTable($name,$core_tables[$name]);
     }
 
@@ -1323,7 +1324,7 @@ public static function reviseEStables()
 
     // Create tables if not existing:
     # This will create all the ES MV (and regular, though not needed) tables with the correct up-to-date fields.
-    self::installMVs(true);
+    self::installMVs();
     # Create, if not exists, the match_data_es table.
     Table::createTableIfNotExists('match_data_es', $MDES);
 

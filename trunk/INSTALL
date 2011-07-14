@@ -10,12 +10,7 @@ UPGRADING
 
 NOTE: When upgrading please save your old settings file(s) as a reference for when filling out the new settings file(s).
 
-0.8 -> 0.9
-
-    Replace all OBBLM files.
-    Run the upgrade.php file from a web-browser.   
-
-0.75 -> 0.8
+0.75 -> Any larger version
 
     Replace all OBBLM files.
     Run the upgrade.php file from a web-browser.   

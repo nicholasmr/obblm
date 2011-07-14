@@ -413,52 +413,18 @@ class Match
             
             THIS IS NO LONGER USED - see issue 462 http://code.google.com/p/obblm/issues/detail?id=462
         */
-        /*
-        if ($pid > 0) {
-            $INJS = array('ma' => 0, 'av' => 0, 'ag' => 0, 'st' => 0, 'inj' => NONE, 'agn1' => NONE, 'agn2' => NONE);
-            if ($PLAYED) {
-                $MA = MA; $AV = AV; $AG = AG; $ST = ST; # Shortcuts.
-                $query = "SELECT 
-                        IF(inj=$MA,1,0)+IF(agn1=$MA,1,0)+IF(agn2=$MA,1,0) AS 'ma',
-                        IF(inj=$AG,1,0)+IF(agn1=$AG,1,0)+IF(agn2=$AG,1,0) AS 'ag',
-                        IF(inj=$AV,1,0)+IF(agn1=$AV,1,0)+IF(agn2=$AV,1,0) AS 'av',
-                        IF(inj=$ST,1,0)+IF(agn1=$ST,1,0)+IF(agn2=$ST,1,0) AS 'st'
-                    FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid";
-                $result = mysql_query($query);
-                $INJS = mysql_fetch_assoc($result);
-            }
-
-            global $CHR_CONV, $incpy;
-            $incpy = $input; # Used in below filter by create_function().
-            $p = new Player($pid);
-            $fields = array('inj', 'agn1', 'agn2');
-            foreach ($fields as $f) {
-                $charDecr = $input[$f];
-                // Unconditionally allow injuries.
-                if (!in_array($charDecr, array_keys($CHR_CONV)))
-                    continue;
-                // Are we trying to save a characteristics decrease that will break the lower limit (defined in Player::chrLimits()) ?
-                $allowed = $p->chrLimits('inj', $charDecr); # Allowed amount.
-                $currentlySaved = $INJS[$CHR_CONV[$charDecr]]; # If match has already been saved this was the old amount which was submitted.
-                $submitted = count(array_filter($fields, create_function('$x', "global \$incpy; return (\$incpy[\$x]==\$incpy['$f']);"))); # New amount submitted.
-                if ($submitted > $allowed+$currentlySaved) {
-                    $input[$f] = MNG; # Save the "bare" MNG (all injs at least give a MNG).
-                }
-            }
-        }
-        */
 
         /*
             Insert data into MySQL 
          */
 
         // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
-        if (!$IMPORT) {
+        if (!$IMPORT && $pid != ID_MERCS) {
             $status &= mysql_query("DELETE FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid");
         }
         $query = 'INSERT INTO match_data ('.implode(',', $EXPECTED).') VALUES ('.implode(',', array_values($input)).')';
-        
-        return mysql_query($query) && 
+        $result = mysql_query($query) or status(false, 'Failed to save player entry with PID = '.$pid.'<br><br>'.mysql_error().'<br><br>'.$query);
+        return $result && 
             // Extra stats, if sent.
             (!empty($ES) ? self::ESentry(array(
                 'f_pid' => $input['f_player_id'], 'f_tid' => $input['f_team_id'], 'f_cid' => $input['f_coach_id'], 'f_rid' => $input['f_race_id'], 
