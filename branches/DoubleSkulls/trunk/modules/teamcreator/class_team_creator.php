@@ -418,7 +418,8 @@ echo<<< EOQ
 
    function getValue(elemId) {
       try {
-         return document.getElementById(elemId).value;
+         var elem = document.getElementById(elemId);
+         return elem.options[elem.selectedIndex].value;
       } catch (err) {
          return "";
       }
