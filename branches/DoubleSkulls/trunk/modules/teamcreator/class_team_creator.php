@@ -457,8 +457,8 @@ echo<<< EOQ
          var players = race['others'];
       }
       var player = players[id];
-      var divS = "sub" + type + id;
-      var newCost = player["cost"] * newQty;
+      var divS = 'sub' + type + id;
+      var newCost = player['cost'] * newQty;
       document.getElementById(divS).innerText= newCost;
       updateTotal();
    }
@@ -466,7 +466,7 @@ echo<<< EOQ
    function makeSelect(id, type, max) {
       var str = "<select id=\"qty" + type + id + "\" name=\"qty" + type + id + "\" onchange=\"updateQty(" + id + ", '" + type + "', this.options[this.selectedIndex].value)\">";
       for (var i = 0; i <= max; i++) {
-         str += "<option>" + i + "</option>";
+         str += "<option value=\"" + i + "\">" + i + "</option>";
       }
       str += "</select>";
       return str;
