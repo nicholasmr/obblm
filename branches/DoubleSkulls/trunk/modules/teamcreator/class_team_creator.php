@@ -427,7 +427,11 @@ echo<<< EOQ
 
    function getText(elemId) {
       try {
-         return document.getElementById(elemId).innerText;
+         if(document.all){
+            return document.getElementById(elemId).innerText;
+         } else {
+            return document.getElementById(elemId).textContent;
+         }
       } catch (err) {
          return "";
       }
@@ -449,6 +453,15 @@ echo<<< EOQ
       return "<input type=\"" + type + "\" id=\"" + id + "\" name=\"" + id + "\" value=\"" + value+ "\" />";
    }
 
+   function setText(element, text) {
+      if(document.all){
+           document.getElementById(element).innerText = text;
+      } else{
+          document.getElementById(element).textContent = text;
+      }
+   }
+
+
    function updateQty(id, type, newQty) {
       var race = races[document.getElementById("rid").value];
       if (type == 'p') {
@@ -459,7 +472,7 @@ echo<<< EOQ
       var player = players[id];
       var divS = 'sub' + type + id;
       var newCost = player['cost'] * newQty;
-      document.getElementById(divS).innerText= newCost;
+      setText(divS, newCost);
       updateTotal();
    }
 
@@ -520,8 +533,8 @@ echo<<< EOQ
       while (table.rows.length > 1) {
          table.deleteRow(1);
       }
-      document.getElementById("pcnt").innerText=0;
-      document.getElementById("total").innerText=0;
+      setText("pcnt", "0");
+      setText("total", "0");
       document.getElementById("raceid").value = race.rid;
 
       rowIdx = 0;
@@ -584,14 +597,14 @@ echo<<< EOQ
             total +=  new Number(subTot);
          }
       }
-      document.getElementById("pcnt").innerText=pCount;
+      setText("pcnt", pCount);
       for (var i=0; i < race['other_count']; i++) {
          subTot = getText('subo' + i);
          if (!isNaN(subTot)) {
             total +=  new Number(subTot);
          }
       }
-      document.getElementById("total").innerText=total;
+      setText("total",total);
    }
 
    function createTeam() {
