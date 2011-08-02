@@ -601,9 +601,9 @@ function mysql_up($do_table_check = false) {
         }
         $tables_diff = array_diff($tables_expected, $tables_found);
         if (count($tables_diff) > 0) {
-            die("<font color='red'><b>Could not find all the expected tables in database. Try running the install script again.<br><br>
-                <i>Tables missing:</i><br> ". implode(', ', $tables_diff) ."
-                </b></font>");
+            die("<font color='red'><b>Could not find all the expected tables in database '$db_name'</b>.<br><br>Did you run the install/upgrade script?<br><br>
+                Tables missing:<br><br><i>". implode('<br>', $tables_diff) ."</i>
+                </font>");
         }
     }
 
