@@ -1,4 +1,2 @@
 #labels Phase-Support
-# Help page
-
-= Post any questions you may have here =
+= Post any questions you may have here OR create an "issue" thread on the issues page=
