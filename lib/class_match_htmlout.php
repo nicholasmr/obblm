@@ -959,7 +959,7 @@ public static function userSched() {
                 echo '<select name="round" id="round">';
                 global $T_ROUNDS;
                 foreach ($T_ROUNDS as $r => $d) {
-                    echo "<option value='$r'>".$lng->getTrn($d)."</option>\n";
+                    echo "<option value='$r' ".(($r == 1) ? 'SELECTED' : '').">".$lng->getTrn($d)."</option>\n";
                 }
                 ?>
                 </select>
