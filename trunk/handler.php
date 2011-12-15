@@ -180,7 +180,7 @@ switch ($_GET['type'])
         break;
 
     default:
-        fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
+        fatal("Sorry. I don't know what the type '".htmlentities($_GET['type'])."' means.\n");
 }
 
 mysql_close($conn);

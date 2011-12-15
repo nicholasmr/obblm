@@ -37,7 +37,7 @@ function sec_login() {
             title($lng->getTrn('login/forgotpass'));
         }
         if (isset($_GET['cid']) && isset($_GET['activation_code'])) {
-            $c = new Coach($_GET['cid']);
+            $c = new Coach((int) $_GET['cid']);
             status($new_passwd = $c->confirmActivation($_GET['activation_code']));
             echo "<br><br>";
             echo $lng->getTrn('login/temppasswd')." <b>$new_passwd</b><br>\n";
@@ -724,15 +724,15 @@ function sec_objhandler() {
                 case T_URL_STANDINGS:
                     call_user_func(
                         array("${classPrefix}_HTMLOUT", 'standings'), 
-                        isset($_GET['node'])    ? $_GET['node']    : false, 
-                        isset($_GET['node_id']) ? $_GET['node_id'] : false
+                        isset($_GET['node'])    ? (int) $_GET['node']    : false, 
+                        isset($_GET['node_id']) ? (int) $_GET['node_id'] : false
                     );
                     break;
                 case T_URL_PROFILE:
-                    if (!call_user_func(array($classPrefix, 'exists'), $_GET['obj_id'])) {
+                    if (!call_user_func(array($classPrefix, 'exists'), (int) $_GET['obj_id'])) {
                         fatal("The specified ID does not exist.");
                     }
-                    call_user_func(array("${classPrefix}_HTMLOUT", 'profile'), $_GET['obj_id']);
+                    call_user_func(array("${classPrefix}_HTMLOUT", 'profile'), (int) $_GET['obj_id']);
                     break;
             }
         }
