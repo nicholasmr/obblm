@@ -70,6 +70,8 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
         if (in_array($m->round,array_keys($T_ROUNDS))) {
             $m->round = $lng->getTrn($T_ROUNDS[$m->round]);
         }
+        $m->team1_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach1_id,false,false)."'>$m->coach1_name</a>)</i>";
+        $m->team2_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach2_id,false,false)."'>$m->coach2_name</a>)</i>";
     }
 
     $fields = array(
@@ -77,8 +79,11 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
         'league_name' => array('desc' => $lng->getTrn('common/league'), 'nosort' => true),
         'tour_name'   => array('desc' => $lng->getTrn('common/tournament'), 'nosort' => true),
         'round'       => array('desc' => $lng->getTrn('common/round'), 'nosort' => false),
-        'team1_name'  => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id'), 'nosort' => true),
-        'team2_name'  => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id'), 'nosort' => true),
+        'team1_name'    => array('desc' => $lng->getTrn('common/home'), 'nosort' => true),
+        'team2_name'    => array('desc' => $lng->getTrn('common/away'), 'nosort' => true),
+// Old solution
+#        'team1_name'  => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id'), 'nosort' => true),
+#        'team2_name'  => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id'), 'nosort' => true),
         'gate'        => array('desc' => $lng->getTrn('common/gate'), 'kilo' => true, 'suffix' => 'k', 'href' => false, 'nosort' => true),
         'score'       => array('desc' => $lng->getTrn('common/score'), 'nosort' => true),
     );
@@ -128,6 +133,8 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         if (in_array($m->round,array_keys($T_ROUNDS))) {
             $m->round = $lng->getTrn($T_ROUNDS[$m->round]);
         }
+        $m->team1_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach1_id,false,false)."'>$m->coach1_name</a>)</i>";
+        $m->team2_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach2_id,false,false)."'>$m->coach2_name</a>)</i>";
     }
 
     $fields = array(
@@ -135,8 +142,11 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         'league_name'   => array('desc' => $lng->getTrn('common/league'), 'nosort' => true),
         'tour_name'     => array('desc' => $lng->getTrn('common/tournament'), 'nosort' => true),
         'round'         => array('desc' => $lng->getTrn('common/round'), 'nosort' => false),
-        'team1_name'    => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id'), 'nosort' => true),
-        'team2_name'    => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id'), 'nosort' => true),
+        'team1_name'    => array('desc' => $lng->getTrn('common/home'), 'nosort' => true),
+        'team2_name'    => array('desc' => $lng->getTrn('common/away'), 'nosort' => true),
+// Old solution
+#        'team1_name'    => array('desc' => $lng->getTrn('common/home'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team1_id'), 'nosort' => true),
+#        'team2_name'    => array('desc' => $lng->getTrn('common/away'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'team2_id'), 'nosort' => true),
         'mlink'         => array('desc' => $lng->getTrn('common/match'), 'nosort' => true),
     );
 

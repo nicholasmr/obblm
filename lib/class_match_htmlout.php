@@ -99,7 +99,7 @@ public static function tourMatches()
     $rnd = 0; # Initial round number must be lower than possible round numbers.
     $cols = 7; # Common columns counter.
     $ROUND_SORT_DIR = (get_alt_col('tours', 'tour_id', $trid, 'type') == TT_RROBIN) ? 'ASC' : 'DESC'; # Sort differently depeding on tour type.
-    $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score
+    $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score, t1.owned_by_coach_id AS 'c1_id', t2.owned_by_coach_id AS 'c2_id',t1.f_cname AS 'c1_name', t2.f_cname AS 'c2_name'
         FROM matches, teams AS t1, teams AS t2 WHERE f_tour_id = $trid AND team1_id = t1.team_id AND team2_id = t2.team_id
         ORDER BY round $ROUND_SORT_DIR, date_played DESC, date_created ASC LIMIT ".(($page-1)*self::T_HTML_MATCHES_PER_PAGE).', '.(($page)*self::T_HTML_MATCHES_PER_PAGE);
     $result = mysql_query($query);
@@ -121,11 +121,19 @@ public static function tourMatches()
         ?>
         <tr>
             <td><?php echo !empty($m->date_played) ? textdate($m->date_played, true) : ''; ?></td>
-            <td class="match" style="text-align: right;"><?php echo $m->t1_name;?></td>
+            <td class="match" style="text-align: right;">
+                <?php 
+                echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->t1_id,false,false)."'>$m->t1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->c1_id,false,false)."'>$m->c1_name</a>)</i>";
+                ?>
+            </td>
             <td class="match" style="text-align: center;"><?php echo !empty($m->date_played) ? $m->team1_score : '';?></td>
             <td class="match" style="text-align: center;">-</td>
             <td class="match" style="text-align: center;"><?php echo !empty($m->date_played) ? $m->team2_score : '';?></td>
-            <td class="match" style="text-align: left;"><?php echo $m->t2_name;?></td>
+            <td class="match" style="text-align: left;">
+                <?php 
+                echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->t2_id,false,false)."'>$m->t2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->c2_id,false,false)."'>$m->c2_name</a>)</i>";
+                ?>
+            </td>
             <?php
             // Does the user have edit or view rights?
             $matchURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$trid&amp;mid=$m->match_id";
