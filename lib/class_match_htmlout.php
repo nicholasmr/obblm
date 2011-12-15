@@ -55,7 +55,7 @@ function upcomingMatches() {
 public static function matchActions($IS_LOCAL_ADMIN) {
     // Admin actions made?
     if (isset($_GET['action']) && $IS_LOCAL_ADMIN) {
-		$match = new Match($_GET['mid']);
+		$match = new Match((int) $_GET['mid']);
 		switch ($_GET['action'])
 		{
 			case 'lock':   status($match->setLocked(true)); break;
@@ -74,7 +74,7 @@ public static function tourMatches()
     global $lng, $coach;
     global $leagues, $divisions, $tours;
 
-    $trid = $_GET['trid']; # Shortcut for string interpolation.
+    $trid = (int) $_GET['trid']; # Shortcut for string interpolation.
     if (!isset($trid) || !in_array($trid, array_keys($tours))) { # Not set or not viewable -> deny access.
         fatal('Invalid tournament ID.');
     }
@@ -250,7 +250,7 @@ public static function tours()
 public static function report() {
 
     // Is $match_id valid?
-    $match_id = $_GET['mid'];
+    $match_id = (int) $_GET['mid'];
     if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
         fatal("Invalid match ID.");
 
