@@ -114,7 +114,7 @@ class Match
         }
     
         // Relations
-        $query = "SELECT t1.name AS 'team1_name', t2.name AS 'team2_name', t1.f_cname AS 'coach1_name', t2.f_cname AS 'coach2_name', t1.f_rname AS 'race1_name', t2.f_rname AS 'race2_name' 
+        $query = "SELECT t1.name AS 'team1_name', t2.name AS 'team2_name', t1.owned_by_coach_id AS 'coach1_id', t2.owned_by_coach_id AS 'coach2_id',t1.f_cname AS 'coach1_name', t2.f_cname AS 'coach2_name', t1.f_rname AS 'race1_name', t2.f_rname AS 'race2_name' 
                 FROM teams AS t1, teams AS t2 WHERE t1.team_id = $this->team1_id AND t2.team_id = $this->team2_id";
         $result = mysql_query($query);
         foreach (mysql_fetch_assoc($result) as $col => $val) {
