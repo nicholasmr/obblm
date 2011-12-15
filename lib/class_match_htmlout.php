@@ -257,6 +257,7 @@ public static function report() {
     global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $racesMayRaiseRotters, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     global $leagues,$divisions,$tours;
+    global $T_ROUNDS;
 
 	// Perform actions (delete, lock/unlock and reset). Needs the
     $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, get_alt_col('matches', 'match_id', $match_id, 'f_tour_id')));
@@ -516,6 +517,11 @@ public static function report() {
         $team2 = new Team($m->team2_id);
     }
 
+    // Change round form submitted?
+    if ($IS_LOCAL_ADMIN && isset($_POST['round'])) {
+        status($m->chRound((int) $_POST['round']));
+    }
+
     /****************
      *
      * Generate form
@@ -544,6 +550,7 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3"><?php  echo $leagueUrl; ?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3"><?php     echo $divUrl;?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td colspan="3"><?php   echo $tourUrl;?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/round');?></b>:</td><td colspan="3"><?php   echo $lng->getTrn($T_ROUNDS[$m->round]);?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
@@ -563,11 +570,21 @@ public static function report() {
 		$matchURL = "index.php?section=matches&type=report&amp;mid=$m->match_id";
 		$deleteURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$m->f_tour_id&amp;mid=$m->match_id";
 
-		echo "<tr><td><b>Admin:</b></td><td colspan='3'>";
+		echo "<tr><td><b>Admin:</b></td><td colspan='3'><b>";
 		echo "<a onclick=\"return match_reset();\" href='$matchURL&amp;action=reset'>".$lng->getTrn('common/reset')."</a>&nbsp;\n";
 		echo "<a onclick=\"return match_delete();\" href='$deleteURL&amp;action=delete' style='color:".(!empty($m->date_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('common/delete')."</a>&nbsp;\n";
 		echo "<a href='$matchURL&amp;action=".(($m->locked) ? 'unlock' : 'lock')."'>" . ($m->locked ? $lng->getTrn('common/unlock') : $lng->getTrn('common/lock')) . "</a>&nbsp;\n";
-		echo "</td></tr>";
+		echo "<br><a href='javascript:void(0);' onClick='slideToggleFast(\"chRound\");'>".$lng->getTrn('matches/report/chround')."</a><div id='chRound' style='display:none;'>
+		<form method='POST'>
+		<select name='round'>";
+		foreach ($T_ROUNDS as $id => $lngidx ) {
+		    echo "<option value='$id'>".$lng->getTrn($lngidx)."</option>\n";
+	    }
+		echo "</select>
+		<input type='submit' value='".$lng->getTrn('matches/report/chround')."'>
+		</form>
+		</div>";
+		echo "</b></td></tr>";
 	}
 ?>
     </table>

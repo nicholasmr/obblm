@@ -285,6 +285,11 @@ class Match
         return $txt->txt;
     }
     
+    public function chRound($round) {
+        $this->round = $round;
+        return mysql_query("UPDATE matches SET round = $round WHERE match_id = $this->match_id");
+    }
+    
     /***************
      * Statics
      ***************/
