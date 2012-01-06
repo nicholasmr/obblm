@@ -122,7 +122,7 @@ public static function tourMatches()
         <tr>
             <td><?php echo !empty($m->date_played) ? textdate($m->date_played, true) : ''; ?></td>
             <td class="match" style="text-align: right;">
-                <?php 
+                <?php
                 echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->t1_id,false,false)."'>$m->t1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->c1_id,false,false)."'>$m->c1_name</a>)</i>";
                 ?>
             </td>
@@ -130,7 +130,7 @@ public static function tourMatches()
             <td class="match" style="text-align: center;">-</td>
             <td class="match" style="text-align: center;"><?php echo !empty($m->date_played) ? $m->team2_score : '';?></td>
             <td class="match" style="text-align: left;">
-                <?php 
+                <?php
                 echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->t2_id,false,false)."'>$m->t2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->c2_id,false,false)."'>$m->c2_name</a>)</i>";
                 ?>
             </td>
@@ -928,7 +928,7 @@ public static function userSched() {
         $own_team = (int) $_POST['own_team'];
         $errmsg = '';
         // Logged in coach has access to the tour?
-        if (!in_array($trid, array_keys($tours))) { 
+        if (!in_array($trid, array_keys($tours))) {
             $errmsg = 'You do not have access to the tournament '.$tours[$trid]['tname'];
         }
         // Is the team is really owned by the logged in coach?
@@ -961,7 +961,7 @@ public static function userSched() {
         <div class='boxBody'>
             <form method="POST">
                     <?php
-                echo "In tournament "; 
+                echo "In tournament ";
                 echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)));
                 echo ' as ';
                 echo '<select name="round" id="round">';
@@ -976,9 +976,8 @@ public static function userSched() {
                     <?php
                 $teams = array();
                     foreach ($coach->getTeams() as $t) {
-                    if (!$t->rdy || $t->is_retired)
-                            continue;
-                    $teams[$t->f_lid][$t->f_did][] = $t;
+                    	if (!$t->rdy || $t->is_retired) continue;
+                    	$teams[$t->f_lid][$t->f_did][] = $t;
                     }
                     ?>
                 <select name='own_team' id='own_team'>
@@ -986,7 +985,9 @@ public static function userSched() {
                     foreach ($teams as $lid => $divs) {
                         echo "<optgroup class='leagues' label='".$leagues[$lid]['lname']."'>\n";
                         foreach ($divs as $did => $teams) {
-                            echo "<optgroup class='divisions' style='padding-left: 1em;' label='".$divisions[$did]['dname']."'>\n";
+                        	 if ($did > 0) {
+                            	echo "<optgroup class='divisions' style='padding-left: 1em;' label='".$divisions[$did]['dname']."'>\n";
+                            }
                             foreach ($teams as $t) {
                                 echo "<option style='background-color: white; margin-left: -1em;' value='$t->team_id'>$t->name</option>\n";
                             }
