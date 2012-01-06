@@ -168,10 +168,11 @@ function validate() {
 
 function save() {
 	if ($this->existing) {
-     	return mysql_query("UPDATE league_prefs SET prime_tid=$this->p_tour, second_tid=$this->s_tour, league_name='".mysql_real_escape_string($this->league_name)."', forum_url='".mysql_real_escape_string($this->forum_url)."' , welcome='".mysql_real_escape_string($this->welcome)."' , rules='".mysql_real_escape_string($this->rules)."'  WHERE f_lid=$this->lid");
+		$query = "UPDATE league_prefs SET prime_tid=$this->p_tour, second_tid=$this->s_tour, league_name='".mysql_real_escape_string($this->league_name)."', forum_url='".mysql_real_escape_string($this->forum_url)."' , welcome='".mysql_real_escape_string($this->welcome)."' , rules='".mysql_real_escape_string($this->rules)."'  WHERE f_lid=$this->lid";
 	} else {
-     	return mysql_query("INSERT INTO league_prefs (f_lid, prime_tid, second_tid, league_name, forum_url, welcome, rules) VALUE ($this->lid, $this->p_tour, $this->s_tour, '".mysql_real_escape_string($this->league_name)."', '".mysql_real_escape_string($this->forum_url)."', '".mysql_real_escape_string($this->welcome)."', '".mysql_real_escape_string($this->rules)."')");
+     	$query = "INSERT INTO league_prefs (f_lid, prime_tid, second_tid, league_name, forum_url, welcome, rules) VALUE ($this->lid, $this->p_tour, $this->s_tour, '".mysql_real_escape_string($this->league_name)."', '".mysql_real_escape_string($this->forum_url)."', '".mysql_real_escape_string($this->welcome)."', '".mysql_real_escape_string($this->rules)."')";
 	}
+	return mysql_query($query);
 }
 
 public static function showLeaguePreferences() {
@@ -256,7 +257,7 @@ public static function handleActions() {
 
     if (isset($_POST['action'])) {
     	if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $_POST['lid'])) {
-			$l_pref = new LeaguePref($_POST['lid'],"",$_POST['p_tour'],$_POST['s_tour'],null,null,null,null,$_POST['existing']);
+			$l_pref = new LeaguePref($_POST['lid'],"",$_POST['p_tour'],$_POST['s_tour'],$_POST['league_name'],$_POST['forum_url'],$_POST['welcome'],$_POST['rules'],$_POST['existing']);
 			if($l_pref->validate()) {
 				if($l_pref->save()) {
 					echo "<div class='boxWide'>";
