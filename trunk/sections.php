@@ -37,7 +37,7 @@ function sec_login() {
             title($lng->getTrn('login/forgotpass'));
         }
         if (isset($_GET['cid']) && isset($_GET['activation_code'])) {
-            $c = new Coach($_GET['cid']);
+            $c = new Coach((int) $_GET['cid']);
             status($new_passwd = $c->confirmActivation($_GET['activation_code']));
             echo "<br><br>";
             echo $lng->getTrn('login/temppasswd')." <b>$new_passwd</b><br>\n";
@@ -78,7 +78,7 @@ function sec_login() {
                 </div>
             </div>
             <?php
-        }
+    }
     }
     else {
         title($lng->getTrn('menu/login'));
@@ -154,14 +154,14 @@ function sec_main() {
     /*
      *  Now we are ready to generate the HTML code.
      */
-   if (Module::isRegistered('LeaguePref')) {
-      $l_pref= LeaguePref::getLeaguePreferences();
-      $league_name = $l_pref->league_name;
-      $welcome = $l_pref->welcome;
-   } else {
-      $league_name = $settings['league_name'];
-      $welcome = $settings['welcome'];
-   }
+	if (Module::isRegistered('LeaguePref')) {
+		$l_pref= LeaguePref::getLeaguePreferences();
+		$league_name = $l_pref->league_name;
+		$welcome = $l_pref->welcome;
+	} else {
+		$league_name = $settings['league_name'];
+		$welcome = $settings['welcome'];
+	}
 
 
     ?>
@@ -294,30 +294,30 @@ function sec_main() {
             default: $_type = T_NODE_LEAGUE;
         }
         $box['type'] = $_type;
-      if (Module::isRegistered('LeaguePref')) {
-         global $tours;
-         // dynamically switch the front page to show the tables for the preferred tournament
-         switch ($box['id']) {
-            case 'prime':
-               if ($l_pref->p_tour > 0) {
-                  $box['id'] = $l_pref->p_tour ;
-                  $box['title'] = $tours[$l_pref->p_tour]['tname'] . " " . $box['title'];
-               } else {
-                  $box['id'] = 1;
-                  $box['title'] = 'Please set league primary tournament';
-               }
-               break;
-            case 'second':
-               if ($l_pref->s_tour > 0) {
-                  $box['id'] = $l_pref->s_tour ;
-                  $box['title'] = $tours[$l_pref->s_tour]['tname'] . " " . $box['title'];
-               } else {
-                  $box['id'] = 1;
-                  $box['title'] = 'Please set league secondary tournament';
-               }
-               break;
-         }
-      }
+    	if (Module::isRegistered('LeaguePref')) {
+    		global $tours;
+    		// dynamically switch the front page to show the tables for the preferred tournament
+			switch ($box['id']) {
+				case 'prime':
+					if ($l_pref->p_tour > 0) {
+					$box['id'] = $l_pref->p_tour ;
+					$box['title'] = $tours[$l_pref->p_tour]['tname'] . " " . $box['title'];
+					} else {
+						$box['id'] = 1;
+						$box['title'] = 'Please set league primary tournament';
+					}
+					break;
+				case 'second':
+					if ($l_pref->s_tour > 0) {
+					$box['id'] = $l_pref->s_tour ;
+					$box['title'] = $tours[$l_pref->s_tour]['tname'] . " " . $box['title'];
+					} else {
+						$box['id'] = 1;
+						$box['title'] = 'Please set league secondary tournament';
+					}
+					break;
+			}
+    	}
 
         $boxes[] = $box;
     }
@@ -385,6 +385,8 @@ function sec_main() {
                                 echo "<td>";
                                 if ($settings['fp_links'] && $f == 'name')
                                     echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t['team_id'],false,false)."'>$t[name]</a>";
+								elseif ($settings['fp_links'] && $f == 'f_cname')
+                                    echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$t['owned_by_coach_id'],false,false)."'>$t[f_cname]</a>";
                                 elseif (is_numeric($t[$f]) && !ctype_digit(($t[$f][0] == '-') ? substr($t[$f],1) : $t[$f]))
                                     echo sprintf('%1.2f', $t[$f]);
                                 else
@@ -408,12 +410,12 @@ function sec_main() {
             break;
 
         case 'latestgames':
-            showGames($box);
-            MTS('Latest matches table generated');
-            break;
+			showGames($box);
+			MTS('Latest matches table generated');
+                break;
 
         case 'upcominggames':
-            showGames($box);
+			showGames($box);
             MTS('Upcoming matches table generated');
             break;
 
@@ -526,59 +528,59 @@ function sec_main() {
 }
 
 function showGames($box) {
-   global $lng, $settings;
-   if ($box['length'] <= 0) {
-      break;
-   }
-   $upcoming = isset($box['upcoming']) ? $box['upcoming'] : false;
-   $matches = Match::getMatches($box['length'], $box['type'], $box['id'], $upcoming)
-   ?>
-   <div class="boxWide">
-      <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
-      <div class='boxBody'>
-         <table class="boxTable">
-            <?php
-            if (sizeof($matches) == 0) {
-            ?>
-            <tr>
-               <td style="text-align: center;" width="100%"><i><?php echo $lng->getTrn('main/nomatches');?></i></td><td> </td>
-            </tr>
-            <?php
-            } else {
-            ?>
-            <tr>
-               <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
+	global $lng, $settings;
+	if ($box['length'] <= 0) {
+		break;
+	}
+	$upcoming = isset($box['upcoming']) ? $box['upcoming'] : false;
+	$matches = Match::getMatches($box['length'], $box['type'], $box['id'], $upcoming)
+	?>
+	<div class="boxWide">
+		<h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
+		<div class='boxBody'>
+			<table class="boxTable">
+				<?php
+				if (sizeof($matches) == 0) {
+				?>
+				<tr>
+					<td style="text-align: center;" width="100%"><i><?php echo $lng->getTrn('main/nomatches');?></i></td><td> </td>
+				</tr>
+				<?php
+				} else {
+				?>
+				<tr>
+					<td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
                <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
                <?php if (!$upcoming) { ?>
                <td><i><?php echo $lng->getTrn('common/date');?></i></td>
                <?php } ?>
                <td>&nbsp;</td>
-            </tr>
-            <?php
-               foreach ($matches as $m) {
-                  echo "<tr valign='top'>\n";
-                  $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
-                  $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
-                  echo "<td style='text-align: right;'>$t1name</td>\n";
-                  if ($upcoming) {
-                     echo "<td><nobr>?&mdash;?</nobr></td>\n";
-                  } else {
-                     echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
-                  }
-                  echo "<td style='text-align: left;'>$t2name</td>\n";
+				</tr>
+				<?php
+					foreach ($matches as $m) {
+					echo "<tr valign='top'>\n";
+					$t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
+					$t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
+					echo "<td style='text-align: right;'>$t1name</td>\n";
+					if ($upcoming) {
+						echo "<td><nobr>?&mdash;?</nobr></td>\n";
+					} else {
+						echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
+					}
+					echo "<td style='text-align: left;'>$t2name</td>\n";
                   if (!$upcoming) {
                      echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
                   }
 
-                  echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
-                  echo "</tr>";
-               }
-            }
-            ?>
-         </table>
-      </div>
-   </div>
-   <?php
+					echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
+					echo "</tr>";
+				}
+				}
+				?>
+			</table>
+		</div>
+	</div>
+	<?php
 }
 
 $_INFOCUSCNT = 1; # HTML ID for _infocus()
@@ -790,15 +792,15 @@ function sec_objhandler() {
                 case T_URL_STANDINGS:
                     call_user_func(
                         array("${classPrefix}_HTMLOUT", 'standings'),
-                        isset($_GET['node'])    ? $_GET['node']    : false,
-                        isset($_GET['node_id']) ? $_GET['node_id'] : false
+                        isset($_GET['node'])    ? (int) $_GET['node']    : false, 
+                        isset($_GET['node_id']) ? (int) $_GET['node_id'] : false
                     );
                     break;
                 case T_URL_PROFILE:
-                    if (!call_user_func(array($classPrefix, 'exists'), $_GET['obj_id'])) {
+                    if (!call_user_func(array($classPrefix, 'exists'), (int) $_GET['obj_id'])) {
                         fatal("The specified ID does not exist.");
                     }
-                    call_user_func(array("${classPrefix}_HTMLOUT", 'profile'), $_GET['obj_id']);
+                    call_user_func(array("${classPrefix}_HTMLOUT", 'profile'), (int) $_GET['obj_id']);
                     break;
             }
         }
@@ -819,12 +821,12 @@ function sec_rules() {
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     echo $HTML_LeagueSelector;
     echo "<br><br>";
-   if (Module::isRegistered('LeaguePref')) {
-      $l_pref= LeaguePref::getLeaguePreferences();
-      echo $l_pref->rules;
-   } else {
-      echo $settings['rules'];
-   }
+	if (Module::isRegistered('LeaguePref')) {
+		$l_pref= LeaguePref::getLeaguePreferences();
+		echo $l_pref->rules;
+	} else {
+    echo $settings['rules'];
+}
 }
 
 /*************************
