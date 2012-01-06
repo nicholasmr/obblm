@@ -27,9 +27,9 @@ define('LOGIN_COOKIE_PASSWD', 'obblmpasswd');
 class Coach
 {
     /***************
-     * Properties 
+     * Properties
      ***************/
-    
+
     // MySQL stored information
     public $coach_id    = 0;
     public $name        = '';
@@ -43,28 +43,28 @@ class Coach
 
     // Shortcut for compabillity issues.
     public $admin       = false;
-    
+
     // Privilege rings (coach access levels)
     const T_RING_GROUP_GLOBAL = 1;
     const T_RING_GROUP_LOCAL = 2;
-    
+
     const T_RING_GLOBAL_ADMIN   = 5; // Site admins
     const T_RING_GLOBAL_NONE    = 0; // No global rights
     const T_RING_LOCAL_ADMIN    = 5; // League commissioner
     const T_RING_LOCAL_REGULAR  = 2; // Regular coach.
-    const T_RING_LOCAL_NONE     = -1; // Pseudo field!!!    
-    
+    const T_RING_LOCAL_NONE     = -1; // Pseudo field!!!
+
     public static $RINGS = array(
         self::T_RING_GROUP_GLOBAL => array(self::T_RING_GLOBAL_ADMIN, self::T_RING_GLOBAL_NONE),
         self::T_RING_GROUP_LOCAL => array(self::T_RING_LOCAL_ADMIN, self::T_RING_LOCAL_REGULAR, self::T_RING_LOCAL_NONE),
     );
-    
+
     /***************
-     * Methods 
+     * Methods
      ***************/
-    
+
     function __construct($coach_id) {
-    
+
         // MySQL stored information
         $this->coach_id = $coach_id;
         $this->setStats(false,false,false);
@@ -73,8 +73,8 @@ class Coach
         if (empty($this->mail)) $this->mail = '';           # Re-define as empty string, and not numeric zero.
         if (empty($this->phone)) $this->phone = '';         # Re-define as empty string, and not numeric zero.
         if (empty($this->realname)) $this->realname = '';   # Re-define as empty string, and not numeric zero.
-        
-       
+
+
         // Coach's site settings.
         $this->settings = array(); // Is overwriten to type = string when loading MySQL data into this object.
         foreach (get_list('coaches', 'coach_id', $this->coach_id, 'settings') as $set) {
@@ -88,7 +88,7 @@ class Coach
                 $this->settings[$key] = $val;
         }
     }
-    
+
     public function setStats($node, $node_id, $set_avg = false)
     {
         foreach (Stats::getAllStats(T_OBJ_COACH, $this->coach_id, $node, $node_id, $set_avg) as $key => $val) {
@@ -96,15 +96,15 @@ class Coach
         }
         return true;
     }
-    
+
     public function setSetting($key, $val) {
-        
+
         $this->settings[$key] = $val;
         $settings = array();
         foreach ($this->settings as $key => $val) {
             $settings[] = implode('=', array($key, $val));
         }
-        
+
         return set_list('coaches', 'coach_id', $this->coach_id, 'settings', $settings);
     }
 
@@ -113,18 +113,18 @@ class Coach
         /**
          * Returns an array of team objects for those teams owned by this coach.
          **/
-    
+
         $teams = array();
-        
-        $result = mysql_query("SELECT team_id FROM teams WHERE owned_by_coach_id = $this->coach_id ORDER BY name ASC");
+
+        $result = mysql_query("SELECT team_id FROM teams WHERE owned_by_coach_id = $this->coach_id ORDER BY team_id DESC");
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($teams, new Team($row['team_id']));
             }
         }
-        
+
         return $teams;
-    }    
+    }
 
     public function getWonTours() {
 
@@ -138,34 +138,34 @@ class Coach
     }
 
     public function isDeletable() {
-        
+
         $status = true;
-        
+
         foreach ($this->getTeams() as $t) {
             $status &= $t->isDeletable();
         }
-        
+
         return $status;
     }
-    
+
     public function delete() {
 
         $status = true;
         if ($this->isDeletable()) {
-            
+
             foreach ($this->getTeams() as $t) {
                 $status &= $t->delete();
-            }            
+            }
 
             $status &= mysql_query("DELETE FROM coaches WHERE coach_id = ".$this->coach_id);
         }
         else {
             $status = false;
         }
-        
+
         return $status;
     }
-    
+
     public function setRetired($bool) {
         return mysql_query("UPDATE coaches SET retired = ".(($bool) ? 1 : 0)." WHERE coach_id = $this->coach_id");
     }
@@ -182,18 +182,18 @@ class Coach
             }
             return $status;
         }
-        
+
         return false;
     }
 
-    public function mayManageObj($obj, $id) { 
-        
+    public function mayManageObj($obj, $id) {
+
         $managee = new Coach($obj == T_OBJ_COACH ? $id : get_alt_col('teams', 'team_id', $id, 'owned_by_coach_id'));
         list($mangers_leagues) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $this->coach_id);
         $MAY_MANAGE_LOCALLY = false;
-        
+
         switch ($obj) {
-    
+
             // Is this coach a commish in a league where the selected coach is a member?
             case T_OBJ_COACH:
                 list($managees_leagues) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, $managee->coach_id);
@@ -204,19 +204,19 @@ class Coach
                     }
                 }
                 break;
-            
+
             // Is this coach a commish in the league the specified team is bounded to?
             case T_OBJ_TEAM:
                 $f_lid = get_alt_col('teams', 'team_id', $id, 'f_lid');
                 $MAY_MANAGE_LOCALLY = (isset($mangers_leagues[$f_lid]) && $mangers_leagues[$f_lid]['ring'] == Coach::T_RING_LOCAL_ADMIN);
                 break;
         }
-        
+
         return ($managee->ring <= $this->ring && ($MAY_MANAGE_LOCALLY || $this->ring == Coach::T_RING_GLOBAL_ADMIN));
     }
-    
+
     public function isNodeCommish($node, $node_id) {
-    
+
         if (!isset($this->_nodeAccess)) {
             list($this->_nodeAccess[T_NODE_LEAGUE], $this->_nodeAccess[T_NODE_DIVISION], $this->_nodeAccess[T_NODE_TOURNAMENT]) = self::allowedNodeAccess(self::NODE_STRUCT__FLAT, $this->coach_id, array(T_NODE_TOURNAMENT => array('f_did' => 'f_did'), T_NODE_DIVISION => array('f_lid' => 'f_lid')));
         }
@@ -239,19 +239,19 @@ class Coach
         global $lng;
         // Ring access allowances.
         $ring_sys_access = array(
-            'log' => $lng->getTrn('name', 'LogSubSys'), 
+            'log' => $lng->getTrn('name', 'LogSubSys'),
             'cpanel' => $lng->getTrn('menu/admin_menu/cpanel')
         );
         $ring_com_access = array(
-            'schedule' => $lng->getTrn('menu/admin_menu/schedule'), 
+            'schedule' => $lng->getTrn('menu/admin_menu/schedule'),
             'nodes' => array('title' => $lng->getTrn('menu/admin_menu/nodes'), 'sub' => array(
                 array('title' => $lng->getTrn('common/tournament'), 'href' => 'node='.T_NODE_TOURNAMENT),
                 array('title' => $lng->getTrn('common/division'),   'href' => 'node='.T_NODE_DIVISION),
                 array('title' => $lng->getTrn('common/league'),     'href' => 'node='.T_NODE_LEAGUE),
-            )), 
-            'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 
-            'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'), 
-            'import' => $lng->getTrn('menu/admin_menu/import'), 
+            )),
+            'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'),
+            'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'),
+            'import' => $lng->getTrn('menu/admin_menu/import'),
         );
         $my_admin_menu = array();
 
@@ -261,7 +261,7 @@ class Coach
             $this->ring == Coach::T_RING_GLOBAL_ADMIN ? $ring_com_access+$ring_sys_access : array(),
             $cnt > 0 ? $ring_com_access : array()
         );
-        
+
         return $my_admin_menu;
     }
 
@@ -294,11 +294,11 @@ class Coach
     }
 
     public function isInMatch($match_id) {
-    
+
         /**
          * Returns the boolean evaluation of a coach's participation in a specific match.
          **/
-    
+
         $result = mysql_query("SELECT team1_id, team2_id FROM matches WHERE match_id = $match_id");
         $row    = mysql_fetch_assoc($result);
         $coach_id1 = get_alt_col('teams', 'team_id', $row['team1_id'], 'owned_by_coach_id');
@@ -306,9 +306,9 @@ class Coach
 
         return ($this->coach_id == $coach_id1 || $this->coach_id == $coach_id2);
     }
-    
+
     public function saveText($str) {
-        
+
         $desc = new ObjDescriptions(T_TEXT_COACH, $this->coach_id);
         return $desc->save($str);
     }
@@ -318,19 +318,19 @@ class Coach
         $desc = new ObjDescriptions(T_TEXT_COACH, $this->coach_id);
         return $desc->txt;
     }
-    
+
     public function savePic($name = false) {
         $img = new ImageSubSys(IMGTYPE_COACH, $this->coach_id);
         list($retstatus, $error) = $img->save($name);
         return $retstatus;
     }
-    
+
     public function deletePic() {
         $img = new ImageSubSys(IMGTYPE_COACH, $this->coach_id);
-        return $img->delete();    
+        return $img->delete();
     }
-    
-    public function setActivationCode($set_AC) 
+
+    public function setActivationCode($set_AC)
     {
         if ($set_AC) {
             $AC = md5(date('l jS \of F Y h:i:s A'));
@@ -340,14 +340,14 @@ class Coach
             return mysql_query("UPDATE coaches SET activation_code = NULL WHERE coach_id = $this->coach_id");
         }
     }
-    
-    public function requestPasswdReset() 
+
+    public function requestPasswdReset()
     {
         $this->setRetired(true); # Prevent future login until activation code is confirmed.
         $AC = $this->setActivationCode(true);
-        mail($this->mail, 
+        mail($this->mail,
         "$_SERVER[SERVER_NAME] password reset request",
-        "Hi $this->name, you have requested a new password at $_SERVER[SERVER_NAME].\nPlease follow this link which will log you on temporarily allowing YOU to set a new password: $_SERVER[SERVER_NAME]$_SERVER[REQUEST_URI]&cid=$this->coach_id&activation_code=$AC", 
+        "Hi $this->name, you have requested a new password at $_SERVER[SERVER_NAME].\nPlease follow this link which will log you on temporarily allowing YOU to set a new password: $_SERVER[SERVER_NAME]$_SERVER[REQUEST_URI]&cid=$this->coach_id&activation_code=$AC",
         'From: noreply@'.$_SERVER['SERVER_NAME']."\r\n".'Reply-To: noreply@'.$_SERVER['SERVER_NAME']."\r\n".'X-Mailer: PHP/'.phpversion()
         );
     }
@@ -366,12 +366,12 @@ class Coach
         }
         return false;
     }
-    
+
     /***************
      * Statics
      ***************/
 
-    public static function exists($id) 
+    public static function exists($id)
     {
         $result = mysql_query("SELECT COUNT(*) FROM coaches WHERE coach_id = $id");
         list($CNT) = mysql_fetch_row($result);
@@ -385,7 +385,7 @@ class Coach
         $FORCE_LOCAL_ADMIN = ((int) get_alt_col('coaches', 'coach_id', $cid, 'ring') > self::T_RING_GLOBAL_NONE);
         $GLOBAL_VIEW = (!$cid || $FORCE_LOCAL_ADMIN);
         $FORCE_LOCAL_RING = ($FORCE_LOCAL_ADMIN) ? self::T_RING_LOCAL_ADMIN : (!$cid ? self::T_RING_LOCAL_REGULAR : false);
-        
+
         $properFields = array();
         $extraFields[T_NODE_LEAGUE]['name']     = 'lname';
         $extraFields[T_NODE_DIVISION]['name']   = 'dname';
@@ -404,8 +404,8 @@ class Coach
             $properFields[] = "m.ring AS 'ring'";
         }
         $query = "SELECT l.lid AS 'lid', d.did AS 'did', t.tour_id AS 'trid',".implode(',',$properFields)."
-            FROM leagues AS l LEFT JOIN divisions AS d ON d.f_lid = l.lid LEFT JOIN tours AS t ON t.f_did = d.did ".
-            ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '');
+            FROM leagues AS l JOIN divisions AS d ON d.f_lid = l.lid JOIN tours AS t ON t.f_did = d.did ".
+            ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '') . " ORDER BY 1 desc, 2 desc, 3 desc";
         $result = mysql_query($query);
 
         switch ($NODE_SRUCT)
@@ -417,9 +417,9 @@ class Coach
                     if (!empty($r->did))  $struct[$r->lid][$r->did]['desc']           = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_DIVISION]),null));
                                           $struct[$r->lid]['desc']                    = array_intersect_key((array) $r, array_fill_keys(array_values($extraFields[T_NODE_LEAGUE]),null));
                     $struct[$r->lid]['desc']['ring'] = ($FORCE_LOCAL_RING) ? $FORCE_LOCAL_RING : $r->ring;
-                }            
+                }
                 return $struct;
-                
+
             case self::NODE_STRUCT__FLAT:
                 $leagues = $divisions = $tours = array();
                 while ($r = mysql_fetch_object($result)) {
@@ -429,20 +429,20 @@ class Coach
                     $leagues[$r->lid]['ring'] = ($FORCE_LOCAL_RING) ? $FORCE_LOCAL_RING : $r->ring;
                 }
                 return array($leagues,$divisions,$tours);
-                
+
             default:
                 return false;
         }
     }
 
     public static function getCoaches() {
-    
+
         /**
          * Returns an array of all coach objects.
          **/
-         
+
         $coaches = array();
-        
+
         $query  = "SELECT coach_id FROM coaches";
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
@@ -450,10 +450,10 @@ class Coach
                 array_push($coaches, new Coach($row['coach_id']));
             }
         }
-                    
+
         return $coaches;
     }
-    
+
     public static function login($coach, $passwd, $setCookie = false) {
         // $coach may be cid or coach name.
 
@@ -471,36 +471,36 @@ class Coach
             return false;
         }
     }
-    
+
     public static function cookieLogin() {
 
         return (
-            !isset($_SESSION['logged_in']) && 
-            isset($_COOKIE[LOGIN_COOKIE_COACHID]) && 
-            isset($_COOKIE[LOGIN_COOKIE_PASSWD]) && 
+            !isset($_SESSION['logged_in']) &&
+            isset($_COOKIE[LOGIN_COOKIE_COACHID]) &&
+            isset($_COOKIE[LOGIN_COOKIE_PASSWD]) &&
             !get_alt_col('coaches', 'coach_id', $_COOKIE[LOGIN_COOKIE_COACHID], 'retired') && # Is not retired?
             self::checkPasswd($_COOKIE[LOGIN_COOKIE_COACHID], $_COOKIE[LOGIN_COOKIE_PASSWD], false) &&
             self::_setSession($_COOKIE[LOGIN_COOKIE_COACHID])
         );
     }
-    
+
     public static function logout() {
         self::_delSession();
         self::_delCookies();
         return true;
     }
-    
+
     public static function checkPasswd($cid, $passwd, $MD5 = true) {
         return (get_alt_col('coaches', 'coach_id', $cid, 'passwd') == ($MD5 ? md5($passwd) : $passwd));
     }
-    
+
     protected static function _setSession($cid) {
         $_SESSION['logged_in'] = true;
         $_SESSION['coach']     = get_alt_col('coaches', 'coach_id', $cid, 'name');
         $_SESSION['coach_id']  = $cid;
         return true;
     }
-    
+
     protected static function _delSession() {
         session_unset();
         session_destroy();
@@ -512,38 +512,38 @@ class Coach
         setcookie(LOGIN_COOKIE_COACHID, $cid, $expire);
         setcookie(LOGIN_COOKIE_PASSWD, get_alt_col('coaches', 'coach_id', $cid, 'passwd'), $expire);
         return true;
-    }    
-   
+    }
+
     protected static function _delCookies() {
         setcookie(LOGIN_COOKIE_COACHID, '', time()-3600);
         setcookie(LOGIN_COOKIE_PASSWD, '', time()-3600);
         return true;
     }
-    
+
     public static function create(array $input) {
-        
+
         /**
          * Creates a new coach.
          *
          * Input: name, realname, passwd, mail, phone, ring, settings, def_leagues (array of LIDs)
          **/
-         
+
         global $settings;
-        
+
         if (
-            empty($input['name']) || 
-            empty($input['passwd']) || 
+            empty($input['name']) ||
+            empty($input['passwd']) ||
             get_alt_col('coaches', 'name', $input['name'], 'coach_id') || # Name exists already?
             !in_array($input['ring'], self::$RINGS[self::T_RING_GROUP_GLOBAL])
-            ) 
+            )
             return false;
 
-        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring, settings) 
+        $query = "INSERT INTO coaches (name, realname, passwd, mail, phone, ring, settings)
                     VALUES ('" . mysql_real_escape_string($input['name']) . "',
-                            '" . mysql_real_escape_string($input['realname']) . "', 
-                            '" . md5($input['passwd']) . "', 
-                            '" . mysql_real_escape_string($input['mail']) . "', 
-                            '" . mysql_real_escape_string($input['phone']) . "', 
+                            '" . mysql_real_escape_string($input['realname']) . "',
+                            '" . md5($input['passwd']) . "',
+                            '" . mysql_real_escape_string($input['mail']) . "',
+                            '" . mysql_real_escape_string($input['phone']) . "',
                             " . $input['ring'].",
                             '".array_strpack_assoc('%k=%v', $input['settings'], ',')."')";
 
