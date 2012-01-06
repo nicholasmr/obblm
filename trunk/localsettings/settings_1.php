@@ -177,7 +177,7 @@ $settings['fp_latestgames'] = array(
         'box_ID' => 2,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'league', # This sets the node to be a league. I.e. this will make a latest games box for the league with ID = 1
-        'title'  => 'Recent games' # Table Title,
+        'title'  => 'Recent games', # Table Title,
         'upcoming' => 0, # if set to 0 will show recent games, if set to 1 will show future games.
         'length' => 5,
     ),
