@@ -317,7 +317,9 @@ public static function handlePost($cid) {
          'f_did' => isset($did) ? (int) $did : Team::T_NO_DIVISION_TIE,
          ));
 
-      $errors = $exitStatus ? Team::$T_CREATE_ERROR_MSGS[$exitStatus] : array();
+      if($exitStatus) {
+      	$errors[] = Team::$T_CREATE_ERROR_MSGS[$exitStatus];
+      }
    }
 
    /* Actually create all the players in the database */
@@ -336,7 +338,7 @@ public static function handlePost($cid) {
    /* Report errors and reset the form, or redirect to the team page */
    if (sizeof($errors) > 0) {
       $msg = implode(",<br />", $errors);
-      status(false, "<br />" . $msg);
+      status(false, $msg);
       $post = (object) $_POST;
 echo<<< EOQ
    <script type="text/javascript">
@@ -418,7 +420,8 @@ echo<<< EOQ
 
    function getValue(elemId) {
       try {
-         return document.getElementById(elemId).value;
+         var elem = document.getElementById(elemId);
+         return elem.options[elem.selectedIndex].value;
       } catch (err) {
          return "";
       }
@@ -426,7 +429,11 @@ echo<<< EOQ
 
    function getText(elemId) {
       try {
-         return document.getElementById(elemId).innerText;
+         if(document.all){
+            return document.getElementById(elemId).innerText;
+         } else {
+            return document.getElementById(elemId).textContent;
+         }
       } catch (err) {
          return "";
       }
@@ -448,6 +455,15 @@ echo<<< EOQ
       return "<input type=\"" + type + "\" id=\"" + id + "\" name=\"" + id + "\" value=\"" + value+ "\" />";
    }
 
+   function setText(element, text) {
+      if(document.all){
+           document.getElementById(element).innerText = text;
+      } else{
+          document.getElementById(element).textContent = text;
+      }
+   }
+
+
    function updateQty(id, type, newQty) {
       var race = races[document.getElementById("rid").value];
       if (type == 'p') {
@@ -456,16 +472,16 @@ echo<<< EOQ
          var players = race['others'];
       }
       var player = players[id];
-      var divS = "sub" + type + id;
-      var newCost = player["cost"] * newQty;
-      document.getElementById(divS).innerText= newCost;
+      var divS = 'sub' + type + id;
+      var newCost = player['cost'] * newQty;
+      setText(divS, newCost);
       updateTotal();
    }
 
    function makeSelect(id, type, max) {
       var str = "<select id=\"qty" + type + id + "\" name=\"qty" + type + id + "\" onchange=\"updateQty(" + id + ", '" + type + "', this.options[this.selectedIndex].value)\">";
       for (var i = 0; i <= max; i++) {
-         str += "<option>" + i + "</option>";
+         str += "<option value=\"" + i + "\">" + i + "</option>";
       }
       str += "</select>";
       return str;
@@ -519,8 +535,8 @@ echo<<< EOQ
       while (table.rows.length > 1) {
          table.deleteRow(1);
       }
-      document.getElementById("pcnt").innerText=0;
-      document.getElementById("total").innerText=0;
+      setText("pcnt", "0");
+      setText("total", "0");
       document.getElementById("raceid").value = race.rid;
 
       rowIdx = 0;
@@ -583,14 +599,14 @@ echo<<< EOQ
             total +=  new Number(subTot);
          }
       }
-      document.getElementById("pcnt").innerText=pCount;
+      setText("pcnt", pCount);
       for (var i=0; i < race['other_count']; i++) {
          subTot = getText('subo' + i);
          if (!isNaN(subTot)) {
             total +=  new Number(subTot);
          }
       }
-      document.getElementById("total").innerText=total;
+      setText("total",total);
    }
 
    function createTeam() {
