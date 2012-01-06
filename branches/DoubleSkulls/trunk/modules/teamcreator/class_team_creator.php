@@ -317,7 +317,9 @@ public static function handlePost($cid) {
          'f_did' => isset($did) ? (int) $did : Team::T_NO_DIVISION_TIE,
          ));
 
-      $errors = $exitStatus ? Team::$T_CREATE_ERROR_MSGS[$exitStatus] : array();
+      if($exitStatus) {
+      	$errors[] = Team::$T_CREATE_ERROR_MSGS[$exitStatus];
+      }
    }
 
    /* Actually create all the players in the database */
@@ -336,7 +338,7 @@ public static function handlePost($cid) {
    /* Report errors and reset the form, or redirect to the team page */
    if (sizeof($errors) > 0) {
       $msg = implode(",<br />", $errors);
-      status(false, "<br />" . $msg);
+      status(false, $msg);
       $post = (object) $_POST;
 echo<<< EOQ
    <script type="text/javascript">
