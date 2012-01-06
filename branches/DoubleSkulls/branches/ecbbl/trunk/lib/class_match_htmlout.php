@@ -55,7 +55,7 @@ function upcomingMatches() {
 public static function matchActions($IS_LOCAL_ADMIN) {
     // Admin actions made?
     if (isset($_GET['action']) && $IS_LOCAL_ADMIN) {
-        $match = new Match($_GET['mid']);
+		$match = new Match((int) $_GET['mid']);
             switch ($_GET['action'])
             {
                 case 'lock':   status($match->setLocked(true)); break;
@@ -74,7 +74,7 @@ public static function tourMatches()
     global $lng, $coach;
     global $leagues, $divisions, $tours;
 
-    $trid = $_GET['trid']; # Shortcut for string interpolation.
+    $trid = (int) $_GET['trid']; # Shortcut for string interpolation.
     if (!isset($trid) || !in_array($trid, array_keys($tours))) { # Not set or not viewable -> deny access.
         fatal('Invalid tournament ID.');
         }
@@ -99,7 +99,7 @@ public static function tourMatches()
     $rnd = 0; # Initial round number must be lower than possible round numbers.
     $cols = 7; # Common columns counter.
     $ROUND_SORT_DIR = (get_alt_col('tours', 'tour_id', $trid, 'type') == TT_RROBIN) ? 'ASC' : 'DESC'; # Sort differently depeding on tour type.
-    $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score
+    $query = "SELECT t1.name AS 't1_name', t1.team_id AS 't1_id', t2.name AS 't2_name', t2.team_id AS 't2_id', match_id, date_played, locked, round, team1_score, team2_score, t1.owned_by_coach_id AS 'c1_id', t2.owned_by_coach_id AS 'c2_id',t1.f_cname AS 'c1_name', t2.f_cname AS 'c2_name'
         FROM matches, teams AS t1, teams AS t2 WHERE f_tour_id = $trid AND team1_id = t1.team_id AND team2_id = t2.team_id
         ORDER BY round $ROUND_SORT_DIR, date_played DESC, date_created ASC LIMIT ".(($page-1)*self::T_HTML_MATCHES_PER_PAGE).', '.(($page)*self::T_HTML_MATCHES_PER_PAGE);
     $result = mysql_query($query);
@@ -121,11 +121,19 @@ public static function tourMatches()
         ?>
         <tr>
             <td><?php echo !empty($m->date_played) ? textdate($m->date_played, true) : ''; ?></td>
-            <td class="match" style="text-align: right;"><?php echo $m->t1_name;?></td>
+            <td class="match" style="text-align: right;">
+                <?php 
+                echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->t1_id,false,false)."'>$m->t1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->c1_id,false,false)."'>$m->c1_name</a>)</i>";
+                ?>
+            </td>
             <td class="match" style="text-align: center;"><?php echo !empty($m->date_played) ? $m->team1_score : '';?></td>
             <td class="match" style="text-align: center;">-</td>
             <td class="match" style="text-align: center;"><?php echo !empty($m->date_played) ? $m->team2_score : '';?></td>
-            <td class="match" style="text-align: left;"><?php echo $m->t2_name;?></td>
+            <td class="match" style="text-align: left;">
+                <?php 
+                echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->t2_id,false,false)."'>$m->t2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->c2_id,false,false)."'>$m->c2_name</a>)</i>";
+                ?>
+            </td>
             <?php
             // Does the user have edit or view rights?
             $matchURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$trid&amp;mid=$m->match_id";
@@ -250,13 +258,14 @@ public static function tours()
 public static function report() {
 
     // Is $match_id valid?
-    $match_id = $_GET['mid'];
+    $match_id = (int) $_GET['mid'];
     if (!get_alt_col('matches', 'match_id', $match_id, 'match_id'))
         fatal("Invalid match ID.");
 
     global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $racesMayRaiseRotters, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     global $leagues,$divisions,$tours;
+    global $T_ROUNDS;
 
 	// Perform actions (delete, lock/unlock and reset). Needs the
     $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, get_alt_col('matches', 'match_id', $match_id, 'f_tour_id')));
@@ -516,6 +525,11 @@ public static function report() {
         $team2 = new Team($m->team2_id);
     }
 
+    // Change round form submitted?
+    if ($IS_LOCAL_ADMIN && isset($_POST['round'])) {
+        status($m->chRound((int) $_POST['round']));
+    }
+
     /****************
      *
      * Generate form
@@ -544,6 +558,7 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3"><?php  echo $leagueUrl; ?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3"><?php     echo $divUrl;?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td colspan="3"><?php   echo $tourUrl;?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/round');?></b>:</td><td colspan="3"><?php   echo $lng->getTrn($T_ROUNDS[$m->round]);?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
@@ -563,11 +578,21 @@ public static function report() {
 		$matchURL = "index.php?section=matches&type=report&amp;mid=$m->match_id";
 		$deleteURL = "index.php?section=matches&amp;type=tourmatches&amp;trid=$m->f_tour_id&amp;mid=$m->match_id";
 
-		echo "<tr><td><b>Admin:</b></td><td colspan='3'>";
+		echo "<tr><td><b>Admin:</b></td><td colspan='3'><b>";
 		echo "<a onclick=\"return match_reset();\" href='$matchURL&amp;action=reset'>".$lng->getTrn('common/reset')."</a>&nbsp;\n";
 		echo "<a onclick=\"return match_delete();\" href='$deleteURL&amp;action=delete' style='color:".(!empty($m->date_played) ? 'Red' : 'Blue').";'>".$lng->getTrn('common/delete')."</a>&nbsp;\n";
 		echo "<a href='$matchURL&amp;action=".(($m->locked) ? 'unlock' : 'lock')."'>" . ($m->locked ? $lng->getTrn('common/unlock') : $lng->getTrn('common/lock')) . "</a>&nbsp;\n";
-		echo "</td></tr>";
+		echo "<br><a href='javascript:void(0);' onClick='slideToggleFast(\"chRound\");'>".$lng->getTrn('matches/report/chround')."</a><div id='chRound' style='display:none;'>
+		<form method='POST'>
+		<select name='round'>";
+		foreach ($T_ROUNDS as $id => $lngidx ) {
+		    echo "<option value='$id'>".$lng->getTrn($lngidx)."</option>\n";
+	}
+		echo "</select>
+		<input type='submit' value='".$lng->getTrn('matches/report/chround')."'>
+		</form>
+		</div>";
+		echo "</b></td></tr>";
 	}
 ?>
     </table>
@@ -942,7 +967,7 @@ public static function userSched() {
                 echo '<select name="round" id="round">';
                 global $T_ROUNDS;
                 foreach ($T_ROUNDS as $r => $d) {
-                    echo "<option value='$r'>".$lng->getTrn($d)."</option>\n";
+                    echo "<option value='$r' ".(($r == 1) ? 'SELECTED' : '').">".$lng->getTrn($d)."</option>\n";
                 }
                 ?>
                 </select>

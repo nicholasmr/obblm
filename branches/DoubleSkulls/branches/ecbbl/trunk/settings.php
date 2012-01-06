@@ -1,4 +1,5 @@
 <?php
+
 /**************************
  * MySQL database settings
  **************************/
@@ -8,14 +9,20 @@ $db_user   = 'talkfan1_ecbbl';
 $db_passwd = 'F?];HB5~8i%%';
 $db_host   = 'localhost';
 
-// For local settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
-
 /*************************
  * Global settings
  *************************/
 
+/* 
+    For help visit 
+        - http://www.nicholasmr.dk/obblmwiki/index.php?title=Customization#Global_settings
+        - http://www.nicholasmr.dk/obblmwiki/index.php?title=Setup
+        
+    For LOCAL settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
+*/
+
 $settings['site_name'] = 'ECBBL'; // Site name.
-$settings['default_visitor_league'] = 1;    // ID of default league to show on front page when not logged in/coach has not selected a home league.
+$settings['default_visitor_league'] = 1;    // ID of default league to show on front page when not logged in OR coach has not selected a home league.
 $settings['default_leagues'] = array(1);    // When creating a coach the coach will automatically become a regular coach in leagues with these IDs.
 $settings['hide_ES_extensions'] = true;    // Default is false. Hides ES (Extra Stats) tables and ES references.
 
@@ -23,7 +30,11 @@ $settings['hide_ES_extensions'] = true;    // Default is false. Hides ES (Extra 
  * House ranking systems
  *****************/
 
-// For help see http://www.nicholasmr.dk/obblmwiki/index.php?title=Customization
+/* 
+    Please visit 
+        - http://www.nicholasmr.dk/obblmwiki/index.php?title=Customization#Global_settings
+    before you edit the below settings.
+*/
 
 // Rule #1
 $hrs[1]['rule']   = array('-pts', '-td', '+smp');    // Sort teams against: most points, then most TDs and then least sportsmanship points.

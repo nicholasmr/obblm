@@ -80,7 +80,25 @@ if (isset($_POST['type'])) {
             foreach ($errors as $msg => $halt) {
                 if ($halt) { status(false,$msg); break 2; }
             }
-            status($c->setRing(Coach::T_RING_GROUP_LOCAL, (int) $_POST['ring'], (int) $_POST['lid']));
+            // Single?
+            if (isset($c)) {
+                status($c->setRing(Coach::T_RING_GROUP_LOCAL, (int) $_POST['ring'], (int) $_POST['lid']));
+            }
+            // Mass user?
+            elseif (isset($_POST['massuser']) && $_POST['massuser']) {
+                $changed = 0;
+                foreach (get_rows('coaches', array('coach_id', 'name')) as $subm_coach) {
+                    if (isset($_POST["cid$subm_coach->coach_id"]) && $_POST["cid$subm_coach->coach_id"]) {
+                        $c = new Coach($subm_coach->coach_id); # Needed later.
+                        if (!$coach->mayManageObj(T_OBJ_COACH, $c->coach_id)) {
+                            status(false, 'You do not have permissions to manage the selected coach "'.$c->name.'".');
+                        }
+                        $c->setRing(Coach::T_RING_GROUP_LOCAL, (int) $_POST['ring'], (int) $_POST['lid']);
+                        $changed++;
+                    }
+                }
+                status(true, "Changed $changed local access levels");
+            }
             break;
 
         case 'ch_passwd':
@@ -192,6 +210,16 @@ $T_LOCAL_RINGS = array(
     <div class="boxBody">
         <form method="POST">
         Coach name<br> <input type="text" name="cname" id="coach1" size="20" maxlength="50"><br><br>
+        <div id='massuserlist' style='display:none;'>
+        Coaches<br>
+        <br>
+        <?php 
+        foreach (get_rows('coaches', array('coach_id', 'name')) as $subm_coach) {
+            echo "<input type='checkbox' name='cid$subm_coach->coach_id' value='1'> $subm_coach->name<br>\n";
+        }
+        ?>
+        <br>
+        </div>
         Access level<br>
         <select name="ring">
             <?php
@@ -214,8 +242,11 @@ $T_LOCAL_RINGS = array(
         </select>
         <br><br>
         <input type="hidden" name="type" value="ch_ring_local">
+        <input type="hidden" name="massuser" id="massuser" value="0">
         <input type="submit" name="button" value="Change LOCAL access">
         </form>
+        <br>
+        <a href='javascript:void();' onClick='slideDownFast("massuserlist");document.getElementById("coach1").disabled=1;document.getElementById("massuser").value=1;'><b>Mass user access changes?</b></a>
     </div>
 </div>
 
