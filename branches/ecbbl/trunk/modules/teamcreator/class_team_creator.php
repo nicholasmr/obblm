@@ -595,8 +595,8 @@ echo<<< EOQ
 
    function createTeam() {
       var oForm = document.forms['form_team'];
-      var spend = new Number(document.getElementById("total").innerText);
-      var pCount = new Number(document.getElementById("pcnt").innerText);
+      var spend = new Number(getText("total"));
+      var pCount = new Number(getText("pcnt"));
       var tName = document.getElementById("tname").value;
       var submit = true;
 
@@ -610,7 +610,10 @@ echo<<< EOQ
          submit = false;
       }
 
-      return submit;
+      if (submit) {
+         oForm.submit();
+   }
+
    }
 
    </script>
@@ -652,7 +655,7 @@ EOQ;
          }
 echo<<< EOQ
       </select></td>
-      <td><span id="createBtnTxt" title="$txtNoRaceSelected"><button id="createBtn" onclick="return createTeam();" DISABLED>$txtCreateBtn</button></td>
+      <td><span id="createBtnTxt" title="$txtNoRaceSelected"><button id="createBtn" onclick="createTeam(); return false;" DISABLED>$txtCreateBtn</button></td>
 EOQ;
       }
 

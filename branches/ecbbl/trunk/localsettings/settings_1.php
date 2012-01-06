@@ -65,7 +65,7 @@ $settings['fp_messageboard']['show_match_summaries'] = true; // Default is true.
 /*
     The below settings define which boxes to show on the right side of the front page.
 
-    Note, every box MUST have a unique 'box_ID' number.
+    Note, every box MUST have a UNIQUE 'box_ID' number.
     The box IDs are used to determine the order in which the boxes are shown on the front page.
     The box with 'box_ID' = 1 is shown at the top of the page, the box with 'box_ID' = 2 is displayed underneath it and so forth.
 */
@@ -77,7 +77,7 @@ $settings['fp_messageboard']['show_match_summaries'] = true; // Default is true.
 $settings['fp_standings'] = array(
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
-        'id'     => 'prime',
+        'id'     => 'prime', # Node ID
         'box_ID' => 3,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
@@ -88,15 +88,15 @@ $settings['fp_standings'] = array(
             Also note that using HRSs with fields such as points (pts) for leagues/divisions standings makes no sense as they are tournament specific fields (i.e. it makes no sense to sum the points for teams across different tours to get the teams' "league/division points", as the points definitions for tours may vary).
         */
         'HRS'    => 4, # Note: this must be a existing and valid HRS number from the main settings.php file.
-        'title'  => 'Standings',
-        'length' => 8,
+        'title'  => 'Standings', # Table Title
+        'length' => 10, # Number of entries in the table
         # Format: "Displayed table column name" => "OBBLM field name".
-        'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
+        'fields' => array('Coach' => 'f_cname', 'Team' => 'name', 'Pld' => 'played', 'Pts' => 'pts', 'TDs' => 'sdiff', 'CAS' => 'tcdiff', 'TV' => 'tv'),
     ),
     # This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
     array(
         'id'     => 'second',
-        'box_ID' => 6,
+        'box_ID' => 7,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
         'infocus' => true, # If true a random team from the standings will be selected and its top players displayed.
@@ -109,7 +109,7 @@ $settings['fp_standings'] = array(
         'title'  => 'Standings',
         'length' => 8,
         # Format: "Displayed table column name" => "OBBLM field name".
-        'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
+        'fields' => array('Coach' => 'f_cname', 'Team' => 'name', 'Pld' => 'played', 'Pts' => 'pts', 'TDs' => 'sdiff', 'CAS' => 'tcdiff', 'TV' => 'tv'),
     ),
 );
 
@@ -126,7 +126,7 @@ $settings['fp_leaders'] = array(
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
         'title'     => 'Most casualties',
-        'field'     => 'cas',
+        'field'     => 'cas',# For the OBBLM fields available see http://nicholasmr.dk/obblmwiki/index.php?title=Customization
         'length'    => 5,
         'show_team' => true, # Show player's team name?
     ),
@@ -136,9 +136,9 @@ $settings['fp_leaders'] = array(
         'box_ID'    => 4,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Most touchdowns',
-        'field'     => 'td',
-        'length'    => 5,
+        'title'     => 'Most touchdowns', # Table Title
+        'field'     => 'td', # For the OBBLM fields available see http://nicholasmr.dk/obblmwiki/index.php?title=Customization
+        'length'    => 5, # Number of entries in table
         'show_team' => true, # Show player's team name?
     ),
 );
@@ -156,11 +156,11 @@ $settings['fp_events'] = array(
             skills      - recent player skill picks
     */
     array(
-        'id'        => 1,
-        'box_ID'    => 5,
+        'id'        => 'prime',
+        'box_ID'    => 6,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'      => 'tournament', # This sets the node to be a tournament. I.e. this will make an event box for the tournament with ID = 1
-        'title'     => 'Tournament ID=1 latest dead',
+        'title'     => 'Latest dead',
         'content'   => 'dead',
         'length'    => 5,
     ),
@@ -173,11 +173,11 @@ $settings['fp_events'] = array(
 $settings['fp_latestgames'] = array(
     # This will display a latest games box for the node (league, division or tournament) with ID = 1
     array(
-        'id'     => 1,
+        'id'     => 1, # Node ID
         'box_ID' => 2,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
         'type'   => 'league', # This sets the node to be a league. I.e. this will make a latest games box for the league with ID = 1
-        'title'  => 'Recent games',
+        'title'  => 'Recent games', # Table Title,
         'upcoming' => 0, # if set to 0 will show recent games, if set to 1 will show future games.
         'length' => 5,
     ),
