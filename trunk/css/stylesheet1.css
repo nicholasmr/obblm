@@ -191,3 +191,220 @@ div.red                 {clear:both;background-color:#F20000;border:1px solid #c
 .won		{background-position:-14px 0}
 .draw		{background-position:-28px 0}
 .lost		{background-position:-42px 0}
+
+/*
+ * Scheduler START
+ */
+ .module_schedule {
+	margin: 30px 10px;
+	padding: 10px;
+ }
+ 
+ .module_schedule .success {
+	background-color: #CCFFCC;
+ }
+ 
+ .module_schedule .error {
+	background-color: #FFCCCC;
+ }
+ 
+ .module_schedule input {
+	padding:5px 10px;
+ }
+ 
+ 
+ .module_schedule .league,
+ .module_schedule .division,
+ .module_schedule .tour {
+	
+	margin: 0 0 20px;
+ }
+ 
+.module_schedule .teamPool,
+.module_schedule .step2 #selectedTeams {
+ 	width: 250px;
+	float: left;
+	margin-right: 10px;
+	cursor:pointer;
+}
+	
+.module_schedule  .team,
+.module_schedule  .slot {
+	margin: 5px 0;
+	padding: 10px;
+ }
+ 
+ .module_schedule .team {
+	width: 200px;
+	height: 32px;
+	line-height:32px;
+	background-color: #DDDDDD;
+	border: 1px solid #BBBBBB;
+ }
+ 
+ .module_schedule .team:hover{
+  background-color: #AAAAAA;
+ }
+ 
+.module_schedule #schedule .team:hover,
+.module_schedule .step1 .team:hover {
+	background-color: #DDDDDD;
+ }
+.module_schedule #schedule .team,
+.module_schedule .step1 .teamPool,
+.module_schedule .step1 .team {
+	cursor: default;
+ }
+ 
+ .module_schedule .step2 .draw { 
+ 	height: 62px;
+ }
+.module_schedule .step2 .slot { 
+ 	width: 25px;
+	height: 32px;
+	font-size: 30px;
+	font-weight: bold;
+	float:left;
+}
+
+ .module_schedule .step2 .notselected {
+	background-color: #FFCCCC;
+	border: 1px solid #FF0000;
+	cursor:pointer;
+ }
+
+  .module_schedule .step2 .notselected:hover {
+	background-color: #FFAAAA;
+}
+
+  .module_schedule .step2 .selected {
+	background-color: #CCFFCC;
+	border: 1px solid #00FF00;
+	cursor:pointer;
+ }
+   .module_schedule .step2 .selected:hover {
+	background-color: #AAFFAA;
+}
+ 
+ .module_schedule .step2 .schedulebutton {
+	background-color: #BBBBBB;
+	border: 1px solid #444444;
+	border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	padding: 10px;
+	width: 200px;
+	height: 32px;
+	margin: 5px;
+	float:left;
+	cursor:pointer;
+	display:none;
+	font-size: 14px;
+	text-align: center;
+ }
+ 
+ .module_schedule .step2 .schedulebutton:hover{
+	background-color: #888888;
+}
+
+ .module_schedule .step2 #draw {
+	width: 300px;
+	float:left;
+	margin: 0 10px;
+
+ }
+ 
+ .module_schedule .step2 #matches {
+	width: 600px;
+	height:100%;
+	float:right;
+	margin: 0 10px;
+ }
+ 
+ .module_schedule .step2 #matches .teamname {
+	display:none;
+ }
+ 
+  .module_schedule .step2 #drawsched #draw .draw .team {
+	width: 200px;
+	height:32px;
+	float:right;
+ }
+ 
+ .module_schedule .step2 #drawsched .boxWide {
+	clear:none;
+ }
+ 
+ .module_schedule .step2 #drawsched #schedule {
+	float:right;
+	margin-top:0;
+ }
+.module_schedule .step2 #drawsched #schedule {
+	width: 785px;
+ }
+ .module_schedule .step2 #drawsched #schedule table.tours {
+	width: 765px;
+ }
+ 
+ .module_schedule .clear {
+	clear:both;
+ }
+ 
+ .module_schedule .droppable {
+	border: 1px dashed #545454;
+
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+ }
+ 
+  .module_schedule .droppableActive {
+	background-color: #CCFFCC;
+	border: 1px dashed #00FF00;
+
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+ }
+ 
+ .module_schedule #roundselection {
+	width: 230px;
+	float:left;
+	margin-top: 0px;
+ }
+ .module_schedule .roundPool {
+  	width: 200px;
+	height: 20px;
+	padding: 2px;
+	margin: 2px;
+	float: left;
+	line-height:20px;
+	background-color: #DDDDDD;
+	border: 1px solid #BBBBBB;
+ }
+ 
+ .module_schedule #hometeam {
+	float: left;
+ }
+ .module_schedule #awayteam {
+	float: right;
+ }
+ 
+ .module_schedule #schedule {
+	text-align: center;
+ }
+ .module_schedule #schedule .vs {
+	font-size: 32px;
+	line-height: 62px;
+ }
+  .module_schedule #schedule .team {
+	line-height: 16px;
+  }
+ .module_schedule #schedule #selectedRound {
+	line-height: 16px;
+	font-size: 16px;
+	font-weight: bold;
+  }
+ /*
+ * Scheduler END
+ */

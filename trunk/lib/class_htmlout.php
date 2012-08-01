@@ -918,6 +918,7 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
         <script type="text/javascript" src="lib/jquery.expander.js"></script>
         <link type="text/css" href="css/autocomplete.css" rel="stylesheet">
@@ -1030,6 +1031,9 @@ private static function make_menu()
                 <?php if (Module::isRegistered('Gallery'))    { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
 				<?php if (Module::isRegistered('LeagueTables'))    { ?><li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Conference'))    { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
+				<?php if (isset($_SESSION['logged_in']) && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $coach->ring == Coach::T_RING_LOCAL_ADMIN)) { ?>
+					<?php if (Module::isRegistered('Scheduler'))    { ?><li><a href="handler.php?type=scheduler"><?php echo $lng->getTrn('name', 'Scheduler');?></a></li><?php } ?>
+				<?php } ?>
             </ul>
         </li>
 
