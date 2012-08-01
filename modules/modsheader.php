@@ -140,4 +140,9 @@ Module::register(array(
     'filesLoadTime' => array('teamcompare/class_teamcompare.php')
 ));
 
+Module::register(array(
+    'class'         => 'Scheduler',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('scheduler/class_scheduler.php')
+));
 ?>

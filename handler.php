@@ -179,8 +179,56 @@ switch ($_GET['type'])
         echo json_encode(array('query' => $_GET['query'], 'suggestions' => array_values($objs), 'data' => array_keys($objs)));
         break;
 
+	/* League Tables */
+    case 'scheduler':
+		$subtype = '';
+		if (isset($_POST['subtype'])) {
+			$subtype = $_POST['subtype'];
+		}
+		
+		if ($subtype != '') {
+			switch($subtype) {
+				case 'apa_schedule_available': {
+					Scheduler::apa_schedule_available();
+					break;
+				}
+				case 'apa_generate_draw': {
+					Scheduler::apa_generate_draw();
+					break;
+				}
+				case 'manual_draw': {
+					Scheduler::show_manual_draw();
+					break;
+				}
+				case 'manual_schedule': {
+					$teams = json_decode($_POST['teams']);
+
+					$draw = array();
+					foreach($teams->teams as $team) {
+						$draw[] = str_replace("pool","", $team);
+					}
+					Scheduler::apa_generate_schedule($draw);
+					break;
+				}
+				case 'custom_draw': {
+					Scheduler::show_custom_draw();
+					break;
+				}
+				case 'custom_game': {
+					Scheduler::schedule_custom_game();
+					break;
+				}
+			}
+		} else {
+			Module::run('Scheduler', array());
+		}
+		
+        break;
+	case 'scheduler_apa_schedule_available':
+		
+		break;
     default:
-        fatal("Sorry. I don't know what the type '".htmlentities($_GET['type'])."' means.\n");
+        fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
 }
 
 mysql_close($conn);
