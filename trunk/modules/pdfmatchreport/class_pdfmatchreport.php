@@ -41,10 +41,15 @@ class PDFMatchReport implements ModuleInterface
         global $lng;
         global $inducements;
 
+        $FILLED = false;
+
         if (!empty($argv)) {
             $team1 = new Team($argv[0]);
             $team2 = new Team($argv[1]);
             $match = new Match($argv[2]);
+            if (!is_null($team1) && !is_null($team2)) {
+                $FILLED = true;
+            }
         }
         else {
             $team1 = null;
@@ -113,10 +118,12 @@ class PDFMatchReport implements ModuleInterface
         $scoreboxOffset = 20;
 #        $pdf->RoundedRect($currentx + 15, $currenty + $scoreboxOffset, 50, 50, 5, 'D'); 
 #        $pdf->RoundedRect($currentx + 475, $currenty + $scoreboxOffset, 50, 50, 5, 'D'); 
-    $img1 = new ImageSubSys(IMGTYPE_TEAMLOGO,$team1->team_id);
-    $img2 = new ImageSubSys(IMGTYPE_TEAMLOGO,$team2->team_id);
-    $pdf->Image($img1->getPath(),$currentx -10,  $currenty + $scoreboxOffset, 60,60,'','',false,0);
-    $pdf->Image($img2->getPath(),$currentx + 495, $currenty + $scoreboxOffset, 60,60,'','',false,0);
+        if ($FILLED) {
+            $img1 = new ImageSubSys(IMGTYPE_TEAMLOGO,$team1->team_id);
+            $img2 = new ImageSubSys(IMGTYPE_TEAMLOGO,$team2->team_id);
+            $pdf->Image($img1->getPath(),$currentx -10,  $currenty + $scoreboxOffset, 60,60,'','',false,0);
+            $pdf->Image($img2->getPath(),$currentx + 495, $currenty + $scoreboxOffset, 60,60,'','',false,0);
+        }
 
         //VS text
         $currentx += 80;
@@ -125,7 +132,7 @@ class PDFMatchReport implements ModuleInterface
         $pdf->SetFont('Tahoma','',16);
         $noname = '__________________';
         
-        $pdf->Cell(390, 50, (is_null($team1) ? $noname : $team1->name).' - '.(is_null($team1) ? $noname : $team1->name), 0, 0, 'C', false, '');
+        $pdf->Cell(390, 50, (!$FILLED ? $noname : $team1->name).' - '.(!$FILLED ? $noname : $team1->name), 0, 0, 'C', false, '');
 
         // Gate + score text
         $pdf->SetFont('Tahoma','',11);
@@ -187,7 +194,7 @@ class PDFMatchReport implements ModuleInterface
             $pdf->Cell(70, $h, 'Total team CAS', 1, 0, 'C', true, '');
             $pdf->Cell(35, $h, 'FAME', 1, 0, 'C', true, '');
             
-            if (1) {
+            if (1 && $FILLED) {
                     $pdf->SetFont('Tahoma','B',11);
                     $pdf->Cell(150, $h, '   '.${"team$i"}->name, 0, 0, 'L', false, '');
             }         
@@ -228,7 +235,7 @@ class PDFMatchReport implements ModuleInterface
             $pdf->Cell(70, $h, '', 1, 0, 'C', true, '');
             $pdf->Cell(35, $h, '', 1, 0, 'C', true, '');
 
-            if (1) {
+            if (1 && $FILLED) {
                     $t = ${"team$i"};
                     $pdf->SetFont('Tahoma','',8);
                    $statsstr = sprintf('TV: %uk  -  Played: %u  -  Win pct.: %1.0f  -  ELO: %1.0f  -  CAS inflicted: %u', $t->tv/1000, $t->mv_played, $t->rg_win_pct, $t->rg_elo, $t->mv_cas);
@@ -272,11 +279,13 @@ class PDFMatchReport implements ModuleInterface
 
             // Printing player rows            
             $tmp_players = array();
-            $players = ${"team$i"}->getPlayers();
-            foreach ($players as $p) {
-                if (!Match::player_validation($p, $match))
-                    continue;
-                array_push($tmp_players, $p);
+            if ($FILLED) {
+                $players = ${"team$i"}->getPlayers();
+                foreach ($players as $p) {
+                    if (!Match::player_validation($p, $match))
+                        continue;
+                    array_push($tmp_players, $p);
+                }
             }
             $players = $tmp_players;
             
