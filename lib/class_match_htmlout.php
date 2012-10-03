@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2012. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -561,6 +561,10 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/round');?></b>:</td><td colspan="3"><?php   echo $lng->getTrn($T_ROUNDS[$m->round]);?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
+    if (Module::isRegistered('PDFMatchReport')) {
+        $str = '<a href="handler.php?type=pdfmatchreport&amp;tid1='.$team1->team_id.'&amp;tid2='.$team2->team_id.'&amp;mid='.$m->match_id.'">Download PDF report</a>';
+        echo "<tr><td><b>Match report</b>:</td><td>$str</td></tr>";
+    }
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
         echo "<tr><td><b>Replay</b>:</td><td colspan='3'><a href='handler.php?type=leegmgr&amp;replay=$m->match_id'>View replay</a></td></tr>";
     }
