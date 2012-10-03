@@ -343,7 +343,11 @@ public static function printList($node, $node_id, $ALLOW_EDIT)
         ?>
         <td style='width:50%;' valign='top'>
         <div class="boxWide" style="width: 80%; margin: 20px auto 20px auto;">
-            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('wanted', __CLASS__).": <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a>";?></div>
+            <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php 
+                echo $lng->getTrn('wanted', __CLASS__).": <a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a>";
+                echo ' (<a href="'.urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e->f_tid,false,false).'">'.$e->f_tname.'</a>)';
+            ?>
+            </div>
             <div class="boxBody">
                 <table class="common">
                     <tr>
