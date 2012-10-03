@@ -44,6 +44,7 @@ $stars['Morg \'n\' Thorg']['cost']                    = 430000;
 $stars['Zzharg Madeye']['cost']                       = 90000;
 $stars['Deeproot Strongbranch']['cost']               = 300000;
 $stars['Eldril Sidewinder']['cost']                   = 200000;
+$stars['Ramtut III']['cost']                          = 380000;
 
 ksort($stars, SORT_STRING);
 
