@@ -132,7 +132,7 @@ class PDFMatchReport implements ModuleInterface
         $pdf->SetFont('Tahoma','',16);
         $noname = '__________________';
         
-        $pdf->Cell(390, 50, (!$FILLED ? $noname : $team1->name).' - '.(!$FILLED ? $noname : $team1->name), 0, 0, 'C', false, '');
+        $pdf->Cell(390, 50, (!$FILLED ? $noname : $team1->name).' - '.(!$FILLED ? $noname : $team2->name), 0, 0, 'C', false, '');
 
         // Gate + score text
         $pdf->SetFont('Tahoma','',11);
