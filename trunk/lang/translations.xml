@@ -1929,4 +1929,529 @@
 </admin>
 </fr-FR>
 
+<it-IT>
+
+<!-- Commonly used strings -->
+<common>
+    <notitle>Inserisci il Titolo qui</notitle>
+    <nobody>--Vuoto--</nobody>
+    
+    <submit>Inserisci</submit>
+    <save>Salva</save>
+    <create>Crea</create>
+    <delete>Cancella</delete>
+    <edit>Modifica</edit>
+    <view>Guarda</view>
+    <back>Indietro</back>
+    <yes>Si</yes>
+    <no>No</no>
+    <none>Nessuno</none>
+    <reset>Resetta</reset>
+    <lock>Blocca</lock>
+    <locked>Bloccato</locked>
+    <finished>Terminato</finished>
+    <unlock>Sblocca</unlock>
+    <add>Aggiungi</add>
+    <remove>Remove</remove>
+    <next>Prossimo</next>
+    <previous>Precedente</previous>
+    <name>Nome</name>
+    <status>Stato</status>
+    <desc>Descrizione</desc>
+    <upload>Upload</upload>
+    <all>Tutto</all>
+    <select>Seleziona</select>
+    <stats>Statistiche</stats>
+    <general>Generale</general>
+    <value>Valore</value>
+    <amount>Quantità</amount>
+    <ach>Achievements</ach>
+    <page>Pagina</page>
+    <retired>Ritirato/a</retired>
+    <skills>Skills</skills>
+    <skill>Skill</skill>
+    <injs>Infortuni</injs>
+    <pos>Posizione</pos>
+    <price>Costo</price>
+    <number>Number</number>
+    <opponent>Avversario</opponent>
+    <options>Opzioni</options>
+    <empty>Vuoto</empty>
+    
+    <needhelp>Serve aiuto?</needhelp>
+    <picof>Immagine di</picof>
+    <about>Info</about>
+    
+    <recentmatches>Partite Recenti</recentmatches>
+    <upcomingmatches>Prossime Partite</upcomingmatches>
+    <dateplayed>Data di Gioco</dateplayed>
+    <datecreated>Data Creazione</datecreated>
+    <date>Data</date>
+    <home>Casa</home>
+    <away>Ospite</away>
+    <score>Punteggio</score>
+    <gate>Spalti</gate>
+    <result>Risultato</result>
+    
+    <starhh>Cronologia Reclutamento Star</starhh>
+    <merchh>Cronologia Reclutamento Mercenari</merchh>
+    
+    <match>Partita</match>
+    <round>Round</round>
+    <tournament>Torneo</tournament>
+    <division>Divisione</division>
+    <league>Lega</league>
+    
+    <player>Giocatore</player>
+    <players>Giocatori</players>
+    <team>Squadra</team>
+    <teams>Squadre</teams>
+    <coach>Allenatore</coach>
+    <coaches>Allenatori</coaches>
+    <race>Razza</race>
+    <races>Razze</races>
+    <star>Star</star>
+    <stars>Stars</stars>
+    
+    <won>Vinte</won>
+    <lost>Perse</lost>
+    <draw>Pareggiate</draw>
+    <streaks>Serie</streaks>
+    <played>Giocate</played>
+    <playedtours>Competizioni Disputate</playedtours>
+    <wontours>Competizioni Vinte</wontours>
+    
+    <ready>Pronto</ready>
+    <dead>Morto</dead>
+    <sold>Venduto</sold>
+    <bought>Comprato</bought>
+    
+    <td>Mete</td>
+    <intcpt>Intercetti</intcpt>
+    <cp>Completi</cp>
+    <ki>Uccisioni</ki>
+    <bh>Fatto Male</bh>
+    <si>Infortunio Grave</si>
+    <cas>CAS</cas>
+    <mvp>MVP</mvp>
+    
+    <pms>Mostra Statistiche medie del Match</pms>
+    <ats>Mostra le statistiche </ats>
+    <uploadnew>Carica una nuova immagine</uploadnew>
+    <notice_simul><![CDATA[<i>Nota</i>: Entrambe le tabelle sottostanti sono ordinate simultaneamente.]]></notice_simul>
+    <notice_spp><![CDATA[<i>Nota</i>: <b>Se</b> i Star Player possono guadagnare SPP debbono avere il valore corrispondente nella colonna SPP.]]></notice_spp>
+    <sortedagainst>Contro</sortedagainst>
+    
+    <confirm_box>Sicuro?</confirm_box>
+    
+    <!-- nodeSelector() -->
+    <displayfrom>Mostra da</displayfrom>
+    <type>Tipo</type>
+        <active>Attivo</active>
+        <alltime>Totali</alltime>
+    <sgrp>Gruppo Statistiche</sgrp>
+    <having>Avere</having>
+    
+    <!-- ES -->
+    <extrastats>Statistiche Extra</extrastats>
+    <stat>Statostoca</stat>
+    <!-- use "all-time" string from nodeSelect() translation -->
+    <matchavg><![CDATA[Match&nbsp;avg.]]></matchavg> <!-- "Match avg." -->
+    
+</common>
+
+<!-- Link names for menu elements -->
+<menu>
+    <login>Login</login>
+    <logout>Logout</logout>
+    <home>Home</home>
+    <cc>Angolo dell'allenatore</cc>
+    <teams>Squadre</teams>
+    <coaches>Allenatori</coaches>
+    <matches_menu>
+        <name>Partite</name> <!-- top level button text -->
+        <tours>Tornei</tours>
+        <recent>Partite Recenti</recent>
+        <upcoming>Prossime Partite</upcoming>
+        <usersched>Inserisci Partita</usersched>
+    </matches_menu>
+    <statistics_menu>
+        <name>Statistiche</name> <!-- top level button text -->
+        <player_stn>Giocatore</player_stn>
+        <team_stn>Team</team_stn>
+        <coach_stn>Allenatore</coach_stn>
+        <race_stn>Razza</race_stn>
+        <star_stn>Star</star_stn>
+    </statistics_menu>
+    <admin_menu>
+        <name>Admin</name> <!-- top level button text -->
+        <nodes>Leghe, divisioni e tornei</nodes>
+        <ct_man>Gestione delle Squadre</ct_man>
+        <usr_man>Gestione</usr_man>
+        <import>Importa Squadra</import>
+        <schedule>Inserisci Partita</schedule>
+        <cpanel>Pannello Principale OBBLM</cpanel>
+    </admin_menu>
+    <plugins>Plugins</plugins>
+    
+    <rules>Regole</rules>
+    <forum>Forum</forum>
+</menu>
+
+<!-- Section translations -->
+<login>
+    <!-- has no <name> tag! -->
+    <loginname>Nome Allenatore</loginname>
+    <passwd>Password</passwd>
+    <remember>Ricordami</remember>
+    <loginbutton>Login</loginbutton>
+    <forgotpass>Password dimenticata?</forgotpass>
+        <resetpasswdmail>Riceverai presto una e-mail</resetpasswdmail>
+        <mismatch>Errore tra User ed indirizzo e-mail</mismatch>
+        <temppasswd>La tua password temporanea è:</temppasswd>
+        <setnewpasswd>Clicca qui per cambiare la password</setnewpasswd>
+</login>
+
+<main>
+    <!-- has no <name> tag! -->
+    <newmsg>Nuovo Messaggio</newmsg>
+    <broadcast>Invia messaggio a tutte le leghe?</broadcast>
+    <nowelcome>Non hai ancora impostato un messaggio di benvenuto</nowelcome>
+    <more>mostra</more>
+    <posted>Inviato</posted>
+    <by>bda</by>
+    <lastedit>Ultima Modifica</lastedit>
+    <infocus>Squadra in osservazione</infocus>
+</main>
+
+<cc>
+    <new_team>Nuova Squadra</new_team>
+
+    <!-- <stats> defined in <common> block -->
+
+    <coach_teams>Squadre dell'allenatore</coach_teams>
+
+    <profile>Profilo</profile>        
+        <photo>Immagine dell'allenatore</photo>
+        <coach_info>Informazioni sull'allenatore</coach_info>
+            <note_persinfo>Le informazioni sugli allenatori sono disponibili solo agli utenti.</note_persinfo>
+            <new>Nuovo</new>
+            <old>Vecchio</old>
+            <current>Corrente</current>
+            <chpasswd>Cambia password</chpasswd>
+            <chphone>Cambia numero di telefono</chphone>
+            <chmail>Cambia email</chmail>
+            <chlogin>Cambia nome (login)</chlogin>
+            <chname>Cabia nome completo</chname>
+            <chtheme>Cambia tema OBBLM</chtheme>
+            <chlang>Cambia lingua</chlang>
+            <chhomelid>Change lega principale</chhomelid>
+</cc>
+
+<profile>
+    <coach>
+        <teams_total>Totale Squadre</teams_total>
+        <teams_active>Squadre Attive</teams_active>
+        <teams_notready>Squadre non pronte</teams_notready>
+        <teams_retired>Squadre ritirate</teams_retired>
+        <avgteam_elo>ELO medio per squadra</avgteam_elo>
+        <avgteam_tv>TV medio per squadra</avgteam_tv>
+        <avgteam_ff>FF medio per squadra</avgteam_ff>
+    </coach>
+
+    <star>
+        <hiredby>Reclutato da</hiredby>
+    </star>
+
+    <player>
+        <about>Info sul Giocatore</about>
+        <profile>Profilo del Giocatore</profile>
+        <best>Miglior Incontro</best>
+    </player>
+    
+    <team>
+        <!-- sub secs. -->
+        
+        <viewtoggle>Cambia Visione del Roster</viewtoggle>
+        
+        <!-- Team management sec. -->
+        <tmanage>Statistiche e Gestione</tmanage>
+        
+        <!-- About sec. -->
+            <logo>Logo</logo>
+            <stad>Stadio</stad>
+
+        <!-- News sec. -->            
+        <news>News</news>
+            <tnews>News di squadra</tnews>
+            <wnews>Scrivi news</wnews>
+            <nonews>Nessun dato</nonews>
+        
+        <!-- Games sec. -->
+        <games>Partite recenti e Prossime</games>
+        
+        <!-- Star/merc HH secs. -->
+        
+        <!-- For the three team page boxes -->
+
+        <box_info>
+            <title>Info squadra e statistiche</title>
+            
+            <ltour><![CDATA[Latest&nbsp;tour]]></ltour>
+        </box_info>
+        
+        <box_tm>
+            <title>Management di squadra</title>
+
+            <hire_player>Recluta giocatore</hire_player>
+            <hire_journeyman>Recluta Journeyman</hire_journeyman>
+            <fire_player>Licenzia Giocatore</fire_player>
+            <unbuy_player>Annulla reclutamento</unbuy_player>
+            <rename_player>Rinomina giocatore</rename_player>
+            <renumber_player>Rinumera giocatore</renumber_player>
+            <rename_team>Rinomina Squadra</rename_team>
+            <buy_goods>Compra beni di squadra</buy_goods>
+            <drop_goods>Abbandona beni di squadra</drop_goods>
+            <ready_state>Pronto</ready_state>
+            <retire>Ritira squadra</retire>
+            <delete>Cancella squadra</delete>
+
+            <!-- Strings used within action boxes -->
+            <fdescs>
+                <thing>cosa</thing>
+                <teamready>Squadra Pronta?</teamready>
+                <retire>Ritira squadra?</retire>
+                <suredeleteteam>Sicuro di voler cancellare la squadra?</suredeleteteam>
+            </fdescs>
+
+            <desc>
+                <hire_player>
+                <![CDATA[
+                Ingaggia un nuovo giocatore.<br>
+                Ingaggiare un giocatore come vagabondo è gratis, ma può essere scelto solo tra le posizioni 0-16 della tua scheda.
+                ]]>
+                </hire_player>
+                <hire_journeyman>
+                <![CDATA[
+                Ingaggia un vagabondo per giocare permanentemente nella tua squadra.
+                ]]>
+                </hire_journeyman>
+                <fire_player>
+                <![CDATA[
+                Licenzia un giocatore. Prezzo di vendita:
+                ]]>
+                </fire_player>
+                <unbuy_player>
+                <![CDATA[
+                Regret hiring a player. 100% refund.<br>
+                Questo è possibile sono per i giocatori che non hanno partacipato a nessun incontro.
+                ]]>
+                </unbuy_player>
+                <rename_player>
+                <![CDATA[
+                Rinomina un giocatore.
+                ]]>
+                </rename_player>
+                <renumber_player>
+                <![CDATA[
+                Cambia il numero di un giocatore.
+                ]]>
+                </renumber_player>
+                <rename_team>
+                <![CDATA[
+                Rinomina la tua squadra.
+                ]]>
+                </rename_team>
+                <buy_goods>
+                <![CDATA[
+                Compra incentivi.
+                ]]>
+                </buy_goods>
+                <buy_goods_warn>
+                <![CDATA[
+                <br><br>Notare che il costo dei reroll è <font color='red'><b>raddoppiato</b></font>.<br>Se la tua intenzione è comprare un RR non raddoppiato, allora compralo e richiedi i soldi in spesi in eccesso all'amministratore.
+                ]]>
+                </buy_goods_warn>
+                <drop_goods>
+                <![CDATA[
+                Rinuncia agli incentivi senza rimborso.
+                ]]>
+                </drop_goods>
+                <ready_state>
+                <![CDATA[
+                Questo attributo permette all'allenatore di segnalare agli altri allenatori/squadre se è interessato o no a disputare una partita.
+                ]]>
+                </ready_state>
+                <retire>
+                <![CDATA[
+                Disabilita la Squadra.<br>Una volta ritirata la squadra non è più gestibile.<br>Solo gli amministratori possono riabilitare la squadra. Il ritiro ha effetto immediato, ma sarà visibile <b>alla successiva ricarica della pagina</b>.
+                ]]>
+                </retire>
+                <delete>
+                <![CDATA[
+                Cancella la Squadra.<br>Per mantenere le statistiche, non ti sarà possibile cancellare la squadra una volta che ha giocato una partita. La rimozione ha effetto immediato, ma sarà visibile <b>alla successiva ricarica della pagina</b>.
+                ]]>
+                </delete>
+            </desc>
+        </box_tm>
+        
+        <box_admin>
+            <title>Pannello di Amministrazione</title>
+
+            <unhire_journeyman>Annulla Vagabondo</unhire_journeyman>
+            <unsell_player>Annulla Licenziamento</unsell_player>
+            <unbuy_goods>Annulla Beni di squadra</unbuy_goods>
+            <bank>Banca</bank>
+            <spp>SPP Giocatore Extra</spp>
+            <dval>Valore Giocatore Extra</dval>
+            <extra_skills>Abilità Giocatore Extra</extra_skills>
+            <ach_skills>Togli Abilità Giocatore</ach_skills>
+
+            <desc>
+                <unhire_journeyman>
+                <![CDATA[
+                Regret permanently hiring a journeyman.<br>
+                This only works on players from a 0-16 allowed position on your team's roster.
+                ]]>
+                </unhire_journeyman>
+                <unsell_player>
+                <![CDATA[
+                Regret firing a player.
+                ]]>
+                </unsell_player>
+                <unbuy_goods>
+                <![CDATA[
+                Regret buying team goods.
+                ]]>
+                </unbuy_goods>
+                <bank>
+                <![CDATA[
+                Make changes to team's treasury.
+                ]]>
+                </bank>
+                <spp>
+                <![CDATA[
+                Manage a player's extra SPP.
+                ]]>
+                </spp>
+                <dval>
+                <![CDATA[
+                Change a player's value by a certain amount.
+                ]]>
+                </dval>
+                <extra_skills>
+                <![CDATA[
+                Manage a player's extra skills.
+                ]]>
+                </extra_skills>
+                <ach_skills>
+                <![CDATA[
+                Remove a players achieved skills. This makes the player able to rechoose a skill.
+                ]]>
+                </ach_skills>
+            </desc>
+        </box_admin>
+    </team>
+</profile>
+
+<standings>
+    <team>
+        <tblTitle2>All-time standings continued (team details)</tblTitle2>
+    </team>
+</standings>
+
+<matches>
+    <tours>
+        <showhidden>Mostra nodi vuoti</showhidden>
+        <!-- none used - all are in "common". -->
+    </tours>
+    <tourmatches>
+        <roundtypes>
+            <final>Finale</final>
+            <thirdPlayoff>Finale per il 3° Posto</thirdPlayoff>
+            <semi>Semi-finali</semi>
+            <quarter>Quarti di finale</quarter>
+            <rnd16>Round of 16</rnd16>
+            <rnd>Round</rnd>
+            <rnd1>Round 1</rnd1>
+            <rnd2>Round 2</rnd2>
+            <rnd3>Round 3</rnd3>
+            <rnd4>Round 4</rnd4>
+            <rnd5>Round 5</rnd5>
+            <rnd6>Round 6</rnd6>
+            <rnd7>Round 7</rnd7>
+            <rnd8>Round 8</rnd8>
+            <rnd9>Round 9</rnd9>
+            <rnd10>Round 10</rnd10>
+            <rnd11>Round 11</rnd11>
+            <rnd12>Round 12</rnd12>
+        </roundtypes>
+        
+        <matchdelete><![CDATA[Sei sicuro di voler cancellare la partita?\n\nNOTA BENE:\nA meno che la partita non sia stata ancora giocata, questa azione non è reversibile e avrà effetti sulle tabelle dei giocatori che vi partecipano.\nE' consigliato cancellare le partite solo se si sà bene cosa si sta facendo.]]></matchdelete>
+        <reset_notice><![CDATA[Sei sicuro di voler resettare questa partita?\n\nNOTA BENE:\nResettare un match cancella tutti i dati.\nResettare un match in cui uno dei giocatori ha già giocato una partita potrebbe alterare le statistiche delle squadre.]]></reset_notice>
+    </tourmatches>
+
+    <!-- Subsection: match report(s) -->
+    <report>
+        
+        <!-- General -->
+        <clickforhelp>Serve Aiuto?</clickforhelp>
+        <notplayed>Non ancora disputata</notplayed>
+        <report>report</report>
+        
+        <!-- Subsecs of team page -->
+        <info>Informazioni</info>
+            <stadium>Stadio</stadium>
+            <fans>Fans (Spettatori Reali)</fans>
+            
+        <results>Risultati</results>
+            <treas>Tesoreria</treas>
+            <ff>Fan factor</ff>
+            <smp>Punti Sportività</smp>
+                <pts>Punti</pts>
+            <tcas>CAS Totali di Squadra</tcas>
+            <fame>FAMA</fame>
+            <tv>TV</tv>
+            
+        <summary>Sommario</summary>
+    </report>
+</matches>
+
+<rules>
+    <!-- None -->
+</rules>
+
+<about>
+    <!-- None -->
+</about>
+
+<!-- NOTE: Translation is NOT supplied for all admin pages. -->
+<admin>
+    <!-- Common -->
+    <prefixes>the prefixes + and - specify least of and most of</prefixes>
+
+    <!-- Subsec: Schedule matches -->
+    <schedule>
+        <create_LD>Creare prima una Lega + Divisione/i prima di schedulare gli incontri</create_LD>
+        <tour_name>Nome del Torneo</tour_name>
+        <rank_sys>Sistema di Ranking</rank_sys>
+        <sched_type>Schedulazione</sched_type>
+        <add_team>Aggiungi Squadra</add_team>
+        <teams_selected>Selezione Squadra</teams_selected>
+        <!-- Tour Types (TT) -->
+            <TT_FFA><![CDATA[Free-For-All tournament &mdash; with N games in it]]></TT_FFA>
+            <TT_FFA_SINGLE><![CDATA[Free-For-All match &mdash; in an existing FFA tournament]]></TT_FFA_SINGLE>
+            <TT_RR><![CDATA[Round-Robin tournament &mdash; with N games in it]]></TT_RR>
+        <!-- RR -->
+            <rrobin_rnds>Seed bracket</rrobin_rnds>
+            <times>volte</times>
+        <!-- FFA -->
+            <in_tour>Nel torneo</in_tour>
+                <new_tour>Un nuovo torneo FFA</new_tour>
+            <as_type>Tipo di accoppiamenti</as_type>
+    </schedule>
+</admin>
+
+</it-IT>
+
 </translations>
