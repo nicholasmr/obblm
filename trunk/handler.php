@@ -140,7 +140,12 @@ switch ($_GET['type'])
 
     /* PDF Match Report */
     case 'pdfmatchreport':
-          Module::run('PDFMatchReport', array());
+          $argv = array();
+          if ( isset($_GET['tid1']) && isset($_GET['tid2']) && isset($_GET['mid']) && 
+            is_numeric($_GET['tid1']) && is_numeric($_GET['tid2']) && is_numeric($_GET['mid'])) {
+            $argv = array((int) $_GET['tid1'], (int) $_GET['tid2'], (int) $_GET['mid']);
+          }
+          Module::run('PDFMatchReport', $argv);
           break;
 
     /* Veridy team name - AJAX use */

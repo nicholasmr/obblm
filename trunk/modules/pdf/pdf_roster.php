@@ -64,7 +64,7 @@ global $inducements;
 define("MARGINX", 20);
 define("MARGINY", 20);
 define("DEFLINECOLOR", '#000000');
-define("HEADLINEBGCOLOR", '#999999');
+define("HEADLINEBGCOLOR", '#c3c3c3');
 
 // Custom settings for inducements.
 
@@ -519,7 +519,7 @@ if ($settings['enable_pdf_logos']) {
 // Color legends
 $pdf->SetFont('Tahoma', '', 8);
 $currentx = MARGINX+16;
-$currenty = 570;
+$currenty = 572;
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_MNG));
 $pdf->SetXY($currentx, $currenty);
 $pdf->Rect($currentx, $currenty, 5, 5, 'DF');
@@ -541,6 +541,12 @@ $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_CHR_LTM1));
 $pdf->Rect($currentx+=50+5, $currenty+=1, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
 $pdf->Cell(50, 8, 'Stat downgrade', 0, 0, 'L', false);
+
+$pdf->SetFont('Tahoma', '', 7);
+$pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NORMAL));
+$pdf->SetXY($currentx+240, $currenty+3);        
+$donate = "Please consider donating to the OBBLM project if you enjoy this software and wish to support\n further development and maintenance. For more information visit nicholasmr.dk";
+$pdf->Multicell(300, 7, $donate, 0, 0, 'L', false);
 
 // Output the PDF document
 $pdf->Output(utf8_decode($team->name) . date(' Y-m-d') . '.pdf', 'I');
