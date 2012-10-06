@@ -68,6 +68,7 @@ public static function profile($pid)
     $p->_achievements();
     $p->_matchBest();
     $p->_recentGames();
+    $p->_injuryHistory();
     if (!$settings['hide_ES_extensions']) {
         $p->_ES();
     }
@@ -169,7 +170,7 @@ private function _about($ALLOW_EDIT)
                             }
                             else {
                                 global $T_INJS;
-                                $status = strtolower($T_INJS[$p->status]);
+                                $status = ucfirst(strtolower($T_INJS[$p->status]));
                                 echo ($status == 'none') ? '<b><font color="green">'.$lng->getTrn('common/ready').'</font></b>' : "<b><font color='blue'>$status</font></b>"; 
                             }
                         ?>
@@ -380,7 +381,7 @@ private function _matchBest()
     <div class="row">
         <div class="boxWide">
             <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('mbest');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/best');?></div>
-            <div class="boxBody" id="mbest" style='display:none;'>
+            <div class="boxBody" id="mbest">
                 <table class="common">
                     <tr>
                         <td><b><?php echo $lng->getTrn('common/type');?></b></td>
@@ -449,6 +450,63 @@ private function _recentGames()
     <?php
 }
 
+private function _injuryHistory()
+{
+    global $lng, $T_INJS;
+    $p = $this; // Copy. Used instead of $this for readability.
+    list($injhist, $stats, $match_objs) = $p->getInjHistory();
+    
+    ?>
+    <div class="row">
+        <div class="boxWide">
+            <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('injhist');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('profile/player/injhist');?></div>
+            <div class="boxBody" id="injhist">
+                <table class="common">
+                    <tr>
+                        <td><b><?php echo $lng->getTrn('common/injs');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/tournament');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/opponent');?></b></td>
+                        <td><b>MVP</b></td>
+                        <td><b>Cp</b></td>
+                        <td><b>Td</b></td>
+                        <td><b>Int</b></td>
+                        <td><b>Cas</b></td>
+                        <td><b><?php echo $lng->getTrn('common/score');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/result');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/dateplayed');?></b></td>
+                        <td><b><?php echo $lng->getTrn('common/match');?></b></td>
+                    </tr>
+                    <?php
+                    foreach (array_keys($injhist) as $mid) {
+                        $m = $match_objs[$mid];
+                        foreach ($injhist[$mid] as $k => $v) {
+                            $injhist[$mid][$k] = ucfirst(strtolower($T_INJS[$v]));
+                        }
+                        ?>
+                        <tr>
+                        <td><?php echo implode(', ', $injhist[$mid]); ?></td>
+                        <td><?php echo get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT);?></td>
+                        <td><?php echo ($p->owned_by_team_id == $m->team1_id) ? $m->team2_name : $m->team1_name; ?></td>
+                        <td><?php echo $stats[$mid]['mvp']; ?></td>
+                        <td><?php echo $stats[$mid]['cp']; ?></td>
+                        <td><?php echo $stats[$mid]['td']; ?></td>
+                        <td><?php echo $stats[$mid]['intcpt']; ?></td>
+                        <td><?php echo $stats[$mid]['bh']+$stats[$mid]['si']+$stats[$mid]['ki']; ?></td>
+                        <td><?php echo $m->team1_score .' - '. $m->team2_score; ?></td>
+                        <td><?php echo matchresult_icon((($m->is_draw) ? 'D' : (($m->winner == $p->owned_by_team_id) ? 'W' : 'L'))); ?></td>
+                        <td><?php echo textdate($m->date_played, false, false);?></td>
+                        <td><a href='javascript:void(0)' onClick="window.open('index.php?section=matches&amp;type=report&amp;mid=<?php echo $m->match_id;?>');"><?php echo $lng->getTrn('common/view');?></a></td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </table>
+            </div>
+        </div>
+    </div>
+    <?php  
+}
+
 private function _ES() 
 {
     global $lng;
@@ -456,7 +514,7 @@ private function _ES()
     <div class="row">
         <div class="boxWide">
             <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/extrastats');?></div>
-            <div class="boxBody" id="ES">
+            <div class="boxBody" id="ES" style='display:none;'>
                 <?php
                 HTMLOUT::generateEStable($this);
                 ?>
