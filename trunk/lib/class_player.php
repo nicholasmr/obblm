@@ -675,6 +675,36 @@ class Player
         return implode(', ', $injs);
     }
     
+    private function _getInjHistory() 
+    {
+        $injs = array();
+        $stats = array();
+        $query = "SELECT inj, agn1, agn2, f_match_id AS 'mid',  mvp, cp, td, intcpt, bh, si, ki FROM match_data, matches WHERE f_match_id = match_id AND f_player_id = $this->player_id AND (inj != ".NONE." OR agn1 != ".NONE." OR agn2 != ".NONE.") ORDER BY date_played DESC";
+        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                $stats[] = $row;
+                $tmp = array();
+                foreach (array('inj', 'agn1', 'agn2') as $inj) {
+                    if ($row[$inj] != NONE) {
+                        array_push($tmp, $row[$inj]);
+                    }
+                }
+                $injs[] = $tmp;
+            }
+        }
+        return array($injs, $stats);
+    }
+    public function getInjHistory() 
+    {
+        # This method wraps _getInjHistory() with extra information.
+        list($injhist, $stats) = $this->_getInjHistory();
+        $match_objs = array();
+        foreach ($stats as $k => $v) {
+            $match_objs[] = new Match($v['mid']);
+        }
+        return array($injhist, $stats, $match_objs);
+    }
+    
     /***************
      * Statics
      ***************/

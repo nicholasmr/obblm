@@ -546,7 +546,7 @@ $pdf->SetFont('Tahoma', '', 7);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NORMAL));
 $pdf->SetXY($currentx+240, $currenty+3);        
 $donate = "Please consider donating to the OBBLM project if you enjoy this software and wish to support\n further development and maintenance. For more information visit nicholasmr.dk";
-$pdf->Multicell(300, 7, $donate, 0, 0, 'L', false);
+$pdf->Multicell(300, 8, $donate, 0, 0, 'L', false);
 
 // Output the PDF document
 $pdf->Output(utf8_decode($team->name) . date(' Y-m-d') . '.pdf', 'I');

@@ -341,7 +341,7 @@ class PDFMatchReport implements ModuleInterface
         $currenty = 800;
         $pdf->SetXY(MARGINX, $currenty);        
         $donate = "Please consider donating to the OBBLM project if you enjoy this software and wish to support\n further development and maintenance. For more information visit nicholasmr.dk";
-        $pdf->Multicell(300, 7, $donate, 0, 0, 'L', false);
+        $pdf->Multicell(300, 9, $donate, 0, 0, 'L', false);
 
         $currentx = MARGINX + 330;
         $pdf->SetXY($currentx, $currenty);
