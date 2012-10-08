@@ -64,7 +64,7 @@ define('T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS', 4);
 
 function setupGlobalVars($type, $opts = array()) {
 
-    global $coach, $lng, $leagues, $divisions, $tours, $settings, $admin_menu;
+    global $coach, $lng, $leagues, $divisions, $tours, $settings, $rules, $admin_menu;
 
     switch ($type) {
     
