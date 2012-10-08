@@ -26,7 +26,7 @@ define('EMAIL_MESSAGE_ACTIVATED', ': your coach on the site has been activated.
 
 Website: ');
 
-define('SEND_EMAIL_ERROR', 'Registration was successful, but the administrators were not notified via email.  It may take longer to activate your account.');
+define('SEND_EMAIL_ERROR', 'Registration was successful, but the administrators were NOT notified via email.  It may take longer to activate your account.');
 define('SEND_EMAIL_ERROR_ACTIVATED', 'Activation was successful, but the user was not notified by email.');
 define('SUCCESS_MSG', 'Registration was successful.  A site administrator will enable your account or contact you for verification.');
 define('USERNAME_RESET_ERROR', 'The username does not exist.');

@@ -144,9 +144,9 @@ class Registration implements ModuleInterface
 
         //Will add regexp check later
         $status = true;
-        $min_length = 3;
+        $min_length = 5;
 
-        if ( strlen($this->username) < $min_length )
+        if ( strlen($this->password) < $min_length )
         {
             $this->error = PASSWORD_ERROR;
             $status = false;
@@ -329,7 +329,7 @@ class Registration implements ModuleInterface
         }
         else
         {
-            Print "<br><b>Error: {$register->error}</b><br>";
+            status(0, $register->error);
             unset($register);
             unset($_POST['new_name']);
             unset($_POST['new_mail']);
