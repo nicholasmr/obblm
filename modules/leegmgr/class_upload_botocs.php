@@ -426,8 +426,13 @@ WHERE match_id = $this->match_id";
 
             // Make $player[$f] into $$f. 
             foreach (array('mvp', 'cp', 'td', 'intcpt', 'bh', 'ki', 'si') as $f) {
-                $$f = $player[$f]; # NOTE: These fields are validated and typecasted correctly already in parse_results(), no further processing needed.
-                if (empty($$f)) {
+                if (array_key_exists($f, $player)) {
+                    $$f = $player[$f]; # NOTE: These fields are validated and typecasted correctly already in parse_results(), no further processing needed.
+                    if (empty($$f)) {
+                        $$f = 0;
+                    }
+                }
+                else {
                     $$f = 0;
                 }
             }
