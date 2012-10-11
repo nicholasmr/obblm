@@ -499,12 +499,21 @@ class Match
         return true;
     }
 
-    public static function getMatches($n = false, $node = false, $node_id = false, $getUpcomming = false) {
+    public static function getMatches($N = array(), $node = false, $node_id = false, $getUpcomming = false) {
     
         /**
-         * Returns an array of match objects for the latest $n matches, or all if $n = false.
+         * Returns an array of match objects for the latest matches.
          **/
-         
+        
+        if (empty($N)) {
+            $LIMIT = "";
+        }
+        else {
+            $delta = $N[1];
+            $page = $N[0]-1; # Page 1 should in MySQL be page 0.
+            $LIMIT = "LIMIT ".($page*$delta).",$delta";
+        }
+        
         $m = array();
         switch ($node) 
         {
@@ -519,7 +528,7 @@ class Match
         $query = "SELECT match_id FROM matches, tours, divisions 
             WHERE date_played IS ".(($getUpcomming) ? '' : 'NOT')." NULL AND match_id > 0 AND f_tour_id = tour_id AND f_did = did
             ".(($where) ? " AND $where " : '')."
-            ORDER BY date_played DESC" . (($n) ? " LIMIT $n" : '');
+            ORDER BY date_played DESC $LIMIT";
         $result = mysql_query($query);
         
         if ($result && mysql_num_rows($result) > 0) {
@@ -528,7 +537,14 @@ class Match
             }
         }
         
-        return $m;
+        # Count number of rows
+        $query_cnt = str_replace('SELECT match_id', "SELECT COUNT(*) AS 'cnt'", $query);
+        $query_cnt = str_replace($LIMIT, '', $query_cnt);
+        $result = mysql_query($query_cnt);
+        $row = mysql_fetch_assoc($result);
+        $pages = ceil($row['cnt']/$delta);
+        
+        return array($m, $pages);
     }
     
     const T_CREATE_SUCCESS = 0;

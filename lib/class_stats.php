@@ -54,7 +54,7 @@ class Stats
 {
 
 
-public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg)
+public static function getRaw($obj, array $filters, $N, array $sortRule, $setAvg)
 {
     global $core_tables, $relations_obj, $relations_node, $objFields_extra, $objFields_init;
     
@@ -156,12 +156,20 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
     }
     $query .= !empty($where) ? ' WHERE '.$where : '';
 
+    if (empty($N)) {
+        $LIMIT = "";
+    }
+    else {
+        $delta = $N[1];
+        $page = $N[0]-1; # Page 1 should in MySQL be page 0.
+        $LIMIT = "LIMIT ".($page*$delta).",$delta";
+    }
+    
     $query .= " 
         GROUP BY ".$relations_obj[$obj]['id']." 
         ".((!empty($HAVING)) ? ' HAVING '.implode(' AND ', $HAVING) : '')."
         ".((!empty($sortRule))  ? ' ORDER BY '.implode(', ', $sortRule) : '')." 
-        ".((is_numeric($n))     ? " LIMIT $n" : '')." 
-    ";
+        $LIMIT";
 
 #    echo $query;
 #    return;
@@ -172,7 +180,17 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
             array_push($ret, $r);
         }
     }
-    return $ret;
+    
+    if (!empty($N)) {
+        $query_cnt = str_replace($LIMIT, '', $query);
+        $result = mysql_query($query_cnt); 
+        $pages = ceil(mysql_num_rows($result)/$delta);
+    }
+    else {
+        $pages = 1;
+    }
+    
+    return array($ret, $pages);
 }
 
 /***************
@@ -180,7 +198,7 @@ public static function getRaw($obj, array $filters, $n, array $sortRule, $setAvg
  ***************/
 public static function getAllStats($obj, $obj_id, $node, $node_id, $setAvg = false)
 {
-    $sarray = self::getRaw($obj, array($obj => $obj_id, $node => $node_id),false,array(),$setAvg);
+    list($sarray, ) = self::getRaw($obj, array($obj => $obj_id, $node => $node_id),false,array(),$setAvg);
     return empty($sarray) ? array() : $sarray[0];
 }
 
@@ -191,12 +209,21 @@ public static function getAllStats($obj, $obj_id, $node, $node_id, $setAvg = fal
  *
  */
 
-public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $n = false, $mkObjs = false, $getUpcomming = false)
+public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $N = array(), $mkObjs = false, $getUpcomming = false)
 {
     $matches = array(); // Return structure.
     
     if ($opp_obj && $opp_obj_id) {list($from,$where,$tid,$tid_opp) = Stats::buildCrossRefQueryComponents($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id);}
     else                         {list($from,$where,$tid)          = Stats::buildQueryComponents($obj, $obj_id, $node, $node_id);}
+
+    if (empty($N)) {
+        $LIMIT = "";
+    }
+    else {
+        $delta = $N[1];
+        $page = $N[0]-1; # Page 1 should in MySQL be page 0.
+        $LIMIT = "LIMIT ".($page*$delta).",$delta";
+    }
 
     $query = "
         SELECT 
@@ -207,7 +234,7 @@ public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp
                 date_played IS ".(($getUpcomming) ? '' : 'NOT')." NULL 
             AND match_id > 0 
             AND ".implode(' AND ', $where)." 
-        ORDER BY date_played DESC ".(($n) ? " LIMIT $n" : '');
+        ORDER BY date_played DESC $LIMIT";
     $result = mysql_query($query);
     if (is_resource($result) && mysql_num_rows($result) > 0) {
         while ($r = mysql_fetch_assoc($result)) {
@@ -222,7 +249,14 @@ public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp
         }
     }
 
-    return $matches;
+    # Count number of rows
+    $query_cnt = preg_replace('/^(.*)FROM/sU', "SELECT COUNT(DISTINCT(match_id)) AS 'cnt' FROM", $query);
+    $query_cnt = str_replace($LIMIT, '', $query_cnt);
+    $result = mysql_query($query_cnt);
+    $row = mysql_fetch_assoc($result);
+    $pages = ceil($row['cnt']/$delta);
+
+    return array($matches, $pages);
 }
 
 /***************

@@ -178,7 +178,7 @@ public static function showTables() {
 	$SR = array_map(create_function('$val', 'return $val[0]."mv_".substr($val,1);'), $tour->getRSSortRule());
 
 	// load all the teams according to the sorting rule
-    $teams = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour_id), 1000, $SR, false);
+    list($teams, ) = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour_id), 1000, $SR, false);
 
     // Dump all the raw info for the first team as debug so I can work out the fields
     /*
