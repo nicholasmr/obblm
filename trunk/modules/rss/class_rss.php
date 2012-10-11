@@ -133,7 +133,7 @@ class RSSfeed implements ModuleInterface
                     
                 case 'HOF':
                     if (Module::isRegistered('HOF')) {
-                        foreach (Module::run('HOF', array('getHOF',RSS_SIZE)) as $item) {
+                        foreach (Module::run('HOF', array('getHOF',false,RSS_SIZE)) as $item) {
                             $item = $item['hof'];
                             $entries[] = (object) array('title' => "HOF entry for ".get_alt_col('players', 'player_id', $item->pid, 'name').": $item->title", 'desc' => $item->about, 'date' => $item->date);
                         }
@@ -142,7 +142,7 @@ class RSSfeed implements ModuleInterface
                 
                 case 'Wanted':
                     if (Module::isRegistered('Wanted')) {
-                        foreach (Module::run('Wanted', array('getWanted', RSS_SIZE)) as $item) {
+                        foreach (Module::run('Wanted', array('getWanted', false, RSS_SIZE)) as $item) {
                             $item = $item['wanted'];
                             $entries[] = (object) array('title' => "Wanted entry for ".get_alt_col('players', 'player_id', $item->pid, 'name').": $item->bounty", 'desc' => $item->why, 'date' => $item->date);
                         }

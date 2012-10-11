@@ -328,7 +328,7 @@ function sec_main() {
                     }
                     break;
             }
-            $teams = Stats::getRaw(T_OBJ_TEAM, array($box['type'] => $box['id']), $box['length'], $SR, false);
+            list($teams, ) = Stats::getRaw(T_OBJ_TEAM, array($box['type'] => $box['id']), array(1, $box['length']), $SR, false);
             ?>
             <div class='boxWide'>
                 <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
@@ -389,7 +389,8 @@ function sec_main() {
                             <td> </td>
                         </tr>
                         <?php
-                        foreach (Match::getMatches($box['length'], $box['type'], $box['id'], false) as $m) {
+                        list($matches,$pages) = Match::getMatches(array(1, $box['length']), $box['type'], $box['id'], false);
+                        foreach ($matches as $m) {
                             echo "<tr valign='top'>\n";
                             $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
                             $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
@@ -411,7 +412,7 @@ function sec_main() {
         case 'leaders':
         
             $f = 'mv_'.$box['field'];
-            $players = Stats::getRaw(T_OBJ_PLAYER, array($box['type'] => $box['id']), $box['length'], array('-'.$f), false)
+            list($players, ) = Stats::getRaw(T_OBJ_PLAYER, array($box['type'] => $box['id']), array(1, $box['length']), array('-'.$f), false)
             ?>
             <div class="boxWide">
                 <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
