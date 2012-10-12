@@ -181,7 +181,7 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         $opts['url'],
         $matches,
         $fields,
-        array('+date_created'),
+        array('+round','+date_created'),
         (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
         $extra
     );
