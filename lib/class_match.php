@@ -513,7 +513,8 @@ class Match
             $page = $N[0]-1; # Page 1 should in MySQL be page 0.
             $LIMIT = "LIMIT ".($page*$delta).",$delta";
         }
-        
+        $ORDERBY_RND = $getUpcomming ? 'round ASC, ' : '';
+    
         $m = array();
         switch ($node) 
         {
@@ -528,7 +529,7 @@ class Match
         $query = "SELECT match_id FROM matches, tours, divisions 
             WHERE date_played IS ".(($getUpcomming) ? '' : 'NOT')." NULL AND match_id > 0 AND f_tour_id = tour_id AND f_did = did
             ".(($where) ? " AND $where " : '')."
-            ORDER BY date_played DESC $LIMIT";
+            ORDER BY $ORDERBY_RND date_played DESC $LIMIT";
         $result = mysql_query($query);
         
         if ($result && mysql_num_rows($result) > 0) {

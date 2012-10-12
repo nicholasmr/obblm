@@ -224,7 +224,8 @@ public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp
         $page = $N[0]-1; # Page 1 should in MySQL be page 0.
         $LIMIT = "LIMIT ".($page*$delta).",$delta";
     }
-
+    $ORDERBY_RND = $getUpcomming ? 'round ASC, ' : '';
+    
     $query = "
         SELECT 
             DISTINCT(match_id) AS 'match_id', 
@@ -234,7 +235,7 @@ public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp
                 date_played IS ".(($getUpcomming) ? '' : 'NOT')." NULL 
             AND match_id > 0 
             AND ".implode(' AND ', $where)." 
-        ORDER BY date_played DESC $LIMIT";
+        ORDER BY $ORDERBY_RND date_played DESC $LIMIT";
     $result = mysql_query($query);
     if (is_resource($result) && mysql_num_rows($result) > 0) {
         while ($r = mysql_fetch_assoc($result)) {
