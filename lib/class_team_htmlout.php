@@ -141,7 +141,7 @@ public static function standings($node = false, $node_id = false)
         $fields,
         $sortRule,
         array(),
-        array('noHelp' => true, 'noSRdisp' => false)
+        array('noHelp' => true, 'noSRdisp' => false, 'doNr' => false)
     );
 }
 
