@@ -1135,11 +1135,12 @@ public static function installProcsAndFuncs($install = true)
             DECLARE cheerleaders '.$core_tables['teams']['cheerleaders'].';
             DECLARE apothecary '.$core_tables['teams']['apothecary'].';
             DECLARE ass_coaches '.$core_tables['teams']['ass_coaches'].';
+            DECLARE treasury '.$core_tables['teams']['treasury'].';
 
             SELECT
-                teams.f_race_id, teams.rerolls, teams.ff_bought, teams.cheerleaders, teams.apothecary, teams.ass_coaches
+                teams.f_race_id, teams.rerolls, teams.ff_bought, teams.cheerleaders, teams.apothecary, teams.ass_coaches, teams.treasury
             INTO
-                f_race_id, rerolls, ff_bought, cheerleaders, apothecary, ass_coaches
+                f_race_id, rerolls, ff_bought, cheerleaders, apothecary, ass_coaches, treasury
             FROM teams WHERE team_id = tid;
 
             SET ff = ff_bought + (SELECT IFNULL(SUM(mv_teams.ff),0) FROM mv_teams WHERE mv_teams.f_tid = tid);
@@ -1149,7 +1150,8 @@ public static function installProcsAndFuncs($install = true)
                 + ff           * '.$rules['cost_fan_factor'].'
                 + cheerleaders * '.$rules['cost_cheerleaders'].'
                 + apothecary   * '.$rules['cost_apothecary'].'
-                + ass_coaches  * '.$rules['cost_ass_coaches'].';
+                + ass_coaches  * '.$rules['cost_ass_coaches'].'
+                + '.(((int) $rules['bank_threshold'] > 0) ? '1' : '0').' * (treasury - '. $rules['bank_threshold']*1000 .');
         END',
 
         'CREATE PROCEDURE getTourDProps(IN trid '.$CT_cols[T_NODE_TOURNAMENT].', OUT empty BOOLEAN, OUT begun BOOLEAN, OUT finished BOOLEAN, OUT winner '.$CT_cols[T_OBJ_TEAM].')
