@@ -26,6 +26,8 @@ $settings['default_visitor_league'] = 1;    // ID of default league to show on f
 $settings['default_leagues'] = array(1);    // When creating a coach the coach will automatically become a regular coach in leagues with these IDs.
 $settings['hide_ES_extensions'] = false;    // Default is false. Hides ES (Extra Stats) tables and ES references.
 
+$rules['bank_threshold'] = 0; // Default is 0 (banking rule disabled). Amount of team treasury in kilos (k) above which it will count towards the team value (TV). NOTE: 1) This feature is not yet avaiable on a per-league basis, it works across all leagues! 2) When changing this value run "Re-install DB back-end procedures and functions" under "DB maintenance" from the "Admin -> Core panel" menu.
+
 /*****************
  * House ranking systems
  *****************/
