@@ -184,7 +184,7 @@ class Player
     
     public function setChoosableSkills() {
 
-        global $DEA, $skillarray, $skillcats, $IllegalSkillCombinations;
+        global $DEA, $skillarray, $skillcats, $IllegalSkillCombinations, $rules;
         # Var. format: "$IllegalSkillCombinations as $hasSkill => $dropSkills"
         
         $this->setSkills();
@@ -250,7 +250,7 @@ class Player
             If a player has SPPs enough for a new skill but has NOT (ever) improvement rolled 2xD6 according to match_data entries, 
             then allow player to select amongst all possible skills.
         */
-        if ($N_allowed_new_skills > 0 && count($IRs) > 0) {
+        if ($N_allowed_new_skills > 0 && (count($IRs) > 0 || $rules['force_IR'])) {
             if (!$allowed['N']) {$this->choosable_skills['norm'] = array();}
             if (!$allowed['D']) {$this->choosable_skills['doub'] = array();}
             $this->choosable_skills['chr'] = array();
