@@ -5,6 +5,7 @@
 */
 
 $upgradeSQLs = array(
+    '091-095' => array(),
     '090-091' => array(),
     '080-090' => array(
         // UnAjusted (ua) values now stored too.
@@ -186,11 +187,13 @@ If you don\'t do this the non-tied teams may not be scheduled to play in any mat
 ),
 '080-090' => array(),
 '090-091' => array(),
+'091-095' => array(),
 );
 
 $upgradeSettings = array(
 '075-080' => array('syncall' => true,  'sync_gamedata' => true,  'reload_indexes' => true),
 '080-090' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 '090-091' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
+'091-095' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 );
 ?>
