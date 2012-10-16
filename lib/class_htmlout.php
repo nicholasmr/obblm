@@ -811,6 +811,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
     $allow_all = (isset($opts['allow_all']) && $opts['allow_all']);
     $hide_empty = isset($opts['hide_empty']) ? $opts['hide_empty'] : array();
     $empty_str = isset($opts['empty_str']) ? $opts['empty_str'] : array(); # e.g. "%name (EMPTY)" where %name will be substituted like $DISSTR
+    $init_option = isset($opts['init_option']) ? $opts['init_option'] : false;
     # Default empty strings
     foreach ($empty_str as $idx => $str) {
         if (empty($str)) { # If $emprty_str = array(T_NODE_* => ''); then we convert it to the below.
@@ -856,6 +857,9 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
     // Done preprocessing...
     $NL = '';
     $NL .= "<select name='$nameid' id='$nameid' ".implode(' ', $extra_tags).">\n";
+    if ($init_option) {
+        $NL .= $init_option;
+    }
     switch ($node) {
         case T_NODE_TOURNAMENT:
             foreach ($leagues as $lid => $divs) {
