@@ -776,6 +776,7 @@ function sec_about() {
         The authors of this program are
         <ul>
             <li> <a href="mailto:nicholas.rathmann@gmail.com">Nicholas Mossor Rathmann</a>
+            <li> William Leonard</a>
             <li> Niels Orsleff Justesen</a>
         </ul>
         With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
