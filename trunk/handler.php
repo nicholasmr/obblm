@@ -173,7 +173,11 @@ switch ($_GET['type'])
                 break;
 
             case T_OBJ_TEAM:
-                $query = "SELECT team_id AS 'id', name FROM teams WHERE name LIKE '%$_GET[query]%' ORDER BY name ASC";
+                $lid = isset($_GET['trid']) ? get_parent_id(T_NODE_TOURNAMENT, (int) $_GET['trid'], T_NODE_LEAGUE) : false;
+                $did = ($lid && get_alt_col('leagues', 'lid', $lid, 'tie_teams') == 1) ? get_parent_id(T_NODE_TOURNAMENT, (int) $_GET['trid'], T_NODE_DIVISION) : false;
+                $FROM_lid = ($lid) ? "f_lid = $lid AND" : '';
+                $FROM_did = ($did) ? "f_did = $did AND" : '';
+                $query = "SELECT team_id AS 'id', name, rdy FROM teams WHERE $FROM_lid $FROM_did name LIKE '%$_GET[query]%' ORDER BY name ASC";
                 $result = mysql_query($query);
                 while($row = mysql_fetch_assoc($result)) {
                     $objs[$row['id']] = $row['name'];

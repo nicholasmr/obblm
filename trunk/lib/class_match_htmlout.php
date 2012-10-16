@@ -956,6 +956,14 @@ public static function userSched() {
             status(false, $errmsg);
         }
     }
+    $trid  = (isset($_GET['trid']) && is_numeric($_GET['trid'])) ? (int) $_GET['trid'] : 0;
+    $lid   = $trid ? get_parent_id(T_NODE_TOURNAMENT, $trid, T_NODE_LEAGUE) : false;
+    $lname = $lid ? get_parent_name(T_NODE_TOURNAMENT, $trid, T_NODE_LEAGUE) : '- N/A -';
+    $did   = ($trid && get_alt_col('leagues', 'lid', $lid, 'tie_teams') == 1) ? get_parent_id(T_NODE_TOURNAMENT, $trid, T_NODE_DIVISION) : false;
+    $dname = $did ? get_parent_name(T_NODE_TOURNAMENT, $trid, T_NODE_DIVISION) : false;
+    
+    $_DISABLED = (!$trid) ? 'DISABLED' : '';
+    #print_r(array($trid, $lid, $lname, $did));
 
     title($lng->getTrn('menu/matches_menu/usersched'));
     $LOCK_FORMS = false;
@@ -966,9 +974,9 @@ public static function userSched() {
             <form method="POST">
                 <?php 
                 echo "In tournament "; 
-                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)));
+                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'index.php?section=matches&type=usersched&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
                 echo ' as ';
-                echo '<select name="round" id="round">';
+                echo '<select name="round" id="round" '.$_DISABLED.'>';
                 global $T_ROUNDS;
                 foreach ($T_ROUNDS as $r => $d) {
                     echo "<option value='$r' ".(($r == 1) ? 'SELECTED' : '').">".$lng->getTrn($d)."</option>\n";
@@ -979,43 +987,39 @@ public static function userSched() {
                 Your team
                 <?php
                 $teams = array();
-                foreach ($coach->getTeams() as $t) {
+                foreach ($coach->getTeams($lid, $did, array('sortby' => 'team_id DESC')) as $t) {
                     if (!$t->rdy || $t->is_retired)
                         continue;
-                    $teams[$t->f_lid][$t->f_did][] = $t;
+                    $teams[] = $t;
                 }
                 ?>
-                <select name='own_team' id='own_team'>
+                <select name='own_team' id='own_team' <?php echo $_DISABLED;?>>
                     <?php
-                    foreach ($teams as $lid => $divs) {
-                        echo "<optgroup class='leagues' label='".$leagues[$lid]['lname']."'>\n";
-                        foreach ($divs as $did => $teams) {
-                            echo "<optgroup class='divisions' style='padding-left: 1em;' label='".$divisions[$did]['dname']."'>\n";
-                            foreach ($teams as $t) {
-                                echo "<option style='background-color: white; margin-left: -1em;' value='$t->team_id'>$t->name</option>\n";
-                            }
-                            echo "</optgroup>\n";
-                        }
-                        echo "</optgroup>\n";
+                    echo "<optgroup class='leagues' label='$lname'>\n";
+                    if ($dname) {
+                        echo "<optgroup class='divisions' label='&nbsp;&nbsp;$dname'>\n";
+                    }
+                    foreach ($teams as $t) {
+                        echo "<option style='background-color: white; margin-left: -1em;' value='$t->team_id'>&nbsp;&nbsp;&nbsp;$t->name</option>\n";
                     }
                     ?>
                 </select>
                 &nbsp;
                 VS.
-                <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50">
+                <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50" <?php echo $_DISABLED;?>>
                 <script>
                     $(document).ready(function(){
                         var options, b;
 
                         options = {
                             minChars:2,
-                                serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>',
+                            serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>&trid=<?php echo $trid; ?>',
                         };
                         b = $('#opposing_team_autoselect').autocomplete(options);
                     });
                 </script>
                 <br><br><br>
-                <input type="submit" name="creategame" value="Schedule match" <?php echo empty($teams) ? 'DISABLED' : ''; ?>>
+                <input type="submit" name="creategame" value="<?php echo $lng->getTrn('menu/matches_menu/usersched');?>" <?php if (empty($teams) || $_DISABLED) echo 'DISABLED';?>>
             </form>
         </div>
     </div>

@@ -108,7 +108,7 @@ class Coach
         return set_list('coaches', 'coach_id', $this->coach_id, 'settings', $settings);
     }
 
-    public function getTeams() {
+    public function getTeams($lid = false, $did = false, $opts = array()) {
 
         /**
          * Returns an array of team objects for those teams owned by this coach.
@@ -116,7 +116,11 @@ class Coach
     
         $teams = array();
         
-        $result = mysql_query("SELECT team_id FROM teams WHERE owned_by_coach_id = $this->coach_id ORDER BY name ASC");
+        $F_LID = $lid ? "AND f_lid = $lid" : '';
+        $F_DID = $did ? "AND f_did = $did" : '';
+        $SORTBY = isset($opts['sortby']) ? $opts['sortby'] : 'name ASC';
+        
+        $result = mysql_query("SELECT team_id FROM teams WHERE owned_by_coach_id = $this->coach_id $F_LID $F_DID ORDER BY $SORTBY");
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($teams, new Team($row['team_id']));
@@ -405,7 +409,7 @@ class Coach
         }
         $query = "SELECT l.lid AS 'lid', d.did AS 'did', t.tour_id AS 'trid',".implode(',',$properFields)."
             FROM leagues AS l LEFT JOIN divisions AS d ON d.f_lid = l.lid LEFT JOIN tours AS t ON t.f_did = d.did ".
-            ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '');
+            ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '') . 'GROUP BY lid DESC, did DESC, trid DESC';
         $result = mysql_query($query);
 
         switch ($NODE_SRUCT)

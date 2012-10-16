@@ -438,6 +438,11 @@
         <showhidden>Show hidden nodes</showhidden>
         <!-- none used - all are in "common". -->
     </tours>
+    
+    <usersched>
+        <selecttour>Select a tournament</selecttour>
+    </usersched>
+    
     <tourmatches>
         <roundtypes>
             <final>Final</final>
