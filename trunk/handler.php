@@ -138,6 +138,17 @@ switch ($_GET['type'])
         Module::run('TeamCompare', array());
         break;
 
+    /* Cemetery */
+    
+    case 'cemetery':
+        if (isset($_GET['tid'])) {
+            Module::run('Cemetery', array((int) $_GET['tid']));
+        }
+        else {
+            fatal('Invalid parameter "tid".');
+        }
+        break;
+
     /* PDF Match Report */
     case 'pdfmatchreport':
           $argv = array();
