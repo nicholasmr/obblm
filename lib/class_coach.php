@@ -409,7 +409,7 @@ class Coach
         }
         $query = "SELECT l.lid AS 'lid', d.did AS 'did', t.tour_id AS 'trid',".implode(',',$properFields)."
             FROM leagues AS l LEFT JOIN divisions AS d ON d.f_lid = l.lid LEFT JOIN tours AS t ON t.f_did = d.did ".
-            ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '') . 'GROUP BY lid DESC, did DESC, trid DESC';
+            ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '') . ' GROUP BY lid DESC, did DESC, trid DESC';
         $result = mysql_query($query);
 
         switch ($NODE_SRUCT)

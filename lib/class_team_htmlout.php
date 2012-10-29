@@ -740,6 +740,9 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
         if (Module::isRegistered('SGraph')) {
             echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''>Vis. stats</a></li>\n";
         }
+        if (Module::isRegistered('Cemetery')) {
+            echo "<li><a href='handler.php?type=cemetery&amp;tid=$team->team_id'>".$lng->getTrn('name', 'Cemetery')."</a></li>\n";
+        }
         ?>
     </ul>
     <br><br>

@@ -145,4 +145,10 @@ Module::register(array(
     'filesRunTime'  => array(),
     'filesLoadTime' => array('scheduler/class_scheduler.php')
 ));
+
+Module::register(array(
+    'class'         => 'Cemetery',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('cemetery/class_cemetery.php')
+));
 ?>
