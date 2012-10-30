@@ -1082,8 +1082,8 @@ private static function make_menu()
         <li><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>
         <?php
-        if (!empty($settings['forum_url'])) {
-            ?><li><a href="<?php echo $settings['forum_url'];?>"><?php echo $lng->getTrn('menu/forum');?></a></li><?php
+        if (!empty($settings['league_url'])) {
+            ?><li><a href="<?php echo $settings['league_url'];?>"><?php echo $settings['league_url_name'];?></a></li><?php
         }
         ?>
     </ul>

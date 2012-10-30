@@ -8,13 +8,14 @@
  *   General
  *********************/
 
-$settings['league_name']   = 'Placeholder title for league with ID = 1'; // Name of the site or the league name if only one league is being managed.
-$settings['forum_url']     = 'http://localhost'; // URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
-$settings['stylesheet']    = 1;                  // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 is the only existing stylesheet.
-$settings['lang']          = 'en-GB';            // Default language. Existing: en-GB, es-ES, de-DE, fr-FR, it-IT.
-$settings['fp_links']      = true;               // Default is true. Generate coach, team and player links on the front page?
-$settings['welcome']       = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league greeting message for the league with ID = 1';
-$settings['rules']         = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
+$settings['league_name']     = 'Placeholder title for league with ID = 1'; // Name of the site or the league name if only one league is being managed.
+$settings['league_url']      = 'http://localhost'; // URL of league home page/forum, if you have such. If not then leave this empty, that is = '' (two quotes only), which will disable the button. 
+$settings['league_url_name'] = 'My league page';   // Button text for league URL.
+$settings['stylesheet']      = 1;                  // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 is the only existing stylesheet.
+$settings['lang']            = 'en-GB';            // Default language. Existing: en-GB, es-ES, de-DE, fr-FR, it-IT.
+$settings['fp_links']        = true;               // Default is true. Generate coach, team and player links on the front page?
+$settings['welcome']         = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league greeting message for the league with ID = 1';
+$settings['rules']           = 'Please replace this line in your local league settings file, <i>localsettings/settings_1.php</i>, with your own league rules description for the league with ID = 1';
 $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the division nodes in the tournament lists section will automatically be folded up if all child tournaments in that division are marked as finished.
 $settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament'); // Default is array('league', 'division', 'tournament'). In the section tournament lists these nodes will be hidden if their contents (children) are finished. Example: If 'division' is chosen here, and all tours in a given division are finished, then the division entry will be hidden.
 
