@@ -973,6 +973,14 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     </tr>
                     <?php
                 }
+                if (Module::isRegistered('FamousTeams')) {
+                    ?>
+                    <tr>
+                        <td><?php echo $lng->getTrn('isfamous', 'FamousTeams');?></td>
+                        <td><?php echo (Module::run('FamousTeams', array('isInFT', $team->team_id))) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
+                    </tr>
+                    <?php
+                }
                 ?>
             </table>
         </div>
@@ -1649,7 +1657,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
         <div class="row">
             <div class="boxWide">
                 <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/extrastats'); ?></div>
-                <div class="boxBody" id="ES">
+                <div class="boxBody" id="ES" style='display:none;'>
                     <?php
                     HTMLOUT::generateEStable($this);
                     ?>

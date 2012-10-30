@@ -21,6 +21,7 @@ $settings['modules_enabled'] = array(
     'Search'             => true, # Search for coaches and teams.
     'TeamCompare'        => true, # Team strength compare
     'Cemetery'           => true, # Team cemetery page
+    'FamousTeams'        => true, # Famous Teams page
     'PDFMatchReport'     => true, # Generating PDF forms for tabletop match reports.
     'LeagueTables'       => false, # Provides league table link on the main menu
     'Conference'         => false, # Provides support for conferences within tournaments

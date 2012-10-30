@@ -151,4 +151,9 @@ Module::register(array(
     'filesRunTime'  => array(),
     'filesLoadTime' => array('cemetery/class_cemetery.php')
 ));
+Module::register(array(
+    'class'         => 'FamousTeams',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('famousteams/class_famousteams.php')
+));
 ?>

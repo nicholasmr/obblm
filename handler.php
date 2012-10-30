@@ -75,6 +75,11 @@ switch ($_GET['type'])
         Module::run('HOF', array('makeList', $COACH_IS_ADMIN));
         break;
 
+    /* Famous Teams */
+    case 'famousteams':
+        Module::run('FamousTeams', array('makeList', $COACH_IS_ADMIN));
+        break;
+
     /* Wanted */
     case 'wanted':
         Module::run('Wanted', array('makeList', $COACH_IS_ADMIN));

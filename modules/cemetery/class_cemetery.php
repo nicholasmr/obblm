@@ -28,8 +28,18 @@ public static function main($argv)
 {
     global $coach;
     list($tid) = $argv;
-    $team = new Team($tid);
-    $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $tid)) && !$team->is_retired); # Show team action boxes?
+    if ($tid) {
+        if (!get_alt_col('teams','team_id',$tid,'name')) {
+            fatal('Invalid team');
+        }
+        $team = new Team($tid);
+        $ALLOW_EDIT = (is_object($coach) && ($team->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $tid)) && !$team->is_retired); # Show team action boxes?
+    }
+    else {
+        $team = null;
+        $ALLOW_EDIT = false;
+    }
+    
     if (isset($_POST['action']) && isset($_POST['pid'])) {
         $pid = (int) $_POST['pid'];
         switch ($_POST['action'])
@@ -52,9 +62,14 @@ private static function printList($team,$ALLOW_EDIT)
 {
     global $lng;
     
-    $entries = self::entries($team->team_id);
-    
-    title($team->name.'&nbsp;'.$lng->getTrn('name', __CLASS__));
+    if ($team) {
+        $entries = self::entries($team->team_id);
+        title("<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false)."'>".$team->name.'</a>&nbsp;'.$lng->getTrn('name', __CLASS__));
+    }
+    else {
+        $entries = self::entries(null);
+        title($lng->getTrn('name', __CLASS__));
+    }
     echo "<table style='table-layout:fixed; width:".(count($entries) == 1 ? 50 : 100)."%;'><tr>"; # The percentage difference is a HTML layout fix.
     $i = 1;
     foreach ($entries as $e) {
@@ -69,11 +84,12 @@ private static function printList($team,$ALLOW_EDIT)
         <div class="boxWide" style="width: 80%; margin: 20px auto 20px auto;">
             <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>">
                 <?php 
-                if (empty($e->title)) {
-                    echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a>";
+                echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,$e->pid,false,false)."'>$e->name</a>";
+                if (!$team) { # Not a single teams cemetery, but all of the cemetery.
+                    echo " (<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$e->f_tid,false,false)."'>".$e->f_tname.'</a>)';
                 }
-                else {
-                    echo $e->title;
+                if (!empty($e->title)) {
+                    echo ": $e->title";
                 }
                 ?>
             </div>
@@ -144,7 +160,8 @@ private static function printList($team,$ALLOW_EDIT)
 
 private static function entries($tid)
 {
-    $query = "SELECT name, date_died, player_id as 'pid', owned_by_team_id 'f_tid',  cemetery_id,date,title,about, DATEDIFF(date_died,date_bought) AS 'lifetime' FROM players LEFT JOIN cemetery ON players.player_id = cemetery.pid WHERE date_died IS NOT NULL ORDER BY players.date_died DESC";
+    $WHERE_TID = ($tid) ? "AND owned_by_team_id = $tid" : '';
+    $query = "SELECT name, date_died, player_id as 'pid', owned_by_team_id 'f_tid', f_tname,  cemetery_id,date,title,about, DATEDIFF(date_died,date_bought) AS 'lifetime' FROM players LEFT JOIN cemetery ON players.player_id = cemetery.pid WHERE date_died IS NOT NULL $WHERE_TID ORDER BY players.date_died DESC";
     $result = mysql_query($query);
     $entries = array();
     if (mysql_num_rows($result) > 0) {
@@ -207,7 +224,22 @@ public static function getModuleTables()
         )
     );
 }
-public static function getModuleUpgradeSQL() { return array(); }
+
+public static function getModuleUpgradeSQL()
+{
+    return array(
+        '091-095' => array(
+            'CREATE TABLE IF NOT EXISTS cemetery
+            (
+                    cemetery_id MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    pid         MEDIUMINT UNSIGNED,
+                    date        DATETIME,
+                    title       TEXT,
+                    about       TEXT
+            )',
+        ),
+    );
+}
 public static function triggerHandler($type, $argv){}
 
 }
