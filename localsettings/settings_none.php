@@ -4,7 +4,8 @@
 // Use this local settigns file for leagues which have no local settings file.
 
 $settings['league_name']   = 'No settings file exists for the selected league';
-$settings['forum_url']     = 'http://localhost';
+$settings['league_url']      = '';
+$settings['league_url_name'] = 'League URL disabled';
 $settings['stylesheet']    = 1;
 $settings['lang']          = 'en-GB';
 $settings['fp_links']      = true;
