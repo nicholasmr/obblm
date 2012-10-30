@@ -21,7 +21,7 @@
  *
  */
 
-require('lib/game_data_lrb6.php'); # Depends on full LRB6 rules.
+require_once('lib/game_data_lrb6.php'); # Depends on full LRB6 rules.
 
 /*
  * Additional data for Brettonians see  - http://www.plasmoids.dk/bbowl/BBBretonnians.htm

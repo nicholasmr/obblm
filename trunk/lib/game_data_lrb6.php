@@ -21,7 +21,7 @@
  *
  */
 
-require('lib/game_data_lrb6x.php');
+require_once('lib/game_data_lrb6x.php');
 
 // Changes to present teams/positionals from LRB5b to LRB6.
 

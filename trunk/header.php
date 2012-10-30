@@ -87,8 +87,9 @@ define('T_HTMLBOX_MATCH', 5);
 require_once('lib/settings_default.php'); # Defaults
 require_once('settings.php'); # Overrides
 require_once('localsettings/settings_none.php'); # Defaults. Overrides are league dependant and are not loaded here - see setupGlobalVars()
-require_once('lib/game_data_lrb6.php'); # LRB6 (Module settings might depend on game data, so we include it first)
+require_once('lib/game_data_lrb6.php');   # LRB6 (Module settings might depend on game data, so we include it first)
 #require_once('lib/game_data_cyanide.php'); # Use this instead of above line for LRB6 + Cyanide "Daemons of Khorne" race.
+#require_once('lib/game_data_brett.php');   # Use this instead of above line for LRB6 + Brettonian race.
 require_once('lib/settings_modules_default.php'); # Defaults
 require_once('settings_modules.php'); # Overrides
 require_once('lib/mysql.php');
