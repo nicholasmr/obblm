@@ -29,6 +29,19 @@ $settings['hide_ES_extensions'] = false;    // Default is false. Hides ES (Extra
 $rules['bank_threshold'] = 0; // Default is 0 (banking rule disabled). Amount of team treasury in kilos (k) above which it will count towards the team value (TV). NOTE: 1) This feature is not yet available on a per-league basis, it works across all leagues! 2) When changing this value run "Re-install DB back-end procedures and functions" under "DB maintenance" from the "Admin -> Core panel" menu.
 $rules['force_IR'] = false; // Default is false. Setting this to true will remove the ability of selecting 0-0 as 2D6 injury rolls (IR) in match reports (of all leagues).
 
+/*
+    Game data - additional races
+        OBBLM uses LRB6 by default.
+        In addition you can include the custom races below. Simply change the keywords "false" to "true" (without apostrophes).
+*/
+
+$settings['custom_races'] = array(
+    'Brettonia'         => false,
+    'Daemons of khorne' => false,
+    'Apes of wrath'     => false,
+);
+
+
 /*****************
  * House ranking systems
  *****************/

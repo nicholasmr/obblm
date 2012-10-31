@@ -21,8 +21,6 @@
  *
  */
 
-require_once('lib/game_data_lrb6.php'); # Depends on full LRB6 rules.
-
 define('T_RACE_DKHORNE', 25);
 
 $DEA['Daemons of Khorne'] = array (
@@ -89,11 +87,5 @@ $DEA['Daemons of Khorne'] = array (
 
 array_push($stars['Grashnak Blackhoof']['races'], T_RACE_DKHORNE);
 array_push($stars['Morg \'n\' Thorg']['races'],   T_RACE_DKHORNE);
-
-ksort($DEA, SORT_STRING);
-$raceididx = array();
-foreach (array_keys($DEA) as $race) {
-    $raceididx[$DEA[$race]['other']['race_id']] = $race;
-}
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Ian Williams <email is protected> 2011. All Rights Reserved.
+ *  Copyright (c) Ian Williams <email is protected> 2011-2012. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,11 +21,7 @@
  *
  */
 
-require_once('lib/game_data_lrb6.php'); # Depends on full LRB6 rules.
-
-/*
- * Additional data for Brettonians see  - http://www.plasmoids.dk/bbowl/BBBretonnians.htm
- */
+// Additional data for Brettonians see  - http://www.plasmoids.dk/bbowl/BBBretonnians.htm
 
 define('T_RACE_BRETTONIA', 24);
 
@@ -78,21 +74,9 @@ $DEA['Brettonia'] = array (
     )
 );
 
-//
-// Changes to LRB5 star players in LRB5b
-//
-$stars['Dolfar Longstride']['races']	= array(5, 8, 20, 24);
-$stars['Griff Oberwald']['races']		= array (9, 24);
-$stars['Mighty Zug']['races']			= array (9, 24);
-$stars['Morg \'n\' Thorg']['races']		= array (0, 1, 2, 21, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 22, 23, 20, 24);
-$stars['Willow Rosebark']['races']		= array(0, 7, 20,24);
-$stars['Zara the Slayer']['races']		= array (0, 4, 7, 8, 9, 14, 20, 24);
-
-ksort($stars, SORT_STRING);
-ksort($DEA, SORT_STRING);
-$raceididx = array();
-foreach (array_keys($DEA) as $race) {
-    $raceididx[$DEA[$race]['other']['race_id']] = $race;
+// Stars allowed
+foreach (array('Dolfar Longstride', 'Griff Oberwald', 'Mighty Zug', 'Morg \'n\' Thorg', 'Willow Rosebark', 'Zara the Slayer') as $s) {
+    array_push($stars[$s]['races'], T_RACE_BRETTONIA);
 }
 
 ?>
