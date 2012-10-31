@@ -121,6 +121,17 @@ function setupGlobalVars($type, $opts = array()) {
     }
 }
 
+function sortgamedata() {
+    global $DEA, $stars, $raceididx;
+    ksort($stars, SORT_STRING);
+    ksort($DEA, SORT_STRING);
+    // Create race ID index (key:val = id:race_name).
+    $raceididx = array();
+    foreach (array_keys($DEA) as $race) {
+        $raceididx[$DEA[$race]['other']['race_id']] = $race;
+    }
+}
+
 function array_strpack($str, array $arr, $implode_delimiter = false, $specifier = '%s') {
     /* 
         Example: 
