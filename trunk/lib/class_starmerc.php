@@ -119,9 +119,17 @@ class Star
         /*
             Deletes a star's entry in a match.
         */
-        
+        # DO NOT CHANGE THE ORDER OF EXPRESSIONS!
+        $result = mysql_query("SELECT * FROM match_data WHERE f_player_id = $this->star_id AND f_match_id = $match_id");
+        $CNT = mysql_num_rows($result);
         $query = "DELETE FROM match_data WHERE f_player_id = $this->star_id AND f_match_id = $match_id" . (($team_id) ? " AND f_team_id = $team_id" : '');
-        return mysql_query($query);
+        mysql_query($query);
+        if ($CNT > 0) {
+            $trid = get_alt_col('matches', 'match_id', $match_id, 'f_tour_id');
+            $q = "SELECT syncMVplayer($this->star_id, $trid)";
+            mysql_query($q);
+        }
+        return true;
     }
     
     public static function getStars($obj, $obj_id, $node, $node_id)
