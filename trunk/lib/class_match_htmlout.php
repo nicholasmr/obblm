@@ -619,11 +619,11 @@ public static function report() {
             </td></tr>
             <tr><td colspan='<?php echo $CP;?>'>
                 <b><?php echo $lng->getTrn('common/gate');?></b>&nbsp;
-                <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
+                <input type="text" name="gate" onChange='numError(this);' value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
             </td></tr>
             <tr><td colspan='<?php echo $CP;?>'>
                 <b><?php echo $lng->getTrn('matches/report/fans');?></b>&nbsp;
-                <input type="text" name="fans" value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
+                <input type="text" name="fans" onChange='numError(this);' value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
             </td></tr>
             <?php
             if (!$settings['hide_ES_extensions']) {
@@ -651,17 +651,17 @@ public static function report() {
             foreach (array(1,2) as $N) {
                 echo "<tr>\n";
                 echo "<td>".${"teamUrl$N"}."</td>\n";
-                echo "<td><input type='text' name='result$N' value='".((int) $m->{"team${N}_score"})."' size='1' maxlength='2' $DIS></td>\n";
-                echo "<td><input type='text' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='result$N' value='".((int) $m->{"team${N}_score"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
                 echo "<td>";
                 foreach (array('1' => 'green', '0' => 'blue', '-1' => 'red') as $Nff => $color) {
                     echo "<input $DIS type='radio' name='ff$N' value='$Nff' ".(($m->{"ffactor$N"} == (int) $Nff) ? 'CHECKED' : '')."><font color='$color'><b>$Nff</b></font>";
                 }
                 echo "</td>\n";
-                echo "<td><input type='text' name='smp$N' value='".($m->{"smp$N"})."' size='1' maxlength='2' $DIS>".$lng->getTrn('matches/report/pts')."</td>\n";
-                echo "<td><input type='text' name='tcas$N' value='".($m->{"tcas$N"})."' size='1' maxlength='2' $DIS></td>\n";
-                echo "<td><input type='text' name='fame$N' value='".($m->{"fame$N"})."' size='1' maxlength='2' $DIS></td>\n";
-                echo "<td><input type='text' name='tv$N' value='".($m->is_played ? $m->{"tv$N"}/1000 : ${"team$N"}->value/1000)."' size='4' maxlength='10' $DIS>k</td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='smp$N' value='".($m->{"smp$N"})."' size='1' maxlength='2' $DIS>".$lng->getTrn('matches/report/pts')."</td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='tcas$N' value='".($m->{"tcas$N"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='fame$N' value='".($m->{"fame$N"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='tv$N' value='".($m->is_played ? $m->{"tv$N"}/1000 : ${"team$N"}->value/1000)."' size='4' maxlength='10' $DIS>k</td>\n";
                 echo "</tr>\n";
             }
             ?>

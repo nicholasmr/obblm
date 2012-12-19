@@ -380,6 +380,14 @@ class Match
         ksort($input);
         if (array_keys($input) !== $EXPECTED)
             return false;
+           
+        // Make sure $T_PMD_ACH input data is numeric
+        global $T_PMD_ACH;
+        foreach ($T_PMD_ACH as $field) {
+            if (!is_numeric($input[$field])) {
+                $input[$field] = 0;
+            }
+        }
             
         /* 
             Post/pre match fixes
@@ -422,7 +430,6 @@ class Match
         /*
             Insert data into MySQL 
          */
-
         // Delete entry if already exists (we don't use MySQL UPDATE on rows for simplicity)
         if (!$IMPORT && $pid != ID_MERCS) {
             $status &= mysql_query("DELETE FROM match_data WHERE f_player_id = $pid AND f_match_id = $mid");
