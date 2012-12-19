@@ -270,6 +270,9 @@ class Match
         // Run triggers.
         SQLTriggers::run(T_SQLTRIG_MATCH_UPD, array('mid' => $this->match_id, 'trid' => $this->f_tour_id, 'tid1' => $this->team1_id, 'tid2' => $this->team2_id, 'played' => (int) $this->is_played));
         Module::runTriggers(T_TRIGGER_MATCH_SAVE, array($this->match_id));
+        foreach (Star::getStars(false,false, STATS_MATCH, $this->match_id) as $s) {
+            mysql_query("SELECT syncMVplayer($s->star_id, $this->f_tour_id)");
+        }
         return true;
     }
     
