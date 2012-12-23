@@ -15,14 +15,15 @@ $settings['modules_enabled'] = array(
     'Wanted'             => true, # Wanted list
     'HOF'                => true, # Hall of fame
     'Prize'              => true, # Tournament prizes list
-    'UPLOAD_BOTOCS'      => true, # Allow upload of a BOTOCS match
-    'XML_BOTOCS'         => true, # BOTOCS XML export of team
     'Registration'       => true, # Allows users to register on the site.
     'Search'             => true, # Search for coaches and teams.
     'TeamCompare'        => true, # Team strength compare
     'Cemetery'           => true, # Team cemetery page
     'FamousTeams'        => true, # Famous Teams page
     'PDFMatchReport'     => true, # Generating PDF forms for tabletop match reports.
+    // The below modules are not well maintained!
+    'UPLOAD_BOTOCS'      => false, # Allow upload of a BOTOCS match
+    'XML_BOTOCS'         => false, # BOTOCS XML export of team
     'LeagueTables'       => false, # Provides league table link on the main menu
     'Conference'         => false, # Provides support for conferences within tournaments
 );
