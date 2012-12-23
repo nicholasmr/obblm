@@ -106,7 +106,7 @@ public static function mkHRS(array $HRSs)
 
 public static function installProcsAndFuncs($install = true)
 {
-    global $CT_cols, $core_tables, $ES_fields, $rules;
+    global $CT_cols, $core_tables, $mv_commoncols, $ES_fields, $rules;
 
     /*
      *  Re-useable code-chunks for routines.
@@ -855,6 +855,7 @@ public static function installProcsAndFuncs($install = true)
             DECLARE tid '.$CT_cols[T_OBJ_TEAM].' DEFAULT NULL;
             DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
             DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
+            DECLARE num_played '.$mv_commoncols['played'].' DEFAULT 0;
             CALL getTourParentNodes(trid, did, lid);
             /* Non-ordinary players with no parent relations? */
             IF pid > 0 THEN
@@ -881,6 +882,13 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data_es
                 WHERE match_data_es.f_pid = pid AND match_data_es.f_trid = trid;
 
+            /* Empty MV entry? => Delete it */
+            SELECT mv_players.played INTO num_played FROM mv_players WHERE mv_players.f_pid = pid AND mv_players.f_trid = trid;
+            IF num_played = 0 THEN
+                DELETE FROM mv_players    WHERE f_pid = pid AND f_trid = trid;
+                DELETE FROM mv_es_players WHERE f_pid = pid AND f_trid = trid;
+            END IF;
+
             RETURN EXISTS(SELECT COUNT(*) FROM mv_players WHERE f_pid = pid AND f_trid = trid);
         END',
 
@@ -893,6 +901,7 @@ public static function installProcsAndFuncs($install = true)
             DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
             DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
             DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
+	        DECLARE num_played '.$mv_commoncols['played'].' DEFAULT 0;
             CALL getTourParentNodes(trid, did, lid);
             CALL getObjParents('.T_OBJ_TEAM.', NULL,tid,cid,rid);
 
@@ -912,6 +921,13 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data_es
                 WHERE match_data_es.f_tid = tid AND match_data_es.f_trid = trid;
 
+            /* Empty MV entry? => Delete it */
+            SELECT mv_teams.played INTO num_played FROM mv_teams WHERE mv_teams.f_tid = tid AND mv_teams.f_trid = trid;
+            IF num_played = 0 THEN
+                DELETE FROM mv_teams    WHERE f_tid = tid AND f_trid = trid;
+                DELETE FROM mv_es_teams WHERE f_tid = tid AND f_trid = trid;
+            END IF;
+
             RETURN EXISTS(SELECT COUNT(*) FROM mv_teams WHERE f_tid = tid AND f_trid = trid);
         END',
 
@@ -922,6 +938,7 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             DECLARE did '.$CT_cols[T_NODE_DIVISION].' DEFAULT NULL;
             DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
+	        DECLARE num_played '.$mv_commoncols['played'].' DEFAULT 0;
             CALL getTourParentNodes(trid, did, lid);
 
             DELETE FROM mv_coaches WHERE f_cid = cid AND f_trid = trid;
@@ -939,6 +956,13 @@ public static function installProcsAndFuncs($install = true)
                 SELECT cid, trid,did,lid, '.$common_es_fields.'
                 FROM match_data_es
                 WHERE match_data_es.f_cid = cid AND match_data_es.f_trid = trid;
+                
+            /* Empty MV entry? => Delete it */
+            SELECT mv_coaches.played INTO num_played FROM mv_coaches WHERE mv_coaches.f_cid = cid AND mv_coaches.f_trid = trid;
+            IF num_played = 0 THEN
+                DELETE FROM mv_coaches    WHERE f_cid = cid AND f_trid = trid;
+                DELETE FROM mv_es_coaches WHERE f_cid = cid AND f_trid = trid;
+            END IF;
 
             RETURN EXISTS(SELECT COUNT(*) FROM mv_coaches WHERE f_cid = cid AND f_trid = trid);
         END',
@@ -950,6 +974,7 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             DECLARE did '.$CT_cols[T_NODE_DIVISION].' DEFAULT NULL;
             DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
+            DECLARE num_played '.$mv_commoncols['played'].' DEFAULT 0;            
             CALL getTourParentNodes(trid, did, lid);
 
             DELETE FROM mv_races WHERE f_rid = rid AND f_trid = trid;
@@ -967,6 +992,13 @@ public static function installProcsAndFuncs($install = true)
                 SELECT rid, trid,did,lid, '.$common_es_fields.'
                 FROM match_data_es
                 WHERE match_data_es.f_rid = rid AND match_data_es.f_trid = trid;
+
+            /* Empty MV entry? => Delete it */
+            SELECT mv_races.played INTO num_played FROM mv_races WHERE mv_races.f_rid = rid AND mv_races.f_trid = trid;
+            IF num_played = 0 THEN
+                DELETE FROM mv_races    WHERE f_rid = rid AND f_trid = trid;
+                DELETE FROM mv_es_races WHERE f_rid = rid AND f_trid = trid;
+            END IF;
 
             RETURN EXISTS(SELECT COUNT(*) FROM mv_races WHERE f_rid = rid AND f_trid = trid);
         END',
