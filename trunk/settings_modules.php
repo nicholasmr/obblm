@@ -21,11 +21,12 @@ $settings['modules_enabled'] = array(
     'Cemetery'           => true, # Team cemetery page
     'FamousTeams'        => true, # Famous Teams page
     'PDFMatchReport'     => true, # Generating PDF forms for tabletop match reports.
-    // The below modules are not well maintained!
+    // The below modules are not well maintained and are poorly supported!!
     'UPLOAD_BOTOCS'      => false, # Allow upload of a BOTOCS match
     'XML_BOTOCS'         => false, # BOTOCS XML export of team
     'LeagueTables'       => false, # Provides league table link on the main menu
     'Conference'         => false, # Provides support for conferences within tournaments
+    'Scheduler'          => false, # Alternative match scheduler
 );
 
 /*****************
