@@ -1183,7 +1183,7 @@ public static function installProcsAndFuncs($install = true)
                 + cheerleaders * '.$rules['cost_cheerleaders'].'
                 + apothecary   * '.$rules['cost_apothecary'].'
                 + ass_coaches  * '.$rules['cost_ass_coaches'].'
-                + '.(((int) $rules['bank_threshold'] > 0) ? '1' : '0').' * (treasury - '. $rules['bank_threshold']*1000 .');
+                + '.(((int) $rules['bank_threshold'] > 0) ? '1' : '0').' * IF(treasury > '. $rules['bank_threshold']*1000 .',treasury - '. $rules['bank_threshold']*1000 .',0);
         END',
 
         'CREATE PROCEDURE getTourDProps(IN trid '.$CT_cols[T_NODE_TOURNAMENT].', OUT empty BOOLEAN, OUT begun BOOLEAN, OUT finished BOOLEAN, OUT winner '.$CT_cols[T_OBJ_TEAM].')
