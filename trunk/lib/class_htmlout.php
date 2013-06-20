@@ -968,6 +968,8 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <!-- CSS MENU (./cssmenu extension) -->
         <link href="cssmenu/css/dropdown/dropdown.css" media="all" rel="stylesheet" type="text/css">
         <link href="cssmenu/css/dropdown/themes/default/default.ultimate.css" media="all" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="cssmenu/js/jquery/jquery.js"></script>
+        <script type="text/javascript" src="cssmenu/js/jquery/jquery.dropdown.js"></script>        
         <!--[if lt IE 7]>
         <script type="text/javascript" src="cssmenu/js/jquery/jquery.js"></script>
         <script type="text/javascript" src="cssmenu/js/jquery/jquery.dropdown.js"></script>
