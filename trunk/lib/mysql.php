@@ -735,7 +735,9 @@ function setup_database() {
         : "<font color='red'>FAILED &mdash; could not create MySQL functions/procedures</font><br>\n";
 
     // Create root user and leave welcome message on messageboard
-    echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => 'root', 'ring' => Coach::T_RING_GLOBAL_ADMIN, 'mail' => '', 'phone' => '', 'settings' => array(), 'def_leagues' => array())))
+	global $rootpass;
+	$rootpass = isset($rootpass) ? $rootpass : 'root';
+    echo (Coach::create(array('name' => 'root', 'realname' => 'root', 'passwd' => $rootpass, 'ring' => Coach::T_RING_GLOBAL_ADMIN, 'mail' => '', 'phone' => '', 'settings' => array(), 'def_leagues' => array())))
         ? "<font color=green>OK &mdash; root user created.</font><br>\n"
         : "<font color=red>FAILED &mdash; root user was not created.</font><br>\n";
 
