@@ -377,7 +377,11 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
-            SELECT divisions.did,divisions.f_lid INTO did,lid FROM tours,divisions WHERE tours.tour_id = trid AND tours.f_did = divisions.did;
+            IF trid = 0 THEN
+                SELECT 0,0 INTO did,lid;
+            ELSE
+                SELECT divisions.did,divisions.f_lid INTO did,lid FROM tours,divisions WHERE tours.tour_id = trid AND tours.f_did = divisions.did;
+            END IF;
         END',
 
         'CREATE PROCEDURE getObjParents(IN obj TINYINT UNSIGNED, IN pid '.$CT_cols[T_OBJ_PLAYER].', INOUT tid '.$CT_cols[T_OBJ_TEAM].', OUT cid '.$CT_cols[T_OBJ_COACH].', OUT rid '.$CT_cols[T_OBJ_RACE].')
@@ -868,10 +872,12 @@ public static function installProcsAndFuncs($install = true)
                 SELECT pid,tid,cid,rid, trid,did,lid, '.$common_fields.'
                 FROM match_data
                 WHERE match_data.f_player_id = pid AND match_data.f_tour_id = trid;
-            IF pid > '.ID_MERCS.' THEN
-                UPDATE mv_players '.$mstat_fields_player.' WHERE f_pid = pid AND f_trid = trid;
-            ELSE
-                UPDATE mv_players '.$mstat_fields_stars.' WHERE f_pid = pid AND f_trid = trid;
+            IF trid > 0 THEN
+                IF pid > '.ID_MERCS.' THEN
+                    UPDATE mv_players '.$mstat_fields_player.' WHERE f_pid = pid AND f_trid = trid;
+                ELSE
+                    UPDATE mv_players '.$mstat_fields_stars.' WHERE f_pid = pid AND f_trid = trid;
+                END IF;
             END IF;
             UPDATE mv_players SET win_pct = winPct(won,lost,draw,played), sdiff = CONVERT(gf,SIGNED)- CONVERT(ga,SIGNED), tcdiff = CONVERT(tcasf,SIGNED)- CONVERT(tcasa,SIGNED) WHERE f_pid = pid AND f_trid = trid;
 
