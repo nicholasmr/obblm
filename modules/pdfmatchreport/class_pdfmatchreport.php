@@ -105,7 +105,7 @@ class PDFMatchReport implements ModuleInterface
 
 
         //Printing game info rounded box
-        $currenty+=15;
+        $currenty+=5;
 
         $pdf->SetFillColorBB($pdf->hex2cmyk('#c6c6c6'));
         $pdf->SetDrawColorBB($pdf->hex2cmyk('#000000'));
@@ -127,7 +127,7 @@ class PDFMatchReport implements ModuleInterface
 
         //VS text
         $currentx += 80;
-        $currenty += 20;
+        $currenty += 15;
         $pdf->SetXY($currentx,$currenty);
         $pdf->SetFont('Tahoma','',16);
         $noname = '__________________';
@@ -152,12 +152,12 @@ class PDFMatchReport implements ModuleInterface
 
         //Print two team boxes
         
-        $currenty += 20;
+        $currenty += 25;
         $i = 0;
         while ($i < 2) {
             $i++;
 
-            $currenty += 20;
+            $currenty += 5;
             $currentx = MARGINX + 6;
             $pdf->SetXY($currentx,$currenty);
 
@@ -290,7 +290,7 @@ class PDFMatchReport implements ModuleInterface
             $players = $tmp_players;
             
             $j=0;
-            while ($j < 14) {
+            while ($j < 16) {
                 $j++;
 
                 $nr = '';
