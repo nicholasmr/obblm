@@ -224,4 +224,4 @@ class RSSfeed implements ModuleInterface
     
     public static function triggerHandler($type, $argv){}
 }
-?>
+

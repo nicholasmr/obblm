@@ -98,4 +98,3 @@ $DEA['Apes of Wrath'] = array (
       )
 );
 
-?>

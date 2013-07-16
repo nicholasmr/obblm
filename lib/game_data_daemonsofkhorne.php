@@ -88,4 +88,3 @@ $DEA['Daemons of Khorne'] = array (
 array_push($stars['Grashnak Blackhoof']['races'], T_RACE_DKHORNE);
 array_push($stars['Morg \'n\' Thorg']['races'],   T_RACE_DKHORNE);
 
-?>

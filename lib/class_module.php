@@ -170,4 +170,3 @@ foreach (array('MATCH_CREATE', 'MATCH_SAVE', 'MATCH_DELETE', 'MATCH_RESET') as $
     Module::registerTrigger($name);
 }
 
-?>

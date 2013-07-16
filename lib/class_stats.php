@@ -345,4 +345,3 @@ private static function buildCrossRefQueryComponents($obj, $obj_id, $node, $node
 
 }
 
-?>

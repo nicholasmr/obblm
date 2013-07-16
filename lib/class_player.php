@@ -865,4 +865,3 @@ class Player
     }
 }
 
-?>

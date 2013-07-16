@@ -157,4 +157,3 @@ else {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
 }
 
-?>

@@ -352,4 +352,3 @@ class PDFMatchReport implements ModuleInterface
     }
 }
 
-?>

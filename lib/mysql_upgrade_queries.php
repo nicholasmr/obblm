@@ -196,4 +196,4 @@ $upgradeSettings = array(
 '090-091' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 '091-095' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 );
-?>
+

@@ -1028,4 +1028,3 @@ public static function userSched() {
 
 }
 
-?>

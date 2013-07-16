@@ -79,4 +79,4 @@ public static function getRecentEvents($event, $node, $node_id, $N)
     return $events;
 }
 }
-?>
+

@@ -119,4 +119,4 @@ public static function starHireHistory($obj, $obj_id, $node, $node_id, $star_id 
 }
 
 }
-?>
+

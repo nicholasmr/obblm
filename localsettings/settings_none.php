@@ -44,4 +44,3 @@ $settings['fp_leaders']     = array();
 $settings['fp_events']      = array();
 $settings['fp_latestgames'] = array();
 
-?>
