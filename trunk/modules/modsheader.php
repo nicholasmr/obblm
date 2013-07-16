@@ -156,4 +156,4 @@ Module::register(array(
     'filesRunTime'  => array(),
     'filesLoadTime' => array('famousteams/class_famousteams.php')
 ));
-?>
+

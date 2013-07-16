@@ -588,4 +588,4 @@ class Team
         return array(self::T_CREATE_SUCCESS, $tid);
     }
 }
-?>
+

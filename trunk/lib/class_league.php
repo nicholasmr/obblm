@@ -117,3 +117,4 @@ public function getUrl() {
 	return getLeagueUrl($this->lid, $this->name);
 }
 }
+

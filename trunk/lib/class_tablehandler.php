@@ -38,4 +38,4 @@ class Table
         return mysql_query($query);
     }
 }
-?>
+

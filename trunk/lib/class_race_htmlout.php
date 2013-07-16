@@ -84,4 +84,3 @@ public static function standings()
 
 }
 
-?>

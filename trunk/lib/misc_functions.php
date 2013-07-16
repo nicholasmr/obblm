@@ -307,4 +307,3 @@ function getESGroups($appendFields = false, $useAbbrevs = false)
     return $grps;
 }
 
-?>

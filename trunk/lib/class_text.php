@@ -413,4 +413,3 @@ class TeamNews extends TextSubSys
     }
 }
 
-?>

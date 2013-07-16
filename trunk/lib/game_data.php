@@ -2094,4 +2094,3 @@ $rules['value_reduction_av'] = 0; // Default is 0.
 $rules['value_reduction_ag'] = 0; // Default is 0.
 $rules['value_reduction_st'] = 0; // Default is 0.
 
-?>

@@ -14,5 +14,3 @@ $rules['bank_threshold'] = 0;
 $rules['force_IR'] = false;
 
 $hrs = array();
-
-?>

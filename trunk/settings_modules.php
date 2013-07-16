@@ -64,4 +64,3 @@ $settings['leegmgr_botocs'] = true; // Setting to false here is preferred as thi
 
 $settings['enable_pdf_logos'] = true;
 
-?>

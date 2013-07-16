@@ -66,4 +66,4 @@ $hrs[3]['points'] = '';                      // Points not used.
 
 // Add you own rules here...
 
-?>
+

@@ -554,4 +554,3 @@ $pdf->Output(utf8_decode($team->name) . date(' Y-m-d') . '.pdf', 'I');
 }
 }
 
-?>

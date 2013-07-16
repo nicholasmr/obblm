@@ -65,4 +65,4 @@ public function getTrn($key, $doc = false) {
 }
 
 }	
-?>
+

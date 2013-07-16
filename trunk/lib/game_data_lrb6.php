@@ -49,4 +49,3 @@ $stars['Ramtut III']['cost']                          = 380000;
 
 $inducements['Halfling Master Chef']['reduced_cost'] = 100000; # Old LRB5 value.
 
-?>

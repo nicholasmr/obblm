@@ -79,4 +79,3 @@ foreach (array('Dolfar Longstride', 'Griff Oberwald', 'Mighty Zug', 'Morg \'n\' 
     array_push($stars[$s]['races'], T_RACE_BRETTONIA);
 }
 
-?>

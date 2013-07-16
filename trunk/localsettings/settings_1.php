@@ -165,4 +165,3 @@ $settings['fp_latestgames'] = array(
     ),
 );
 
-?>
