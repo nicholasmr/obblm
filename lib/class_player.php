@@ -506,9 +506,13 @@ class Player
         }
         elseif ($type == 'C') {
             $fname = $CHR_CONV[$skill];
-            $query = "UPDATE players SET ach_$fname = ach_$fname - 1 WHERE player_id = $this->player_id";
+            $query = '';
+            if ($this->{"ach_$fname"} > 0) {
+                #echo "yes! -- ".$this->{"ach_$fname"}; # DEBUG
+                $query = "UPDATE players SET ach_$fname = ach_$fname - 1 WHERE player_id = $this->player_id";
+            }
         }
-        
+
         return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
     }
     
