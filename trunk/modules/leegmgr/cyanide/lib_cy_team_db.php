@@ -156,7 +156,7 @@ class cy_team_db {
 		$this->db_status = $this->_db_con->exec($sql);
 	}
 	private function insert_team_listings(){
-			$sql = "INSERT INTO 'Team_Listing' VALUES(".$this->team['ID'].",'".sqlite_escape_string($this->team['name'])."',".$this->team['race_id'].",'".sqlite_escape_string($this->team['strLogo'])."',".$this->team['iTeamColor'].",'".sqlite_escape_string($this->team['moto'])."','".sqlite_escape_string($this->team['background'])."',".$this->team['TV'].",".$this->team['fanfactor'].",".$this->team['gold'].",".$this->team['cheerleaders'].",".$this->team['balms'].",".$this->team['apothecary'].",".$this->team['reroll'] .",".$this->team['edited'].",".$this->team['idlistfilters'].",".$this->team['str_f_background'].",".$this->team['idstrlocalmoto'].",".$this->team['inextpurchas'].",".$this->team['assistantcoaches'].");";
+			$sql = "INSERT INTO 'Team_Listing' VALUES(".$this->team['ID'].",'".SQLite3::escapeString($this->team['name'])."',".$this->team['race_id'].",'".SQLite3::escapeString($this->team['strLogo'])."',".$this->team['iTeamColor'].",'".SQLite3::escapeString($this->team['moto'])."','".SQLite3::escapeString($this->team['background'])."',".$this->team['TV'].",".$this->team['fanfactor'].",".$this->team['gold'].",".$this->team['cheerleaders'].",".$this->team['balms'].",".$this->team['apothecary'].",".$this->team['reroll'] .",".$this->team['edited'].",".$this->team['idlistfilters'].",".$this->team['str_f_background'].",".$this->team['idstrlocalmoto'].",".$this->team['inextpurchas'].",".$this->team['assistantcoaches'].");";
 			$this->db_status = $this->_db_con->exec($sql);
 	}
 	private function insert_team_rankings() {
@@ -185,16 +185,16 @@ class cy_team_db {
 		    $sql .= sprintf("INSERT INTO 'Player_Listing' VALUES(%d,%d,'%s',%d,'%s',%d,%d,%d,%d,%d,%d,'%s',%d,%d,%d,%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,'%s');",
                     $player['ID'],
                     $player['idPlayer_Names'],
-                    sqlite_escape_string($player['strName']),
+                    SQLite3::escapeString($player['strName']),
                     $player['idPlayer_Types'],
-                    sqlite_escape_string($player['idTeam_Listing']),
+                    SQLite3::escapeString($player['idTeam_Listing']),
                     $player['idTeam_Listing_Previous'],
                     $player['idRaces'],
                     $player['iPlayerColor'],
                     $player['iSkinScalePercent'],
                     $player['iSkinMeshVariant'],
                     $player['iSkinTextureVariant'],
-                    sqlite_escape_string($player['fAgeing real']),
+                    SQLite3::escapeString($player['fAgeing real']),
                     $player['iNumber'],
                     $player['Characteristics_fMovementAllowance'],
                     $player['Characteristics_fStrength'],
@@ -226,7 +226,7 @@ class cy_team_db {
                     $player['bStar'],
                     $player['bEdited'],
                     $player['bDead'],
-                    sqlite_escape_string($player['strLevelUp'])
+                    SQLite3::escapeString($player['strLevelUp'])
                 );
 		}
 		$this->db_status = $this->_db_con->exec($sql);
