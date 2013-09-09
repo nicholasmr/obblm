@@ -250,9 +250,9 @@ class Message extends TextSubSys
         unset($this->txt);
     }
 
-    public function edit($new_title, $new_msg, $f_coach_id = false) 
+    public function edit($new_title, $new_msg, $f_coach_id = false, $type = T_TEXT_MSG) 
     {
-        return (parent::edit($new_msg, $new_title, $f_coach_id, T_TEXT_MSG) && ($this->title = $this->txt2) && ($this->message = $this->txt));
+        return (parent::edit($new_msg, $new_title, $f_coach_id, $type) && ($this->title = $this->txt2) && ($this->message = $this->txt));
     }
 
     /***************
@@ -276,9 +276,9 @@ class Message extends TextSubSys
         return $m;
     }
 
-    public static function create($input) 
+    public static function create($input, $type = T_TEXT_MSG, $txt = '', $txt2 = '', $f_id2 = false)
     {
-        return parent::create($input['f_coach_id'], T_TEXT_MSG, $input['msg'], $input['title'], $input['f_lid']);
+        return parent::create($input['f_coach_id'], $type, $input['msg'], $input['title'], $input['f_lid']);
     }
 }
 
@@ -377,9 +377,9 @@ class TeamNews extends TextSubSys
         parent::__construct($nid);
     }
 
-    public function edit($txt)
+    public function edit($txt, $txt2 = '', $f_id = false, $type = false)
     {
-        return parent::edit($txt, '', false, false);    
+        return parent::edit($txt, $txt2, $f_id, $type);    
     }
 
     /* 
@@ -390,9 +390,9 @@ class TeamNews extends TextSubSys
      * Statics
      ***************/
     
-    public static function create($str, $tid)
+    public static function create($str, $tid, $type = T_TEXT_TNEWS, $txt2 = '', $f_id2 = false)//Should be $f_id, $type, $txt, $txt2, $f_id2 = false
     {
-        return parent::create($tid, T_TEXT_TNEWS, $str, false);
+        return parent::create($tid, $type, $str, $f_id2);
     }
     
     public static function getNews($tid = false, $n = false, $lid = false)
