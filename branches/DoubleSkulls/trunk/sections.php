@@ -364,7 +364,7 @@ function sec_main() {
                     }
                     break;
             }
-            $teams = Stats::getRaw(T_OBJ_TEAM, array($box['type'] => $box['id']), $box['length'], $SR, false);
+            list($teams, ) = Stats::getRaw(T_OBJ_TEAM, array($box['type'] => $box['id']), array(1, $box['length']), $SR, false);
             ?>
             <div class='boxWide'>
                 <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
@@ -423,7 +423,7 @@ function sec_main() {
         case 'leaders':
 
             $f = 'mv_'.$box['field'];
-            $players = Stats::getRaw(T_OBJ_PLAYER, array($box['type'] => $box['id']), $box['length'], array('-'.$f), false)
+            list($players, ) = Stats::getRaw(T_OBJ_PLAYER, array($box['type'] => $box['id']), array(1, $box['length']), array('-'.$f), false)
             ?>
             <div class="boxWide">
                 <h3 class='boxTitle<?php echo T_HTMLBOX_STATS;?>'><?php echo $box['title'];?></h3>
@@ -849,6 +849,7 @@ function sec_about() {
         The authors of this program are
         <ul>
             <li> <a href="mailto:nicholas.rathmann@gmail.com">Nicholas Mossor Rathmann</a>
+            <li> <a href="http://www.mercuryvps.com">William Leonard</a>
             <li> Niels Orsleff Justesen</a>
         </ul>
         With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
@@ -870,6 +871,9 @@ function sec_about() {
     </p>
 
     <?php
+	title("OBBLM Hosting");
+	echo 'Please visit <a href="http://www.mercuryvps.com">Mercury VPS</a> and click on the OBBLM tab to get started.';
+	
     title("Documentation");
     echo "See the <a TARGET='_blank' href='".DOC_URL."'>OBBLM documentation wiki</a>";
 
@@ -905,4 +909,4 @@ function sec_about() {
     </p>
     <?php
 }
-?>
+

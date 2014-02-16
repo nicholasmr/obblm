@@ -717,4 +717,3 @@ class SGraph implements ModuleInterface
     }
 }
 
- ?>

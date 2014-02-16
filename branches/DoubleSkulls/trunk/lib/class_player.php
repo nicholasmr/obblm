@@ -184,7 +184,7 @@ class Player
     
     public function setChoosableSkills() {
 
-        global $DEA, $skillarray, $skillcats, $IllegalSkillCombinations;
+        global $DEA, $skillarray, $skillcats, $IllegalSkillCombinations, $rules;
         # Var. format: "$IllegalSkillCombinations as $hasSkill => $dropSkills"
         
         $this->setSkills();
@@ -250,7 +250,7 @@ class Player
             If a player has SPPs enough for a new skill but has NOT (ever) improvement rolled 2xD6 according to match_data entries, 
             then allow player to select amongst all possible skills.
         */
-        if ($N_allowed_new_skills > 0 && count($IRs) > 0) {
+        if ($N_allowed_new_skills > 0 && (count($IRs) > 0 || $rules['force_IR'])) {
             if (!$allowed['N']) {$this->choosable_skills['norm'] = array();}
             if (!$allowed['D']) {$this->choosable_skills['doub'] = array();}
             $this->choosable_skills['chr'] = array();
@@ -506,9 +506,13 @@ class Player
         }
         elseif ($type == 'C') {
             $fname = $CHR_CONV[$skill];
-            $query = "UPDATE players SET ach_$fname = ach_$fname - 1 WHERE player_id = $this->player_id";
+            $query = '';
+            if ($this->{"ach_$fname"} > 0) {
+                #echo "yes! -- ".$this->{"ach_$fname"}; # DEBUG
+                $query = "UPDATE players SET ach_$fname = ach_$fname - 1 WHERE player_id = $this->player_id";
+            }
         }
-        
+
         return mysql_query($query) && SQLTriggers::run(T_SQLTRIG_PLAYER_DPROPS, array('id' => $this->player_id, 'obj' => $this)); # Update PV and TV.
     }
     
@@ -675,6 +679,36 @@ class Player
         return implode(', ', $injs);
     }
     
+    private function _getInjHistory() 
+    {
+        $injs = array();
+        $stats = array();
+        $query = "SELECT inj, agn1, agn2, f_match_id AS 'mid',  mvp, cp, td, intcpt, bh, si, ki FROM match_data, matches WHERE f_match_id = match_id AND f_player_id = $this->player_id AND (inj != ".NONE." OR agn1 != ".NONE." OR agn2 != ".NONE.") ORDER BY date_played DESC";
+        if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                $stats[] = $row;
+                $tmp = array();
+                foreach (array('inj', 'agn1', 'agn2') as $inj) {
+                    if ($row[$inj] != NONE) {
+                        array_push($tmp, $row[$inj]);
+                    }
+                }
+                $injs[] = $tmp;
+            }
+        }
+        return array($injs, $stats);
+    }
+    public function getInjHistory() 
+    {
+        # This method wraps _getInjHistory() with extra information.
+        list($injhist, $stats) = $this->_getInjHistory();
+        $match_objs = array();
+        foreach ($stats as $k => $v) {
+            $match_objs[] = new Match($v['mid']);
+        }
+        return array($injhist, $stats, $match_objs);
+    }
+    
     /***************
      * Statics
      ***************/
@@ -835,4 +869,3 @@ class Player
     }
 }
 
-?>

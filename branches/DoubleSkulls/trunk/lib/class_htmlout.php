@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2012. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -53,10 +53,24 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
     if (!(array_key_exists('n', $opts) && $opts['n'])) {$opts['n'] = false;}
+    if (!$opts['n']) {
+        $N = array();
+    }
+    else {
+        $N = isset($_GET["page"]) 
+            ? array((int) $_GET["page"],$opts['n'])
+            : array(1,$opts['n']);
+    }
 
-    $matches = ($FOR_OBJ = $obj && $obj_id)
-        ? $matches = Stats::getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $opts['n'], true, false)
-        : $matches = Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, false);
+
+    $FOR_OBJ = $obj;
+    if ($obj && $obj_id)
+        list($matches, $pages) = Stats::getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $N, true, false);
+    else
+        list($matches, $pages) = Match::getMatches($N, ($node) ? $node : false, ($node) ? $node_id : false, false);
+
+    $extra['page'] = $N[0];
+    $extra['pages'] = $pages;
 
     foreach ($matches as $m) {
         $m->date_played_disp = textdate($m->date_played, false, false);
@@ -78,7 +92,7 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
         'date_played_disp' => array('desc' => $lng->getTrn('common/dateplayed'), 'nosort' => true),
         'league_name' => array('desc' => $lng->getTrn('common/league'), 'nosort' => true),
         'tour_name'   => array('desc' => $lng->getTrn('common/tournament'), 'nosort' => true),
-        'round'       => array('desc' => $lng->getTrn('common/round'), 'nosort' => false),
+        'round'       => array('desc' => $lng->getTrn('common/round'), 'nosort' => true),
         'team1_name'    => array('desc' => $lng->getTrn('common/home'), 'nosort' => true),
         'team2_name'    => array('desc' => $lng->getTrn('common/away'), 'nosort' => true),
 // Old solution
@@ -120,10 +134,22 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
     if (!(array_key_exists('n', $opts) && $opts['n'])) {$opts['n'] = false;}
+    if (!$opts['n']) {
+        $N = array();
+    }
+    else {
+        $N = isset($_GET["page"]) 
+            ? array((int) $_GET["page"],$opts['n'])
+            : array(1,$opts['n']);
+    }
 
-    $matches = ($obj && $obj_id)
-        ? Stats::getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $opts['n'], true, true)
-        : Match::getMatches($opts['n'], ($node) ? $node : false, ($node) ? $node_id : false, true);
+    if ($obj && $obj_id)
+        list($matches, $pages) = Stats::getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, $N, true, true);
+    else
+        list($matches, $pages) = Match::getMatches($N, ($node) ? $node : false, ($node) ? $node_id : false, true);
+
+    $extra['page'] = $N[0];
+    $extra['pages'] = $pages;
 
     foreach ($matches as $m) {
         $m->date_created_disp = textdate($m->date_created, true);
@@ -141,7 +167,7 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         'date_created_disp'  => array('desc' => $lng->getTrn('common/datecreated'), 'nosort' => true),
         'league_name'   => array('desc' => $lng->getTrn('common/league'), 'nosort' => true),
         'tour_name'     => array('desc' => $lng->getTrn('common/tournament'), 'nosort' => true),
-        'round'         => array('desc' => $lng->getTrn('common/round'), 'nosort' => false),
+        'round'         => array('desc' => $lng->getTrn('common/round'), 'nosort' => true),
         'team1_name'    => array('desc' => $lng->getTrn('common/home'), 'nosort' => true),
         'team2_name'    => array('desc' => $lng->getTrn('common/away'), 'nosort' => true),
 // Old solution
@@ -155,7 +181,7 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         $opts['url'],
         $matches,
         $fields,
-        array('+date_created'),
+        array('+round','+date_created'),
         (isset($_GET["sort$opts[GET_SS]"])) ? array((($_GET["dir$opts[GET_SS]"] == 'a') ? '+' : '-') . $_GET["sort$opts[GET_SS]"]) : array(),
         $extra
     );
@@ -327,6 +353,11 @@ public static function standings($obj, $node, $node_id, array $opts)
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
 
+    $PAGE = isset($_GET["page"]) 
+            ? (int) $_GET["page"]
+            : 1;
+    $PAGELENGTH = 0; # Infinite, is overrided in below switch/case..
+
     $extra['noHelp'] = false;
     $W_TEAMS_FROM = array_key_exists('teams_from', $opts);
 
@@ -388,7 +419,8 @@ public static function standings($obj, $node, $node_id, array $opts)
                 'name'    => array('desc' => $lng->getTrn('common/player'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
                 'f_tname' => array('desc' => $lng->getTrn('common/team'),   'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_team_id')),
             );
-            $objs = Stats::getRaw(T_OBJ_PLAYER, $filter_node+$filter_having+$filter_race, $settings['standings']['length_players'], $sortRule, $set_avg);
+            $PAGELENGTH = $settings['standings']['length_players'];
+            list($objs, $PAGES) = Stats::getRaw(T_OBJ_PLAYER, $filter_node+$filter_having+$filter_race, array($PAGE, $PAGELENGTH), $sortRule, $set_avg);
             break;
 
         case STATS_TEAM:
@@ -402,17 +434,19 @@ public static function standings($obj, $node, $node_id, array $opts)
             {
                 case T_OBJ_COACH:
                     $fields_before['f_rname'] = array('desc' => $lng->getTrn('common/race'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_RACE,false,false,false), 'field' => 'obj_id', 'value' => 'f_race_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+$filter_race+array(T_OBJ_COACH => (int) $opts['teams_from_id']), false, $sortRule, $set_avg);
+                    list($objs, $PAGES) = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+$filter_race+array(T_OBJ_COACH => (int) $opts['teams_from_id']), false, $sortRule, $set_avg);
                     break;
 
                 case T_OBJ_RACE:
                     $fields_before['f_cname'] = array('desc' => $lng->getTrn('common/coach'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'owned_by_coach_id'));
-                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+array(T_OBJ_RACE => (int) $opts['teams_from_id']), $settings['standings']['length_teams'], $sortRule, $set_avg);
+                    $PAGELENGTH = $settings['standings']['length_teams'];
+                    list($objs, $PAGES) = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+array(T_OBJ_RACE => (int) $opts['teams_from_id']), array($PAGE, $PAGELENGTH), $sortRule, $set_avg);
                     break;
 
                 // All teams
                 default:
-                    $objs = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+$filter_race, $settings['standings']['length_teams'], $sortRule, $set_avg);
+                    $PAGELENGTH = $settings['standings']['length_teams'];
+                    list($objs, $PAGES) = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+$filter_race, array($PAGE, $PAGELENGTH), $sortRule, $set_avg);
             }
             break;
 
@@ -431,7 +465,7 @@ public static function standings($obj, $node, $node_id, array $opts)
             if ($dash_empty) {
                 $extra['dashed'] = array('condField' => $dash_empty, 'fieldVal' => 0, 'noDashFields' => array('name'));
             }
-            $objs = Stats::getRaw(T_OBJ_RACE, $filter_node+$filter_having, false, $sortRule, $set_avg);
+            list($objs, $PAGES) = Stats::getRaw(T_OBJ_RACE, $filter_node+$filter_having, false, $sortRule, $set_avg);
 
             break;
 
@@ -440,7 +474,8 @@ public static function standings($obj, $node, $node_id, array $opts)
             $fields_before = array(
                 'name' => array('desc' => $lng->getTrn('common/coach'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_COACH,false,false,false), 'field' => 'obj_id', 'value' => 'coach_id')),
             );
-            $objs = Stats::getRaw(T_OBJ_COACH, $filter_node+$filter_having, $settings['standings']['length_coaches'], $sortRule, $set_avg);
+            $PAGELENGTH = $settings['standings']['length_coaches'];
+            list($objs, $PAGES) = Stats::getRaw(T_OBJ_COACH, $filter_node+$filter_having, array($PAGE, $PAGELENGTH), $sortRule, $set_avg);
             break;
 
         case STATS_STAR:
@@ -455,7 +490,7 @@ public static function standings($obj, $node, $node_id, array $opts)
                 'av'     => array('desc' => 'Av'),
             );
             $extra['dashed'] = array('condField' => 'mv_played', 'fieldVal' => 0, 'noDashFields' => array('name'));
-            $objs = Stats::getRaw(T_OBJ_STAR, $filter_node+$filter_having, false, $sortRule, $set_avg);
+            list($objs, $PAGES) = Stats::getRaw(T_OBJ_STAR, $filter_node+$filter_having, false, $sortRule, $set_avg);
 
             break;
     }
@@ -476,6 +511,9 @@ public static function standings($obj, $node, $node_id, array $opts)
             }
         }
     }
+    $extra['page'] = $PAGE;
+    $extra['pages'] = $PAGES;
+    $extra['pagelength'] = $PAGELENGTH;
     HTMLOUT::sort_table(
        $tblTitle,
        $opts['url'].(($set_avg) ? '&amp;pms=1' : ''),
@@ -773,6 +811,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
     $allow_all = (isset($opts['allow_all']) && $opts['allow_all']);
     $hide_empty = isset($opts['hide_empty']) ? $opts['hide_empty'] : array();
     $empty_str = isset($opts['empty_str']) ? $opts['empty_str'] : array(); # e.g. "%name (EMPTY)" where %name will be substituted like $DISSTR
+    $init_option = isset($opts['init_option']) ? $opts['init_option'] : false;
     # Default empty strings
     foreach ($empty_str as $idx => $str) {
         if (empty($str)) { # If $emprty_str = array(T_NODE_* => ''); then we convert it to the below.
@@ -818,6 +857,9 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
     // Done preprocessing...
     $NL = '';
     $NL .= "<select name='$nameid' id='$nameid' ".implode(' ', $extra_tags).">\n";
+    if ($init_option) {
+        $NL .= $init_option;
+    }
     switch ($node) {
         case T_NODE_TOURNAMENT:
             foreach ($leagues as $lid => $divs) {
@@ -918,6 +960,7 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
         <script type="text/javascript" src="lib/jquery.expander.js"></script>
         <link type="text/css" href="css/autocomplete.css" rel="stylesheet">
@@ -925,6 +968,8 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <!-- CSS MENU (./cssmenu extension) -->
         <link href="cssmenu/css/dropdown/dropdown.css" media="all" rel="stylesheet" type="text/css">
         <link href="cssmenu/css/dropdown/themes/default/default.ultimate.css" media="all" rel="stylesheet" type="text/css">
+        <!-- <script type="text/javascript" src="cssmenu/js/jquery/jquery.js"></script> -->
+        <script type="text/javascript" src="cssmenu/js/jquery/jquery.dropdown.js"></script>
         <!--[if lt IE 7]>
         <script type="text/javascript" src="cssmenu/js/jquery/jquery.js"></script>
         <script type="text/javascript" src="cssmenu/js/jquery/jquery.dropdown.js"></script>
@@ -1026,19 +1071,24 @@ private static function make_menu()
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/plugins');?></span>
             <ul>
-                <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
                 <?php if (Module::isRegistered('Search')){ ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('TeamCompare')){ ?><li><a href="handler.php?type=teamcompare"><?php echo $lng->getTrn('name', 'TeamCompare');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('HOF'))   { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('FamousTeams'))       { ?><li><a href="handler.php?type=famousteams"><?php echo $lng->getTrn('name', 'FamousTeams');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Wanted')){ ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Prize')) { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Cemetery'))          { ?><li><a href="handler.php?type=cemetery&amp;tid=0"><?php echo $lng->getTrn('name', 'Cemetery');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Memmatches')) { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('SGraph'))     { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Gallery'))    { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Conference'))    { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('LeaguePref'))    { ?><li><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('menu-lge', 'LeaguePref');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('TeamCreator'))    { ?><li><a href="handler.php?type=teamcreator"><?php echo $lng->getTrn('menu-tc', 'TeamCreator');?></a></li><?php } ?>
+				<?php if (isset($_SESSION['logged_in']) && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $coach->ring == Coach::T_RING_LOCAL_ADMIN)) { ?>
+				<?php if (Module::isRegistered('Scheduler'))     { ?><li><a href="handler.php?type=scheduler"><?php echo $lng->getTrn('name', 'Scheduler');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
+                <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
+				<?php } ?>
             </ul>
         </li>
 
@@ -1051,6 +1101,8 @@ private static function make_menu()
 			$forum_url = $l_pref->forum_url;
 		} else {
 			$forum_url = $settings['forum_url'];
+        if (!empty($settings['league_url'])) {
+            ?><li><a href="<?php echo $settings['league_url'];?>"><?php echo $settings['league_url_name'];?></a></li><?php
 		}
         if (!empty($forum_url)) {
             ?><li><a href="<?php echo $forum_url;?>"><?php echo $lng->getTrn('menu/forum');?></a></li><?php
@@ -1086,6 +1138,9 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             anchor => string. Will create table sorting links, that include this identifier as an anchor.
             noHelp => true/false. Will enable/disable help link [?].
             noSRdisp => true/false. Will force not to show the table sort rule used/parsed.
+            
+            page => current page being viewed
+            pages => total number of pages
     */
     global $settings, $lng;
 
@@ -1101,6 +1156,10 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
     $LIMIT = (array_key_exists('limit', $extra)) ? $extra['limit'] : -1;
     $ANCHOR = (array_key_exists('anchor', $extra)) ? $extra['anchor'] : false;
     $NOSRDISP = (array_key_exists('noSRdisp', $extra)) ? $extra['noSRdisp'] : false;
+    $GETSUFX = (array_key_exists('GETsuffix', $extra)) ? $extra['GETsuffix'] : '';
+    $PAGES = (array_key_exists('pages', $extra)) ? $extra['pages'] : false;
+    $PAGE  = (array_key_exists('page', $extra))  ? $extra['page']  : 1;
+    $PAGELENGTH = (array_key_exists('pagelength', $extra))  ? $extra['pagelength'] : 0;
 
     if ($DONR) {
         $fields = array_merge(array('nr' => array('desc' => '#')), $fields);
@@ -1134,26 +1193,20 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                 echo "<td></td>";
                 continue;
             }
-            if (array_key_exists('GETsuffix', $extra)) {
-                $sort = 'sort'.$extra['GETsuffix'];
-                $dir = 'dir'.$extra['GETsuffix'];
-            }
-            else {
-                $sort = 'sort';
-                $dir = 'dir';
-            }
+            $sort = 'sort'.$GETSUFX;
+            $dir = 'dir'.$GETSUFX;
             $anc = '';
             if ($ANCHOR) {
                 $anc = "#$ANCHOR";
             }
 
-            echo "<td><b><a href='$lnk&amp;$sort=$f&amp;$dir=a$anc' title='Sort ascending'>+</a>/<a href='$lnk&amp;$sort=$f&amp;$dir=d$anc' title='Sort descending'>-</a></b></td>";
+            echo "<td><b><a href='$lnk&amp;page=1&amp;$sort=$f&amp;$dir=a$anc' title='Sort ascending'>+</a>/<a href='$lnk&amp;page=1&amp;$sort=$f&amp;$dir=d$anc' title='Sort descending'>-</a></b></td>";
         }
         ?>
         </tr>
         <tr><td colspan="<?php echo $CP;?>"><hr></td></tr>
         <?php
-        $i = 1;
+        $i = 1 + (($PAGE && $PAGELENGTH) ? ($PAGE-1)*$PAGELENGTH : 0);
         foreach ($objs as $o) {
             $DASH = (array_key_exists('dashed', $extra) && $o->{$extra['dashed']['condField']} == $extra['dashed']['fieldVal']) ? true : false;
             if (array_key_exists('color', $extra)) {
@@ -1209,7 +1262,22 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
         </tr>
         <tr>
             <td align="right" colspan="<?php echo $CP;?>">
-            <i><?php echo $lng->getTrn('common/sortedagainst');?>: <?php echo implode(', ', rule_dict($MASTER_SORT));?></i>
+            <?php
+            if ($PAGES) {
+            ?>
+            <div style='float:left;'><?php 
+                echo $lng->getTrn('common/page')."&nbsp;";
+                $primary_sort = isset($_GET["sort$GETSUFX"])
+                    ? "&amp;sort$GETSUFX=".$_GET["sort$GETSUFX"]."&amp;dir$GETSUFX=".$_GET["dir$GETSUFX"]
+                    : '';
+                $pageslist = array_strpack('<a href=\"'.$lnk.'&amp;page=%s'.$primary_sort.'\">%s</a>', range(1,$PAGES));
+                $pageslist[$PAGE-1] = "<b>$PAGE</b>";
+                echo implode(', ', $pageslist);
+            ?></div>
+            <?php
+            }
+            ?>
+            <div style='float:right;'><i><?php echo $lng->getTrn('common/sortedagainst');?>: <?php echo implode(', ', rule_dict($MASTER_SORT));?></i></div>
             </td>
         </tr>
         <?php
@@ -1282,4 +1350,3 @@ public static function dnt()
 
 }
 
-?>
