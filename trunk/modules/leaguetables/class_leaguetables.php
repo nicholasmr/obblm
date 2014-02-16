@@ -129,8 +129,7 @@ echo<<< EOQ
 			<form method="POST">
 				<select name="tour_id">
 EOQ;
-	$rTours = array_reverse($tours, true);
-		foreach ($rTours as $trid => $desc) {
+		foreach ($tours as $trid => $desc) {
 			if ($firstTour == 0) {
 				$firstTour = $trid;
 			}
