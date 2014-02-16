@@ -404,7 +404,7 @@ class Coach
             $properFields[] = "m.ring AS 'ring'";
         }
         $query = "SELECT l.lid AS 'lid', d.did AS 'did', t.tour_id AS 'trid',".implode(',',$properFields)."
-            FROM leagues AS l JOIN divisions AS d ON d.f_lid = l.lid JOIN tours AS t ON t.f_did = d.did ".
+            FROM leagues AS l JOIN divisions AS d ON d.f_lid = l.lid LEFT OUTER JOIN tours AS t ON t.f_did = d.did ".
             ((!$GLOBAL_VIEW) ? ", memberships AS m WHERE m.lid = l.lid AND m.cid = $cid" : '') . " ORDER BY 1 desc, 2 desc, 3 desc";
         $result = mysql_query($query);
 
