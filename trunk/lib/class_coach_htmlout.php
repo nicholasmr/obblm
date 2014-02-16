@@ -571,4 +571,4 @@ private function _recentGames()
 }
 
 }
-?>
+

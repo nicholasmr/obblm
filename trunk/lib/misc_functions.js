@@ -46,7 +46,10 @@ function numError(field)
     
     if (!IsNumeric(field.value)) {
         alert("Sorry. Only numeric values are allowed in the field you changed. Try again.");
-        field.value = "";
+        field.value = "0";
+    }
+    if (field.value.length == 0) {
+        field.value = "0";
     }
 }
 

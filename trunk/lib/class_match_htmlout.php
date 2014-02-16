@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2011. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2009-2012. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -561,6 +561,10 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/round');?></b>:</td><td colspan="3"><?php   echo $lng->getTrn($T_ROUNDS[$m->round]);?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
+    if (Module::isRegistered('PDFMatchReport')) {
+        $str = '<a href="handler.php?type=pdfmatchreport&amp;tid1='.$team1->team_id.'&amp;tid2='.$team2->team_id.'&amp;mid='.$m->match_id.'">Download PDF report</a>';
+        echo "<tr><td><b>Match report</b>:</td><td>$str</td></tr>";
+    }
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
         echo "<tr><td><b>Replay</b>:</td><td colspan='3'><a href='handler.php?type=leegmgr&amp;replay=$m->match_id'>View replay</a></td></tr>";
     }
@@ -615,11 +619,11 @@ public static function report() {
             </td></tr>
             <tr><td colspan='<?php echo $CP;?>'>
                 <b><?php echo $lng->getTrn('common/gate');?></b>&nbsp;
-                <input type="text" name="gate" value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
+                <input type="text" name="gate" onChange='numError(this);' value="<?php echo $m->gate ? $m->gate/1000 : 0;?>" size="4" maxlength="4" <?php echo $DIS;?>>k
             </td></tr>
             <tr><td colspan='<?php echo $CP;?>'>
                 <b><?php echo $lng->getTrn('matches/report/fans');?></b>&nbsp;
-                <input type="text" name="fans" value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
+                <input type="text" name="fans" onChange='numError(this);' value="<?php echo $m->fans;?>" size="7" maxlength="12" <?php echo $DIS;?>>
             </td></tr>
             <?php
             if (!$settings['hide_ES_extensions']) {
@@ -647,17 +651,17 @@ public static function report() {
             foreach (array(1,2) as $N) {
                 echo "<tr>\n";
                 echo "<td>".${"teamUrl$N"}."</td>\n";
-                echo "<td><input type='text' name='result$N' value='".((int) $m->{"team${N}_score"})."' size='1' maxlength='2' $DIS></td>\n";
-                echo "<td><input type='text' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='result$N' value='".((int) $m->{"team${N}_score"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
                 echo "<td>";
                 foreach (array('1' => 'green', '0' => 'blue', '-1' => 'red') as $Nff => $color) {
                     echo "<input $DIS type='radio' name='ff$N' value='$Nff' ".(($m->{"ffactor$N"} == (int) $Nff) ? 'CHECKED' : '')."><font color='$color'><b>$Nff</b></font>";
                 }
                 echo "</td>\n";
-                echo "<td><input type='text' name='smp$N' value='".($m->{"smp$N"})."' size='1' maxlength='2' $DIS>".$lng->getTrn('matches/report/pts')."</td>\n";
-                echo "<td><input type='text' name='tcas$N' value='".($m->{"tcas$N"})."' size='1' maxlength='2' $DIS></td>\n";
-                echo "<td><input type='text' name='fame$N' value='".($m->{"fame$N"})."' size='1' maxlength='2' $DIS></td>\n";
-                echo "<td><input type='text' name='tv$N' value='".($m->is_played ? $m->{"tv$N"}/1000 : ${"team$N"}->value/1000)."' size='4' maxlength='10' $DIS>k</td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='smp$N' value='".($m->{"smp$N"})."' size='1' maxlength='2' $DIS>".$lng->getTrn('matches/report/pts')."</td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='tcas$N' value='".($m->{"tcas$N"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='fame$N' value='".($m->{"fame$N"})."' size='1' maxlength='2' $DIS></td>\n";
+                echo "<td><input type='text' onChange='numError(this);' name='tv$N' value='".($m->is_played ? $m->{"tv$N"}/1000 : ${"team$N"}->value/1000)."' size='4' maxlength='10' $DIS>k</td>\n";
                 echo "</tr>\n";
             }
             ?>
@@ -952,6 +956,14 @@ public static function userSched() {
             status(false, $errmsg);
         }
     }
+    $trid  = (isset($_GET['trid']) && is_numeric($_GET['trid'])) ? (int) $_GET['trid'] : 0;
+    $lid   = $trid ? get_parent_id(T_NODE_TOURNAMENT, $trid, T_NODE_LEAGUE) : false;
+    $lname = $lid ? get_parent_name(T_NODE_TOURNAMENT, $trid, T_NODE_LEAGUE) : '- N/A -';
+    $did   = ($trid && get_alt_col('leagues', 'lid', $lid, 'tie_teams') == 1) ? get_parent_id(T_NODE_TOURNAMENT, $trid, T_NODE_DIVISION) : false;
+    $dname = $did ? get_parent_name(T_NODE_TOURNAMENT, $trid, T_NODE_DIVISION) : false;
+
+    $_DISABLED = (!$trid) ? 'DISABLED' : '';
+    #print_r(array($trid, $lid, $lname, $did));
 
     title($lng->getTrn('menu/matches_menu/usersched'));
     $LOCK_FORMS = false;
@@ -962,9 +974,9 @@ public static function userSched() {
             <form method="POST">
                     <?php
                 echo "In tournament ";
-                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)));
+                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'index.php?section=matches&type=usersched&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
                 echo ' as ';
-                echo '<select name="round" id="round">';
+                echo '<select name="round" id="round" '.$_DISABLED.'>';
                 global $T_ROUNDS;
                 foreach ($T_ROUNDS as $r => $d) {
                     echo "<option value='$r' ".(($r == 1) ? 'SELECTED' : '').">".$lng->getTrn($d)."</option>\n";
@@ -975,12 +987,12 @@ public static function userSched() {
                 Your team
                     <?php
                 $teams = array();
-                    foreach ($coach->getTeams() as $t) {
+                foreach ($coach->getTeams($lid, $did, array('sortby' => 'team_id DESC')) as $t) {
                     	if (!$t->rdy || $t->is_retired) continue;
-                    	$teams[$t->f_lid][$t->f_did][] = $t;
+                    $teams[] = $t;
                     }
                     ?>
-                <select name='own_team' id='own_team'>
+                <select name='own_team' id='own_team' <?php echo $_DISABLED;?>>
                     <?php
                     foreach ($teams as $lid => $divs) {
                         echo "<optgroup class='leagues' label='".$leagues[$lid]['lname']."'>\n";
@@ -989,30 +1001,26 @@ public static function userSched() {
                             	echo "<optgroup class='divisions' style='padding-left: 1em;' label='".$divisions[$did]['dname']."'>\n";
                             }
                             foreach ($teams as $t) {
-                                echo "<option style='background-color: white; margin-left: -1em;' value='$t->team_id'>$t->name</option>\n";
+                        echo "<option style='background-color: white; margin-left: -1em;' value='$t->team_id'>&nbsp;&nbsp;&nbsp;$t->name</option>\n";
                             }
-                            echo "</optgroup>\n";
-                        }
-                        echo "</optgroup>\n";
-                    }
                     ?>
                 </select>
                 &nbsp;
                 VS.
-                <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50">
+                <input type="text" id='opposing_team_autoselect' name="opposing_team_autocomplete" size="30" maxlength="50" <?php echo $_DISABLED;?>>
                 <script>
                     $(document).ready(function(){
                         var options, b;
 
                         options = {
                             minChars:2,
-                                serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>',
+                            serviceUrl:'handler.php?type=autocomplete&obj=<?php echo T_OBJ_TEAM;?>&trid=<?php echo $trid; ?>',
                         };
                         b = $('#opposing_team_autoselect').autocomplete(options);
                     });
                 </script>
                 <br><br><br>
-                <input type="submit" name="creategame" value="Schedule match" <?php echo empty($teams) ? 'DISABLED' : ''; ?>>
+                <input type="submit" name="creategame" value="<?php echo $lng->getTrn('menu/matches_menu/usersched');?>" <?php if (empty($teams) || $_DISABLED) echo 'DISABLED';?>>
             </form>
         </div>
     </div>
@@ -1021,4 +1029,3 @@ public static function userSched() {
 
 }
 
-?>

@@ -10,8 +10,11 @@
 
 $settings['league_name']   = 'Edinboro Castle Blood Bowl League'; // Name of the site or the league name if only one league is being managed.
 $settings['forum_url']     = 'http://ecbbl.doubleskulls.net/forum/index.php'; // URL of league forum, if you have such. If not then leave this empty, that is = '' (two quotes only).
+$settings['league_name']     = 'Placeholder title for league with ID = 1'; // Name of the site or the league name if only one league is being managed.
+$settings['league_url']      = 'http://localhost'; // URL of league home page/forum, if you have such. If not then leave this empty, that is = '' (two quotes only), which will disable the button. 
+$settings['league_url_name'] = 'My league page';   // Button text for league URL.
 $settings['stylesheet']    = 1;                  // Default is 1. OBBLM CSS stylesheet for non-logged in guests. Currently stylesheet 1 is the only existing stylesheet.
-$settings['lang']          = 'en-GB';            // Default language. Existing: en-GB, es, de, fr.
+$settings['lang']            = 'en-GB';            // Default language. Existing: en-GB, es-ES, de-DE, fr-FR, it-IT.
 $settings['fp_links']      = true;               // Default is true. Generate coach, team and player links on the front page?
 $settings['welcome']       = 'Who: Blood Bowl League in North London<BR />Where: Mason Arms, 58 Devonshire Street, London W1W 5EA<BR />When: Tuesday nights from 6:30pm<BR />The ECBBL is the leading London Blood Bowl League';
 $settings['rules']         = '<a href="http://ecbbl.doubleskulls.net/forum/viewforum.php?f=7">See the forum for the latest rules</a>';
@@ -193,4 +196,3 @@ $settings['fp_latestgames'] = array(
     ),
 );
 
-?>

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Daniel Straalman <email is protected> 2008-2009. All Rights Reserved.
+ *  Copyright (c) Daniel Straalman <email is protected> 2008-2012. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -306,13 +306,6 @@ $DEA['Underworld'] = array (
     )
 );
 
-// Create race ID index (key:val = id:race_name).
-ksort($DEA, SORT_STRING);
-$raceididx = array();
-foreach (array_keys($DEA) as $race) {
-    $raceididx[$DEA[$race]['other']['race_id']] = $race;
-}
-
 //
 // New star players in LRB5b.
 //
@@ -527,8 +520,6 @@ $stars['Varag Ghoul-Chewer']['cost']         = 290000;
 $stars['Zara the Slayer']['races']           = array (0, 4, 7, 8, 9, 14, 20);
 $stars['Zzharg Madeye']['races']             = array (2, 21);
 
-ksort($stars, SORT_STRING);
-
 //
 // Changes to inducements
 //
@@ -537,4 +528,3 @@ $inducements['Halfling Master Chef']['reduced_cost'] = 50000;
 $inducements['Bribes']['reduced_cost'] = 50000;
 $inducements['Bribes']['reduced_cost_races'] = array(6);
 
-?>

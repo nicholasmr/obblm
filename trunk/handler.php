@@ -75,6 +75,11 @@ switch ($_GET['type'])
         Module::run('HOF', array('makeList', $COACH_IS_ADMIN));
         break;
 
+    /* Famous Teams */
+    case 'famousteams':
+        Module::run('FamousTeams', array('makeList', $COACH_IS_ADMIN));
+        break;
+
     /* Wanted */
     case 'wanted':
         Module::run('Wanted', array('makeList', $COACH_IS_ADMIN));
@@ -147,9 +152,25 @@ switch ($_GET['type'])
         Module::run('TeamCompare', array());
         break;
 
+    /* Cemetery */
+    
+    case 'cemetery':
+        if (isset($_GET['tid'])) {
+            Module::run('Cemetery', array((int) $_GET['tid']));
+        }
+        else {
+            fatal('Invalid parameter "tid".');
+        }
+        break;
+
     /* PDF Match Report */
     case 'pdfmatchreport':
-          Module::run('PDFMatchReport', array());
+          $argv = array();
+          if ( isset($_GET['tid1']) && isset($_GET['tid2']) && isset($_GET['mid']) && 
+            is_numeric($_GET['tid1']) && is_numeric($_GET['tid2']) && is_numeric($_GET['mid'])) {
+            $argv = array((int) $_GET['tid1'], (int) $_GET['tid2'], (int) $_GET['mid']);
+          }
+          Module::run('PDFMatchReport', $argv);
           break;
 
     /* Veridy team name - AJAX use */
@@ -177,7 +198,11 @@ switch ($_GET['type'])
                 break;
 
             case T_OBJ_TEAM:
-                $query = "SELECT team_id AS 'id', name FROM teams WHERE name LIKE '%$_GET[query]%' ORDER BY name ASC";
+                $lid = isset($_GET['trid']) ? get_parent_id(T_NODE_TOURNAMENT, (int) $_GET['trid'], T_NODE_LEAGUE) : false;
+                $did = ($lid && get_alt_col('leagues', 'lid', $lid, 'tie_teams') == 1) ? get_parent_id(T_NODE_TOURNAMENT, (int) $_GET['trid'], T_NODE_DIVISION) : false;
+                $FROM_lid = ($lid) ? "f_lid = $lid AND" : '';
+                $FROM_did = ($did) ? "f_did = $did AND" : '';
+                $query = "SELECT team_id AS 'id', name, rdy FROM teams WHERE $FROM_lid $FROM_did name LIKE '%$_GET[query]%' ORDER BY name ASC";
                 $result = mysql_query($query);
                 while($row = mysql_fetch_assoc($result)) {
                     $objs[$row['id']] = $row['name'];
@@ -188,10 +213,57 @@ switch ($_GET['type'])
         echo json_encode(array('query' => $_GET['query'], 'suggestions' => array_values($objs), 'data' => array_keys($objs)));
         break;
 
+	/* League Tables */
+    case 'scheduler':
+		$subtype = '';
+		if (isset($_POST['subtype'])) {
+			$subtype = $_POST['subtype'];
+		}
+		
+		if ($subtype != '') {
+			switch($subtype) {
+				case 'apa_schedule_available': {
+					Scheduler::apa_schedule_available();
+					break;
+				}
+				case 'apa_generate_draw': {
+					Scheduler::apa_generate_draw();
+					break;
+				}
+				case 'manual_draw': {
+					Scheduler::show_manual_draw();
+					break;
+				}
+				case 'manual_schedule': {
+					$teams = json_decode($_POST['teams']);
+
+					$draw = array();
+					foreach($teams->teams as $team) {
+						$draw[] = str_replace("pool","", $team);
+					}
+					Scheduler::apa_generate_schedule($draw);
+					break;
+				}
+				case 'custom_draw': {
+					Scheduler::show_custom_draw();
+					break;
+				}
+				case 'custom_game': {
+					Scheduler::schedule_custom_game();
+					break;
+				}
+			}
+		} else {
+			Module::run('Scheduler', array());
+		}
+		
+        break;
+	case 'scheduler_apa_schedule_available':
+		
+		break;
     default:
-        fatal("Sorry. I don't know what the type '".htmlentities($_GET['type'])."' means.\n");
+        fatal("Sorry. I don't know what the type '$_GET[type]' means.\n");
 }
 
 mysql_close($conn);
 
-?>
