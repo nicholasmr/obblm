@@ -7,6 +7,10 @@
 <not-admin>Sorry, this feature is only available to division or global administrators</not-admin>
 
 <addConf>Add Conference</addConf>
+<schedMatch>Schedule Matches</schedMatch>
+<schedMatchHelp>Adds a number of round robin rounds for every team in a conference, so if 2 were selected every team would play every other team in the conference twice. This will take into account matches already played.</schedMatchHelp>
+<schedMatchDone>Matches Scheduled. Each team will play every other team in the conference</schedMatchDone>
+<schedMatchDone2>times, including any matches already scheduled or played.</schedMatchDone2>
 <findTeam>Add Team</findTeam>
 
 <failedAddTeam>Error adding team</failedAddTeam>
