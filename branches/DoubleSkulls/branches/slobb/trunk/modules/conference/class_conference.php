@@ -138,6 +138,7 @@ function __construct()
 
 /* Gets the IDs of the teams already allocated to this conference */
 function loadTeamIds() {
+	 $this->teamIds = array();
     $result = mysql_query("SELECT f_team_id FROM conference_teams WHERE f_conf_id=" . $this->conf_id);
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
@@ -174,6 +175,86 @@ public static function getConferencesForTour($tour_id)
 
     return $conferences;
 }
+
+/**
+ * This function creates new matches. Each member of a conference plays all other members of the conference $rounds times, taking into account any matches already played
+ */
+public static function scheduleMatches($tour_id, $rounds) {
+	global $lng;
+	$conferences = self::getConferencesForTour($tour_id);
+	// iterate over the conferences
+	foreach($conferences as $conf) {
+		if (count($conf->teamIds) < 2)  return;
+
+		$fixedTeam = $conf->teamIds[0];
+		$movingTeams = array_slice($conf->teamIds, 1);
+		shuffle($movingTeams);
+
+		$length = sizeof($movingTeams);
+		$games = sizeof($conf->teamIds) / 2;
+
+		for($r = 0; $r < $length; $r++) {
+			for ($i = 0; $i < $games; $i++) {
+				if ($i == 0) {
+					// Make the fixed team alternate home/away - everyone else moves.
+					if ($r % 2) {
+						self::createGame($movingTeams[$i], $fixedTeam, $rounds, $tour_id);
+					} else {
+						self::createGame($fixedTeam, $movingTeams[$i], $rounds, $tour_id);
+					}
+				} else {
+					self::createGame($movingTeams[$i], $movingTeams[$length - $i], $rounds, $tour_id);
+				}
+			}
+
+			// move the first element to the end for the next round
+			$shift = array_shift($movingTeams);
+			array_push($movingTeams, $shift);
+		}
+	}
+	echo "<div class='boxWide'>";
+	HTMLOUT::helpBox($lng->getTrn('schedMatchDone', 'Conference') . " $rounds " . $lng->getTrn('schedMatchDone2', 'Conference'));
+	echo "</div>";
+}
+
+public static function createGame($homeTeam, $awayTeam, $rounds, $tour_id) {
+	// find matches already played between the two teams
+	$count = self::getCountMatchesAlreadyPresent($homeTeam, $awayTeam, $tour_id);
+
+	if ($count < $rounds) {
+		$rndH = self::getHighestRoundSoFar($homeTeam, $tour_id);
+		$rndA = self::getHighestRoundSoFar($awayTeam, $tour_id);
+		$rnds = array($rndH, $rndA);
+		$round = 1 + (max($rnds));
+		Match::create(array('team1_id' => $homeTeam, 'team2_id' => $awayTeam, 'round' => $round, 'f_tour_id' => $tour_id));
+	}
+
+}
+
+public static function getHighestRoundSoFar($team, $tour_id) {
+	$query = "SELECT round FROM matches WHERE f_tour_id=$tour_id AND (team1_id=$team OR team2_id=$team)";
+	$result = mysql_query($query);
+	$rnd = 0;
+	if ($result && mysql_num_rows($result) > 0) {
+	   while ($row = mysql_fetch_assoc($result)) {
+		  $rnd = $row['round'];
+	   }
+	}
+	return $rnd;
+}
+
+public static function getCountMatchesAlreadyPresent($homeTeam, $awayTeam, $tour_id) {
+	$query = "SELECT count(1) as cnt FROM matches WHERE f_tour_id=$tour_id AND ( (team1_id=$homeTeam AND team2_id=$awayTeam) OR (team1_id=$awayTeam AND team2_id=$homeTeam))";
+	$result = mysql_query($query);
+	if ($result && mysql_num_rows($result) > 0) {
+	   while ($row = mysql_fetch_assoc($result)) {
+		  $count = $row['cnt'];
+	   }
+	}
+	return $count;
+
+}
+
 
 public static function addTeamToConference($conf_id,$team_id)  {
     global $lng;
@@ -239,11 +320,11 @@ public static function handleActions() {
     global $lng, $coach;
 
     if (isset($_POST['action']) && is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, $_POST['tour_id'])) {
-
 		$tour_id = $_POST['tour_id'];
         $conf_name = isset($_POST['conf_name']) ? stripslashes($_POST['conf_name']) : 0 ;
         $conf_id = isset($_POST['conf_id']) ? $_POST['conf_id'] : 0 ;
         $team_id = isset($_POST['team_id']) ? $_POST['team_id'] : 0 ;
+        $rounds = isset($_POST['rounds']) ? $_POST['rounds'] : 1 ;
 
         switch ($_POST['action'])
         {
@@ -252,6 +333,9 @@ public static function handleActions() {
             	break;
             case 'add_conf':
             	self::addConference($tour_id, $conf_name);
+            	break;
+            case 'schedule_matches':
+            	self::scheduleMatches($tour_id, $rounds);
             	break;
             case 'remove_team':
             	self::removeTeamFromConference($conf_id, $team_id);
@@ -274,7 +358,6 @@ public static function tournamentSelector($tour_id) {
 			$manageable_tours[$trid] = $desc;
 		}
 	}
-	$manageable_tours = array_reverse($manageable_tours, true);
 	$firstTour = 0;
     ?>
     <div class='boxWide'>
@@ -327,6 +410,8 @@ public static function conferenceAdmin() {
 
 	$tour = new Tour($tour_id);
 	$addConfTitle = $lng->getTrn('addConf', 'Conference');
+	$schedMatchTitle = $lng->getTrn('schedMatch', 'Conference');
+	$schedMatchHelp = $lng->getTrn('schedMatchHelp', 'Conference');
 echo<<< EOQ
 	<div class='boxWide'>
 		<h3 class='boxTitle4'>$tour->name</h3>
@@ -337,6 +422,20 @@ echo<<< EOQ
 			<input name='conf_name' type='hidden' value='$tour_id' />
 			<input id='conf_name' type="text" name="conf_name" size="30" maxlength="50">
 			<input type="submit" value="$addConfTitle">
+		</form>
+		<form name="schedule_matches" method="POST" action="handler.php?type=conference">
+			<input name='action' type='hidden' value='schedule_matches' />
+			<input name='tour_id' type='hidden' value='$tour_id' />
+			<input name='conf_name' type='hidden' value='$tour_id' />
+			<span title='$schedMatchHelp'>
+				<select name='rounds'>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+				</select>
+				<input type="submit" value="$schedMatchTitle">
+			</span>
 		</form>
 	</div>
     <script language="javascript">
