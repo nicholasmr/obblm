@@ -13,11 +13,11 @@ $db_host   = 'localhost';
  * Global settings
  *************************/
 
-/* 
-    For help visit 
+/*
+    For help visit
         - http://www.nicholasmr.dk/obblmwiki/index.php?title=Customization#Global_settings
         - http://www.nicholasmr.dk/obblmwiki/index.php?title=Setup
-        
+
     For LOCAL settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
 */
 
@@ -36,8 +36,8 @@ $rules['force_IR'] = false; // Default is false. Setting this to true will remov
 */
 
 $settings['custom_races'] = array(
-    'Brettonia'         => false,
-    'Daemons of khorne' => false,
+    'Brettonia'         => true,
+    'Daemons of khorne' => true,
     'Apes of wrath'     => false,
 );
 
@@ -46,8 +46,8 @@ $settings['custom_races'] = array(
  * House ranking systems
  *****************/
 
-/* 
-    Please visit 
+/*
+    Please visit
         - http://www.nicholasmr.dk/obblmwiki/index.php?title=Customization#Global_settings
     before you edit the below settings.
 */

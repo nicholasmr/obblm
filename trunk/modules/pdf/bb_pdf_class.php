@@ -41,7 +41,7 @@ var $tmpFiles = array(); // Private for PNG Alpha Channel support
 // x, y: top left corner of the rectangle.
 // w, h: width and height.
 // r: radius of the rounded corners.
-// style: same as Rect(): F, D (default), FD or DF. 
+// style: same as Rect(): F, D (default), FD or DF.
 
 function RoundedRect($x, $y, $w, $h, $r, $style = '')
 {
@@ -86,7 +86,7 @@ function _Arc($x1, $y1, $x2, $y2, $x3, $y3)
 function SetDrawColorBB($cmyk) {
     //Set color for all stroking operations
     // $cmyk is array 0 => c, 1 => m, 2 => y, 3 => k
-    if (is_array($cmyk)) 
+    if (is_array($cmyk))
         $this->DrawColor = sprintf('%.3f %.3f %.3f %.3f K', $cmyk[0] / 100, $cmyk[1] / 100, $cmyk[2] / 100, $cmyk[3] / 100);
     else
         $this->DrawColor = '0 G';
@@ -97,9 +97,9 @@ function SetDrawColorBB($cmyk) {
 function SetFillColorBB($cmyk) {
     // Set fill color
     // $cmyk is array 0 => c, 1 => m, 2 => y, 3 => k
-    if (is_array($cmyk)) 
+    if (is_array($cmyk))
         $this->FillColor = sprintf('%.3f %.3f %.3f %.3f k', $cmyk[0] / 100, $cmyk[1] / 100, $cmyk[2] / 100, $cmyk[3] / 100);
-    else 
+    else
         $this->FillColor = '0 g';
     $this->ColorFlag = ($this->FillColor != $this->TextColor);
     if($this->page > 0)
@@ -109,7 +109,7 @@ function SetFillColorBB($cmyk) {
 function SetTextColorBB($cmyk) {
     //Set color for text
     // $cmyk is array 0 => c, 1 => m, 2 => y, 3 => k
-    if (is_array($cmyk)) 
+    if (is_array($cmyk))
         $this->TextColor = sprintf('%.3f %.3f %.3f %.3f k',$cmyk[0] / 100, $cmyk[1] / 100, $cmyk[2] / 100, $cmyk[3] / 100);
     else
         $this->TextColor = '0 g';
@@ -125,13 +125,13 @@ function print_prow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', 
   $this->SetXY($x,$y);
   $newheight = $h;
   $newfontsize=$fontsize;
-  
+
   // Needs to correct fontsize and height for skills, if text doesn't fit
   list($newheight, $newfontsize) = $this->FitTextInCell($h, 329, $fontsize, $p['skills']);
   if ($newheight<$h)
     $h=$newheight*2;
   $this->SetFontSize($fontsize);
-  
+
   //Print cells in order
   $this->Cell(23, $h, $p['nr'], 1, 0, 'C', true, '');
   $this->Cell(97, $h, $p['name'], 1, 0, 'L', true, '');
@@ -152,7 +152,7 @@ function print_prow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', 
     $this->MultiCell(329, $newheight, $p['skills'], 1, 'L', true);
     $this->SetFontSize($fontsize);
   }
-  else 
+  else
     $this->MultiCell(329, $h, $p['skills'], 1, 'L', true);
   $this->SetXY($x+23+97+75+18+18+18+18+329,$y);
   $this->Cell(23, $h, $p['inj'], 1, 0, 'C', true, '');
@@ -175,13 +175,13 @@ function print_srow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', 
   $this->SetXY($x,$y);
   $newheight = $h;
   $newfontsize=$fontsize;
-  
+
   // Needs to correct fontsize and height for skills, if text doesn't fit
   list($newheight, $newfontsize) = $this->FitTextInCell($h, 329, $fontsize, $p['skills']);
   if ($newheight<$h)
     $h=$newheight*2;
   $this->SetFontSize($fontsize);
-  
+
   //Print cells in order
   $this->Cell(97+75, $h, $p['name'], 0, 0, 'L', true, '');
   $this->Cell(18, $h, $p['ma'], 0, 0, 'C', true, '');
@@ -195,7 +195,7 @@ function print_srow($p, $x, $y, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', 
     $this->MultiCell(329, $newheight, $p['skills'], 0, 'L', true);
     $this->SetFontSize($fontsize);
   }
-  else 
+  else
     $this->MultiCell(329, $h, $p['skills'], 0, 'L', true);
   $this->SetXY($x+97+75+18+18+18+18+329,$y);
   $this->Cell(21, $h, $p['cp'], 0, 0, 'C', true, '');
@@ -247,7 +247,7 @@ function hex2cmyk($hex) {
   $cyan    = @(($cyan    - $black) / (255 - $black)) * 255;
   $magenta = @(($magenta - $black) / (255 - $black)) * 255;
   $yellow  = @(($yellow  - $black) / (255 - $black)) * 255;
-  
+
   return array($cyan / 2.55, $magenta / 2.55, $yellow / 2.55, $black / 2.55);
 }
 
@@ -261,7 +261,7 @@ function GetStringRemainder($s, $cellsize) {
 	$l=strlen($s);
 	$sep=-1;
 	for($i=0;$i<$l;$i++) {
-    if($s[$i]==' ') $sep=$i; 
+    if($s[$i]==' ') $sep=$i;
 		$w+=$cw[$s[$i]];
 		if (($w*$this->FontSize)>$cellsize) {
 		  $linebreaked=true;
@@ -286,7 +286,7 @@ function FitTextInCell($h, $cellpx, $fontsize, $txt) {
     return array(0=>$h, 1=>$f);
 
   while ($r != '0') {
-    $this->SetFontSize($f-=0.5); // Downsize font 
+    $this->SetFontSize($f-=0.5); // Downsize font
     $r=$this->GetStringRemainder($txt, $cellpx);
     if ($r == '0') // txt fits in 1 line
       break;
@@ -314,7 +314,7 @@ function Mf($m) {
 // Version 1.2 of PDF_ImageAlpha
 // by Valentin Schmidt
 // For alpha support in PNG images, which FPDF 1.6 doesnt have
-function Image($file,$x,$y,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=0)
+function Image($file,$x = NULL,$y = NULL,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=0)
 {
     //Put an image on the page
     if(!isset($this->images[$file]))
@@ -345,7 +345,7 @@ function Image($file,$x,$y,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=
             $info=$this->$mtd($file);
         }
 #        set_magic_quotes_runtime($mqr);
-        
+
         if ($isMask){
       $info['cs']="DeviceGray"; // try to force grayscale (instead of indexed)
     }
@@ -366,12 +366,12 @@ function Image($file,$x,$y,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=
         $w=$h*$info['w']/$info['h'];
     if($h==0)
         $h=$w*$info['h']/$info['w'];
-        
+
     if ($isMask) $x = $this->CurPageFormat[1] + 10; // embed hidden, ouside the canvas, was: fwPt
     $this->_out(sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',$w*$this->k,$h*$this->k,$x*$this->k,($this->h-($y+$h))*$this->k,$info['i']));
     if($link)
         $this->Link($x,$y,$w,$h,$link);
-        
+
     return $info['i'];
 }
 
@@ -384,14 +384,14 @@ function ImagePngWithAlpha($file,$x,$y,$w=0,$h=0,$link='')
     $this->tmpFiles[] = $tmp_alpha;
     $tmp_plain = tempnam('.', 'mskp');
     $this->tmpFiles[] = $tmp_plain;
-    
+
     list($wpx, $hpx) = getimagesize($file);
     $img = imagecreatefrompng($file);
     $alpha_img = imagecreate( $wpx, $hpx );
-    
+
     // generate gray scale pallete
     for($c=0;$c<256;$c++) ImageColorAllocate($alpha_img, $c, $c, $c);
-    
+
     // extract alpha channel
     $xpx=0;
     while ($xpx<$wpx){
@@ -407,16 +407,16 @@ function ImagePngWithAlpha($file,$x,$y,$w=0,$h=0,$link='')
 
     imagepng($alpha_img, $tmp_alpha);
     imagedestroy($alpha_img);
-    
+
     // extract image without alpha channel
     $plain_img = imagecreatetruecolor ( $wpx, $hpx );
     imagecopy ($plain_img, $img, 0, 0, 0, 0, $wpx, $hpx );
     imagepng($plain_img, $tmp_plain);
     imagedestroy($plain_img);
-    
+
     //first embed mask image (w, h, x, will be ignored)
     $maskImg = $this->Image($tmp_alpha, 0,0,0,0, 'PNG', '', true);
-    
+
     //embed image, masked with previously embedded mask
     $this->Image($tmp_plain,$x,$y,$w,$h,'PNG',$link, false, $maskImg);
 }
@@ -447,9 +447,9 @@ function _putimages()
         $this->_out('/Subtype /Image');
         $this->_out('/Width '.$info['w']);
         $this->_out('/Height '.$info['h']);
-        
+
         if (isset($info["masked"])) $this->_out('/SMask '.($this->n-1).' 0 R'); ###
-        
+
         if($info['cs']=='Indexed')
             $this->_out('/ColorSpace [/Indexed /DeviceRGB '.(strlen($info['pal'])/3-1).' '.($this->n+1).' 0 R]');
         else

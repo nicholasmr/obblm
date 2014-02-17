@@ -1003,6 +1003,8 @@ public static function userSched() {
                             foreach ($teams as $t) {
                         echo "<option style='background-color: white; margin-left: -1em;' value='$t->team_id'>&nbsp;&nbsp;&nbsp;$t->name</option>\n";
                             }
+                        }
+                    }
                     ?>
                 </select>
                 &nbsp;
