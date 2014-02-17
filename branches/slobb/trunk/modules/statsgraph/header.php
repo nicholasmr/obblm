@@ -14,4 +14,4 @@ define('SG_CNT_HORIZ', 3); // Number of graphs to place hirozontally next to eac
 # Graph dimensions
 define('SG_DIM_X', 600);
 define('SG_DIM_Y', 400);
-?>
+

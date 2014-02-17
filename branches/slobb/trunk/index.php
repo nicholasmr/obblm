@@ -79,4 +79,4 @@ switch ($_GET['section'])
 HTMLOUT::frame_end(); // Spit out all the end-tags.
 mysql_close($conn);
 MTS('END OF SCRIPT');
-?>
+

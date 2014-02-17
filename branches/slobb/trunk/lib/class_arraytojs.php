@@ -45,4 +45,4 @@ class array_to_js {
         return $outputstring;
     }
 }
-?>
+

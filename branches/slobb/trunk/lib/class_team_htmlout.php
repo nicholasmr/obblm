@@ -85,8 +85,9 @@ public static function dispList()
     while ($t = mysql_fetch_object($result)) {
         $img = new ImageSubSys(IMGTYPE_TEAMLOGO, $t->team_id);
         $t->logo = "<img border='0px' height='20' width='20' alt='Team race picture' src='".$img->getPath($t->f_race_id)."'>";
+        $retired = $t->retired;
         $t->retired = ($t->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
-        $t->rdy = ($t->rdy) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
+        $t->rdy = ($t->rdy && !$retired) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
 
         $teams[] = $t;
     }
@@ -140,7 +141,7 @@ public static function standings($node = false, $node_id = false)
         $fields,
         $sortRule,
         array(),
-        array('noHelp' => true, 'noSRdisp' => false)
+        array('noHelp' => true, 'noSRdisp' => false, 'doNr' => false)
     );
 }
 
@@ -739,6 +740,9 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
         if (Module::isRegistered('SGraph')) {
             echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''>Vis. stats</a></li>\n";
         }
+        if (Module::isRegistered('Cemetery')) {
+            echo "<li><a href='handler.php?type=cemetery&amp;tid=$team->team_id'>".$lng->getTrn('name', 'Cemetery')."</a></li>\n";
+        }
         ?>
     </ul>
     <br><br>
@@ -966,6 +970,14 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <tr valign="top">
                         <td><?php echo $lng->getTrn('name', 'Prize');?></td>
                         <td><small><?php echo Module::run('Prize', array('getPrizesString', T_OBJ_TEAM, $team->team_id));?></small></td>
+                    </tr>
+                    <?php
+                }
+                if (Module::isRegistered('FamousTeams')) {
+                    ?>
+                    <tr>
+                        <td><?php echo $lng->getTrn('isfamous', 'FamousTeams');?></td>
+                        <td><?php echo (Module::run('FamousTeams', array('isInFT', $team->team_id))) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
                     </tr>
                     <?php
                 }
@@ -1645,7 +1657,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
         <div class="row">
             <div class="boxWide">
                 <div class="boxTitle<?php echo T_HTMLBOX_STATS;?>"><a href='javascript:void(0);' onClick="slideToggleFast('ES');"><b>[+/-]</b></a> &nbsp;<?php echo $lng->getTrn('common/extrastats'); ?></div>
-                <div class="boxBody" id="ES">
+                <div class="boxBody" id="ES" style='display:none;'>
                     <?php
                     HTMLOUT::generateEStable($this);
                     ?>
@@ -1785,3 +1797,4 @@ private function _games()
 }
 
 }
+
