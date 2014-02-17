@@ -57,7 +57,7 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
         $N = array();
     }
     else {
-        $N = isset($_GET["page"]) 
+        $N = isset($_GET["page"])
             ? array((int) $_GET["page"],$opts['n'])
             : array(1,$opts['n']);
     }
@@ -138,7 +138,7 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         $N = array();
     }
     else {
-        $N = isset($_GET["page"]) 
+        $N = isset($_GET["page"])
             ? array((int) $_GET["page"],$opts['n'])
             : array(1,$opts['n']);
     }
@@ -353,7 +353,7 @@ public static function standings($obj, $node, $node_id, array $opts)
     if (!array_key_exists('GET_SS', $opts)) {$opts['GET_SS'] = '';}
     else {$extra['GETsuffix'] = $opts['GET_SS'];} # GET Sorting Suffix
 
-    $PAGE = isset($_GET["page"]) 
+    $PAGE = isset($_GET["page"])
             ? (int) $_GET["page"]
             : 1;
     $PAGELENGTH = 0; # Infinite, is overrided in below switch/case..
@@ -1101,6 +1101,7 @@ private static function make_menu()
 			$forum_url = $l_pref->forum_url;
 		} else {
 			$forum_url = $settings['forum_url'];
+		}
         if (!empty($settings['league_url'])) {
             ?><li><a href="<?php echo $settings['league_url'];?>"><?php echo $settings['league_url_name'];?></a></li><?php
 		}
@@ -1138,7 +1139,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             anchor => string. Will create table sorting links, that include this identifier as an anchor.
             noHelp => true/false. Will enable/disable help link [?].
             noSRdisp => true/false. Will force not to show the table sort rule used/parsed.
-            
+
             page => current page being viewed
             pages => total number of pages
     */
@@ -1265,7 +1266,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             <?php
             if ($PAGES) {
             ?>
-            <div style='float:left;'><?php 
+            <div style='float:left;'><?php
                 echo $lng->getTrn('common/page')."&nbsp;";
                 $primary_sort = isset($_GET["sort$GETSUFX"])
                     ? "&amp;sort$GETSUFX=".$_GET["sort$GETSUFX"]."&amp;dir$GETSUFX=".$_GET["dir$GETSUFX"]

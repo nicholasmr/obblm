@@ -120,7 +120,7 @@ function sec_login() {
 
 function sec_main() {
 
-    global $settings, $rules, $coach, $lng, $leagues;
+    global $settings, $rules, $coach, $lng, $leagues, $tours;
 
     MTS('Main start');
 
@@ -295,6 +295,7 @@ function sec_main() {
         }
         $box['type'] = $_type;
     	if (Module::isRegistered('LeaguePref')) {
+
     		global $tours;
     		// dynamically switch the front page to show the tables for the preferred tournament
 			switch ($box['id']) {
@@ -528,12 +529,14 @@ function sec_main() {
 }
 
 function showGames($box) {
+
 	global $lng, $settings;
+
 	if ($box['length'] <= 0) {
 		break;
 	}
 	$upcoming = isset($box['upcoming']) ? $box['upcoming'] : false;
-	$matches = Match::getMatches($box['length'], $box['type'], $box['id'], $upcoming)
+	list($matches,$pages) = Match::getMatches(array(1, $box['length'], $box['type'], $box['id'], $upcoming));
 	?>
 	<div class="boxWide">
 		<h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
@@ -549,32 +552,34 @@ function showGames($box) {
 				} else {
 				?>
 				<tr>
-					<td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td><td> </td>
-               <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
+					<td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td>
+					<td> </td>
+               		<td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
                <?php if (!$upcoming) { ?>
-               <td><i><?php echo $lng->getTrn('common/date');?></i></td>
+               		<td><i><?php echo $lng->getTrn('common/date');?></i></td>
                <?php } ?>
-               <td>&nbsp;</td>
+               		<td>&nbsp;</td>
 				</tr>
 				<?php
 					foreach ($matches as $m) {
-					echo "<tr valign='top'>\n";
-					$t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
-					$t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
-					echo "<td style='text-align: right;'>$t1name</td>\n";
-					if ($upcoming) {
-						echo "<td><nobr>?&mdash;?</nobr></td>\n";
-					} else {
-						echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
-					}
-					echo "<td style='text-align: left;'>$t2name</td>\n";
-                  if (!$upcoming) {
-                     echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
-                  }
 
-					echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
-					echo "</tr>";
-				}
+						echo "<tr valign='top'>\n";
+						$t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
+						$t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
+						echo "<td style='text-align: right;'>$t1name</td>\n";
+						if ($upcoming) {
+							echo "<td><nobr>?&mdash;?</nobr></td>\n";
+						} else {
+							echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
+						}
+						echo "<td style='text-align: left;'>$t2name</td>\n";
+  					    if (!$upcoming) {
+						 	 echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
+						}
+
+						echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
+						echo "</tr>";
+					}
 				}
 				?>
 			</table>
@@ -792,7 +797,7 @@ function sec_objhandler() {
                 case T_URL_STANDINGS:
                     call_user_func(
                         array("${classPrefix}_HTMLOUT", 'standings'),
-                        isset($_GET['node'])    ? (int) $_GET['node']    : false, 
+                        isset($_GET['node'])    ? (int) $_GET['node']    : false,
                         isset($_GET['node_id']) ? (int) $_GET['node_id'] : false
                     );
                     break;
@@ -873,7 +878,7 @@ function sec_about() {
     <?php
 	title("OBBLM Hosting");
 	echo 'Please visit <a href="http://www.mercuryvps.com">Mercury VPS</a> and click on the OBBLM tab to get started.';
-	
+
     title("Documentation");
     echo "See the <a TARGET='_blank' href='".DOC_URL."'>OBBLM documentation wiki</a>";
 
