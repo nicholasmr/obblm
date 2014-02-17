@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2011. All Rights Reserved.
+ *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2008-2012. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -37,8 +37,8 @@ session_start();
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.9 $Rev$');
-$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'William Leonard', 'Grégory Romé', 'Goiz Ruiz de Gopegui', 'Ryan Williams', 'Ian Williams');
+define('OBBLM_VERSION', '0.95 $Rev$');
+$credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'Grégory Romé', 'Goiz Ruiz de Gopegui', 'Ryan Williams', 'Ian Williams');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcoming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 define('DOC_URL', 'http://www.nicholasmr.dk/obblmwiki');
@@ -84,16 +84,22 @@ define('T_HTMLBOX_MATCH', 5);
  ********************/
 
 // General OBBLM routines and data structures.
+# General settings
 require_once('lib/settings_default.php'); # Defaults
 require_once('settings.php'); # Overrides
 require_once('localsettings/settings_none.php'); # Defaults. Overrides are league dependant and are not loaded here - see setupGlobalVars()
-require_once('lib/game_data_brett.php'); # LRB6 (Module settings might depend on game data, so we include it first)
+# Load game data --- Module settings might depend on game data, so we include it first
+require_once('lib/game_data_lrb6.php'); # LRB6 MUST be loaded.
+if ($settings['custom_races']['Brettonia'])         {require_once('lib/game_data_brettonia.php');}
+if ($settings['custom_races']['Daemons of khorne']) {require_once('lib/game_data_daemonsofkhorne.php');}
+if ($settings['custom_races']['Apes of wrath'])     {require_once('lib/game_data_apesofwrath.php');}
+# Module settings
 require_once('lib/settings_modules_default.php'); # Defaults
 require_once('settings_modules.php'); # Overrides
-require_once('lib/mysql.php');
-require_once('lib/misc_functions.php');
 
 // OBBLM libraries.
+require_once('lib/mysql.php');
+require_once('lib/misc_functions.php');
 require_once('lib/class_sqltriggers.php');
 require_once('lib/class_match.php');
 require_once('lib/class_tournament.php');
@@ -131,8 +137,10 @@ require_once('lib/class_match_htmlout.php');
  *   Final setup
  ********************/
 
-if (!is_writable(IMG))
+if (!is_writable(IMG)) {
     die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
+}
+sortgamedata(); # Game data files are unsorted, make them pretty for display porposes.
 
 /********************
  *   Globals/Startup
@@ -149,4 +157,3 @@ else {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
 }
 
-?>

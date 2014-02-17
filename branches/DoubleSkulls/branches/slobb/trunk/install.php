@@ -38,7 +38,7 @@ require('header.php'); // Includes and constants.
 <br>
 <small>
 <?php
-if (isset($_POST['setup'])) {
+if (isset($_POST['setup']) || $argv[1] == 'setup') {
     echo setup_database()
         ? "<br><b><font color='green'>Done</font></b>"
         : "<br><b><font color='red'>Error</font></b>";

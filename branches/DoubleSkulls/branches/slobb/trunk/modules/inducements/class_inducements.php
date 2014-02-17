@@ -236,8 +236,8 @@ while (isset($_POST["Merc$i"])) {
     print $merc_list[$i];
     $cost[$i] = (int) $merc[$mid]["cost"] + MERC_EXTRA_COST + $extra_skill_cost;
     echo "        </SELECT></td>\n";
-		if (!in_array('Loner', $merc[$mid]["def"]))
-    	array_unshift($merc[$mid]["def"], 99);  // Adding Loner to default skills if Merc does not have Loner already
+		if (!in_array(99, $merc[$mid]["def"]))
+           	array_unshift($merc[$mid]["def"], 99);  // Adding Loner to default skills if Merc does not have Loner already
     $def_skills = skillsTrans($merc[$mid]["def"]);
     if (empty($def_skills)) $def_skills[] = '&nbsp;';
     print "        <td>$pos[$mid]</td><td>".str_replace('000','',$cost[$i])."k</td><td class=\"cent\">".$merc[$mid]["ma"]."</td><td class=\"cent\">".$merc[$mid]["st"]."</td>";

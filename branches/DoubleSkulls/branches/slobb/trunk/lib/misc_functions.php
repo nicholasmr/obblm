@@ -64,7 +64,7 @@ define('T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS', 4);
 
 function setupGlobalVars($type, $opts = array()) {
 
-    global $coach, $lng, $leagues, $divisions, $tours, $settings, $admin_menu;
+    global $coach, $lng, $leagues, $divisions, $tours, $settings, $rules, $admin_menu;
 
     switch ($type) {
     
@@ -118,6 +118,17 @@ function setupGlobalVars($type, $opts = array()) {
             setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
             setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
             break;
+    }
+}
+
+function sortgamedata() {
+    global $DEA, $stars, $raceididx;
+    ksort($stars, SORT_STRING);
+    ksort($DEA, SORT_STRING);
+    // Create race ID index (key:val = id:race_name).
+    $raceididx = array();
+    foreach (array_keys($DEA) as $race) {
+        $raceididx[$DEA[$race]['other']['race_id']] = $race;
     }
 }
 
@@ -296,4 +307,3 @@ function getESGroups($appendFields = false, $useAbbrevs = false)
     return $grps;
 }
 
-?>

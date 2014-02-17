@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<en-GB>
+
+<name>Cemetery</name>
+
+<player>Player</player>
+<submit>Submit</submit>
+<edit>Edit</edit>
+<del>Delete</del>
+<posted>Posted</posted>
+<died>Died</died>
+<after>after</after>
+<days>days</days>
+
+<g_title>Title</g_title>
+<g_about>About</g_about>
+
+<title><![CDATA[Obituary title. Can be left blank.]]></title>
+<about><![CDATA[About the player's death. Achievements? Remembered for?]]></about>
+
+</en-GB>

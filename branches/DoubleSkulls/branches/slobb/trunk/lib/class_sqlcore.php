@@ -106,7 +106,7 @@ public static function mkHRS(array $HRSs)
 
 public static function installProcsAndFuncs($install = true)
 {
-    global $CT_cols, $core_tables, $ES_fields, $rules;
+    global $CT_cols, $core_tables, $mv_commoncols, $ES_fields, $rules;
 
     /*
      *  Re-useable code-chunks for routines.
@@ -377,7 +377,11 @@ public static function installProcsAndFuncs($install = true)
             NOT DETERMINISTIC
             READS SQL DATA
         BEGIN
+            IF trid = 0 THEN
+                SELECT 0,0 INTO did,lid;
+            ELSE
             SELECT divisions.did,divisions.f_lid INTO did,lid FROM tours,divisions WHERE tours.tour_id = trid AND tours.f_did = divisions.did;
+            END IF;
         END',
 
         'CREATE PROCEDURE getObjParents(IN obj TINYINT UNSIGNED, IN pid '.$CT_cols[T_OBJ_PLAYER].', INOUT tid '.$CT_cols[T_OBJ_TEAM].', OUT cid '.$CT_cols[T_OBJ_COACH].', OUT rid '.$CT_cols[T_OBJ_RACE].')
@@ -855,6 +859,7 @@ public static function installProcsAndFuncs($install = true)
             DECLARE tid '.$CT_cols[T_OBJ_TEAM].' DEFAULT NULL;
             DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
             DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
+            DECLARE num_played '.$mv_commoncols['played'].' DEFAULT 0;
             CALL getTourParentNodes(trid, did, lid);
             /* Non-ordinary players with no parent relations? */
             IF pid > 0 THEN
@@ -867,10 +872,12 @@ public static function installProcsAndFuncs($install = true)
                 SELECT pid,tid,cid,rid, trid,did,lid, '.$common_fields.'
                 FROM match_data
                 WHERE match_data.f_player_id = pid AND match_data.f_tour_id = trid;
+            IF trid > 0 THEN
             IF pid > '.ID_MERCS.' THEN
                 UPDATE mv_players '.$mstat_fields_player.' WHERE f_pid = pid AND f_trid = trid;
             ELSE
                 UPDATE mv_players '.$mstat_fields_stars.' WHERE f_pid = pid AND f_trid = trid;
+            END IF;
             END IF;
             UPDATE mv_players SET win_pct = winPct(won,lost,draw,played), sdiff = CONVERT(gf,SIGNED)- CONVERT(ga,SIGNED), tcdiff = CONVERT(tcasf,SIGNED)- CONVERT(tcasa,SIGNED) WHERE f_pid = pid AND f_trid = trid;
 
@@ -880,6 +887,13 @@ public static function installProcsAndFuncs($install = true)
                 SELECT pid,tid,cid,rid, trid,did,lid, '.$common_es_fields.'
                 FROM match_data_es
                 WHERE match_data_es.f_pid = pid AND match_data_es.f_trid = trid;
+
+            /* Empty MV entry? => Delete it */
+            SELECT mv_players.played INTO num_played FROM mv_players WHERE mv_players.f_pid = pid AND mv_players.f_trid = trid;
+            IF num_played = 0 THEN
+                DELETE FROM mv_players    WHERE f_pid = pid AND f_trid = trid;
+                DELETE FROM mv_es_players WHERE f_pid = pid AND f_trid = trid;
+            END IF;
 
             RETURN EXISTS(SELECT COUNT(*) FROM mv_players WHERE f_pid = pid AND f_trid = trid);
         END',
@@ -893,6 +907,7 @@ public static function installProcsAndFuncs($install = true)
             DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
             DECLARE cid '.$CT_cols[T_OBJ_COACH].' DEFAULT NULL;
             DECLARE rid '.$CT_cols[T_OBJ_RACE].' DEFAULT NULL;
+	        DECLARE num_played '.$mv_commoncols['played'].' DEFAULT 0;
             CALL getTourParentNodes(trid, did, lid);
             CALL getObjParents('.T_OBJ_TEAM.', NULL,tid,cid,rid);
 
@@ -912,6 +927,13 @@ public static function installProcsAndFuncs($install = true)
                 FROM match_data_es
                 WHERE match_data_es.f_tid = tid AND match_data_es.f_trid = trid;
 
+            /* Empty MV entry? => Delete it */
+            SELECT mv_teams.played INTO num_played FROM mv_teams WHERE mv_teams.f_tid = tid AND mv_teams.f_trid = trid;
+            IF num_played = 0 THEN
+                DELETE FROM mv_teams    WHERE f_tid = tid AND f_trid = trid;
+                DELETE FROM mv_es_teams WHERE f_tid = tid AND f_trid = trid;
+            END IF;
+
             RETURN EXISTS(SELECT COUNT(*) FROM mv_teams WHERE f_tid = tid AND f_trid = trid);
         END',
 
@@ -922,6 +944,7 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             DECLARE did '.$CT_cols[T_NODE_DIVISION].' DEFAULT NULL;
             DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
+	        DECLARE num_played '.$mv_commoncols['played'].' DEFAULT 0;
             CALL getTourParentNodes(trid, did, lid);
 
             DELETE FROM mv_coaches WHERE f_cid = cid AND f_trid = trid;
@@ -939,6 +962,13 @@ public static function installProcsAndFuncs($install = true)
                 SELECT cid, trid,did,lid, '.$common_es_fields.'
                 FROM match_data_es
                 WHERE match_data_es.f_cid = cid AND match_data_es.f_trid = trid;
+                
+            /* Empty MV entry? => Delete it */
+            SELECT mv_coaches.played INTO num_played FROM mv_coaches WHERE mv_coaches.f_cid = cid AND mv_coaches.f_trid = trid;
+            IF num_played = 0 THEN
+                DELETE FROM mv_coaches    WHERE f_cid = cid AND f_trid = trid;
+                DELETE FROM mv_es_coaches WHERE f_cid = cid AND f_trid = trid;
+            END IF;
 
             RETURN EXISTS(SELECT COUNT(*) FROM mv_coaches WHERE f_cid = cid AND f_trid = trid);
         END',
@@ -950,6 +980,7 @@ public static function installProcsAndFuncs($install = true)
         BEGIN
             DECLARE did '.$CT_cols[T_NODE_DIVISION].' DEFAULT NULL;
             DECLARE lid '.$CT_cols[T_NODE_LEAGUE].' DEFAULT NULL;
+            DECLARE num_played '.$mv_commoncols['played'].' DEFAULT 0;            
             CALL getTourParentNodes(trid, did, lid);
 
             DELETE FROM mv_races WHERE f_rid = rid AND f_trid = trid;
@@ -967,6 +998,13 @@ public static function installProcsAndFuncs($install = true)
                 SELECT rid, trid,did,lid, '.$common_es_fields.'
                 FROM match_data_es
                 WHERE match_data_es.f_rid = rid AND match_data_es.f_trid = trid;
+
+            /* Empty MV entry? => Delete it */
+            SELECT mv_races.played INTO num_played FROM mv_races WHERE mv_races.f_rid = rid AND mv_races.f_trid = trid;
+            IF num_played = 0 THEN
+                DELETE FROM mv_races    WHERE f_rid = rid AND f_trid = trid;
+                DELETE FROM mv_es_races WHERE f_rid = rid AND f_trid = trid;
+            END IF;
 
             RETURN EXISTS(SELECT COUNT(*) FROM mv_races WHERE f_rid = rid AND f_trid = trid);
         END',
@@ -1135,11 +1173,12 @@ public static function installProcsAndFuncs($install = true)
             DECLARE cheerleaders '.$core_tables['teams']['cheerleaders'].';
             DECLARE apothecary '.$core_tables['teams']['apothecary'].';
             DECLARE ass_coaches '.$core_tables['teams']['ass_coaches'].';
+            DECLARE treasury '.$core_tables['teams']['treasury'].';
 
             SELECT
-                teams.f_race_id, teams.rerolls, teams.ff_bought, teams.cheerleaders, teams.apothecary, teams.ass_coaches
+                teams.f_race_id, teams.rerolls, teams.ff_bought, teams.cheerleaders, teams.apothecary, teams.ass_coaches, teams.treasury
             INTO
-                f_race_id, rerolls, ff_bought, cheerleaders, apothecary, ass_coaches
+                f_race_id, rerolls, ff_bought, cheerleaders, apothecary, ass_coaches, treasury
             FROM teams WHERE team_id = tid;
 
             SET ff = ff_bought + (SELECT IFNULL(SUM(mv_teams.ff),0) FROM mv_teams WHERE mv_teams.f_tid = tid);
@@ -1149,7 +1188,8 @@ public static function installProcsAndFuncs($install = true)
                 + ff           * '.$rules['cost_fan_factor'].'
                 + cheerleaders * '.$rules['cost_cheerleaders'].'
                 + apothecary   * '.$rules['cost_apothecary'].'
-                + ass_coaches  * '.$rules['cost_ass_coaches'].';
+                + ass_coaches  * '.$rules['cost_ass_coaches'].'
+                + '.(((int) $rules['bank_threshold'] > 0) ? '1' : '0').' * IF(treasury > '. $rules['bank_threshold']*1000 .',treasury - '. $rules['bank_threshold']*1000 .',0);
         END',
 
         'CREATE PROCEDURE getTourDProps(IN trid '.$CT_cols[T_NODE_TOURNAMENT].', OUT empty BOOLEAN, OUT begun BOOLEAN, OUT finished BOOLEAN, OUT winner '.$CT_cols[T_OBJ_TEAM].')
@@ -1353,4 +1393,3 @@ public static function reviseEStables()
 
 }
 
-?>

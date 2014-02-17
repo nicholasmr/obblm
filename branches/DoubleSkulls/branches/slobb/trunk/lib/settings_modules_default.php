@@ -15,4 +15,3 @@ $settings['leegmgr_botocs'] = true;
 
 $settings['enable_pdf_logos'] = true;
 
-?>

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  Copyright (c) Daniel Straalman <email is protected> 2009-2010. All Rights Reserved.
+ *  Copyright (c) Daniel Straalman <email is protected> 2009-2012. All Rights Reserved.
  *
  *
  *  This file is part of OBBLM.
@@ -21,10 +21,9 @@
  *
  */
 
-require('lib/game_data_lrb6x.php');
+require_once('lib/game_data_lrb6x.php');
 
 // Changes to present teams/positionals from LRB5b to LRB6.
-
 
 $DEA['Necromantic']['players']['Flesh Golem']['cost'] = 110000;
 $DEA['Necromantic']['players']['Necromantic Werewolf'] = $DEA['Necromantic']['players']['Werewolf']; unset($DEA['Necromantic']['players']['Werewolf']);
@@ -44,11 +43,9 @@ $stars['Morg \'n\' Thorg']['cost']                    = 430000;
 $stars['Zzharg Madeye']['cost']                       = 90000;
 $stars['Deeproot Strongbranch']['cost']               = 300000;
 $stars['Eldril Sidewinder']['cost']                   = 200000;
-
-ksort($stars, SORT_STRING);
+$stars['Ramtut III']['cost']                          = 380000;
 
 // Changes to inducements
 
 $inducements['Halfling Master Chef']['reduced_cost'] = 100000; # Old LRB5 value.
 
-?>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<en-GB>
+
+<name>Famous Teams</name>
+
+<team>Team</team>
+<sort_hint>Hint: clicking on the dropdown and pressing any letter on the keyboard scrolls the dropdown down to the first team name beginning with that letter.</sort_hint>
+<submit>Submit</submit>
+<new>New entry</new>
+<edit>Edit</edit>
+<del>Delete</del>
+<from>from</from>
+<posted>Posted</posted>
+<isfamous>Is famous</isfamous>
+
+<g_title>Title</g_title>
+<g_about>General description</g_about>
+
+<desc><![CDATA[Welcome to the famous teams list.<br>Here league commissioners may highlight teams which have become famous for whatever reason.]]></desc>
+<title><![CDATA[A short description of what the team has achieved, why its famous etc..]]></title>
+<about><![CDATA[About the team's achievement in detail. Where there any prizes involved? When did this happen and how?]]></about>
+
+</en-GB>

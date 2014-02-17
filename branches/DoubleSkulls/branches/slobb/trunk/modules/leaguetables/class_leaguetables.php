@@ -129,13 +129,12 @@ echo<<< EOQ
 			<form method="POST">
 				<select name="tour_id">
 EOQ;
-					$rTours = array_reverse($tours, true);
-					foreach ($rTours as $trid => $desc) {
-						if ($firstTour == 0) {
-							$firstTour = $trid;
-						}
+		foreach ($tours as $trid => $desc) {
+			if ($firstTour == 0) {
+				$firstTour = $trid;
+			}
 			echo "<option value='$trid'" . ($trid==$selectedTour ? 'SELECTED' : '') . " >$desc[tname]</option>\n";
-					}
+		}
 echo<<< EOQ
 				</select>
 				<input type="submit" value="OK">
@@ -163,7 +162,7 @@ public static function showTables() {
     		$l_pref= LeaguePref::getLeaguePreferences();
     		if (isset($l_pref->p_tour)) {
     			$tour_id = $l_pref->p_tour;
-	}
+    		}
     	}
 	}
 
@@ -175,7 +174,7 @@ public static function showTables() {
 	$SR = array_map(create_function('$val', 'return $val[0]."mv_".substr($val,1);'), $tour->getRSSortRule());
 
 	// load all the teams according to the sorting rule
-    $teams = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour_id), 1000, $SR, false);
+    list($teams, ) = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour_id), 1000, $SR, false);
 
     // Dump all the raw info for the first team as debug so I can work out the fields
     /*
