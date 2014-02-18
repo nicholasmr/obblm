@@ -1010,7 +1010,7 @@ function Output($name='', $dest='')
 		case 'I':
 			//Send to standard output
 			if(ob_get_length())
-				$this->Error('Some data has already been output, can\'t send PDF file');
+				// $this->Error('Some data has already been output, can\'t send PDF file');
 			if(php_sapi_name()!='cli')
 			{
 				//We send to a browser
