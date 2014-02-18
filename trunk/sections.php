@@ -536,7 +536,7 @@ function showGames($box) {
 		break;
 	}
 	$upcoming = isset($box['upcoming']) ? $box['upcoming'] : false;
-	list($matches,$pages) = Match::getMatches(array(1, $box['length'], $box['type'], $box['id'], $upcoming));
+	list($matches,$pages) = Match::getMatches(array(1, $box['length']), $box['type'], $box['id'], $upcoming);
 	?>
 	<div class="boxWide">
 		<h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
