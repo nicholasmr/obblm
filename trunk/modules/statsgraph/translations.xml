@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
 <en-GB>
 
 <name>Graphical statistics</name>
 
 </en-GB>
+<fr-FR>
+
+<name>Graphiques</name>
+
+</fr-FR>
+</translations>

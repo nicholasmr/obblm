@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
 <en-GB>
 
 <name>Prizes</name>
@@ -16,3 +17,21 @@
 <about>Details about the prize. Did the winning team/coach get something in real life?</about>
 
 </en-GB>
+<fr-FR>
+
+<name>Troph&amp;eacute;es</name>
+
+<team>&amp;Eacute;quipe</team>
+<tour>Tournoi</tour>
+<submit>Valider</submit>
+<new>Nouveau troph&amp;eacute;e</new>
+
+<kind>Type de troph&amp;eacute;e</kind>
+<g_title>Titre</g_title>
+<g_about>Description</g_about>
+<desc><![CDATA[Bienvenue dans la section des troph&eacute;es.<br>Vous pourrez trouver les &eacute;quipes qui ont gagn&eacute; des troph&eacute;es.]]></desc>
+<title><![CDATA[Introduction sur le troph&eacute;e ou l'&eacute;quipe r&eacute;compenc&eacute;e.]]></title>
+<about>D&amp;eacute;tails sur le troph&amp;eacute;e. L'&amp;eacute;quipe ou le coach r&amp;eacute;compens&amp;eacute;s a-t-il re&amp;ccedil;u un troph&amp;eacute;e r&amp;eacute;el ?</about>
+
+</fr-FR>
+</translations>

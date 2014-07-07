@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
 <en-GB>
 
 <name>Hall of fame</name>
@@ -20,3 +21,25 @@
 <about><![CDATA[About the player's achievement in detail. If the player has received an bonus (extra) skill, you could also write about that.]]></about>
 
 </en-GB>
+<fr-FR>
+
+<name>Panth&amp;eacute;on</name>
+
+<player>Joueur</player>
+<sort_hint>Astuce : Cliquer dans la liste de choix et presser une lettre, provoque la s&amp;eacute;lection de la premi&amp;egrave;re &amp;eacute;quipe commen&amp;ccedil;ant par cette lettre.</sort_hint>
+<submit>Valider</submit>
+<new>Nouvelle entr&amp;eacute;e</new>
+<edit>&amp;Eacute;diter</edit>
+<del>Supprimer</del>
+<from>par</from>
+<posted>Post&amp;eacute;</posted>
+
+<g_title>Titre</g_title>
+<g_about>Description g&amp;eacute;n&amp;eacute;rale</g_about>
+
+<desc><![CDATA[Bienvenue dans le panth&eacute;on.<br>Ici les commissaires de ligue peuvent promouvoir des joueurs ayant accomplis des exploits.]]></desc>
+<title><![CDATA[Une br&egrave;ve description de ce que le joueur a accompli, par exemple le domaine de son exploit.]]></title>
+<about><![CDATA[Une description d&eacute;taill&eacute;e de l'exploit du joueur. Si le joueur a re&ccedil;u une comp&eacute;tence suppl&eacute;mentaire, cela sera inscrit ici.]]></about>
+
+</fr-FR>
+</translations>

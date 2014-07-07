@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translation>
 <en-GB>
 
 <name>Find coach or team</name>
@@ -7,3 +8,12 @@
 <search_cname>Search for coach</search_cname>
 
 </en-GB>
+<fr-FR>
+
+<name>Chercher un coach ou une &amp;eacute;quipe</name>
+
+<search_tname>Chercher une &amp;eacute;quipe</search_tname>
+<search_cname>Chercher un coach</search_cname>
+
+</fr-FR>
+</translation>

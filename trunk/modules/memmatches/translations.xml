@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
 <en-GB>
 
 <name>Memorable matches</name>
@@ -20,3 +21,25 @@
 <tvdiff>Largest TV difference in which underdog won</tvdiff>
 
 </en-GB>
+<fr-FR>
+
+<name>Matchs m&amp;eacute;morables</name>
+
+<record>Record</record>
+<desc>Quelles sont les matchs les plus m&amp;eacute;morables pour le nombre de touchdowns, les sorties, etc. ?</desc>
+<filled>More than X matches have the same record or no record exists at all.</filled>
+
+<!-- Most of... -->
+<td>Le plus touchdowns</td>
+<cp>Le plus de passes</cp>
+<intcpt>Le plus d'interceptions</intcpt>
+<ki>Le plus de morts</ki>
+<cas>Le plus de sorties</cas>
+<svic>La plus large diff&amp;eacute;rence de touchdowns</svic>
+<inc>Le plus gros gains d'&amp;eacute;quipe</inc>
+<gate>La plus grosse affluence</gate>
+<mfans>Most RL fans/spectators</mfans>
+<tvdiff>Le plus large &amp;eacute;cart de valeur dans laquelle le favori a perdu</tvdiff>
+
+</fr-FR>
+</translations>

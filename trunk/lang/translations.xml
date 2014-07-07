@@ -1643,6 +1643,8 @@
     <tours>Tournois</tours>
     <recent>Matchs recents</recent>
     <upcoming>Matchs futurs</upcoming>
+    <usersched>Programmer un match</usersched>
+    <usersched>Programmer un match</usersched>
     </matches_menu>
     <statistics_menu>
     <name>Statistiques</name>
@@ -1662,7 +1664,9 @@
     <tour_man>Gerer: Tournois</tour_man>
     <import>Importer une equipe</import>
     <schedule>Plannifier un match</schedule>
+    <nodes>Ligues, divisions et tournois</nodes>
     <cpanel>OBBLM panneau principal</cpanel>
+    <nodes>Ligues, divisions et tournois</nodes>
     </admin_menu>
     <plugins>Plugins</plugins>
     <rules>Regles</rules>
@@ -1854,8 +1858,10 @@
         <ach_skills>
             Retirer un talent selectionner. Cela permet de choisir un nouveau talent en remplacement.
             </ach_skills>
+    <games>Matchs r&amp;eacute;cents &amp; &amp;agrave; venir</games>
         </desc>
     </box_admin>
+    <games>Matchs r&amp;eacute;cents &amp; &amp;agrave; venir</games>
     </team>
 </profile>
 <standings>
