@@ -895,7 +895,7 @@ function Ln($h=null)
 		$this->y+=$h;
 }
 
-function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
+function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='', $isMask=false, $maskImg=0)
 {
 	//Put an image on the page
 	if(!isset($this->images[$file]))
