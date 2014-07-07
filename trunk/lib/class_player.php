@@ -305,7 +305,7 @@ class Player
          **/
     
         global $rules;
-        $lid = get_alt_col('teams', 'team_id̈́', $this->owned_by_team_id, 'f_lid');
+        $lid = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'f_lid');
         setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
     
         if ($this->is_sold || $this->is_dead)
