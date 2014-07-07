@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
 <en-GB>
 <name>Gallery</name>
 
@@ -12,3 +13,16 @@
 <playersof>Players of</playersof>
 
 </en-GB>
+<fr-FR>
+<name>Galerie</name>
+
+<note>S&amp;eacute;lectionner une des options ci-dessus.</note>
+<none>Aucune s&amp;eacute;lection</none>
+
+<players>Joueurs de l'&amp;eacute;quipe</players>
+<stads>Stades d'&amp;eacute;quipe</stads>
+<coaches>Coachs</coaches>
+
+<playersof>Joueurs de </playersof>
+</fr-FR>
+</translations>

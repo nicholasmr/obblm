@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
 <en-GB>
 
 <name>Wanted</name>
@@ -23,3 +24,28 @@
 <note>Please note: Once the player has been killed it is up to a leagues commissioner (admin) to give the appropriate award.</note>
 
 </en-GB>
+<fr-FR>
+
+<name>Primes</name>
+
+<player>Joueur</player>
+<sort_hint>Astuce : clicking on the dropdown and pressing any letter on the keyboard scrolls the dropdown down to the first team name beginning with that letter.</sort_hint>
+<submit>Valider</submit>
+<new>Nouvelle prime</new>
+<posted>Post&amp;eacute;e</posted>
+<edit>&amp;Eacute;diter</edit>
+<del>Supprimer</del>
+
+<g_title>Primes</g_title>
+<g_about>Recherch&amp;eacute; pour </g_about>
+<killed>A &amp;eacute;t&amp;eacute; tu&amp;acute; !</killed>
+<wanted>Recherch&amp;eacute;</wanted>
+
+<desc><![CDATA[Bienvenue sur le mur des joueurs recherch&eacute;s.<br>Surveillez ces joueurs, une prime sera donn&eacute;e en &eacute;change de leur t&ecirc;te !]]></desc>
+<title><![CDATA[Quelle est la prime ? Cela peut aller d'une somme d'or &agrave; une comp&eacute;tence suppl&eacute;mentaire pour un des joueurs de l'&eacute;quipe ayant tu&eacute; le joueur recherch&eacute;.]]></title>
+<about>Pourquoi ce joueur est recherch&amp;eacute; ?</about>
+
+<note>Note : Il appartient aux commissaires, une fois que le joueur a &amp;eacute;t&amp;eacute; tu&amp;eacute;, de donner la r&amp;eacute;compense appropri&amp;eacute;e.</note>
+
+</fr-FR>
+</translations>
