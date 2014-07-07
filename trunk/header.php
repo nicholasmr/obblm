@@ -30,7 +30,8 @@ if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
 if (!defined('T_NO_STARTUP') && file_exists('install.php'))
     die('Please remove <i>install.php</i> before using OBBLM.');
 
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
+error_reporting((E_ALL | E_STRICT) & ~E_DEPRECATED);
 session_start();
 
 /*********************
