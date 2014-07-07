@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
 <en-GB>
 
 <name>League Tables</name>
@@ -21,3 +22,27 @@
 <table-points>Pts</table-points>
 
 </en-GB>
+
+<es-ES>
+
+<name>Clasificacion en liga</name>
+<help>Por favor, elige el torneo para el que quieras ver la clasificación</help>
+<no-conf>Sin conferencia asignada</no-conf>
+<menu-label>Clasificaciones</menu-label>
+<tours>Elige un torneo</tours>
+
+<table-pos>#</table-pos>
+<table-coach>Entrenador</table-coach>
+<table-name>Equipo</table-name>
+<table-race>Raza</table-race>
+<table-tv>VE</table-tv>
+<table-played>Jug</table-played>
+<table-won>G</table-won>
+<table-draw>E</table-draw>
+<table-loss>P</table-loss>
+<table-td>TD</table-td>
+<table-cas>Her</table-cas>
+<table-points>Pts</table-points>
+
+</es-ES>
+</translations>

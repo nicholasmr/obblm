@@ -19,8 +19,31 @@
 <gate>Largest gate</gate>
 <mfans>Most RL fans/spectators</mfans>
 <tvdiff>Largest TV difference in which underdog won</tvdiff>
-
 </en-GB>
+
+<es-ES>
+
+<name>Partidos memorables</name>
+
+<record>Récord</record>
+<desc>Qué partidos son dignos de recordar en terminos de más TDs, muertes y demás</desc>
+<filled>Más de X partidos tienen el mísmo récord o no existe ningún récord.</filled>
+
+<!-- Most of... -->
+<td>Más touchdowns</td>
+<cp>Más pases completos</cp>
+<intcpt>Más intercepciones</intcpt>
+<ki>Más muertos</ki>
+<cas>Más lesiones</cas>
+<svic>Resultado más abultado</svic>
+<inc>Mayor ganancia</inc>
+<gate>Mayor entrada</gate>
+<mfans>Más fans de VR/espectadores</mfans>
+<tvdiff>Mayor diferencia de VE, ganando el de menor VE</tvdiff>
+
+</es-ES>
+
+
 <fr-FR>
 
 <name>Matchs m&amp;eacute;morables</name>

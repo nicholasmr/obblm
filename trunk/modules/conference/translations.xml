@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <translations>
+
 <en-GB>
 
 <name>Conferences Admininstration</name>
@@ -21,8 +22,31 @@
 
 <failedAddConf>Error adding conference</failedAddConf>
 <addedConf>Conference added</addedConf>
-
 </en-GB>
+
+<en-ES>
+<name>Administración de conferencias</name>
+<tours>Elige un torneo</tours>
+<menu-conf>Administrar conferencia</menu-conf>
+<not-admin>Disculpe, esta característica sólo está disponible para administradores de conferencia o globales</not-admin>
+
+<addConf>Añadir conferencia</addConf>
+<findTeam>Añadir equipo</findTeam>
+
+<failedAddTeam>Error añadiendo equipo</failedAddTeam>
+<addedTeam>Equipo añadido</addedTeam>
+
+<failedRemoveTeam>Error eliminando equipo</failedRemoveTeam>
+<removedTeam>Equipo eliminado</removedTeam>
+
+<failedRemoveConf>Error eliminando conferencia</failedRemoveConf>
+<removedConf>Conferencia eliminada</removedConf>
+
+<failedAddConf>Error añadiendo conferencia</failedAddConf>
+<addedConf>Conferencia añadida</addedConf>
+</en-ES>
+
+
 <fr-FR>
 
 <name>Administration de conf&amp;eacute;rences</name>

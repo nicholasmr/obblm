@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <translations>
+
 <en-GB>
 
 <name>Wanted</name>
@@ -22,8 +23,34 @@
 <about>Why is the player wanted?</about>
 
 <note>Please note: Once the player has been killed it is up to a leagues commissioner (admin) to give the appropriate award.</note>
-
 </en-GB>
+
+<es-ES>
+
+<name>Se busca</name>
+
+<player>Jugador</player>
+<sort_hint>Consejo: haciendo click en el desplegable y pulsando cualquier letra en el teclado te llevará al primer equipo cuyo nombre comience por dicha letra.</sort_hint>
+<submit>Enviar</submit>
+<new>Nueva entrada</new>
+<posted>Enviado</posted>
+<edit>Editar</edit>
+<del>Borrar</del>
+
+<g_title>Recompensa</g_title>
+<g_about>Buscado por</g_about>
+<killed>¡HA SIDO MATADO!</killed>
+<wanted>Buscado</wanted>
+
+<desc><![CDATA[Bienvenido al muro de jugadores buscados.<br>Cuidado con estos jugadores, una recompensa pesa sobre sus cabezas!]]></desc>
+<title><![CDATA[¿Cuál es la recompensa por la cabeza de este jugador? Podría ser cualquier cosa, desde oro hasta una habilidad extra para un jugador del equipo que lo mate.]]></title>
+<about>¿Por qué se busca al jugador?</about>
+
+<note>Nota: Una vez que el jugador haya sido matado es el deber de los responsables de la liga (admin) el otorgar la recompensa adecuada.</note>
+
+</es-ES>
+
+
 <fr-FR>
 
 <name>Primes</name>
