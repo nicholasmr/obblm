@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<translations>
 <en-GB>
 
 <name>Cemetery</name>
@@ -19,3 +20,25 @@
 <about><![CDATA[About the player's death. Achievements? Remembered for?]]></about>
 
 </en-GB>
+
+<es-ES>
+
+<name>Cementerio</name>
+
+<player>Player</player>
+<submit>Enviar</submit>
+<edit>Editar</edit>
+<del>Borrar</del>
+<posted>Enviado</posted>
+<died>Muerto</died>
+<after>tras</after>
+<days>días</days>
+
+<g_title>Título</g_title>
+<g_about>Acerca de</g_about>
+
+<title><![CDATA[Título del obituario. Puede dejarse en blanco.]]></title>
+<about><![CDATA[Sobre la muerte del jugador. ¿Logros? ¿Por qué será recordado?]]></about>
+
+</es-ES>
+</translations>

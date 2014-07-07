@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <translations>
+
 <en-GB>
 
 <name>Hall of fame</name>
@@ -19,8 +20,31 @@
 <desc><![CDATA[Welcome to the hall of fame.<br>Here league commissioners may exercise their power by giving publicity to players of noteworthy achievements.]]></desc>
 <title><![CDATA[A short description of what the player has achieved, for example in which area the achievement has been made in.]]></title>
 <about><![CDATA[About the player's achievement in detail. If the player has received an bonus (extra) skill, you could also write about that.]]></about>
-
 </en-GB>
+
+<es-ES>
+
+<name>Salón de la fama</name>
+
+<player>Jugador</player>
+<sort_hint>Consejo: haciendo click en el desplegable y pulsando cualquier letra en el teclado te llevará al primer equipo cuyo nombre comience por dicha letra.</sort_hint>
+<submit>Enviar</submit>
+<new>Nueva entrada</new>
+<edit>Editar</edit>
+<del>Borrar</del>
+<from>de</from>
+<posted>Enviado</posted>
+
+<g_title>Título</g_title>
+<g_about>Descripción general</g_about>
+
+<desc><![CDATA[Bienvenido al salón de la fama.<br>Aquí los responsasbles de la liga pueden dar publicidad a jugadores con logros notorios.]]></desc>
+<title><![CDATA[Una descripción corta de los logros del jugador. Por ejemplo, en que área se realizó el logro.]]></title>
+<about><![CDATA[Detalle del logro del jugador. Si el jugador ha recibido una habilidad (extra), también puedes escribir sobre ello.]]></about>
+
+</es-ES>
+
+
 <fr-FR>
 
 <name>Panth&amp;eacute;on</name>
