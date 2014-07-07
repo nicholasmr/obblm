@@ -5,6 +5,12 @@
 */
 
 $upgradeSQLs = array(
+    '096-097' => array(
+
+),
+    '095-096' => array(
+        SQLUpgrade::runIfColumnNOTExists('texts', 'pinned', 'ALTER TABLE texts ADD COLUMN pinned TINYINT UNSIGNED NOT NULL DEFAULT 0'),
+    ),
     '091-095' => array(),
     '090-091' => array(),
     '080-090' => array(
