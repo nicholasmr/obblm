@@ -265,7 +265,7 @@ public static function report() {
     global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $racesMayRaiseRotters, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     global $leagues,$divisions,$tours;
-    global $T_ROUNDS;
+    $T_ROUNDS = Match::getRounds();
 
 	// Perform actions (delete, lock/unlock and reset). Needs the
     $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, get_alt_col('matches', 'match_id', $match_id, 'f_tour_id')));
@@ -555,10 +555,10 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/coaches');?></b>:</td><td style='text-align: right;'><?php echo "$coachUrl1</td><td> &mdash; </td><td style='text-align: left;'>$coachUrl2";?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/races');?></b>:</td><td style='text-align: right;'><?php echo "$raceUrl1</td><td> &mdash; </td><td style='text-align: left;'>$raceUrl2";?></td></tr>
     <tr><td colspan="4"><hr></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3"><?php  echo $leagueUrl; ?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3"><?php     echo $divUrl;?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3">    <?php   echo $leagueUrl; ?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3">  <?php   echo $divUrl;?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td colspan="3"><?php   echo $tourUrl;?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/round');?></b>:</td><td colspan="3"><?php   echo $lng->getTrn($T_ROUNDS[$m->round]);?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/round');?></b>:</td><td colspan="3">     <?php   echo $T_ROUNDS[$m->round];?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
     if (Module::isRegistered('PDFMatchReport')) {
@@ -589,8 +589,8 @@ public static function report() {
 		echo "<br><a href='javascript:void(0);' onClick='slideToggleFast(\"chRound\");'>".$lng->getTrn('matches/report/chround')."</a><div id='chRound' style='display:none;'>
 		<form method='POST'>
 		<select name='round'>";
-		foreach ($T_ROUNDS as $id => $lngidx ) {
-		    echo "<option value='$id'>".$lng->getTrn($lngidx)."</option>\n";
+		foreach ($T_ROUNDS as $id => $desv ) {
+		    echo "<option value='$id'>".$desc."</option>\n";
 	    }
 		echo "</select>
 		<input type='submit' value='".$lng->getTrn('matches/report/chround')."'>
@@ -977,9 +977,9 @@ public static function userSched() {
                 echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'index.php?section=matches&type=usersched&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
                 echo ' as ';
                 echo '<select name="round" id="round" '.$_DISABLED.'>';
-                global $T_ROUNDS;
+                $T_ROUNDS = Match::getRounds();
                 foreach ($T_ROUNDS as $r => $d) {
-                    echo "<option value='$r' ".(($r == 1) ? 'SELECTED' : '').">".$lng->getTrn($d)."</option>\n";
+                    echo "<option value='$r' ".(($r == 1) ? 'SELECTED' : '').">".$d."</option>\n";
                 }
                 ?>
                 </select>

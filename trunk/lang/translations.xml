@@ -453,18 +453,6 @@
             <quarter>Quarter-finals</quarter>
             <rnd16>Round of 16</rnd16>
             <rnd>Round</rnd>
-            <rnd1>Round 1</rnd1>
-            <rnd2>Round 2</rnd2>
-            <rnd3>Round 3</rnd3>
-            <rnd4>Round 4</rnd4>
-            <rnd5>Round 5</rnd5>
-            <rnd6>Round 6</rnd6>
-            <rnd7>Round 7</rnd7>
-            <rnd8>Round 8</rnd8>
-            <rnd9>Round 9</rnd9>
-            <rnd10>Round 10</rnd10>
-            <rnd11>Round 11</rnd11>
-            <rnd12>Round 12</rnd12>
         </roundtypes>
         
         <matchdelete><![CDATA[Are you sure you want to delete the match?\n\nPLEASE NOTE:\nUnless the match has not yet been played this action is not reversible and will affect the contents of the subsequent match reports for both teams.\nIt is advised against deleting non-test matches unless you know what you are doing.]]></matchdelete>
@@ -2383,18 +2371,6 @@
             <quarter>Quarti di finale</quarter>
             <rnd16>Round of 16</rnd16>
             <rnd>Round</rnd>
-            <rnd1>Round 1</rnd1>
-            <rnd2>Round 2</rnd2>
-            <rnd3>Round 3</rnd3>
-            <rnd4>Round 4</rnd4>
-            <rnd5>Round 5</rnd5>
-            <rnd6>Round 6</rnd6>
-            <rnd7>Round 7</rnd7>
-            <rnd8>Round 8</rnd8>
-            <rnd9>Round 9</rnd9>
-            <rnd10>Round 10</rnd10>
-            <rnd11>Round 11</rnd11>
-            <rnd12>Round 12</rnd12>
         </roundtypes>
         
         <matchdelete><![CDATA[Sei sicuro di voler cancellare la partita?\n\nNOTA BENE:\nA meno che la partita non sia stata ancora giocata, questa azione non è reversibile e avrà effetti sulle tabelle dei giocatori che vi partecipano.\nE' consigliato cancellare le partite solo se si sà bene cosa si sta facendo.]]></matchdelete>
