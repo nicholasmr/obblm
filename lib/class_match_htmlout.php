@@ -34,7 +34,7 @@ class Match_HTMLOUT extends Match
 
 const T_HTML_MATCHES_PER_PAGE = 100;
 
-function recentMatches() {
+public static function recentMatches() {
 
     global $lng;
     title($lng->getTrn('menu/matches_menu/recent'));
@@ -43,7 +43,7 @@ function recentMatches() {
     HTMLOUT::recentGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=recent', 'n' => MAX_RECENT_GAMES));
 }
 
-function upcomingMatches() {
+public static function upcomingMatches() {
 
     global $lng;
     title($lng->getTrn('menu/matches_menu/upcoming'));
