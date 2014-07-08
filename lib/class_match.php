@@ -27,14 +27,7 @@ define('RT_3RD_PLAYOFF', 254); # 3rd place playoff: The two knock-out matches be
 define('RT_SEMI', 253); # Semi-finals.
 define('RT_QUARTER', 252); # Quarter-finals.
 define('RT_ROUND16', 251); # Round of 16.
-
-$T_ROUNDS = array(
-    RT_FINAL => 'matches/tourmatches/roundtypes/final', 
-    RT_3RD_PLAYOFF => 'matches/tourmatches/roundtypes/thirdPlayoff', 
-    RT_SEMI => 'matches/tourmatches/roundtypes/semi', 
-    RT_QUARTER => 'matches/tourmatches/roundtypes/quarter', 
-    RT_ROUND16 => 'matches/tourmatches/roundtypes/rnd16')
-    + array_combine(range(1,12), array_strpack("matches/tourmatches/roundtypes/rnd%s", range(1,12)));
+define('ROUNDS_HARD_LIMIT', 60); # Hard limit for number of rounds. May be changed.
 
 // Reserved (non-real) matches:
 define('T_IMPORT_MID', -1);
@@ -296,6 +289,19 @@ class Match
     /***************
      * Statics
      ***************/
+
+    public static function getRounds() {
+        global $lng;
+        $T_ROUNDS__FINALS = array(
+            RT_FINAL        => $lng->getTrn('matches/tourmatches/roundtypes/final'), 
+            RT_3RD_PLAYOFF  => $lng->getTrn('matches/tourmatches/roundtypes/thirdPlayoff'), 
+            RT_SEMI         => $lng->getTrn('matches/tourmatches/roundtypes/semi'), 
+            RT_QUARTER      => $lng->getTrn('matches/tourmatches/roundtypes/quarter'), 
+            RT_ROUND16      => $lng->getTrn('matches/tourmatches/roundtypes/rnd16')
+        );
+        $T_ROUNDS__LOWER = array_combine(range(1,ROUNDS_HARD_LIMIT), array_strpack($lng->getTrn('matches/tourmatches/roundtypes/rnd')." %s", range(1,ROUNDS_HARD_LIMIT)));
+        return $T_ROUNDS__FINALS + $T_ROUNDS__LOWER;
+    }
 
     public static function ImportEntry($pid, array $input) {
         $status = (bool) mysql_query("REPLACE INTO matches (match_id, team1_id,  team2_id, round, f_tour_id, date_created, date_played)

@@ -249,9 +249,9 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
         // FFA settings.
         $body .= $lng->getTrn('admin/schedule/as_type').'<br>';
         $body .= '<select name="round">';
-        global $T_ROUNDS;
+        $T_ROUNDS = Match::getRounds();;
         foreach ($T_ROUNDS as $r => $d) {
-                $body .= "<option value='$r' ".(($addMatchToFFA && isset($_POST['round']) && $r == $_POST['round']) ? 'SELECTED' : '').">".$lng->getTrn($d)."</option>\n";
+                $body .= "<option value='$r' ".(($addMatchToFFA && isset($_POST['round']) && $r == $_POST['round']) ? 'SELECTED' : '').">".$d."</option>\n";
         }
         $body .= '</select>';
         echo "<div id='OPTS_FFA_TOUR_SETS'>$body</div>\n";
