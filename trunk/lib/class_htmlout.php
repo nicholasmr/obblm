@@ -46,7 +46,8 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
          );
     */
 
-    global $lng, $T_ROUNDS;
+    global $lng;
+    $T_ROUNDS = Match::getRounds();
 
     $extra = array('doNr' => false, 'noHelp' => true);
 
@@ -82,7 +83,7 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
             $m->result = matchresult_icon($m->result);
         }
         if (in_array($m->round,array_keys($T_ROUNDS))) {
-            $m->round = $lng->getTrn($T_ROUNDS[$m->round]);
+            $m->round = $T_ROUNDS[$m->round];
         }
         $m->team1_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach1_id,false,false)."'>$m->coach1_name</a>)</i>";
         $m->team2_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach2_id,false,false)."'>$m->coach2_name</a>)</i>";
@@ -127,7 +128,8 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
          );
     */
 
-    global $lng, $T_ROUNDS;
+    global $lng;
+    $T_ROUNDS = Match::getRounds();
 
     $extra = array('doNr' => false, 'noHelp' => true);
 
@@ -157,7 +159,7 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         $m->tour_name = Tour::getTourUrl($m->f_tour_id);
         $m->league_name = League::getLeagueUrl(get_parent_id(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE));
         if (in_array($m->round,array_keys($T_ROUNDS))) {
-            $m->round = $lng->getTrn($T_ROUNDS[$m->round]);
+            $m->round = $T_ROUNDS[$m->round];
         }
         $m->team1_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach1_id,false,false)."'>$m->coach1_name</a>)</i>";
         $m->team2_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach2_id,false,false)."'>$m->coach2_name</a>)</i>";
