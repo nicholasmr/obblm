@@ -63,13 +63,15 @@ class PDFMatchReport implements ModuleInterface
         define("HEADLINEBGCOLOR", '#c3c3c3');
         
         # player statuses
-        define('COLOR_ROSTER_NORMAL',   COLOR_HTML_NORMAL);
-        define('COLOR_ROSTER_READY',    COLOR_HTML_READY);
-        define('COLOR_ROSTER_MNG',      COLOR_HTML_MNG);
-        define('COLOR_ROSTER_DEAD',     COLOR_HTML_DEAD);
-        define('COLOR_ROSTER_SOLD',     COLOR_HTML_SOLD);
-        define('COLOR_ROSTER_STARMERC', COLOR_HTML_STARMERC);
-        define('COLOR_ROSTER_JOURNEY',  COLOR_HTML_JOURNEY);
+        define('COLOR_ROSTER_NORMAL',       COLOR_HTML_NORMAL);
+        define('COLOR_ROSTER_READY',        COLOR_HTML_READY);
+        define('COLOR_ROSTER_MNG',          COLOR_HTML_MNG);
+        define('COLOR_ROSTER_DEAD',         COLOR_HTML_DEAD);
+        define('COLOR_ROSTER_SOLD',         COLOR_HTML_SOLD);
+        define('COLOR_ROSTER_STARMERC',     COLOR_HTML_STARMERC);
+        define('COLOR_ROSTER_JOURNEY',      COLOR_HTML_JOURNEY);
+        define('COLOR_ROSTER_JOURNEY_USED', COLOR_HTML_JOURNEY_USED);
+        define('COLOR_ROSTER_NEWSKILL',     COLOR_HTML_NEWSKILL);
 
         define('T_PDF_ROSTER_SET_EMPTY_ON_ZERO', true); # Prints cp, td etc. as '' (empty string) when field = 0.
 
@@ -305,9 +307,17 @@ class PDFMatchReport implements ModuleInterface
                        $name = "$p->name [J]";
                        $bgc = COLOR_ROSTER_JOURNEY;
                   }
+                  if ($p->is_journeyman_used) {
+                       $name = "$p->name [J]";
+                       $bgc = COLOR_ROSTER_JOURNEY_USED;
+                  }
                   if ($p->is_mng) {
                        $name = "$p->name [MNG]";
                        $bgc = COLOR_ROSTER_MNG;
+                  }
+                  if ($p->mayHaveNewSkill()) {
+                       $name = "$p->name";
+                       $bgc = COLOR_ROSTER_NEWSKILL;
                   }
 
                   $nr = $p->nr;
@@ -334,13 +344,46 @@ class PDFMatchReport implements ModuleInterface
                 $currenty+=$h;
                 $pdf->SetXY($currentx,$currenty);
             }
+
+            //$myscale = 0.55;
+            //$pdf->Image('modules/pdfmatchreport/status.png', $currentx+280, $currenty+5, $myscale*320, $myscale*22, '', '', false, 0);
+
+//            $pdf->SetFont('Tahoma', 'B', 7);
+//            $pdf->SetXY(360, $currenty+5);        
+//            $pdf->Multicell(200, 10, $lng->getTrn('matches/report/usedjourney'), 0, 0, 'L', false);
+
+            // Color legends
+            $pdf->SetFont('Tahoma', '', 7);
+            $currentx = 335;
+            $currenty += 5;
+            $dd = 2;
+            $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_MNG));
+            $pdf->SetXY($currentx, $currenty);
+            $pdf->Rect($currentx, $currenty, 5, 5, 'DF');
+            $pdf->SetXY($currentx+=5, $currenty-=1);
+            $pdf->Cell(20, 8, 'MNG', 0, 0, 'L', false);
+            $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY));
+            $pdf->Rect($currentx+=22+$dd, $currenty+=1, 5, 5, 'DF');
+            $pdf->SetXY($currentx+=5, $currenty-=1);
+            $pdf->Cell(45, 8, 'Journeyman', 0, 0, 'L', false);
+
+            $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY_USED));
+            $pdf->Rect($currentx+=47+$dd, $currenty+=1, 5, 5, 'DF');
+            $pdf->SetXY($currentx+=5, $currenty-=1);
+            $pdf->Cell(45, 8, 'Used journeyman', 0, 0, 'L', false);
+            $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NEWSKILL));
+            $pdf->Rect($currentx+=64+$dd, $currenty+=1, 5, 5, 'DF');
+            $pdf->SetXY($currentx+=5, $currenty-=1);
+            $pdf->Cell(70, 8, 'New skill available', 0, 0, 'L', false);
+
         }
 
         // end
         $pdf->SetFont('Tahoma', '', 7);
         $currenty = 800;
-        $pdf->SetXY(MARGINX, $currenty);        
-        $donate = "Please consider donating to the OBBLM project if you enjoy this software and wish to support\n further development and maintenance. For more information visit nicholasmr.dk";
+        $pdf->SetXY(MARGINX-5, $currenty);        
+        $donate = "Please consider donating to the OBBLM project if you enjoy this software and wish to support further development and maintenance. For more information visit nicholasmr.dk";
+        $pdf->SetFillColorBB($pdf->hex2cmyk('#FFFFFF'));
         $pdf->Multicell(300, 9, $donate, 0, 0, 'L', false);
 
         $currentx = MARGINX + 330;
