@@ -286,7 +286,7 @@ public static function report() {
     foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
         foreach ($t->getPlayers() as $p) {
             if (!self::player_validation($p, $m)) {continue;}
-            if ($p->is_journeyman_used) {$USED_JOURNEYMAN_PRESENT = true;}
+            if (!$m->is_played && $p->is_journeyman_used) {$USED_JOURNEYMAN_PRESENT = true;}
         }
     }
     if ($USED_JOURNEYMAN_PRESENT) {$DIS = 'DISABLED';}
@@ -706,10 +706,10 @@ public static function report() {
                 $mdat   = $m->getPlayerEntry($p->player_id);
 
                 // Print player row
-                if ($p->is_journeyman_used)     {$bgcolor = COLOR_HTML_JOURNEY_USED;    $NORMSTAT = false;}
-                elseif ($p->is_journeyman)      {$bgcolor = COLOR_HTML_JOURNEY;         $NORMSTAT = false;}
-                elseif ($status == MNG)         {$bgcolor = COLOR_HTML_MNG;             $NORMSTAT = false;}
-                elseif ($p->mayHaveNewSkill())  {$bgcolor = COLOR_HTML_NEWSKILL;        $NORMSTAT = false;}
+                if ($p->is_journeyman_used && !$m->is_played)   {$bgcolor = COLOR_HTML_JOURNEY_USED;    $NORMSTAT = false;}
+                elseif ($p->is_journeyman)                      {$bgcolor = COLOR_HTML_JOURNEY;         $NORMSTAT = false;}
+                elseif ($status == MNG)                         {$bgcolor = COLOR_HTML_MNG;             $NORMSTAT = false;}
+                elseif ($p->mayHaveNewSkill())                  {$bgcolor = COLOR_HTML_NEWSKILL;        $NORMSTAT = false;}
                 else {$bgcolor = false;}
                 self::_print_player_row($p->player_id, $p->name, $p->nr, $p->position.(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
             }
@@ -892,6 +892,7 @@ public static function report_ES($mid, $DIS)
         }
         }
         status($status);
+        $m->finalizeMatchSubmit(); // Run MySQL triggers
         $players = self::report_ES_loadPlayers($mid); # Reload!
     }
 
