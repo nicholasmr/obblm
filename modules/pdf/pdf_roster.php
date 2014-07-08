@@ -80,6 +80,7 @@ define('COLOR_ROSTER_DEAD',     COLOR_HTML_DEAD);
 define('COLOR_ROSTER_SOLD',     COLOR_HTML_SOLD);
 define('COLOR_ROSTER_STARMERC', COLOR_HTML_STARMERC);
 define('COLOR_ROSTER_JOURNEY',  COLOR_HTML_JOURNEY);
+define('COLOR_ROSTER_JOURNEY_USED',  COLOR_HTML_JOURNEY_USED);
 define('COLOR_ROSTER_NEWSKILL', COLOR_HTML_NEWSKILL);
 //-----
 define('COLOR_ROSTER_CHR_EQP1', COLOR_HTML_CHR_EQP1); // Characteristic equal plus one.
@@ -207,6 +208,9 @@ foreach ($players as $p) {
   if ($p->is_journeyman) {
     $p->position = 'Journeyman';
     $bgc=COLOR_ROSTER_JOURNEY;
+    if ($p->is_journeyman_used) {
+        $bgc=COLOR_ROSTER_JOURNEY_USED;
+    }
   }
   else $bgc=COLOR_ROSTER_NORMAL;
   
@@ -526,11 +530,15 @@ $pdf->Rect($currentx, $currenty, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
 $pdf->Cell(20, 8, 'MNG', 0, 0, 'L', false);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY));
-$pdf->Rect($currentx+=20+5, $currenty+=1, 5, 5, 'DF');
+$pdf->Rect($currentx+=22+5, $currenty+=1, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
 $pdf->Cell(45, 8, 'Journeyman', 0, 0, 'L', false);
+$pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY_USED));
+$pdf->Rect($currentx+=47+5, $currenty+=1, 5, 5, 'DF');
+$pdf->SetXY($currentx+=5, $currenty-=1);
+$pdf->Cell(45, 8, 'Used journeyman', 0, 0, 'L', false);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NEWSKILL));
-$pdf->Rect($currentx+=45+5, $currenty+=1, 5, 5, 'DF');
+$pdf->Rect($currentx+=67+5, $currenty+=1, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
 $pdf->Cell(70, 8, 'New skill available', 0, 0, 'L', false);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_CHR_GTP1));
@@ -544,7 +552,7 @@ $pdf->Cell(50, 8, 'Stat downgrade', 0, 0, 'L', false);
 
 $pdf->SetFont('Tahoma', '', 7);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NORMAL));
-$pdf->SetXY($currentx+240, $currenty+3);        
+$pdf->SetXY($currentx+160, $currenty+1);        
 $donate = "Please consider donating to the OBBLM project if you enjoy this software and wish to support\n further development and maintenance. For more information visit nicholasmr.dk";
 $pdf->Multicell(300, 8, $donate, 0, 0, 'L', false);
 

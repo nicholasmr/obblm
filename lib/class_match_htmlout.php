@@ -281,6 +281,16 @@ public static function report() {
     $ALLOW_EDIT = (!$m->locked && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $leagues[$lid]['ring'] == Coach::T_RING_LOCAL_ADMIN || $coach->isInMatch($m->match_id)));
     $DIS = ($ALLOW_EDIT) ? '' : 'DISABLED';
 
+    // Lock page for other reasons? (Used journeys etc)
+    $USED_JOURNEYMAN_PRESENT = false;
+    foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
+        foreach ($t->getPlayers() as $p) {
+            if (!self::player_validation($p, $m)) {continue;}
+            if ($p->is_journeyman_used) {$USED_JOURNEYMAN_PRESENT = true;}
+        }
+    }
+    if ($USED_JOURNEYMAN_PRESENT) {$DIS = 'DISABLED';}
+
     // Relay to ES report page?
     if (isset($_GET['es_report'])) { # Don't care what value the GET field has!
         self::report_ES($match_id, !$ALLOW_EDIT);
@@ -589,7 +599,7 @@ public static function report() {
 		echo "<br><a href='javascript:void(0);' onClick='slideToggleFast(\"chRound\");'>".$lng->getTrn('matches/report/chround')."</a><div id='chRound' style='display:none;'>
 		<form method='POST'>
 		<select name='round'>";
-		foreach ($T_ROUNDS as $id => $desv ) {
+		foreach ($T_ROUNDS as $id => $desc ) {
 		    echo "<option value='$id'>".$desc."</option>\n";
 	    }
 		echo "</select>
@@ -685,6 +695,7 @@ public static function report() {
             }
             echo "</tr>\n";
 
+            $NORMSTAT = true; // only normal player statuses
             foreach ($t->getPlayers() as $p) {
 
                 if (!self::player_validation($p, $m))
@@ -695,12 +706,27 @@ public static function report() {
                 $mdat   = $m->getPlayerEntry($p->player_id);
 
                 // Print player row
-                if ($p->is_journeyman) {$bgcolor = COLOR_HTML_JOURNEY;}
-                elseif ($status == MNG) {$bgcolor = COLOR_HTML_MNG;}
+                if ($p->is_journeyman_used)     {$bgcolor = COLOR_HTML_JOURNEY_USED;    $NORMSTAT = false;}
+                elseif ($p->is_journeyman)      {$bgcolor = COLOR_HTML_JOURNEY;         $NORMSTAT = false;}
+                elseif ($status == MNG)         {$bgcolor = COLOR_HTML_MNG;             $NORMSTAT = false;}
+                elseif ($p->mayHaveNewSkill())  {$bgcolor = COLOR_HTML_NEWSKILL;        $NORMSTAT = false;}
                 else {$bgcolor = false;}
                 self::_print_player_row($p->player_id, $p->name, $p->nr, $p->position.(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
             }
             echo "</table>\n";
+            echo "<br>\n";
+            if (!$NORMSTAT) {
+            ?><table class="text"><tr><td style="width: 100%;"></td><?php
+                if (1) {
+                    ?>
+                    <td style="background-color: <?php echo COLOR_HTML_MNG;     ?>;"><font color='black'><b>&nbsp;MNG&nbsp;</b></font></td>
+                    <td style="background-color: <?php echo COLOR_HTML_JOURNEY; ?>;"><font color='black'><b>&nbsp;Journeyman&nbsp;</b></font></td>
+                    <td style="background-color: <?php echo COLOR_HTML_JOURNEY_USED; ?>;"><font color='black'><b>&nbsp;Used&nbsp;journeyman&nbsp;</b></font></td>
+                    <td style="background-color: <?php echo COLOR_HTML_NEWSKILL;?>;"><font color='black'><b>&nbsp;New&nbsp;skill&nbsp;available&nbsp;</b></font></td>
+                    <?php
+                }
+            ?></tr></table><?php
+            }
 
             // Add raised zombies
             global $racesHasNecromancer;
@@ -758,7 +784,11 @@ public static function report() {
             <tr class='commonhead'><td colspan='13'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td></tr>
             <tr><td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->getText(); ?></textarea></td></tr>
         </table>
-        <br><center><input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>></center>
+        <br>
+        <center>
+            <input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>>
+            <?php if ($USED_JOURNEYMAN_PRESENT) {echo "<br><br><b>".$lng->getTrn('matches/report/usedjourney')."</b>";} ?>
+        </center>
     </form>
     <br><br>
     <?php

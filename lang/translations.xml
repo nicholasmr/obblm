@@ -483,6 +483,7 @@
             <tv>TVs</tv>
             
         <summary>Game summary</summary>
+        <usedjourney>Match cannot be saved until you decide the fate of the used journeymen on the team roster page</usedjourney>
     </report>
 </matches>
 
