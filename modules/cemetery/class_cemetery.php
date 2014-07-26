@@ -40,7 +40,7 @@ public static function main($argv)
         $ALLOW_EDIT = false;
     }
     
-    if (isset($_POST['action']) && isset($_POST['pid'])) {
+    if ($ALLOW_EDIT && isset($_POST['action']) && isset($_POST['pid'])) {
         $pid = (int) $_POST['pid'];
         switch ($_POST['action'])
         {
