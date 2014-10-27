@@ -309,5 +309,3 @@ $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
     var SL = document.getElementById('selectedlist');
     var TEAMS = document.getElementById('teams');
 </script>
-
-<?php
