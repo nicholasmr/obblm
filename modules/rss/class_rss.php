@@ -173,7 +173,10 @@ class RSSfeed implements ModuleInterface
             $el_item->appendChild($dom->createElement('title', htmlspecialchars($item->title, ENT_NOQUOTES, "UTF-8")));
             $el_item->appendChild($dom->createElement('description', htmlspecialchars($item->desc, ENT_NOQUOTES, "UTF-8")));
             $el_item->appendChild($dom->createElement('link', $this->link));
-            $el_item->appendChild($dom->createElement('pubDate', $item->date));
+#            $el_item->appendChild($dom->createElement('pubDate', $item->date));
+            $el_item->appendChild($dom->createElement('pubDate', date('r', strtotime($item->date))));
+            $el_item->appendChild($dom->createElement('guid', $this->link . 'index.php?' . date('U', strtotime($item->date)))); # RSS 2.0 dirty workaround.
+
             $el_channel->appendChild($el_item);
         }
         
