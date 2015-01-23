@@ -1012,7 +1012,7 @@ private static function make_menu()
         else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('menu/login');?></a></li><?php }
 
         if (isset($_SESSION['logged_in']) && is_object($coach)) {
-            echo '<li><a href="'.urlcompile(T_URL_PROFILE,T_OBJ_COACH,$coach->coach_id,false,false).'">'.$lng->getTrn('menu/cc').'</a></li>';
+            echo '<li><a href="'.urlcompile(T_URL_PROFILE,T_OBJ_COACH,$coach->coach_id,false,false).'">'.$lng->getTrn('menu/cc').' ('.ucfirst($coach->name).')</a></li>';
             if (!empty($admin_menu)) {
                 ?>
                 <li><span class="dir"><?php echo $lng->getTrn('menu/admin_menu/name');?></span>
