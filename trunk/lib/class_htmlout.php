@@ -1065,27 +1065,38 @@ private static function make_menu()
                 <li><a href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
             </ul>
         </li>
+        <?
+        // To avoid showing the plugin menu if no plugins are loaded, we start output buffering here
+        ob_start();?>
+        <?php if (Module::isRegistered('Search'))            { ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('TeamCompare'))       { ?><li><a href="handler.php?type=teamcompare"><?php echo $lng->getTrn('name', 'TeamCompare');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('HOF'))               { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('FamousTeams'))       { ?><li><a href="handler.php?type=famousteams"><?php echo $lng->getTrn('name', 'FamousTeams');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Wanted'))            { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Prize'))             { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Cemetery'))          { ?><li><a href="handler.php?type=cemetery&amp;tid=0"><?php echo $lng->getTrn('name', 'Cemetery');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('SGraph'))            { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Gallery'))           { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('LeagueTables'))      { ?><li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Conference'))        { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
+        <?php if (isset($_SESSION['logged_in']) && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $coach->ring == Coach::T_RING_LOCAL_ADMIN)) { ?>
+        <?php if (Module::isRegistered('Scheduler'))     { ?><li><a href="handler.php?type=scheduler"><?php echo $lng->getTrn('name', 'Scheduler');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
+        <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
+        <?php } ?>
+        <?
+        $plugin_menu = trim(ob_get_contents());
+        ob_end_clean();
+        if(strlen($plugin_menu) > 0)
+        {
+        ?>
         <li><span class="dir"><?php echo $lng->getTrn('menu/plugins');?></span>
             <ul>
-                <?php if (Module::isRegistered('Search'))            { ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('TeamCompare'))       { ?><li><a href="handler.php?type=teamcompare"><?php echo $lng->getTrn('name', 'TeamCompare');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('HOF'))               { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('FamousTeams'))       { ?><li><a href="handler.php?type=famousteams"><?php echo $lng->getTrn('name', 'FamousTeams');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Wanted'))            { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Prize'))             { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Cemetery'))          { ?><li><a href="handler.php?type=cemetery&amp;tid=0"><?php echo $lng->getTrn('name', 'Cemetery');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('SGraph'))            { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Gallery'))           { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
-				<?php if (Module::isRegistered('LeagueTables'))      { ?><li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Conference'))        { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
-				<?php if (isset($_SESSION['logged_in']) && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $coach->ring == Coach::T_RING_LOCAL_ADMIN)) { ?>
-				<?php if (Module::isRegistered('Scheduler'))     { ?><li><a href="handler.php?type=scheduler"><?php echo $lng->getTrn('name', 'Scheduler');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
-                <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
-				<?php } ?>
+              <?=$plugin_menu?>
             </ul>
         </li>
+        <?} /*end of output buffering of the plugin menu*/ ?>
 
         <li><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>
