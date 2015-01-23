@@ -1,5 +1,23 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<translations>
+<?xml version="1.0" encoding="utf-8" ?> <translations>
+
+<!-- =================================================================
+    PLEASE READ THIS CARREFULY BEFORE TOUCHING THIS FILE !!
+    =================================================================
+
+This is the main OBBLM XML translation file.
+
+It must be encoded as UTF-8 to keep special characters from different languages.
+/!\ If you edit this file, please be extremly careful with encoding when saving !
+
+Remember : ENGLISH language is the default language and the most UP TO DATE.
+
+Each registered language have it's data stored in it's own branch.
+For example, english is in <en-GB>, french in <fr-FR>, .......
+
+Each missing string in foreign language (other than english) is present but empty for you
+to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
+-->
+
 
 <en-GB>
 
@@ -47,6 +65,11 @@
     <price>Price</price>
     <number>Number</number>
     <opponent>Opponent</opponent>
+    <reroll>Re-roll</reroll>
+    <apothecary>Apothecary</apothecary>
+    <ass_coach>Assistant Coach</ass_coach>
+    <cheerleader>Cheerleader</cheerleader>
+    <journeyman>Journeyman</journeyman>
     <options>Options</options>
     <empty>empty</empty>
     
@@ -141,14 +164,14 @@
     <teams>Teams</teams>
     <coaches>Coaches</coaches>
     <matches_menu>
-        <name>Matches</name> <!-- top level button text -->
+        <name>Matches</name>
         <tours>Tournaments</tours>
         <recent>Recent matches</recent>
         <upcoming>Upcoming matches</upcoming>
         <usersched>Schedule match</usersched>
     </matches_menu>
     <statistics_menu>
-        <name>Statistics</name> <!-- top level button text -->
+        <name>Statistics</name>
         <player_stn>Player standings</player_stn>
         <team_stn>Team standings</team_stn>
         <coach_stn>Coach standings</coach_stn>
@@ -156,7 +179,7 @@
         <star_stn>Star standings</star_stn>
     </statistics_menu>
     <admin_menu>
-        <name>Admin</name> <!-- top level button text -->
+        <name>Admin</name>
         <nodes>Leagues, divisions &amp; tournaments</nodes>
         <ct_man>Coaches &amp; teams management</ct_man>
         <usr_man>User management</usr_man>
@@ -172,7 +195,6 @@
 
 <!-- Section translations -->
 <login>
-    <!-- has no <name> tag! -->
     <loginname>Coach name</loginname>
     <passwd>Password</passwd>
     <remember>Remember me</remember>
@@ -194,8 +216,6 @@
     <by>by</by>
     <lastedit>last edited</lastedit>
     <infocus>Team in focus</infocus>
-    <pin>Pin</pin>
-    <unpin>Unpin</unpin>
 </main>
 
 <cc>
@@ -300,73 +320,19 @@
             </fdescs>
 
             <desc>
-                <hire_player>
-                <![CDATA[
-                Hire a new player.<br>
-                Hiring a player as a journeyman is free, but only players from a 0-16 allowed position on your team's roster are hire-able as journeymen.
-                ]]>
-                </hire_player>
-                <hire_journeyman>
-                <![CDATA[
-                Hire one of your journeymen to permanently play on your team.
-                ]]>
-                </hire_journeyman>
-                <fire_player>
-                <![CDATA[
-                Fire a player. Refund rate:
-                ]]>
-                </fire_player>
-                <unbuy_player>
-                <![CDATA[
-                Regret hiring a player. 100% refund.<br>
-                This is only possible for players which have not participated in any matches.
-                ]]>
-                </unbuy_player>
-                <rename_player>
-                <![CDATA[
-                Rename a player.
-                ]]>
-                </rename_player>
-                <renumber_player>
-                <![CDATA[
-                Renumber a player.
-                ]]>
-                </renumber_player>
-                <rename_team>
-                <![CDATA[
-                Rename your team.
-                ]]>
-                </rename_team>
-                <buy_goods>
-                <![CDATA[
-                Buy team goods.
-                ]]>
-                </buy_goods>
-                <buy_goods_warn>
-                <![CDATA[
-                <br><br>Please note that re-roll prices are currently <font color='red'><b>doubled</b></font>.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert the overcharged amount.
-                ]]>
-                </buy_goods_warn>
-                <drop_goods>
-                <![CDATA[
-                Let go/drop of team goods for no refund.
-                ]]>
-                </drop_goods>
-                <ready_state>
-                <![CDATA[
-                This team attribute allows coaches to signal other coaches/teams whether or not this team is interested in playing any matches.
-                ]]>
-                </ready_state>
-                <retire>
-                <![CDATA[
-                Retire team.<br>Once retired the team is no longer manageable.<br>Admins can un-retire teams. The retirement takes effect immediately, but will first be visible on <b>next page reload</b>.
-                ]]>
-                </retire>
-                <delete>
-                <![CDATA[
-                Delete team.<br>For the sake of keeping league statistics intact you are not allowed to delete teams which have played matches. The deletion takes effect immediately, but will first be visible on <b>next page reload</b>.
-                ]]>
-                </delete>
+                <hire_player> <![CDATA[ Hire a new player.<br> Hiring a player as a journeyman is free, but only players from a 0-16 allowed position on your team's roster are hire-able as journeymen. ]]> </hire_player>
+                <hire_journeyman> <![CDATA[ Hire one of your journeymen to permanently play on your team. ]]> </hire_journeyman>
+                <fire_player> <![CDATA[ Fire a player. Refund rate: ]]> </fire_player>
+                <unbuy_player> <![CDATA[ Regret hiring a player. 100% refund.<br> This is only possible for players which have not participated in any matches. ]]> </unbuy_player>
+                <rename_player> <![CDATA[ Rename a player. ]]> </rename_player>
+                <renumber_player> <![CDATA[ Renumber a player. ]]> </renumber_player>
+                <rename_team> <![CDATA[ Rename your team. ]]> </rename_team>
+                <buy_goods> <![CDATA[ Buy team goods. ]]> </buy_goods>
+                <buy_goods_warn> <![CDATA[ <br><br>Please note that re-roll prices are currently <font color='red'><b>doubled</b></font>.<br>If your intention is to buy a non-doubled RR, then buy it anyway and reclaim the lost gold by asking an admin to reinsert the overcharged amount. ]]> </buy_goods_warn>
+                <drop_goods> <![CDATA[ Let go/drop of team goods for no refund. ]]> </drop_goods>
+                <ready_state> <![CDATA[ This team attribute allows coaches to signal other coaches/teams whether or not this team is interested in playing any matches. ]]> </ready_state>
+                <retire> <![CDATA[ Retire team.<br>Once retired the team is no longer manageable.<br>Admins can un-retire teams. The retirement takes effect immediately, but will first be visible on <b>next page reload</b>. ]]> </retire>
+                <delete> <![CDATA[ Delete team.<br>For the sake of keeping league statistics intact you are not allowed to delete teams which have played matches. The deletion takes effect immediately, but will first be visible on <b>next page reload</b>. ]]> </delete>
             </desc>
         </box_tm>
         
@@ -383,47 +349,14 @@
             <ach_skills>Remove ach. player skills</ach_skills>
 
             <desc>
-                <unhire_journeyman>
-                <![CDATA[
-                Regret permanently hiring a journeyman.<br>
-                This only works on players from a 0-16 allowed position on your team's roster.
-                ]]>
-                </unhire_journeyman>
-                <unsell_player>
-                <![CDATA[
-                Regret firing a player.
-                ]]>
-                </unsell_player>
-                <unbuy_goods>
-                <![CDATA[
-                Regret buying team goods.
-                ]]>
-                </unbuy_goods>
-                <bank>
-                <![CDATA[
-                Make changes to team's treasury.
-                ]]>
-                </bank>
-                <spp>
-                <![CDATA[
-                Manage a player's extra SPP.
-                ]]>
-                </spp>
-                <dval>
-                <![CDATA[
-                Change a player's value by a certain amount.
-                ]]>
-                </dval>
-                <extra_skills>
-                <![CDATA[
-                Manage a player's extra skills.
-                ]]>
-                </extra_skills>
-                <ach_skills>
-                <![CDATA[
-                Remove a players achieved skills. This makes the player able to rechoose a skill.
-                ]]>
-                </ach_skills>
+                <unhire_journeyman> <![CDATA[ Regret permanently hiring a journeyman.<br> This only works on players from a 0-16 allowed position on your team's roster. ]]> </unhire_journeyman>
+                <unsell_player> <![CDATA[ Regret firing a player. ]]> </unsell_player>
+                <unbuy_goods> <![CDATA[ Regret buying team goods. ]]> </unbuy_goods>
+                <bank> <![CDATA[ Make changes to team's treasury. ]]> </bank>
+                <spp> <![CDATA[ Manage a player's extra SPP. ]]> </spp>
+                <dval> <![CDATA[ Change a player's value by a certain amount. ]]> </dval>
+                <extra_skills> <![CDATA[ Manage a player's extra skills. ]]> </extra_skills>
+                <ach_skills> <![CDATA[ Remove a players achieved skills. This makes the player able to rechoose a skill. ]]> </ach_skills>
             </desc>
         </box_admin>
     </team>
@@ -453,6 +386,18 @@
             <quarter>Quarter-finals</quarter>
             <rnd16>Round of 16</rnd16>
             <rnd>Round</rnd>
+            <rnd1>Round 1</rnd1>
+            <rnd2>Round 2</rnd2>
+            <rnd3>Round 3</rnd3>
+            <rnd4>Round 4</rnd4>
+            <rnd5>Round 5</rnd5>
+            <rnd6>Round 6</rnd6>
+            <rnd7>Round 7</rnd7>
+            <rnd8>Round 8</rnd8>
+            <rnd9>Round 9</rnd9>
+            <rnd10>Round 10</rnd10>
+            <rnd11>Round 11</rnd11>
+            <rnd12>Round 12</rnd12>
         </roundtypes>
         
         <matchdelete><![CDATA[Are you sure you want to delete the match?\n\nPLEASE NOTE:\nUnless the match has not yet been played this action is not reversible and will affect the contents of the subsequent match reports for both teams.\nIt is advised against deleting non-test matches unless you know what you are doing.]]></matchdelete>
@@ -483,17 +428,26 @@
             <tv>TVs</tv>
             
         <summary>Game summary</summary>
-        <usedjourney>Match cannot be saved until you decide the fate of the used journeymen on the team roster page</usedjourney>
+
+        <!-- Match report table header -->
+        <mvp>Mvp</mvp>
+        <cp>Cp</cp>
+        <bh>Bh</bh>
+        <si>Si</si>
+        <ki>Ki</ki>
+        <ir1>IR 1</ir1>
+        <ir2>IR 2</ir2>
+        <ir3>IR 3</ir3>
+        <inj>Inj</inj>
+        <ageing1>Ageing 1</ageing1>
+        <ageing2>Ageing 2</ageing2>
+
     </report>
 </matches>
 
-<rules>
-    <!-- None -->
-</rules>
+<rules> </rules>
 
-<about>
-    <!-- None -->
-</about>
+<about> </about>
 
 <!-- NOTE: Translation is NOT supplied for all admin pages. -->
 <admin>
@@ -521,6 +475,122 @@
             <as_type>Match type</as_type>
     </schedule>
 </admin>
+
+<race>
+  <amazon>Amazon</amazon>
+  <chaos>Chaos</chaos>
+  <chaosdwarf>Chaos Dwarf</chaosdwarf>
+  <darkelf>Dark Elf</darkelf>
+  <dwarf>Dward</dwarf>
+  <elf>Elf</elf>
+  <goblin>Goblin</goblin>
+  <halfling>Halfling</halfling>
+  <highelf>High Elf</highelf>
+  <human>Human</human>
+  <khemri>Khemri</khemri>
+  <lizardman>Lizardman</lizardman>
+  <orc>Orc</orc>
+  <necromantic>Necromantic</necromantic>
+  <norse>Norse</norse>
+  <nurgle>Nurgle</nurgle>
+  <ogre>Ogre</ogre>
+  <undead>Undead</undead>
+  <vampire>Vampire</vampire>
+  <skaven>Skaven</skaven>
+  <woodelf>Wood Elf</woodelf>
+  <chaospact>Chaos Pact</chaospact>
+  <underworld>Underworld</underworld>
+  <slann>Slann</slann>
+</race>
+
+<position>
+  <linewoman>Linewoman</linewoman>
+  <thrower>Thrower</thrower>
+  <catcher>Catcher</catcher>
+  <blitzer>Blitzer</blitzer>
+
+  <beastman>Beastman</beastman>
+  <chaoswarrior>Chaos warrior</chaoswarrior>
+  <minotaur>Minotaur</minotaur>
+
+  <marauder>Marauder</marauder>
+  <goblinrenegade>Goblin renegade</goblinrenegade>
+  <skavenrenegade>Skaven renegade</skavenrenegade>
+  <darkelfrenegade>Dark elf renegade</darkelfrenegade>
+  <chaostroll>Chaos troll</chaostroll>
+  <chaosogre>Chaos ogre</chaosogre>
+  <necromanticwerewolf>Necromantic werewolf</necromanticwerewolf>
+  <norsewerewolf>Norse werewolf</norsewerewolf>
+  <yhetee>Yhetee</yhetee>
+
+  <hobgoblin>Hobgoblin</hobgoblin>
+  <chaosdwarfblocker>Chaos dwarf blocker</chaosdwarfblocker>
+  <bullcentaur>Bull centaur</bullcentaur>
+
+  <lineman>Lineman</lineman>
+  <runner>Runner</runner>
+  <assassin>Assassin</assassin>
+  <witchelf>Witchelf</witchelf>
+
+  <blocker>Blocker</blocker>
+  <trollslayer>Troll slayer</trollslayer>
+  <deathroller>Deathroller</deathroller>
+
+  <goblin>Goblin</goblin>
+  <bombardier>Bombardier</bombardier>
+  <pogoer>Pogoer</pogoer>
+  <looney>Looney</looney>
+  <fanatic>Fanatic</fanatic>
+  <troll>Troll</troll>
+
+  <halfling>Halfling</halfling>
+  <treeman>Treeman</treeman>
+
+  <ogre>Ogre</ogre>
+
+  <skeleton>Skeleton</skeleton>
+  <throra>Throra</throra>
+  <blitzra>Blitzra</blitzra>
+  <mummy>Mummy</mummy>
+  <tombguardian>Tomb guardian</tombguardian>
+
+  <skink>Skink</skink>
+  <saurus>Saurus</saurus>
+  <kroxigor>Kroxigor</kroxigor>
+
+  <blackorcblocker>Black orc blocker</blackorcblocker>
+
+  <zombie>Zombie</zombie>
+  <ghoul>Ghoul</ghoul>
+  <wight>Wight</wight>
+  <fleshgolem>Flesh golem</fleshgolem>
+  <werewolf>Werewolf</werewolf>
+
+  <berserker>Berserker</berserker>
+  <ulfwerener>Ulfwerener</ulfwerener>
+  <snowtroll>Snow troll</snowtroll>
+
+  <rotter>Rotter</rotter>
+  <pestigor>Pestigor</pestigor>
+  <nurglewarrior>Nurgle warrior</nurglewarrior>
+  <beastofnurgle>Beast of nurgle</beastofnurgle>
+
+  <underworldgoblin>Underworld goblin</underworldgoblin>
+  <skavenlineman>Skaven lineman</skavenlineman>
+  <skaventhrower>Skaven thrower</skaventhrower>
+  <skavenblitzer>Skaven blitzer</skavenblitzer>
+  <warpstonetroll>Warp stone troll</warpstonetroll>
+
+  <snotling>Snotling</snotling>
+
+  <thrall>Thrall</thrall>
+  <vampire>Vampire</vampire>
+
+  <gutterrunner>Gutter runner</gutterrunner>
+  <ratogre>Rat ogre</ratogre>
+
+  <wardancer>War dancer</wardancer>
+</position>
 
 </en-GB>
 
@@ -1509,424 +1579,503 @@
 
 </de-DE>
 
+
 <fr-FR>
+
 <!-- Commonly used strings -->
 <common>
-    <notitle>Saisir un titre</notitle>
-    <nobody>--Vide--</nobody>
-    <submit>Soumettre</submit>
-    <save>Enregistrer</save>
-    <create>Creer</create>
-    <delete>Effacer</delete>
-    <edit>Editer</edit>
-    <view>Voir</view>
-    <back>Retour</back>
-    <yes>Oui</yes>
-    <no>Non</no>
-    <none>Rien</none>
-    <reset>Reset</reset>
-    <lock>Verouille</lock>
-    <locked>Verouille</locked>
-    <finished>Terminer</finished>
-    <unlock>Deverouiller</unlock>
-    <add>Ajouter</add>
-    <remove>Retirer</remove>
-    <next>Suivant</next>
-    <previous>Precedent</previous>
-    <name>Nom</name>
-    <status>Status</status>
-    <desc>Description</desc>
-    <upload>Upload</upload>
-    <all>Tous</all>
-    <select>Selectionner</select>
-    <stats>Statistiques</stats>
-    <general>General</general>
-    <value>Valeur</value>
-    <amount>Montant</amount>
-    <ach>Succes</ach>
-    <page>Page</page>
-    <retired>Retraite</retired>
-    <skills>Talents</skills>
-    <injs>Blessures</injs>
-    <pos>Position</pos>
-    <price>Prix</price>
-    <number>Numero</number>
-    <opponent>Adversaire</opponent>
-    <needhelp>Besoin d'aide?</needhelp>
-    <picof>Image de</picof>
-    <about>A propos</about>
-    <recentmatches>Matchs recents</recentmatches>
-    <upcomingmatches>Matchs futurs</upcomingmatches>
-    <dateplayed>Date joue</dateplayed>
-    <datecreated>Date cree</datecreated>
-    <home>Accueil</home>
-    <away>Visiteur</away>
-    <score>Score</score>
-    <gate>Portail</gate>
-    <result>Resultat</result>
-    <starhh>Historique des stars a louer</starhh>
-    <merchh>Historique des mercenaires a louer</merchh>
-    <match>Match</match>
-    <tournament>Tournois</tournament>
-    <division>Division</division>
-    <league>Ligue</league>
-    <player>Joueur</player>
-    <players>Joueurs</players>
-    <team>Equipe</team>
-    <teams>Equipes</teams>
-    <coach>Coach</coach>
-    <coaches>Coachs</coaches>
-    <race>Race</race>
-    <races>Races</races>
-    <star>Star</star>
-    <stars>Stars</stars>
-    <won>Victoires</won>
-    <lost>Defaites</lost>
-    <draw>Nuls</draw>
-
-    <streaks>Periodes</streaks>
-    <played>Jouee</played>
-    <playedtours>Tours joues</playedtours>
-    <wontours>Tours gagnes</wontours>
-    <ready>Pret</ready>
-    <dead>Mort</dead>
-    <sold>Vendu</sold>
-    <bought>Achete</bought>
-    <td>Touchdowns</td>
-    <intcpt>Interceptions</intcpt>
-    <cp>Reussites</cp>
-    <ki>Tues</ki>
-    <bh>Mauvaise blessure</bh>
-    <si>Gravement blesse</si>
-    <cas>Pertes</cas>
-    <mvp>Meilleur joueur</mvp>
-    <pms>Afficher les stats des matchs</pms>
-    <ats>Afficher toutes les stats</ats>
-    <uploadnew>Envoyer une nouvelle image</uploadnew>
-    <notice_simul>&lt;i&gt;Note&lt;/i&gt;: Les tables ci-dessous sont triees simultanement.</notice_simul>
-    <notice_spp>&lt;i&gt;Note&lt;/i&gt;: &lt;b&gt;Si&lt;/b&gt; les stars peuvent gagner des competences, ils auront le montant correspondant dans la colonne.</notice_spp>
-    <sortedagainst>Trie contre</sortedagainst>
-    <!-- nodeSelector() -->
-    <displayfrom>Afficher depuis</displayfrom>
-    <type>Type</type>
-    <active>Actif</active>
-    <alltime>Historique</alltime>
-    <sgrp>Groupe de stats</sgrp>
-    <having>Avec</having>
-    <!-- ES -->
-    <extrastats>Stats supplementaires</extrastats>
-    <stat>Stat</stat>
-    <!-- use "all-time" string from nodeSelect() translation -->
-    <matchavg>Match&amp;nbsp;moy.</matchavg>
-    <!-- "Match avg." -->
+        <notitle>Saisir un titre</notitle>
+        <nobody>--Vide--</nobody>
+        <submit>Soumettre</submit>
+        <save>Enregistrer</save>
+        <create>Créer</create>
+        <delete>Effacer</delete>
+        <edit>Editer</edit>
+        <view>Voir</view>
+        <back>Retour</back>
+        <yes>Oui</yes>
+        <no>Non</no>
+        <none>Rien</none>
+        <reset>Reset</reset>
+        <lock>Verrouiller</lock>
+        <locked>Verrouillé</locked>
+        <finished>Terminer</finished>
+        <unlock>Déverrouiller</unlock>
+        <add>Ajouter</add>
+        <remove>Retirer</remove>
+        <next>Suivant</next>
+        <previous>Précédent</previous>
+        <name>Nom</name>
+        <status>Status</status>
+        <desc>Description</desc>
+        <upload>Upload</upload>
+        <all>Tous</all>
+        <select>Sélectionner</select>
+        <stats>Statistiques</stats>
+        <general>Général</general>
+        <value>Valeur</value>
+        <amount>Montant</amount>
+        <ach>Succès</ach>
+        <page>Page</page>
+        <retired>Retraite</retired>
+        <skills>Talents</skills>
+        <skill>Talent</skill>
+        <injs>Blessures</injs>
+        <pos>Position</pos>
+        <price>Prix</price>
+        <number>Numéro</number>
+        <opponent>Adversaire</opponent>
+        <reroll>Relance</reroll>
+        <apothecary>Apothicaire</apothecary>
+        <ass_coach>Coach Assistant</ass_coach>
+        <cheerleader>Pom Pom Girl</cheerleader>
+        <journeyman>Journalier</journeyman>
+        <options>Options</options>
+        <empty>Vide</empty>
+        <needhelp>Besoin d'aide ?</needhelp>
+        <picof>Image de</picof>
+        <about>A propos</about>
+        <recentmatches>Matchs récents</recentmatches>
+        <upcomingmatches>Matchs à venir</upcomingmatches>
+        <dateplayed>Date joué</dateplayed>
+        <datecreated>Date créé</datecreated>
+        <date>Date</date>
+        <home>Accueil</home>
+        <away>Visiteur</away>
+        <score>Score</score>
+        <gate>Spectateurs</gate>
+        <result>Résultat</result>
+        <starhh>Historique des stars louées</starhh>
+        <merchh>Historique des mercenaires loués</merchh>
+        <match>Match</match>
+        <round>Ronde</round>
+        <tournament>Tournoi</tournament>
+        <division>Division</division>
+        <league>Ligue</league>
+        <player>Joueur</player>
+        <players>Joueurs</players>
+        <team>Equipe</team>
+        <teams>Equipes</teams>
+        <coach>Coach</coach>
+        <coaches>Coachs</coaches>
+        <race>Race</race>
+        <races>Races</races>
+        <star>Champion</star>
+        <stars>Champions</stars>
+        <won>Victoires</won>
+        <lost>Défaites</lost>
+        <draw>Nuls</draw>
+        <streaks>Périodes</streaks>
+        <played>Jouée</played>
+        <playedtours>Tours joués</playedtours>
+        <wontours>Tours gagnés</wontours>
+        <ready>Prêt</ready>
+        <dead>Mort</dead>
+        <sold>Vendu</sold>
+        <bought>Acheté</bought>
+        <td>Touchdowns</td>
+        <intcpt>Interceptions</intcpt>
+        <cp>Réussites</cp>
+        <ki>Tués</ki>
+        <bh>Commotionnés</bh>
+        <si>Gravements blessés</si>
+        <cas>Pertes</cas>
+        <mvp>Meilleur joueur</mvp>
+        <pms>Afficher les stats des matchs</pms>
+        <ats>Afficher toutes les stats</ats>
+        <uploadnew>Envoyer une nouvelle image</uploadnew>
+        <notice_simul>&lt;i&gt;Note&lt;/i&gt;: Les tables ci-dessous sont triées simultanément.</notice_simul>
+        <notice_spp>&lt;i&gt;Note&lt;/i&gt;: &lt;b&gt;Si&lt;/b&gt; les stars peuvent gagner des compétences, elles auront le montant correspondant dans la colonne.</notice_spp>
+        <sortedagainst>Trié par</sortedagainst>
+        <confirm_box>Etes-vous sur ?</confirm_box>
+<!-- nodeSelector() -->
+        <displayfrom>Afficher depuis</displayfrom>
+        <type>Type</type>
+        <active>Actif</active>
+        <alltime>Historique</alltime>
+        <sgrp>Groupe de stats</sgrp>
+        <having>Avec</having>
+<!-- ES -->
+        <extrastats>Stats supplémentaires</extrastats>
+        <stat>Stat</stat>
+<!-- use "all-time" string from nodeSelect() translation -->
+        <matchavg>Match&amp;nbsp;moy.</matchavg>
 </common>
 <!-- Link names for menu elements -->
 <menu>
-    <login>Connexion</login>
-    <logout>Deconnexion</logout>
-    <home>Accueil</home>
-    <cc>Coin du Coach</cc>
-    <teams>Equipes</teams>
-    <coaches>Coaches</coaches>
-    <matches_menu>
-    <name>Matchs</name>
-    <!-- top level button text -->
-    <tours>Tournois</tours>
-    <recent>Matchs recents</recent>
-    <upcoming>Matchs futurs</upcoming>
-    <usersched>Programmer un match</usersched>
-    </matches_menu>
-    <statistics_menu>
-    <name>Statistiques</name>
-    <!-- top level button text -->
-    <player_stn>Position du Joueur</player_stn>
-    <team_stn>Position de l'Equipe</team_stn>
-    <coach_stn>Position du Coach</coach_stn>
-    <race_stn>Position de la Race</race_stn>
-    <star_stn>Position de la Star</star_stn>
-    </statistics_menu>
-    <admin_menu>
-    <name>Admin</name>
-    <!-- top level button text -->
-    <ld_man>Gerer: Ligues &amp; divisions</ld_man>
-    <ct_man>Gerer: Coachs &amp; equipes</ct_man>
-    <usr_man>Gerer: Utilisateurs</usr_man>
-    <tour_man>Gerer: Tournois</tour_man>
-    <import>Importer une equipe</import>
-    <schedule>Plannifier un match</schedule>
-    <nodes>Ligues, divisions et tournois</nodes>
-    <cpanel>OBBLM panneau principal</cpanel>
-    </admin_menu>
-    <plugins>Plugins</plugins>
-    <rules>Regles</rules>
-    <forum>Forum</forum>
+        <login>Connexion</login>
+        <logout>Déconnexion</logout>
+        <home>Accueil</home>
+        <cc>Coin du Coach</cc>
+        <teams>Equipes</teams>
+        <coaches>Coaches</coaches>
+<matches_menu>
+        <name>Matchs</name>
+        <tours>Tournois</tours>
+        <recent>Matchs récents</recent>
+        <upcoming>Matchs à venir</upcoming>
+        <usersched>Planifier un match</usersched>
+</matches_menu>
+<statistics_menu>
+        <name>Statistiques</name>
+        <player_stn>Position du Joueur</player_stn>
+        <team_stn>Position de l'Equipe</team_stn>
+        <coach_stn>Position du Coach</coach_stn>
+        <race_stn>Position de la Race</race_stn>
+        <star_stn>Position de la Star</star_stn>
+</statistics_menu>
+<admin_menu>
+        <name>Admin</name>
+        <nodes>Ligues, divisions, tournois</nodes>
+        <ct_man>Gérer: Coachs &amp; équipes</ct_man>
+        <usr_man>Gerer: Utilisateurs</usr_man>
+        <import>Importer une équipe</import>
+        <schedule>Planifier un match</schedule>
+        <cpanel>OBBLM panneau principal</cpanel>
+</admin_menu>
+        <plugins>Modules</plugins>
+        <rules>Règles</rules>
+        <forum>Forum</forum>
 </menu>
 <!-- Section translations -->
 <login>
-    <!-- has no <name> tag! -->
-    <loginname>Nom du Coach</loginname>
-    <passwd>Mot de passe</passwd>
-    <remember>Se rappeler de moi</remember>
-    <loginbutton>Connexion</loginbutton>
-    <forgotpass>Mot de passe oublie?</forgotpass>
-    <resetpasswdmail>Vous recevrez un email bientot</resetpasswdmail>
-    <mismatch>Le nom et l'email ne correspondent pas.</mismatch>
-    <temppasswd>Votre mot de passe temporaire est:</temppasswd>
-    <setnewpasswd>Cliquez ici pour changer votre mot de passe</setnewpasswd>
+        <loginname>Nom du Coach</loginname>
+        <passwd>Mot de passe</passwd>
+        <remember>Se souvenir de moi</remember>
+        <loginbutton>Connexion</loginbutton>
+        <forgotpass>Mot de passe oublié ?</forgotpass>
+        <resetpasswdmail>Vous aller reçevoir un email...</resetpasswdmail>
+        <mismatch>Le nom et l'email ne correspondent pas.</mismatch>
+        <temppasswd>Votre mot de passe temporaire est :</temppasswd>
+        <setnewpasswd>Cliquez ici pour changer votre mot de passe</setnewpasswd>
 </login>
 <main>
-    <!-- has no <name> tag! -->
-    <newmsg>Nouveau message</newmsg>
-    <broadcast>Envoyer un message a toutes les ligues?</broadcast>
-    <nowelcome>Vous n'avez pas mis de message d'accueil.</nowelcome>
-    <more>plus</more>
-    <posted>Poste</posted>
-    <by>par</by>
-    <lastedit>derniere edition</lastedit>
+<!-- has no <name> tag! -->
+        <newmsg>Nouveau message</newmsg>
+        <broadcast>Envoyer un message à toutes les ligues ?</broadcast>
+        <nowelcome>Vous n'avez pas mis de message d'accueil.</nowelcome>
+        <more>plus</more>
+        <posted>Publié</posted>
+        <by>par</by>
+        <lastedit>Dernière édition</lastedit>
+        <infocus>Equipe du jour</infocus>
 </main>
 <cc>
-    <new_team>Nouvelle Equipe</new_team>
-    <!-- <stats> defined in <common> block -->
-    <coach_teams>Equipes du Coach</coach_teams>
-    <profile>Profile</profile>
-    <photo>Image du Coach</photo>
-    <coach_info>Information du Coach</coach_info>
-    <note_persinfo>Informations personnels reserves aux utilisateurs connectes</note_persinfo>
-    <new>Nouveau</new>
-    <old>Ancien</old>
-    <current>Actuel</current>
-    <chpasswd>Changer le mot de passe</chpasswd>
-    <chphone>Changer le numero de telephone</chphone>
-    <chmail>Changer l'email</chmail>
-    <chlogin>Changer le login (connexion)</chlogin>
-    <chname>Changer le nom complet</chname>
-    <chtheme>Changer le theme OBBLM</chtheme>
-    <chlang>Changer de langue</chlang>
-    <chhomelid>Changer de league par defaut</chhomelid>
+        <new_team>Nouvelle équipe</new_team>
+        <!-- <stats> defined in <common> block -->
+        <coach_teams>Equipes du Coach</coach_teams>
+        <profile>Profile</profile>
+        <photo>Image du Coach</photo>
+        <coach_info>Information du Coach</coach_info>
+        <note_persinfo>Informations personnelles visibles uniquement aux utilisateurs connectés</note_persinfo>
+        <new>Nouveau</new>
+        <old>Ancien</old>
+        <current>Actuel</current>
+        <chpasswd>Changer le mot de passe</chpasswd>
+        <chphone>Changer le numéro de telephone</chphone>
+        <chmail>Changer l'email</chmail>
+        <chlogin>Changer le login (connexion)</chlogin>
+        <chname>Changer le nom complet</chname>
+        <chtheme>Changer le thème OBBLM</chtheme>
+        <chlang>Changer de langue</chlang>
+        <chhomelid>Changer de ligue par défaut</chhomelid>
 </cc>
 <profile>
-    <coach>
-    <teams_total>Nombre d'Equipes</teams_total>
-    <teams_active>Equipes actives</teams_active>
-    <teams_notready>Equipes non pretes</teams_notready>
-    <teams_retired>Equipes a la retraite</teams_retired>
-    <avgteam_elo>Moyenne ELO par equipe</avgteam_elo>
-    <avgteam_tv>Valeur moyenne</avgteam_tv>
-    <avgteam_ff>Popularite moyenne</avgteam_ff>
-    </coach>
-    <star>
-    <hiredby>Engagee par</hiredby>
-    </star>
-    <player>
-    <about>A propos du joueur</about>
-    <profile>Profil du joueur</profile>
-    <best>Meilleur match</best>
-    </player>
-    <team>
-    <!-- sub secs. -->
-    <viewtoggle>Passer en vue Liste</viewtoggle>
-    <!-- Team management sec. -->
-    <tmanage>Gestion d'Equipe + info</tmanage>
-    <!-- About sec. -->
-    <logo>Logo d'Equipe</logo>
-    <stad>Stade de l'Equipe</stad>
-    <!-- News sec. -->
-    <news>Articles</news>
-    <tnews>Articles sur l'Equipe</tnews>
-    <wnews>Ecrire un article</wnews>
-    <nonews>Pas d'articles</nonews>
-    <!-- Recent games sec. -->
-    <!-- Star/merc HH secs. -->
-    <!-- For the three team page boxes -->
-    <box_info>
-        <title>Informations et stats sur l'Equipe</title>
+<coach>
+        <teams_total>Nombre d'équipes</teams_total>
+        <teams_active>Equipes actives</teams_active>
+        <teams_notready>Equipes non prêtes</teams_notready>
+        <teams_retired>Equipes à la retraite</teams_retired>
+        <avgteam_elo>Moyenne ELO par équipe</avgteam_elo>
+        <avgteam_tv>Valeur moyenne</avgteam_tv>
+        <avgteam_ff>Popularité moyenne</avgteam_ff>
+</coach>
+<star>
+        <hiredby>Engagé par</hiredby>
+</star>
+<player>
+        <about>A propos du joueur</about>
+        <profile>Profil du joueur</profile>
+        <best>Meilleur match</best>
+        <injhist>Historique des blessures</injhist>
+</player>
+<team>
+<!-- sub secs. -->
+        <viewtoggle>Passer en vue Liste</viewtoggle>
+<!-- Team management sec. -->
+        <tmanage>Gestion d'équipe + info</tmanage>
+<!-- About sec. -->
+        <logo>Logo d'équipe</logo>
+        <stad>Stade de l'équipe</stad>
+<!-- News sec. -->            
+        <news>Articles</news>
+        <tnews>Articles sur l'équipe</tnews>
+        <wnews>Ecrire un article</wnews>
+        <nonews>Pas d'articles</nonews>
+<!-- Games sec. -->
+        <games>Matchs récents et à venir</games>
+<!-- Star/merc HH secs. -->
+<!-- For the three team page boxes -->
+<box_info>
+        <title>Informations et stats sur l'équipe</title>
         <ltour>Dernier&amp;nbsp;tour</ltour>
-    </box_info>
-    <box_tm>
-        <title>Gestion de l'Equipe</title>
+</box_info>
+<box_tm>
+        <title>Gestion de l'équipe</title>
         <hire_player>Embaucher un joueur</hire_player>
         <hire_journeyman>Embaucher un journalier</hire_journeyman>
         <fire_player>Virer un joueur</fire_player>
-        <unbuy_player>Desembaucher un joueur</unbuy_player>
+        <unbuy_player>Désembaucher un joueur</unbuy_player>
         <rename_player>Renommer un joueur</rename_player>
-        <renumber_player>Renumeroter un joueur</renumber_player>
-        <rename_team>Renommer une equipe</rename_team>
-        <buy_goods>Acheter des avantages d'Equipe</buy_goods>
-        <drop_goods>Se separer d'avantages d'Equipe</drop_goods>
-        <ready_state>Pret ou pas?</ready_state>
-        <retire>Mettre l'Equipe en retraite</retire>
-        <delete>Effacer l'Equipe</delete>
-        <!-- Strings used within action boxes -->
-        <fdescs>
+        <renumber_player>Re-numéroter un joueur</renumber_player>
+        <rename_team>Renommer une équipe</rename_team>
+        <buy_goods>Acheter des avantages d'équipe</buy_goods>
+        <drop_goods>Se séparer d'avantages d'équipe</drop_goods>
+        <ready_state>Prêt ou pas ?</ready_state>
+        <retire>Mettre l'équipe en retraite</retire>
+        <delete>Effacer l'équipe</delete>
+<!-- Strings used within action boxes -->
+<fdescs>
         <thing>Cible</thing>
-        <teamready>Equipe Prete?</teamready>
-        <retire>Retraiter l'Equipe?</retire>
-        <suredeleteteam>Certain de vouloir effacer l'Equipe?</suredeleteteam>
-        </fdescs>
-        <desc>
-        <hire_player>
-            Embaucher un nouveau joueur.&lt;br&gt;
-            Embaucher un journalier est gratuit, mais seul la position 0-16 est eligible.
-            </hire_player>
-        <hire_journeyman>
-            Embaucher un journalier dans l'Equipe en tant que membre definitif.
-            </hire_journeyman>
-        <fire_player>
-            Virer un joueur. Remboursement de :
-            </fire_player>
-        <unbuy_player>
-            Erreur sur l'embauche d'un joueur. Rembourser a 100%.&lt;br&gt;
-            Uniquement sur les joueurs n'ayant jamais joue de match.
-            </unbuy_player>
-        <rename_player>
-            Renommer un joueur.
-            </rename_player>
-        <renumber_player>
-            Renumeroter un joueur.
-            </renumber_player>
-        <rename_team>
-            Renommer votre Equipe.
-            </rename_team>
-        <buy_goods>
-            Acheter des biens d'Equipe.
-            </buy_goods>
-        <buy_goods_warn>
-            &lt;br&gt;&lt;br&gt;Notez que les relances d'Equipes coutent le &lt;font color='red'&gt;&lt;b&gt;double&lt;/b&gt;&lt;/font&gt;.&lt;br&gt;Si vous souhaitez acheter une relance au prix de base, demandez a l'Administrateur un remboursement de la difference.
-            </buy_goods_warn>
-        <drop_goods>
-            Se separer de biens sans remboursement.
-            </drop_goods>
-        <ready_state>
-            Cet attribut d'Equipe indique que l'Equipe accepte les matchs ou non.
-            </ready_state>
-        <retire>
-            Retraiter l'Equipe.&lt;br&gt;Une fois a la retraite, l'Equipe n'est plus gerable.&lt;br&gt;Seul l'Admin peut remettre l'Equipe en service actif. La mise a la retraite est immediate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;.
-            </retire>
-        <delete>
-            Effacer l'Equipe.&lt;br&gt;Pour le bien des statistiques, vous ne pouvez plus effacer d'Equipe ayant jouer un match. L'effacement est immediat mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;.
-            </delete>
-        </desc>
-    </box_tm>
-    <box_admin>
+        <teamready>Equipe prête ?</teamready>
+        <retire>Mise en retraite équipe ?</retire>
+        <suredeleteteam>Etes-vous certain de vouloir effacer l\'équipe ?</suredeleteteam>
+</fdescs>
+<desc>
+        <hire_player> Embaucher un nouveau joueur.&lt;br&gt; Embaucher un journalier est gratuit, mais seule la position 0-16 est eligible. </hire_player>
+        <hire_journeyman> Embaucher un des journaliers de l'équipe en tant que membre définitif. </hire_journeyman>
+        <fire_player> Virer un joueur. Remboursement de : </fire_player>
+        <unbuy_player> Erreur sur l'embauche d'un joueur. Rembourser à 100%.&lt;br&gt; Uniquement sur un joueur n'ayant jamais joué de match. </unbuy_player>
+        <rename_player> Renommer un joueur. </rename_player>
+        <renumber_player> Renuméroter un joueur. </renumber_player>
+        <rename_team> Renommer votre équipe. </rename_team>
+        <buy_goods> Acheter des biens d'équipe. </buy_goods>
+        <buy_goods_warn> &lt;br&gt;&lt;br&gt;Notez que les relances d'équipes coutent le &lt;font color='red'&gt;&lt;b&gt;double&lt;/b&gt;&lt;/font&gt;.&lt;br&gt;Si vous souhaitez acheter une elance au prix de base, demandez à l'Administrateur un remboursement de la différence. </buy_goods_warn>
+        <drop_goods> Se séparer de biens sans remboursement. </drop_goods>
+        <ready_state> Cet attribut d'équipe indique que l'équipe accepte les matchs ou non. </ready_state>
+        <retire> Mise en retraite de l'équipe.&lt;br&gt;Une fois à la retraite, l'équipe n'est plus gérable.&lt;br&gt;Seul l'Admin peut remettre l'équipe en service actif. La mise à la retraite est immédiate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </retire>
+        <delete> Effacer l'équipe.&lt;br&gt;Pour le bien des statistiques, vous ne pouvez plus effacer d'équipe ayant joué un match. L'effacement est immédiat mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </delete>
+</desc>
+</box_tm>
+<box_admin>
         <title>Outils d'Admin</title>
-        <unhire_journeyman>Desembaucher un Journalier</unhire_journeyman>
-        <unsell_player>Re-embaucher un Joueur</unsell_player>
-        <unbuy_goods>Desacheter un bien d'Equipe.</unbuy_goods>
+        <unhire_journeyman>Désembaucher un Journalier</unhire_journeyman>
+        <unsell_player>Ré-embaucher un Joueur</unsell_player>
+        <unbuy_goods>Désacheter un bien d'équipe.</unbuy_goods>
         <bank>Compte en banque</bank>
-        <chown>Changer de proprietaire</chown>
-        <spp>Gerer l'Experience bonus</spp>
-        <dval>Gerer la valeur bonus des joueurs</dval>
-        <extra_skills>Gerer les talents supplémentaires des joueurs</extra_skills>
+        <spp>Gérer l'expérience bonus</spp>
+        <dval>Gérer la valeur bonus des joueurs</dval>
+        <extra_skills>Gérer les talents suppl. des joueurs</extra_skills>
         <ach_skills>Retirer des talents de joueurs</ach_skills>
-        <desc>
-        <unhire_journeyman>
-            Revenir sur l'embauche d'un journalier en tant que Joueurs.&lt;br&gt;
-            Ne fonctionne que sur les positions 0-16 de la fiche d'Equipe.
-            </unhire_journeyman>
-        <unsell_player>
-            Revenir sur le licensiement d'un joueur.
-            </unsell_player>
-        <unbuy_goods>
-            Revenir sur l'achat de bien d'Equipe.
-            </unbuy_goods>
-        <bank>
-            Modifier la tresorerie d'Equipe.
-            </bank>
-        <chown>
-            Changer le proprietaire de l'Equipe.
-            </chown>
-        <spp>
-            Gerer l'Experience bonus d'un Joueur.
-            </spp>
-        <dval>
-            Changer la valeur d'un joueur d'un montant.
-            </dval>
-        <extra_skills>
-            Gerer les talents supplementaires d'un joueur.
-            </extra_skills>
-        <ach_skills>
-            Retirer un talent selectionner. Cela permet de choisir un nouveau talent en remplacement.
-            </ach_skills>
-        </desc>
-    </box_admin>
-    </team>
+<desc>
+        <unhire_journeyman> Revenir sur l'embauche d'un journalier en tant que Joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
+        <unsell_player> Revenir sur le licenciement d'un joueur. </unsell_player> <unbuy_goods> Revenir sur l'achat de bien d'équipe. </unbuy_goods>
+        <unbuy_goods>Revenir sur l'achat de biens d'équipe</unbuy_goods>
+        <bank> Modifier la trésorerie d'équipe. </bank>
+        <spp> Gérer l'éxperience bonus d'un Joueur. </spp>
+        <dval> Changer la valeur d'un joueur d'un montant. </dval>
+        <extra_skills> Gérer les talents supplémentaires d'un joueur. </extra_skills>
+        <ach_skills> Retirer un talent selectionné. Cela permet de choisir un nouveau talent en remplacement. </ach_skills>
+</desc>
+</box_admin>
+</team>
 </profile>
 <standings>
-    <team>
-    <tblTitle2>Position historique, suite (Position d'Equipe)</tblTitle2>
-    </team>
+<team>
+        <tblTitle2>Position historique, suite (Position d'équipe)</tblTitle2>
+</team>
 </standings>
 <matches>
-    <tours>
-    <!-- none used - all are in "common". -->
-    </tours>
-    <tourmatches>
-    <roundtypes>
+<tours>
+        <showhidden>Afficher les éléments cachés</showhidden>
+<!-- none used - all are in "common". -->
+</tours>
+<usersched>
+        <selecttour>Selectionner un tournoi</selecttour>
+</usersched>
+<tourmatches>
+<roundtypes>
         <final>Finale</final>
         <thirdPlayoff>Finale des perdants</thirdPlayoff>
         <semi>Demi-finale</semi>
         <quarter>Quart de finale</quarter>
         <rnd16>16eme de finale</rnd16>
-        <rnd>Tour</rnd>
-    </roundtypes>
-    <matchdelete>Es te vous sur de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n'a pas encore ete joue, cette action est IRREVERSIBLE et affectera tout les matchs suivants pour les deux equipes.\nIl est conseiller de n'effacer un match que si vous etes conscient des risques.</matchdelete>
-    <reset_notice>Es te vous sur de vouloir REINITIALISER ce match?\n\nATTENTION:\nCette action est IRREVERSIBLE et affectera tout les matchs suivants pour les deux equipes.</reset_notice>
-    </tourmatches>
-    <!-- Subsection: match report(s) -->
-    <report>
-    <!-- General -->
-    <clickforhelp>Besoin d'Aide?</clickforhelp>
-    <notplayed>Pas encore joue</notplayed>
-    <report>repporter</report>
-    <!-- <help></help>  NOT TRANSLATED - defaults to english --> 
-    <!-- Subsecs of team page -->
-    <info>Informations sur les parties</info>
-    <stadium>Stade</stadium>
-    <fans>Fans (Spectateurs)</fans>
-    <results>Resultat du match</results>
-    <treas>Tresorerie</treas>
-    <ff>Facteur de Popularite</ff>
-    <smp>Point de fair-play</smp>
-    <pts>points</pts>
-    <tcas>Pertes total de l'Equipe</tcas>
-    <fame>FAME</fame>
-    <tv>VE</tv>
-    <summary>Resume du match</summary>
-    </report>
+        <rnd>Round</rnd>
+        <rnd1>Round 1</rnd1>
+        <rnd2>Round 2</rnd2>
+        <rnd3>Round 3</rnd3>
+        <rnd4>Round 4</rnd4>
+        <rnd5>Round 5</rnd5>
+        <rnd6>Round 6</rnd6>
+        <rnd7>Round 7</rnd7>
+        <rnd8>Round 8</rnd8>
+        <rnd9>Round 9</rnd9>
+        <rnd10>Round 10</rnd10>
+        <rnd11>Round 11</rnd11>
+        <rnd12>Round 12</rnd12>
+</roundtypes>
+        <matchdelete>Êtes-vous sur(e) de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n\'a pas encore ete joué, cette action est IRREVERSIBLE et affectera tout les matchs suivants pour les deux equipes.\nIl est conseillé de n\'effacer un match que si vous êtes conscient des risques.</matchdelete>
+        <reset_notice>Êtes-vous sur(e) de vouloir REINITIALISER ce match?\n\nATTENTION:\nCette action est IRREVERSIBLE et affectera tous les matchs suivants pour les deux équipes.</reset_notice>
+</tourmatches>
+<!-- Subsection: match report(s) -->
+<report>
+<!-- General -->
+        <clickforhelp>Besoin d'aide ?</clickforhelp>
+        <notplayed>Pas encore joué</notplayed>
+        <report>Rapporteur</report>
+        <chround>Changer de round</chround>
+<!-- Subsecs of team page -->
+        <info>Informations sur les parties</info>
+        <stadium>Stade</stadium>
+        <fans>Fans (Spectateurs IRL)</fans>
+        <results>Résultat du match</results>
+        <treas>Trésorerie</treas>
+        <ff>Popularité</ff>
+        <smp>Point de fair-play</smp>
+        <pts>points</pts>
+        <tcas>Pertes totales de l'équipe</tcas>
+        <fame>FAME</fame>
+        <tv>VE</tv>
+        <summary>Compte-rendu du match</summary>
+<!-- Match report table header -->
+        <mvp>Jpv</mvp>
+        <cp>Réu</cp>
+        <bh>Bl L</bh>
+        <si>Bl G</si>
+        <ki>Tué</ki>
+        <ir1>JEx1</ir1>
+        <ir2>JEx2</ir2>
+        <ir3>JEx3</ir3>
+        <inj>Blessure</inj>
+        <ageing1>Vieillesse 1</ageing1>
+        <ageing2>Vieillesse 2</ageing2>
+</report>
 </matches>
-<rules>
-    <!-- None -->
-</rules>
-<about>
-    <!-- None -->
-</about>
+        <!-- <rules> </rules> -->
+        <!-- <about> </about> -->
 <!-- NOTE: Translation is NOT supplied for all admin pages. -->
 <admin>
-    <!-- Common -->
-    <prefixes>Les symboles + et - signifient moins de et plus de, respectivement</prefixes>
-    <!-- Subsec: Schedule matches -->
-    <schedule>
-    <!-- <help></help> NOT TRANSLATED - defaults to english --> 
-    <create_LD>Merci de creer une Ligue et une Division avant de prevoir des matchs</create_LD>
-    <tour_name>Nom du Tournois</tour_name>
-    <rank_sys>Methode de Classement</rank_sys>
-    <tour_type>Type de Tournois</tour_type>
-    <add_team>Ajouter une Equipe</add_team>
-    <teams_selected>Choisir une Equipe</teams_selected>
-    <!-- Tour Types (TT) -->
-    <TT_FFA>FFA &lt;i&gt;(Free For All = "Chacun fait ce qu'il veut")&lt;/i&gt;</TT_FFA>
-    <TT_RR>Par ronde</TT_RR>
-    <!-- RR -->
-    <RR_settings>Parametre des rondes</RR_settings>
-    <rrobin_rnds>&lt;b&gt;Fait l'entre crochet N fois:&lt;/b&gt;</rrobin_rnds>
-    <!-- FFA -->
-    <FFA_settings>Parametre du FFA</FFA_settings>
-    <add_match>Ajouter un match pour...</add_match>
-    <new_tour>Ajouter un tournois FFA</new_tour>
-    <as_type>De type...</as_type>
-    </schedule>
+<!-- Common -->
+        <prefixes>Les symboles + et - signifient moins de et plus de</prefixes>
+<!-- Subsec: Schedule matches -->
+<schedule>
+        <create_LD>Merci de créer une Ligue et une Division avant de prévoir des matchs</create_LD>
+        <tour_name>Nom du Tournoi</tour_name>
+        <rank_sys>Méthode de Classement</rank_sys>
+        <sched_type>Planning</sched_type>
+        <add_team>Ajouter une équipe</add_team>
+        <teams_selected>Choisir une équipe</teams_selected>
+<!-- Tour Types (TT) -->
+        <TT_FFA>FFA &lt;i&gt;(Free For All = "Chacun fait ce qu'il veut")&lt;/i&gt;</TT_FFA>
+        <TT_FFA_SINGLE>FFA &lt;i&gt;(Free For All = "Chacun fait ce qu'il veut")&lt;/i&gt; dans un tournois déjà existant</TT_FFA_SINGLE>
+        <TT_RR>Par ronde</TT_RR>
+<!-- RR -->
+        <rrobin_rnds>&lt;b&gt;Fait l'entre crochet N fois:&lt;/b&gt;</rrobin_rnds>
+        <times>répétition</times>
+<!-- FFA -->
+        <in_tour>Dans le tournoi</in_tour>
+        <new_tour>Ajouter un tournois FFA</new_tour>
+        <as_type>De type...</as_type>
+</schedule>
 </admin>
+<race>
+        <amazon>Amazone</amazon>
+        <chaos>Chaos</chaos>
+        <chaosdwarf>Nain du Chaos</chaosdwarf>
+        <darkelf>Elfe noir</darkelf>
+        <dwarf>Nain</dwarf>
+        <elf>Elfe Pro</elf>
+        <goblin>Gobelin</goblin>
+        <halfling>Halfling</halfling>
+        <highelf>Haut-Elfe</highelf>
+        <human>Humain</human>
+        <khemri>Khemri</khemri>
+        <lizardman>Homme Lézard</lizardman>
+        <orc>Orque</orc>
+        <necromantic>Nécromancien</necromantic>
+        <norse>Nordique</norse>
+        <nurgle>Nurgle</nurgle>
+        <ogre>Ogre</ogre>
+        <undead>Mort-vivant</undead>
+        <vampire>Vampire</vampire>
+        <skaven>Skaven</skaven>
+        <woodelf>Elfe Sylvain</woodelf>
+        <chaospact>Pacte du Chaos</chaospact>
+        <underworld>Monde souterrain</underworld>
+        <slann>Slann</slann>
+</race>
+<position>
+        <linewoman>Trois-quart</linewoman>
+        <thrower>Passeur</thrower>
+        <catcher>Reçeveur</catcher>
+        <blitzer>Blitzeur</blitzer>
+        <beastman>Homme-bête</beastman>
+        <chaoswarrior>Guerrier du Chaos</chaoswarrior>
+        <minotaur>Minotaure</minotaur>
+        <marauder>Maraudeur</marauder>
+        <goblinrenegade>Renégat Gobelin</goblinrenegade>
+        <skavenrenegade>Renégat Skaven</skavenrenegade>
+        <darkelfrenegade>Renégat Elf Noir</darkelfrenegade>
+        <chaostroll>Troll du Chaos</chaostroll>
+        <chaosogre>Ogre du Chaos</chaosogre>
+        <necromanticwerewolf>Loup-Garou nécromantique</necromanticwerewolf>
+        <norsewerewolf>Loup-Garou Norse</norsewerewolf>
+        <yhetee>Troll des neiges</yhetee>
+        <hobgoblin>Hobgobelin</hobgoblin>
+        <chaosdwarfblocker>Bloqueur nain du Chaos</chaosdwarfblocker>
+        <bullcentaur>Centaure Taureau</bullcentaur>
+        <lineman>Trois-quart</lineman>
+        <runner>Coureur</runner>
+        <assassin>Assassin</assassin>
+        <witchelf>Furie</witchelf>
+        <blocker>Bloqueur</blocker>
+        <trollslayer>Tueur de Troll</trollslayer>
+        <deathroller>Roule-mort</deathroller>
+        <goblin>Gobelin</goblin>
+        <bombardier>Bombardier</bombardier>
+        <pogoer>Bâton à ressort</pogoer>
+        <looney>Barjot</looney>
+        <fanatic>Fanatique</fanatic>
+        <troll>Troll</troll>
+        <halfling>Halfling</halfling>
+        <treeman>Homme-arbre</treeman>
+        <ogre>Ogre</ogre>
+        <skeleton>Squelette</skeleton>
+        <throra>Thro-ra</throra>
+        <blitzra>Blitz-ra</blitzra>
+        <mummy>Momie</mummy>
+        <tombguardian>Gardien des tombes</tombguardian>
+        <skink>Skink</skink>
+        <saurus>Saurus</saurus>
+        <kroxigor>Kroxigor</kroxigor>
+        <blackorcblocker>Bloqueur Orc Noir</blackorcblocker>
+        <zombie>Zombie</zombie>
+        <ghoul>Goules</ghoul>
+        <wight>Revenant</wight>
+        <fleshgolem>Golem de chair</fleshgolem>
+        <werewolf>Loup-Garou</werewolf>
+        <berserker>Berseker</berserker>
+        <ulfwerener>Ulfwerener</ulfwerener>
+        <snowtroll>Troll des neiges</snowtroll>
+        <rotter>Pourri</rotter>
+        <pestigor>Pestigor</pestigor>
+        <nurglewarrior>Guerrier de Nurgle</nurglewarrior>
+        <beastofnurgle>Bête de Nurgle</beastofnurgle>
+        <underworldgoblin>Gobelin</underworldgoblin>
+        <skavenlineman>Trois-quart Skaven</skavenlineman>
+        <skaventhrower>Passeur Skaven</skaventhrower>
+        <skavenblitzer>Blitzeur Skaven</skavenblitzer>
+        <warpstonetroll>Troll de Malepierre</warpstonetroll>
+        <snotling>Snotling</snotling>
+        <thrall>Serviteur</thrall>
+        <vampire>Vampire</vampire>
+        <gutterrunner>Coureur d'égout</gutterrunner>
+        <ratogre>Rat Ogre</ratogre>
+        <wardancer>Danseur de guerre</wardancer>
+</position>
+
 </fr-FR>
+
 
 <it-IT>
 
@@ -2372,6 +2521,18 @@
             <quarter>Quarti di finale</quarter>
             <rnd16>Round of 16</rnd16>
             <rnd>Round</rnd>
+            <rnd1>Round 1</rnd1>
+            <rnd2>Round 2</rnd2>
+            <rnd3>Round 3</rnd3>
+            <rnd4>Round 4</rnd4>
+            <rnd5>Round 5</rnd5>
+            <rnd6>Round 6</rnd6>
+            <rnd7>Round 7</rnd7>
+            <rnd8>Round 8</rnd8>
+            <rnd9>Round 9</rnd9>
+            <rnd10>Round 10</rnd10>
+            <rnd11>Round 11</rnd11>
+            <rnd12>Round 12</rnd12>
         </roundtypes>
         
         <matchdelete><![CDATA[Sei sicuro di voler cancellare la partita?\n\nNOTA BENE:\nA meno che la partita non sia stata ancora giocata, questa azione non è reversibile e avrà effetti sulle tabelle dei giocatori che vi partecipano.\nE' consigliato cancellare le partite solo se si sà bene cosa si sta facendo.]]></matchdelete>
