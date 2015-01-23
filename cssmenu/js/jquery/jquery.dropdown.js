@@ -29,4 +29,4 @@ $(document).ready(function(){
  });
 
 
-});Statistics
+}).Statistics
