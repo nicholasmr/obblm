@@ -58,7 +58,7 @@ EOL;
 }
 else {
     ?>
-    Please make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>
+    Please, <b>before starting the installation process</b>, make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>When ready, press the button below :<br><br>
 
     <form method="POST">
         <input type="submit" name="setup" value="Setup DB for OBBLM">
