@@ -201,6 +201,12 @@ private function _newTeam($ALLOW_EDIT)
     <?php echo $lng->getTrn('common/race');?><br>
     <select name="rid">
         <?php
+        // We need to sort the array manually because of the translation
+        foreach ($raceididx as $rid => &$rname)
+            $rname = $lng->getTrn('race/'.strtolower(str_replace(' ','', $rname)));
+        unset($rname); // very important !
+        asort($raceididx);
+        // The, we display as usual
         foreach ($raceididx as $rid => $rname)
             echo "<option value='$rid'>$rname</option>\n";
         ?>
