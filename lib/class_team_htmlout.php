@@ -88,6 +88,7 @@ public static function dispList()
         $retired = $t->retired;
         $t->retired = ($t->retired) ? '<b>'.$lng->getTrn('common/yes').'</b>' : $lng->getTrn('common/no');
         $t->rdy = ($t->rdy && !$retired) ? '<font color="green">'.$lng->getTrn('common/yes').'</font>' : '<font color="red">'.$lng->getTrn('common/no').'</font>';
+        $t->f_rname = $lng->getTrn('race/'.strtolower(str_replace(' ','', $t->f_rname)));
 
         $teams[] = $t;
     }
@@ -849,7 +850,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('common/race');?></td>
-                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?php echo $team->f_rname; ?></a></td>
+                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?=$lng->getTrn('race/'.strtolower(str_replace(' ','', $team->f_rname))); ?></a></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('common/league');?></td>

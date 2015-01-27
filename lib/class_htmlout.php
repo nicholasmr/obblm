@@ -450,6 +450,11 @@ public static function standings($obj, $node, $node_id, array $opts)
                     $PAGELENGTH = $settings['standings']['length_teams'];
                     list($objs, $PAGES) = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+$filter_race, array($PAGE, $PAGELENGTH), $sortRule, $set_avg);
             }
+
+            // Translating race name
+            foreach($objs as &$o)
+              $o['f_rname'] = $lng->getTrn('race/'.strtolower(str_replace(' ','', $o['f_rname'])));
+
             break;
 
         case STATS_RACE:
@@ -468,6 +473,10 @@ public static function standings($obj, $node, $node_id, array $opts)
                 $extra['dashed'] = array('condField' => $dash_empty, 'fieldVal' => 0, 'noDashFields' => array('name'));
             }
             list($objs, $PAGES) = Stats::getRaw(T_OBJ_RACE, $filter_node+$filter_having, false, $sortRule, $set_avg);
+
+            // Translating race name
+            foreach($objs as &$o)
+              $o['name'] = $lng->getTrn('race/'.strtolower(str_replace(' ','', $o['name'])));
 
             break;
 

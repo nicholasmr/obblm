@@ -29,12 +29,11 @@ public static function profile($rid)
     global $lng, $DEA;
     $race = new Race($rid);
     $roster = $DEA[$race->name];
-    title($race->name);
+    title($lng->getTrn('race/'.strtolower(str_replace(' ','', $race->name))));
     ?>
     <center><img src="<?php echo RACE_ICONS.'/'.$roster['other']['icon'];?>" alt="Race icon"></center>
     <ul>
-        <li>ID: <?php echo $roster['other']['race_id'];?></li>
-        <li>Re-roll cost: <?php echo $roster['other']['rr_cost']/1000;?>k</li>
+        <li><?=$lng->getTrn('common/reroll')?>: <?php echo $roster['other']['rr_cost']/1000;?>k</li>
     </ul><br>
     <?php
     $players = array();
