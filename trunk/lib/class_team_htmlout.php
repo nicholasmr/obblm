@@ -363,7 +363,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
 
         $p->skills   = '<small>'.$p->getSkillsStr(true).'</small>';
         $p->injs     = $p->getInjsStr(true);
-        $p->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$p->icon' alt='player avatar'></td><td>$p->position</td></tr></table>";
+        $p->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$p->icon' alt='player avatar'></td><td>".$lng->getTrn("position/".strtolower($lng->FilterPosition($p->position)))."</td></tr></table>";
 
         if ($DETAILED) {
             $p->mv_cas = "$p->mv_bh/$p->mv_si/$p->mv_ki";
@@ -1064,7 +1064,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                             // Show players on the select list if buyable, or if player is a potential journeyman AND team has not reached journeymen limit.
                             if (($team->isPlayerBuyable($details['pos_id']) && $team->treasury >= $details['cost']) ||
                                 (($details['qty'] == 16 || $details['qty'] == 12) && count($active_players) < $rules['journeymen_limit'])) {
-                                echo "<option value='$details[pos_id]'>" . $details['cost']/1000 . "k | $pos</option>\n";
+                                echo "<option value='$details[pos_id]'>" . $details['cost']/1000 . "k | ".$lng->GetTrn('position/'.strtolower($lng->FilterPosition($pos)))."</option>\n";
                                 $DISABLE = false;
                             }
                         }
@@ -1084,7 +1084,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         ?>
                         </select>
                         <br><br>
-                        Journeyman? <input type="checkbox" name="as_journeyman" value="1">
+                        <?=$lng->GetTrn('common/journeyman')?> ? <input type="checkbox" name="as_journeyman" value="1">
                         <br><br>
                         <?php echo $lng->getTrn('common/name');?>:<br>
                         <input type="text" name="name">

@@ -66,5 +66,12 @@ public function getTrn($key, $doc = false) {
     return (string) $query->item(0)->nodeValue;
 }
 
+// Filter some characters from the players positions ([J]  &nbsp; spaces etc...)
+public function FilterPosition($position)
+{
+  $position = str_replace(array('&nbsp;',' ','-','[J]'),'',$position);
+  return $position;
+}
+
 }	
 
