@@ -43,6 +43,7 @@ public static function profile($rid)
         $p->skills = implode(', ', skillsTrans($p->def));
         $p->N = implode('',$p->norm);
         $p->D = implode('',$p->doub);
+        $p->position = $lng->getTrn("position/".strtolower(str_replace(' ','',$p->position)));
         $players[] = $p;
     }
     $fields = array(

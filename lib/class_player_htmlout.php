@@ -149,7 +149,7 @@ private function _about($ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td><b><?php echo $lng->getTrn('common/pos');?></b></td>
-                        <td><?php echo $p->position; ?></td>
+                        <td><?php echo $lng->getTrn('position/'.strtolower($lng->FilterPosition($p->position))); ?></td>
                     </tr>
                     <tr>
                         <td><b><?php echo $lng->getTrn('common/team');?></b></td>
