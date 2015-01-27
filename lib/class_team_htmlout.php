@@ -886,7 +886,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td><?php echo $team->tv/1000 . 'k'; ?></td>
                 </tr>
                 <tr>
-                    <td>Treasury</td>
+                     <td><?=$lng->getTrn('matches/report/treas')?></td>
                     <td><?php echo $team->treasury/1000 . 'k'; ?></td>
                 </tr>
                 <tr>
@@ -898,25 +898,25 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <?php
                 }
                 if (!in_array($team->f_race_id, $racesNoApothecary)) {
-                    echo "<td>Apothecary</td>\n";
+                    echo "<td>".$lng->getTrn('common/apothecary')."</td>\n";
                     echo "<td>" . ($team->apothecary ? $lng->getTrn('common/yes') : $lng->getTrn('common/no')) . "</td>\n";
                 }
                 ?>
                 </tr>
                 <tr>
-                    <td>Rerolls</td>
+                    <td><?=$lng->getTrn('common/reroll')?></td>
                     <td><?php echo $team->rerolls; ?></td>
                 </tr>
                 <tr>
-                    <td>Fan&nbsp;Factor</td>
+                    <td><?=$lng->getTrn('matches/report/ff')?></td>
                     <td><?php echo $team->rg_ff; ?></td>
                 </tr>
                 <tr>
-                    <td>Ass.&nbsp;Coaches</td>
+                    <td><?=$lng->getTrn('common/ass_coach')?></td>
                     <td><?php echo $team->ass_coaches; ?></td>
                 </tr>
                 <tr>
-                    <td>Cheerleaders</td>
+                    <td><?=$lng->getTrn('common/cheerleader')?></td>
                     <td><?php echo $team->cheerleaders; ?></td>
                 </tr>
                 <tr>
