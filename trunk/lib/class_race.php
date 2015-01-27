@@ -56,18 +56,18 @@ public function getGoods($double_RRs = false)
      * Returns buyable stuff for this race.
      **/
 
-    global $DEA, $rules, $racesNoApothecary;
+    global $DEA, $rules, $racesNoApothecary, $lng;
 
     $rr_price = $DEA[$this->race]['other']['rr_cost'] * (($double_RRs) ? 2 : 1);
     $apoth = !in_array($this->race_id, $racesNoApothecary);
 
     return array(
             // MySQL column names as keys
-            'apothecary'    => array('cost' => $rules['cost_apothecary'],   'max' => ($apoth ? 1 : 0),              'item' => 'Apothecary'),
-            'rerolls'       => array('cost' => $rr_price,                   'max' => $rules['max_rerolls'],         'item' => 'Reroll'),
-            'ff_bought'     => array('cost' => $rules['cost_fan_factor'],   'max' => $rules['max_fan_factor'],      'item' => 'Fan Factor'),
-            'ass_coaches'   => array('cost' => $rules['cost_ass_coaches'],  'max' => $rules['max_ass_coaches'],     'item' => 'Assistant Coach'),
-            'cheerleaders'  => array('cost' => $rules['cost_cheerleaders'], 'max' => $rules['max_cheerleaders'],    'item' => 'Cheerleader'),
+            'apothecary'    => array('cost' => $rules['cost_apothecary'],   'max' => ($apoth ? 1 : 0),              'item' => $lng->GetTrn('common/apothecary')),
+            'rerolls'       => array('cost' => $rr_price,                   'max' => $rules['max_rerolls'],         'item' => $lng->GetTrn('common/reroll')),
+            'ff_bought'     => array('cost' => $rules['cost_fan_factor'],   'max' => $rules['max_fan_factor'],      'item' => $lng->GetTrn('matches/report/ff')),
+            'ass_coaches'   => array('cost' => $rules['cost_ass_coaches'],  'max' => $rules['max_ass_coaches'],     'item' => $lng->GetTrn('common/ass_coach')),
+            'cheerleaders'  => array('cost' => $rules['cost_cheerleaders'], 'max' => $rules['max_cheerleaders'],    'item' => $lng->GetTrn('common/cheerleader')),
     );
 }
 
