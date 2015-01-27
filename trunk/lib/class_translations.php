@@ -60,6 +60,8 @@ public function getTrn($key, $doc = false) {
     if ($query->length == 0) {
         # Try fallback language
         $query = $xpath->query("//".self::fallback."/$key");
+        if ($query->length == 0)
+          return (string) "TRANSLATION ERR ! $key";
     }
     return (string) $query->item(0)->nodeValue;
 }
