@@ -33,7 +33,7 @@ public static function profile($rid)
     ?>
     <center><img src="<?php echo RACE_ICONS.'/'.$roster['other']['icon'];?>" alt="Race icon"></center>
     <ul>
-        <li><?=$lng->getTrn('common/reroll')?>: <?php echo $roster['other']['rr_cost']/1000;?>k</li>
+        <li><?php echo $lng->getTrn('common/reroll')?>: <?php echo $roster['other']['rr_cost']/1000;?>k</li>
     </ul><br>
     <?php
     $players = array();

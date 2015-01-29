@@ -1060,9 +1060,9 @@ private static function make_menu()
                 <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
                 <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
                 <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a></li>
-                <?if (isset($_SESSION['logged_in'])) {?>
+                <?php if (isset($_SESSION['logged_in'])) {?>
                   <li><a href="index.php?section=matches&amp;type=usersched"><?php echo $lng->getTrn('menu/matches_menu/usersched');?></a></li>
-                <?}?>
+                <?php }?>
             </ul>
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/statistics_menu/name');?></span>
@@ -1102,10 +1102,10 @@ private static function make_menu()
         ?>
         <li><span class="dir"><?php echo $lng->getTrn('menu/plugins');?></span>
             <ul>
-              <?=$plugin_menu?>
+              <?php echo $plugin_menu?>
             </ul>
         </li>
-        <?} /*end of output buffering of the plugin menu*/ ?>
+        <?php } /*end of output buffering of the plugin menu*/ ?>
 
         <li><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>
