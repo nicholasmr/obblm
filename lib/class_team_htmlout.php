@@ -850,7 +850,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('common/race');?></td>
-                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?=$lng->getTrn('race/'.strtolower(str_replace(' ','', $team->f_rname))); ?></a></td>
+                    <td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team->f_race_id,false,false);?>"><?php echo $lng->getTrn('race/'.strtolower(str_replace(' ','', $team->f_rname))); ?></a></td>
                 </tr>
                 <tr>
                     <td><?php echo $lng->getTrn('common/league');?></td>
@@ -887,7 +887,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                     <td><?php echo $team->tv/1000 . 'k'; ?></td>
                 </tr>
                 <tr>
-                     <td><?=$lng->getTrn('matches/report/treas')?></td>
+                     <td><?php echo $lng->getTrn('matches/report/treas')?></td>
                     <td><?php echo $team->treasury/1000 . 'k'; ?></td>
                 </tr>
                 <tr>
@@ -905,19 +905,19 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                 ?>
                 </tr>
                 <tr>
-                    <td><?=$lng->getTrn('common/reroll')?></td>
+                    <td><?php echo $lng->getTrn('common/reroll')?></td>
                     <td><?php echo $team->rerolls; ?></td>
                 </tr>
                 <tr>
-                    <td><?=$lng->getTrn('matches/report/ff')?></td>
+                    <td><?php echo $lng->getTrn('matches/report/ff')?></td>
                     <td><?php echo $team->rg_ff; ?></td>
                 </tr>
                 <tr>
-                    <td><?=$lng->getTrn('common/ass_coach')?></td>
+                    <td><?php echo $lng->getTrn('common/ass_coach')?></td>
                     <td><?php echo $team->ass_coaches; ?></td>
                 </tr>
                 <tr>
-                    <td><?=$lng->getTrn('common/cheerleader')?></td>
+                    <td><?php echo $lng->getTrn('common/cheerleader')?></td>
                     <td><?php echo $team->cheerleaders; ?></td>
                 </tr>
                 <tr>
@@ -1085,7 +1085,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         ?>
                         </select>
                         <br><br>
-                        <?=$lng->GetTrn('common/journeyman')?> ? <input type="checkbox" name="as_journeyman" value="1">
+                        <?php echo $lng->GetTrn('common/journeyman')?> ? <input type="checkbox" name="as_journeyman" value="1">
                         <br><br>
                         <?php echo $lng->getTrn('common/name');?>:<br>
                         <input type="text" name="name">
