@@ -56,7 +56,19 @@ EOL;
         
     }
 }
-else {
+else
+{
+   // Make sure OBBLM is not already installed
+   $conn = mysql_up();
+   if(mysql_query("DESCRIBE coaches"))
+   {
+     echo <<<EOL
+     It seems OBBLM is already installed.<br>You can safely delete the file <i>install.php</i> and go to the main page.
+     <br><br>If you need help please visit <a href='http://code.google.com/p/obblm/issues/list'>code.google.com/p/obblm</a> and create a bug report.<br>
+EOL;
+   }
+   else
+   {
     ?>
     Please, <b>before starting the installation process</b>, make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>When ready, press the button below :<br><br>
 
@@ -64,6 +76,7 @@ else {
         <input type="submit" name="setup" value="Setup DB for OBBLM">
     </form>
     <?php
+   }
 }
 HTMLOUT::frame_end();
 ?>
