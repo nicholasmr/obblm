@@ -167,7 +167,8 @@ function sec_main() {
             echo $settings['welcome'];
             echo "</div>\n";
             echo "<div class='main_leftColumn_left'>\n";
-            echo $HTML_LeagueSelector;
+            if(count($leagues) > 1)
+              echo $HTML_LeagueSelector;
             echo "</div>\n";
             echo "<div class='main_leftColumn_right'>\n";
             if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $sel_lid)) {
@@ -759,10 +760,13 @@ function sec_objhandler() {
 
 function sec_rules() {
 
-    global $lng, $settings;
+    global $lng, $settings, $leagues;
     title($lng->getTrn('menu/rules'));
-    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
-    echo $HTML_LeagueSelector;
+    if(count($leagues) > 1)
+    {
+      list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
+      echo $HTML_LeagueSelector;
+    }
     echo "<br><br>";
     echo $settings['rules'];
 }
