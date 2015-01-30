@@ -692,7 +692,27 @@ public static function report() {
             <?php
             echo "<tr>\n";
             foreach (array_values($playerFields) as $f) {
-                echo "<td><i>$f</i></td>\n";
+               // We need to translate table headers
+               switch(strtolower(str_replace(' ', '', $f)))
+               {
+                   case 'name': $header_text = $lng->getTrn('common/name'); break;
+                   case 'mvp': $header_text = $lng->getTrn('matches/report/mvp'); break;
+                   case 'cp': $header_text = $lng->getTrn('matches/report/cp'); break;
+                   case 'bh': $header_text = $lng->getTrn('matches/report/bh'); break;
+                   case 'si': $header_text = $lng->getTrn('matches/report/si'); break;
+                   case 'ki': $header_text = $lng->getTrn('matches/report/ki'); break;
+                   case 'ir1d1': $header_text = $lng->getTrn('matches/report/ir1')." D1"; break;
+                   case 'ir1d2': $header_text = $lng->getTrn('matches/report/ir1')." D2"; break;
+                   case 'ir2d1': $header_text = $lng->getTrn('matches/report/ir2')." D1"; break;
+                   case 'ir2d2': $header_text = $lng->getTrn('matches/report/ir2')." D2"; break;
+                   case 'ir3d1': $header_text = $lng->getTrn('matches/report/ir3')." D1"; break;
+                   case 'ir3d2': $header_text = $lng->getTrn('matches/report/ir3')." D2"; break;
+                   case 'inj': $header_text = $lng->getTrn('matches/report/inj'); break;
+                   case 'ageing1': $header_text = $lng->getTrn('matches/report/ageing1'); break;
+                   case 'ageing2': $header_text = $lng->getTrn('matches/report/ageing2'); break;
+                   default: $header_text = $f;
+                 }
+                 echo "<td><i>$header_text</i></td>\n";
             }
             echo "</tr>\n";
 
