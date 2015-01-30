@@ -1074,7 +1074,7 @@ private static function make_menu()
                 <li><a href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
             </ul>
         </li>
-        <?
+        <?php
         // To avoid showing the plugin menu if no plugins are loaded, we start output buffering here
         ob_start();?>
         <?php if (Module::isRegistered('Search'))            { ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
@@ -1094,7 +1094,7 @@ private static function make_menu()
         <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
         <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
         <?php } ?>
-        <?
+        <?php
         $plugin_menu = trim(ob_get_contents());
         ob_end_clean();
         if(strlen($plugin_menu) > 0)
