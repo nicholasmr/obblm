@@ -238,7 +238,45 @@ function status($status, $msg = '') {
 }
 
 function textdate($mysqldate, $noTime = false, $setSeconds = true) {
-    return date("D M j Y".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), strtotime($mysqldate));
+  global $lng;
+
+  $days = array(
+    $lng->getTrn('daysofweek/sunday'),
+    $lng->getTrn('daysofweek/monday'),
+    $lng->getTrn('daysofweek/tuesday'),
+    $lng->getTrn('daysofweek/wednesday'),
+    $lng->getTrn('daysofweek/thusday'),
+    $lng->getTrn('daysofweek/friday'),
+    $lng->getTrn('daysofweek/saturday'),
+    );
+  $months = array("",
+    $lng->getTrn('months/january'),
+    $lng->getTrn('months/february'),
+    $lng->getTrn('months/march'),
+    $lng->getTrn('months/april'),
+    $lng->getTrn('months/may'),
+    $lng->getTrn('months/june'),
+    $lng->getTrn('months/july'),
+    $lng->getTrn('months/august'),
+    $lng->getTrn('months/september'),
+    $lng->getTrn('months/october'),
+    $lng->getTrn('months/november'),
+    $lng->getTrn('months/december'),
+  );
+
+  $the_time = strtotime($mysqldate);
+
+  switch($lng->getLanguage())
+  {
+      case 'fr-FR':
+        return $days[date("w", $the_time)]." ".date("j", $the_time)." ".$months[date("n", $the_time)]." ".date("Y ".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), $the_time);
+        break;
+
+      default:
+        return date("D M j Y".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), strtotime($mysqldate));
+        // If you want full words dates (days of week and months) enable the line below and disable the line above
+        //return $days[date("w", $the_time)]." ".$months[date("n", $the_time)]." ".date("j", $the_time)." ".date("Y ".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), $the_time);
+    }
 }
 
 # Micro Time Stamp.
