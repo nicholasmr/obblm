@@ -596,6 +596,168 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <wardancer>War dancer</wardancer>
 </position>
 
+<skill>
+  <block>Block</block>
+  <dauntless>Dauntless</dauntless>
+  <dirtyplayer>Dirty Player</dirtyplayer>
+  <fend>Fend</fend>
+  <franzy>Frenzy</franzy>
+  <kick>Kick</kick>
+  <kickoffreturn>Kick-off Return</kickoffreturn>
+  <passblock>Pass Block</passblock>
+  <pro>Pro</pro>
+  <shadowing>Shadowing</shadowing>
+  <stripball>Strip Ball</stripball>
+  <surehands>Sure Hands</surehands>
+  <tackle>Tackle</tackle>
+  <wrestle>Wrestle</wrestle>
+  <catch>Catch</catch>
+  <divingcatch>Diving Catch</divingcatch>
+  <divingtackle>Diving Tackle</divingtackle>
+  <dodge>Dodge</dodge>
+  <jumpup>Jump Up</jumpup>
+  <leap>Leap</leap>
+  <sidestep>Side Step</sidestep>
+  <sneakygit>Sneaky Git</sneakygit>
+  <sprint>Sprint</sprint>
+  <surefeet>Sure Feet</surefeet>
+  <accurate>Accurate</accurate>
+  <dumpoff>Dump-Off</dumpoff>
+  <hailmarypass>Hail Mary Pass</hailmarypass>
+  <leader>Leader</leader>
+  <nervesofsteel>Nerves of Steel</nervesofsteel>
+  <pass>Pass</pass>
+  <safethrow>Safe Throw</safethrow>
+  <breaktackle>Break Tackle</breaktackle>
+  <grab>Grab</grab>
+  <guard>Guard</guard>
+  <juggernaut>Juggernaut</juggernaut>
+  <mightyblow>Mighty Blow</mightyblow>
+  <multipleblock>Multiple Block</multipleblock>
+  <pilingon>Piling On</pilingon>
+  <standfirm>Stand Firm</standfirm>
+  <strongarm>Strong Arm</strongarm>
+  <thickskull>Thick Skull</thickskull>
+  <bighand>Big Hand</bighand>
+  <claw>Claw</claw>
+  <disturbingpresence>Disturbing Presence</disturbingpresence>
+  <extraarms>Extra Arms</extraarms>
+  <foulappearance>Foul Appearance</foulappearance>
+  <horns>Horns</horns>
+  <prehensiletail>Prehensile Tail</prehensiletail>
+  <tentacles>Tentacles</tentacles>
+  <twoheads>Two Heads</twoheads>
+  <verylonglegs>Very Long Legs</verylonglegs>
+  <alwayshungry>Always Hungry</alwayshungry>
+  <animosity>Animosity</animosity>
+  <ballchain>Ball and Chain</ballchain>
+  <bloodlust>Blood Lust</bloodlust>
+  <bombardier>Bombardier</bombardier>
+  <bonehead>Bone Head</bonehead>
+  <chainsaw>Chainsaw</chainsaw>
+  <decay>Decay</decay>
+  <fanfavourite>Fan Favourite</fanfavourite>
+  <hypnoticgaze>Hypnotic Gaze</hypnoticgaze>
+  <loner>Loner</loner>
+  <nohands>No Hands</nohands>
+  <nurglesrot>Nurgle's Rot</nurglesrot>
+  <reallystupid>Really Stupid</reallystupid>
+  <regenaration>Regenaration</regenaration>
+  <rightstuff>Right Stuff</rightstuff>
+  <secretweapon>Secret Weapon</secretweapon>
+  <stab>Stab</stab>
+  <stakes>Stakes</stakes>
+  <stunty>Stunty</stunty>
+  <takeroots>Take Roots</takeroots>
+  <throwteammate>Throw Team-Mate</throwteammate>
+  <titchy>Titchy</titchy>
+  <wildanimal>Wild Animal</wildanimal>
+</skill>
+
+<starplayer>
+    <barikfarblast>Barik Farblast</barikfarblast>
+    <berthabigfist>Bertha Bigfist</berthabigfist>
+    <bomberdribblesnot>Bomber Dribblesnot</bomberdribblesnot>
+    <boomereziasson>Boomer Eziasson</boomereziasson>
+    <brickfarthgrotty>Brick Far'th and Grotty</brickfarthgrotty>
+    <countluthorvondrakenborg>Count Luthor Von Drakenborg</countluthorvondrakenborg>
+    <crazyigor>Crazy Igor</crazyigor>
+    <deeprootstrongbranch>Deeproot Strongbranch</deeprootstrongbranch>
+    <dolfarlongstride>Dolfar Longstride</dolfarlongstride>
+    <eldrilsidewinder>Eldril Sidewinder</eldrilsidewinder>
+    <fezglitch>Fezglitch</fezglitch>
+    <flintchurnblade>Flint Churnblade</flintchurnblade>
+    <fungustheloon>Fungus the Loon</fungustheloon>
+    <glartsmarchripjr>Glart Smarchrip Jr.</glartsmarchripjr>
+    <grashnakblackhoof>Grashnak Blackhoof</grashnakblackhoof>
+    <griffoberwald>Griff Oberwald</griffoberwald>
+    <grimironjaw>Grim Ironjaw</grimironjaw>
+    <hackenslash>Hack Enslash</hackenslash>
+    <hakflemskuttlespike>Hakflem Skuttlespike</hakflemskuttlespike>
+    <headsplitter>Headsplitter</headsplitter>
+    <helmutwulf>Helmut Wulf</helmutwulf>
+    <hemlock>Hemlock</hemlock>
+    <horkonheartripper>Horkon Heartripper</horkonheartripper>
+    <htharktheunstoppable>Hthark the Unstoppable</htharktheunstoppable>
+    <hubrisrakhart>Hubris Rakhart</hubrisrakhart>
+    <humeruscarpal>Humerus Carpal</humeruscarpal>
+    <icepelthammerblow>Icepelt Hammerblow</icepelthammerblow>
+    <ithacabenoin>Ithaca Benoin</ithacabenoin>
+    <jearlice>J Earlice</jearlice>
+    <jordellfreshbreeze>Jordell Freshbreeze</jordellfreshbreeze>
+    <lewdgripwhiparm>Lewdgrip Whiparm</lewdgripwhiparm>
+    <lordborakthedespoiler>Lord Borak the Despoiler</lordborakthedespoiler>
+    <lottabottol>Lottabottol</lottabottol>
+    <maxspleenripper>Max Spleenripper</maxspleenripper>
+    <mightyzug>Mighty Zug</mightyzug>
+    <morgnthrog>Morg 'N' Throg</morgnthrog>
+    <nobblablackwart>Nobbla Blackwart</nobblablackwart>
+    <princemoranion>Prince Moranion</princemoranion>
+    <puggybaconbreath>Puggy Baconbreath</puggybaconbreath>
+    <quetzalleap>Quetzal Leap</quetzalleap>
+    <ramtutiii>Ramtut III</ramtutiii>
+    <rashnakbackstabber>Rashnak Backstabber</rashnakbackstabber>
+    <ripper>Ripper</ripper>
+    <roxannadarknail>Roxanna Darknail</roxannadarknail>
+    <scrappasorehead>Scrappa Sorehead</scrappasorehead>
+    <setekh>Setekh</setekh>
+    <silibili>Silibili</silibili>
+    <sinnedbad>Sinnedbad</sinnedbad>
+    <skitterstabstab>Skitter Stab-Stab</skitterstabstab>
+    <soarenhightower>Soaren Hightower</soarenhightower>
+    <ugrothbolgrot>Ugroth Bolgrot</ugrothbolgrot>
+    <varagghoulchewer>Varag Ghoul-Chewer</varagghoulchewer>
+    <wilhelmchaney>Wilhelm Chaney</wilhelmchaney>
+    <wilowrosebark>Wilow Rosebark</wilowrosebark>
+    <zaratheslayer>Zara the Slayer</zaratheslayer>
+    <zzhargmadeye>Zzharg Madeye</zzhargmadeye>
+</starplayer>
+
+<daysofweek>
+  <monday>Monday</monday>
+  <tuesday>Tuesday</tuesday>
+  <wednesday>Wednesday</wednesday>
+  <thursday>Thursday></thursday>
+  <friday>Friday</friday>
+  <saturday>Saturday</saturday>
+  <sunday>Sunday</sunday>
+</daysofweek>
+
+<months>
+  <january>January</january>
+  <february>February</february>
+  <march>March</march>
+  <april>April</april>
+  <may>May</may>
+  <june>June</june>
+  <july>July</july>
+  <august>August</august>
+  <september>September</september>
+  <october>October</october>
+  <november>November</november>
+  <december>December</december>
+</months>
+
 </en-GB>
 
 <!-- Spanish -->
@@ -2080,6 +2242,168 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <ratogre>Rat Ogre</ratogre>
         <wardancer>Danseur de guerre</wardancer>
 </position>
+
+<skill>
+    <block>Blocage</block>
+    <dauntless>Intrépidité</dauntless>
+    <dirtyplayer>Joueur Vicieux</dirtyplayer>
+    <fend>Parade</fend>
+    <franzy>Frénésie</franzy>
+    <kick>Frappe Précise</kick>
+    <kickoffreturn>Anticipation</kickoffreturn>
+    <passblock>Blocage de Passe</passblock>
+    <pro>Pro</pro>
+    <shadowing>Poursuite</shadowing>
+    <stripball>Arracher le ballon</stripball>
+    <surehands>Destérité</surehands>
+    <tackle>Tacle</tackle>
+    <wrestle>Lutte</wrestle>
+    <catch>Réception</catch>
+    <divingcatch>Plongeon</divingcatch>
+    <divingtackle>Tacle Pongeant</divingtackle>
+    <dodge>Esquive</dodge>
+    <jumpup>Bond</jumpup>
+    <leap>Saut</leap>
+    <sidestep>Glissade contrôlée</sidestep>
+    <sneakygit>Sournois</sneakygit>
+    <sprint>Sprint</sprint>
+    <surefeet>Équilibre</surefeet>
+    <accurate>Précision</accurate>
+    <dumpoff>Passe Rapide</dumpoff>
+    <hailmarypass>La Main de Dieu</hailmarypass>
+    <leader>Chef</leader>
+    <nervesofsteel>Nerfs d'Acier</nervesofsteel>
+    <pass>Passe</pass>
+    <safethrow>Lancer Précis</safethrow>
+    <breaktackle>Esquive en Force</breaktackle>
+    <grab>Projection</grab>
+    <guard>Garde</guard>
+    <juggernaut>Juggernaut</juggernaut>
+    <mightyblow>Châtaigne</mightyblow>
+    <multipleblock>Blocage Multiple</multipleblock>
+    <pilingon>Écrasement</pilingon>
+    <standfirm>Stabilité</standfirm>
+    <strongarm>Costaud</strongarm>
+    <thickskull>Crâne Épais</thickskull>
+    <bighand>Main Démesurée</bighand>
+    <claw>Griffes</claw>
+    <disturbingpresence>Présence Perturbante</disturbingpresence>
+    <extraarms>Bras Supplémentaires</extraarms>
+    <foulappearance>Répulsion</foulappearance>
+    <horns>Cornes</horns>
+    <prehensiletail>Queue Préhensile</prehensiletail>
+    <tentacles>Tentacules</tentacles>
+    <twoheads>Deux Têtes</twoheads>
+    <verylonglegs>Très Longues Jambes</verylonglegs>
+    <alwayshungry>Toujours Affamé</alwayshungry>
+    <animosity>Animosité</animosity>
+    <ballchain>Chaîne et Boulet</ballchain>
+    <bloodlust>Soif de Sang</bloodlust>
+    <bombardier>Bombardier</bombardier>
+    <bonehead>Cerveau Lent</bonehead>
+    <chainsaw>Tronçonneuse</chainsaw>
+    <decay>Décomposition</decay>
+    <fanfavourite>Idole des Foules</fanfavourite>
+    <hypnoticgaze>Regard Hypnotique</hypnoticgaze>
+    <loner>Solitaire</loner>
+    <nohands>Manchot</nohands>
+    <nurglesrot>Pourriture de Nurgle</nurglesrot>
+    <reallystupid>Gros Débile</reallystupid>
+    <regenaration>Régénération</regenaration>
+    <rightstuff>Poids Plume</rightstuff>
+    <secretweapon>Arme Secrète</secretweapon>
+    <stab>Poignard</stab>
+    <stakes>Pieux</stakes>
+    <stunty>Minus</stunty>
+    <takeroots>Prendre Racine</takeroots>
+    <throwteammate>Lancer un Coéquipier</throwteammate>
+    <titchy>Microbe</titchy>
+    <wildanimal>Animal Sauvage</wildanimal>
+</skill>
+
+<starplayer>
+    <barikfarblast>Barik Tirloin</barikfarblast>
+    <berthabigfist>Bertha GroPoing</berthabigfist>
+    <bomberdribblesnot>Boomer Morvonez</bomberdribblesnot>
+    <boomereziasson>Blam’ Eziasson</boomereziasson>
+    <brickfarthgrotty>Pèt’Brik et Minab’</brickfarthgrotty>
+    <countluthorvondrakenborg>Compte Luthor Von Drakenborg</countluthorvondrakenborg>
+    <crazyigor>Igor LeFou</crazyigor>
+    <deeprootstrongbranch>Racine Dutronc</deeprootstrongbranch>
+    <dolfarlongstride>Dolfar Long’jambes</dolfarlongstride>
+    <eldrilsidewinder>Eldril Fendlabise</eldrilsidewinder>
+    <fezglitch>Fezglish</fezglitch>
+    <flintchurnblade>Tronçonneuse Flint</flintchurnblade>
+    <fungustheloon>Fungus le Cingle</fungustheloon>
+    <glartsmarchripjr>Glart Lavollée Jr.</glartsmarchripjr>
+    <grashnakblackhoof>Grashnak Noirsabo</grashnakblackhoof>
+    <griffoberwald>Griff Oberwald</griffoberwald>
+    <grimironjaw>Grim Croc d'Acier</grimironjaw>
+    <hackenslash>Hack l’Étripeur</hackenslash>
+    <hakflemskuttlespike>Hakflem Pointu</hakflemskuttlespike>
+    <headsplitter>Cass Crâne</headsplitter>
+    <helmutwulf>Helmut Wulf</helmutwulf>
+    <hemlock>Hemlock</hemlock>
+    <horkonheartripper>Horkon l'Écorcheur</horkonheartripper>
+    <htharktheunstoppable>Hthark Le Defonceur</htharktheunstoppable>
+    <hubrisrakhart>Hubris Rakarth</hubrisrakhart>
+    <humeruscarpal>Humerus Carpal</humeruscarpal>
+    <icepelthammerblow>Icepelt Hammerblow</icepelthammerblow>
+    <ithacabenoin>Ithaca Benoin</ithacabenoin>
+    <jearlice>J. Oreillefine</jearlice>
+    <jordellfreshbreeze>Jordell Flechevive</jordellfreshbreeze>
+    <lewdgripwhiparm>Lewdgrip Fouet’bras</lewdgripwhiparm>
+    <lordborakthedespoiler>Lord Borak le Destructeur</lordborakthedespoiler>
+    <lottabottol>Boutaïdo</lottabottol>
+    <maxspleenripper>Max Éclaterate</maxspleenripper>
+    <mightyzug>Zug la Bete</mightyzug>
+    <morgnthrog>Morg 'N'Thorg</morgnthrog>
+    <nobblablackwart>Nobbla la Teigne</nobblablackwart>
+    <princemoranion>Prince Moranion</princemoranion>
+    <puggybaconbreath>Puggy Haleinedebacon</puggybaconbreath>
+    <quetzalleap>Quetzal le Bondissant</quetzalleap>
+    <ramtutiii>Ramtut III</ramtutiii>
+    <rashnakbackstabber>Rashnak Lamedansledos</rashnakbackstabber>
+    <ripper>Bolgrot l'Écrabouilleur</ripper>
+    <roxannadarknail>Roxanna Onglenoir</roxannadarknail>
+    <scrappasorehead>Scappa Malocrane</scrappasorehead>
+    <setekh>Setekh</setekh>
+    <silibili>Silibili</silibili>
+    <sinnedbad>Sinnedbad</sinnedbad>
+    <skitterstabstab>Skitter Pic-Pic</skitterstabstab>
+    <soarenhightower>Soaren Hautetour</soarenhightower>
+    <ugrothbolgrot>Ugroth Tranchegrots</ugrothbolgrot>
+    <varagghoulchewer>Varag Mache Goule</varagghoulchewer>
+    <wilhelmchaney>Wilhelm Chaney</wilhelmchaney>
+    <wilowrosebark>Willow Teinrose</wilowrosebark>
+    <zaratheslayer>Zara la tueuse</zaratheslayer>
+    <zzhargmadeye>Zzharg Le Borgne</zzhargmadeye>
+</starplayer>
+
+<daysofweek>
+  <monday>Lundi</monday>
+  <tuesday>Mardi</tuesday>
+  <wednesday>Mercredi</wednesday>
+  <thursday>Jeudi></thursday>
+  <friday>Vendredi</friday>
+  <saturday>Samedi</saturday>
+  <sunday>Dimanche</sunday>
+</daysofweek>
+
+<months>
+  <january>Janvier</january>
+  <february>Février</february>
+  <march>Mars</march>
+  <april>Avril</april>
+  <may>Mai</may>
+  <june>Juin</june>
+  <july>Juillet</july>
+  <august>Août</august>
+  <september>Septembre</september>
+  <october>Octobre</october>
+  <november>Novembre</november>
+  <december>Décembre</december>
+</months>
 
 </fr-FR>
 
