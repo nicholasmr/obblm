@@ -77,5 +77,29 @@ public function FilterPosition($position)
   return $position;
 }
 
+
+/***************************
+   Translate skills
+***************************/
+public function TranslateSkills()
+{
+  global $skillarray;
+  foreach($skillarray as $cat => $val)
+  {
+    foreach($skillarray[$cat] as &$skl)
+    {
+      $skl = $this->getTrn('skill/'.strtolower(str_replace(array(' ','-','&',"'",'/'),'',$skl)));
+    }
+  }
+  unset($skl);
+    
+  global $skillididx;
+  foreach($skillididx as &$skill)
+  {
+    $skill = $this->getTrn('skill/'.strtolower(str_replace(array(' ','-','&',"'",'/'),'',$skill)));
+  }
+  unset($skill);
+}
+
 }	
 
