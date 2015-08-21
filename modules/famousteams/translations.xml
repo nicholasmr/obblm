@@ -45,4 +45,28 @@
 <about><![CDATA[Los logros del equipo en detalle. ¿Se llevó algún premio? ¿Cúando ocurrió y cómo?]]></about>
 
 </es-ES>
+
+<fr-FR>
+
+<name>Equipes célèbres</name>
+
+<team>Equipe</team>
+<sort_hint>Astuce : Cliquer sur le menu déroulant et taper sur n'importe quelle lettre au clavier fera dérouler la liste jusqu'au premier nom d'équipe commençant par cette lettre.</sort_hint>
+<submit>Soumettre</submit>
+<new>Nouvelle entrée</new>
+<edit>Editer</edit>
+<del>Effacer</del>
+<from>de</from>
+<posted>posté</posted>
+<isfamous>est célèbre</isfamous>
+
+<g_title>Nom</g_title>
+<g_about>Description générale</g_about>
+
+<desc><![CDATA[Bienvenue dans la liste des équipes célèbres.<br>Ici, les commissaires de ligue peuvent mettre en valeur des équipes qui sont devenues célèbres pour n'importe quelle raison.]]></desc>
+<title><![CDATA[Une description courte à propos de ce que l'équipe a accomplie, pourquoi elle est célèbre, etc...]]></title>
+<about><![CDATA[A propos des réussites de l'équipe en détail. Où sont les prix associés ? Quand est-ce arrivé et comment ?]]></about>
+
+</fr-FR>
+
 </translations>
