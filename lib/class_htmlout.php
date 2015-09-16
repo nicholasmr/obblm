@@ -1042,8 +1042,9 @@ private static function make_menu()
                         }
                     }
                     ?>
-                    </ul>
-                </li>
+				<li><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('name', 'LeaguePref');?></a></li>
+				</ul>
+				</li>
                 <?php
             }
 		?>
@@ -1053,6 +1054,9 @@ Search</a>
 				<li class="subfirst"><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
 				<li><a href="index.php?section=coachlist"><?php echo $lng->getTrn('menu/coaches');?></a></li>
 				<?php if (Module::isRegistered('Search'))            { ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
+				<?php if (Module::isRegistered('Gallery'))        { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
+				<?php if (Module::isRegistered('Wanted'))        { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
+				<?php if (Module::isRegistered('Prizes'))        { ?><li><a href="handler.php?type=prizes"><?php echo $lng->getTrn('name', 'Prizes');?></a></li><?php } ?>
 				<?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
 			</ul>
 		<li class="topmenu"><a rel="nofollow" href="#" style="height:20px;line-height:20px;">	<img src="data:image/gif;base64,R0lGODlhEAAOAMQcAP///xpljiVrk8zc5unp6Td3nO/v72matWKUs+Dh4XOgu9vm7VWMq3ynwNDW2Z+5yMDV40F+orPL20qFpzx7oO/0946yx6rF1+Tt8oqpu4iux5q70P///wAAAAAAAAAAACH5BAEAABwALAAAAAAQAA4AQAV1ICdyQRQFYoCOKQS8wBAYRJKtXDTAwFLQCcGoYIEsAJWBpIFjBQ68hoZmaXIQh8GgUWBIHgXnkRebEBwP4QirVVAEBwaCxZm4YD6gOgWFNRQ0c04CGxgVEgIXNA57AQpkAAoPNYwiDJAvAgGaThMFmxQMVhwhADs=" alt=""/>

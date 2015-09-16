@@ -140,6 +140,24 @@ Module::register(array(
     'filesLoadTime' => array('teamcompare/class_teamcompare.php')
 ));
 
+/*Module::register(array(
+    'class'         => 'Adverts',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('adverts/class_adverts.php')
+));*/
+
+Module::register(array(
+    'class'         => 'LeaguePref',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('leaguePref/class_league_pref.php')
+));
+
+Module::register(array(
+    'class'         => 'TeamCreator',
+    'filesRunTime'  => array(),
+    'filesLoadTime' => array('teamcreator/class_team_creator.php')
+));
+
 Module::register(array(
     'class'         => 'Scheduler',
     'filesRunTime'  => array(),
@@ -156,4 +174,6 @@ Module::register(array(
     'filesRunTime'  => array(),
     'filesLoadTime' => array('famousteams/class_famousteams.php')
 ));
+
+?>
 
