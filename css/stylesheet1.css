@@ -29,8 +29,7 @@ html {overflow-y: scroll;} /* Keep page alignment uniform. */
 }
 
 a {
-color: #8592AC;
-font-weight: bold;
+color: #8585AD;
 }
 a:link, a:visited {}
 
@@ -126,7 +125,8 @@ div.menu {
 /* Section code container */
 div.section {
     margin: 5px; 
-    padding-bottom: 40px; 
+    color: white;
+	padding-bottom: 40px; 
     background-color: inherit;
 }
 
@@ -135,6 +135,7 @@ div.section {
  */
 div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo {
     margin: 16px; 
+	color: white;
     border: 2px solid black;
 
 	border-radius: 0px;
@@ -157,13 +158,13 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 	-webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;*/
 }
-.boxTitle1 {font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Team/player/coach info & team news */
-.boxTitle2 {font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 13px; font-weight: normal;} /* Used for: Management/actions/more box for ordinary coaches */
+.boxTitle1 {color:black; font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Team/player/coach info & team news */
+.boxTitle2 {color:black; font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Management/actions/more box for ordinary coaches */
 .boxTitle3 {font-family: aurora; background-color: #FD0200; color: white; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Management/actions/more box for ordinary admins */
-.boxTitle4 {font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Statistics (standings, player leaders, ES) */
-.boxTitle5 {font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Match summaries & recent games */
-.boxBody   {border-top: 2px solid black; background-color: #FAFAFA; font-weight: normal; padding: 10px;}
-table.boxTable {border-spacing: 5px; width: 100%;}
+.boxTitle4 {color:black; font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Statistics (standings, player leaders, ES) */
+.boxTitle5 {color:black; font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Match summaries & recent games */
+.boxBody   {color:black; border-top: 2px solid black; background-color: #FAFAFA; font-weight: normal; padding: 10px;}
+table.boxTable {color:black; border-spacing: 5px; width: 100%;}
 
 /* Other types of boxes. */
 .helpBox {
@@ -199,7 +200,7 @@ table.boxTable {border-spacing: 5px; width: 100%;}
 
 /* Used almost everywhere */
 table.common  {border: none; width: 100%; background-color: inherit;}
-tr.commonhead {background-color: #CCCCCC;}
+tr.commonhead {color: black; background-color: #CCCCCC;}
 
 /* For the tours list */
 table.tours {
