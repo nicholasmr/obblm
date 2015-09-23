@@ -156,12 +156,10 @@ else {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
     require_once('modules/modsheader.php'); # Registration of modules.
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
+	
+	/******************************
+	   Translate skills globally
+	******************************/
+	global $lng;
+	$lng->TranslateSkills();
 }
-
-/******************************
-   Translate skills globally
-******************************/
-global $lng;
-$lng->TranslateSkills();
-
-
