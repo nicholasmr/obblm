@@ -1,8 +1,4 @@
 @media only screen and (max-device-width: 600px){
-    div.everything {
-        width: 90%;
-    }
-    
     div.boxCommon {
         width: 70%;
         margin: auto;
