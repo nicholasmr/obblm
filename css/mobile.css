@@ -1,0 +1,58 @@
+@media only screen and (max-device-width: 600px){
+    div.everything {
+        width: 90%;
+    }
+    
+    div.boxCommon {
+        width: 70%;
+        margin: auto;
+        float: none;
+    }
+    
+    div.main {
+        padding: 5px;
+    }
+    
+    #tabs {
+        margin-top: 5px;
+    }
+    
+    .ui-widget-header {
+        background: #A37B45;
+    }
+    
+    .button-panel {
+        float: right;
+    }
+    
+    #Players {
+        margin-top: 5px;
+    }
+    
+    #Players td {
+        text-align: center;
+    }
+    
+    #PlayerDialog, #MatchDialog {
+        display: none;
+    }
+    
+    .ui-dialog-content .label {
+        display: inline-block;
+        width: 9em;
+        font-weight: normal;
+    }
+    
+    .ui-dialog-content .data {
+        font-weight: bold;
+    }
+    
+    table tbody {
+        font-weight: normal;
+    }
+    
+    #MatchDialog #SelectedPlayer {
+        margin-top: 10px;
+    }
+}
+

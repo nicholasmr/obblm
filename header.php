@@ -101,6 +101,7 @@ require_once('settings_modules.php');             # Overrides
 // OBBLM libraries.
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
+require_once('lib/class_mobile.php');
 require_once('lib/class_sqltriggers.php');
 require_once('lib/class_match.php');
 require_once('lib/class_tournament.php');
