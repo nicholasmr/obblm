@@ -1,4 +1,9 @@
 @media only screen and (max-device-width: 600px){
+    table tbody {
+        font-weight: normal;
+        font-size: 11px;
+    }
+
     div.boxCommon {
         width: 70%;
         margin: auto;
@@ -42,9 +47,9 @@
     .ui-dialog-content .data {
         font-weight: bold;
     }
-    
-    table tbody {
-        font-weight: normal;
+
+    .ui-tabs .ui-tabs-panel {
+        padding: 1em 0.5em;
     }
     
     #MatchDialog #SelectedPlayer {

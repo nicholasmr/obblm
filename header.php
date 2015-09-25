@@ -134,6 +134,7 @@ require_once('lib/class_player_htmlout.php');
 require_once('lib/class_starmerc_htmlout.php');
 require_once('lib/class_race_htmlout.php');
 require_once('lib/class_match_htmlout.php');
+require_once('lib/class_mobile_htmlout.php');
 
 /********************
  *   Final setup
