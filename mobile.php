@@ -72,7 +72,7 @@ MTS('Header loaded, login auth, html frame generated');
 switch ($_GET['section'])
 {
     case 'login':        sec_login();           break;
-    default:             sec_mobile_main();
+    default:             Mobile_HTMLOUT::sec_mobile_main();
 }
 
 HTMLOUT::frame_end(); // Spit out all the end-tags.
