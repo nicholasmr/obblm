@@ -5,7 +5,7 @@
     }
     
     div.row {
-        margin-bottom: 1px;
+        margin-bottom: 2px;
     }
     
     div.row input[type="radio"] {
@@ -62,7 +62,7 @@
     }
     
     #MatchDialog #SelectedPlayer {
-        margin-top: 10px;
+        margin-top: 20px;
     }
     
     #MatchDialog input[type="number"] {
