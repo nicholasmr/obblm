@@ -107,59 +107,11 @@ class Mobile_HTMLOUT {
                         </table>
                         
                         <div id="MatchDialog" data-bind="with: matchDialogViewModel">
-                            <div>
-                                <span class="label">Team:</span>
-                                <span class="data" data-bind="text: name"></span>
+                            <div data-bind="if: matchIsLocked">
+                                <?php Mobile_HTMLOUT::readonlyMatchView(); ?>
                             </div>
-                            <div>
-                                <span class="label">Score:</span>
-                                <span class="data" data-bind="text: score"></span>
-                            </div>
-                            <div>
-                                <span class="label">Treasury:</span>
-                                <span class="data" data-bind="text: treasuryChange"></span>
-                            </div>
-                            <div>
-                                <span class="label">Fan Factor:</span>
-                                <span class="data" data-bind="text: fanFactorChange"></span>
-                            </div>
-                            <div id="SelectedPlayer">
-                                <span>Player:</span>
-                                <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select>
-                                <div data-bind="with: selectedPlayerViewModel">
-                                    <div>
-                                        <span class="label">MVP:</span>
-                                        <span class="data" data-bind="text: mvp"></span>
-                                    </div>
-                                    <div>
-                                        <span class="label">Completions:</span>
-                                        <span class="data" data-bind="text: completions"></span>
-                                    </div>
-                                    <div>
-                                        <span class="label">Touchdowns:</span>
-                                        <span class="data" data-bind="text: touchdowns"></span>
-                                    </div>
-                                    <div>
-                                        <span class="label">Interceptions:</span>
-                                        <span class="data" data-bind="text: interceptions"></span>
-                                    </div>
-                                    <div>
-                                        <span class="label">Badly hurt:</span>
-                                        <span class="data" data-bind="text: badlyHurt"></span>
-                                    </div>
-                                    <div>
-                                        <span class="label">Sustained injury:</span>
-                                        <span class="data" data-bind="text: sustainedInjury"></span>
-                                    </div>
-                                    <div>
-                                        <span class="label">Killed:</span>
-                                        <span class="data" data-bind="text: killed"></span>
-                                    </div>
-                                    <div>
-                                        <span class="label">Injured:</span>
-                                        <span class="data" data-bind="text: injured"></span>
-                                    </div>
-                                </div>
+                            <div data-bind="ifnot: matchIsLocked">
+                                <?php Mobile_HTMLOUT::editableMatchView(); ?>
                             </div>
                         </div>
                     </div>
@@ -167,5 +119,131 @@ class Mobile_HTMLOUT {
             </form>
         </div>
         <?php   
+    }
+    
+    private static function readonlyMatchView() {
+        ?>
+        <div>
+            <span class="label">Team:</span>
+            <span class="data" data-bind="text: name"></span>
+        </div>
+        <div>
+            <span class="label">Score:</span>
+            <span class="data" data-bind="text: myScore"></span> for me, to <span class="data" data-bind="text: theirScore"></span>
+        </div>
+        <div>
+            <span class="label">Treasury:</span>
+            <span class="data" data-bind="text: treasuryChange"></span>
+        </div>
+        <div>
+            <span class="label">Fan Factor:</span>
+            <span class="data" data-bind="text: fanFactorChange"></span>
+        </div>
+        <div id="SelectedPlayer">
+            <span>Player:</span>
+            <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select>
+            <div data-bind="with: selectedPlayerViewModel">
+                <div>
+                    <span class="label">MVP:</span>
+                    <span class="data" data-bind="text: mvp"></span>
+                </div>
+                <div>
+                    <span class="label">Completions:</span>
+                    <span class="data" data-bind="text: completions"></span>
+                </div>
+                <div>
+                    <span class="label">Touchdowns:</span>
+                    <span class="data" data-bind="text: touchdowns"></span>
+                </div>
+                <div>
+                    <span class="label">Interceptions:</span>
+                    <span class="data" data-bind="text: interceptions"></span>
+                </div>
+                <div>
+                    <span class="label">Badly hurt:</span>
+                    <span class="data" data-bind="text: badlyHurt"></span>
+                </div>
+                <div>
+                    <span class="label">Sustained injury:</span>
+                    <span class="data" data-bind="text: sustainedInjury"></span>
+                </div>
+                <div>
+                    <span class="label">Killed:</span>
+                    <span class="data" data-bind="text: killed"></span>
+                </div>
+                <div>
+                    <span class="label">Injured:</span>
+                    <span class="data" data-bind="text: injured"></span>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    private static function editableMatchView() {
+        ?>
+        <div class="row">
+            <span class="label">Team:</span>
+            <span class="data" data-bind="text: name"></span>
+        </div>
+        <div class="row">
+            <span class="label">Score:</span>
+            <input type="number" data-bind="value: myScore" /> for me, to <input type="number" data-bind="value: theirScore" />
+        </div>
+        <div class="row">
+            <span class="label">Treasury:</span>
+            <input type="number" data-bind="value: treasuryChange" />k
+        </div>
+        <div class="treasury-change-field row">
+            <span class="label">Fan Factor:</span>
+            <span>1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="1" /></span>
+            <span>0<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="0" /></span>
+            <span>-1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="-1" /></span>
+        </div>
+        <div id="SelectedPlayer">
+            <span>Player:</span>
+            <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select>
+            <div data-bind="with: selectedPlayerViewModel">
+                <div class="row">
+                    <span class="label">MVP:</span>
+                    <span>0<input type="radio" name="Mvp" data-bind="checked: mvp" value="0" /></span>
+                    <span>1<input type="radio" name="Mvp" data-bind="checked: mvp" value="1" /></span>
+                    <span>2<input type="radio" name="Mvp" data-bind="checked: mvp" value="2" /></span>
+                </div>
+                <div class="row">
+                    <span class="label">Completions:</span>
+                    <input type="number" data-bind="value: completions" />
+                </div>
+                <div class="row">
+                    <span class="label">Touchdowns:</span>
+                    <input type="number" data-bind="value: touchdowns" />
+                </div>
+                <div class="row">
+                    <span class="label">Interceptions:</span>
+                    <input type="number" data-bind="value: interceptions" />
+                </div>
+                <div class="row">
+                    <span class="label">Badly hurt:</span>
+                    <input type="number" data-bind="value: badlyHurt" />
+                </div>
+                <div class="row">
+                    <span class="label">Sustained injury:</span>
+                    <input type="number" data-bind="value: sustainedInjury" />
+                </div>
+                <div class="row">
+                    <span class="label">Killed:</span>
+                    <input type="number" data-bind="value: killed" />
+                </div>
+                <div class="row">
+                    <span class="label">Injured:</span>
+                    <span class="data" data-bind="text: injured"></span>
+                </div>
+            </div>
+        </div>
+        <div class="button-panel">
+            <input type="button" value="Save" data-bind="click: saveMatch" />
+            <a href="#" data-bind="click: close">Close</a>
+        </div>
+        <?php
     }
 }

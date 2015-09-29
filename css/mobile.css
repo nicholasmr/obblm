@@ -3,6 +3,15 @@
         font-weight: normal;
         font-size: 11px;
     }
+    
+    div.row {
+        margin-bottom: 1px;
+    }
+    
+    div.row input[type="radio"] {
+        vertical-align: middle;
+        margin-top: -1px;
+    }
 
     div.boxCommon {
         width: 70%;
@@ -54,6 +63,10 @@
     
     #MatchDialog #SelectedPlayer {
         margin-top: 10px;
+    }
+    
+    #MatchDialog input[type="number"] {
+        width: 2.5em;
     }
 }
 
