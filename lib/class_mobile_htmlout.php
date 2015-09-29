@@ -52,73 +52,88 @@ class Mobile_HTMLOUT {
                         <li><a href="#Teams">Teams</a></li>
                         <li><a href="#Games">Games</a></li>
                     </ul>
-                    <div id="Teams">
-                        <table id="Players">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Stats</th>
-                                    <th>Skills</th>
-                                    <th>SPP</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach($playersOnSelectedTeam as $player) { ?>
-                                    <tr>
-                                        <td><?php echo '<a href="#" data-bind="click: openPlayerDialog" data-player-id="' . $player->player_id . '">' . $player->name .'</a>'; ?></td>
-                                        <td><?php echo $player->position; ?></td>
-                                        <td><?php echo $player->ma . '/' . $player->st . '/' . $player->ag . '/' . $player->av; ?></td>
-                                        <td><?php echo $player->current_skills; ?></td>
-                                        <td><?php echo $player->mv_spp; ?></td>
-                                    </tr>
-                                <?php } ?>
-                            </tbody>
-                        </table>
-                        <div id="PlayerDialog" data-bind="with: playerDialogViewModel">
-                            <table>
-                                <tbody>
-                                    <tr><td>Player name:</td><td class="data" data-bind="text: name"></td></tr>
-                                    <tr><td>Position:</td><td class="data" data-bind="text: position"></td></tr>
-                                    <tr><td>MA/ST/AG/AV:</td><td class="data" data-bind="text: statString"></td></tr>
-                                    <tr><td>Skills:</td><td class="data" data-bind="html: skillsString"></td></tr>
-                                    <tr><td>SPP:</td><td class="data" data-bind="text: spp"></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div id="Games">
-                        <div>Recent:</div>
-                        <table>
-                            <tbody>
-                            <?php
-                                foreach($allMatches as $match) {
-                                    $dateCreated = date('Y-m-d', strtotime($match->date_created));
-                                    
-                                    echo '<tr>';
-                                    echo '<td class="date"><a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $dateCreated . '</td>';
-                                    echo '<td class="team-name">' . $match->team1_name . '</td>';
-                                    echo '<td>v.</td>';
-                                    echo '<td class="team-name">' . $match->team2_name . '</td>';
-                                    echo '</tr>';
-                                }
-                            ?>
-                            </tbody>
-                        </table>
-                        
-                        <div id="MatchDialog" data-bind="with: matchDialogViewModel">
-                            <div data-bind="if: matchIsLocked">
-                                <?php Mobile_HTMLOUT::readonlyMatchView(); ?>
-                            </div>
-                            <div data-bind="ifnot: matchIsLocked">
-                                <?php Mobile_HTMLOUT::editableMatchView(); ?>
-                            </div>
-                        </div>
-                    </div>
+                    <?php Mobile_HTMLOUT::teamSummaryView($playersOnSelectedTeam); ?>
+                    <?php Mobile_HTMLOUT::matchSummaryView($allMatches); ?>
                 </div>
             </form>
         </div>
         <?php   
+    }
+    
+    private static function teamSummaryView($playersOnSelectedTeam) {
+        ?>
+        <div id="Teams">
+            <table id="Players">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Stats</th>
+                        <th>Skills</th>
+                        <th>SPP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($playersOnSelectedTeam as $player) { ?>
+                        <tr>
+                            <td><?php echo $player->nr; ?></td>
+                            <td><?php echo '<a href="#" data-bind="click: openPlayerDialog" data-player-id="' . $player->player_id . '">' . $player->name .'</a>'; ?></td>
+                            <td><?php echo $player->position; ?></td>
+                            <td><?php echo $player->ma . '/' . $player->st . '/' . $player->ag . '/' . $player->av; ?></td>
+                            <td><?php echo $player->current_skills; ?></td>
+                            <td><?php echo $player->mv_spp; ?></td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+            <div id="PlayerDialog" data-bind="with: playerDialogViewModel">
+                <table>
+                    <tbody>
+                        <tr><td>Number:</td><td class="data" data-bind="text: number"></td></tr>
+                        <tr><td>Player name:</td><td class="data" data-bind="text: name"></td></tr>
+                        <tr><td>Position:</td><td class="data" data-bind="text: position"></td></tr>
+                        <tr><td>MA/ST/AG/AV:</td><td class="data" data-bind="text: statString"></td></tr>
+                        <tr><td>Skills:</td><td class="data" data-bind="html: skillsString"></td></tr>
+                        <tr><td>SPP:</td><td class="data" data-bind="text: spp"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php
+    }
+    
+    private static function matchSummaryView($allMatches) {
+        ?>
+        <div id="Games">
+            <div>Recent:</div>
+            <table>
+                <tbody>
+                <?php
+                    foreach($allMatches as $match) {
+                        $dateCreated = date('Y-m-d', strtotime($match->date_created));
+                        
+                        echo '<tr>';
+                        echo '<td class="date"><a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $dateCreated . '</td>';
+                        echo '<td class="team-name">' . $match->team1_name . '</td>';
+                        echo '<td>v.</td>';
+                        echo '<td class="team-name">' . $match->team2_name . '</td>';
+                        echo '</tr>';
+                    }
+                ?>
+                </tbody>
+            </table>
+            
+            <div id="MatchDialog" data-bind="with: matchDialogViewModel">
+                <div data-bind="if: matchIsLocked">
+                    <?php Mobile_HTMLOUT::readonlyMatchView(); ?>
+                </div>
+                <div data-bind="ifnot: matchIsLocked">
+                    <?php Mobile_HTMLOUT::editableMatchView(); ?>
+                </div>
+            </div>
+        </div>
+        <?php
     }
     
     private static function readonlyMatchView() {

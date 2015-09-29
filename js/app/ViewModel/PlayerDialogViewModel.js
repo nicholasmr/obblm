@@ -3,6 +3,7 @@ var PlayerDialogViewModel = function() {
     
     self.player = ko.observable({});
     
+    self.number = ko.computed(function() { return self.player().nr; });
     self.name = ko.computed(function() { return self.player().name; });
     self.position = ko.computed(function() { return self.player().position; });
     
