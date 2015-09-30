@@ -1,11 +1,12 @@
 var MatchDialogViewModel = function() {
-    var self = this;
+    var self = this,
+        playerEntries = ko.observable({});
     
     self.match = ko.observable({});
     self.playersOnTeam = ko.observable({});
     self.myTeamId = ko.observable(-1);
     self.selectedPlayer = ko.observable({});
-    
+        
     var matchTeamOneId = ko.computed(function() {
         return parseInt(self.match().team1_id, 10);
     });
@@ -35,8 +36,15 @@ var MatchDialogViewModel = function() {
     self.matchIsLocked = ko.computed(function() {
         return self.match().locked;
     });
+    
+    self.playersInMatch = ko.computed(function() {
+        return _.reduce(self.playersOnTeam(), function(player) {
+            return _.find(playerEntries(), function(playerEntry, playerId) {
+                return playerId === player.player_id;
+            });
+        });
+    });
 
-    var playerEntries = {};
     self.match.subscribe(function(newMatch) {
         self.selectedPlayer(_.first(self.playersOnTeam()));
         
@@ -49,7 +57,7 @@ var MatchDialogViewModel = function() {
                 'team_id': self.myTeamId()
             },
             success: function(result) {
-                playerEntries = JSON.parse(result);
+                playerEntries(JSON.parse(result));
                 self.selectedPlayer.valueHasMutated();
                 $('#MatchDialog').dialog({modal: true});
             }
@@ -59,7 +67,7 @@ var MatchDialogViewModel = function() {
     self.selectedPlayerViewModel = new SelectedPlayerViewModel();
 
     self.selectedPlayer.subscribe(function(newSelectedPlayer) {
-        var entry = _.find(playerEntries, function(entry, playerId) {
+        var entry = _.find(playerEntries(), function(entry, playerId) {
             return playerId === newSelectedPlayer.player_id;
         });
         
@@ -101,7 +109,7 @@ var MatchDialogViewModel = function() {
      
         data['team_id'] = self.myTeamId();
         
-        _.each(playerEntries, function(playerEntry, playerId) {
+        _.each(playerEntries(), function(playerEntry, playerId) {
             _.each(playerEntry, function(value, key) {
                 data[key + '_' + playerId] = value;
             });

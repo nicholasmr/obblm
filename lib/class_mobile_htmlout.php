@@ -1,7 +1,7 @@
 <?php
 class Mobile_HTMLOUT {
     public static function sec_mobile_main() {
-        global $coach, $lng;
+        global $coach, $lng, $T_INJS;
         
         $teams = $coach->getTeams();
         $selectedTeamId = isset($_POST["SelectedTeam"]) ? $_POST["SelectedTeam"] : $teams[0]->team_id;
@@ -20,6 +20,7 @@ class Mobile_HTMLOUT {
         <script type="text/javascript">
             var playersOnSelectedTeam = <?php echo json_encode($playersOnSelectedTeam); ?>;
             var matches = <?php echo json_encode($allMatches); ?>;
+            var injuryTable = <?php echo json_encode($T_INJS); ?>;
         
             $(document).ready(function() {
                 $('#tabs').tabs();
@@ -28,6 +29,7 @@ class Mobile_HTMLOUT {
                 });
 
                 var mobileViewModel = new MobileViewModel();
+                mobileViewModel.matchDialogViewModel.selectedPlayerViewModel.injuryTable(injuryTable);
                 mobileViewModel.matchDialogViewModel.myTeamId(<?php echo $selectedTeamId; ?>);
                 mobileViewModel.matchDialogViewModel.playersOnTeam(playersOnSelectedTeam);
                 
@@ -189,7 +191,7 @@ class Mobile_HTMLOUT {
                 </div>
                 <div>
                     <span class="label"><?php echo $lng->getTrn('common/injs'); ?>:</span>
-                    <span class="data" data-bind="text: injured"></span>
+                    <span class="data" data-bind="text: injuryText"></span>
                 </div>
             </div>
         </fieldset>
@@ -254,7 +256,7 @@ class Mobile_HTMLOUT {
                 </div>
                 <div class="row">
                     <span class="label"><?php echo $lng->getTrn('common/injs'); ?>:</span>
-                    <span class="data" data-bind="text: injured"></span>
+                    <select data-bind="value: injured, options: injuries, optionsValue: 'id', optionsText: 'name'"></select>
                 </div>
             </div>
         </fieldset>
