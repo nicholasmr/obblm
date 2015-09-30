@@ -141,25 +141,23 @@ class Mobile_HTMLOUT {
     private static function readonlyMatchView() {
         global $lng;
         ?>
-        <div>
-            <span class="label"><?php echo $lng->getTrn('common/team'); ?>:</span>
-            <span class="data" data-bind="text: name"></span>
-        </div>
-        <div>
-            <span class="label"><?php echo $lng->getTrn('common/score'); ?>:</span>
-            <span class="data" data-bind="text: myScore"></span> for me, to <span class="data" data-bind="text: theirScore"></span>
-        </div>
-        <div>
-            <span class="label"><?php echo $lng->getTrn('matches/report/treas'); ?>:</span>
-            <span class="data" data-bind="text: treasuryChange"></span>
-        </div>
-        <div>
-            <span class="label"><?php echo $lng->getTrn('matches/report/ff'); ?>:</span>
-            <span class="data" data-bind="text: fanFactorChange"></span>
-        </div>
-        <div id="SelectedPlayer">
-            <span><?php echo $lng->getTrn('common/player'); ?>:</span>
-            <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select>
+        <fieldset>
+            <legend><?php echo $lng->getTrn('common/team'); ?>: <span class="data" data-bind="text: name"></span></legend>
+            <div>
+                <span class="label"><?php echo $lng->getTrn('common/score'); ?>:</span>
+                <span class="data" data-bind="text: myScore"></span> for me, to <span class="data" data-bind="text: theirScore"></span>
+            </div>
+            <div>
+                <span class="label"><?php echo $lng->getTrn('matches/report/treas'); ?>:</span>
+                <span class="data" data-bind="text: treasuryChange"></span>
+            </div>
+            <div>
+                <span class="label"><?php echo $lng->getTrn('matches/report/ff'); ?>:</span>
+                <span class="data" data-bind="text: fanFactorChange"></span>
+            </div>
+        </fieldset>
+        <fieldset id="SelectedPlayer">
+            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select></legend>
             <div data-bind="with: selectedPlayerViewModel">
                 <div>
                     <span class="label"><?php echo $lng->getTrn('matches/report/mvp'); ?>:</span>
@@ -194,34 +192,35 @@ class Mobile_HTMLOUT {
                     <span class="data" data-bind="text: injured"></span>
                 </div>
             </div>
-        </div>
+        </fieldset>
         <?php
     }
 
     private static function editableMatchView() {
         global $lng;
         ?>
-        <div class="row">
-            <span class="label"><?php echo $lng->getTrn('common/team'); ?>:</span>
-            <span class="data" data-bind="text: name"></span>
-        </div>
-        <div class="row">
-            <span class="label"><?php echo $lng->getTrn('common/score'); ?>:</span>
-            <input type="number" data-bind="value: myScore" /> for me, to <input type="number" data-bind="value: theirScore" />
-        </div>
-        <div class="row">
-            <span class="label"><?php echo $lng->getTrn('matches/report/treas'); ?>:</span>
-            <input type="number" data-bind="value: treasuryChange" />k
-        </div>
-        <div class="treasury-change-field row">
-            <span class="label"><?php echo $lng->getTrn('matches/report/ff'); ?>:</span>
-            <span>1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="1" /></span>
-            <span>0<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="0" /></span>
-            <span>-1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="-1" /></span>
-        </div>
-        <div id="SelectedPlayer">
-            <span><?php echo $lng->getTrn('common/player'); ?>:</span>
-            <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select>
+        <fieldset>
+            <legend><?php echo $lng->getTrn('common/team'); ?>: <span class="data" data-bind="text: name"></span></legend>
+
+            <div class="row">
+                <span class="label"><?php echo $lng->getTrn('common/score'); ?>:</span>
+                <input type="number" data-bind="value: myScore" /> for me, to <input type="number" data-bind="value: theirScore" />
+            </div>
+            <div class="row">
+                <span class="label"><?php echo $lng->getTrn('matches/report/treas'); ?>:</span>
+                <input type="number" data-bind="value: treasuryChange" />k
+            </div>
+            <div class="treasury-change-field row">
+                <span class="label"><?php echo $lng->getTrn('matches/report/ff'); ?>:</span>
+                <span>1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="1" /></span>
+                <span>0<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="0" /></span>
+                <span>-1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="-1" /></span>
+            </div>
+        </fieldset>
+        
+        <fieldset id="SelectedPlayer">
+            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select></legend>
+            
             <div data-bind="with: selectedPlayerViewModel">
                 <div class="row">
                     <span class="label"><?php echo $lng->getTrn('matches/report/mvp'); ?>:</span>
@@ -258,7 +257,7 @@ class Mobile_HTMLOUT {
                     <span class="data" data-bind="text: injured"></span>
                 </div>
             </div>
-        </div>
+        </fieldset>
         <div class="button-panel">
             <input type="button" value="<?php echo $lng->getTrn('common/save'); ?>" data-bind="click: saveMatch" />
             <a href="#" data-bind="click: close"><?php echo $lng->getTrn('common/back'); ?></a>

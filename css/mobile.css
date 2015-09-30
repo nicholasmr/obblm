@@ -67,6 +67,7 @@
     
     #MatchDialog #SelectedPlayer {
         margin-top: 20px;
+        margin-bottom: 5px;
     }
     
     #MatchDialog input[type="number"] {
