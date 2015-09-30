@@ -1005,8 +1005,9 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <title><?php echo $settings['site_name']; ?></title>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css">
         <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
-        <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml">
+        <link type="text/css" href="css/mobile.css" rel="stylesheet">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
         <script type="text/javascript" src="js/lib/underscore-1.8.3.min.js"></script>
@@ -1018,8 +1019,6 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <script type="text/javascript" src="js/app/ViewModel/MatchDialogViewModel.js"></script>
         <script type="text/javascript" src="js/app/ViewModel/SelectedPlayerViewModel.js"></script>
         
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css">
-        <link type="text/css" href="css/mobile.css" rel="stylesheet">
     </head>
     <body>
         <div class="everything">

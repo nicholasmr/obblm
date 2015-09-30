@@ -61,6 +61,10 @@
         padding: 1em 0.5em;
     }
     
+    .ui-widget {
+        font: 1.1em Arial, Helvetica, sans-serif;
+    }
+    
     #MatchDialog #SelectedPlayer {
         margin-top: 20px;
     }
