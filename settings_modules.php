@@ -24,9 +24,11 @@ $settings['modules_enabled'] = array(
     // The below modules are not well maintained and are poorly supported!!
     'UPLOAD_BOTOCS'      => false, # Allow upload of a BOTOCS match
     'XML_BOTOCS'         => false, # BOTOCS XML export of team
-    'LeagueTables'       => false, # Provides league table link on the main menu
-    'Conference'         => false, # Provides support for conferences within tournaments
-    'Scheduler'          => false, # Alternative match scheduler
+    'LeagueTables'       => true, # Provides league table link on the main menu
+    'Conference'         => true, # Provides support for conferences within tournaments
+    'Scheduler'          => true, # Alternative match scheduler
+    'LeaguePref'         => true, # Allows dynamic configuration of league preferences
+    'TeamCreator'        => true, # Allows coaches to create teams quickly
 );
 
 /*****************

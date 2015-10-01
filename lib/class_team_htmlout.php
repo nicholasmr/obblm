@@ -645,24 +645,37 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
 #cycolors .grey7 a {top:96px;left: 112px;}
 </style>
 
-    <br>
-    <ul id="nav" class="dropdown dropdown-horizontal" style="position:static; z-index:0;">
-        <li><a href="<?php echo $url.'&amp;subsec=man';?>"><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
-        <li><a href="<?php echo $url.'&amp;subsec=news';?>"><?php echo $lng->getTrn('profile/team/news');?></a></li>
+    <ul id="css3menu1" class="topmenu" style="position:static; z-index:0;">
+        <li class="topfirst"><a href="<?php echo $url.'&amp;subsec=man';?>"><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
+        <li class="topmenu"><a href="<?php echo $url.'&amp;subsec=news';?>"><?php echo $lng->getTrn('profile/team/news');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=about';?>"><?php echo $lng->getTrn('common/about');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=games';?>"><?php echo $lng->getTrn('profile/team/games');?></a></li>
         <?php
         echo "<li><a href='${url}&amp;subsec=hhstar'>".$lng->getTrn('common/starhh')."</a></li>\n";
         echo "<li><a href='${url}&amp;subsec=hhmerc'>".$lng->getTrn('common/merchh')."</a></li>\n";
-
+		
         $pdf    = (Module::isRegistered('PDFroster')) ? "handler.php?type=roster&amp;team_id=$this->team_id&amp;detailed=".($DETAILED ? '1' : '0') : '';
         $botocs = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_botocs']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id" : '';
         $cyanide = (Module::isRegistered('XML_BOTOCS') && $settings['leegmgr_cyanide']) ? "handler.php?type=botocsxml&amp;teamid=$this->team_id&amp;cy" : '';
         if ($pdf || $botocs) {
         ?>
-        <li><span class="dir">Roster</span>
+		
+						        <?php
+        }
+        if (Module::isRegistered('IndcPage')) {
+            echo "<li><a href='handler.php?type=inducements&amp;team_id=$team->team_id'>Inducements try-out</a></li>\n";
+        }
+        if (Module::isRegistered('SGraph')) {
+            echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''>Vis. stats</a></li>\n";
+        }
+        if (Module::isRegistered('Cemetery')) {
+            echo "<li><a href='handler.php?type=cemetery&amp;tid=$team->team_id'>".$lng->getTrn('name', 'Cemetery')."</a></li>\n";
+        }
+        ?>
+		
+        <li class="toplast"><a>Roster</a>
             <ul>
-                <?php if ($pdf)    { ?><li><a TARGET="_blank" href="<?php echo $pdf;?>">PDF</a></li> <?php } ?>
+                <?php if ($pdf)    { ?><li class="subfirst"><a TARGET="_blank" href="<?php echo $pdf;?>">PDF</a></li> <?php } ?>
                 <?php if ($botocs) { ?><li><a TARGET="_blank" href="<?php echo $botocs;?>">BOTOCS-XML</a></li> <?php } ?>
                 <?php if ($cyanide) { ?><li><span class="dir">Cyanide-DB</span>
                     <ul>
@@ -732,24 +745,11 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
                     </div>
                     </ul>
                 </li>
-
                 <?php } ?>
             </ul>
         </li>
-        <?php
-        }
-        if (Module::isRegistered('IndcPage')) {
-            echo "<li><a href='handler.php?type=inducements&amp;team_id=$team->team_id'>Inducements try-out</a></li>\n";
-        }
-        if (Module::isRegistered('SGraph')) {
-            echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_TEAM."&amp;id=$team->team_id''>Vis. stats</a></li>\n";
-        }
-        if (Module::isRegistered('Cemetery')) {
-            echo "<li><a href='handler.php?type=cemetery&amp;tid=$team->team_id'>".$lng->getTrn('name', 'Cemetery')."</a></li>\n";
-        }
-        ?>
     </ul>
-    <br><br>
+    <br>
     <?php
 }
 

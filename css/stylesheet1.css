@@ -4,18 +4,71 @@
 
 html {overflow-y: scroll;} /* Keep page alignment uniform. */
 
+@font-face {
+    font-family: 'auroracondensed';
+    src: url('fonts/aurora_condensed-webfont.eot');
+    src: url('fonts/aurora_condensed-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/aurora_condensed-webfont.woff2') format('woff2'),
+         url('fonts/aurora_condensed-webfont.woff') format('woff'),
+         url('fonts/aurora_condensed-webfont.ttf') format('truetype'),
+         url('fonts/aurora_condensed-webfont.svg#auroracondensed') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'aurora';
+    src: url('fonts/aurora-bdcn-bt-bold-webfont.eot');
+    src: url('fonts/aurora-bdcn-bt-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/aurora-bdcn-bt-bold-webfont.woff2') format('woff2'),
+         url('fonts/aurora-bdcn-bt-bold-webfont.woff') format('woff'),
+         url('fonts/aurora-bdcn-bt-bold-webfont.ttf') format('truetype'),
+         url('fonts/aurora-bdcn-bt-bold-webfont.svg#aurora_bdcn_btbold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+a {
+color: #8585AD;
+}
+a:link, a:visited {}
+
+a:hover { color:#A3AFC7;
+text-decoration: underline;
+}
+
 body 
 {
-    /*
-    background-color: black;
-    background-image: url(../images/bg2.jpg);
-    background-repeat: repeat-y;
-    background-position: top center;
-    */
-    background: #0a1e2e url(../images/bg.png) repeat-x;
+  
+    background-color: #990000;
 
-    font: 12px Tahoma;
+    font: 11px bold Arial, Helvetica, sans-serif;
+    font-weight: bold;
 }
+
+f1 {
+	/* Forum name */
+	line-height: 0.5;
+	font-family: auroracondensed, Verdana, "Trebuchet MS", Arial, Helvetica, sans-serif;
+	margin-right: 10px;
+	color: white;
+	padding-bottom: 200px;
+	font-weight: normal;
+	font-size: 40px;
+	text-shadow: 2px 2px black;
+	padding-left: 160px;
+}
+
+f2 {
+	/* Forum header titles */
+	line-height:6;
+	font-family: Verdana, "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: #201d0e;
+	font-size: 1em;
+	margin: 000px  00px 00px 160px;
+}
+
 
 h3 {margin:0} /* Reset browser default margin */
 
@@ -25,7 +78,7 @@ h2
     clear: both;
     text-align: center;
     padding-top: 20px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     width: inherit;
     font-size: 18px;
     font-weight: bold;
@@ -37,12 +90,13 @@ div.row {width: inherit; clear: both; background-color: inherit;}
 
 /* MAIN container */
 div.everything {
-    width: 1200px; 
+  /*  width: 1200px; 
     margin: auto; 
-    background-color: #eeeeee;
+    background-color: inherit;
 	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
+	*/
 } /* Top level container */
 
 /*
@@ -51,23 +105,28 @@ div.everything {
 
 /* Banner */
 div.banner {
-    width: 1200px;
-    height: 150px;
-    background-image: url(../images/banner.png); /* 150x1000px */
-    background-repeat: no-repeat;
-    background-position: top left;
+    width: 100%;
+    height: 135px;
+    margin-left:0px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    background: url(../images/logo.png) left bottom no-repeat, url(../images/logo2.png) right bottom no-repeat, url(../images/bg_header.png) left bottom repeat-x;
+	border: 1px solid black;
+	color: black;
 }
 
 /* Menu */
 div.menu {
-    width: 100%;
-    float: left;
+    width: 99.8%;
+    float: left; 
+    border: 2px solid black;
 }
 
 /* Section code container */
 div.section {
     margin: 5px; 
-    padding-bottom: 40px; 
+    color: white;
+	padding-bottom: 40px; 
     background-color: inherit;
 }
 
@@ -75,16 +134,17 @@ div.section {
  *   Box (inner) stylings.
  */
 div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo {
-    margin: 20px; 
-    border: 1px solid #545454;
+    margin: 16px; 
+	color: white;
+    border: 2px solid black;
 
-	border-radius: 4px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
+	border-radius: 0px;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
 
-	-moz-box-shadow: 3px 4px 10px #999;
+	/*-moz-box-shadow: 3px 4px 10px #999;
 	-webkit-box-shadow: 3px 4px 10px #999;
-	box-shadow: 3px 4px 10px #999;
+	box-shadow: 3px 4px 10px #999;*/
 }
 div.boxWide             {clear:both;}
 div.boxCommon           {float:left;}
@@ -93,17 +153,18 @@ div.boxTeamPage         {float: left; width: 270px; margin: 15px; margin-bottom:
 div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 
 .boxTitle1,.boxTitle2,.boxTitle3,.boxTitle4,.boxTitle5 {
-	-moz-border-radius: 4px 4px 0 0;
+	
+/*	-moz-border-radius: 4px 4px 0 0;
 	-webkit-border-radius: 4px 4px 0 0;
-	border-radius: 4px 4px 0 0;
+	border-radius: 4px 4px 0 0;*/
 }
-.boxTitle1 {background-color: #679EC9; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Team/player/coach info & team news */
-.boxTitle2 {background-color: #A37B45; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Management/actions/more box for ordinary coaches */
-.boxTitle3 {background-color: #BCDD11; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Management/actions/more box for ordinary admins */
-.boxTitle4 {background-color: #F1921A; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Statistics (standings, player leaders, ES) */
-.boxTitle5 {background-color: #669900; padding: 6px; font-size: 13px; font-weight: bold;} /* Used for: Match summaries & recent games */
-.boxBody   {border-top: 1px solid #545454; padding: 10px;}
-table.boxTable {border-spacing: 5px; width: 100%;}
+.boxTitle1 {color:black; font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Team/player/coach info & team news */
+.boxTitle2 {color:black; font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Management/actions/more box for ordinary coaches */
+.boxTitle3 {font-family: aurora; background-color: #FD0200; color: white; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Management/actions/more box for ordinary admins */
+.boxTitle4 {color:black; font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Statistics (standings, player leaders, ES) */
+.boxTitle5 {color:black; font-family: aurora; background-color: #D9D8D0; padding: 6px; font-size: 20px; font-weight: normal;} /* Used for: Match summaries & recent games */
+.boxBody   {color:black; border-top: 2px solid black; background-color: #FAFAFA; font-weight: normal; padding: 10px;}
+table.boxTable {color:black; border-spacing: 5px; width: 100%;}
 
 /* Other types of boxes. */
 .helpBox {
@@ -139,7 +200,7 @@ table.boxTable {border-spacing: 5px; width: 100%;}
 
 /* Used almost everywhere */
 table.common  {border: none; width: 100%; background-color: inherit;}
-tr.commonhead {background-color: #CCCCCC;}
+tr.commonhead {color: black; background-color: #CCCCCC;}
 
 /* For the tours list */
 table.tours {
@@ -168,15 +229,16 @@ div.toursNCont       {margin-top:0px;  margin-left:10px;}
  */
 
 /* Main page */
-div.main_head       {clear: both; padding-left: 20px; padding-top: 20px; padding-bottom: 5px; font-size: 18px; background-color: inherit;}
+
+div.main_head       {font-family: aurora; clear: both; padding-left: 20px; padding-top: 15px; padding-bottom: 5px; font-size: 25px; color: white; text-shadow: 2px 2px black; background-color: inherit; font-weight: normal}
 div.main_foot       {clear: both; font-size: 11px; padding: 30px; padding-top: 20px; background-color: inherit;}
-div.main_rightColumn {float: right; width: 600px; background-color: inherit;}
-div.main_leftColumn {float: left; width: 540px; background-color: inherit;}
-    div.main_leftColumn_head     {clear: both; text-align: right; padding-right: 20px; background-color: inherit;} /* Padding should be the same as lcolBox padding. */
+div.main_rightColumn {float: right; width: 50%; background-color: inherit;}
+div.main_leftColumn {float: left; width: 50%; background-color: inherit;}
+    div.main_leftColumn_head     {clear: both; color: white; text-align: right; padding-right: 20px; background-color: inherit;} /* Padding should be the same as lcolBox padding. */
         div.main_leftColumn_welcome  {clear: both; padding-left: 20px; padding-top: 3px; padding-bottom: 3px; background-color: inherit; text-align: left;}
         div.main_leftColumn_left  {padding-left: 20px; padding-top: 10px; padding-bottom: 10px; background-color: inherit; text-align: left; float:left;}
         div.main_leftColumn_right {padding-left: 20px; padding-top: 3px;  padding-bottom: 3px;  background-color: inherit; text-align: right; float:right;}
-
+*/
 /* 
  *  Other
  */
