@@ -29,6 +29,8 @@ class Mobile_HTMLOUT {
                 });
 
                 var mobileViewModel = new MobileViewModel();
+                mobileViewModel.teamViewModel.playersOnTeam(playersOnSelectedTeam);
+                
                 mobileViewModel.matchDialogViewModel.selectedPlayerViewModel.injuryTable(injuryTable);
                 mobileViewModel.matchDialogViewModel.myTeamId(<?php echo $selectedTeamId; ?>);
                 mobileViewModel.matchDialogViewModel.playersOnTeam(playersOnSelectedTeam);
@@ -75,21 +77,24 @@ class Mobile_HTMLOUT {
                         <th><?php echo $lng->getTrn('common/stats'); ?></th>
                         <th><?php echo $lng->getTrn('common/skills'); ?></th>
                         <th>SPP</th>
+                        <th>NI</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach($playersOnSelectedTeam as $player) { ?>
-                        <tr>
-                            <td><?php echo $player->nr; ?></td>
-                            <td><?php echo '<a href="#" data-bind="click: openPlayerDialog" data-player-id="' . $player->player_id . '">' . $player->name .'</a>'; ?></td>
-                            <td><?php echo $player->position; ?></td>
-                            <td><?php echo $player->ma . '/' . $player->st . '/' . $player->ag . '/' . $player->av; ?></td>
-                            <td><?php echo $player->current_skills; ?></td>
-                            <td><?php echo $player->mv_spp; ?></td>
-                        </tr>
-                    <?php } ?>
+                <tbody data-bind="foreach: teamViewModel.players">
+                    <tr data-bind="css: {'miss-next-game': missNextGame}">
+                        <td data-bind="text: number"></td>
+                        <td><a href="#" data-bind="click: $parent.openPlayerDialog, text: name"></td>
+                        <td data-bind="text: position"></td>
+                        <td data-bind="text: statsString"></td>
+                        <td data-bind="html: skills"></td>
+                        <td data-bind="text: spp"></td>
+                        <td data-bind="text: nigglingInjuryCount"></td>
+                    </tr>
                 </tbody>
             </table>
+            <div>
+                <span class="miss-next-game">Miss next game</span>.
+            </div>
             <div id="PlayerDialog" data-bind="with: playerDialogViewModel">
                 <table>
                     <tbody>

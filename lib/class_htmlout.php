@@ -1015,6 +1015,8 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>
 
         <script type="text/javascript" src="js/app/ViewModel/MobileViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/TeamViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/PlayerViewModel.js"></script>
         <script type="text/javascript" src="js/app/ViewModel/PlayerDialogViewModel.js"></script>
         <script type="text/javascript" src="js/app/ViewModel/MatchDialogViewModel.js"></script>
         <script type="text/javascript" src="js/app/ViewModel/SelectedPlayerViewModel.js"></script>

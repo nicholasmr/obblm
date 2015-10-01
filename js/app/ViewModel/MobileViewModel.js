@@ -1,8 +1,8 @@
 var MobileViewModel = function() {
     var self = this;
     
-    self.openPlayerDialog = function(viewModel, event) {
-        var playerId = $(event.target).attr('data-player-id');
+    self.openPlayerDialog = function(playerViewModel, event) {
+        var playerId = playerViewModel.id;
         var player = _.find(playersOnSelectedTeam, function(player) {
             return player.player_id === playerId;
         });
@@ -31,6 +31,7 @@ var MobileViewModel = function() {
         // opens after AJAX call in MatchDialogViewModel
     }
     
+    self.teamViewModel = new TeamViewModel();
     self.playerDialogViewModel = new PlayerDialogViewModel();
     self.matchDialogViewModel = new MatchDialogViewModel();
 };

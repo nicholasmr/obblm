@@ -37,6 +37,7 @@
     
     #Players {
         margin-top: 5px;
+        margin-bottom: 10px;
     }
     
     #Players td {
@@ -72,6 +73,10 @@
     
     #MatchDialog input[type="number"] {
         width: 2.5em;
+    }
+    
+    .miss-next-game {
+        background-color: rgba(255,0,0,0.25);
     }
 }
 
