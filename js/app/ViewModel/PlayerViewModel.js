@@ -13,6 +13,7 @@ var PlayerViewModel = function(player) {
     self.spp = player.mv_spp;
     self.missNextGame = player.is_mng;
     self.nigglingInjuryCount = player.inj_ni;
+    self.mayBuyNewSkill = player.may_buy_new_skill > 0;
     
     self.statsString = player.ma + '/' + player.st + '/' + player.ag + '/' + player.av;
 };

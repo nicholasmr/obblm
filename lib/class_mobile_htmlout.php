@@ -81,7 +81,7 @@ class Mobile_HTMLOUT {
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: teamViewModel.players">
-                    <tr data-bind="css: {'miss-next-game': missNextGame}">
+                    <tr data-bind="css: {'miss-next-game': missNextGame, 'may-buy-new-skill': mayBuyNewSkill}">
                         <td data-bind="text: number"></td>
                         <td><a href="#" data-bind="click: $parent.openPlayerDialog, text: name"></td>
                         <td data-bind="text: position"></td>
@@ -93,7 +93,7 @@ class Mobile_HTMLOUT {
                 </tbody>
             </table>
             <div>
-                <span class="miss-next-game">Miss next game</span>.
+                <span class="miss-next-game">Miss next game</span>, <span class="may-buy-new-skill">may buy new skill</span>.
             </div>
             <div id="PlayerDialog" data-bind="with: playerDialogViewModel">
                 <table>

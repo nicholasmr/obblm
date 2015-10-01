@@ -69,6 +69,7 @@ class Player
     public $current_skills   = array();
     public $extra_spp = 0;
     public $extra_val = 0;
+    public $may_buy_new_skill = 0;
     
     public $value = 0;
     public $date_died = '';
@@ -167,6 +168,7 @@ class Player
         }
         
         $this->current_skills = $this->getSkillsStr(true);
+        $this->may_buy_new_skill = $this->mayHaveNewSkill();
     }
     
     public function setStats($node, $node_id, $set_avg = false)
