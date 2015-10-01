@@ -5,7 +5,7 @@ ul#css3menu1 ul{
 ul#css3menu1 li:hover>*{
 	display:block;}
 ul#css3menu1 li{
-	position:relative;display:block;white-space:nowrap;font-size:0;float:left;}
+	position:relative;display:block;white-space:nowrap;font-size:0;float:right;}
 ul#css3menu1 li:hover{
 	z-index:1;}
 ul#css3menu1 ul ul{
@@ -16,7 +16,7 @@ ul#css3menu1{
 * html ul#css3menu1 li a{
 	display:inline-block;}
 ul#css3menu1>li{
-	margin:0;width:14%;}
+	margin:0;display:table-cell; table-layout:fixed; width:12.5%;}
 ul#css3menu1 li.toplast{
 	width:16%;}
 body:first-of-type ul#css3menu1{
