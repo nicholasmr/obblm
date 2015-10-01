@@ -139,7 +139,7 @@ require_once('lib/class_match_htmlout.php');
  ********************/
 
 if (!is_writable(IMG)) {
-    die('OBBLM needs to be able to write to the <i>images</i> directory in order to work probably. Please check the directory permissions.');
+    die('OBBLM needs to be able to write to the <i>images</i> directory in order to work properly. Please check the directory permissions.');
 }
 sortgamedata(); # Game data files are unsorted, make them pretty for display porposes.
 
@@ -156,12 +156,12 @@ else {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
     require_once('modules/modsheader.php'); # Registration of modules.
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
+	
+	/******************************
+	   Translate skills globally
+	******************************/
+	global $lng;
+	$lng->TranslateSkills();
 }
-
-/******************************
-   Translate skills globally
-******************************/
-global $lng;
-$lng->TranslateSkills();
 
 
