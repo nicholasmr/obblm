@@ -141,7 +141,7 @@ require_once('lib/class_match_htmlout.php');
 if (!is_writable(IMG)) {
     die('OBBLM needs to be able to write to the <i>images</i> directory in order to work properly. Please check the directory permissions.');
 }
-sortgamedata(); # Game data files are unsorted, make them pretty for display porposes.
+sortgamedata(); # Game data files are unsorted, make them pretty for display purposes.
 
 /********************
  *   Globals/Startup
