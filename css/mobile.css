@@ -35,7 +35,7 @@
         float: right;
     }
     
-    #Players {
+    #Players, #GamesTable {
         margin-top: 5px;
         margin-bottom: 10px;
     }
@@ -77,6 +77,18 @@
     
     .miss-next-game {
         background-color: rgba(255,0,0,0.25);
+    }
+    
+    #usersched {
+        text-align: center;
+    }
+    
+    #usersched #trid, #usersched #round, #usersched #own_team {
+        width: 100%;
+    }
+    
+    #usersched #opposing_team_autoselect {
+        width: 98%;
     }
 }
 

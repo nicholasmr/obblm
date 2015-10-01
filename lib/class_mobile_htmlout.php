@@ -116,7 +116,7 @@ class Mobile_HTMLOUT {
         ?>
         <div id="Games">
             <div><?php echo $lng->getTrn('profile/team/games'); ?></div>
-            <table>
+            <table id="GamesTable">
                 <tbody>
                 <?php
                     foreach($allMatches as $match) {
@@ -132,6 +132,9 @@ class Mobile_HTMLOUT {
                 ?>
                 </tbody>
             </table>
+            <div>
+                <a href="mobile.php?section=matches&type=usersched"><?php echo $lng->getTrn('menu/matches_menu/usersched'); ?></a>
+            </div>
             
             <div id="MatchDialog" data-bind="with: matchDialogViewModel">
                 <div data-bind="if: matchIsLocked">

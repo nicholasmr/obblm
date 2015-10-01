@@ -71,8 +71,9 @@ MTS('Header loaded, login auth, html frame generated');
 // Check if a menu-link was picked, and execute section code from sections.php accordingly.
 switch ($_GET['section'])
 {
-    case 'login':        sec_login();           break;
-    default:             Mobile_HTMLOUT::sec_mobile_main();
+    case 'login':       sec_login();                        break;
+    case 'matches':     Match_HTMLOUT::userSched();         break;
+    default:            Mobile_HTMLOUT::sec_mobile_main();
 }
 
 HTMLOUT::frame_end(); // Spit out all the end-tags.
