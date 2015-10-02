@@ -49,6 +49,9 @@ class Mobile_HTMLOUT {
                         }
                     ?>
                 </select>
+                <span>
+                    TV<?php echo $selectedTeam->tv/1000; ?>
+                </span>
                 <span class="button-panel">
                     <a href="<?php echo getFormAction() . '?logout=1'; ?>"><?php echo $lng->getTrn('menu/logout'); ?></a>
                 </span>
