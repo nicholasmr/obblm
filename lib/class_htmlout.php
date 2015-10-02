@@ -545,13 +545,13 @@ public static function updateNodeSelectorLeagueVars()
 
     /* Simple league selector (SLS) */
     $lids = array_keys($leagues);
-    if (isset($_POST['SLS_lid']) && in_array($_POST['SLS_lid'], $lids)) {
+    if (isset($_REQUEST['SLS_lid']) && in_array($_REQUEST['SLS_lid'], $lids)) {
         $_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
-        $_SESSION[self::T_NSStr__node_id] = (int) $_POST['SLS_lid'];
+        $_SESSION[self::T_NSStr__node_id] = (int) $_REQUEST['SLS_lid'];
     }
 
     /* Advanced node selector (ANS) */
-    if (isset($_POST['ANS'])) {
+    if (isset($_REQUEST['ANS'])) {
         $_SESSION[self::T_NSStr__node] = (int) $_POST['node'];
         $rel = array(T_NODE_TOURNAMENT => 'tour', T_NODE_DIVISION => 'division', T_NODE_LEAGUE => 'league');
         $_SESSION[self::T_NSStr__node_id] = (int) $_POST[$rel[$_SESSION[self::T_NSStr__node]].'_in'];
