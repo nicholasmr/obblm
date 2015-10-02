@@ -1,4 +1,4 @@
-var MobileViewModel = function() {
+var MobileViewModel = function(playersOnSelectedTeam, matches) {
     var self = this;
     
     self.openPlayerDialog = function(playerViewModel, event) {
@@ -31,7 +31,7 @@ var MobileViewModel = function() {
         // opens after AJAX call in MatchDialogViewModel
     }
     
-    self.teamViewModel = new TeamViewModel();
+    self.teamViewModel = new TeamViewModel(playersOnSelectedTeam);
     self.playerDialogViewModel = new PlayerDialogViewModel();
-    self.matchDialogViewModel = new MatchDialogViewModel();
+    self.matchDialogViewModel = new MatchDialogViewModel(playersOnSelectedTeam);
 };

@@ -169,6 +169,7 @@ class Player
         
         $this->current_skills = $this->getSkillsStr(true);
         $this->may_buy_new_skill = $this->mayHaveNewSkill();
+        $this->setChoosableSkills();
     }
     
     public function setStats($node, $node_id, $set_avg = false)

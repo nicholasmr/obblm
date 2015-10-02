@@ -1,9 +1,8 @@
-var MatchDialogViewModel = function() {
+var MatchDialogViewModel = function(playersOnSelectedTeam) {
     var self = this,
         playerEntries = ko.observable({});
     
     self.match = ko.observable({});
-    self.playersOnTeam = ko.observable({});
     self.myTeamId = ko.observable(-1);
     self.selectedPlayer = ko.observable({});
         
@@ -38,15 +37,17 @@ var MatchDialogViewModel = function() {
     });
     
     self.playersInMatch = ko.computed(function() {
-        return _.reduce(self.playersOnTeam(), function(player) {
-            return _.find(playerEntries(), function(playerEntry, playerId) {
+        var playerMatchEntries = playerEntries();
+        return _.reduce(playersOnSelectedTeam, function(player) {
+            var inMatch = _.find(playerMatchEntries, function(playerEntry, playerId) {
                 return playerId === player.player_id;
             });
+            return inMatch ? player : null;
         });
     });
 
     self.match.subscribe(function(newMatch) {
-        self.selectedPlayer(_.first(self.playersOnTeam()));
+        self.selectedPlayer(_.first(playersOnSelectedTeam));
         
         $.ajax({
             type: 'GET',

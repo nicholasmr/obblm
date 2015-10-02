@@ -1,10 +1,8 @@
-var TeamViewModel = function() {
+var TeamViewModel = function(playersOnSelectedTeam) {
     var self = this;
     
-    self.playersOnTeam = ko.observable({});
-    
     self.players = ko.computed(function() {
-        return _.map(self.playersOnTeam(), function(player) {
+        return _.map(playersOnSelectedTeam, function(player) {
             return new PlayerViewModel(player);
         });
     });

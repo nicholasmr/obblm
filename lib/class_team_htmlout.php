@@ -153,12 +153,12 @@ public static function profile($tid)
     setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => $t->f_lid)); // Load correct $rules for league.
 
     /* Argument(s) passed to generating functions. */
-    $ALLOW_EDIT = (is_object($coach) && ($t->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $tid)) && !$t->is_retired); # Show team action boxes?
+    $ALLOW_EDIT = $t->allowEdit(); # Show team action boxes?
     $DETAILED   = (isset($_GET['detailed']) && $_GET['detailed'] == 1);# Detailed roster view?
 
     /* Team pages consist of the output of these generating functions. */
-    $t->_handleActions($ALLOW_EDIT); # Handles any actions/request sent.
-    list($players, $players_backup) = $t->_loadPlayers($DETAILED); # Should come after _handleActions().
+    $t->handleActions($ALLOW_EDIT); # Handles any actions/request sent.
+    list($players, $players_backup) = $t->_loadPlayers($DETAILED); # Should come after handleActions().
     $t->_roster($ALLOW_EDIT, $DETAILED, $players);
     $players = $players_backup; # Restore the $players array (_roster() manipulates the passed $players array).
     $t->_menu($ALLOW_EDIT, $DETAILED);
@@ -181,7 +181,7 @@ public static function profile($tid)
     }
 }
 
-private function _handleActions($ALLOW_EDIT)
+public function handleActions($ALLOW_EDIT)
 {
     global $coach;
     $team = $this; // Copy. Used instead of $this for readability.

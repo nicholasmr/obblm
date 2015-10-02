@@ -13,27 +13,28 @@ class Mobile_HTMLOUT {
         
         $playersOnSelectedTeam = $selectedTeam->getPlayers();
         
+        foreach($playersOnSelectedTeam as $player) {
+            Player_HTMLOUT::setChoosableSkillsTranslations($player);
+        }
+
         list($recentMatches, $pages) = Stats::getMatches(T_OBJ_TEAM, $selectedTeamId, false, false, false, false, array(), true, false);
         list($upcomingMatches, $pages) = Stats::getMatches(T_OBJ_TEAM, $selectedTeamId, false, false, false, false, array(), true, true);
         $allMatches = array_merge($recentMatches, $upcomingMatches);
         ?>
         <script type="text/javascript">
-            var playersOnSelectedTeam = <?php echo json_encode($playersOnSelectedTeam); ?>;
-            var matches = <?php echo json_encode($allMatches); ?>;
-            var injuryTable = <?php echo json_encode($T_INJS); ?>;
-        
             $(document).ready(function() {
+                var playersOnSelectedTeam = <?php echo json_encode($playersOnSelectedTeam); ?>;
+                var matches = <?php echo json_encode($allMatches); ?>;
+                var injuryTable = <?php echo json_encode($T_INJS); ?>;
                 $('#tabs').tabs();
                 $('#SelectedTeam').change(function() {
                     this.form.submit();
                 });
 
-                var mobileViewModel = new MobileViewModel();
-                mobileViewModel.teamViewModel.playersOnTeam(playersOnSelectedTeam);
+                var mobileViewModel = new MobileViewModel(playersOnSelectedTeam, matches);
                 
                 mobileViewModel.matchDialogViewModel.selectedPlayerViewModel.injuryTable(injuryTable);
                 mobileViewModel.matchDialogViewModel.myTeamId(<?php echo $selectedTeamId; ?>);
-                mobileViewModel.matchDialogViewModel.playersOnTeam(playersOnSelectedTeam);
                 
                 ko.applyBindings(mobileViewModel);
             });
@@ -104,6 +105,23 @@ class Mobile_HTMLOUT {
                         <tr><td>MA/ST/AG/AV:</td><td class="data" data-bind="text: statString"></td></tr>
                         <tr><td><?php echo $lng->getTrn('common/skills'); ?>:</td><td class="data" data-bind="html: skillsString"></td></tr>
                         <tr><td>SPP:</td><td class="data" data-bind="text: spp"></td></tr>
+                        <tr data-bind="visible: mayBuyNewSkill">
+                            <td>Skill up: </td>
+                            <td>
+                                <select data-bind="value: selectedNewSkill">
+                                    <optgroup label="Normal skills" data-bind="foreach: choosableNormalSkills">
+                                        <option data-bind="value: id, text: name" />
+                                    </optgroup>
+                                    <optgroup label="Double skills" data-bind="foreach: choosableDoubleSkills">
+                                        <option data-bind="value: id, text: name" />
+                                    </optgroup>
+                                    <optgroup label="Characteristic increases" data-bind="foreach: choosableCharacteristicIncreases">
+                                        <option data-bind="value: id, text: name" />
+                                    </optgroup>
+                                </select>
+                                <button data-bind="click: saveSkill"><?php echo $lng->getTrn('common/save'); ?></button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -167,7 +185,7 @@ class Mobile_HTMLOUT {
             </div>
         </fieldset>
         <fieldset id="SelectedPlayer">
-            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select></legend>
+            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersInMatch, optionsText: 'name'"></select></legend>
             <div data-bind="with: selectedPlayerViewModel">
                 <div>
                     <span class="label"><?php echo $lng->getTrn('matches/report/mvp'); ?>:</span>
@@ -229,7 +247,7 @@ class Mobile_HTMLOUT {
         </fieldset>
         
         <fieldset id="SelectedPlayer">
-            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersOnTeam, optionsText: 'name'"></select></legend>
+            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersInMatch, optionsText: 'name'"></select></legend>
             
             <div data-bind="with: selectedPlayerViewModel">
                 <div class="row">

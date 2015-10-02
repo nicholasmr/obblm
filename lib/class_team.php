@@ -475,6 +475,13 @@ class Team
     public function postImportSync() {
         return mysql_query("CALL match_sync(0,0,$this->team_id,$this->team_id,0)");
     }
+    
+    public function allowEdit() {
+        global $coach;
+        return is_object($coach) 
+            && ($this->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $this->team_id)) 
+            && !$this->is_retired;
+    }
 
     /***************
      * Statics
