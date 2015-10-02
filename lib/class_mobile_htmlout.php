@@ -4,7 +4,14 @@ class Mobile_HTMLOUT {
         global $coach, $lng, $T_INJS;
         
         $teams = $coach->getTeams();
-        $selectedTeamId = isset($_POST["SelectedTeam"]) ? $_POST["SelectedTeam"] : $teams[0]->team_id;
+        
+        if(isset($_SESSION["SelectedTeam"])) {
+            $selectedTeamId = (isset($_POST["SelectedTeam"]) && $_POST["SelectedTeam"] != $_SESSION["SelectedTeam"]) ? $_POST["SelectedTeam"] : $_SESSION["SelectedTeam"];
+        } else {
+            $selectedTeamId = isset($_POST["SelectedTeam"]) ? $_POST["SelectedTeam"] : $teams[0]->team_id;
+        }
+        
+        $_SESSION["SelectedTeam"] = $selectedTeamId;
 
         foreach($teams as $team) {
             if($team->team_id == $selectedTeamId)
@@ -55,15 +62,15 @@ class Mobile_HTMLOUT {
                 <span class="button-panel">
                     <a href="<?php echo getFormAction() . '?logout=1'; ?>"><?php echo $lng->getTrn('menu/logout'); ?></a>
                 </span>
-                <div id="tabs">
-                    <ul>
-                        <li><a href="#Teams"><?php echo $lng->getTrn('common/teams'); ?></a></li>
-                        <li><a href="#Games"><?php echo $lng->getTrn('menu/matches_menu/name'); ?></a></li>
-                    </ul>
-                    <?php Mobile_HTMLOUT::teamSummaryView($playersOnSelectedTeam); ?>
-                    <?php Mobile_HTMLOUT::matchSummaryView($allMatches); ?>
-                </div>
             </form>
+            <div id="tabs">
+                <ul>
+                    <li><a href="#Teams"><?php echo $lng->getTrn('common/teams'); ?></a></li>
+                    <li><a href="#Games"><?php echo $lng->getTrn('menu/matches_menu/name'); ?></a></li>
+                </ul>
+                <?php Mobile_HTMLOUT::teamSummaryView($playersOnSelectedTeam); ?>
+                <?php Mobile_HTMLOUT::matchSummaryView($allMatches); ?>
+            </div>
         </div>
         <?php   
     }
