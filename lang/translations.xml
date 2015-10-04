@@ -1762,7 +1762,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <yes>Oui</yes>
         <no>Non</no>
         <none>Rien</none>
-        <reset>Reset</reset>
+        <reset>Remise à zéro</reset>
         <lock>Verrouiller</lock>
         <locked>Verrouillé</locked>
         <finished>Terminer</finished>
@@ -1774,7 +1774,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <name>Nom</name>
         <status>Statut</status>
         <desc>Description</desc>
-        <upload>Upload</upload>
+        <upload>Téléversement</upload>
         <all>Tous</all>
         <select>Sélectionner</select>
         <stats>Statistiques</stats>
