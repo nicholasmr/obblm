@@ -1762,7 +1762,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <yes>Oui</yes>
         <no>Non</no>
         <none>Rien</none>
-        <reset>Reset</reset>
+        <reset>Remise à zéro</reset>
         <lock>Verrouiller</lock>
         <locked>Verrouillé</locked>
         <finished>Terminer</finished>
@@ -1772,9 +1772,9 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <next>Suivant</next>
         <previous>Précédent</previous>
         <name>Nom</name>
-        <status>Status</status>
+        <status>Statut</status>
         <desc>Description</desc>
-        <upload>Upload</upload>
+        <upload>Téléversement</upload>
         <all>Tous</all>
         <select>Sélectionner</select>
         <stats>Statistiques</stats>
@@ -1784,8 +1784,8 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <ach>Succès</ach>
         <page>Page</page>
         <retired>Retraite</retired>
-        <skills>Talents</skills>
-        <skill>Talent</skill>
+        <skills>Compétences</skills>
+        <skill>Compétence</skill>
         <injs>Blessures</injs>
         <pos>Position</pos>
         <price>Prix</price>
@@ -1848,7 +1848,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <cas>Pertes</cas>
         <mvp>Meilleur joueur</mvp>
         <pms>Afficher les stats des matchs</pms>
-        <ats>Afficher toutes les stats</ats>
+        <ats>Afficher toutes les statistiques</ats>
         <uploadnew>Envoyer une nouvelle image</uploadnew>
         <notice_simul>&lt;i&gt;Note&lt;/i&gt;: Les tables ci-dessous sont triées simultanément.</notice_simul>
         <notice_spp>&lt;i&gt;Note&lt;/i&gt;: &lt;b&gt;Si&lt;/b&gt; les stars peuvent gagner des compétences, elles auront le montant correspondant dans la colonne.</notice_spp>
@@ -1884,17 +1884,17 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 </matches_menu>
 <statistics_menu>
         <name>Statistiques</name>
-        <player_stn>Position du Joueur</player_stn>
-        <team_stn>Position de l'Equipe</team_stn>
-        <coach_stn>Position du Coach</coach_stn>
-        <race_stn>Position de la Race</race_stn>
-        <star_stn>Position de la Star</star_stn>
+        <player_stn>Statistiques des joueurs</player_stn>
+        <team_stn>Statistiques des équipes</team_stn>
+        <coach_stn>Statistiques des coachs</coach_stn>
+        <race_stn>Statistiques des races</race_stn>
+        <star_stn>Statistiques des champions</star_stn>
 </statistics_menu>
 <admin_menu>
-        <name>Admin</name>
+        <name>Admininstration</name>
         <nodes>Ligues, divisions, tournois</nodes>
-        <ct_man>Gérer: Coachs &amp; équipes</ct_man>
-        <usr_man>Gerer: Utilisateurs</usr_man>
+        <ct_man>Gérer : Coachs &amp; équipes</ct_man>
+        <usr_man>Gerer : Utilisateurs</usr_man>
         <import>Importer une équipe</import>
         <schedule>Planifier un match</schedule>
         <cpanel>OBBLM panneau principal</cpanel>
@@ -1931,9 +1931,9 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 <cc>
         <new_team>Nouvelle équipe</new_team>
         <!-- <stats> defined in <common> block -->
-        <coach_teams>Equipes du Coach</coach_teams>
-        <profile>Profile</profile>
-        <photo>Image du Coach</photo>
+        <coach_teams>Equipes du coach</coach_teams>
+        <profile>Profil</profile>
+        <photo>Image du coach</photo>
         <coach_info>Information du Coach</coach_info>
         <note_persinfo>Informations personnelles visibles uniquement aux utilisateurs connectés</note_persinfo>
         <new>Nouveau</new>
@@ -1992,7 +1992,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <title>Gestion de l'équipe</title>
         <hire_player>Embaucher un joueur</hire_player>
         <hire_journeyman>Embaucher un journalier</hire_journeyman>
-        <fire_player>Virer un joueur</fire_player>
+        <fire_player>Renvoyer un joueur</fire_player>
         <unbuy_player>Désembaucher un joueur</unbuy_player>
         <rename_player>Renommer un joueur</rename_player>
         <renumber_player>Re-numéroter un joueur</renumber_player>
@@ -2012,7 +2012,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 <desc>
         <hire_player> Embaucher un nouveau joueur.&lt;br&gt; Embaucher un journalier est gratuit, mais seule la position 0-16 est eligible. </hire_player>
         <hire_journeyman> Embaucher un des journaliers de l'équipe en tant que membre définitif. </hire_journeyman>
-        <fire_player> Virer un joueur. Remboursement de : </fire_player>
+        <fire_player> Renvoyer un joueur. Remboursement de : </fire_player>
         <unbuy_player> Erreur sur l'embauche d'un joueur. Rembourser à 100%.&lt;br&gt; Uniquement sur un joueur n'ayant jamais joué de match. </unbuy_player>
         <rename_player> Renommer un joueur. </rename_player>
         <renumber_player> Renuméroter un joueur. </renumber_player>
@@ -2026,24 +2026,24 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 </desc>
 </box_tm>
 <box_admin>
-        <title>Outils d'Admin</title>
-        <unhire_journeyman>Désembaucher un Journalier</unhire_journeyman>
-        <unsell_player>Ré-embaucher un Joueur</unsell_player>
-        <unbuy_goods>Désacheter un bien d'équipe.</unbuy_goods>
+        <title>Outils d'Administration</title>
+        <unhire_journeyman>Désembaucher un journalier</unhire_journeyman>
+        <unsell_player>Annuler le renvoi d'un joueur</unsell_player>
+        <unbuy_goods>Annuler l'achat d'un bien d'équipe.</unbuy_goods>
         <bank>Compte en banque</bank>
         <spp>Gérer l'expérience bonus</spp>
         <dval>Gérer la valeur bonus des joueurs</dval>
-        <extra_skills>Gérer les talents suppl. des joueurs</extra_skills>
-        <ach_skills>Retirer des talents de joueurs</ach_skills>
+        <extra_skills>Gérer les compétences supplémentaires des joueurs</extra_skills>
+        <ach_skills>Retirer des compétences de joueurs</ach_skills>
 <desc>
-        <unhire_journeyman> Revenir sur l'embauche d'un journalier en tant que Joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
+        <unhire_journeyman> Revenir sur l'embauche d'un journalier en tant que joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
         <unsell_player> Revenir sur le licenciement d'un joueur. </unsell_player> <unbuy_goods> Revenir sur l'achat de bien d'équipe. </unbuy_goods>
         <unbuy_goods>Revenir sur l'achat de biens d'équipe</unbuy_goods>
         <bank> Modifier la trésorerie d'équipe. </bank>
         <spp> Gérer l'éxperience bonus d'un Joueur. </spp>
         <dval> Changer la valeur d'un joueur d'un montant. </dval>
-        <extra_skills> Gérer les talents supplémentaires d'un joueur. </extra_skills>
-        <ach_skills> Retirer un talent selectionné. Cela permet de choisir un nouveau talent en remplacement. </ach_skills>
+        <extra_skills> Gérer les compétences supplémentaires d'un joueur. </extra_skills>
+        <ach_skills> Retirer une compétence selectionnée. Cela permet de choisir un nouvelle compétence en remplacement. </ach_skills>
 </desc>
 </box_admin>
 </team>
@@ -2082,7 +2082,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <rnd11>Round 11</rnd11>
         <rnd12>Round 12</rnd12>
 </roundtypes>
-        <matchdelete>Êtes-vous sur(e) de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n\'a pas encore ete joué, cette action est IRREVERSIBLE et affectera tout les matchs suivants pour les deux equipes.\nIl est conseillé de n\'effacer un match que si vous êtes conscient des risques.</matchdelete>
+        <matchdelete>Êtes-vous sur(e) de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n\'a pas encore ete joué, cette action est IRREVERSIBLE et affectera tous les matchs suivants pour les deux equipes.\nIl est conseillé de n\'effacer un match que si vous êtes conscient des risques.</matchdelete>
         <reset_notice>Êtes-vous sur(e) de vouloir REINITIALISER ce match?\n\nATTENTION:\nCette action est IRREVERSIBLE et affectera tous les matchs suivants pour les deux équipes.</reset_notice>
 </tourmatches>
 <!-- Subsection: match report(s) -->
@@ -2128,9 +2128,9 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <prefixes>Les symboles + et - signifient moins de et plus de</prefixes>
 <!-- Subsec: Schedule matches -->
 <schedule>
-        <create_LD>Merci de créer une Ligue et une Division avant de prévoir des matchs</create_LD>
-        <tour_name>Nom du Tournoi</tour_name>
-        <rank_sys>Méthode de Classement</rank_sys>
+        <create_LD>Merci de créer une ligue et une division avant de prévoir des matchs</create_LD>
+        <tour_name>Nom du tournoi</tour_name>
+        <rank_sys>Méthode de classement</rank_sys>
         <sched_type>Planning</sched_type>
         <add_team>Ajouter une équipe</add_team>
         <teams_selected>Choisir une équipe</teams_selected>
