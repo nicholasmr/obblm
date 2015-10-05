@@ -38,7 +38,7 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
     
     self.playersInMatch = ko.computed(function() {
         var playerMatchEntries = playerEntries();
-        return _.reduce(playersOnSelectedTeam, function(player) {
+        return _.filter(playersOnSelectedTeam, function(player) {
             var inMatch = _.find(playerMatchEntries, function(playerEntry, playerId) {
                 return playerId === player.player_id;
             });
