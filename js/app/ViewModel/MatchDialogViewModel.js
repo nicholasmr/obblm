@@ -42,6 +42,7 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
             var inMatch = _.find(playerMatchEntries, function(playerEntry, playerId) {
                 return playerId === player.player_id;
             });
+            player.numberAndName = '#' + player.nr + ' ' + player.name;
             return inMatch ? player : null;
         });
     });

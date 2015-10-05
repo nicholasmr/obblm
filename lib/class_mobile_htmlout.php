@@ -195,7 +195,7 @@ class Mobile_HTMLOUT {
             </div>
         </fieldset>
         <fieldset id="SelectedPlayer">
-            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersInMatch, optionsText: 'name'"></select></legend>
+            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersInMatch, optionsText: 'numberAndName'"></select></legend>
             <div data-bind="with: selectedPlayerViewModel">
                 <div>
                     <span class="label"><?php echo $lng->getTrn('matches/report/mvp'); ?>:</span>
@@ -257,7 +257,7 @@ class Mobile_HTMLOUT {
         </fieldset>
         
         <fieldset id="SelectedPlayer">
-            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersInMatch, optionsText: 'name'"></select></legend>
+            <legend><?php echo $lng->getTrn('common/player'); ?>: <select data-bind="value: selectedPlayer, options: playersInMatch, optionsText: 'numberAndName'"></select></legend>
             
             <div data-bind="with: selectedPlayerViewModel">
                 <div class="row">
