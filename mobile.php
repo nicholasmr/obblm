@@ -55,7 +55,7 @@ if ($_VISSTATE['POST_OUT'] = isset($_GET['logout'])) {
     Coach::logout();
 }
 
-Mobile::isMobile(true);
+Mobile::setIsMobile(true);
 
 if ($_VISSTATE['COOCKIE'] || $_VISSTATE['POST_IN'] || $_VISSTATE['POST_OUT']) {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT);
@@ -71,9 +71,12 @@ MTS('Header loaded, login auth, html frame generated');
 // Check if a menu-link was picked, and execute section code from sections.php accordingly.
 switch ($_GET['section'])
 {
-    case 'login':       sec_login();                        break;
-    case 'matches':     Match_HTMLOUT::userSched();         break;
-    case 'management':  Team_HTMLOUT::teamManagementBox();  break;
+    case 'login':       sec_login();                            break;
+    case 'matches':     Match_HTMLOUT::userSched();             break;
+    case 'management':
+        $teamId = Mobile_HTMLOUT::getSelectedTeamId();
+        Team_HTMLOUT::teamManagementBox($teamId);
+        break;
     default:            Mobile_HTMLOUT::sec_mobile_main();
 }
 

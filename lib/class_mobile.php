@@ -5,10 +5,12 @@
  */
 
 class Mobile {
-    function isMobile($isMobile) {
-		if(isset($isMobile))
-			$_SESSION['isMobile'] = $isMobile;
-		
+    public static function setIsMobile($isMobile) {
+        if(isset($isMobile))
+            $_SESSION['isMobile'] = $isMobile;
+    }
+    
+    public static function isMobile() {
 		return $_SESSION['isMobile'];
     }
 }

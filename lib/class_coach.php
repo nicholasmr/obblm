@@ -495,7 +495,10 @@ class Coach
     }
     
     public static function isLoggedIn() {
-        return $_SESSION['logged_in'];
+        if(isset($_SESSION['logged_in']))
+            return $_SESSION['logged_in'];
+        
+        return false;
     }
     
     public static function checkPasswd($cid, $passwd, $MD5 = true) {
