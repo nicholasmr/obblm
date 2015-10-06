@@ -65,7 +65,7 @@ class Mobile_HTMLOUT {
                     TV<?php echo $selectedTeam->tv/1000; ?>
                 </span>
                 <span class="button-panel">
-                    <a href="<?php echo getFormAction() . '?section=management'; ?>"><?php echo $lng->getTrn('profile/team/box_tm/title'); ?></a>
+                    <a href="<?php echo getFormAction() . '?section=management'; ?>">Management</a>
                     <a href="<?php echo getFormAction() . '?logout=1'; ?>"><?php echo $lng->getTrn('menu/logout'); ?></a>
                 </span>
             </form>
