@@ -73,6 +73,7 @@ switch ($_GET['section'])
 {
     case 'login':       sec_login();                        break;
     case 'matches':     Match_HTMLOUT::userSched();         break;
+    case 'management':  Team_HTMLOUT::teamManagementBox();  break;
     default:            Mobile_HTMLOUT::sec_mobile_main();
 }
 

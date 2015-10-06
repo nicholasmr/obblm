@@ -821,6 +821,16 @@ private function _HHStar($DETAILED)
     );
 }
 
+public static function teamManagementBox($teamId) {
+    $team = new self($teamId);
+    $ALLOW_EDIT = $team->allowEdit(); # Show team action boxes?
+    $DETAILED = (isset($_GET['detailed']) && $_GET['detailed'] == 1);# Detailed roster view?
+    $team->handleActions($ALLOW_EDIT); # Handles any actions/request sent.
+    list($players, $players_backup) = $team->_loadPlayers($DETAILED); # Should come after handleActions().
+    
+    $team->_teamManagementBox($players, $team);
+}
+
 private function _actionBoxes($ALLOW_EDIT, $players)
 {
     /******************************
@@ -992,377 +1002,8 @@ private function _actionBoxes($ALLOW_EDIT, $players)
 
     <?php
     if ($ALLOW_EDIT) {
-        ?>
-        <div class="boxTeamPage">
-            <div class="boxTitle<?php echo T_HTMLBOX_COACH;?>"><?php echo $lng->getTrn('profile/team/box_tm/title');?></div>
-            <div class="boxBody">
-                <?php
+        $this->_teamManagementBox($players, $team);
 
-                $base = 'profile/team';
-                $tmanage = array(
-                    'hire_player'       => $lng->getTrn($base.'/box_tm/hire_player'),
-                    'hire_journeyman'   => $lng->getTrn($base.'/box_tm/hire_journeyman'),
-                    'fire_player'       => $lng->getTrn($base.'/box_tm/fire_player'),
-                    'unbuy_player'      => $lng->getTrn($base.'/box_tm/unbuy_player'),
-                    'rename_player'     => $lng->getTrn($base.'/box_tm/rename_player'),
-                    'renumber_player'   => $lng->getTrn($base.'/box_tm/renumber_player'),
-                    'rename_team'       => $lng->getTrn($base.'/box_tm/rename_team'),
-                    'buy_goods'         => $lng->getTrn($base.'/box_tm/buy_goods'),
-                    'drop_goods'        => $lng->getTrn($base.'/box_tm/drop_goods'),
-                    'ready_state'       => $lng->getTrn($base.'/box_tm/ready_state'),
-                    'retire'            => $lng->getTrn($base.'/box_tm/retire'),
-                    'delete'            => $lng->getTrn($base.'/box_tm/delete'),
-                );
-
-                # If one of these are selected from the menu, a JavaScript confirm prompt is displayed before submitting.
-                # Note: Don't add "hire_player" here - players may be un-bought if not having played any games.
-                $tmange_confirm = array('hire_journeyman', 'fire_player', 'buy_goods', 'drop_goods');
-
-                // Set default choice.
-                if (!isset($_POST['menu_tmanage'])) {
-                    reset($tmanage);
-                    $_POST['menu_tmanage'] = key($tmanage);
-                }
-
-                // If action is already chosen, then make it the default selected.
-                if (isset($_POST['type']) && array_key_exists($_POST['type'], $tmanage)) {
-                    $_POST['menu_tmanage'] = $_POST['type'];
-                }
-
-                ?>
-                <form method="POST" name="menu_tmanage_form">
-                    <select name="menu_tmanage" onchange="document.menu_tmanage_form.submit();">
-                        <?php
-                        foreach ($tmanage as $opt => $desc)
-                            echo "<option value='$opt'" . ($_POST['menu_tmanage'] == $opt ? 'SELECTED' : '') . ">$desc</option>";
-                        ?>
-                    </select>
-                    <!-- <input type="submit" name="tmanage" value="OK"> -->
-                </form>
-
-                <br><i><?php echo $lng->getTrn('common/desc');?>:</i><br><br>
-                <form name="form_tmanage" method="POST" enctype="multipart/form-data">
-                <?php
-                $DISABLE = false;
-
-                switch ($_POST['menu_tmanage']) {
-
-                    /**************
-                     * Hire player
-                     **************/
-
-                    case 'hire_player':
-                        echo $lng->getTrn('profile/team/box_tm/desc/hire_player');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('common/player');?>:<br>
-                        <select name='player'>
-                        <?php
-                        $active_players = array_filter($players, create_function('$p', "return (\$p->is_sold || \$p->is_dead || \$p->is_mng) ? false : true;"));
-                        $DISABLE = true;
-                        foreach ($DEA[$team->f_rname]['players'] as $pos => $details) {
-
-                            // Show players on the select list if buyable, or if player is a potential journeyman AND team has not reached journeymen limit.
-                            if (($team->isPlayerBuyable($details['pos_id']) && $team->treasury >= $details['cost']) ||
-                                (($details['qty'] == 16 || $details['qty'] == 12) && count($active_players) < $rules['journeymen_limit'])) {
-                                echo "<option value='$details[pos_id]'>" . $details['cost']/1000 . "k | ".$lng->GetTrn('position/'.strtolower($lng->FilterPosition($pos)))."</option>\n";
-                                $DISABLE = false;
-                            }
-                        }
-                        echo "</select>\n";
-                        ?>
-                        <br><br>
-                        <?php echo $lng->getTrn('common/number');?>:<br>
-                        <select name="number">
-                        <?php
-                        foreach ($T_ALLOWED_PLAYER_NR as $i) {
-                            foreach ($players as $p) {
-                                if ($p->nr == $i && !$p->is_sold && !$p->is_dead)
-                                    continue 2;
-                            }
-                            echo "<option value='$i'>$i</option>\n";
-                        }
-                        ?>
-                        </select>
-                        <br><br>
-                        <?php echo $lng->GetTrn('common/journeyman')?> ? <input type="checkbox" name="as_journeyman" value="1">
-                        <br><br>
-                        <?php echo $lng->getTrn('common/name');?>:<br>
-                        <input type="text" name="name">
-                        <input type="hidden" name="type" value="hire_player">
-                        <?php
-                        break;
-
-                    /**************
-                     * Hire journeymen
-                     **************/
-
-                    case 'hire_journeyman':
-                        echo $lng->getTrn('profile/team/box_tm/desc/hire_journeyman');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('common/player');?>:<br>
-                        <select name="player">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($players as $p) {
-                            $price = $DEA[$team->f_rname]['players'][$p->pos]['cost'];
-                            if (!$p->is_journeyman || $p->is_sold || $p->is_dead ||
-                                $team->treasury < $price || !$team->isPlayerBuyable($p->f_pos_id) || $team->isFull()) {
-                                continue;
-                            }
-
-                            echo "<option value='$p->player_id'>$p->name | " . $price/1000 . " k</option>\n";
-                            $DISABLE = false;
-                        }
-                        ?>
-                        </select>
-                        <input type="hidden" name="type" value="hire_journeyman">
-                        <?php
-                        break;
-
-                    /**************
-                     * Fire player
-                     **************/
-
-                    case 'fire_player':
-                        echo $lng->getTrn('profile/team/box_tm/desc/fire_player').' '.$rules['player_refund']*100 . "%.\n";
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('common/player');?>:<br>
-                        <select name="player">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($players as $p) {
-                            if ($p->is_dead || $p->is_sold)
-                                continue;
-
-                            echo "<option value='$p->player_id'>" . (($p->value/1000)*$rules['player_refund']) . "k refund | $p->name</option>\n";
-                            $DISABLE = false;
-                        }
-                        ?>
-                        </select>
-                        <input type="hidden" name="type" value="fire_player">
-                        <?php
-                        break;
-
-                    /***************
-                     * Un-buy player
-                     **************/
-
-                    case 'unbuy_player':
-                        echo $lng->getTrn('profile/team/box_tm/desc/unbuy_player');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('common/player');?>:<br>
-                        <select name="player">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($players as $p) {
-                            if ($p->is_unbuyable() && !$p->is_sold) {
-                                    echo "<option value='$p->player_id'>$p->name</option>\n";
-                                    $DISABLE = false;
-                            }
-                        }
-                        ?>
-                        </select>
-                        <input type="hidden" name="type" value="unbuy_player">
-                        <?php
-                        break;
-
-                    /**************
-                     * Rename player
-                     **************/
-
-                    case 'rename_player':
-                        echo $lng->getTrn('profile/team/box_tm/desc/rename_player');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('common/player');?>:<br>
-                        <select name="player">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($players as $p) {
-                            unset($color);
-                            if ($p->is_dead)
-                                $color = COLOR_HTML_DEAD;
-                            elseif ($p->is_sold)
-                                $color = COLOR_HTML_SOLD;
-
-                            echo "<option value='$p->player_id' ".(isset($color) ? "style='background-color: $color;'" : '').">$p->name</option>\n";
-                            $DISABLE = false;
-                        }
-                        ?>
-                        </select>
-                        <br><br>
-                        <?php echo $lng->getTrn('common/name');?>:<br>
-                        <input type='text' name='name' maxlength=50 size=20>
-                        <input type="hidden" name="type" value="rename_player">
-                        <?php
-                        break;
-
-                    /**************
-                     * Renumber player
-                     **************/
-
-                    case 'renumber_player':
-                        echo $lng->getTrn('profile/team/box_tm/desc/renumber_player');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('common/player');?>:<br>
-                        <select name="player">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($players as $p) {
-                            unset($color);
-                            if ($p->is_dead)
-                                $color = COLOR_HTML_DEAD;
-                            elseif ($p->is_sold)
-                                $color = COLOR_HTML_SOLD;
-
-                            echo "<option value='$p->player_id' ".(isset($color) ? "style='background-color: $color;'" : '').">$p->nr $p->name</option>\n";
-                            $DISABLE = false;
-                        }
-                        ?>
-                        </select>
-                        <br><br>
-                        <?php echo $lng->getTrn('common/number');?>:<br>
-                        <select name="number">
-                        <?php
-                        foreach ($T_ALLOWED_PLAYER_NR as $i) {
-                            echo "<option value='$i'>$i</option>\n";
-                        }
-                        ?>
-                        </select>
-                        <input type="hidden" name="type" value="renumber_player">
-                        <?php
-                        break;
-
-                    /**************
-                     * Rename team
-                     **************/
-
-                    case 'rename_team':
-                        echo $lng->getTrn('profile/team/box_tm/desc/rename_team');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('common/name');?>:<br>
-                        <input type='text' name='name' maxlength='50' size='20'>
-                        <input type="hidden" name="type" value="rename_team">
-                        <?php
-                        break;
-
-                    /**************
-                     * Buy team goods
-                     **************/
-
-                    case 'buy_goods':
-                        echo $lng->getTrn('profile/team/box_tm/desc/buy_goods');
-                        $goods_temp = $team->getGoods();
-                        if ($DEA[$team->f_rname]['other']['rr_cost'] != $goods_temp['rerolls']['cost']) {
-                            echo $lng->getTrn('profile/team/box_tm/desc/buy_goods_warn');
-                        }
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/thing');?>:<br>
-                        <select name="thing">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($team->getGoods() as $name => $details) {
-                            if ($name == 'ff_bought' && !$team->mayBuyFF())
-                                continue;
-                            if (($team->$name < $details['max'] || $details['max'] == -1) && $team->treasury >= $details['cost']) {
-                                echo "<option value='$name'>" . $details['cost']/1000 . "k | $details[item]</option>\n";
-                                $DISABLE = false;
-                            }
-                        }
-                        ?>
-                        </select>
-                        <input type="hidden" name="type" value="buy_goods">
-                        <?php
-                        break;
-
-                    /**************
-                     * Let go (drop) of team goods
-                     **************/
-
-                    case 'drop_goods':
-                        echo $lng->getTrn('profile/team/box_tm/desc/drop_goods');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/thing');?>:<br>
-                        <select name="thing">
-                        <?php
-                        $DISABLE = true;
-                        foreach ($team->getGoods() as $name => $details) {
-                            if ($name == 'ff_bought' && !$team->mayBuyFF())
-                                continue;
-                            if ($team->$name > 0) {
-                                echo "<option value='$name'>$details[item]</option>\n";
-                                $DISABLE = false;
-                            }
-                        }
-                        ?>
-                        </select>
-                        <input type="hidden" name="type" value="drop_goods">
-                        <?php
-                        break;
-
-                    /**************
-                     * Set ready state
-                     **************/
-
-                    case 'ready_state':
-                        echo $lng->getTrn('profile/team/box_tm/desc/ready_state');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/teamready');?>
-                        <input type="checkbox" name="bool" value="1" <?php echo ($team->rdy) ? 'CHECKED' : '';?>>
-                        <input type="hidden" name="type" value="ready_state">
-                        <?php
-                        break;
-
-                    /***************
-                     * Retire
-                     **************/
-
-                    case 'retire':
-                        echo $lng->getTrn('profile/team/box_tm/desc/retire');
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/retire');?>
-                        <input type="checkbox" name="bool" value="1">
-                        <input type="hidden" name="type" value="retire">
-                        <?php
-                        break;
-
-                    /***************
-                     * Delete
-                     **************/
-
-                    case 'delete':
-                        echo $lng->getTrn('profile/team/box_tm/desc/delete');
-                        if (!$this->isDeletable()) {
-                            $DISABLE = true;
-                        }
-                        ?>
-                        <hr><br>
-                        <?php echo $lng->getTrn('profile/team/box_tm/fdescs/suredeleteteam');?>
-                        <input type="checkbox" name="bool" value="1" <?php echo ($DISABLE) ? 'DISABLED' : '';?>>
-                        <input type="hidden" name="type" value="delete">
-                        <?php
-                        break;
-
-                    }
-                    ?>
-                    <br><br>
-                    <input type="submit" name="button" value="OK" <?php echo ($DISABLE ? 'DISABLED' : '');?>
-                        <?php if (in_array($_POST['menu_tmanage'], $tmange_confirm)) {echo "onClick=\"if(!confirm('".$lng->getTrn('common/confirm_box')."')){return false;}\"";}?>
-                    >
-                </form>
-            </div>
-        </div>
-        <?php
         if ($coach->isNodeCommish(T_NODE_LEAGUE, $team->f_lid)) {
             ?>
             <div class="boxTeamPage">
@@ -1678,6 +1319,384 @@ private function _actionBoxes($ALLOW_EDIT, $players)
         </script>
         <?php
     }
+}
+
+private function _teamManagementBox($players, $team) {
+    global $lng, $rules, $DEA, $T_ALLOWED_PLAYER_NR;
+    ?>
+    <div class="boxTeamPage">
+    <div class="boxTitle<?php echo T_HTMLBOX_COACH;?>"><?php echo $lng->getTrn('profile/team/box_tm/title') . ' - ' . $team->name;?></div>
+    <div class="boxBody">
+        <?php
+
+        $base = 'profile/team';
+        $tmanage = array(
+            'hire_player'       => $lng->getTrn($base.'/box_tm/hire_player'),
+            'hire_journeyman'   => $lng->getTrn($base.'/box_tm/hire_journeyman'),
+            'fire_player'       => $lng->getTrn($base.'/box_tm/fire_player'),
+            'unbuy_player'      => $lng->getTrn($base.'/box_tm/unbuy_player'),
+            'rename_player'     => $lng->getTrn($base.'/box_tm/rename_player'),
+            'renumber_player'   => $lng->getTrn($base.'/box_tm/renumber_player'),
+            'rename_team'       => $lng->getTrn($base.'/box_tm/rename_team'),
+            'buy_goods'         => $lng->getTrn($base.'/box_tm/buy_goods'),
+            'drop_goods'        => $lng->getTrn($base.'/box_tm/drop_goods'),
+            'ready_state'       => $lng->getTrn($base.'/box_tm/ready_state'),
+            'retire'            => $lng->getTrn($base.'/box_tm/retire'),
+            'delete'            => $lng->getTrn($base.'/box_tm/delete'),
+        );
+
+        # If one of these are selected from the menu, a JavaScript confirm prompt is displayed before submitting.
+        # Note: Don't add "hire_player" here - players may be un-bought if not having played any games.
+        $tmange_confirm = array('hire_journeyman', 'fire_player', 'buy_goods', 'drop_goods');
+
+        // Set default choice.
+        if (!isset($_POST['menu_tmanage'])) {
+            reset($tmanage);
+            $_POST['menu_tmanage'] = key($tmanage);
+        }
+
+        // If action is already chosen, then make it the default selected.
+        if (isset($_POST['type']) && array_key_exists($_POST['type'], $tmanage)) {
+            $_POST['menu_tmanage'] = $_POST['type'];
+        }
+
+        ?>
+        <form method="POST" name="menu_tmanage_form">
+            <select name="menu_tmanage" onchange="document.menu_tmanage_form.submit();">
+                <?php
+                foreach ($tmanage as $opt => $desc)
+                    echo "<option value='$opt'" . ($_POST['menu_tmanage'] == $opt ? 'SELECTED' : '') . ">$desc</option>";
+                ?>
+            </select>
+            <!-- <input type="submit" name="tmanage" value="OK"> -->
+        </form>
+
+        <br><i><?php echo $lng->getTrn('common/desc');?>:</i><br><br>
+        <form name="form_tmanage" method="POST" enctype="multipart/form-data">
+        <?php
+        $DISABLE = false;
+
+        switch ($_POST['menu_tmanage']) {
+
+            /**************
+             * Hire player
+             **************/
+
+            case 'hire_player':
+                echo $lng->getTrn('profile/team/box_tm/desc/hire_player');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('common/player');?>:<br>
+                <select name='player'>
+                <?php
+                $active_players = array_filter($players, create_function('$p', "return (\$p->is_sold || \$p->is_dead || \$p->is_mng) ? false : true;"));
+                $DISABLE = true;
+                foreach ($DEA[$team->f_rname]['players'] as $pos => $details) {
+
+                    // Show players on the select list if buyable, or if player is a potential journeyman AND team has not reached journeymen limit.
+                    if (($team->isPlayerBuyable($details['pos_id']) && $team->treasury >= $details['cost']) ||
+                        (($details['qty'] == 16 || $details['qty'] == 12) && count($active_players) < $rules['journeymen_limit'])) {
+                        echo "<option value='$details[pos_id]'>" . $details['cost']/1000 . "k | ".$lng->GetTrn('position/'.strtolower($lng->FilterPosition($pos)))."</option>\n";
+                        $DISABLE = false;
+                    }
+                }
+                echo "</select>\n";
+                ?>
+                <br><br>
+                <?php echo $lng->getTrn('common/number');?>:<br>
+                <select name="number">
+                <?php
+                foreach ($T_ALLOWED_PLAYER_NR as $i) {
+                    foreach ($players as $p) {
+                        if ($p->nr == $i && !$p->is_sold && !$p->is_dead)
+                            continue 2;
+                    }
+                    echo "<option value='$i'>$i</option>\n";
+                }
+                ?>
+                </select>
+                <br><br>
+                <?php echo $lng->GetTrn('common/journeyman')?> ? <input type="checkbox" name="as_journeyman" value="1">
+                <br><br>
+                <?php echo $lng->getTrn('common/name');?>:<br>
+                <input type="text" name="name">
+                <input type="hidden" name="type" value="hire_player">
+                <?php
+                break;
+
+            /**************
+             * Hire journeymen
+             **************/
+
+            case 'hire_journeyman':
+                echo $lng->getTrn('profile/team/box_tm/desc/hire_journeyman');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('common/player');?>:<br>
+                <select name="player">
+                <?php
+                $DISABLE = true;
+                foreach ($players as $p) {
+                    $price = $DEA[$team->f_rname]['players'][$p->pos]['cost'];
+                    if (!$p->is_journeyman || $p->is_sold || $p->is_dead ||
+                        $team->treasury < $price || !$team->isPlayerBuyable($p->f_pos_id) || $team->isFull()) {
+                        continue;
+                    }
+
+                    echo "<option value='$p->player_id'>$p->name | " . $price/1000 . " k</option>\n";
+                    $DISABLE = false;
+                }
+                ?>
+                </select>
+                <input type="hidden" name="type" value="hire_journeyman">
+                <?php
+                break;
+
+            /**************
+             * Fire player
+             **************/
+
+            case 'fire_player':
+                echo $lng->getTrn('profile/team/box_tm/desc/fire_player').' '.$rules['player_refund']*100 . "%.\n";
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('common/player');?>:<br>
+                <select name="player">
+                <?php
+                $DISABLE = true;
+                foreach ($players as $p) {
+                    if ($p->is_dead || $p->is_sold)
+                        continue;
+
+                    echo "<option value='$p->player_id'>" . (($p->value/1000)*$rules['player_refund']) . "k refund | $p->name</option>\n";
+                    $DISABLE = false;
+                }
+                ?>
+                </select>
+                <input type="hidden" name="type" value="fire_player">
+                <?php
+                break;
+
+            /***************
+             * Un-buy player
+             **************/
+
+            case 'unbuy_player':
+                echo $lng->getTrn('profile/team/box_tm/desc/unbuy_player');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('common/player');?>:<br>
+                <select name="player">
+                <?php
+                $DISABLE = true;
+                foreach ($players as $p) {
+                    if ($p->is_unbuyable() && !$p->is_sold) {
+                            echo "<option value='$p->player_id'>$p->name</option>\n";
+                            $DISABLE = false;
+                    }
+                }
+                ?>
+                </select>
+                <input type="hidden" name="type" value="unbuy_player">
+                <?php
+                break;
+
+            /**************
+             * Rename player
+             **************/
+
+            case 'rename_player':
+                echo $lng->getTrn('profile/team/box_tm/desc/rename_player');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('common/player');?>:<br>
+                <select name="player">
+                <?php
+                $DISABLE = true;
+                foreach ($players as $p) {
+                    unset($color);
+                    if ($p->is_dead)
+                        $color = COLOR_HTML_DEAD;
+                    elseif ($p->is_sold)
+                        $color = COLOR_HTML_SOLD;
+
+                    echo "<option value='$p->player_id' ".(isset($color) ? "style='background-color: $color;'" : '').">$p->name</option>\n";
+                    $DISABLE = false;
+                }
+                ?>
+                </select>
+                <br><br>
+                <?php echo $lng->getTrn('common/name');?>:<br>
+                <input type='text' name='name' maxlength=50 size=20>
+                <input type="hidden" name="type" value="rename_player">
+                <?php
+                break;
+
+            /**************
+             * Renumber player
+             **************/
+
+            case 'renumber_player':
+                echo $lng->getTrn('profile/team/box_tm/desc/renumber_player');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('common/player');?>:<br>
+                <select name="player">
+                <?php
+                $DISABLE = true;
+                foreach ($players as $p) {
+                    unset($color);
+                    if ($p->is_dead)
+                        $color = COLOR_HTML_DEAD;
+                    elseif ($p->is_sold)
+                        $color = COLOR_HTML_SOLD;
+
+                    echo "<option value='$p->player_id' ".(isset($color) ? "style='background-color: $color;'" : '').">$p->nr $p->name</option>\n";
+                    $DISABLE = false;
+                }
+                ?>
+                </select>
+                <br><br>
+                <?php echo $lng->getTrn('common/number');?>:<br>
+                <select name="number">
+                <?php
+                foreach ($T_ALLOWED_PLAYER_NR as $i) {
+                    echo "<option value='$i'>$i</option>\n";
+                }
+                ?>
+                </select>
+                <input type="hidden" name="type" value="renumber_player">
+                <?php
+                break;
+
+            /**************
+             * Rename team
+             **************/
+
+            case 'rename_team':
+                echo $lng->getTrn('profile/team/box_tm/desc/rename_team');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('common/name');?>:<br>
+                <input type='text' name='name' maxlength='50' size='20'>
+                <input type="hidden" name="type" value="rename_team">
+                <?php
+                break;
+
+            /**************
+             * Buy team goods
+             **************/
+
+            case 'buy_goods':
+                echo $lng->getTrn('profile/team/box_tm/desc/buy_goods');
+                $goods_temp = $team->getGoods();
+                if ($DEA[$team->f_rname]['other']['rr_cost'] != $goods_temp['rerolls']['cost']) {
+                    echo $lng->getTrn('profile/team/box_tm/desc/buy_goods_warn');
+                }
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('profile/team/box_tm/fdescs/thing');?>:<br>
+                <select name="thing">
+                <?php
+                $DISABLE = true;
+                foreach ($team->getGoods() as $name => $details) {
+                    if ($name == 'ff_bought' && !$team->mayBuyFF())
+                        continue;
+                    if (($team->$name < $details['max'] || $details['max'] == -1) && $team->treasury >= $details['cost']) {
+                        echo "<option value='$name'>" . $details['cost']/1000 . "k | $details[item]</option>\n";
+                        $DISABLE = false;
+                    }
+                }
+                ?>
+                </select>
+                <input type="hidden" name="type" value="buy_goods">
+                <?php
+                break;
+
+            /**************
+             * Let go (drop) of team goods
+             **************/
+
+            case 'drop_goods':
+                echo $lng->getTrn('profile/team/box_tm/desc/drop_goods');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('profile/team/box_tm/fdescs/thing');?>:<br>
+                <select name="thing">
+                <?php
+                $DISABLE = true;
+                foreach ($team->getGoods() as $name => $details) {
+                    if ($name == 'ff_bought' && !$team->mayBuyFF())
+                        continue;
+                    if ($team->$name > 0) {
+                        echo "<option value='$name'>$details[item]</option>\n";
+                        $DISABLE = false;
+                    }
+                }
+                ?>
+                </select>
+                <input type="hidden" name="type" value="drop_goods">
+                <?php
+                break;
+
+            /**************
+             * Set ready state
+             **************/
+
+            case 'ready_state':
+                echo $lng->getTrn('profile/team/box_tm/desc/ready_state');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('profile/team/box_tm/fdescs/teamready');?>
+                <input type="checkbox" name="bool" value="1" <?php echo ($team->rdy) ? 'CHECKED' : '';?>>
+                <input type="hidden" name="type" value="ready_state">
+                <?php
+                break;
+
+            /***************
+             * Retire
+             **************/
+
+            case 'retire':
+                echo $lng->getTrn('profile/team/box_tm/desc/retire');
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('profile/team/box_tm/fdescs/retire');?>
+                <input type="checkbox" name="bool" value="1">
+                <input type="hidden" name="type" value="retire">
+                <?php
+                break;
+
+            /***************
+             * Delete
+             **************/
+
+            case 'delete':
+                echo $lng->getTrn('profile/team/box_tm/desc/delete');
+                if (!$this->isDeletable()) {
+                    $DISABLE = true;
+                }
+                ?>
+                <hr><br>
+                <?php echo $lng->getTrn('profile/team/box_tm/fdescs/suredeleteteam');?>
+                <input type="checkbox" name="bool" value="1" <?php echo ($DISABLE) ? 'DISABLED' : '';?>>
+                <input type="hidden" name="type" value="delete">
+                <?php
+                break;
+
+            }
+            ?>
+            <br><br>
+            <input type="submit" name="button" value="OK" <?php echo ($DISABLE ? 'DISABLED' : '');?>
+                <?php if (in_array($_POST['menu_tmanage'], $tmange_confirm)) {echo "onClick=\"if(!confirm('".$lng->getTrn('common/confirm_box')."')){return false;}\"";}?>
+            >
+            <?php if(Mobile::isMobile()) {
+                echo '<a href="' . getFormAction() . '">' . $lng->getTrn('common/back') . '</a>';
+            } ?>
+        </form>
+    </div>
+</div>
+<?php
 }
 
 private function _about($ALLOW_EDIT)

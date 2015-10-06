@@ -23,6 +23,11 @@
         padding: 5px;
     }
     
+    div.boxTeamPage {
+        float: none;
+        margin: auto;
+    }
+    
     #tabs {
         margin-top: 5px;
     }

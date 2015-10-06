@@ -1,16 +1,21 @@
 <?php
 class Mobile_HTMLOUT {
+    public static function getSelectedTeamId() {
+        global $coach;
+        
+        if(isset($_SESSION["SelectedTeam"])) {
+            return (isset($_POST["SelectedTeam"]) && $_POST["SelectedTeam"] != $_SESSION["SelectedTeam"]) ? $_POST["SelectedTeam"] : $_SESSION["SelectedTeam"];
+        } else {
+            $teams = $coach->getTeams();
+            return isset($_POST["SelectedTeam"]) ? $_POST["SelectedTeam"] : $teams[0]->team_id;
+        }
+    }
+    
     public static function sec_mobile_main() {
         global $coach, $lng, $T_INJS;
         
         $teams = $coach->getTeams();
-        
-        if(isset($_SESSION["SelectedTeam"])) {
-            $selectedTeamId = (isset($_POST["SelectedTeam"]) && $_POST["SelectedTeam"] != $_SESSION["SelectedTeam"]) ? $_POST["SelectedTeam"] : $_SESSION["SelectedTeam"];
-        } else {
-            $selectedTeamId = isset($_POST["SelectedTeam"]) ? $_POST["SelectedTeam"] : $teams[0]->team_id;
-        }
-        
+        $selectedTeamId = Mobile_HTMLOUT::getSelectedTeamId();
         $_SESSION["SelectedTeam"] = $selectedTeamId;
 
         foreach($teams as $team) {
@@ -60,12 +65,13 @@ class Mobile_HTMLOUT {
                     TV<?php echo $selectedTeam->tv/1000; ?>
                 </span>
                 <span class="button-panel">
+                    <a href="<?php echo getFormAction() . '?section=management'; ?>"><?php echo $lng->getTrn('profile/team/box_tm/title'); ?></a>
                     <a href="<?php echo getFormAction() . '?logout=1'; ?>"><?php echo $lng->getTrn('menu/logout'); ?></a>
                 </span>
             </form>
             <div id="tabs">
                 <ul>
-                    <li><a href="#Teams"><?php echo $lng->getTrn('common/teams'); ?></a></li>
+                    <li><a href="#Teams"><?php echo $lng->getTrn('common/team'); ?></a></li>
                     <li><a href="#Games"><?php echo $lng->getTrn('menu/matches_menu/name'); ?></a></li>
                 </ul>
                 <?php Mobile_HTMLOUT::teamSummaryView($playersOnSelectedTeam); ?>
