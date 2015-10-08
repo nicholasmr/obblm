@@ -101,6 +101,7 @@ require_once('settings_modules.php');             # Overrides
 // OBBLM libraries.
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
+require_once('lib/class_mobile.php');
 require_once('lib/class_sqltriggers.php');
 require_once('lib/class_match.php');
 require_once('lib/class_tournament.php');
@@ -133,6 +134,7 @@ require_once('lib/class_player_htmlout.php');
 require_once('lib/class_starmerc_htmlout.php');
 require_once('lib/class_race_htmlout.php');
 require_once('lib/class_match_htmlout.php');
+require_once('lib/class_mobile_htmlout.php');
 
 /********************
  *   Final setup

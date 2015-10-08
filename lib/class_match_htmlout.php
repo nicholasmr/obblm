@@ -999,7 +999,16 @@ public static function userSched() {
                 'round'     => $round,
                 'f_tour_id' => $trid,
             ));
-            status(!$exitStatus, $exitStatus ? Match::$T_CREATE_ERROR_MSGS[$exitStatus] : "<a href='index.php?section=matches&amp;type=report&amp;mid=$mid'>Click here</a> to open the match report");
+            
+            $backFromMatchLink = 
+                Mobile::isMobile() 
+                    ? "mobile.php"
+                    : "index.php?section=matches&amp;type=report&amp;mid=$mid";
+            
+            status(!$exitStatus, 
+                $exitStatus 
+                    ? Match::$T_CREATE_ERROR_MSGS[$exitStatus] 
+                    : "<a href='$backFromMatchLink'>Click here</a> to open the match report");
             if (!$exitStatus) {
                 echo "<br>";
             }
@@ -1023,10 +1032,10 @@ public static function userSched() {
     <div class='boxCommon'>
         <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $lng->getTrn('menu/matches_menu/usersched');?></h3>
         <div class='boxBody'>
-            <form method="POST">
+            <form method="POST" id="usersched">
                 <?php 
                 echo "In tournament "; 
-                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'index.php?section=matches&type=usersched&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
+                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \''. getFormAction() . '?section=matches&type=usersched&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
                 echo ' as ';
                 echo '<select name="round" id="round" '.$_DISABLED.'>';
                 $T_ROUNDS = Match::getRounds();
@@ -1072,6 +1081,10 @@ public static function userSched() {
                 </script>
                 <br><br><br>
                 <input type="submit" name="creategame" value="<?php echo $lng->getTrn('menu/matches_menu/usersched');?>" <?php if (empty($teams) || $_DISABLED) echo 'DISABLED';?>>
+                
+                <?php if(Mobile::isMobile()) {
+                    echo '<a href="' . getFormAction() . '">' . $lng->getTrn('common/back') . '</a>';
+                } ?>
             </form>
         </div>
     </div>

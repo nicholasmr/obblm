@@ -26,6 +26,10 @@
  *  Login
  *
  *************************/
+ 
+function getFormAction() {
+    return Mobile::isMobile() ? 'mobile.php' : 'index.php';
+}
 
 function sec_login() {
 
@@ -86,7 +90,7 @@ function sec_login() {
         <div class='boxCommon'>
             <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('menu/login');?></h3>
             <div class='boxBody'>
-            <form method="POST" action="index.php">
+            <form method="POST" action="<?php echo getFormAction() ?>">
                 <?php echo $lng->getTrn('login/loginname');?><br>
                 <input type="text" name="coach" size="20" maxlength="50"><br><br>
                 <?php echo $lng->getTrn('login/passwd');?><br>
@@ -100,11 +104,13 @@ function sec_login() {
             </form>
             <br><br>
             <?php
-            if (Module::isRegistered('Registration') && $settings['allow_registration']) {
-                echo "<a href='handler.php?type=registration'><b>Register</b></a>";
-            }  
-            echo "<br><br>";
-            echo "<a href='$_URL_forgotpass'><b>".$lng->getTrn('login/forgotpass').'</b></a>';
+            if(!Mobile::isMobile()) {
+                if (Module::isRegistered('Registration') && $settings['allow_registration']) {
+                    echo "<a href='handler.php?type=registration'><b>Register</b></a>";
+                }  
+                echo "<br><br>";
+                echo "<a href='$_URL_forgotpass'><b>".$lng->getTrn('login/forgotpass').'</b></a>';
+            }
             ?>
             </div>
         </div>
@@ -813,9 +819,9 @@ function sec_about() {
     </p>
 
     <?php 
-	title("OBBLM Hosting");
-	echo 'Please visit <a href="http://www.mercuryvps.com">Mercury VPS</a> and click on the OBBLM tab to get started.';
-	
+    title("OBBLM Hosting");
+    echo 'Please visit <a href="http://www.mercuryvps.com">Mercury VPS</a> and click on the OBBLM tab to get started.';
+    
     title("Documentation");
     echo "See the <a TARGET='_blank' href='".DOC_URL."'>OBBLM documentation wiki</a>";
     
@@ -851,4 +857,3 @@ function sec_about() {
     </p>
     <?php
 }
-

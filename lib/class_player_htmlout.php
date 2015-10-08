@@ -75,6 +75,24 @@ public static function profile($pid)
     }
 }
 
+public static function setChoosableSkillsTranslations($player) {
+    global $skillididx, $CHR_CONV;
+    
+    $player->choosable_skills_strings = array();
+    
+    foreach($player->choosable_skills["norm"] as $skillId) {
+        $player->choosable_skills_strings["norm"][$skillId] = $skillididx[$skillId];
+    }
+    
+    foreach($player->choosable_skills["doub"] as $skillId) {
+        $player->choosable_skills_strings["doub"][$skillId] = $skillididx[$skillId];
+    }
+    
+    foreach($player->choosable_skills["chr"] as $skillId) {
+        $player->choosable_skills_strings["chr"][$skillId] = ucfirst($CHR_CONV[$skillId]);
+    }
+}
+
 private function _handleActions($ALLOW_EDIT)
 {
     $p = $this; // Copy. Used instead of $this for readability.

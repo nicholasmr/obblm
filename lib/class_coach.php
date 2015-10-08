@@ -494,6 +494,13 @@ class Coach
         return true;
     }
     
+    public static function isLoggedIn() {
+        if(isset($_SESSION['logged_in']))
+            return $_SESSION['logged_in'];
+        
+        return false;
+    }
+    
     public static function checkPasswd($cid, $passwd, $MD5 = true) {
         return (get_alt_col('coaches', 'coach_id', $cid, 'passwd') == ($MD5 ? md5($passwd) : $passwd));
     }
