@@ -30,6 +30,12 @@ var MobileViewModel = function(playersOnSelectedTeam, matches) {
         self.matchDialogViewModel.match(match);
         // opens after AJAX call in MatchDialogViewModel
     }
+	
+	self.isMenuVisible = ko.observable(false);
+	
+	self.showMenu = function() {
+		self.isMenuVisible(true);
+	}
     
     self.teamViewModel = new TeamViewModel(playersOnSelectedTeam);
     self.playerDialogViewModel = new PlayerDialogViewModel();

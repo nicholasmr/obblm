@@ -1,5 +1,9 @@
 <?php
 class Mobile_HTMLOUT {
+	public static function addMobileParam($paramPrefix) {
+		return Mobile::isMobile() ? ($paramPrefix . 'mobile=1') : '';
+	}
+
     public static function getSelectedTeamId() {
         global $coach;
         
@@ -42,7 +46,7 @@ class Mobile_HTMLOUT {
                 $('#SelectedTeam').change(function() {
                     this.form.submit();
                 });
-
+				
                 var mobileViewModel = new MobileViewModel(playersOnSelectedTeam, matches);
                 
                 mobileViewModel.matchDialogViewModel.selectedPlayerViewModel.injuryTable(injuryTable);
@@ -52,7 +56,7 @@ class Mobile_HTMLOUT {
             });
         </script>
         <div class="main">
-            <form method="post" action="<?php echo getFormAction(); ?>">
+            <form method="post" action="index.php<?php echo Mobile_HTMLOUT::addMobileParam('?'); ?>">
                  <select id="SelectedTeam" name="SelectedTeam">
                     <?php
                         foreach($teams as $team) {
@@ -65,8 +69,12 @@ class Mobile_HTMLOUT {
                     TV<?php echo $selectedTeam->tv/1000; ?>
                 </span>
                 <span class="button-panel">
-                    <a href="<?php echo getFormAction() . '?section=management'; ?>">Management</a>
-                    <a href="<?php echo getFormAction() . '?logout=1'; ?>"><?php echo $lng->getTrn('menu/logout'); ?></a>
+					<img src="images/menu.svg" alt="Menu" class="icon ui-button ui-state-default ui-corner-all" data-bind="click: showMenu" />
+					<ul id="menu" class="ui-state-default ui-corner-left ui-corner-left ui-corner-br" data-bind="visible: isMenuVisible">
+						<li><a href="index.php?section=management<?php echo Mobile_HTMLOUT::addMobileParam('&'); ?>">Management</a></li>
+						<li><a href="index.php">Desktop Site</a></li>
+						<li><a href="index.php?logout=1<?php echo Mobile_HTMLOUT::addMobileParam('&'); ?>"><?php echo $lng->getTrn('menu/logout'); ?></a></li>
+					</ul>
                 </span>
             </form>
             <div id="tabs">
@@ -167,7 +175,7 @@ class Mobile_HTMLOUT {
                 </tbody>
             </table>
             <div>
-                <a href="mobile.php?section=matches&type=usersched"><?php echo $lng->getTrn('menu/matches_menu/usersched'); ?></a>
+                <a href="index.php?mobile=1&section=matches&type=usersched"><?php echo $lng->getTrn('menu/matches_menu/usersched'); ?></a>
             </div>
             
             <div id="MatchDialog" data-bind="with: matchDialogViewModel">

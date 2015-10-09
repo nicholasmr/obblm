@@ -49,18 +49,22 @@ if ($_VISSTATE['POST_IN'] = isset($_POST['login'])) {
     }
 }
 
+$isMobile = $_GET['mobile'] == '1';
+
 // Logout?
 if ($_VISSTATE['POST_OUT'] = isset($_GET['logout'])) {
-    $_GET['section'] = 'main'; # Redirect logged out users to the main page.
+    $_GET['section'] = $isMobile ? 'login' : 'main'; # Redirect logged out users to the main page.
     Coach::logout();
 }
+
+Mobile::setIsMobile($isMobile);
+
 
 if ($_VISSTATE['COOCKIE'] || $_VISSTATE['POST_IN'] || $_VISSTATE['POST_OUT']) {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT);
 }
 
-if($_GET['mobile'] == 1) {
-	Mobile::setIsMobile(true);
+if(Mobile::isMobile()) {
 	HTMLOUT::mobile_frame_begin(isset($_SESSION['logged_in']) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
 	MTS('Header loaded, login auth, html frame generated');
 	

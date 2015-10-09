@@ -64,7 +64,7 @@ var PlayerDialogViewModel = function() {
                 'skill': selectedNewSkillId
             },
             success: function(result) {
-                window.location.href = 'mobile.php';
+                window.location.href = 'index.php?mobile=1';
             }
         });
     };

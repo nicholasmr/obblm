@@ -99,5 +99,28 @@
     #usersched #opposing_team_autoselect {
         width: 98%;
     }
+	
+	.icon {
+		width: 1.6em;
+		height: 1.6em;
+	}
+	
+	#menu {
+		position: absolute;
+		width: 8em;
+		z-index: 1;
+		right: 1.6em;
+		list-style-type: none;
+		box-shadow: 0.2em 0.2em 0.1em #666;
+		
+		/* override Chrome defaults */
+		-webkit-padding-start: 1em;
+		-webkit-margin-before: 0;
+				
+	}
+	
+	#menu li {
+		padding: 0.6em;
+	}
 }
 
