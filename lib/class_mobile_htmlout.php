@@ -65,7 +65,7 @@ class Mobile_HTMLOUT {
                     TV<?php echo $selectedTeam->tv/1000; ?>
                 </span>
                 <span class="button-panel">
-					<img src="images/menu.svg" alt="Menu" class="icon ui-button ui-state-default ui-corner-all" data-bind="click: showMenu" />
+					<img id="open-menu" src="images/menu.svg" alt="Menu" class="icon ui-button ui-state-default ui-corner-all" data-bind="click: showMenu" />
 					<ul id="menu" class="ui-state-default ui-corner-left ui-corner-left ui-corner-br" data-bind="visible: isMenuVisible">
 						<li><a href="<?php echo getFormAction('?section=management'); ?>">Management</a></li>
 						<li><a href="index.php">Desktop Site</a></li>

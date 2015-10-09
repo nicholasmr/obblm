@@ -33,9 +33,15 @@ var MobileViewModel = function(playersOnSelectedTeam, matches) {
 	
 	self.isMenuVisible = ko.observable(false);
 	
-	self.showMenu = function() {
+	self.showMenu = function(viewModel, event) {
 		self.isMenuVisible(true);
 	}
+    
+    $('html').click(function(event) {
+        if(!$(event.target).is('#menu') && !$(event.target).is('#open-menu')) {
+            self.isMenuVisible(false);
+        }
+    });
     
     self.teamViewModel = new TeamViewModel(playersOnSelectedTeam);
     self.playerDialogViewModel = new PlayerDialogViewModel();
