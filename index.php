@@ -53,12 +53,16 @@ $isMobile = $_GET['mobile'] == '1';
 
 // Logout?
 if ($_VISSTATE['POST_OUT'] = isset($_GET['logout'])) {
-    $_GET['section'] = $isMobile ? 'login' : 'main'; # Redirect logged out users to the main page.
+    $_GET['section'] = 'main'; # Redirect logged out users to the main page.
     Coach::logout();
 }
 
 Mobile::setIsMobile($isMobile);
 
+if ($isMobile && !Coach::isLoggedIn()) {
+    // Redirect logged out mobile users to login
+    $_GET['section'] = 'login';
+}
 
 if ($_VISSTATE['COOCKIE'] || $_VISSTATE['POST_IN'] || $_VISSTATE['POST_OUT']) {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT);

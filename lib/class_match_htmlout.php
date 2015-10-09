@@ -1035,7 +1035,7 @@ public static function userSched() {
             <form method="POST" id="usersched">
                 <?php 
                 echo "In tournament "; 
-                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'index.php?section=matches&type=usersched'. Mobile_HTMLOUT::addMobileParam('&') . '&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
+                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'' . getFormAction('?section=matches&type=usersched') . '&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
                 echo ' as ';
                 echo '<select name="round" id="round" '.$_DISABLED.'>';
                 $T_ROUNDS = Match::getRounds();
@@ -1083,7 +1083,7 @@ public static function userSched() {
                 <input type="submit" name="creategame" value="<?php echo $lng->getTrn('menu/matches_menu/usersched');?>" <?php if (empty($teams) || $_DISABLED) echo 'DISABLED';?>>
                 
                 <?php if(Mobile::isMobile()) {
-                    echo '<a href="index.php' . Mobile_HTMLOUT::addMobileParam('?') . '">' . $lng->getTrn('common/back') . '</a>';
+                    echo '<a href="' . getFormAction('') . '">' . $lng->getTrn('common/back') . '</a>';
                 } ?>
             </form>
         </div>

@@ -1,9 +1,5 @@
 <?php
 class Mobile_HTMLOUT {
-	public static function addMobileParam($paramPrefix) {
-		return Mobile::isMobile() ? ($paramPrefix . 'mobile=1') : '';
-	}
-
     public static function getSelectedTeamId() {
         global $coach;
         
@@ -56,7 +52,7 @@ class Mobile_HTMLOUT {
             });
         </script>
         <div class="main">
-            <form method="post" action="index.php<?php echo Mobile_HTMLOUT::addMobileParam('?'); ?>">
+            <form method="post" action="<?php echo getFormAction(''); ?>">
                  <select id="SelectedTeam" name="SelectedTeam">
                     <?php
                         foreach($teams as $team) {
@@ -71,9 +67,9 @@ class Mobile_HTMLOUT {
                 <span class="button-panel">
 					<img src="images/menu.svg" alt="Menu" class="icon ui-button ui-state-default ui-corner-all" data-bind="click: showMenu" />
 					<ul id="menu" class="ui-state-default ui-corner-left ui-corner-left ui-corner-br" data-bind="visible: isMenuVisible">
-						<li><a href="index.php?section=management<?php echo Mobile_HTMLOUT::addMobileParam('&'); ?>">Management</a></li>
+						<li><a href="<?php echo getFormAction('?section=management'); ?>">Management</a></li>
 						<li><a href="index.php">Desktop Site</a></li>
-						<li><a href="index.php?logout=1<?php echo Mobile_HTMLOUT::addMobileParam('&'); ?>"><?php echo $lng->getTrn('menu/logout'); ?></a></li>
+						<li><a href="<?php echo getFormAction('?logout=1'); ?>"><?php echo $lng->getTrn('menu/logout'); ?></a></li>
 					</ul>
                 </span>
             </form>
