@@ -25,7 +25,7 @@
 
 define('T_RACE_BRETTONIA', 24);
 
-$DEA['Brettonia'] = array (
+$DEA['Bretonnia'] = array (
     'other'	=> array (
         'rr_cost' => 60000,
         'icon' => 'brettonian.jpg',
@@ -42,10 +42,10 @@ $DEA['Brettonia'] = array (
     				'doub'		=> array ('A', 'S', 'P'),
     				'qty'			  => 16,
     				'cost'			  => 40000,
-    				'icon'			  => 'hlineman1an',
+    				'icon'			  => 'bretlineman',
     			    'pos_id'          => 235,
   			),
-  			'Yeoman'	=> array (
+  			'Blocker'	=> array (
     				'ma'        	=> 6,
     				'st'        	=> 3,
     				'ag'        	=> 3,
@@ -55,20 +55,20 @@ $DEA['Brettonia'] = array (
     				'doub'		=> array ('A', 'P'),
     				'qty'			  => 4,
     				'cost'			  => 70000,
-    				'icon'			  => 'hblitzer1an',
+    				'icon'			  => 'bretblocker',
     			    'pos_id'          => 236,
   			),
   			'Blitzer'	=> array (
-    				'ma'        	=> 8,
+    				'ma'        	=> 7,
     				'st'        	=> 3,
     				'ag'        	=> 3,
     				'av'        	=> 8,
     				'def'	    => array (1, 20, 2),
-    				'norm'		=> array ('G', 'S'),
-    				'doub'		=> array ('A', 'P'),
+    				'norm'		=> array ('G', 'P'),
+    				'doub'		=> array ('A', 'S'),
     				'qty'			  => 4,
-    				'cost'			  => 120000,
-    				'icon'			  => 'hcatcher1an',
+    				'cost'			  => 110000,
+    				'icon'			  => 'bretblitzer',
     			    'pos_id'          => 237,
   			),
     )

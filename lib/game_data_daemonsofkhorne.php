@@ -40,7 +40,7 @@ $DEA['Daemons of Khorne'] = array (
     				'doub'		=> array ('A', 'S'),
     				'qty'			  => 16,
     				'cost'			  => 60000,
-    				'icon'			  => 'hlineman1an',
+    				'icon'			  => 'pitfighter',
     			    'pos_id'          => 250,
   			),
   			'Bloodletter Daemon' => array (
@@ -53,7 +53,7 @@ $DEA['Daemons of Khorne'] = array (
     				'doub'		=> array ('P'),
     				'qty'			  => 4,
     				'cost'			  => 80000,
-    				'icon'			  => 'hblitzer1an',
+    				'icon'			  => 'bloodletter',
     			    'pos_id'          => 251,
   			),
   			'Khorne Herald'	=> array (
@@ -66,7 +66,7 @@ $DEA['Daemons of Khorne'] = array (
     				'doub'		=> array ('A', 'P'),
     				'qty'			  => 2,
     				'cost'			  => 90000,
-    				'icon'			  => 'hblitzer1an',
+    				'icon'			  => 'herald',
     			    'pos_id'          => 252,
   			),
   			'Bloodthirster'	=> array (
@@ -79,7 +79,7 @@ $DEA['Daemons of Khorne'] = array (
     				'doub'		=> array ('G', 'A', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 180000,
-    				'icon'			  => 'hblitzer1an',
+    				'icon'			  => 'bloodthirster',
     			    'pos_id'          => 253,
   			),
     )
