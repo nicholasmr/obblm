@@ -27,10 +27,11 @@
  *
  *************************/
  
-function getFormAction() {
-    return Mobile::isMobile() ? 'mobile.php' : 'index.php';
+function getFormAction($params) {
+    $mobilePrefix =(strpos($params, '?') !== FALSE) ? '&' : '?';    
+    return 'index.php' . $params . (Mobile::isMobile() ? ($mobilePrefix . 'mobile=1') : '');
 }
-
+ 
 function sec_login() {
 
     global $lng, $settings;
@@ -90,7 +91,7 @@ function sec_login() {
         <div class='boxCommon'>
             <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('menu/login');?></h3>
             <div class='boxBody'>
-            <form method="POST" action="<?php echo getFormAction() ?>">
+            <form method="POST" action="<?php echo getFormAction(''); ?>">
                 <?php echo $lng->getTrn('login/loginname');?><br>
                 <input type="text" name="coach" size="20" maxlength="50"><br><br>
                 <?php echo $lng->getTrn('login/passwd');?><br>

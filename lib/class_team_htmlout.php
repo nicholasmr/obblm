@@ -1691,7 +1691,7 @@ private function _teamManagementBox($players, $team) {
                 <?php if (in_array($_POST['menu_tmanage'], $tmange_confirm)) {echo "onClick=\"if(!confirm('".$lng->getTrn('common/confirm_box')."')){return false;}\"";}?>
             >
             <?php if(Mobile::isMobile()) {
-                echo '<a href="' . getFormAction() . '">' . $lng->getTrn('common/back') . '</a>';
+                echo '<a href="' . getFormAction('') . '">' . $lng->getTrn('common/back') . '</a>';
             } ?>
         </form>
     </div>
