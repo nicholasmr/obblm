@@ -663,7 +663,7 @@ public static function report() {
                 echo "<tr>\n";
                 echo "<td>".${"teamUrl$N"}."</td>\n";
                 echo "<td><input type='text' onChange='numError(this);' name='result$N' value='".((int) $m->{"team${N}_score"})."' size='1' maxlength='2' $DIS></td>\n";
-                echo "<td><input type='text' onChange='numError(this);' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
+                echo "<td><input type='text' onChange='numErrorAllowNegative(this);' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
                 echo "<td>";
                 foreach (array('1' => 'green', '0' => 'blue', '-1' => 'red') as $Nff => $color) {
                     echo "<input $DIS type='radio' name='ff$N' value='$Nff' ".(($m->{"ffactor$N"} == (int) $Nff) ? 'CHECKED' : '')."><font color='$color'><b>$Nff</b></font>";
