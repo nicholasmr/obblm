@@ -493,8 +493,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 
 <race>
   <amazon>Amazon</amazon>
+  <bretonnia>Bretonnia</bretonnia>
   <chaos>Chaos</chaos>
   <chaosdwarf>Chaos Dwarf</chaosdwarf>
+  <daemonsofkhorne>Daemons of Khorne</daemonsofkhorne>
   <darkelf>Dark Elf</darkelf>
   <dwarf>Dwarf</dwarf>
   <elf>Elf</elf>
@@ -515,6 +517,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
   <woodelf>Wood Elf</woodelf>
   <chaospact>Chaos Pact</chaospact>
   <underworld>Underworld</underworld>
+  <simyin>Simyin</simyin>
   <slann>Slann</slann>
 </race>
 
@@ -605,6 +608,17 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
   <ratogre>Rat ogre</ratogre>
 
   <wardancer>War dancer</wardancer>
+  
+  <pitfighter>Pit Fighter</pitfighter>
+  <bloodletterdaemon>Bloodletter Daemon</bloodletterdaemon>
+  <khorneherald>Khorne Herald</khorneherald>
+  <bloodthirster>Bloodthirster</bloodthirster>
+  
+  <bonobo>Bonobo</bonobo>
+  <orangutan>Orangutan</orangutan>
+  <gorilla>Gorilla</gorilla>
+  <chimpanzee>Chimpanzee</chimpanzee>
+  <silverback>Silverback</silverback>
 </position>
 
 <skill>

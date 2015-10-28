@@ -92,8 +92,10 @@ public function __construct()
 
 /* Generates an array containing all the info needed for each player, to be converted to Javascript */
 public static function addPlayer($pos, $d) {
+    global $lng;
+    
    $p = array();
-   $p['position'] = $pos;
+   $p['position'] = $lng->getTrn('position/'.strtolower(str_replace(' ','', $pos)));
    $p['ma'] = $d['ma'];
    $p['st'] = $d['st'];
    $p['ag'] = $d['ag'];
@@ -123,7 +125,7 @@ public static function addTeamAttribute($name, $cost, $max) {
 
 /* Generates an array containing all the info needed for the teams, to be converted to Javascript */
 public static function getRaceArray() {
-   global $raceididx, $DEA, $stars, $rules, $racesNoApothecary, $inducements;
+   global $raceididx, $DEA, $stars, $rules, $racesNoApothecary, $inducements, $lng;
 
    $races = array();
    foreach ($raceididx as $rid => $rname) {
@@ -643,7 +645,8 @@ EOQ;
       echo "<option value='-1'>$txtRaceSelectOption</option>";
       $i = 0;
         foreach ($raceididx as $rname) {
-            echo "<option value='$i'>$rname</option>";
+            $translatedRaceName = $lng->getTrn('race/'.strtolower(str_replace(' ','', $rname)));
+            echo "<option value='$i'>$translatedRaceName</option>";
             $i++;
       }
 echo<<< EOQ

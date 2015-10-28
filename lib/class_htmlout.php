@@ -452,8 +452,8 @@ public static function standings($obj, $node, $node_id, array $opts)
             }
 
             // Translating race name
-            foreach($objs as &$o)
-              $o['f_rname'] = $lng->getTrn('race/'.strtolower(str_replace(' ','', $o['f_rname'])));
+            //foreach($objs as &$o)
+              //$o['f_rname'] = $lng->getTrn('race/'.strtolower(str_replace(' ','', $o['f_rname'])));
 
             break;
 
