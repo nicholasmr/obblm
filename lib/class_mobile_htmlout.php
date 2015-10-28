@@ -67,8 +67,8 @@ class Mobile_HTMLOUT {
                 <span class="button-panel">
 					<img id="open-menu" src="images/menu.svg" alt="Menu" class="icon ui-button ui-state-default ui-corner-all" data-bind="click: showMenu" />
 					<ul id="menu" class="ui-state-default ui-corner-left ui-corner-left ui-corner-br" data-bind="visible: isMenuVisible">
-						<li><a href="<?php echo getFormAction('?section=management'); ?>">Management</a></li>
-						<li><a href="index.php">Desktop Site</a></li>
+						<li><a href="<?php echo getFormAction('?section=management'); ?>"><?php echo $lng->getTrn('mobile/team/management'); ?></a></li>
+						<li><a href="index.php"><?php echo $lng->getTrn('mobile/team/desktop_site'); ?></a></li>
 						<li><a href="<?php echo getFormAction('?logout=1'); ?>"><?php echo $lng->getTrn('menu/logout'); ?></a></li>
 					</ul>
                 </span>
@@ -114,7 +114,7 @@ class Mobile_HTMLOUT {
                 </tbody>
             </table>
             <div>
-                <span class="miss-next-game">Miss next game</span>, <span class="may-buy-new-skill">may buy new skill</span>.
+                <span class="miss-next-game"><?php echo $lng->getTrn('mobile/team/miss_next_game'); ?></span>, <span class="may-buy-new-skill"><?php echo $lng->getTrn('mobile/team/may_buy_new_skill'); ?></span>.
             </div>
             <div id="PlayerDialog" data-bind="with: playerDialogViewModel">
                 <table>
@@ -193,7 +193,7 @@ class Mobile_HTMLOUT {
             <legend><?php echo $lng->getTrn('common/team'); ?>: <span class="data" data-bind="text: name"></span></legend>
             <div>
                 <span class="label"><?php echo $lng->getTrn('common/score'); ?>:</span>
-                <span class="data" data-bind="text: myScore"></span> for me, to <span class="data" data-bind="text: theirScore"></span>
+                <span class="data" data-bind="text: myScore"></span><?php echo $lng->getTrn('mobile/matches/match/for_me_to'); ?><span class="data" data-bind="text: theirScore"></span>
             </div>
             <div>
                 <span class="label"><?php echo $lng->getTrn('matches/report/treas'); ?>:</span>

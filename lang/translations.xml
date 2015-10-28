@@ -14,9 +14,6 @@ Remember : ENGLISH language is the default language and the most UP TO DATE.
 
 Each registered language have it's data stored in it's own branch.
 For example, english is in <en-GB>, french in <fr-FR>, .......
-
-Each missing string in foreign language (other than english) is present but empty for you
-to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 -->
 
 
@@ -448,6 +445,20 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 
     </report>
 </matches>
+
+<mobile>
+    <team>
+        <miss_next_game>Miss next game</miss_next_game>
+        <may_buy_new_skill>may buy new skill</may_buy_new_skill>
+        <management>Management</management>
+        <desktop_site>Desktop Site</desktop_site>
+    </team>
+    <matches>
+        <match>
+            <for_me_to>for me, to</for_me_to>
+        </match>
+    </matches>
+</mobile>
 
 <rules> </rules>
 
