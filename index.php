@@ -49,7 +49,7 @@ if ($_VISSTATE['POST_IN'] = isset($_POST['login'])) {
     }
 }
 
-$isMobile = $_GET['mobile'] == '1';
+$isMobile = isset($_GET['mobile']) ? ($_GET['mobile'] == '1') : false;
 
 // Logout?
 if ($_VISSTATE['POST_OUT'] = isset($_GET['logout'])) {

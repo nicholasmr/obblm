@@ -91,21 +91,29 @@ public function __construct()
 
 
 /* Generates an array containing all the info needed for each player, to be converted to Javascript */
-public static function addPlayer($pos, $d) {
-   $p = array();
-   $p['position'] = $pos;
-   $p['ma'] = $d['ma'];
-   $p['st'] = $d['st'];
-   $p['ag'] = $d['ag'];
-   $p['av'] = $d['av'];
-   $p['skills'] = implode(', ', skillsTrans($d['def']));
-   $p['N'] = isset($d['norm']) ? implode('',$d['norm']) : "";
-   $p['D'] = isset($d['doub']) ? implode('',$d['doub']) : "";
-   $p['cost'] = $d['cost'] / 1000;
-   $p['id'] = isset($d['pos_id']) ? $d['pos_id'] : $d['id'];
-   $p['ind'] = isset($d['pos_id']) ? 0 : 1;
-   $p['max'] = isset($d['qty']) ? $d['qty'] : 1;
-   return $p;
+private static function addPlayer($pos, $d, $isStarPlayer) {
+    global $lng;
+    
+    $p = array();
+    
+    $positionName = strtolower(str_replace(array('-', '\'', ' ', '(', ')', '+', '.'), '', $pos));
+    if(!$isStarPlayer)
+        $p['position'] = $lng->getTrn('position/' . $positionName);
+    else
+        $p['position'] = $lng->getTrn('starplayer/' . $positionName);
+    
+    $p['ma'] = $d['ma'];
+    $p['st'] = $d['st'];
+    $p['ag'] = $d['ag'];
+    $p['av'] = $d['av'];
+    $p['skills'] = implode(', ', skillsTrans($d['def']));
+    $p['N'] = isset($d['norm']) ? implode('',$d['norm']) : "";
+    $p['D'] = isset($d['doub']) ? implode('',$d['doub']) : "";
+    $p['cost'] = $d['cost'] / 1000;
+    $p['id'] = isset($d['pos_id']) ? $d['pos_id'] : $d['id'];
+    $p['ind'] = isset($d['pos_id']) ? 0 : 1;
+    $p['max'] = isset($d['qty']) ? $d['qty'] : 1;
+    return $p;
 }
 
 /* Generates an array containing all the info needed for each inducement or other team attribute */
@@ -123,7 +131,7 @@ public static function addTeamAttribute($name, $cost, $max) {
 
 /* Generates an array containing all the info needed for the teams, to be converted to Javascript */
 public static function getRaceArray() {
-   global $raceididx, $DEA, $stars, $rules, $racesNoApothecary, $inducements;
+   global $raceididx, $DEA, $stars, $rules, $racesNoApothecary, $inducements, $lng;
 
    $races = array();
    foreach ($raceididx as $rid => $rname) {
@@ -134,11 +142,11 @@ public static function getRaceArray() {
       $race['players'] = array();
       $race['others'] = array();
       foreach ($DEA[$raceididx[$rid]]['players'] as $pos => $d) {
-         $race['players'][] = self::addPlayer($pos, $d);
+         $race['players'][] = self::addPlayer($pos, $d, false);
       }
       foreach($stars as $pos => $d) {
          if (in_array($rid, $d['races'])) {
-            $race['players'][] = self::addPlayer($pos, $d);
+            $race['players'][] = self::addPlayer($pos, $d, true);
          }
       }
       $race['player_count'] = sizeof($race['players']);
@@ -643,7 +651,8 @@ EOQ;
       echo "<option value='-1'>$txtRaceSelectOption</option>";
       $i = 0;
         foreach ($raceididx as $rname) {
-            echo "<option value='$i'>$rname</option>";
+            $translatedRaceName = $lng->getTrn('race/'.strtolower(str_replace(' ','', $rname)));
+            echo "<option value='$i'>$translatedRaceName</option>";
             $i++;
       }
 echo<<< EOQ

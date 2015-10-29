@@ -14,9 +14,6 @@ Remember : ENGLISH language is the default language and the most UP TO DATE.
 
 Each registered language have it's data stored in it's own branch.
 For example, english is in <en-GB>, french in <fr-FR>, .......
-
-Each missing string in foreign language (other than english) is present but empty for you
-to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 -->
 
 
@@ -449,6 +446,20 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     </report>
 </matches>
 
+<mobile>
+    <team>
+        <miss_next_game>Miss next game</miss_next_game>
+        <may_buy_new_skill>may buy new skill</may_buy_new_skill>
+        <management>Management</management>
+        <desktop_site>Desktop Site</desktop_site>
+    </team>
+    <matches>
+        <match>
+            <for_me_to>for me, to</for_me_to>
+        </match>
+    </matches>
+</mobile>
+
 <rules> </rules>
 
 <about> </about>
@@ -482,8 +493,10 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 
 <race>
   <amazon>Amazon</amazon>
+  <bretonnia>Bretonnia</bretonnia>
   <chaos>Chaos</chaos>
   <chaosdwarf>Chaos Dwarf</chaosdwarf>
+  <daemonsofkhorne>Daemons of Khorne</daemonsofkhorne>
   <darkelf>Dark Elf</darkelf>
   <dwarf>Dwarf</dwarf>
   <elf>Elf</elf>
@@ -504,6 +517,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <woodelf>Wood Elf</woodelf>
   <chaospact>Chaos Pact</chaospact>
   <underworld>Underworld</underworld>
+  <simyin>Simyin</simyin>
   <slann>Slann</slann>
 </race>
 
@@ -514,22 +528,22 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <blitzer>Blitzer</blitzer>
 
   <beastman>Beastman</beastman>
-  <chaoswarrior>Chaos warrior</chaoswarrior>
+  <chaoswarrior>Chaos Warrior</chaoswarrior>
   <minotaur>Minotaur</minotaur>
 
   <marauder>Marauder</marauder>
-  <goblinrenegade>Goblin renegade</goblinrenegade>
-  <skavenrenegade>Skaven renegade</skavenrenegade>
-  <darkelfrenegade>Dark elf renegade</darkelfrenegade>
-  <chaostroll>Chaos troll</chaostroll>
-  <chaosogre>Chaos ogre</chaosogre>
-  <necromanticwerewolf>Necromantic werewolf</necromanticwerewolf>
-  <norsewerewolf>Norse werewolf</norsewerewolf>
+  <goblinrenegade>Goblin Renegade</goblinrenegade>
+  <skavenrenegade>Skaven Renegade</skavenrenegade>
+  <darkelfrenegade>Dark Elf Renegade</darkelfrenegade>
+  <chaostroll>Chaos Troll</chaostroll>
+  <chaosogre>Chaos Ogre</chaosogre>
+  <necromanticwerewolf>Necromantic Werewolf</necromanticwerewolf>
+  <norsewerewolf>Norse Werewolf</norsewerewolf>
   <yhetee>Yhetee</yhetee>
 
   <hobgoblin>Hobgoblin</hobgoblin>
-  <chaosdwarfblocker>Chaos dwarf blocker</chaosdwarfblocker>
-  <bullcentaur>Bull centaur</bullcentaur>
+  <chaosdwarfblocker>Chaos Dwarf Blocker</chaosdwarfblocker>
+  <bullcentaur>Bull Centaur</bullcentaur>
 
   <lineman>Lineman</lineman>
   <runner>Runner</runner>
@@ -537,7 +551,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <witchelf>Witchelf</witchelf>
 
   <blocker>Blocker</blocker>
-  <trollslayer>Troll slayer</trollslayer>
+  <trollslayer>Troll Slayer</trollslayer>
   <deathroller>Deathroller</deathroller>
 
   <goblin>Goblin</goblin>
@@ -553,47 +567,60 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <ogre>Ogre</ogre>
 
   <skeleton>Skeleton</skeleton>
-  <throra>Throra</throra>
-  <blitzra>Blitzra</blitzra>
+  <thro-ra>Thro-Ra</thro-ra>
+  <blitz-ra>Blitz-Ra</blitz-ra>
+  <throra>Thro-Ra</throra>
+  <blitzra>Blitz-Ra</blitzra>
   <mummy>Mummy</mummy>
-  <tombguardian>Tomb guardian</tombguardian>
+  <tombguardian>Tomb Guardian</tombguardian>
 
   <skink>Skink</skink>
   <saurus>Saurus</saurus>
   <kroxigor>Kroxigor</kroxigor>
 
-  <blackorcblocker>Black orc blocker</blackorcblocker>
+  <blackorcblocker>Black Orc Blocker</blackorcblocker>
 
   <zombie>Zombie</zombie>
   <ghoul>Ghoul</ghoul>
   <wight>Wight</wight>
-  <fleshgolem>Flesh golem</fleshgolem>
+  <fleshgolem>Flesh Golem</fleshgolem>
   <werewolf>Werewolf</werewolf>
 
   <berserker>Berserker</berserker>
   <ulfwerener>Ulfwerener</ulfwerener>
-  <snowtroll>Snow troll</snowtroll>
+  <snowtroll>Snow Troll</snowtroll>
 
   <rotter>Rotter</rotter>
   <pestigor>Pestigor</pestigor>
-  <nurglewarrior>Nurgle warrior</nurglewarrior>
-  <beastofnurgle>Beast of nurgle</beastofnurgle>
+  <nurglewarrior>Nurgle Warrior</nurglewarrior>
+  <beastofnurgle>Beast of Nurgle</beastofnurgle>
 
-  <underworldgoblin>Underworld goblin</underworldgoblin>
-  <skavenlineman>Skaven lineman</skavenlineman>
-  <skaventhrower>Skaven thrower</skaventhrower>
-  <skavenblitzer>Skaven blitzer</skavenblitzer>
-  <warpstonetroll>Warp stone troll</warpstonetroll>
+  <underworldgoblin>Underworld Goblin</underworldgoblin>
+  <skavenlineman>Skaven Lineman</skavenlineman>
+  <skaventhrower>Skaven Thrower</skaventhrower>
+  <skavenblitzer>Skaven Blitzer</skavenblitzer>
+  <warpstonetroll>Warp Stone Troll</warpstonetroll>
 
   <snotling>Snotling</snotling>
 
   <thrall>Thrall</thrall>
   <vampire>Vampire</vampire>
 
-  <gutterrunner>Gutter runner</gutterrunner>
-  <ratogre>Rat ogre</ratogre>
+  <gutterrunner>Gutter Runner</gutterrunner>
+  <ratogre>Rat Ogre</ratogre>
 
-  <wardancer>War dancer</wardancer>
+  <wardancer>War Dancer</wardancer>
+  
+  <pitfighter>Pit Fighter</pitfighter>
+  <bloodletterdaemon>Bloodletter Daemon</bloodletterdaemon>
+  <khorneherald>Khorne Herald</khorneherald>
+  <bloodthirster>Bloodthirster</bloodthirster>
+  
+  <bonobo>Bonobo</bonobo>
+  <orangutan>Orangutan</orangutan>
+  <gorilla>Gorilla</gorilla>
+  <chimpanzee>Chimpanzee</chimpanzee>
+  <silverback>Silverback</silverback>
 </position>
 
 <skill>
@@ -662,7 +689,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <nohands>No Hands</nohands>
   <nurglesrot>Nurgle's Rot</nurglesrot>
   <reallystupid>Really Stupid</reallystupid>
-  <regeneration>Regenaration</regeneration>
+  <regeneration>Regeneration</regeneration>
   <rightstuff>Right Stuff</rightstuff>
   <secretweapon>Secret Weapon</secretweapon>
   <stab>Stab</stab>
@@ -680,6 +707,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <bomberdribblesnot>Bomber Dribblesnot</bomberdribblesnot>
     <boomereziasson>Boomer Eziasson</boomereziasson>
     <brickfarthgrotty>Brick Far'th and Grotty</brickfarthgrotty>
+    <grottyincludedinbrickfarth>Grotty (included in Brick Far'th)</grottyincludedinbrickfarth>
     <countluthorvondrakenborg>Count Luthor Von Drakenborg</countluthorvondrakenborg>
     <crazyigor>Crazy Igor</crazyigor>
     <deeprootstrongbranch>Deeproot Strongbranch</deeprootstrongbranch>
@@ -688,7 +716,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <fezglitch>Fezglitch</fezglitch>
     <flintchurnblade>Flint Churnblade</flintchurnblade>
     <fungustheloon>Fungus the Loon</fungustheloon>
-    <glartsmarchripjr>Glart Smarchrip Jr.</glartsmarchripjr>
+    <glartsmashripjr>Glart Smashrip Jr.</glartsmashripjr>
     <grashnakblackhoof>Grashnak Blackhoof</grashnakblackhoof>
     <griffoberwald>Griff Oberwald</griffoberwald>
     <grimironjaw>Grim Ironjaw</grimironjaw>
@@ -699,7 +727,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <hemlock>Hemlock</hemlock>
     <horkonheartripper>Horkon Heartripper</horkonheartripper>
     <htharktheunstoppable>Hthark the Unstoppable</htharktheunstoppable>
-    <hubrisrakhart>Hubris Rakhart</hubrisrakhart>
+    <hubrisrakarth>Hubris Rakarth</hubrisrakarth>
     <humeruscarpal>Humerus Carpal</humeruscarpal>
     <icepelthammerblow>Icepelt Hammerblow</icepelthammerblow>
     <ithacabenoin>Ithaca Benoin</ithacabenoin>
@@ -710,7 +738,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <lottabottol>Lottabottol</lottabottol>
     <maxspleenripper>Max Spleenripper</maxspleenripper>
     <mightyzug>Mighty Zug</mightyzug>
-    <morgnthrog>Morg 'N' Throg</morgnthrog>
+    <morgnthorg>Morg 'N' Thorg</morgnthorg>
     <nobblablackwart>Nobbla Blackwart</nobblablackwart>
     <princemoranion>Prince Moranion</princemoranion>
     <puggybaconbreath>Puggy Baconbreath</puggybaconbreath>
@@ -722,13 +750,14 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <scrappasorehead>Scrappa Sorehead</scrappasorehead>
     <setekh>Setekh</setekh>
     <silibili>Silibili</silibili>
+    <slibli>Slibli</slibli>
     <sinnedbad>Sinnedbad</sinnedbad>
     <skitterstabstab>Skitter Stab-Stab</skitterstabstab>
     <soarenhightower>Soaren Hightower</soarenhightower>
     <ugrothbolgrot>Ugroth Bolgrot</ugrothbolgrot>
     <varagghoulchewer>Varag Ghoul-Chewer</varagghoulchewer>
     <wilhelmchaney>Wilhelm Chaney</wilhelmchaney>
-    <wilowrosebark>Wilow Rosebark</wilowrosebark>
+    <willowrosebark>Willow Rosebark</willowrosebark>
     <zaratheslayer>Zara the Slayer</zaratheslayer>
     <zzhargmadeye>Zzharg Madeye</zzhargmadeye>
 </starplayer>
@@ -2335,7 +2364,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <fezglitch>Fezglish</fezglitch>
     <flintchurnblade>Tronçonneuse Flint</flintchurnblade>
     <fungustheloon>Fungus le Cingle</fungustheloon>
-    <glartsmarchripjr>Glart Lavollée Jr.</glartsmarchripjr>
+    <glartsmashripjr>Glart Lavollée Jr.</glartsmashripjr>
     <grashnakblackhoof>Grashnak Noirsabo</grashnakblackhoof>
     <griffoberwald>Griff Oberwald</griffoberwald>
     <grimironjaw>Grim Croc d'Acier</grimironjaw>
@@ -2357,7 +2386,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <lottabottol>Boutaïdo</lottabottol>
     <maxspleenripper>Max Éclaterate</maxspleenripper>
     <mightyzug>Zug la Bete</mightyzug>
-    <morgnthrog>Morg 'N'Thorg</morgnthrog>
+    <morgnthorg>Morg 'N'Thorg</morgnthorg>
     <nobblablackwart>Nobbla la Teigne</nobblablackwart>
     <princemoranion>Prince Moranion</princemoranion>
     <puggybaconbreath>Puggy Haleinedebacon</puggybaconbreath>
@@ -2375,7 +2404,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <ugrothbolgrot>Ugroth Tranchegrots</ugrothbolgrot>
     <varagghoulchewer>Varag Mache Goule</varagghoulchewer>
     <wilhelmchaney>Wilhelm Chaney</wilhelmchaney>
-    <wilowrosebark>Willow Teinrose</wilowrosebark>
+    <willowrosebark>Willow Teinrose</willowrosebark>
     <zaratheslayer>Zara la tueuse</zaratheslayer>
     <zzhargmadeye>Zzharg Le Borgne</zzhargmadeye>
 </starplayer>
