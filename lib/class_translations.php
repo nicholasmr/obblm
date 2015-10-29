@@ -62,7 +62,7 @@ public function getTrn($key, $doc = false) {
     $xpath = new DOMXpath($this->docs[$doc]);
     $query = $xpath->query("//$this->lang/$key");
     if ($query->length == 0) {
-        # Try fallback languagez
+        # Try fallback language
         $query = $xpath->query("//".self::fallback."/$key");
         if ($query->length == 0)
           return (string) "TRANSLATION ERR ! $key";
