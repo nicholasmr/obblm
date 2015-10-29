@@ -1048,20 +1048,85 @@ private static function make_menu()
 
     ?>
     <ul id="css3menu1" class="topmenu">
-        <li class="topfirst"><a href="index.php?section=main" style="height:20px;line-height:20px;"><img src="data:image/gif;base64,R0lGODlhDQAMAMQfAAN9uv////Ly8vj4+Pz8/Pb29vX19fDw8Ozs7Ojo6Pn5+eXl5ePj4/v7++np6d7e3vf39+fn5+rq6u3t7dzc3O7u7uTk5NTU1Pr6+vT09O/v7/Pz8+Hh4d3d3fHx8f///yH5BAEAAB8ALAAAAAANAAwAQAVG4CeOwGh+QLAJ3lEFJRkE2oXMsZni+lxECwuDI+ChAgRCA6OAnUSp3GmXMEJngkeHcjACAIMJQuJIGL6yAaRgyDh133guBAA7" alt=""/>
-<?php echo $lng->getTrn('menu/home');?></a></li>
-        <li class="topmenu"><a href="#" style="height:20px;line-height:20px;"> <img src="data:image/gif;base64,R0lGODlhEAAOAMQdAP////v7+xtlji58znys3Mvc5t3d3SRrk9/p7zt6niZoq3ynwHGSs/7+/6bC0nmkvXOhubDK2+/099Ph6VGJqr7T35O2y5u71GGVtG2duWmZtYmvy8LW4f///wAAAAAAACH5BAEAAB0ALAAAAAAQAA4AQAVqYCeKgjCep1ABLFAIzEYQwUAWLYAkzEzbAktlApBMIgsTipRLKgZQ2wijKRQeEEVvVusIEDlWgWIImKVegbW0HAk4uV3Z3BVlmpb5eXS4ICQRBw56dQ9hABCDdDYUhwABB09QKQkCB5VtIQA7" alt=""/>Options</a>
-        <ul>
-            <li class="subfirst"><a href="index.php?section=matches&amp;type=usersched" >Schedule Match</a></li>
-            <?php if (isset($_SESSION['logged_in']) && is_object($coach)) {echo '<li><a href="'.urlcompile(T_URL_PROFILE,T_OBJ_COACH,$coach->coach_id,false,false).'">Manage Profile and Teams</a></li>';} ?> 
-            <?php if (Module::isRegistered('TeamCreator'))       { ?><li><a href="handler.php?type=teamcreator">New Team Wizard</a></li><?php } ?>
+        <li class="topfirst"><a href="index.php?section=main" style="height:20px;line-height:20px;"><?php echo $lng->getTrn('menu/home');?></a>
+		 <ul>
+            <li class="subfirst"><a href="#" >Europe ></a>
+				<ul>
+					<li><a href="#" >UK ></a>
+						<ul>
+							<li><a href="index.php?SLS_lid=5" >Basildon Warboyz (Basildon)</a></li>
+                            <li><a href="index.php?SLS_lid=4" >FennLong</a></li>
+                            <li><a href="index.php?SLS_lid=6" >League of Extraordinary Gentlemen</a></li>
+                            <li><a href="index.php?SLS_lid=8" >Rom-at-the-Ford's Blood Bowl League (Romford)</a></li>
+                            <li><a href="index.php?SLS_lid=9" >ARBBL (Andover)</a></li>
+                            <li><a href="index.php?SLS_lid=15" >Bristol Vanguard (Bristol)</a></li>
+                            <li><a href="index.php?SLS_lid=14" >MAD League (Ashfordby)</a></li>
+						</ul>
+                    </li>
+					<li><a href="#" >Sweden ></a>
+						<ul>
+							<li><a href="index.php?SLS_lid=2" >MARBBL</a></li>
+						</ul>
+                    </li>                        
+					<li><a href="#" >Germany ></a>
+						<ul>
+							<li><a href="index.php?SLS_lid=7" >United Friends</a></li>
+						</ul>
+                    </li>   
+				</ul>
+            </li>
+			<li><a href="#" >North America ></a>
+				<ul>
+					<li><a href="#" >USA ></a>
+                		<ul>
+							<li><a href="index.php?SLS_lid=11" >KABBL (Knoxville)</a></li>
+                            <li><a href="index.php?SLS_lid=16" >KIL (Dever)</a></li>
+                            <li><a href="index.php?SLS_lid=12" >DSBBTT</a></li>
+                            <li><a href="index.php?SLS_lid=13" >KRBBL</a></li>
+						</ul>                                             
+                    </li>
+					<li><a href="#" >Canada ></a>
+                		<ul>
+							<li><a href="index.php?SLS_lid=10" >CHOP (Vancouver)</a></li>
+						</ul>     
+                    </li>
+				</ul>
+            </li>
+			<li><a href="#" >Rest of the World ></a>
+				<ul>
+					<li><a href="#" >(None)</a>
+                    </li>
+				</ul>
+            </li>
+            <li><a href="http://www.thenaf.net/leagues/leagues-locator/" >TheNAF.net League Locator</a></li>
             <li><a href="index.php?section=about">About OBBLM</a></li>
-        </ul>
-<?php if (!empty($admin_menu)) {
-                ?>
-                <li class="topmenu"><a href="#" style="height:20px;line-height:20px;"><span><img src="data:image/gif;base64,R0lGODlhEAAOAMQVAPv7+3l5eS58zn6AgXys3OLi4jJrpomNkHGSs5ycnHWGmFNykTttoISGiG95hKWlpYWr0uHh4d3d3YqKioKCgv///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABUALAAAAAAQAA4AQAVPYCWOZCkOQTCgS1EAMCCYIxVE8Tyuo+D/tNLgEDwFEpKYbJdSGV5KXbFCnIoCDoavOAkoCODllYgKPBBggrhSDjSeCEhYWkkNKk/l2joKAQA7" alt=""/>
-                    <?php echo $lng->getTrn('menu/admin_menu/name');?></a>
-                    <ul><?php foreach ($admin_menu as $lnk => $desc) {
+		</ul>
+    </li>
+<?php
+        if (isset($_SESSION['logged_in'])) {
+
+?>
+
+<li class="topfirst"><a href="#" style="height:20px;line-height:20px;">User Menu</a>
+        <ul>
+            <li class="subfirst"><a href="handler.php?type=teamcreator">Create a New Team</a></li>
+            <li><a href="index.php?section=matches&amp;type=usersched" >Schedule Match</a></li>
+             <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_COACH,$coach->coach_id,false,false);?>"><?php echo $lng->getTrn('menu/cc');?></a></li>
+            <li><a rel="nofollow"href="index.php?logout=1"><?php echo $lng->getTrn('menu/logout');?></a></li>
+            </ul><?php 
+
+}        else      { 
+
+?><li class="topfirst"><a rel="nofollow" href="index.php?section=login" style="height:20px;line-height:20px;"><?php echo $lng->getTrn('menu/login');?></a></li><?php }
+?>
+
+<?php if (!empty($admin_menu)) {    
+        ?>
+		<li class="topmenu"><a href="#" style="height:20px;line-height:20px;"><?php echo $lng->getTrn('menu/admin_menu/name');?></a>
+					<ul>
+                        <li class="subfirst"><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('name', 'LeaguePref');?></a></li>
+                        <li><a href="handler.php?type=conference"><?php echo $lng->getTrn('name', 'Conference');?></a></li>
+                        <?php foreach ($admin_menu as $lnk => $desc) {
                         if (!is_array($desc)) {echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";}
                         else {?>
                         <li><a href="#"><?php echo $desc['title'];?>
@@ -1074,56 +1139,84 @@ private static function make_menu()
                         }
                     }
                     ?>
-                <li><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('name', 'LeaguePref');?></a></li>
                 </ul>
                 </li>
                 <?php
             }
         ?>
-        <li class="topmenu"><a href="#" style="height:20px;line-height:20px;">  <span><img src="data:image/gif;base64,R0lGODlhEAAOANUsAHd3d4mJif////r6+q6urvHx8ZSUlOPj4+Le4ZGRkdjY2PPz86ioqPX19ff397y8vOXl5Y+Pj+rq6s/Pz8zMzN7e3o2Nja2trdbW1tnZ2ZiYmPj4+Hh4eOvr6+fn55qamnp6erq6uoKCgpmZmc3NzeLi4vn5+ezs7Kenp5ubm6urq9XV1f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACwALAAAAAAQAA4AQAZjQJZwSCwSDaPHJKQBbABGUaXgEAgKmYBxOwQQoMQEAyNYoQzcAKnTMDUkFC236EUMwMSABRCRbwMqJwVWAgx+RBwQCwMCAwslIH8pCgceBwofeEYBCQAGABcAd3NEdQOHc35BADs=" alt=""/>
-Search</a>
+        
+
+<li class="topmenu"><a href="#" style="height:20px;line-height:20px;">League Menu</a>
             <ul>
-                <li class="subfirst"><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
+                <li class="subfirst"><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
+                <li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('name', 'LeagueTables');?></a></li>
+                <li><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
                 <li><a href="index.php?section=coachlist"><?php echo $lng->getTrn('menu/coaches');?></a></li>
-                <?php if (Module::isRegistered('Search'))            { ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
+                <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
+                <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a>
+                <?php
+        if (!empty($settings['league_url'])) {
+            ?>  <li><a href="<?php echo $settings['league_url'];?>"><?php echo $settings['league_url_name'];?></a></li><?php
+        }
+        ?>
+            </ul>
+    </li>
+        
+<li class="topmenu"><a rel="nofollow" href="index.php?section=rules" style="height:20px;line-height:20px;">League History</a>
+    <ul>
+        <li class="subfirst"><a rel="nofollow" href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
+                <li><a href="http://www.thenaf.net/wp-content/uploads/2013/06/CRP1.pdf">The CRP (Blood Bowl Competition Rules Pack)</a></li>
+<li><a href="http://the-outcast.com/bloodbowl/blood%20bowl%20crp%20lite.pdf">"Ickle Book" A5 Summary of the Rules</a></li>     
                 <?php if (Module::isRegistered('Gallery'))        { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Wanted'))        { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Prize'))        { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('HOF'))        { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('FamousTeams'))        { ?><li><a href="handler.php?type=famousteams"><?php echo $lng->getTrn('name', 'FamousTeams');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
-            </ul>
-        <li class="topmenu"><a rel="nofollow" href="#" style="height:20px;line-height:20px;">   <img src="data:image/gif;base64,R0lGODlhEAAOAMQcAP///xpljiVrk8zc5unp6Td3nO/v72matWKUs+Dh4XOgu9vm7VWMq3ynwNDW2Z+5yMDV40F+orPL20qFpzx7oO/0946yx6rF1+Tt8oqpu4iux5q70P///wAAAAAAAAAAACH5BAEAABwALAAAAAAQAA4AQAV1ICdyQRQFYoCOKQS8wBAYRJKtXDTAwFLQCcGoYIEsAJWBpIFjBQ68hoZmaXIQh8GgUWBIHgXnkRebEBwP4QirVVAEBwaCxZm4YD6gOgWFNRQ0c04CGxgVEgIXNA57AQpkAAoPNYwiDJAvAgGaThMFmxQMVhwhADs=" alt=""/>
-Standings & Tables</a>
+                <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
+    </ul></li>
+
+<?php if (Module::isRegistered('Search'))            { ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
+        
+        
+<li class="topmenu"><a rel="nofollow" href="#" style="height:20px;line-height:20px;">Statistics</a>
             <ul>
                 <li class="subfirst"><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/team_stn');?></a></li>
                 <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/player_stn');?></a></li>
                 <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_COACH,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/coach_stn');?></a></li>
                 <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_RACE,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/race_stn');?></a></li>
                 <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
-                <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
-                <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
-                <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a></li>
             </ul>
         </li>
-        <li class="topmenu"><a rel="nofollow" href="index.php?section=rules" style="height:20px;line-height:20px;"> <img src="data:image/gif;base64,R0lGODlhEAAOAMQeAC58zjJrpv///93d3e7h5Jq52PHx8eLi4sKVoN/f37XM4u3t7ejFzYUeNuLEy7wqTffw8o0fOrMoSfbw8YgsQslVcXwcM+TEzJU8UcVGZY06TuS3wtzCydJxiP///wAAACH5BAEAAB4ALAAAAAAQAA4AQAVUoCeOZEkCyXQJjiAEpgcYBNcIxBsDQBnAJsBgcFgkhsDSDFKRdFzJk6DQCxR0O562tyMSEIbDIDoCECyYSEaDVS4QlM2D0T4NBAqAArqjjqxkMYIhADs=" alt=""/>
-<?php echo $lng->getTrn('menu/rules');?></a>
-    <ul>
-        <li class="subfirst"><a rel="nofollow" href="index.php?section=rules">WBBL Rules</a></li>
-                <li><a href="http://www.thenaf.net/wp-content/uploads/2013/06/CRP1.pdf">The CRP (Blood Bowl Competition Rules Pack)</a></li>
-<li><a href="http://the-outcast.com/bloodbowl/blood%20bowl%20crp%20lite.pdf">"Ickle Book" Summary of the Rules</a></li>     
-<li><a href="http://www.thenaf.net/files/NewTeams_LRB6.pdf ">The Three NAF Sanctioned Rosters</a></li>
-        <li><a href="http://img138.imageshack.us/img138/224/apey.png">The Apes Roster</a></li>
-        <li><a href="http://i1013.photobucket.com/albums/af259/dode74/KhorneRosterAL1.png">The Khorne Roster</a></li>
-    </ul></li>
-        <li class="topmenu"><a rel="nofollow" href="http://nzbbn.com/" style="height:20px;line-height:20px;">   <img src="data:image/gif;base64,R0lGODlhEAAOAMQYAP///yZorDZ4nBhjjfH2+CVslGCUtbfP3OPs89Ti7Iuu05m60anF1VKKqoyyxy5ymLTN326duUSBo1GGvbzR43CdwKfD2jRysv///wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABgALAAAAAAQAA4AQAVcICaOZDkuQKquxlgQKRIowGWkh2kWDJAIpAZilaIARw0iZLYalAYHVQLG0D0MjgPDIdHdUpZAYJIAEI6YZCy1pKWcGAExgVIhHq5oqhKAARY6IgODAg5mEYE7RyEAOw==" alt=""/>
-Forum</a></li>  
-    <?php
-        if (isset($_SESSION['logged_in'])) { ?><li class="toplast"><a rel="nofollow"href="index.php?logout=1" style="height:20px;line-height:20px;">    <img src="data:image/gif;base64,R0lGODlhEAAOAMQTAP///xtljoWr0oWFhdPh6WOWs9zb1h1nkDB0mUSBpJi5zKSkpKXC08bY4zh4nZC0yJK2yXShu3Kguf///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABMALAAAAAAQAA4AQAVH4CSOZElKQCosKVCYB6EOaROYZHDjuSEMhgQuwGj9WoodySFrNRC80SoqcgB8QADUFDHSUq9ccYZUimKtFsGcK0AeBSGVGgIAOw==" alt=""/>
-<?php echo $lng->getTrn('menu/logout');?></a></li><?php }
-        else                               { ?><li class="toplast"><a rel="nofollow" href="index.php?section=login" style="height:20px;line-height:20px;">  <img src="data:image/gif;base64,R0lGODlhEAAOAMQTAP///xtljoWr0oWFhdPh6WOWs9zb1h1nkDB0mUSBpJi5zKSkpKXC08bY4zh4nZC0yJK2yXShu3Kguf///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABMALAAAAAAQAA4AQAVH4CSOZElKQCosKVCYB6EOaROYZHDjuSEMhgQuwGj9WoodySFrNRC80SoqcgB8QADUFDHSUq9ccYZUimKtFsGcK0AeBSGVGgIAOw==" alt=""/>
-<?php echo $lng->getTrn('menu/login');?></a></li><?php }
-        ?>
+        
+<li class="topmenu"><a rel="nofollow" href="#" style="height:20px;line-height:20px;">Game Rules</a>
+    <ul> 
+        <li class="subfirst"><a rel="nofollow" href="#">CRP Rosters ></a>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=0">Amazon</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=1">Chaos</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=2">Chaos Dwarf</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=3">Dark Elf</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=4">Dwarf</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=5">Elf</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=6">Goblin</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=7">Halfling</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=8">High Elf</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=9">Human</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=10">Khemri</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=11">Lizardman</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=12">Necromantic</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=13">Norse</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=14">Nurgle</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=15">Ogre</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=16">Orc</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=19">Skaven</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=17">Undead</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=18">Vampire</a></li>
+            <li><a rel="nofollow" href="index.php?section=objhandler&type=1&obj=4&obj_id=20">Wood Elf</a></li>
+        </li>
+    </ul>
+</li>  
+    
     <?php
 }
 
