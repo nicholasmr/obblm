@@ -987,8 +987,8 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <div class="everything">
             <div class="banner">
             <f0> </f0><br><br><br>
-            <f1>This line set on line 979 of class_htmlout.php</f1><br>
-            <f2> This line set on line 980 of class_htmlout.php</f2></div>
+            <f1><?php echo $settings['banner_title']; ?></f1><br>
+            <f2><?php echo $settings['banner_subtitle']; ?></f2></div>
             <div class="menu">
                 <?php if ($menu) {HTMLOUT::make_menu();} ?>
             </div> <!-- Menu div end -->

@@ -8,6 +8,8 @@
  *   General
  *********************/
 
+$settings['banner_title']    = 'Banner title for league with ID = 1 (change in settings_1.php)';
+$settings['banner_subtitle'] = 'Banner subtitle (change in settings_1.php)';
 $settings['league_name']     = 'Placeholder title for league with ID = 1'; // Name of the site or the league name if only one league is being managed.
 $settings['league_url']      = 'http://localhost'; // URL of league home page/forum, if you have such. If not then leave this empty, that is = '' (two quotes only), which will disable the button. 
 $settings['league_url_name'] = 'My league page';   // Button text for league URL.
