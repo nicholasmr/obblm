@@ -21,15 +21,15 @@
  *
  */
 
-// Additional data for Brettonians see  - http://www.plasmoids.dk/bbowl/BBBretonnians.htm
+// Additional data for Bretonnians see  - http://www.plasmoids.dk/bbowl/BBBretonnians.htm
 
-define('T_RACE_BRETTONIA', 24);
+define('T_RACE_BRETONNIA', 24);
 
 $DEA['Bretonnia'] = array (
     'other'	=> array (
         'rr_cost' => 60000,
-        'icon' => 'brettonian.jpg',
-        'race_id' => T_RACE_BRETTONIA, # (Brettonia)
+        'icon' => 'bretonnian.jpg',
+        'race_id' => T_RACE_BRETONNIA, # (Bretonnia)
     ),
     'players'	=> array (
   			'Lineman'	=> array (
@@ -76,6 +76,6 @@ $DEA['Bretonnia'] = array (
 
 // Stars allowed
 foreach (array('Dolfar Longstride', 'Griff Oberwald', 'Mighty Zug', 'Morg \'n\' Thorg', 'Willow Rosebark', 'Zara the Slayer') as $s) {
-    array_push($stars[$s]['races'], T_RACE_BRETTONIA);
+    array_push($stars[$s]['races'], T_RACE_BRETONNIA);
 }
 
