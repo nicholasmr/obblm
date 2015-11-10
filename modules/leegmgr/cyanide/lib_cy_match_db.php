@@ -62,6 +62,10 @@ class cy_match_db {
 	public $hometeam_id = 0;
 	public $awayteam_id = 0;
 	public $match_id = 0;
+	
+	public $results_table = '';
+	public $results = '';
+	public $divider = PHP_EOL;
 
 
 	function __construct($file) {
@@ -71,6 +75,9 @@ class cy_match_db {
 		if(file_exists($this->file)) {
 			//open the DB
 			$this->db_status = $this->load_match_db($this->db_engine);
+			//Results Header
+			$this->results_table .= "<table border=1><tr><td></td><td>Home Team</td><td>Away Team</td></tr><tr>";
+			$this->results .= "=====================\nResults\n=====================";
 			//set home team
 			$this->set_home_team();
 			//set away team
@@ -111,6 +118,8 @@ class cy_match_db {
 			$this->set_players('Away');
 			// set away players array
 			$this->set_gate();
+			//Table footer
+			$this->results_table .= "</table>";
 			//close db
 			$this->close_match_db($this->db_engine);
 		} else {
@@ -151,22 +160,24 @@ class cy_match_db {
 		foreach ($this->_db_read->query($this->sql) as $row) {
 			$this->hometeam = $row['strName'];
 		}
-		echo "<table border=1><tr><td>Step</td><td>Home Team</td><td>Away Team</td></tr><tr>";
-		echo "<tr><td>Name</td><td>".$this->hometeam."</td>";
+		$this->results_table .= "<tr><td>Name</td><td>".$this->hometeam."</td>";
+		$this->results .= "\nHome Team: ".$this->hometeam;
 	}
 	private function set_away_team() {
 		$this->set_sql(4);
 		foreach ($this->_db_read->query($this->sql) as $row) {
 			$this->awayteam = $row['strName'];
 		}
-		echo "<td>".$this->awayteam."</td></tr>";
+		$this->results_table .= "<td>".$this->awayteam."</td></tr>";
+		$this->results .= $this->divider."Away Team: ".$this->awayteam;
 	}
 	private function set_home_score() {
 		$this->set_sql(1);
 		foreach ($this->_db_read->query($this->sql) as $row) {
 			$this->homescore = (int)$row['Home_iScore'];
 		}
-		echo "<tr><td>Score</td><td>".$this->homescore."</td>";
+		$this->results_table .= "<tr><td>Score</td><td>".$this->homescore."</td>";
+		$this->results .= "\nScore: ".$this->homescore;
 
 	}
 	private function set_away_score() {
@@ -174,7 +185,8 @@ class cy_match_db {
 		foreach ($this->_db_read->query($this->sql) as $row) {
 			$this->awayscore = (int)$row['Away_iScore'];
 		}
-		echo "<td>".$this->awayscore."</td></tr>";
+		$this->results_table .= "<td>".$this->awayscore."</td></tr>";
+		$this->results .= ":".$this->awayscore;
 	}
 	private function set_winner() {
 		if($this->homescore > $this->awayscore) {
@@ -184,12 +196,13 @@ class cy_match_db {
 			$this->winner = $this->awayteam;
 		} elseif ($this->awayscore == $this->homescore) {
 			//Tie
-			$this->winner = '';
+			$this->winner = 'Draw';
 		} else {
 			$this->error = "There has been a problem match
 			winner could not be set";
 		}
-		echo "<tr><td>Winner</td><td colspan=2>".$this->winner."</td></tr>";
+		$this->results_table .= "<tr><td>Winner</td><td colspan=2>".$this->winner."</td></tr>";
+		$this->results .= "\nWinner: ".$this->winner;
 
 	}
 	private function set_concession() {
@@ -200,11 +213,12 @@ class cy_match_db {
 			//if 0 or 2 set concession true
 			if($result == 0 or $result == 2) {
 				$this->concession = true;
+				$this->results .= "\nMatch conceded to ".$this->winner;
 			} else {
 				$this->concession = false;
 			}
 		}
-		echo "<tr><td>Concession?</td><td colspan=2>".$this->concession."</td></tr>";
+		$this->results_table .= "<tr><td>Concession?</td><td colspan=2>".var_export($this->concession,true)."</td></tr>";
 	}
 	private function set_gate(){
 		//$this->set_sql(6);
@@ -212,7 +226,8 @@ class cy_match_db {
 		//	$this->gate = $row['iSpectators'];
 		//}
 		$this->gate = $this->awayfans + $this->homefans;
-		echo "<tr><td>Gate</td><td colspan=2>".$this->gate."</td></tr>";
+		$this->results_table .= "<tr><td>Gate</td><td colspan=2>".$this->gate."</td></tr>";
+		$this->results .= "\nGate: ".$this->gate;
 	}
 	private function set_home_tvff() {
 		$this->set_sql(7);
@@ -220,7 +235,8 @@ class cy_match_db {
 			$this->homeff = $row['iPopularity'];
 			$this->tv_home = $row['iValue'];
 		}
-		echo "<tr><td>Current FF</td><td>".$this->homeff."</td>";
+		$this->results_table .= "<tr><td>Current FF</td><td>".$this->homeff."</td>";
+		$this->results .= "\n".$this->hometeam." Fan Factor: ".$this->homeff;
 	}
 	private function set_away_tvff() {
 		$this->set_sql(8);
@@ -228,19 +244,22 @@ class cy_match_db {
 			$this->awayff = $row['iPopularity'];
 			$this->tv_away = $row['iValue'];
 		}
-		echo "<td>".$this->awayff."</td></tr>";
+		$this->results_table .= "<td>".$this->awayff."</td></tr>";
+		$this->results .= $this->divider.$this->awayteam." Fan Factor: ".$this->awayff;
 	}
 	private function set_home_fans() {
 		$d1 = rand(1,6);
 		$d2 = rand(1,6);
 		$this->homefans = ($d1 + $d2 + $this->homeff)*1000;
-		echo "<tr><td>Fans</td><td>".$this->homefans."</td>";
+		$this->results_table .= "<tr><td>Fans</td><td>".$this->homefans."</td>";
+		$this->results .= "\n".$this->hometeam." Fans: ".$this->homefans;
 	}
 	private function set_away_fans() {
 		$d1 = rand(1,6);
 		$d2 = rand(1,6);
 		$this->awayfans = ($d1 + $d2 + $this->awayff)*1000;
-		echo "<td>".$this->awayfans."</td></tr>";
+		$this->results_table .= "<td>".$this->awayfans."</td></tr>";
+		$this->results .= $this->divider.$this->awayteam." Fans: ".$this->awayfans;
 	}
 	private function set_home_fame() {
 		if($this->homefans <= $this->awayfans) {
@@ -252,7 +271,8 @@ class cy_match_db {
 		} else {
 			$this->error = "There has been a error gathering home team fame. This error should not occrue";
 		}
-		echo "<tr><td>Fame</td><td>".$this->homefame."</td>";
+		$this->results_table .= "<tr><td>Fame</td><td>".$this->homefame."</td>";
+		$this->results .= "\n".$this->hometeam." Fame: ".$this->homefame;
 	}
 	private function set_away_fame() {
 		if($this->awayfans <= $this->homefans) {
@@ -264,34 +284,42 @@ class cy_match_db {
 		} else {
 			$this->error = "There has been a error gathering home team fame. This error should not occrue";
 		}
-		echo "<td>".$this->awayfame."</td></tr>";
+		$this->results_table .= "<td>".$this->awayfame."</td></tr>";
+		$this->results .= $this->divider.$this->awayteam." Fame: ".$this->awayfame;
 	}
 	private function set_home_winnings() {
 		$d1 = rand(1,6);
 		$this->homewinnings = (($d1 + $this->homefame) * 10000) +  (( $this->winner != $this->awayteam ) ? 10000 : 0);
-		echo "<tr><td>winnings</td><td>".$this->homewinnings."</td>";
+		$this->results_table .= "<tr><td>winnings</td><td>".$this->homewinnings." (".$d1.")"."</td>";
+		$this->results .= "\n".$this->hometeam." Winnings: ".$this->homewinnings." (".$d1.")";
 	}
 
 	private function set_away_winnings() {
 		$d1 = rand(1,6);
 		$this->awaywinnings = (($d1 + $this->awayfame) * 10000) +  (( $this->winner != $this->hometeam ) ? 10000 : 0);
-		echo "<td>".$this->awaywinnings."</td></tr>";
+		$this->results_table .= "<td>".$this->awaywinnings." (".$d1.")"."</td></tr>";
+		$this->results .= $this->divider.$this->awayteam." Winnings: ".$this->awaywinnings." (".$d1.")";
 	}
 	private function set_home_ff_new() {
-		echo "<tr><td>FF Roles Home Team</td><td>";
+		$this->results_table .= "<tr><td>FF Roles Home Team</td><td>";
+		$this->results .= "\nFF Rolls ".$this->hometeam." ";
 		$cff = $this->homeff;
 		$d1  = rand(1,6);
-		echo "[".$d1."]";
+		$this->results_table .= "[".$d1."]";
+		$this->results .= "[".$d1."]";
 		$d2  = rand(1,6);
-		echo "[".$d2."]";
+		$this->results_table .= "[".$d2."]";
+		$this->results .= "[".$d2."]";
 		$win = false;
 		if($this->winner == $this->hometeam) {
 			$d3 = rand(1,6);
-			echo "[".$d3."]</td>";
+			$this->results_table .= "[".$d3."]</td>";
+			$this->results .= "[".$d3."]: ";
 			$win = true;
 		} else {
 			$d3 = 0;
-			echo "</td>";
+			$this->results_table .= "</td>";
+			$this->results .= ": ";
 		}
 		$rr = $d1 + $d2 +$d3 ;
 		if ($win == true) {
@@ -318,23 +346,29 @@ class cy_match_db {
 			}
 		}
 		$win = false;
-		echo "<td>Adjust: ".$this->homeff."</td></tr>";
+		$this->results_table .= "<td>Adjust: ".$this->homeff."</td></tr>";
+		$this->results .= (($this->homeff >= 0)?"+":"").$this->homeff;
 	}
 	private function set_away_ff_new() {
-		echo "<tr><td>FF Roles Away Team</td><td>";
+		$this->results_table .= "<tr><td>FF Roles Away Team</td><td>";
+		$this->results .= "\nFF Rolls ".$this->awayteam." ";
 		$cff = $this->awayff;
 		$d1  = rand(1,6);
-		echo "[".$d1."]";
+		$this->results_table .= "[".$d1."]";
+		$this->results .= "[".$d1."]";
 		$d2  = rand(1,6);
-		echo "[".$d2."]";
+		$this->results_table .= "[".$d2."]";
+		$this->results .= "[".$d2."]";
 		$win = false;
 		if($this->winner == $this->awayteam) {
 			$d3 = rand(1,6);
-			echo "[".$d3."]</td>";
+			$this->results_table .= "[".$d3."]</td>";
+			$this->results .= "[".$d3."]: ";
 			$win = true;
 		} else {
 			$d3 = 0;
-			echo "</td>";
+			$this->results_table .= "</td>";
+			$this->results .= ": ";
 		}
 		$rr = $d1 + $d2 +$d3 ;
 		if ($win == true) {
@@ -361,7 +395,8 @@ class cy_match_db {
 			}
 		}
 		$win = false;
-		echo "<td>Adjust: ".$this->awayff."</td></tr>";
+		$this->results_table .= "<td>Adjust: ".$this->awayff."</td></tr>";
+		$this->results .= (($this->awayff >= 0)?"+":"").$this->awayff;
 	}
 	public function init_player_array() {
 			

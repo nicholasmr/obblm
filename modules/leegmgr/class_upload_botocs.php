@@ -44,19 +44,24 @@ class UPLOAD_BOTOCS implements ModuleInterface
         public $homewinnings = 0;
         public $homeff = 0;
         public $homefame = 0;
+		public $homefans = 0;
         public $hometransferedGold = 0;
         public $homeplayers;
         public $tv_home = 0;
         public $homerotters = 0;
-    public $awayteam = '';
+		public $awayteam = '';
         public $awayscore = 0;
         public $awaywinnings = 0;
         public $awayff = 0;
         public $awayfame = 0;
+		public $awayfans = 0;
         public $awaytransferedGold = 0;
         public $awayplayers;
         public $tv_away = 0;
         public $awayrotters = 0;
+		
+	public $results_table = '';
+	public $results = '';
 
     public $hometeam_id = 0;
     public $awayteam_id = 0;
@@ -68,6 +73,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
     public $reporttype = "botocs";
 
     public $success = "";
+	public $summary = "";
 
 
     function __construct($userfile, $tour_id, $coach_id, $reroll) {
@@ -89,33 +95,51 @@ class UPLOAD_BOTOCS implements ModuleInterface
         else if ( $this->reporttype == "cyanide" )
         {
             if ( !$this->parse_cy_results() ) return false;
-            if ( $this->winner && !$this->checkCoach($this->winner) )
+            if ( ( $this->winner != 'Draw' ) and !$this->checkCoach($this->winner) )
             {
                 $this->error = "You must be the winner to upload the match.";
                 return false;
             }
+			
+			
             if ( $reroll && $this->checkCoach($this->winner) )
             {
                 if ( $this->winner == $this->hometeam && $reroll > ($this->homewinnings / 10000 - $this->homefame - 1) )
                 {
                     $oldwinnings = $this->homewinnings;
                     $this->homewinnings = (rand(1,6) + $this->homefame + 1) * 10000;
-                    $this->success .= "Rerolled old winnings of ".$oldwinnings." to ".$this->homewinnings;
+                    $this->success .= "\n".$this->winner." rerolled winnings of ".$oldwinnings." to get ".$this->homewinnings.".";
                 }
                 else if ( $reroll > ($this->awaywinnings / 10000 - $this->awayfame - 1) )
                 {
                     $oldwinnings = $this->awaywinnings;
                     $this->awaywinnings = (rand(1,6) + $this->awayfame + 1) * 10000;
-                    $this->success .= "Rerolled old winnings of ".$oldwinnings." to ".$this->awaywinnings;
+                    $this->success .= "\n".$this->winner." coach rerolled winnings of ".$oldwinnings." to get ".$this->awaywinnings.".";
                 }
             }
+			
         }
 
-        if ( !$this->checkCoach ( $this->hometeam ) && !$this->checkCoach ( $this->awayteam ) )
-        {
-            $this->error = "You must be the owner of one of the teams in the report to upload a match.";
+        // if ( !$this->checkCoach ( $this->hometeam ) && !$this->checkCoach ( $this->awayteam ) )
+        // {
+            // $this->error = "You must be the owner of one of the teams in the report to upload a match.";
+            // return false;
+        // }
+		
+		if ( $this->checkCoach ( $this->hometeam ) )
+		{
+			$this->success .= "Match report uploaded by the coach of the ".$this->hometeam.".";
+		}
+		else if ( $this->checkCoach ( $this->awayteam ) )
+		{
+			$this->success .= "Match report uploaded by the coach of the ".$this->awayteam.".";
+		}
+		else
+		{
+			$this->error = "You must be the owner of one of the teams in the report to upload a match.";
             return false;
-        }
+		}
+		
 
         $this->hometeam_id= $this->checkTeam ( $this->hometeam );
         $this->awayteam_id=$this->checkTeam ( $this->awayteam );
@@ -191,7 +215,7 @@ WHERE match_id = $this->match_id";
 
         $match = new Match( $this->match_id );
         $match->finalizeMatchSubmit(); # Must be run AFTER ALL match data has been submitted. This syncs stats.
-        $match->setLocked(true);
+        $match->setLocked(false);
 
         //Begin add replay
         $query = "UPDATE leegmgr_matches SET replay = \"$this->replay\" WHERE mid = $this->match_id";
@@ -201,6 +225,11 @@ WHERE match_id = $this->match_id";
             $this->error = "Failed to upload the replay file with the following error: ".mysql_error();
             return false;
         }
+		if (!empty($this->success)) {
+			
+			$this->summary .= $this->success."\n\n".$this->results;
+			$match->saveText($this->summary); # Save summary.
+		}
         //End add replay
         return true;
 
@@ -246,6 +275,7 @@ WHERE match_id = $this->match_id";
             $this->{"${team}winnings"}  = $results->team[$N]->winnings - $results->team[$N]->transferedGold;
             $this->{"${team}ff"}        = (int) $results->team[$N]->fanfactor;
             $this->{"${team}fame"}      = (int) $results->team[$N]->fame;
+			$this->{"${team}fans"}      = (int) $results->team[$N]->fans;
             $this->{"${team}rotters"}      = (int) $results->team[$N]->attributes()->rotters;
             #$this->{"${team}transferedGold"} = (int) $results->team[$N]->transferedGold;
             
@@ -319,6 +349,8 @@ WHERE match_id = $this->match_id";
         $this->hash = md5($this->xmlresults);
         $this->gate = 0; # Initialize it.
         $this->winner = $cy_parse->winner;
+		$this->results_table = $cy_parse->results_table;
+		$this->results = $cy_parse->results;
 
         foreach (array(0 => 'home', 1 => 'away') as $N => $team) {
             
@@ -329,6 +361,7 @@ WHERE match_id = $this->match_id";
             $this->{"${team}winnings"}  = $cy_parse->{"${team}winnings"};
             $this->{"${team}ff"}        = (int) $cy_parse->{"${team}ff"};
             $this->{"${team}fame"}      = (int) $cy_parse->{"${team}fame"};
+			$this->{"${team}fans"}      = (int) $cy_parse->{"${team}fans"};
             // Player properties
             $this->{"${team}players"} = $cy_parse->{"${team}players"};
         }
@@ -534,8 +567,7 @@ WHERE match_id = $this->match_id";
 
         $match = new Match( $this->match_id );
         if (!$this->revUpdate) $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor1" => $this->homeff, "ffactor2" => $this->awayff, "fame1" => $this->homefame, "fame2" => $this->awayfame, "income1" => $this->homewinnings, "income2" => $this->awaywinnings, "team1_score" => $this->homescore, "team2_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv1" => $this->tv_home, "tv2" => $this->tv_away,) );
-        else $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor2" => $this->homeff, "ffactor1" => $this->awayff, "fame2" => $this->homefame, "fame1" => $this->awayfame, "income2" => $this->homewinnings, "income1" => $this->awaywinnings, "team2_score" => $this->homescore, "team1_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $this->tv_home, "tv1" => $this->tv_away,) );
-
+        else                   $match->update( $input = array("submitter_id" => $this->coach_id, "stadium" => $this->hometeam_id, "gate" => $this->gate, "fans" => 0, "ffactor2" => $this->homeff, "ffactor1" => $this->awayff, "fame2" => $this->homefame, "fame1" => $this->awayfame, "income2" => $this->homewinnings, "income1" => $this->awaywinnings, "team2_score" => $this->homescore, "team1_score" => $this->awayscore, "smp1" => 0, "smp2" => 0, "tcas1" => 0, "tcas2" => 0, "tv2" => $this->tv_home, "tv1" => $this->tv_away,) );
         return true;
     }
 
@@ -910,16 +942,19 @@ WHERE match_id = $this->match_id";
         if ( !$upload->error )
         {
             Print "Upload was successful.";
-            Print "<br>".$upload->success;
+            Print "<br>".nl2br($upload->success,false)."<br>";
+			Print $upload->results_table;
             unset($upload);
         }
         else
         {
             Print "<br><b>Error: {$upload->error}</b><br>";
+			Print $upload->results_table;
             unset($upload);
             unset($_FILES['userfile']);
             UPLOAD_BOTOCS::main(array(true));
         }
+		
 
     }
 
