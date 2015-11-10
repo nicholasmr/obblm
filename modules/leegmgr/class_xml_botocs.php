@@ -79,8 +79,6 @@ class XML_BOTOCS implements ModuleInterface
                 $this->apothecary = ( $this->apothecary == "1" ) ? "true" : "false";
             $this->treasury = $team->treasury;
             $this->tv = $team->value; #for cyanide roster only
-            
-        if ( !$this->checkJourneymen() ) return false;
 
         $this->name = $team->name;
         $this->coach_name = $team->f_cname;
@@ -318,6 +316,7 @@ class XML_BOTOCS implements ModuleInterface
             else
             {
                 if (!class_exists("PDO")) die("PDO must be installed for the Cyanide module to work properly.");
+                if (!$roster->checkJourneymen() ) die(); # checkJourneymen prints more detailed errors
                 $roster->cy = ($_GET["cy"] > 0) ? $_GET["cy"] : 0;
                 $roster->createCyRoster();
                 if ( !$roster->error )
