@@ -110,7 +110,7 @@ class UPLOAD_BOTOCS implements ModuleInterface
                     $this->homewinnings = (rand(1,6) + $this->homefame + 1) * 10000;
                     $this->success .= "\n".$this->winner." rerolled winnings of ".$oldwinnings." to get ".$this->homewinnings.".";
                 }
-                else if ( $reroll > ($this->awaywinnings / 10000 - $this->awayfame - 1) )
+                else if ( $this->winner == $this->awayteam && $reroll > ($this->awaywinnings / 10000 - $this->awayfame - 1) )
                 {
                     $oldwinnings = $this->awaywinnings;
                     $this->awaywinnings = (rand(1,6) + $this->awayfame + 1) * 10000;
