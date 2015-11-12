@@ -19,7 +19,7 @@ INSERT INTO player_types VALUES (8, 'Team_Dwarf_Blitzer', 2, 4, 13, 1143, '', 41
 INSERT INTO player_types VALUES (9, 'Team_Dwarf_TrollSlayer', 2, 1, 14, 118, '', 41.665, 50, 33.333, 72.222, 90000, 2);
 INSERT INTO player_types VALUES (10, 'Team_Dwarf_DeathRoller', 2, 5, 13, 102337, '', 33.333, 90, 16.666, 91.666, 160000, 1);
 INSERT INTO player_types VALUES (11, 'Team_WoodElf_Lineman', 7, 1, 8, 31, '', 58.333, 50, 66.666, 58.333, 70000, 16);
-INSERT INTO player_types VALUES (12, 'Team_WoodElf_Catcher', 7, 3, 8, 32, '', 74.999, 40, 66.666, 58.333, 90000, 4);
+INSERT INTO player_types VALUES (12, 'Team_WoodElf_Catcher', 7, 3, 8, 32, '', 66.667, 40, 66.666, 58.333, 90000, 4);
 INSERT INTO player_types VALUES (13, 'Team_WoodElf_Thrower', 7, 2, 8, 33, '', 58.333, 50, 66.666, 58.333, 90000, 2);
 INSERT INTO player_types VALUES (14, 'Team_WoodElf_WarDancer', 7, 4, 9, 122, '', 66.667, 50, 66.666, 58.333, 120000, 2);
 INSERT INTO player_types VALUES (15, 'BigGuy_WoodElf_Treeman', 7, 5, 10, 123, '', 16.667, 80, 16.666, 91.666, 120000, 1);
