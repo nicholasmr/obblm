@@ -1087,11 +1087,11 @@ private static function make_menu()
         <?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
         <?php if (Module::isRegistered('SGraph'))            { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
         <?php if (Module::isRegistered('Gallery'))           { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
         <?php if (Module::isRegistered('LeagueTables'))      { ?><li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
         <?php if (Module::isRegistered('Conference'))        { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
         <?php if (isset($_SESSION['logged_in']) && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $coach->ring == Coach::T_RING_LOCAL_ADMIN)) { ?>
         <?php if (Module::isRegistered('Scheduler'))     { ?><li><a href="handler.php?type=scheduler"><?php echo $lng->getTrn('name', 'Scheduler');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
         <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
         <?php } ?>
         <?php
