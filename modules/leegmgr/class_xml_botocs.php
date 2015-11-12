@@ -150,9 +150,6 @@ class XML_BOTOCS implements ModuleInterface
                 if ($p->ach_av > 1) array_push($chrs, "+1 Av");
 
                 $skillstr = skillsTrans(array_merge($p->ach_nor_skills, $p->ach_dob_skills));
-                if ($p->f_pos_id == 201) {
-                        array_push($extras, 'Sprint');
-                }
                 if ($p->is_journeyman) {
                         array_push($extras, 'Loner');
                 }
