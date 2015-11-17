@@ -1468,7 +1468,7 @@ private function _teamManagementBox($players, $team) {
                     if ($p->is_dead || $p->is_sold)
                         continue;
 
-                    echo "<option value='$p->player_id'>" . (($p->value/1000)*$rules['player_refund']) . "k refund | $p->name</option>\n";
+                    echo "<option value='$p->player_id'>" . ($rules['player_refund'] ? (($p->value/1000)*$rules['player_refund'])."k refund | " : "") . "$p->name</option>\n";
                     $DISABLE = false;
                 }
                 ?>
