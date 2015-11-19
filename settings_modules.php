@@ -26,7 +26,7 @@ $settings['modules_enabled'] = array(
     'XML_BOTOCS'         => false, # BOTOCS XML export of team
     'LeagueTables'       => true, # Provides league table link on the main menu
     'Conference'         => true, # Provides support for conferences within tournaments
-    'Scheduler'          => true, # Alternative match scheduler
+    'Scheduler'          => false, # Alternative match scheduler
     'LeaguePref'         => true, # Allows dynamic configuration of league preferences
     'TeamCreator'        => true, # Allows coaches to create teams quickly
 );
