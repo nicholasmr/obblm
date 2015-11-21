@@ -964,7 +964,12 @@ private static function make_menu()
 						<ul>
 							<li><a href="index.php?SLS_lid=2" >MARBBL (Malmo)</a></li>
 						</ul>
-                    </li>                        
+                    </li>    
+					<li><a href="#" >Spain ></a>
+						<ul>
+							<li><a href="index.php?SLS_lid=18" >Liga Burgalesa</a></li>
+						</ul>
+                    </li>                      
 					<li><a href="#" >Germany ></a>
 						<ul>
 							<li><a href="index.php?SLS_lid=7" >United Friends</a></li>
@@ -977,7 +982,8 @@ private static function make_menu()
 					<li><a href="#" >USA ></a>
                 		<ul>
 							<li><a href="index.php?SLS_lid=11" >KABBL (Knoxville)</a></li>
-                            <li><a href="index.php?SLS_lid=16" >KIL (Dever)</a></li>
+                            <li><a href="index.php?SLS_lid=16" >KIL (Denver)</a></li>
+                            <li><a href="index.php?SLS_lid=19" >PaDGBBL (Vista CA)</a></li>
 						</ul>                                             
                     </li>
 					<li><a href="#" >Canada ></a>
@@ -989,7 +995,11 @@ private static function make_menu()
             </li>
 			<li><a href="#" >Rest of the World ></a>
 				<ul>
-					<li><a href="#" >(None)</a>
+					<li><a href="#" >Australia ></a>
+                		<ul>
+							<li><a href="index.php?SLS_lid=17" >Newcastle Legion</a>
+</li>
+						</ul>  
                     </li>
 				</ul>
             </li>
@@ -1021,7 +1031,7 @@ private static function make_menu()
 		<li class="topmenu"><a href="#" style="height:20px;line-height:20px;"><?php echo $lng->getTrn('menu/admin_menu/name');?></a>
 					<ul>
                         <li class="subfirst"><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('name', 'LeaguePref');?></a></li>
-                        <li><a href="handler.php?type=conference"><?php echo $lng->getTrn('name', 'Conference');?></a></li>
+<?php if (Module::isRegistered('Conference'))        { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('name', 'Conference');?></a></li><?php } ?>
                         <?php foreach ($admin_menu as $lnk => $desc) {
                         if (!is_array($desc)) {echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";}
                         else {?>
