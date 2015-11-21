@@ -1067,7 +1067,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                     if ($p->is_sold || $p->is_dead || $p->is_journeyman || $p->qty != 16)
                                         continue;
 
-                                    echo "<option value='$p->player_id'>$p->name</option>\n";
+                                    echo "<option value='$p->player_id'>$p->nr $p->name</option>\n";
                                     $DISABLE = false;
                                 }
                                 ?>
@@ -1090,7 +1090,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 $DISABLE = true;
                                 foreach ($players as $p) {
                                     if ($p->is_sold) {
-                                            echo "<option value='$p->player_id'>$p->name</option>\n";
+                                            echo "<option value='$p->player_id'>$p->nr $p->name</option>\n";
                                             $DISABLE = false;
                                     }
                                 }
@@ -1154,7 +1154,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 objsort($players, array('+is_dead', '+name'));
                                 foreach ($players as $p) {
                                     if (!$p->is_sold) {
-                                        echo "<option value='$p->player_id'".(($p->is_dead) ? ' style="background-color:'.COLOR_HTML_DEAD.';"' : '').">$p->name</option>";
+                                        echo "<option value='$p->player_id'".(($p->is_dead) ? ' style="background-color:'.COLOR_HTML_DEAD.';"' : '').">$p->nr $p->name</option>";
                                         $DISABLE = false;
                                     }
                                 }
@@ -1184,7 +1184,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 objsort($players, array('+is_dead', '+name'));
                                 foreach ($players as $p) {
                                     if (!$p->is_sold) {
-                                        echo "<option value='$p->player_id'".(($p->is_dead) ? ' style="background-color:'.COLOR_HTML_DEAD.';"' : '').">$p->name (current extra = ".($p->extra_val/1000)."k)</option>";
+                                        echo "<option value='$p->player_id'".(($p->is_dead) ? ' style="background-color:'.COLOR_HTML_DEAD.';"' : '').">$p->nr $p->name (current extra = ".($p->extra_val/1000)."k)</option>";
                                         $DISABLE = false;
                                     }
                                 }
@@ -1214,7 +1214,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 $DISABLE = true;
                                 foreach ($players as $p) {
                                     if (!$p->is_sold && !$p->is_dead) {
-                                        echo "<option value='$p->player_id'>$p->name</option>";
+                                        echo "<option value='$p->player_id'>$p->nr $p->name</option>";
                                         $DISABLE = false;
                                     }
                                 }
@@ -1255,7 +1255,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 $DISABLE = true;
                                 foreach ($players as $p) {
                                     if (!$p->is_dead && !$p->is_sold) {
-                                        echo "<option value='$p->player_id'>$p->name</option>\n";
+                                        echo "<option value='$p->player_id'>$p->nr $p->name</option>\n";
                                         $DISABLE = false;
                                     }
                                 }
@@ -1443,7 +1443,7 @@ private function _teamManagementBox($players, $team) {
                         continue;
                     }
 
-                    echo "<option value='$p->player_id'>$p->name | " . $price/1000 . " k</option>\n";
+                    echo "<option value='$p->player_id'>$p->nr $p->name | " . $price/1000 . " k</option>\n";
                     $DISABLE = false;
                 }
                 ?>
@@ -1468,7 +1468,7 @@ private function _teamManagementBox($players, $team) {
                     if ($p->is_dead || $p->is_sold)
                         continue;
 
-                    echo "<option value='$p->player_id'>" . (($p->value/1000)*$rules['player_refund']) . "k refund | $p->name</option>\n";
+                    echo "<option value='$p->player_id'>" . ($rules['player_refund'] ? (($p->value/1000)*$rules['player_refund'])."k refund | " : "") . "$p->nr $p->name</option>\n";
                     $DISABLE = false;
                 }
                 ?>
@@ -1491,7 +1491,7 @@ private function _teamManagementBox($players, $team) {
                 $DISABLE = true;
                 foreach ($players as $p) {
                     if ($p->is_unbuyable() && !$p->is_sold) {
-                            echo "<option value='$p->player_id'>$p->name</option>\n";
+                            echo "<option value='$p->player_id'>$p->nr $p->name</option>\n";
                             $DISABLE = false;
                     }
                 }
@@ -1520,7 +1520,7 @@ private function _teamManagementBox($players, $team) {
                     elseif ($p->is_sold)
                         $color = COLOR_HTML_SOLD;
 
-                    echo "<option value='$p->player_id' ".(isset($color) ? "style='background-color: $color;'" : '').">$p->name</option>\n";
+                    echo "<option value='$p->player_id' ".(isset($color) ? "style='background-color: $color;'" : '').">$p->nr $p->name</option>\n";
                     $DISABLE = false;
                 }
                 ?>
