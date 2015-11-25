@@ -318,6 +318,23 @@ class Team
         }
     }
 
+	public function setff_bought($integer) {
+
+        /**
+         * Set team's bought fan factor
+         **/
+        $integer = intval(max($integer,0));
+
+        $query = "UPDATE teams SET ff_bought = $integer WHERE team_id = $this->team_id";
+        if (mysql_query($query)) {
+            $this->ff_bought+= $integer;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public function setReady($bool) {
 
         mysql_query("UPDATE teams SET rdy = ".(($bool) ? 1 : 0)." WHERE team_id = $this->team_id");

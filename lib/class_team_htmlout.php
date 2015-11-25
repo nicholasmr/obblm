@@ -295,6 +295,10 @@ public function handleActions($ALLOW_EDIT)
                 else                                                    $type = 'C'; # Assume it's a characteristic.
                 status($p->rmSkill($type, ($type == 'C') ? (int) str_replace('ach_','',$_POST['skill']) : (int) $_POST['skill']));
                 break;
+           case 'ff':
+                status($team->setff_bought($_POST['amount']));
+                SQLTriggers::run(T_SQLTRIG_TEAM_DPROPS, array('obj' => T_OBJ_TEAM, 'id' => $team->team_id));
+                break;
         }
     }
 
@@ -1020,6 +1024,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         'dval'              => $lng->getTrn($base.'/box_admin/dval'),
                         'extra_skills'      => $lng->getTrn($base.'/box_admin/extra_skills'),
                         'ach_skills'        => $lng->getTrn($base.'/box_admin/ach_skills'),
+                        'ff'                => $lng->getTrn($base.'/box_admin/ff'),
                     );
 
                     // Set default choice.
@@ -1136,6 +1141,19 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 <input type="radio" name="sign" value="-">-
                                 <input type='text' name="amount" maxlength=5 size=5>k
                                 <input type="hidden" name="type" value="bank">
+                                <?php
+                                break;
+                            /***************
+                             * Manage Fan Factor
+                            ***************/
+
+                            case 'ff':
+                                echo $lng->getTrn('profile/team/box_admin/desc/ff');
+                                ?>
+                                <hr><br>
+                                Bought ff + Match ff = Total<br>
+				<input type='text' name="amount" value="<?php echo $team->ff_bought.'" maxlength=2 size=1 style="text-align: right">+'.($team->rg_ff-$team->ff_bought).'='.$team->rg_ff ?>
+                                <input type="hidden" name="type" value="ff">
                                 <?php
                                 break;
 
