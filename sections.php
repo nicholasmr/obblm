@@ -360,21 +360,23 @@ function sec_main() {
                         }
                         echo "</tr>\n";
                         foreach ($teams as $t) {
-                            echo "<tr>\n";
-                            foreach ($box['fields'] as $title => $f) {
-                                if (in_array($f, $_MV_COLS)) {
-                                    $f = 'mv_'.$f;
+                            if (!$t['retired']) {
+                                echo "<tr>\n";
+                                foreach ($box['fields'] as $title => $f) {
+                                    if (in_array($f, $_MV_COLS)) {
+                                        $f = 'mv_'.$f;
+                                    }
+                                    echo "<td>";
+                                    if ($settings['fp_links'] && $f == 'name')
+                                        echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t['team_id'],false,false)."'>$t[name]</a>";
+                                    elseif (is_numeric($t[$f]) && !ctype_digit(($t[$f][0] == '-') ? substr($t[$f],1) : $t[$f]))
+                                        echo sprintf('%1.2f', $t[$f]);
+                                    else
+                                        echo in_array($f, array('tv')) ? $t[$f]/1000 : $t[$f];
+                                    echo "</td>\n";
                                 }
-                                echo "<td>";
-                                if ($settings['fp_links'] && $f == 'name')
-                                    echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t['team_id'],false,false)."'>$t[name]</a>";
-                                elseif (is_numeric($t[$f]) && !ctype_digit(($t[$f][0] == '-') ? substr($t[$f],1) : $t[$f]))
-                                    echo sprintf('%1.2f', $t[$f]);
-                                else
-                                    echo in_array($f, array('tv')) ? $t[$f]/1000 : $t[$f];
-                                echo "</td>\n";
+                                echo "</tr>\n";
                             }
-                            echo "</tr>\n";
                         }
                         ?>
                     </table>
