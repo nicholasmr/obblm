@@ -1791,17 +1791,17 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <yes>Oui</yes>
         <no>Non</no>
         <none>Rien</none>
-        <reset>Reset</reset>
+        <reset>Remise à zéro</reset>
         <lock>Verrouiller</lock>
         <locked>Verrouillé</locked>
-        <finished>Terminer</finished>
+        <finished>Terminé</finished>
         <unlock>Déverrouiller</unlock>
         <add>Ajouter</add>
         <remove>Retirer</remove>
         <next>Suivant</next>
         <previous>Précédent</previous>
         <name>Nom</name>
-        <status>Status</status>
+        <status>Statut</status>
         <desc>Description</desc>
         <upload>Upload</upload>
         <all>Tous</all>
@@ -1813,8 +1813,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <ach>Succès</ach>
         <page>Page</page>
         <retired>Retraite</retired>
-        <skills>Talents</skills>
-        <skill>Talent</skill>
+        <skills>Compétences</skills>
+        <skill>Compétence</skill>
         <injs>Blessures</injs>
         <pos>Position</pos>
         <price>Prix</price>
@@ -1862,8 +1862,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <draw>Nuls</draw>
         <streaks>Périodes</streaks>
         <played>Jouée</played>
-        <playedtours>Tours joués</playedtours>
-        <wontours>Tours gagnés</wontours>
+        <playedtours>Tournois joués</playedtours>
+        <wontours>Tournois gagnés</wontours>
         <ready>Prêt</ready>
         <dead>Mort</dead>
         <sold>Vendu</sold>
@@ -1891,8 +1891,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <sgrp>Groupe de stats</sgrp>
         <having>Avec</having>
 <!-- ES -->
-        <extrastats>Stats supplémentaires</extrastats>
-        <stat>Stat</stat>
+        <extrastats>Statistiques supplémentaires</extrastats>
+        <stat>Statistiques</stat>
 <!-- use "all-time" string from nodeSelect() translation -->
         <matchavg>Match&amp;nbsp;moy.</matchavg>
 </common>
@@ -1920,10 +1920,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <star_stn>Position de la Star</star_stn>
 </statistics_menu>
 <admin_menu>
-        <name>Admin</name>
+        <name>Admininstration</name>
         <nodes>Ligues, divisions, tournois</nodes>
-        <ct_man>Gérer: Coachs &amp; équipes</ct_man>
-        <usr_man>Gerer: Utilisateurs</usr_man>
+        <ct_man>Gérer : Coachs &amp; équipes</ct_man>
+        <usr_man>Gerer : Utilisateurs</usr_man>
         <import>Importer une équipe</import>
         <schedule>Planifier un match</schedule>
         <cpanel>OBBLM panneau principal</cpanel>
@@ -1998,7 +1998,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 </player>
 <team>
 <!-- sub secs. -->
-        <viewtoggle>Passer en vue Liste</viewtoggle>
+        <viewtoggle>Passer en vue liste</viewtoggle>
 <!-- Team management sec. -->
         <tmanage>Gestion d'équipe + info</tmanage>
 <!-- About sec. -->
@@ -2014,15 +2014,15 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 <!-- Star/merc HH secs. -->
 <!-- For the three team page boxes -->
 <box_info>
-        <title>Informations et stats sur l'équipe</title>
-        <ltour>Dernier&amp;nbsp;tour</ltour>
+        <title>Informations et statistiques sur l'équipe</title>
+        <ltour>Dernier tournoi</ltour>
 </box_info>
 <box_tm>
         <title>Gestion de l'équipe</title>
         <hire_player>Embaucher un joueur</hire_player>
         <hire_journeyman>Embaucher un journalier</hire_journeyman>
-        <fire_player>Virer un joueur</fire_player>
-        <unbuy_player>Désembaucher un joueur</unbuy_player>
+        <fire_player>Renvoyer un joueur</fire_player>
+        <unbuy_player>annuler l'achat d'un joueur</unbuy_player>
         <rename_player>Renommer un joueur</rename_player>
         <renumber_player>Re-numéroter un joueur</renumber_player>
         <rename_team>Renommer une équipe</rename_team>
@@ -2041,7 +2041,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 <desc>
         <hire_player> Embaucher un nouveau joueur.&lt;br&gt; Embaucher un journalier est gratuit, mais seule la position 0-16 est eligible. </hire_player>
         <hire_journeyman> Embaucher un des journaliers de l'équipe en tant que membre définitif. </hire_journeyman>
-        <fire_player> Virer un joueur. Remboursement de : </fire_player>
+        <fire_player> Renvoyer un joueur. Remboursement de : </fire_player>
         <unbuy_player> Erreur sur l'embauche d'un joueur. Rembourser à 100%.&lt;br&gt; Uniquement sur un joueur n'ayant jamais joué de match. </unbuy_player>
         <rename_player> Renommer un joueur. </rename_player>
         <renumber_player> Renuméroter un joueur. </renumber_player>
@@ -2050,29 +2050,29 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <buy_goods_warn> &lt;br&gt;&lt;br&gt;Notez que les relances d'équipes coutent le &lt;font color='red'&gt;&lt;b&gt;double&lt;/b&gt;&lt;/font&gt;.&lt;br&gt;Si vous souhaitez acheter une elance au prix de base, demandez à l'Administrateur un remboursement de la différence. </buy_goods_warn>
         <drop_goods> Se séparer de biens sans remboursement. </drop_goods>
         <ready_state> Cet attribut d'équipe indique que l'équipe accepte les matchs ou non. </ready_state>
-        <retire> Mise en retraite de l'équipe.&lt;br&gt;Une fois à la retraite, l'équipe n'est plus gérable.&lt;br&gt;Seul l'Admin peut remettre l'équipe en service actif. La mise à la retraite est immédiate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </retire>
+        <retire> Mise en retraite de l'équipe.&lt;br&gt;Une fois à la retraite, l'équipe n'est plus gérable.&lt;br&gt;Seul l'Admininstrateur peut remettre l'équipe en service actif. La mise à la retraite est immédiate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </retire>
         <delete> Effacer l'équipe.&lt;br&gt;Pour le bien des statistiques, vous ne pouvez plus effacer d'équipe ayant joué un match. L'effacement est immédiat mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </delete>
 </desc>
 </box_tm>
 <box_admin>
-        <title>Outils d'Admin</title>
-        <unhire_journeyman>Désembaucher un Journalier</unhire_journeyman>
-        <unsell_player>Ré-embaucher un Joueur</unsell_player>
-        <unbuy_goods>Désacheter un bien d'équipe.</unbuy_goods>
+        <title>Outils d'Admininstration</title>
+        <unhire_journeyman>Désembaucher un journalier</unhire_journeyman>
+        <unsell_player>Ré-embaucher un joueur</unsell_player>
+        <unbuy_goods>Annuler les achats de bien d'équipe.</unbuy_goods>
         <bank>Compte en banque</bank>
         <spp>Gérer l'expérience bonus</spp>
         <dval>Gérer la valeur bonus des joueurs</dval>
-        <extra_skills>Gérer les talents suppl. des joueurs</extra_skills>
-        <ach_skills>Retirer des talents de joueurs</ach_skills>
+        <extra_skills>Gérer les compétences suppl. des joueurs</extra_skills>
+        <ach_skills>Retirer des compétences de joueurs</ach_skills>
 <desc>
-        <unhire_journeyman> Revenir sur l'embauche d'un journalier en tant que Joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
+        <unhire_journeyman> Revenir sur l'embauche d'un journalier en tant que joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
         <unsell_player> Revenir sur le licenciement d'un joueur. </unsell_player> <unbuy_goods> Revenir sur l'achat de bien d'équipe. </unbuy_goods>
         <unbuy_goods>Revenir sur l'achat de biens d'équipe</unbuy_goods>
         <bank> Modifier la trésorerie d'équipe. </bank>
         <spp> Gérer l'éxperience bonus d'un Joueur. </spp>
         <dval> Changer la valeur d'un joueur d'un montant. </dval>
-        <extra_skills> Gérer les talents supplémentaires d'un joueur. </extra_skills>
-        <ach_skills> Retirer un talent selectionné. Cela permet de choisir un nouveau talent en remplacement. </ach_skills>
+        <extra_skills> Gérer les compétences supplémentaires d'un joueur. </extra_skills>
+        <ach_skills> Retirer une compétence selectionnée. Cela permet de choisir une compétence en remplacement. </ach_skills>
 </desc>
 </box_admin>
 </team>
@@ -2088,12 +2088,12 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 <!-- none used - all are in "common". -->
 </tours>
 <usersched>
-        <selecttour>Selectionner un tournoi</selecttour>
+        <selecttour>Sélectionner un tournoi</selecttour>
 </usersched>
 <tourmatches>
 <roundtypes>
         <final>Finale</final>
-        <thirdPlayoff>Finale des perdants</thirdPlayoff>
+        <thirdPlayoff>Petite finale</thirdPlayoff>
         <semi>Demi-finale</semi>
         <quarter>Quart de finale</quarter>
         <rnd16>16eme de finale</rnd16>
@@ -2111,7 +2111,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <rnd11>Round 11</rnd11>
         <rnd12>Round 12</rnd12>
 </roundtypes>
-        <matchdelete>Êtes-vous sur(e) de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n\'a pas encore ete joué, cette action est IRREVERSIBLE et affectera tout les matchs suivants pour les deux equipes.\nIl est conseillé de n\'effacer un match que si vous êtes conscient des risques.</matchdelete>
+        <matchdelete>Êtes-vous sur(e) de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n\'a pas encore ete joué, cette action est IRREVERSIBLE et affectera tous les matchs suivants pour les deux equipes.\nIl est conseillé de n\'effacer un match que si vous êtes conscient des risques.</matchdelete>
         <reset_notice>Êtes-vous sur(e) de vouloir REINITIALISER ce match?\n\nATTENTION:\nCette action est IRREVERSIBLE et affectera tous les matchs suivants pour les deux équipes.</reset_notice>
 </tourmatches>
 <!-- Subsection: match report(s) -->
@@ -2131,7 +2131,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <smp>Point de fair-play</smp>
         <pts>points</pts>
         <tcas>Pertes totales de l'équipe</tcas>
-        <fame>FAME</fame>
+        <fame>Popularité</fame>
         <tv>VE</tv>
         <summary>Compte-rendu du match</summary>
         <usedjourney>Le match ne peut pas être sauvegardé tant que vous ne décidez pas du sort des journaliers utilisés (page du roster de votre équipe)</usedjourney>
@@ -2157,10 +2157,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <prefixes>Les symboles + et - signifient moins de et plus de</prefixes>
 <!-- Subsec: Schedule matches -->
 <schedule>
-        <create_LD>Merci de créer une Ligue et une Division avant de prévoir des matchs</create_LD>
-        <tour_name>Nom du Tournoi</tour_name>
+        <create_LD>Merci de créer une ligue et une division avant de prévoir des matchs</create_LD>
+        <tour_name>Nom du tournoi</tour_name>
         <rank_sys>Méthode de Classement</rank_sys>
-        <sched_type>Planning</sched_type>
+        <sched_type>Calendrier</sched_type>
         <add_team>Ajouter une équipe</add_team>
         <teams_selected>Choisir une équipe</teams_selected>
 <!-- Tour Types (TT) -->
@@ -2199,7 +2199,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <skaven>Skaven</skaven>
         <woodelf>Elfe Sylvain</woodelf>
         <chaospact>Pacte du Chaos</chaospact>
-        <underworld>Monde souterrain</underworld>
+        <underworld>Bas fond</underworld>
         <slann>Slann</slann>
 </race>
 <position>
@@ -2213,7 +2213,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <marauder>Maraudeur</marauder>
         <goblinrenegade>Renégat Gobelin</goblinrenegade>
         <skavenrenegade>Renégat Skaven</skavenrenegade>
-        <darkelfrenegade>Renégat Elf Noir</darkelfrenegade>
+        <darkelfrenegade>Renégat Elfe Noir</darkelfrenegade>
         <chaostroll>Troll du Chaos</chaostroll>
         <chaosogre>Ogre du Chaos</chaosogre>
         <necromanticwerewolf>Loup-Garou nécromantique</necromanticwerewolf>
@@ -2232,7 +2232,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <goblin>Gobelin</goblin>
         <bombardier>Bombardier</bombardier>
         <pogoer>Bâton à ressort</pogoer>
-        <looney>Barjot</looney>
+        <looney>Fanatique</looney>
         <fanatic>Fanatique</fanatic>
         <troll>Troll</troll>
         <halfling>Halfling</halfling>
@@ -2248,7 +2248,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <kroxigor>Kroxigor</kroxigor>
         <blackorcblocker>Bloqueur Orc Noir</blackorcblocker>
         <zombie>Zombie</zombie>
-        <ghoul>Goules</ghoul>
+        <ghoul>Goule</ghoul>
         <wight>Revenant</wight>
         <fleshgolem>Golem de chair</fleshgolem>
         <werewolf>Loup-Garou</werewolf>
@@ -2299,7 +2299,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <surefeet>Équilibre</surefeet>
     <accurate>Précision</accurate>
     <dumpoff>Passe Rapide</dumpoff>
-    <hailmarypass>La Main de Dieu</hailmarypass>
+    <hailmarypass>Main de Dieu</hailmarypass>
     <leader>Chef</leader>
     <nervesofsteel>Nerfs d'Acier</nervesofsteel>
     <pass>Passe</pass>
@@ -2324,7 +2324,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <tentacles>Tentacules</tentacles>
     <twoheads>Deux Têtes</twoheads>
     <verylonglegs>Très Longues Jambes</verylonglegs>
-    <alwayshungry>Toujours Affamé</alwayshungry>
+    <alwayshungry>Toujours faim</alwayshungry>
     <animosity>Animosité</animosity>
     <ballchain>Chaîne et Boulet</ballchain>
     <bloodlust>Soif de Sang</bloodlust>
@@ -2356,7 +2356,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <bomberdribblesnot>Boomer Morvonez</bomberdribblesnot>
     <boomereziasson>Blam’ Eziasson</boomereziasson>
     <brickfarthgrotty>Pèt’Brik et Minab’</brickfarthgrotty>
-    <countluthorvondrakenborg>Compte Luthor Von Drakenborg</countluthorvondrakenborg>
+    <countluthorvondrakenborg>Comte Luthor Von Drakenborg</countluthorvondrakenborg>
     <crazyigor>Igor LeFou</crazyigor>
     <deeprootstrongbranch>Racine Dutronc</deeprootstrongbranch>
     <dolfarlongstride>Dolfar Long’jambes</dolfarlongstride>
@@ -2365,7 +2365,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <flintchurnblade>Tronçonneuse Flint</flintchurnblade>
     <fungustheloon>Fungus le Cingle</fungustheloon>
     <glartsmashripjr>Glart Lavollée Jr.</glartsmashripjr>
-    <grashnakblackhoof>Grashnak Noirsabo</grashnakblackhoof>
+    <grashnakblackhoof>Grashnak Noirsabots</grashnakblackhoof>
     <griffoberwald>Griff Oberwald</griffoberwald>
     <grimironjaw>Grim Croc d'Acier</grimironjaw>
     <hackenslash>Hack l’Étripeur</hackenslash>
