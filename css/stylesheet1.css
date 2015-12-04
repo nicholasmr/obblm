@@ -212,9 +212,9 @@ table.tours {
 }
 
 /* tour lists: titel boxes */
-.leagues     {background-color: #659EC7;}
-.divisions   {background-color: #8BB381;}
-.tours       {background-color: #BBBBBB;}
+.leagues     {background-color: #;}
+.divisions   {background-color: #;}
+.tours       {background-color: whitesmoke;}
 td.round     {background-color: #CCCCCC;}
 td.match     {background-color: #DDDDDD;}
 td.seperator {height:15px;}

@@ -29,6 +29,16 @@ class Mobile_HTMLOUT {
         }
         
         $playersOnSelectedTeam = $selectedTeam->getPlayers();
+
+        // Filter players depending on settings and view mode.
+        $tmp_players = array();
+        foreach ($playersOnSelectedTeam as $player) {
+            if ($player->is_dead || $player->is_sold) {
+                continue;
+            }
+            array_push($tmp_players, $player);
+        }
+        $playersOnSelectedTeam = $tmp_players;
         
         foreach($playersOnSelectedTeam as $player) {
             Player_HTMLOUT::setChoosableSkillsTranslations($player);
