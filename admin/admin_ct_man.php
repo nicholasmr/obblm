@@ -8,7 +8,7 @@ if (isset($_POST['type'])) {
     }
     else {
         $o = $IS_COACH ? new Coach($id) : new Team($id);
-        if (!$coach->mayManageObj($IS_COACH ? T_OBJ_COACH : T_OBJ_TEAM, $IS_COACH ? $o->coach_id : $o->owned_by_coach_id)) {
+        if (!$coach->mayManageObj($IS_COACH ? T_OBJ_COACH : T_OBJ_TEAM, $IS_COACH ? $o->coach_id : $id)) {
             status(false, 'You do not have permissions to manage the selected coach or team.');
             $_POST['type'] = 'QUIT';
         }
