@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <en-GB>
 
-<name>League Preferences Admininstration</name>
+<name>League Preferences Administration</name>
 <menu-lge>League Preferences</menu-lge>
 <help>Using the league prefences league and global administrators can change some of the settings for a league without modifying the PHP files.</help>
 
 <lname>League</lname>
 
 <prime_title>Primary Tournament</prime_title>
-<prime_help>The primary tournament gets automatically selected in a number of tables and lookups</prime_help>
+<prime_help>The primary tournament is used for the front page league table</prime_help>
 
-<second_title>Secondary Tournament</second_title>
-<second_help>The secondary tournament is used as an alternative to the primary tournament</second_help>
+<second_title>Primary Division</second_title>
+<second_help>The primary division is used for front page player performance stats</second_help>
 
 <league_name_title>League Name</league_name_title>
 <league_name_help>Name of your league</league_name_help>
@@ -30,7 +30,7 @@
 <submit_title>Update this league`s preferences</submit_title>
 
 <failedSave>Unable to save preferences</failedSave>
-<failedValidate>Primary and secondary tournaments must be different</failedValidate>
+<failedValidate>Oh Noes! The league administration module has failed the ptid!=stid check.  Please alert your administrator!</failedValidate>
 <failedSave>Sorry, you don't have permission to update this league</failedSave>
 
 <saved>Updated</saved>

@@ -95,7 +95,7 @@ public static function getModuleTables()
         'league_prefs' => array(
 			'f_lid'       => $CT_cols[T_NODE_LEAGUE].' NOT NULL PRIMARY KEY ',
 	        'prime_tid'   => $CT_cols[T_NODE_TOURNAMENT],
-	        'second_tid'  => $CT_cols[T_NODE_TOURNAMENT],
+	        'second_tid'  => $CT_cols[T_NODE_DIVISION],
 	        'league_name' => 'VARCHAR(128) ',
 	        'forum_url'   => 'VARCHAR(256) ',
 	        'welcome'     => 'TEXT ',
@@ -121,7 +121,7 @@ public static function triggerHandler($type, $argv){
 /***************
  * Properties
  ***************/
-public $lid      = 0;
+/*public $lid      = 0;*/
 public $l_name    = '';
 public $p_tour   = 0;
 public $s_tour = 0;
@@ -131,13 +131,11 @@ public $welcome = '';
 public $rules = '';
 public $existing = false;
 
-function __construct($lid, $name, $ptid, $stid, $league_name, $forum_url, $welcome, $rules, $existing) {
+function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $rules, $existing) {
 	global $settings;
-
 	$this->lid = $lid;
 	$this->l_name = $name;
 	$this->p_tour = $ptid;
-	$this->s_tour = $stid;
 	$this->league_name = isset($league_name) ? $league_name: $settings['league_name'];
 	$this->forum_url = isset($forum_url) ? $forum_url: $settings['forum_url'];
 	$this->welcome = isset($welcome) ? $welcome: $settings['welcome'];
@@ -150,12 +148,15 @@ public static function getLeaguePreferences() {
 
 	global $settings, $coach, $leagues;
 
-    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], array_keys($leagues))) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
+list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
+echo $HTML_LeagueSelector;
 
-	$result = mysql_query("SELECT lid, name, prime_tid, second_tid, league_name, forum_url, welcome, rules FROM leagues LEFT OUTER JOIN league_prefs on lid=f_lid WHERE lid=$sel_lid");
+/*    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], array_keys($leagues))) ? $coach->settings['home_lid'] : $settings['default_visitor_league']; */
+
+	$result = mysql_query("SELECT lid, name, prime_tid, league_name, forum_url, welcome, rules FROM leagues LEFT OUTER JOIN league_prefs on lid=f_lid WHERE lid=$sel_lid");
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
-            return new LeaguePref($row['lid'],$row['name'],$row['prime_tid'],$row['second_tid'],$row['league_name'],$row['forum_url'],$row['welcome'],$row['rules'], true);
+            return new LeaguePref($row['lid'],$row['name'],$row['prime_tid'],$row['league_name'],$row['forum_url'],$row['welcome'],$row['rules'], true);
         }
     } else {
 		return new LeaguePref($sel_lid,$leagues['lname'],null,null,null,null,null,null,false);
@@ -168,9 +169,9 @@ function validate() {
 
 function save() {
 	if ($this->existing) {
-		$query = "UPDATE league_prefs SET prime_tid=$this->p_tour, second_tid=$this->s_tour, league_name='".mysql_real_escape_string($this->league_name)."', forum_url='".mysql_real_escape_string($this->forum_url)."' , welcome='".mysql_real_escape_string($this->welcome)."' , rules='".mysql_real_escape_string($this->rules)."'  WHERE f_lid=$this->lid";
+		$query = "UPDATE league_prefs SET prime_tid=$this->p_tour, league_name='".mysql_real_escape_string($this->league_name)."', forum_url='".mysql_real_escape_string($this->forum_url)."' , welcome='".mysql_real_escape_string($this->welcome)."' , rules='".mysql_real_escape_string($this->rules)."'  WHERE f_lid=$this->lid";
 	} else {
-     	$query = "INSERT INTO league_prefs (f_lid, prime_tid, second_tid, league_name, forum_url, welcome, rules) VALUE ($this->lid, $this->p_tour, $this->s_tour, '".mysql_real_escape_string($this->league_name)."', '".mysql_real_escape_string($this->forum_url)."', '".mysql_real_escape_string($this->welcome)."', '".mysql_real_escape_string($this->rules)."')";
+     	$query = "INSERT INTO league_prefs (f_lid, prime_tid, league_name, forum_url, welcome, rules) VALUE ($this->lid, $this->p_tour, $this->s_tour, '".mysql_real_escape_string($this->league_name)."', '".mysql_real_escape_string($this->forum_url)."', '".mysql_real_escape_string($this->welcome)."', '".mysql_real_escape_string($this->rules)."')";
 	}
 	return mysql_query($query);
 }
@@ -185,9 +186,6 @@ public static function showLeaguePreferences() {
 	// short cuts to text lookups
 	$prime_title = $lng->getTrn('prime_title', 'LeaguePref');
 	$prime_help = $lng->getTrn('prime_help', 'LeaguePref');
-
-	$second_title = $lng->getTrn('second_title', 'LeaguePref');
-	$second_help = $lng->getTrn('second_help', 'LeaguePref');
 
 	$league_name_title = $lng->getTrn('league_name_title', 'LeaguePref');
 	$league_name_help = $lng->getTrn('league_name_help', 'LeaguePref');
@@ -208,6 +206,7 @@ public static function showLeaguePreferences() {
 	$l_pref = self::getLeaguePreferences();
 	// check this coach is allowed to administer this league
 	$canEdit = is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $l_pref->lid) ? "" : "DISABLED";
+
 echo<<< EOQ
 	<div class='boxWide'>
 		<h3 class='boxTitle4'>$l_pref->l_name</h3>
@@ -232,14 +231,6 @@ EOQ;
 	}
 echo<<< EOQ
 				</select></span></td></tr>
-				<tr><td><span title="$second_help">$second_title:</span></td>
-				<td><span title="$second_help"><select name="s_tour">
-EOQ;
-	foreach ($rTours as $trid => $desc) {
-		echo "<option value='$trid'" . ($trid==$l_pref->s_tour ? 'SELECTED' : '').  " $canEdit >$desc[tname]</option>\n";
-	}
-echo<<< EOQ
-				</select></span></td></tr>
 
 				<tr><td colspan="2"><input type="submit" name="action" $canEdit title="$submit_title" value="$submit_text" style="position:relative; right:-200px;"></td></tr>
 			</form>
@@ -257,7 +248,7 @@ public static function handleActions() {
 
     if (isset($_POST['action'])) {
     	if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $_POST['lid'])) {
-			$l_pref = new LeaguePref($_POST['lid'],"",$_POST['p_tour'],$_POST['s_tour'],$_POST['league_name'],$_POST['forum_url'],$_POST['welcome'],$_POST['rules'],$_POST['existing']);
+			$l_pref = new LeaguePref($_POST['lid'],"",$_POST['p_tour'],$_POST['league_name'],$_POST['forum_url'],$_POST['welcome'],$_POST['rules'],$_POST['existing']);
 			if($l_pref->validate()) {
 				if($l_pref->save()) {
 					echo "<div class='boxWide'>";

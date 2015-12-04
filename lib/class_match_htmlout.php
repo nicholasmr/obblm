@@ -732,7 +732,7 @@ public static function report() {
                 elseif ($status == MNG)                         {$bgcolor = COLOR_HTML_MNG;             $NORMSTAT = false;}
                 elseif ($p->mayHaveNewSkill())                  {$bgcolor = COLOR_HTML_NEWSKILL;        $NORMSTAT = false;}
                 else {$bgcolor = false;}
-                self::_print_player_row($p->player_id, $p->name, $p->nr, $lng->getTrn('position/'.strtolower($lng->FilterPosition($p->position))).(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
+                self::_print_player_row($p->player_id, '<a href="index.php?section=objhandler&type=1&obj=1&obj_id='.$p->player_id.'">'.$p->name.'</a>', $p->nr, $lng->getTrn('position/'.strtolower($lng->FilterPosition($p->position))).(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
             }
             echo "</table>\n";
             echo "<br>\n";
