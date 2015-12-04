@@ -18,14 +18,14 @@ var SelectedPlayerViewModel = function() {
         };
     }
     
-    self.mvp = ko.computed(makePropertyObject("mvp"));
-    self.completions = ko.computed(makePropertyObject("cp"));
-    self.touchdowns = ko.computed(makePropertyObject("td"));
-    self.interceptions = ko.computed(makePropertyObject("intcpt"));
-    self.badlyHurt = ko.computed(makePropertyObject("bh"));
-    self.sustainedInjury = ko.computed(makePropertyObject("si"));
-    self.killed = ko.computed(makePropertyObject("ki"));
-    self.injured = ko.computed(makePropertyObject("inj"));
+    self.mvp = ko.computed(makePropertyObject("mvp")).extend({notify: "always"});
+    self.completions = ko.computed(makePropertyObject("cp")).extend({notify: "always"});
+    self.touchdowns = ko.computed(makePropertyObject("td")).extend({notify: "always"});
+    self.interceptions = ko.computed(makePropertyObject("intcpt")).extend({notify: "always"});
+    self.badlyHurt = ko.computed(makePropertyObject("bh")).extend({notify: "always"});
+    self.sustainedInjury = ko.computed(makePropertyObject("si")).extend({notify: "always"});
+    self.killed = ko.computed(makePropertyObject("ki")).extend({notify: "always"});
+    self.injured = ko.computed(makePropertyObject("inj")).extend({notify: "always"});
     
     self.injuryText = ko.computed(function() {
         var injuryTable = self.injuryTable(),
