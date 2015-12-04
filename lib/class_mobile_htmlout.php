@@ -23,6 +23,11 @@ class Mobile_HTMLOUT {
                 $selectedTeam = $team;
         }
         
+        if(!$selectedTeam) {
+            echo $lng->getTrn('mobile/team/noteams');
+            return;
+        }
+        
         $playersOnSelectedTeam = $selectedTeam->getPlayers();
         
         foreach($playersOnSelectedTeam as $player) {
