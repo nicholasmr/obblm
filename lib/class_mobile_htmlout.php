@@ -77,7 +77,7 @@ class Mobile_HTMLOUT {
                     ?>
                 </select>
                 <span>
-                    TV<?php echo $selectedTeam->tv/1000; ?>
+                    <?php echo 'TV' . $selectedTeam->tv/1000 . ', ' . $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff; ?> 
                 </span>
                 <span class="button-panel">
 					<img id="open-menu" src="images/menu.svg" alt="Menu" class="icon ui-button ui-state-default ui-corner-all" data-bind="click: showMenu" />
