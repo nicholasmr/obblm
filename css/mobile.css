@@ -4,6 +4,10 @@
         font-size: 11px;
     }
     
+    table tbody a{
+        font-size: 12px;
+    }
+    
     div.row {
         margin-bottom: 2px;
     }

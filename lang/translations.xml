@@ -454,6 +454,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <may_buy_new_skill>may buy new skill</may_buy_new_skill>
         <management>Management</management>
         <desktop_site>Desktop Site</desktop_site>
+        <noteams>You have no teams! This mobile site isn't sophisticated enough to help you -- you'll have use the &lt;a href="index.php"&gt;desktop site&lt;/a&gt;.</noteams>
     </team>
     <matches>
         <match>
