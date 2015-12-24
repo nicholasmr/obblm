@@ -11,7 +11,7 @@ var MobileViewModel = function(playersOnSelectedTeam, matches) {
         $('#PlayerDialog').dialog({modal: true});
     };
     
-    self.openMatchDialog = function() {
+    self.openMatchDialog = function(playerViewModel, event) {
         var matchId = $(event.target).attr('data-match-id');
         var match = _.find(matches, function(match) {
             return match.match_id === matchId;
