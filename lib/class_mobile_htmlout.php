@@ -76,9 +76,6 @@ class Mobile_HTMLOUT {
                         }
                     ?>
                 </select>
-                <span>
-                    <?php echo 'TV' . $selectedTeam->tv/1000 . ', ' . $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff; ?> 
-                </span>
                 <span class="button-panel">
 					<img id="open-menu" src="images/menu.svg" alt="Menu" class="icon ui-button ui-state-default ui-corner-all" data-bind="click: showMenu" />
 					<ul id="menu" class="ui-state-default ui-corner-left ui-corner-left ui-corner-br" data-bind="visible: isMenuVisible">
@@ -88,6 +85,10 @@ class Mobile_HTMLOUT {
 					</ul>
                 </span>
             </form>
+            <div>
+                <?php echo 'TV' . $selectedTeam->tv/1000 . ', ' . $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff; ?> 
+                <?php if($selectedTeam->apothecary) { echo ', ' . $lng->getTrn('common/apothecary'); } ?>
+            </div>
             <div id="tabs">
                 <ul>
                     <li><a href="#Teams"><?php echo $lng->getTrn('common/team'); ?></a></li>
