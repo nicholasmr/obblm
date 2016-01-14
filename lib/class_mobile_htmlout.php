@@ -95,7 +95,7 @@ class Mobile_HTMLOUT {
                     <li><a href="#Games"><?php echo $lng->getTrn('menu/matches_menu/name'); ?></a></li>
                 </ul>
                 <?php Mobile_HTMLOUT::teamSummaryView($playersOnSelectedTeam); ?>
-                <?php Mobile_HTMLOUT::matchSummaryView($allMatches); ?>
+                <?php Mobile_HTMLOUT::matchSummaryView($recentMatches, $upcomingMatches); ?>
             </div>
         </div>
         <?php   
@@ -165,25 +165,29 @@ class Mobile_HTMLOUT {
         <?php
     }
     
-    private static function matchSummaryView($allMatches) {
+    private static function outputMatchesRows($matches) {
+        foreach($matches as $match) {
+            $dateCreated = date('Y-m-d', strtotime($match->date_created));
+            
+            echo '<tr>';
+            echo '<td class="date"><a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $dateCreated . '</td>';
+            echo '<td class="team-name">' . $match->team1_name . '</td>';
+            echo '<td>v.</td>';
+            echo '<td class="team-name">' . $match->team2_name . '</td>';
+            echo '</tr>';
+        }
+    }
+    
+    private static function matchSummaryView($recentMatches, $upcomingMatches) {
         global $lng;
         ?>
         <div id="Games">
-            <div><?php echo $lng->getTrn('profile/team/games'); ?></div>
             <table id="GamesTable">
                 <tbody>
-                <?php
-                    foreach($allMatches as $match) {
-                        $dateCreated = date('Y-m-d', strtotime($match->date_created));
-                        
-                        echo '<tr>';
-                        echo '<td class="date"><a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $dateCreated . '</td>';
-                        echo '<td class="team-name">' . $match->team1_name . '</td>';
-                        echo '<td>v.</td>';
-                        echo '<td class="team-name">' . $match->team2_name . '</td>';
-                        echo '</tr>';
-                    }
-                ?>
+                    <tr><td colspan="4"><h3><?php echo $lng->getTrn("common/recentmatches"); ?></h3></td></tr>
+                    <?php Mobile_HTMLOUT::outputMatchesRows($recentMatches); ?>
+                    <tr><td colspan="4"><h3><?php echo $lng->getTrn("common/upcomingmatches"); ?></h3></td></tr>
+                    <?php Mobile_HTMLOUT::outputMatchesRows($upcomingMatches); ?>
                 </tbody>
             </table>
             <div>
