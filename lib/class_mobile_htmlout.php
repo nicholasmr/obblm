@@ -272,13 +272,13 @@ class Mobile_HTMLOUT {
             </div>
             <div class="row">
                 <span class="label"><?php echo $lng->getTrn('matches/report/treas'); ?>:</span>
-                <input type="number" data-bind="value: treasuryChange" />k
+                <input type="number" id="TreasuryChange" data-bind="value: treasuryChange" />k
             </div>
-            <div class="treasury-change-field row">
+            <div class="row">
                 <span class="label"><?php echo $lng->getTrn('matches/report/ff'); ?>:</span>
-                <span>1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="1" /></span>
-                <span>0<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="0" /></span>
-                <span>-1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="-1" /></span>
+                <span>1<input type="radio" name="FanFactorChange" data-bind="checked: fanFactorChange" value="1" /></span>
+                <span>0<input type="radio" name="FanFactorChange" data-bind="checked: fanFactorChange" value="0" /></span>
+                <span>-1<input type="radio" name="FanFactorChange" data-bind="checked: fanFactorChange" value="-1" /></span>
             </div>
         </fieldset>
         

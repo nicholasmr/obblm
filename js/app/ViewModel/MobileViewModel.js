@@ -1,5 +1,14 @@
 var MobileViewModel = function(playersOnSelectedTeam, matches) {
     var self = this;
+                        
+    // Matches come from the database as "30000", but we deal with them as "30". Convert before we do anything else.
+    _.each(matches, function(match) {
+        match.income1 /= 1000;        
+        match.income2 /= 1000;
+        match.gate /= 1000;
+        match.tv1 /= 1000;
+        match.tv2 /= 1000;
+    });
     
     self.openPlayerDialog = function(playerViewModel, event) {
         var playerId = playerViewModel.id;
@@ -16,17 +25,7 @@ var MobileViewModel = function(playersOnSelectedTeam, matches) {
         var match = _.find(matches, function(match) {
             return match.match_id === matchId;
         });
-        
-        // These values are loaded from the database as "10000", but saved as "10" so we convert before displaying.
-        // This condition is a bit of a hack -- incomes are only higher than 100 if they are "10,000" format, so we haven't converted anything yet.
-        if(match.income1 > 100) {
-            match.income1 /= 1000;        
-            match.income2 /= 1000;
-            match.gate /= 1000;
-            match.tv1 /= 1000;
-            match.tv2 /= 1000;
-        }
-        
+
         self.matchDialogViewModel.match(match);
         // opens after AJAX call in MatchDialogViewModel
     }
