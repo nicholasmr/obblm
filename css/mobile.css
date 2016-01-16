@@ -8,6 +8,10 @@
         font-size: 12px;
     }
     
+    table td.date {
+        width: 65px;
+    }
+    
     div.row {
         margin-bottom: 2px;
     }
@@ -81,6 +85,10 @@
     
     #MatchDialog input[type="number"] {
         width: 2.5em;
+    }
+    
+    #MatchDialog #TreasuryChange {
+        width: 4em;
     }
             
     .may-buy-new-skill {

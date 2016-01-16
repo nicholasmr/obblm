@@ -76,9 +76,6 @@ class Mobile_HTMLOUT {
                         }
                     ?>
                 </select>
-                <span>
-                    <?php echo 'TV' . $selectedTeam->tv/1000 . ', ' . $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff; ?> 
-                </span>
                 <span class="button-panel">
 					<img id="open-menu" src="images/menu.svg" alt="Menu" class="icon ui-button ui-state-default ui-corner-all" data-bind="click: showMenu" />
 					<ul id="menu" class="ui-state-default ui-corner-left ui-corner-left ui-corner-br" data-bind="visible: isMenuVisible">
@@ -88,13 +85,17 @@ class Mobile_HTMLOUT {
 					</ul>
                 </span>
             </form>
+            <div>
+                <?php echo 'TV' . $selectedTeam->tv/1000 . ', ' . $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff; ?> 
+                <?php if($selectedTeam->apothecary) { echo ', ' . $lng->getTrn('common/apothecary'); } ?>
+            </div>
             <div id="tabs">
                 <ul>
                     <li><a href="#Teams"><?php echo $lng->getTrn('common/team'); ?></a></li>
                     <li><a href="#Games"><?php echo $lng->getTrn('menu/matches_menu/name'); ?></a></li>
                 </ul>
                 <?php Mobile_HTMLOUT::teamSummaryView($playersOnSelectedTeam); ?>
-                <?php Mobile_HTMLOUT::matchSummaryView($allMatches); ?>
+                <?php Mobile_HTMLOUT::matchSummaryView($recentMatches, $upcomingMatches); ?>
             </div>
         </div>
         <?php   
@@ -164,25 +165,29 @@ class Mobile_HTMLOUT {
         <?php
     }
     
-    private static function matchSummaryView($allMatches) {
+    private static function outputMatchesRows($matches) {
+        foreach($matches as $match) {
+            $dateCreated = date('Y-m-d', strtotime($match->date_created));
+            
+            echo '<tr>';
+            echo '<td class="date"><a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $dateCreated . '</td>';
+            echo '<td class="team-name">' . $match->team1_name . '</td>';
+            echo '<td>v.</td>';
+            echo '<td class="team-name">' . $match->team2_name . '</td>';
+            echo '</tr>';
+        }
+    }
+    
+    private static function matchSummaryView($recentMatches, $upcomingMatches) {
         global $lng;
         ?>
         <div id="Games">
-            <div><?php echo $lng->getTrn('profile/team/games'); ?></div>
             <table id="GamesTable">
                 <tbody>
-                <?php
-                    foreach($allMatches as $match) {
-                        $dateCreated = date('Y-m-d', strtotime($match->date_created));
-                        
-                        echo '<tr>';
-                        echo '<td class="date"><a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $dateCreated . '</td>';
-                        echo '<td class="team-name">' . $match->team1_name . '</td>';
-                        echo '<td>v.</td>';
-                        echo '<td class="team-name">' . $match->team2_name . '</td>';
-                        echo '</tr>';
-                    }
-                ?>
+                    <tr><td colspan="4"><h3><?php echo $lng->getTrn("common/recentmatches"); ?></h3></td></tr>
+                    <?php Mobile_HTMLOUT::outputMatchesRows($recentMatches); ?>
+                    <tr><td colspan="4"><h3><?php echo $lng->getTrn("common/upcomingmatches"); ?></h3></td></tr>
+                    <?php Mobile_HTMLOUT::outputMatchesRows($upcomingMatches); ?>
                 </tbody>
             </table>
             <div>
@@ -271,13 +276,13 @@ class Mobile_HTMLOUT {
             </div>
             <div class="row">
                 <span class="label"><?php echo $lng->getTrn('matches/report/treas'); ?>:</span>
-                <input type="number" data-bind="value: treasuryChange" />k
+                <input type="number" id="TreasuryChange" data-bind="value: treasuryChange" />k
             </div>
-            <div class="treasury-change-field row">
+            <div class="row">
                 <span class="label"><?php echo $lng->getTrn('matches/report/ff'); ?>:</span>
-                <span>1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="1" /></span>
-                <span>0<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="0" /></span>
-                <span>-1<input type="radio" name="TreasuryChange" data-bind="checked: fanFactorChange" value="-1" /></span>
+                <span>1<input type="radio" name="FanFactorChange" data-bind="checked: fanFactorChange" value="1" /></span>
+                <span>0<input type="radio" name="FanFactorChange" data-bind="checked: fanFactorChange" value="0" /></span>
+                <span>-1<input type="radio" name="FanFactorChange" data-bind="checked: fanFactorChange" value="-1" /></span>
             </div>
         </fieldset>
         

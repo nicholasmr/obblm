@@ -122,7 +122,8 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
             url: 'match_webservice.php',
             data: data,
             success: function() {
-                self.close();
+                // reload page so updates are made
+                window.location.href = window.location.href;
             }
         });
     };
