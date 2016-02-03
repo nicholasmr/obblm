@@ -13,7 +13,20 @@ module.exports = function (grunt) {
 				},
 				src: '.',
 				dest: 'public_html',
-				exclusions: ['.gitignore', '.travis.yml', 'Gruntfile.js', 'notes.txt', 'README.md', 'package.json', '.ftppass', 'LICENSE', '.git', 'node_modules', 'test']
+				exclusions: ['.gitignore', 
+                    '.travis.yml', 
+                    'Gruntfile.js', 
+                    'notes.txt', 
+                    'README.md', 
+                    'package.json', 
+                    '.ftppass', 
+                    'LICENSE', 
+                    '.git', 
+                    'node_modules', 
+                    'test',
+                    'install.php'   // It won't run if install.php is on the server.
+                    'settings.php'  // Don't overwrite the database settings with the development ones!
+                    ]
 			}
 		}
 	});
@@ -28,7 +41,6 @@ module.exports = function (grunt) {
 			ftpPassword = grunt.option('ftpPassword');		
 		
 		var contents = '{"key1":{"username":"' + ftpUsername + '", "password":"' + ftpPassword + '"}}';
-        grunt.log.write(contents);
 			
 		// Create a file to supply the authentication parameters to the deployment
 		grunt.file.write('.ftppass', contents);
