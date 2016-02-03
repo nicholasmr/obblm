@@ -28,6 +28,7 @@ module.exports = function (grunt) {
 			ftpPassword = grunt.option('ftpPassword');		
 		
 		var contents = '{"key1":{"username":"' + ftpUsername + '", "password":"' + ftpPassword + '"}}';
+        grunt.log.write(contents);
 			
 		// Create a file to supply the authentication parameters to the deployment
 		grunt.file.write('.ftppass', contents);
