@@ -454,6 +454,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <may_buy_new_skill>may buy new skill</may_buy_new_skill>
         <management>Management</management>
         <desktop_site>Desktop Site</desktop_site>
+        <noteams>You have no teams! This mobile site isn't sophisticated enough to help you -- you'll have use the &lt;a href="index.php"&gt;desktop site&lt;/a&gt;.</noteams>
     </team>
     <matches>
         <match>
@@ -953,7 +954,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     </statistics_menu>
     <admin_menu>
         <name>Admin</name>
-        <nodes>Ligas, divisinones &amp; torneos</nodes>
+        <nodes>Ligas, divisiones &amp; torneos</nodes>
         <ct_man>Gestión: Entrenadores &amp; equipos</ct_man>
         <usr_man>Gestión: Usuarios</usr_man>
         <import>Importar equipo</import>
@@ -1121,10 +1122,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
             <unbuy_goods>Deshacer compra de bienes</unbuy_goods>
             <bank>Tesorería</bank>
             <chown>Cambiar dueño</chown>
-            <spp>Gestionar PE extra de jugador</spp>
-            <dval>Gestionar valor extra de jugador</dval>
-            <extra_skills>Gestionar habilidades extra de jugador</extra_skills>
-            <ach_skills>Eliminar habilidades conseguidas por jugador</ach_skills>
+            <spp>Gestionar PE extra</spp>
+            <dval>Gestionar valor extra</dval>
+            <extra_skills>Gestionar habilidades extra</extra_skills>
+            <ach_skills>Eliminar habilidades</ach_skills>
             <ff>Gestionar FH</ff>
 
             <desc>
