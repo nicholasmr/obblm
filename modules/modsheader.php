@@ -176,4 +176,3 @@ Module::register(array(
 ));
 
 ?>
-
