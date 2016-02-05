@@ -106,7 +106,21 @@ public static function getModuleTables()
 
 public static function getModuleUpgradeSQL()
 {
-    return array();
+    global $CT_cols;
+    return array(
+        '096-097' => array(
+            'CREATE TABLE IF NOT EXISTS league_prefs
+            (
+                f_lid       ' . $CT_cols[T_NODE_LEAGUE] . ' NOT NULL PRIMARY KEY,
+                prime_tid   ' . $CT_cols[T_NODE_TOURNAMENT] . ',
+                second_tid  ' . $CT_cols[T_NODE_DIVISION] . ',
+                league_name VARCHAR(128),
+                forum_url   VARCHAR(256),
+                welcome     TEXT,
+                rules       TEXT
+            )'            
+        ),
+    );
 }
 
 public static function triggerHandler($type, $argv){
@@ -154,6 +168,7 @@ echo $HTML_LeagueSelector;
 /*    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], array_keys($leagues))) ? $coach->settings['home_lid'] : $settings['default_visitor_league']; */
 
 	$result = mysql_query("SELECT lid, name, prime_tid, league_name, forum_url, welcome, rules FROM leagues LEFT OUTER JOIN league_prefs on lid=f_lid WHERE lid=$sel_lid");
+
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
             return new LeaguePref($row['lid'],$row['name'],$row['prime_tid'],$row['league_name'],$row['forum_url'],$row['welcome'],$row['rules'], true);
@@ -168,11 +183,12 @@ function validate() {
 }
 
 function save() {
-	if ($this->existing) {
-		$query = "UPDATE league_prefs SET prime_tid=$this->p_tour, league_name='".mysql_real_escape_string($this->league_name)."', forum_url='".mysql_real_escape_string($this->forum_url)."' , welcome='".mysql_real_escape_string($this->welcome)."' , rules='".mysql_real_escape_string($this->rules)."'  WHERE f_lid=$this->lid";
-	} else {
-     	$query = "INSERT INTO league_prefs (f_lid, prime_tid, league_name, forum_url, welcome, rules) VALUE ($this->lid, $this->p_tour, $this->s_tour, '".mysql_real_escape_string($this->league_name)."', '".mysql_real_escape_string($this->forum_url)."', '".mysql_real_escape_string($this->welcome)."', '".mysql_real_escape_string($this->rules)."')";
-	}
+    $hasLeaguePref = mysql_fetch_object(mysql_query("SELECT f_lid from league_prefs where f_lid=$this->lid"));
+    if($hasLeaguePref) {
+        $query = "UPDATE league_prefs SET prime_tid=$this->p_tour, league_name='".mysql_real_escape_string($this->league_name)."', forum_url='".mysql_real_escape_string($this->forum_url)."' , welcome='".mysql_real_escape_string($this->welcome)."' , rules='".mysql_real_escape_string($this->rules)."'  WHERE f_lid=$this->lid";
+    } else {
+        $query = "INSERT INTO league_prefs (f_lid, prime_tid, second_tid, league_name, forum_url, welcome, rules) VALUE ($this->lid, $this->p_tour, $this->s_tour, '".mysql_real_escape_string($this->league_name)."', '".mysql_real_escape_string($this->forum_url)."', '".mysql_real_escape_string($this->welcome)."', '".mysql_real_escape_string($this->rules)."')";
+    }
 	return mysql_query($query);
 }
 
