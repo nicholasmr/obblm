@@ -874,7 +874,13 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
         <script type="text/javascript" src="lib/jquery.expander.js"></script>
         <link type="text/css" href="css/autocomplete.css" rel="stylesheet">
-
+        <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+        <script>tinymce.init({ 
+            selector:'.html_edit',
+            menubar: false,
+            width: 860,
+            height: 150
+        });</script>
         <!-- CSS MENU (./cssmenu extension) -->
         <link rel="stylesheet" href="css_menu_files/css3menu1/style.css" type="text/css" /><style type="text/css">._css3m{display:none}</style>
         <!--[if lt IE 7]>

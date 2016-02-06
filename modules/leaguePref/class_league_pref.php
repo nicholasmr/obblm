@@ -234,9 +234,9 @@ echo<<< EOQ
 				<tr><td><span title="$forum_url_help">$forum_url_title:</span></td>
 				<td><span title="$forum_url_help"><input type="text" size="118" maxsize="256" name="forum_url" value="$l_pref->forum_url" $canEdit/></span></td></tr>
 				<tr><td><span title="$welcome_help">$welcome_title:</span></td>
-				<td><span title="$welcome_help"><textarea rows="4" cols="90" name="welcome" $canEdit>$l_pref->welcome</textarea></span></td></tr>
+				<td><span title="$welcome_help"><textarea rows="4" cols="90" class="html_edit" name="welcome" $canEdit>$l_pref->welcome</textarea></span></td></tr>
 				<tr><td><span title="$rules_help">$rules_title:</span></td>
-				<td><span title="$rules_help"><textarea rows="4" cols="90" name="rules" $canEdit>$l_pref->rules</textarea></span></td></tr>
+				<td><span title="$rules_help"><textarea rows="4" cols="90" class="html_edit" name="rules" $canEdit>$l_pref->rules</textarea></span></td></tr>
 				<input type="hidden" name="lid" value="$l_pref->lid" />
 				<input type="hidden" name="existing" value="$l_pref->existing" />
 				<tr><td><span title="$prime_help">$prime_title:</span></td>

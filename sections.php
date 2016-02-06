@@ -768,16 +768,26 @@ function sec_objhandler() {
  *************************/
 
 function sec_rules() {
-
     global $lng, $settings, $leagues;
     title($lng->getTrn('menu/rules'));
-    if(count($leagues) > 1)
-    {
-      list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
-      echo $HTML_LeagueSelector;
-    }
-    echo "<br><br>";
-    echo $settings['rules'];
+    ?>
+    <div class="boxWide">
+        <?php
+            if(count($leagues) > 1)
+            {
+                echo '<div class="boxTitle4">';
+                list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
+                echo $HTML_LeagueSelector;
+                echo '</div>';
+            }
+        ?>
+        <div class="boxBody">
+            <div>
+                <?php echo $settings['rules']; ?>
+            </div>
+        </div>
+    </div>
+    <?php
 }
 
 /*************************
