@@ -26,8 +26,8 @@ var MobileViewModel = function(playersOnSelectedTeam, matches) {
             return match.match_id === matchId;
         });
 
-        self.matchDialogViewModel.match(match);
-        // opens after AJAX call in MatchDialogViewModel
+        self.matchDialogViewModel.serverMatch(match);
+        // opens after onMatchLoaded in MatchDialogViewModel
     }
 	
 	self.isMenuVisible = ko.observable(false);
