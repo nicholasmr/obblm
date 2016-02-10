@@ -208,13 +208,18 @@ public static function isInHOF($pid)
     return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
 }
 
-public static function makeList($ALLOW_EDIT) {
+public static function makeList() {
     
     global $lng, $coach, $settings;
     HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
     
-    /* A new entry was sent. Add it to system */
+    title($lng->getTrn('name', __CLASS__));
+    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
+    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
+
+    $ALLOW_EDIT = (is_object($coach) && $coach->isNodeCommish($sel_node, $sel_node_id));
     
+    /* A new entry was sent. Add it to system */
     if (isset($_POST['player_id']) && $ALLOW_EDIT) {
         if (get_magic_quotes_gpc()) {
             $_POST['title'] = stripslashes($_POST['title']);
@@ -231,13 +236,10 @@ public static function makeList($ALLOW_EDIT) {
                 status(self::create($_POST['player_id'], $_POST['title'], $_POST['about']));
                 break;
         }
-    }
-    title($lng->getTrn('name', __CLASS__));    
+    }  
     
-    /* Was a request for a new entry made? */ 
-    
-    if (isset($_GET['action']) && $ALLOW_EDIT) {
-        
+    /* Was a request for a new entry made? */    
+    if (isset($_GET['action']) && $ALLOW_EDIT) {        
         // Default schema values. These are empty unless "edit" is chosen.
         $player_id = false;
         $title = '';
@@ -316,14 +318,11 @@ public static function makeList($ALLOW_EDIT) {
         }
     }
     
-    /* Print the hall of fame */
-    
-    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
-    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
     if ($ALLOW_EDIT) {
         echo "<br><a href='handler.php?type=hof&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
+    /* Print the hall of fame */
     self::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
     HTMLOUT::frame_end();
 }
