@@ -46,7 +46,7 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
             return inMatch ? player : null;
         });
     });
-
+    
     self.match.subscribe(function(newMatch) {
         self.selectedPlayer(_.first(playersOnSelectedTeam));
         
@@ -59,9 +59,16 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
                 'team_id': self.myTeamId()
             },
             success: function(result) {
-                playerEntries(JSON.parse(result));
-                self.selectedPlayer.valueHasMutated();
-                $('#MatchDialog').dialog({modal: true});
+                try {
+                    playerEntries(JSON.parse(result));
+                    self.selectedPlayer.valueHasMutated();
+                    $('#MatchDialog').dialog({modal: true});
+                } catch(error) {
+                    alert('AJAX Error (success?): ' + error);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('AJAX Error: ' + textStatus);
             }
         });
     });
