@@ -869,7 +869,7 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
-        <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
         <script type="text/javascript" src="lib/jquery.expander.js"></script>
@@ -915,12 +915,13 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <link type="text/css" href="css/mobile.css" rel="stylesheet">
         <link type="text/css" href="css/autocomplete.css" rel="stylesheet">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
-        <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script type="text/javascript" src="js/lib/underscore-1.8.3.min.js"></script>
         <script type="text/javascript" src="js/lib/knockout-3.3.0.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
 
+        <script type="text/javascript" src="js/app/Model/Match.js"></script>
         <script type="text/javascript" src="js/app/ViewModel/MobileViewModel.js"></script>
         <script type="text/javascript" src="js/app/ViewModel/TeamViewModel.js"></script>
         <script type="text/javascript" src="js/app/ViewModel/PlayerViewModel.js"></script>
