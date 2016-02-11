@@ -6,8 +6,9 @@ var MobileViewModel = function(playersOnSelectedTeam, matches) {
         match.income1 /= 1000;        
         match.income2 /= 1000;
         match.gate /= 1000;
-        match.tv1 /= 1000;
-        match.tv2 /= 1000;
+        
+        match.tv1 = parseInt(match.tv1, 10) / 1000;
+        match.tv2 = parseInt(match.tv2, 10) / 1000;
     });
     
     self.openPlayerDialog = function(playerViewModel, event) {
