@@ -114,7 +114,7 @@ class PDFMatchReport implements ModuleInterface
         // Text in headline
         $pdf->SetXY($currentx+130,$currenty);
         $pdf->SetFont('Tahoma','B',18);
-        $pdf->Cell(360, 20, 'MKBBL Match Report', 0, 0, 'R', false, '');  // make a call to get the league Name instead of hardcoded
+        $pdf->Cell(360, 20, 'OBBLM Match Report', 0, 0, 'R', false, '');  // make a call to get the league Name instead of hardcoded
 
 
         //Printing game info rounded box
@@ -253,7 +253,7 @@ class PDFMatchReport implements ModuleInterface
           if (1 && $FILLED) {
                     $t = ${"team$i"};
                     $pdf->SetFont('Tahoma','',7);
-                    $statsstr = sprintf('TV: %uk - ReRolls: %u - Apocthecary: %u - Fan Factor: %u - Assistant Coaches: %u - Cheerleaders: %u - Played: %u - Win pct.: %1.0f - ELO: %1.0f - CAS inflicted: %u', $t->tv/1000, $t->rerolls,$t->apocthecary,$t->ff,$t->ass_coaches,$t->cheerleaders,$t->mv_played,$t->rg_win_pct, $t->rg_elo, $t->mv_cas);
+                    $statsstr = sprintf('TV: %uk - ReRolls: %u - Apocthecary: %u - Fan Factor: %u - Assistant Coaches: %u - Cheerleaders: %u - Played: %u - Win pct.: %1.0f - ELO: %1.0f - CAS inflicted: %u', $t->tv/1000, $t->rerolls,$t->apothecary,$t->rg_ff,$t->ass_coaches,$t->cheerleaders,$t->mv_played,$t->rg_win_pct, $t->rg_elo, $t->mv_cas);
                     $pdf->Cell(250, $h, '    '.$statsstr, 0, 0, 'L', false, '');
             }
 
