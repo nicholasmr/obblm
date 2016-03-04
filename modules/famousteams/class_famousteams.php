@@ -206,7 +206,7 @@ public static function isInFT($tid)
 public static function makeList() {
     
     global $lng, $coach, $settings;
-    HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
+    HTMLOUT::frame_begin($coach->getStylesheetId()); # Make page frame, banner and menu.
 
     title($lng->getTrn('name', __CLASS__));
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
