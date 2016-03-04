@@ -569,7 +569,7 @@ class Coach
     }
     
     public function getStylesheetId() {
-        return isset($_SESSION['logged_in']) ? $coach->settings['theme'] : $settings['stylesheet'];
+        return $settings['stylesheet'];
     }
 }
 
