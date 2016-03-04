@@ -65,17 +65,22 @@ var Match = function(playersOnSelectedTeam) {
             },
             success: function(result) {
                 try {
+                    if(result === 'You must be logged into OBBLM to use this webservice.') {
+                        alert('Your session has expired. Login and check "Remember me" to prevent this.');
+                        return;
+                    }
+                    
                     playerEntries(JSON.parse(result));
                     self.selectedPlayer.valueHasMutated();
                     
                     if(onMatchLoadedHandler)
                         onMatchLoadedHandler();
                 } catch(error) {
-                    alert('AJAX Error (success?): ' + error);
+                    alert('AJAX Error: ' + error + '. Please report this to an admin!');
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                alert('AJAX Error: ' + textStatus);
+                alert('AJAX Error: ' + textStatus + '. Please report this to an admin!');
             }
         });
     });
