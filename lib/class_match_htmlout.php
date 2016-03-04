@@ -573,7 +573,7 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
     if (Module::isRegistered('PDFMatchReport')) {
-        $str = '<a href="handler.php?type=pdfmatchreport&amp;tid1='.$team1->team_id.'&amp;tid2='.$team2->team_id.'&amp;mid='.$m->match_id.'">Download PDF report</a>';
+        $str = '<a href="handler.php?type=pdfmatchreport&amp;tid1='.$team1->team_id.'&amp;tid2='.$team2->team_id.'&amp;mid='.$m->match_id.'" TARGET="_blank">Download PDF report</a>';
         echo "<tr><td><b>Match report</b>:</td><td>$str</td></tr>";
     }
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
