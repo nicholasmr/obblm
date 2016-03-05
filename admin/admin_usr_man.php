@@ -124,11 +124,11 @@ if (isset($_POST['type'])) {
 title($lng->getTrn('menu/admin_menu/usr_man'));
 
 $T_GLOBAL_RINGS = array(
-    Coach::T_RING_GLOBAL_ADMIN => 'Global commisoner (site admin)',
+    Coach::T_RING_GLOBAL_ADMIN => 'Global commissioner (site admin)',
     Coach::T_RING_GLOBAL_NONE  => 'No global rights (regular coach)',
 );
 $T_LOCAL_RINGS = array(
-    Coach::T_RING_LOCAL_ADMIN   => 'Local commisioner',
+    Coach::T_RING_LOCAL_ADMIN   => 'Local commissioner',
     Coach::T_RING_LOCAL_REGULAR => 'Regular coach',
 );
 
