@@ -857,7 +857,7 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
     $NL .= "</select>\n";
     return $NL;
 }
-public static function frame_begin($stylesheet = false, $menu = true)
+public static function frame_begin($menu = true)
 {
     global $settings;
     ?>
@@ -866,7 +866,7 @@ public static function frame_begin($stylesheet = false, $menu = true)
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <title><?php echo $settings['site_name']; ?></title>
-        <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
+        <link type="text/css" href="css/stylesheet<?php echo $settings['stylesheet']; ?>.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
@@ -900,7 +900,7 @@ public static function frame_begin($stylesheet = false, $menu = true)
             <div class="section"> <!-- This container holds the section specific content -->
     <?php
     
-}public static function mobile_frame_begin($stylesheet = false, $menu = true)
+}public static function mobile_frame_begin($menu = true)
 {
     global $settings;
     ?>
@@ -911,7 +911,7 @@ public static function frame_begin($stylesheet = false, $menu = true)
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <title><?php echo $settings['site_name']; ?></title>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css">
-        <link type="text/css" href="css/stylesheet<?php echo ($stylesheet) ? $stylesheet : $settings['stylesheet']; ?>.css" rel="stylesheet">
+        <link type="text/css" href="css/stylesheet<?php echo $settings['stylesheet']; ?>.css" rel="stylesheet">
         <link type="text/css" href="css/mobile.css" rel="stylesheet">
         <link type="text/css" href="css/autocomplete.css" rel="stylesheet">
         <script type="text/javascript" src="lib/misc_functions.js"></script>

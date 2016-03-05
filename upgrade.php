@@ -23,7 +23,7 @@
 
 define('T_NO_STARTUP', true);
 require('header.php');
-HTMLOUT::frame_begin(false,false);
+HTMLOUT::frame_begin(false);
 title("OBBLM upgrade script");
 if (isset($_POST['version'])) {
     $upgradeMsgs = upgrade_database($_POST['version'], array('lrb' => isset($_POST['lrb']) ? $_POST['lrb'] : false));

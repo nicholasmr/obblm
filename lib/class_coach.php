@@ -567,9 +567,5 @@ class Coach
         }
         return $status ? $cid : false;
     }
-    
-    public function getStylesheetId() {
-        return $settings['stylesheet'];
-    }
 }
 
