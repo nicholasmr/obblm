@@ -9,6 +9,8 @@ $db_user   = 'root';
 $db_passwd = '';
 $db_host   = 'localhost';
 
+include('config.php');
+
 /*************************
  * Global settings 
  *************************/
@@ -23,7 +25,7 @@ $db_host   = 'localhost';
 
 $settings['site_name'] = 'My OBBLM portal'; // Site name.
 $settings['default_visitor_league'] = 1;    // ID of default league to show on front page when not logged in OR coach has not selected a home league.
-$settings['default_leagues'] = array(1);    // When creating a coach the coach will automatically become a regular coach in leagues with these IDs.
+$settings['default_leagues'] = array();    // When creating a coach the coach will automatically become a regular coach in leagues with these IDs.
 $settings['hide_ES_extensions'] = false;    // Default is false. Hides ES (Extra Stats) tables and ES references.
 
 $rules['bank_threshold'] = 0; // Default is 0 (banking rule disabled). Amount of team treasury in kilos (k) above which it will count towards the team value (TV). NOTE: 1) This feature is not yet available on a per-league basis, it works across all leagues! 2) When changing this value run "Re-install DB back-end procedures and functions" under "DB maintenance" from the "Admin -> Core panel" menu.
@@ -36,9 +38,9 @@ $rules['force_IR'] = false; // Default is false. Setting this to true will remov
 */
 
 $settings['custom_races'] = array(
-    'Brettonia'         => false,
-    'Daemons of khorne' => false,
-    'Apes of wrath'     => false,
+    'Bretonnia'         => true,
+    'Daemons of khorne' => true,
+    'Apes of wrath'     => true,
 );
 
 
@@ -64,6 +66,12 @@ $hrs[2]['points'] = '2*[gf] - 1*[ga]';            // The definition of points.
 $hrs[3]['rule']   = array('-sdiff', '-smp'); // Sort teams against: largest score difference, then most sportsmanship points.
 $hrs[3]['points'] = '';                      // Points not used.
 
+// Rule #4
+$hrs[4]['rule']   = array('-pts', '-sdiff', '-tcdiff');    // Sort teams against: most points, then net TDs and then least sportsmanship points.
+$hrs[4]['points'] = '6*[won] + 3*[draw] + 1*[lost]'; // The definition of points.
+
+// Rule #4
+$hrs[5]['rule']   = array('-pts', '-sdiff', '-tcdiff');    // Sort teams against: most points, then net TDs and then least sportsmanship points.
+$hrs[5]['points'] = '3*[won] + 1*[draw] + 0*[lost]'; // The definition of points.
+
 // Add you own rules here...
-
-
