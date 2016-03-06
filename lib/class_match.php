@@ -112,7 +112,13 @@ class Match
         $result = mysql_query($query);
         foreach (mysql_fetch_assoc($result) as $col => $val) {
             $this->$col = $val;
-        }                
+        }
+
+        $tvQuery = "SELECT t1.tv as 'team1_tv', t2.tv as 'team2_tv' FROM teams as t1, teams as t2 WHERE t1.team_id = $this->team1_id AND t2.team_id = $this->team2_id";
+        $tvResult = mysql_query($tvQuery);
+        foreach(mysql_fetch_assoc($tvResult) as $col => $tv) {
+            $this->$col = $tv;
+        }
 
         // Determine winner's team ID.
         if ($this->team1_score > $this->team2_score) {

@@ -170,10 +170,13 @@ class Mobile_HTMLOUT {
             $dateCreated = date('Y-m-d', strtotime($match->date_created));
             
             echo '<tr>';
-            echo '<td class="date"><a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $dateCreated . '</td>';
-            echo '<td class="team-name">' . $match->team1_name . '</td>';
+            echo '<td class="date" colspan="3"><a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $dateCreated . '</td>';
+            echo '</tr>';
+			
+			echo '<tr>';
+            echo '<td class="team-name">' . $match->team1_name . '(TV' . $match->team1_tv/1000 . ')' . '</td>';
             echo '<td>v.</td>';
-            echo '<td class="team-name">' . $match->team2_name . '</td>';
+            echo '<td class="team-name">' . $match->team2_name . '(TV' . $match->team2_tv/1000 . ')' . '</td>';
             echo '</tr>';
         }
     }
