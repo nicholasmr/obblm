@@ -4,6 +4,10 @@
         font-size: 11px;
     }
     
+    table tbody a{
+        font-size: 12px;
+    }
+    
     table td.date {
         width: 65px;
     }
