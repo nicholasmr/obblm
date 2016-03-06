@@ -175,7 +175,7 @@ class Mobile_HTMLOUT {
             $myTeamLink = '<a data-bind="click: openMatchDialog" href="#" data-match-id="' . $match->match_id . '">' . $myTeamName . '</a>';
 
             echo '<tr>';
-            echo '<td class="team-name">' . $myTeamLink . ' (TV' . $myTeamTv . ')' . '</td>';
+            echo '<td class="team-name">' . $myTeamLink  . '</td>';
             echo '<td>v.</td>';
             echo '<td class="team-name">' . $otherTeamName  . ' (TV' . $otherTeamTv . ')'. '</td>';
             echo '</tr>';
