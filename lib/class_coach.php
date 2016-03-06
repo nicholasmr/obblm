@@ -439,15 +439,14 @@ class Coach
         }
     }
 
-    public static function getCoaches() {
-    
-        /**
-         * Returns an array of all coach objects.
-         **/
-         
+    public static function getCoaches($where = false) {
         $coaches = array();
         
         $query  = "SELECT coach_id FROM coaches";
+        if($where) {
+            $query = $query . ' WHERE ' . $where;
+        }
+        
         $result = mysql_query($query);
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
