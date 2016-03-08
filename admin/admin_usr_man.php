@@ -124,11 +124,11 @@ if (isset($_POST['type'])) {
 title($lng->getTrn('menu/admin_menu/usr_man'));
 
 $T_GLOBAL_RINGS = array(
-    Coach::T_RING_GLOBAL_ADMIN => 'Global commisoner (site admin)',
+    Coach::T_RING_GLOBAL_ADMIN => 'Global commissioner (site admin)',
     Coach::T_RING_GLOBAL_NONE  => 'No global rights (regular coach)',
 );
 $T_LOCAL_RINGS = array(
-    Coach::T_RING_LOCAL_ADMIN   => 'Local commisioner',
+    Coach::T_RING_LOCAL_ADMIN   => 'Local commissioner',
     Coach::T_RING_LOCAL_REGULAR => 'Regular coach',
 );
 
@@ -274,6 +274,36 @@ $T_LOCAL_RINGS = array(
     </div>
 </div>
 
+<?php if (Module::isRegistered('Registration') && $settings['allow_registration']) { ?>
+    <div class="boxCommon">
+        <div class="boxTitle<?php echo T_HTMLBOX_ADMIN; ?>">
+            Activate Users
+        </div>
+        <div class="boxBody">
+            <?php
+                $retiredCoaches = Coach::getCoaches('retired = 2');
+                    
+                if(empty($retiredCoaches)) {
+                    echo 'No coaches to activate!';
+                } else { ?>
+                    <table>
+                        <?php foreach($retiredCoaches as $coach) { ?>
+                            <tr>
+                                <td><?php echo $coach->name; ?></td>
+                                <td>
+                                    <form method="POST" action="handler.php?type=registration&form=activate">
+                                        <input type="hidden" name="activate_name" value="<?php echo $coach->name; ?>" />
+                                        <button>Activate</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </table>
+                <?php } ?>
+        </div>
+    </div>
+<?php } ?>
+    
 </div> <!-- END row 1 -->
 <div class="row"> <!-- Intter row 2 -->
 

@@ -69,7 +69,7 @@ if ($_VISSTATE['COOCKIE'] || $_VISSTATE['POST_IN'] || $_VISSTATE['POST_OUT']) {
 }
 
 if(Mobile::isMobile()) {
-	HTMLOUT::mobile_frame_begin($settings['stylesheet']); # Make page frame, banner and menu.
+	HTMLOUT::mobile_frame_begin(); # Make page frame, banner and menu.
 	MTS('Header loaded, login auth, html frame generated');
 	
 	// Check if a menu-link was picked, and execute section code from sections.php accordingly.
@@ -84,7 +84,7 @@ if(Mobile::isMobile()) {
 		default:            Mobile_HTMLOUT::sec_mobile_main();
 	}
 } else {
-	HTMLOUT::frame_begin($settings['stylesheet']); # Make page frame, banner and menu.
+	HTMLOUT::frame_begin(); # Make page frame, banner and menu.
 	MTS('Header loaded, login auth, html frame generated');
 	
 	// Check if a menu-link was picked, and execute section code from sections.php accordingly.

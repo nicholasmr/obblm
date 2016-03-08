@@ -1036,7 +1036,7 @@ WHERE match_id = $this->match_id";
 		return true;
         }
         #End Replay Retrieval
-        if ( !isset($argv[0]) ) HTMLOUT::frame_begin($coach->getStylesheetId());
+        if ( !isset($argv[0]) ) HTMLOUT::frame_begin();
         if ( isset($_FILES['userfile']) && isset($_SESSION['coach_id']) )
         {
             $userfile = $_FILES['userfile'];

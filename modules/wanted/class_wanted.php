@@ -209,7 +209,7 @@ public static  function isWanted($pid)
 
 public static function makeList() {
     global $lng, $coach, $settings;
-    HTMLOUT::frame_begin($coach->getStylesheetId()); # Make page frame, banner and menu.
+    HTMLOUT::frame_begin(); # Make page frame, banner and menu.
     
     title($lng->getTrn('name', __CLASS__));
     echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
@@ -288,7 +288,7 @@ public static function makeList() {
                 <form method="POST">
                 <b><?php echo $lng->getTrn('player', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('sort_hint', __CLASS__);?><br>
                 <?php
-                $query = "SELECT player_id, f_tname, name FROM players, mv_players WHERE player_id = f_pid AND f_lid = $node_id ORDER by f_tname ASC, name ASC";
+                $query = "SELECT DISTINCT player_id, f_tname, name FROM players, mv_players WHERE player_id = f_pid AND f_lid = $node_id ORDER by f_tname ASC, name ASC";
                 $result = mysql_query($query);
                 if ($result && mysql_num_rows($result) == 0) {
                     $_DISABLED = 'DISABLED';
