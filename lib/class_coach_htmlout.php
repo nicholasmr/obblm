@@ -254,7 +254,6 @@ private function _CCprofile($ALLOW_EDIT)
             case 'chmail':      status($this->setMail($_POST['new_email'])); break;
             case 'chlogin':     status($this->setName($_POST['new_name'])); break;
             case 'chname':      status($this->setRealName($_POST['new_realname'])); break;
-            case 'chtheme':     status($this->setSetting('theme', (int) $_POST['new_theme'])); break;
             case 'chlang':      status($this->setSetting('lang', $_POST['new_lang'])); break;
             case 'chhomelid':   status(isset($_POST['new_homelid']) && get_alt_col('leagues', 'lid', (int) $_POST['new_homelid'], 'lid') && $this->setSetting('home_lid', $_POST['new_homelid'])); break;
 
@@ -351,24 +350,6 @@ private function _CCprofile($ALLOW_EDIT)
                 <td><?php echo $lng->getTrn('cc/new');?>:<input type='text' name='new_realname' size="20" maxlength="50"></td>
                 <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chname');?>"></td>
                 <input type='hidden' name='type' value='chname'>
-                </form>
-            </tr>
-            <tr>
-                <form method="POST">
-                <td><?php echo $lng->getTrn('cc/chtheme');?>:</td>
-                <td><?php echo $lng->getTrn('cc/current');?>: <?php echo $this->settings['theme'];?></td>
-                <td>
-                    <?php echo $lng->getTrn('cc/new');?>:
-                    <select name='new_theme'>
-                        <?php
-                        foreach (array(1 => 'Classic') as $theme => $desc) {
-                            echo "<option value='$theme'>$theme: $desc</option>\n";
-                        }
-                        ?>
-                    </select>
-                </td>
-                <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chtheme');?>"></td>
-                <input type='hidden' name='type' value='chtheme'>
                 </form>
             </tr>
             <tr>
