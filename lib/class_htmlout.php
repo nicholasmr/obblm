@@ -881,7 +881,6 @@ public static function frame_begin($menu = true)
             width: 860,
             height: 150
         });</script>
-        <link rel="stylesheet" href="css_menu_files/css3menu1/style.css" type="text/css" /><style type="text/css">._css3m{display:none}</style>
     </head>
     <body>
         <div class="everything">
