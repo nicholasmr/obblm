@@ -318,7 +318,6 @@ public static function tournamentSelector($tour_id) {
 
 /* Main function for displaying conference administration page */
 public static function conferenceAdmin() {
-	LeagueTables::styles();
     global $lng, $tours, $coach;
     title($lng->getTrn('name', 'Conference'));
     self::handleActions();

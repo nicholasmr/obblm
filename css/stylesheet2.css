@@ -166,6 +166,16 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
     text-transform: uppercase;
     font-size: 10px;
     font-weight: bold;}
+    
+.boxTitleConf {
+    background-color: #679EC9;
+    padding: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+    
 .boxBody   { background-color: #ebf6fc; padding: 5px;
 
     background-image: url(../images/gradient.gif);
