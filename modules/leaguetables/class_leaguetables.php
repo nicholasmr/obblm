@@ -119,24 +119,8 @@ function __construct($conf_id)
 {
 }
 
-public static function styles() {
-echo<<< EOQ
-	<style type="text/css">
-		.boxTitleConf {
-			background-color: #679EC9;
-			padding: 6px;
-			font-size: 13px;
-			font-weight: bold;
-			margin-top: 0px;
-			margin-bottom: 5px;
-		}
-	</style>
-EOQ;
-}
-
 /* This function is the primary one to display a league table */
 public static function showTables() {
-	self::styles();
     global $lng, $tours;
     title($lng->getTrn('name', 'LeagueTables'));
 

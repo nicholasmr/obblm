@@ -166,6 +166,15 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 .boxBody   {color:black; border-top: 2px solid black; background-color: #FAFAFA; font-weight: normal; padding: 10px;}
 table.boxTable {color:black; border-spacing: 5px; width: 100%;}
 
+.boxTitleConf {
+    background-color: #679EC9;
+    padding: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
 /* Other types of boxes. */
 .helpBox {
 	color: #FFFFFF;
