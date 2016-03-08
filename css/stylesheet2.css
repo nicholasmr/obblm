@@ -321,17 +321,17 @@ body:first-of-type ul#css3menu1>li{
 ul#css3menu1 a:active, ul#css3menu1 a:focus{
 	outline-style:none;}
 ul#css3menu1 a{
-	display:block;vertical-align:middle;text-align:left;text-decoration:none;font:bold 12px Arial,Helvetica,sans-serif;color:#000000;text-shadow:#FFF 0 0 1px;cursor:pointer;padding:4px 10px 4px 10px;background-color:#c1c1c1;background-image:url("images/mainbk.png");background-repeat:repeat;background-position:0 0;border-width:0 0 0 1px;border-style:solid;border-color:#C0C0C0;}
+	display:block;vertical-align:middle;text-align:left;text-decoration:none;font:bold 12px Arial,Helvetica,sans-serif;color:#000000;text-shadow:#FFF 0 0 1px;cursor:pointer;padding:4px 10px 4px 10px;background-color:#c1c1c1;background-image:url("../images/mainbk.png");background-repeat:repeat;background-position:0 0;border-width:0 0 0 1px;border-style:solid;border-color:#C0C0C0;}
 ul#css3menu1 ul li{
 	float:none;margin:10px 0 0;}
 ul#css3menu1 ul a{
 	text-align:left;padding:4px;background-color:#FFFFFF;background-image:none;border-width:0;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;font:bold 12px Arial,Helvetica,sans-serif;color:#000;text-decoration:none;}
 ul#css3menu1 li:hover>a,ul#css3menu1 li a.pressed{
-	background-color:#eb0000;border-color:#C0C0C0;border-style:solid;color:#ffffff;text-shadow:#FFF 0 0 1px;background-image:url("images/mainbk.png");background-position:0 100px;}
+	background-color:#eb0000;border-color:#C0C0C0;border-style:solid;color:#ffffff;text-shadow:#FFF 0 0 1px;background-image:url("../images/mainbk.png");background-position:0 100px;}
 ul#css3menu1 span{
 	display:block;overflow:visible;background-position:right center;background-repeat:no-repeat;padding-right:0px;}
 ul#css3menu1 ul span{
-	background-image:url("images/arrowsub.png");padding-right:12px;}
+	background-image:url("../images/arrowsub.png");padding-right:12px;}
 ul#css3menu1 > li.switch{
 	display:none;cursor:pointer;width:25px;height:20px;padding:4px 10px 4px 10px;}
 ul#css3menu1 > li.switch:before{
@@ -341,7 +341,7 @@ ul#css3menu1 > li.switch:hover:before{
 .c3m-switch-input{
 	display:none;}
 ul#css3menu1 li:hover>a,ul#css3menu1 li > a.pressed{
-	background-color:#eb0000;background-image:url("images/mainbk.png");background-position:0 100px;border-style:solid;border-color:#C0C0C0;color:#ffffff;text-decoration:none;text-shadow:#FFF 0 0 1px;}
+	background-color:#eb0000;background-image:url("../images/mainbk.png");background-position:0 100px;border-style:solid;border-color:#C0C0C0;color:#ffffff;text-decoration:none;text-shadow:#FFF 0 0 1px;}
 ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li > a.pressed{
 	background-color:#ffffff;background-image:none;color:#eb0000;text-decoration:none;}
 ul#css3menu1 li.topfirst>a{
