@@ -303,6 +303,11 @@ div.red                 {clear:both;background-color:#F20000;border:1px solid #c
     font-size: 18px;
 }
 
+ul.topmenu > li > a { /* Top menu bar sizing */
+    height: 20px;
+    line-height: 20px !important; /* Seems to get overridden by something in the CSSmenu code */
+}
+
 
 /*********************
  Mobile
@@ -355,9 +360,9 @@ ul#css3menu1{
 * html ul#css3menu1 li a{
 	display:inline-block;}
 ul#css3menu1>li{
-	margin:0;display:table-cell; table-layout:fixed; width:12.5%;}
+	margin:0;display:table-cell; table-layout:fixed; }
 ul#css3menu1 li.toplast{
-	width:16%;}
+	width:221px;}
 body:first-of-type ul#css3menu1{
 	display:inline-table;border-spacing:0px 0;}
 body:first-of-type ul#css3menu1>li{

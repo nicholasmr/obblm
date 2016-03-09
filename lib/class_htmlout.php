@@ -946,7 +946,7 @@ private static function make_menu()
     global $lng, $coach, $settings, $rules, $admin_menu;
     ?>
     <ul id="css3menu1" class="topmenu">
-        <li class="topfirst"><a href="index.php?section=main" style="height:20px;line-height:20px;"><?php echo $lng->getTrn('menu/home');?></a>
+        <li class="topfirst"><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a>
 		 <ul>
             <li class="subfirst"><a href="#" >Europe ></a>
 				<ul>
@@ -1029,7 +1029,7 @@ private static function make_menu()
         if (isset($_SESSION['logged_in'])) {
 ?>
 
-<li class="topfirst"><a href="#" style="height:20px;line-height:20px;">User Menu</a>
+<li class="topfirst"><a href="#">User Menu</a>
         <ul>
             <li class="subfirst"><a href="handler.php?type=teamcreator">Create a New Team</a></li>
             <li><a href="index.php?section=matches&amp;type=usersched" >Schedule Match</a></li>
@@ -1045,7 +1045,7 @@ private static function make_menu()
 
 <?php if (!empty($admin_menu)) {    
         ?>
-		<li class="topmenu"><a href="#" style="height:20px;line-height:20px;"><?php echo $lng->getTrn('menu/admin_menu/name');?></a>
+		<li class="topmenu"><a href="#"><?php echo $lng->getTrn('menu/admin_menu/name');?></a>
 					<ul>
                         <li class="subfirst"><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('name', 'LeaguePref');?></a></li>
 <?php if (Module::isRegistered('Conference'))        { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('name', 'Conference');?></a></li><?php } ?>
@@ -1069,7 +1069,7 @@ private static function make_menu()
         ?>
         
 
-<li class="topmenu"><a href="#" style="height:20px;line-height:20px;">League Menu</a>
+<li class="topmenu"><a href="#">League Menu</a>
             <ul>
                 <li class="subfirst"><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
                 <li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('name', 'LeagueTables');?></a></li>
@@ -1085,7 +1085,7 @@ private static function make_menu()
             </ul>
     </li>
         
-<li class="topmenu"><a rel="nofollow" href="index.php?section=rules" style="height:20px;line-height:20px;">League History</a>
+<li class="topmenu"><a rel="nofollow" href="index.php?section=rules">League History</a>
     <ul>   
                 <?php if (Module::isRegistered('Gallery'))        { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
                 <?php if (Module::isRegistered('Wanted'))        { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
@@ -1099,7 +1099,7 @@ private static function make_menu()
 
         
         
-<li class="topmenu"><a rel="nofollow" href="#" style="height:20px;line-height:20px;">Statistics</a>
+<li class="topmenu"><a rel="nofollow" href="#">Statistics</a>
             <ul>
                 <li class="subfirst"><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/team_stn');?></a></li>
                 <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/player_stn');?></a></li>
@@ -1109,7 +1109,7 @@ private static function make_menu()
             </ul>
         </li>
         
-<li class="topmenu"><a rel="nofollow" href="#" style="height:20px;line-height:20px;">Game Rules</a>
+<li class="topmenu"><a rel="nofollow" href="#">Game Rules</a>
     <ul> 
         <li class="subfirst"><a rel="nofollow" href="#">CRP Rosters ></a>
             <ul><li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=0" style="height:10px;line-height:10px;">Amazon</a></li>
