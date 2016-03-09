@@ -72,7 +72,8 @@ class Mobile_HTMLOUT {
                     <?php
                         foreach($teams as $team) {
                             $isThisTeam = ($team->team_id == $selectedTeamId);
-                            echo '<option value="' . $team->team_id . '"' . ($isThisTeam ? ' selected="selected"' : '') . '>' . $team->name . '</option>';
+                            $teamName = $team->name . ' (TV' . ($team->tv/1000) . ')';
+                            echo '<option value="' . $team->team_id . '"' . ($isThisTeam ? ' selected="selected"' : '') . '>' . $teamName . '</option>';
                         }
                     ?>
                 </select>
@@ -86,7 +87,7 @@ class Mobile_HTMLOUT {
                 </span>
             </form>
             <div>
-                <?php echo 'TV' . $selectedTeam->tv/1000 . ', ' . $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff; ?> 
+                <?php echo $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff . ', ' . $selectedTeam->ass_coaches . ' Coaches, ' . $selectedTeam->cheerleaders . ' Cheerleaders'; ?>
                 <?php if($selectedTeam->apothecary) { echo ', ' . $lng->getTrn('common/apothecary'); } ?>
             </div>
             <div id="tabs">
