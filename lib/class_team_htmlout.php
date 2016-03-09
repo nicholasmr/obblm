@@ -761,7 +761,7 @@ private function _HHMerc($DETAILED)
 {
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
-    title("<a name='anc'>".$lng->getTrn('common/merchh')."</a>");
+    title('<div class="team-management-title">' . $lng->getTrn('common/merchh') . '</div>');
     $mdat = array();
     foreach (Mercenary::getMercsHiredByTeam($team->team_id, false) as $merc) {
         $o = (object) array();
@@ -818,7 +818,7 @@ private function _HHStar($DETAILED)
 {
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
-    title("<a name='anc'>".$lng->getTrn('common/starhh')."</a>");
+    title('<div class="team-management-title">' . $lng->getTrn('common/starhh') . '</div>');
     Star_HTMLOUT::starHireHistory(STATS_TEAM, $team->team_id, false, false, false, array(
         'url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=hhstar'.(($DETAILED) ? '&amp;detailed=1' : '&amp;detailed=0'),
         'GET_SS' => 'tp_shh',)
@@ -855,7 +855,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
     ?>
     <a name="aanc"></a>
     <div class="boxTeamPage">
-        <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><a name='anc'><?php echo $lng->getTrn('profile/team/box_info/title');?></a></div>
+        <div class="boxTitle<?php echo T_HTMLBOX_INFO;?>"><?php echo $lng->getTrn('profile/team/box_info/title');?></div>
         <div class="boxBody">
             <table width="100%">
                 <tr>
@@ -1722,7 +1722,7 @@ private function _about($ALLOW_EDIT)
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
 
-    title("<a name='anc'>".$lng->getTrn('common/about')." $team->name</a>");
+    title('<div class="team-management-title">' . $lng->getTrn('common/about') . '</div>');
     ?>
     <table class='common'>
         <tr class='commonhead'>
@@ -1775,7 +1775,7 @@ private function _news($ALLOW_EDIT)
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
 
-    title("<a name='anc'>".$lng->getTrn('profile/team/news')."</a>");
+    title('<div class="team-management-title">' . $lng->getTrn('profile/team/news') . '</div>');
     $news = $team->getNews(MAX_TNEWS);
     ?>
     <div class="row">
@@ -1830,11 +1830,10 @@ private function _games()
     global $lng;
     $team = $this; // Copy. Used instead of $this for readability.
 
-    title("<a name='anc'>".$lng->getTrn('profile/team/games')."</a>");
+    title('<div class="team-management-title">' . $lng->getTrn('profile/team/games') . '</div>');
     HTMLOUT::recentGames(T_OBJ_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=games', 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'gp'));
     echo "<br>";
     HTMLOUT::upcomingGames(T_OBJ_TEAM, $team->team_id, false, false, false, false, array('url' => urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team->team_id,false,false).'&amp;subsec=games', 'n' => MAX_RECENT_GAMES, 'GET_SS' => 'ug'));
-#    upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $opp_obj_id, array $opts)
 }
 
 }

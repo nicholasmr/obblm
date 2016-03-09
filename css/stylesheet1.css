@@ -263,7 +263,9 @@ div.red                 {clear:both;background-color:#F20000;border:1px solid #c
 .draw		{background-position:-28px 0}
 .lost		{background-position:-42px 0}
 
-
+.team-management-title {
+    font-size: 18px;
+}
 
 
 /*********************
