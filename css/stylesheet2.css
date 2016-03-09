@@ -291,6 +291,11 @@ div.red                 {clear:both;background-color:#F20000;border:1px solid #c
     font-size: 18px;
 }
 
+ul.topmenu > li > a { /* Top menu bar sizing */
+    height: 20px;
+    line-height: 20px !important; /* Seems to get overridden by something in the CSSmenu code */
+}
+
 /*********************
  CSS Menu
  *********************/
