@@ -1,4 +1,4 @@
-var MobileViewModel = function(playersOnSelectedTeam, matches) {
+var MobileViewModel = function(playersOnSelectedTeam, matches, lastMatchId) {
     var self = this;
                         
     // Matches come from the database as "30000", but we deal with them as "30". Convert before we do anything else.
@@ -21,14 +21,27 @@ var MobileViewModel = function(playersOnSelectedTeam, matches) {
         $('#PlayerDialog').dialog({modal: true});
     };
     
-    self.openMatchDialog = function(playerViewModel, event) {
-        var matchId = $(event.target).attr('data-match-id');
+    function openMatchDialog(matchId) {
         var match = _.find(matches, function(match) {
-            return match.match_id === matchId;
+            // match.match_id is a string
+            return match.match_id === matchId || match.match_id === matchId + '';
         });
 
         self.matchDialogViewModel.serverMatch(match);
         // opens after onMatchLoaded in MatchDialogViewModel
+    }
+    
+    self.hasLastOpenedMatchId = function() {
+        return lastMatchId !== -1;
+    };
+    
+    self.openLastOpenedMatchDialog = function() {
+        openMatchDialog(lastMatchId);
+    };
+    
+    self.openMatchDialog = function(playerViewModel, event) {
+        var matchId = $(event.target).attr('data-match-id');
+        openMatchDialog(matchId);
     }
 	
 	self.isMenuVisible = ko.observable(false);

@@ -6,6 +6,10 @@ var Match = function(playersOnSelectedTeam) {
     self.serverMatch = ko.observable({});
     self.myTeamId = ko.observable(-1);
     self.selectedPlayer = ko.observable({});
+    
+    self.getMatchId = function() {
+        return self.serverMatch().match_id;
+    };
         
     var matchTeamOneId = ko.computed(function() {
         return parseInt(self.serverMatch().team1_id, 10);
@@ -60,7 +64,7 @@ var Match = function(playersOnSelectedTeam) {
             url: 'match_webservice.php',
             data: {
                 'action': 'getplayerentries',
-                'match_id': self.serverMatch().match_id,
+                'match_id': self.getMatchId(),
                 'team_id': self.myTeamId()
             },
             success: function(result) {
