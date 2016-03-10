@@ -87,8 +87,10 @@ class Mobile_HTMLOUT {
                 </span>
             </form>
             <div>
-                <?php echo $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff . ', ' . $selectedTeam->ass_coaches . ' Coaches, ' . $selectedTeam->cheerleaders . ' Cheerleaders'; ?>
-                <?php if($selectedTeam->apothecary) { echo ', ' . $lng->getTrn('common/apothecary'); } ?>
+                <?php 
+                    echo $selectedTeam->treasury/1000 . 'k, FF' . $selectedTeam->rg_ff . ', ' . $selectedTeam->ass_coaches . ' Coaches, ' . $selectedTeam->cheerleaders . ' Cheerleaders'; 
+                    if($selectedTeam->apothecary) { echo ', ' . $lng->getTrn('common/apothecary'); } 
+                ?>
             </div>
             <div id="tabs">
                 <ul>
