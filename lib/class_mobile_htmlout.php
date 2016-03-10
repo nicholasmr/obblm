@@ -53,12 +53,13 @@ class Mobile_HTMLOUT {
                 var playersOnSelectedTeam = <?php echo json_encode($playersOnSelectedTeam); ?>;
                 var matches = <?php echo json_encode($allMatches); ?>;
                 var injuryTable = <?php echo json_encode($T_INJS); ?>;
+                var lastMatchId = <?php echo isset($_GET['lastMatchId']) ? $_GET['lastMatchId'] : -1; ?>;
                 $('#tabs').tabs();
                 $('#SelectedTeam').change(function() {
                     this.form.submit();
                 });
 				
-                var mobileViewModel = new MobileViewModel(playersOnSelectedTeam, matches);
+                var mobileViewModel = new MobileViewModel(playersOnSelectedTeam, matches, lastMatchId);
                 
                 mobileViewModel.matchDialogViewModel.selectedPlayerViewModel.injuryTable(injuryTable);
                 mobileViewModel.matchDialogViewModel.myTeamId(<?php echo $selectedTeamId; ?>);
@@ -92,6 +93,7 @@ class Mobile_HTMLOUT {
                     if($selectedTeam->apothecary) { echo ', ' . $lng->getTrn('common/apothecary'); } 
                 ?>
             </div>
+            <a data-bind="visible: hasLastOpenedMatchId(), click: openLastOpenedMatchDialog">Open Last Match</a>
             <div id="tabs">
                 <ul>
                     <li><a href="#Teams"><?php echo $lng->getTrn('common/team'); ?></a></li>
