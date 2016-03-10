@@ -1,29 +1,14 @@
 /**************************
  * CHOP! Blood Bowl Theme
  **************************/
-
- 
  
 /*************************
  * General
  *************************/
 
 html {
-    overflow-y: scroll; /* Keep page alignment uniform. */
     height: 98%;
 } 
-
-@font-face {
-    font-family: 'auroracondensed';
-    src: url('fonts/aurora_condensed-webfont.eot');
-    src: url('fonts/aurora_condensed-webfont.eot?#iefix') format('embedded-opentype'),
-         url('fonts/aurora_condensed-webfont.woff2') format('woff2'),
-         url('fonts/aurora_condensed-webfont.woff') format('woff'),
-         url('fonts/aurora_condensed-webfont.ttf') format('truetype'),
-         url('fonts/aurora_condensed-webfont.svg#auroracondensed') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
 
 @font-face {
     font-family: 'aurora';
@@ -97,24 +82,6 @@ f2 {
 	margin: 0 0 0 120px;
 }
 
-
-h3 {margin:0} /* Reset browser default margin */
-
-/* Title for sections */
-h2 {
-    clear: both;
-    text-align: center;
-    padding-top: 20px;
-    padding-bottom: 10px;
-    width: inherit;
-    font-size: 18px;
-    font-weight: bold;
-	margin:0 auto;
-}
-
-/* Container for rows */
-div.row {width: inherit; clear: both; background-color: inherit;}
-
 /* Top level container */
 div.everything {
     width: 1200px; 
@@ -137,6 +104,7 @@ div.everything {
 /* Banner */
 div.banner {
     height: 135px;
+    width: auto;
     margin-left:0px;
     margin-bottom: 0px;
     margin-top: 10px;
@@ -181,12 +149,6 @@ div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo
 	box-shadow: 3px 4px 10px #666;
 }
 div.boxWide             {clear:both; background-color: #D9D8D0;}
-div.boxCommon           {float:left;}
-div.boxCoachPage        {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
-div.boxTeamPage         {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
-div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
-
-
 
 /* .boxTitle1: Used for: Team/player/coach info & team news */
 /* .boxTitle2: Used for: Management/actions/more box for ordinary coaches */
@@ -206,107 +168,16 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 }
 .boxTitle3 {background-color: #AAA; } /* Used for: Management/actions/more box for ordinary admins */
 
-.boxTitleConf {
-    background-color: #679EC9;
-    padding: 6px;
-    font-size: 13px;
-    font-weight: bold;
-    margin-top: 0px;
-    margin-bottom: 5px;
-}
-
 .boxBody   { border-top: 2px solid black; background-color: #FAFAFA; font-weight: normal; padding: 10px;}
 table.boxTable {color:black; border-spacing: 5px; width: 100%;}
 
-/* Other types of boxes. */
-.helpBox {
-	color: #FFFFFF;
-	border: 2px solid #CC6633;
-	background-color: #4C6260;
-	padding:10px;
-	line-height:1.4em;
-}
-
-/* Other types of boxes. */
-.errorBox {
-	color: #FFFFFF;
-	border: 2px solid #000000;
-	background-color: #800000;
-	padding:10px;
-	line-height:1.4em;
-}
 
 /* 
  *   Tables, TRs and TDs 
  */
 
-/* Used almost everywhere */
-table.common  { 
-    width: 100%; 
-}
-
 tr.commonhead {color: black; background-color: #CCCCCC;}
-
-/* For the tours list */
-table.tours {
-    border: none; 
-    width: 100%; 
-    background-color: inherit; 
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-/* tour lists: titel boxes */
-.leagues     {background-color: #;}
-.divisions   {background-color: #;}
-.tours       {background-color: whitesmoke;}
-td.round     {background-color: #CCCCCC;}
-td.match     {background-color: #DDDDDD;}
-td.seperator {height:15px;}
-
-/* tour lists: node containers */
-div.leaguesNCont     {margin-top:15px; margin-left:10px;}
-div.divisionsNCont   {margin-top:5px;  margin-left:25px;}
-div.toursNCont       {margin-top:0px;  margin-left:10px;}
-
-/* 
- *   Section specific 
- */
-
-/* Main page */
-
-div.main_head  { display: none; }
-div.main_foot  {clear: both; font-size: 11px; padding: 30px; padding-top: 20px; }
-div.main_rightColumn {float: right; width: 50%; }
-div.main_leftColumn {float: left; width: 50%; }
-div.main_leftColumn_head     {clear: both; color: black; text-align: right; padding-right: 20px; } /* Padding should be the same as lcolBox padding. */
-div.main_leftColumn_welcome  {clear: both; padding-left: 20px; padding-top: 3px; padding-bottom: 3px; text-align: left;}
-div.main_leftColumn_left  {padding-left: 20px; padding-top: 10px; padding-bottom: 10px; text-align: left; float:left;}
-div.main_leftColumn_right {padding-left: 20px; padding-top: 3px;  padding-bottom: 3px; text-align: right; float:right;}
-hr { display: none; } 
-/* 
- *  Other
- */
-
-/* Status bar */
-div.messageContainer    {width:100%;padding:6px 0px 6px 0px;color:#fff;font-weight:bold;}
-div.green               {clear:both;background-color:#390;border:1px solid #298000;}
-div.red                 {clear:both;background-color:#F20000;border:1px solid #c00;}
-
-/* Game result icon*/
-.match_icon	{background:transparent url(../images/result_icon.gif) no-repeat 0 0;width:12px;height:12px}
-.won		{background-position:-14px 0}
-.draw		{background-position:-28px 0}
-.lost		{background-position:-42px 0}
-
-.team-management-title {
-    font-size: 18px;
-}
-
-ul.topmenu > li > a { /* Top menu bar sizing */
-    height: 20px;
-    line-height: 20px !important; /* Seems to get overridden by something in the CSSmenu code */
-}
+table.common  {background-color: transparent;}
 
 
 /*********************
@@ -326,129 +197,27 @@ ul.topmenu > li > a { /* Top menu bar sizing */
     }
 }
  
-
-/*********************
- CSS Menu
- *********************/
-._css3m{display:none}
  
-ul#css3menu1,ul#css3menu1 ul{
-	margin:0;
-    list-style:none;
-    padding:0;
-    background-color:#dedede;
-    border-width:1px;
-    border-style:solid;
-    border-color:#5f5f5f;
-    -moz-border-radius:0px;
-    -webkit-border-radius:0px;
-    border-radius:0px;
-}
-ul#css3menu1 ul{
-	display:none;position:absolute;left:0;top:100%;-moz-box-shadow:3.5px 3.5px 5px #000000;-webkit-box-shadow:3.5px 3.5px 5px #000000;box-shadow:3.5px 3.5px 5px #000000;background-color:#FFFFFF;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;border-color:#d4d4d4;padding:0 10px 10px;}
-ul#css3menu1 li:hover>*{
-	display:block;}
-ul#css3menu1 li{
-	position:relative;display:block;white-space:nowrap;font-size:0;float:right;}
-ul#css3menu1 li:hover{
-	z-index:1;}
-ul#css3menu1 ul ul{
-	position:absolute;left:100%;top:0;}
-ul#css3menu1{
-	font-size:0;width:100%;z-index:999;position:relative;display:inline-block;zoom:1;padding:0 0%;margin:0 0%;
-	*display:inline;*padding-right:1.75%;}
-* html ul#css3menu1 li a{
-	display:inline-block;}
-ul#css3menu1>li{
-	margin:0;display:table-cell; table-layout:fixed; }
-ul#css3menu1 li.toplast{
-	width:221px;}
-body:first-of-type ul#css3menu1{
-	display:inline-table;border-spacing:0px 0;}
-body:first-of-type ul#css3menu1>li{
-	display:table-cell;float:none;}
-ul#css3menu1 a:active, ul#css3menu1 a:focus{
-	outline-style:none;}
-ul#css3menu1 a{
-	display:block;
-    vertical-align:middle;
-    text-align:left;
-    text-decoration:none;
-    font:bold 12px Arial,Helvetica,sans-serif;
-    color:#000000;
-    text-shadow:#FFF 0 0 1px;
-    cursor:pointer;
-    padding:4px 10px 4px 10px;
-    
+ /*
+ */
+ ul#css3menu1 a{
     background: rgb(253,246,205); /* Old browsers */
     background: -moz-linear-gradient(top, rgba(253,246,205,1) 0%, rgba(240,209,36,1) 100%); /* FF3.6-15 */
     background: -webkit-linear-gradient(top, rgba(253,246,205,1) 0%,rgba(240,209,36,1) 100%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to bottom, rgba(253,246,205,1) 0%,rgba(240,209,36,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdf6cd', endColorstr='#f0d124',GradientType=0 ); /* IE6-9 */
-
-    border-width:0 0 0 1px;
-    border-style:solid;
-    border-color:#C0C0C0;
 }
-ul#css3menu1 ul li{
-	float:none;margin:10px 0 0;}
-ul#css3menu1 ul a{
-	text-align:left;padding:4px;background-color:#FFFFFF;background-image:none;border-width:0;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;font:bold 12px Arial,Helvetica,sans-serif;color:#000;text-decoration:none;}
-ul#css3menu1 li:hover>a,ul#css3menu1 li a.pressed{
-	background-color:#eb0000;border-color:#C0C0C0;border-style:solid;color:#ffffff;text-shadow:#FFF 0 0 1px;background-image:url("../images/mainbk.png");background-position:0 100px;}
-ul#css3menu1 span{
-	display:block;overflow:visible;background-position:right center;background-repeat:no-repeat;padding-right:0px;}
-ul#css3menu1 ul span{
-	background-image:url("../images/arrowsub.png");padding-right:12px;}
-ul#css3menu1 > li.switch{
-	display:none;cursor:pointer;width:25px;height:20px;padding:4px 10px 4px 10px;}
-ul#css3menu1 > li.switch:before{
-	content:"";position:absolute;display:block;height:4px;width:25px;border-radius:4px;background:#000000;-moz-box-shadow:0 8px #000000, 0 16px #000000;-webkit-box-shadow:0 8px #000000, 0 16px #000000;box-shadow:0 8px #000000, 0 16px #000000;}
-ul#css3menu1 > li.switch:hover:before{
-	background:#ffffff;-moz-box-shadow:0 8px #ffffff, 0 16px #ffffff;-webkit-box-shadow:0 8px #ffffff, 0 16px #ffffff;box-shadow:0 8px #ffffff, 0 16px #ffffff;}
-.c3m-switch-input{
-	display:none;}
+
 ul#css3menu1 li:hover>a,ul#css3menu1 li > a.pressed{
-    border-style:solid;
-    border-color:#C0C0C0;
-    color:black;
+    color: black;
     
     background: rgb(247,232,95); /* Old browsers */
     background: -moz-linear-gradient(top, rgba(247,232,95,1) 0%, rgba(193,172,13,1) 100%); /* FF3.6-15 */
     background: -webkit-linear-gradient(top, rgba(247,232,95,1) 0%,rgba(193,172,13,1) 100%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to bottom, rgba(247,232,95,1) 0%,rgba(193,172,13,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7e85f', endColorstr='#c1ac0d',GradientType=0 ); /* IE6-9 */
-
-    text-decoration:none;
-    text-shadow:#FFF 0 0 1px;
 }
+
 ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li > a.pressed{
-	background-color:#ffffff;
-    background-image:none;
     color:#bb0000;
-    text-decoration:none;
 }
-ul#css3menu1 li.topfirst>a{
-	border-radius:0px 0 0 0px;-moz-border-radius:0px 0 0 0px;-webkit-border-radius:0px;-webkit-border-top-right-radius:0;-webkit-border-bottom-right-radius:0;}
-ul#css3menu1 li.toplast>a{
-	border-radius:0 0px 0px 0;-moz-border-radius:0 0px 0px 0;-webkit-border-radius:0;-webkit-border-top-right-radius:0px;-webkit-border-bottom-right-radius:0px;}
-
-@-moz-document url-prefix(){body:first-of-type ul#css3menu1{display:inline-block} body:first-of-type ul#css3menu1>li{display:block;float:left !important;}}
-@media only screen and (max-width:399px),only screen and (max-device-width:399px){
-ul#css3menu1>li:nth-of-type(1){width:25%}ul#css3menu1>li:nth-of-type(2){width:25%}ul#css3menu1>li:nth-of-type(3){width:25%}ul#css3menu1>li:nth-of-type(4){width:25%}ul#css3menu1>li:nth-of-type(5){width:33%}ul#css3menu1>li:nth-of-type(6){width:33%}ul#css3menu1>li:nth-of-type(7){width:34%}body:first-of-type ul#css3menu1{display:inline-block} body:first-of-type ul#css3menu1>li{display:block;float:left !important;}}
-@media screen and (max-width: 768px) {
-	ul#css3menu1 > li {
-		position: initial;}
-	ul#css3menu1 ul .submenu,ul#css3menu1 li > ul {
-		left: 0; right:auto; top: 100%;}
-	ul#css3menu1 .submenu,ul#css3menu1 ul,ul#css3menu1 .column {
-		-webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;padding-right: 0;width: 100% !important;}
-}
-@media screen and (max-width: 228px) {
-	ul#css3menu1 {
-		width: 100%;}
-	ul#css3menu1 > li {
-		display: none;		position: relative;		width: 100% !important;}
-	ul#css3menu1 > li.switch,.c3m-switch-input:checked + ul#css3menu1 > li + li {
-		display: block;}
-	ul#css3menu1 > li.switch > label {		position: absolute;cursor: pointer;top: 0;left: 0;right: 0;bottom: 0;}}
