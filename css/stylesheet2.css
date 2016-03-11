@@ -1,3 +1,7 @@
+/**************************
+ * AUSBowl Blood Bowl Theme
+ **************************/
+
 /*************************
  * General
  *************************/
@@ -72,25 +76,9 @@ f2 {
 
 h3 {margin:0} /* Reset browser default margin */
 
-/* Title for sections */
-h2
-{
-    clear: both;
-    text-align: center;
-    padding-top: 20px;
-    padding-bottom: 10px;
-    width: inherit;
-    font-size: 18px;
-    font-weight: bold;
-	margin:0 auto;
-}
-
-/* Container for rows */
-div.row {width: inherit; clear: both; background-color: inherit;}
-
 /* MAIN container */
 div.everything {
-  width: 99%; 
+    width: 99%; 
     margin: 5px;
     background-color: inherit;
 	border-left: 1px;
@@ -126,27 +114,22 @@ div.menu {
 
 /* Section code container */
 div.section {
-    margin: px; 
+    margin: 5px; 
     color: #335289;
 	padding: 20px;
 	padding-top:50px; 
     background-color: #EEEEEE;
 }
 
+/*
  *   Box (inner) stylings.
  */
 div.boxCommon,div.boxWide,div.boxCoachPage,div.boxTeamPage,div.boxPlayerPageInfo {
-    margin: 0px; 
-	border-radius: 4px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-
-	
+    margin: 0 0 18px 0; 
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
 }
-div.boxWide             {clear:both;}
-div.boxCoachPage        {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
-div.boxTeamPage         {float: left; width: 270px; margin: 15px; margin-bottom: 0px;}
-div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 
 .boxTitle1,.boxTitle2,.boxTitle3,.boxTitle4,.boxTitle5 {
 	-moz-border-top-left-radius: 8px;
@@ -179,7 +162,6 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 	-moz-border-bottom-right-radius: 8px;
 	-webkit-border-bottom-right-radius: 8px;
 	border-bottom-right-radius: 8px;
-	margin-bottom:18px;
 	
 	border-style: solid;
 	border-left-width: 6px;
@@ -189,65 +171,6 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 	border-color: #0b8ccd;
 
 }
-table.boxTable {border-spacing: 5px; width: 100%;}
-
-/* Other types of boxes. */
-.helpBox {
-        color: #FFFFFF;
-        border: 2px solid #CC6633;
-        background-color: #4C6260;
-        padding:10px;
-        line-height:1.4em;
-}
-
-/* Other types of boxes. */
-.errorBox {
-        color: #FFFFFF;
-        border: 2px solid #000000;
-        background-color: #800000;
-        padding:10px;
-        line-height:1.4em;
-}
-
-/*
-.assistantBox {
-        color: #000000;
-        border: 2px solid #3D3D3D;
-        background-color: #FFCCFF;
-        padding:10px;
-        line-height:1.4em;
-}
-*/
-
-/* 
- *   Tables, TRs and TDs 
- */
-
-/* Used almost everywhere */
-table.common  {border: none; width: 100%; background-color: inherit;}
-tr.commonhead {background-color: #CCCCCC;}
-
-/* For the tours list */
-table.tours {
-    border: none; 
-    width: 100%; 
-    background-color: inherit; 
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-/* tour lists: titel boxes */
-.leagues     {background-color: #659EC7;}
-.divisions   {background-color: #8BB381;}
-.tours       {background-color: #BBBBBB;}
-td.round     {background-color: #CCCCCC;}
-td.match     {background-color: #DDDDDD;}
-td.seperator {height:15px;}
-
-/* tour lists: node containers */
-div.leaguesNCont     {margin-top:15px; margin-left:10px;}
-div.divisionsNCont   {margin-top:5px;  margin-left:25px;}
-div.toursNCont       {margin-top:0px;  margin-left:10px;}
 
 /* 
  *   Section specific 
@@ -255,25 +178,9 @@ div.toursNCont       {margin-top:0px;  margin-left:10px;}
 
 /* Main page */
 div.main_head       {clear: both; padding-left: 10px; padding-top: 0px; padding-bottom: 5px; font-size: 18px; background-color: inherit;}
-div.main_foot       {clear: both; font-size: 11px; padding: 30px; padding-top: 20px; background-color: inherit;}
 div.main_rightColumn {float: right; width: 49%; background-color: inherit;}
 div.main_leftColumn {float: left; width: 49%; background-color: inherit;}
     div.main_leftColumn_head     {clear: both; text-align: right; padding-right: 10px; background-color: inherit;} /* Padding should be the same as lcolBox padding. */
         div.main_leftColumn_welcome  {clear: both; padding-left: 10px; padding-top: 3px; padding-bottom: 3px; background-color: inherit; text-align: left;}
         div.main_leftColumn_left  {padding-left: 10px; padding-top: 10px; padding-bottom: 15px; background-color: inherit; text-align: left; float:left;}
         div.main_leftColumn_right {padding-left: 20px; padding-top: 3px;  padding-bottom: 0px;  background-color: inherit; text-align: right; float:right;}
-
-/* 
- *  Other
- */
-
-/* Status bar */
-div.messageContainer    {width:100%;padding:6px 0px 6px 0px;color:#fff;font-weight:bold;}
-div.green               {clear:both;background-color:#390;border:1px solid #298000;}
-div.red                 {clear:both;background-color:#F20000;border:1px solid #c00;}
-
-/* Game result icon*/
-.match_icon     {background:transparent url(../images/result_icon.gif) no-repeat 0 0;width:12px;height:12px}
-.won            {background-position:-14px 0}
-.draw           {background-position:-28px 0}
-.lost           {background-position:-42px 0}
