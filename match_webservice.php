@@ -9,27 +9,40 @@ if (!Coach::isLoggedIn())
 $action = $_REQUEST["action"];
 if($action == "update") {
     $match = new Match($_POST["match_id"]);
+    
+    function pushIfSet(&$inputArray, $key, $value, $convert) {
+        if($value != null)
+            $inputArray[$key] = $convert($value);
+    }
+    
+    $toInt = function($value) {
+        return (int) $value;
+    };
+    $timesOneThousand = function($value) {
+        return (int) $value * 1000;
+    };
+    
+    $input = array();
+    pushIfSet($input, 'submitter_id', $_SESSION['coach_id'], $toInt);
+    pushIfSet($input, 'stadium', $_POST['stadium'], $toInt);
+    pushIfSet($input, 'gate', $_POST['gate'], $timesOneThousand);
+    pushIfSet($input, 'fans', $_POST['fans'], $toInt);
+    pushIfSet($input, 'ffactor1', $_POST['ff1'], $toInt);
+    pushIfSet($input, 'ffactor2', $_POST['ff2'], $toInt);
+    pushIfSet($input, 'income1', $_POST['inc1'], $timesOneThousand);
+    pushIfSet($input, 'income2', $_POST['inc2'], $timesOneThousand);
+    pushIfSet($input, 'team1_score', $_POST['result1'], $toInt);
+    pushIfSet($input, 'team2_score', $_POST['result2'], $toInt);
+    pushIfSet($input, 'smp1', $_POST['smp1'], $toInt);
+    pushIfSet($input, 'smp2', $_POST['smp2'], $toInt);
+    pushIfSet($input, 'tcas1', $_POST['tcas1'], $toInt);
+    pushIfSet($input, 'tcas2', $_POST['tcas2'], $toInt);
+    pushIfSet($input, 'fame1', $_POST['fame1'], $toInt);
+    pushIfSet($input, 'fame2', $_POST['fame2'], $toInt);
+    pushIfSet($input, 'tv1', $_POST['tv1'], $timesOneThousand);
+    pushIfSet($input, 'tv2', $_POST['tv2'], $timesOneThousand);
 
-    $match->update(array(
-        'submitter_id'  => (int) $_SESSION['coach_id'],
-        'stadium'       => (int) $_POST['stadium'],
-        'gate'          => (int) $_POST['gate']*1000,
-        'fans'          => (int) $_POST['fans'],
-        'ffactor1'      => (int) $_POST['ff1'],
-        'ffactor2'      => (int) $_POST['ff2'],
-        'income1'       => (int) $_POST['inc1']*1000,
-        'income2'       => (int) $_POST['inc2']*1000,
-        'team1_score'   => (int) $_POST['result1'],
-        'team2_score'   => (int) $_POST['result2'],
-        'smp1'          => (int) $_POST['smp1'],
-        'smp2'          => (int) $_POST['smp2'],
-        'tcas1'         => (int) $_POST['tcas1'],
-        'tcas2'         => (int) $_POST['tcas2'],
-        'fame1'         => (int) $_POST['fame1'],
-        'fame2'         => (int) $_POST['fame2'],
-        'tv1'           => (int) $_POST['tv1']*1000,
-        'tv2'           => (int) $_POST['tv2']*1000,
-    ));
+    $match->updatePartial($input);
 
     $team = new Team($_POST["team_id"]);    
     foreach ($team->getPlayers() as $player) {
