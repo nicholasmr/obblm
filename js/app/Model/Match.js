@@ -110,23 +110,6 @@ var Match = function(playersOnSelectedTeam) {
             action: 'update'            
         };
         
-        // Save these values without changing them
-        data['stadium'] = match.stadium;
-        data['gate'] = match.gate;
-        data['fans'] = match.fans;
-        data['smp1'] = match.smp1;
-        data['smp2'] = match.smp2;
-        data['tcas1'] = match.tcas1;
-        data['tcas2'] = match.tcas2;
-        data['fame1'] = match.fame1;
-        data['fame2'] = match.fame2;
-        data['tv1'] = match.tv1;
-        data['tv2'] = match.tv2;        
-        
-        // Put back the values we already had.
-        data[isTeamOne() ? 'ff2' : 'ff1'] = match[isTeamOne() ? 'ffactor2' : 'ffactor1'];
-        data[isTeamOne() ? 'inc2' : 'inc1'] = match[isTeamOne() ? 'income2' : 'income1'];
-        
         data[isTeamOne() ? 'ff1' : 'ff2'] = self.fanFactorChange();
         data[isTeamOne() ? 'inc1' : 'inc2'] = self.treasuryChange();
         data[isTeamOne() ? 'result1' : 'result2'] = self.myScore();
