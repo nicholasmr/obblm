@@ -874,7 +874,6 @@ public static function frame_begin($menu = true)
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
         <script type="text/javascript" src="lib/jquery.expander.js"></script>
-        <link type="text/css" href="css/autocomplete.css" rel="stylesheet">
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
         <script>tinymce.init({ 
             selector:'.html_edit',
@@ -906,9 +905,8 @@ public static function frame_begin($menu = true)
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <title><?php echo $settings['site_name']; ?></title>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css">
+        <link type="text/css" href="css/stylesheet_default.css" rel="stylesheet">
         <link type="text/css" href="css/stylesheet<?php echo $settings['stylesheet']; ?>.css" rel="stylesheet">
-        <link type="text/css" href="css/mobile.css" rel="stylesheet">
-        <link type="text/css" href="css/autocomplete.css" rel="stylesheet">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script type="text/javascript" src="js/lib/underscore-1.8.3.min.js"></script>

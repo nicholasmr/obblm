@@ -252,3 +252,12 @@ div.red                 {clear:both;background-color:#F20000;border:1px solid #c
 .won		{background-position:-14px 0}
 .draw		{background-position:-28px 0}
 .lost		{background-position:-42px 0}
+
+/*********************
+ Mobile
+ *********************/
+@media only screen and (max-device-width: 600px){
+    .ui-widget-header {
+        background: #A37B45;
+    }
+}
