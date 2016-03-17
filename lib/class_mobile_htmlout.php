@@ -127,7 +127,7 @@ class Mobile_HTMLOUT {
                         <td data-bind="text: number"></td>
                         <td><a href="#" data-bind="click: $parent.openPlayerDialog, text: name"></td>
                         <td data-bind="text: position"></td>
-                        <td data-bind="text: statsString"></td>
+                        <td data-bind="html: statsString"></td>
                         <td data-bind="html: skills"></td>
                         <td data-bind="text: spp"></td>
                         <td data-bind="text: nigglingInjuryCount"></td>

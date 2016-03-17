@@ -15,5 +15,10 @@ var PlayerViewModel = function(player) {
     self.nigglingInjuryCount = player.inj_ni;
     self.mayBuyNewSkill = player.may_buy_new_skill > 0;
     
-    self.statsString = player.ma + '/' + player.st + '/' + player.ag + '/' + player.av;
+    var statsString = '{0}/{1}/{2}/{3}';
+    statsString = statsString.replace('{0}', player.inj_ma !== '0' ? ('<span class="injury">' + player.ma + '</span>') : player.ma);
+    statsString = statsString.replace('{1}', player.inj_st !== '0' ? ('<span class="injury">' + player.st + '</span>') : player.st);
+    statsString = statsString.replace('{2}', player.inj_ag !== '0' ? ('<span class="injury">' + player.ag + '</span>') : player.ag);
+    statsString = statsString.replace('{3}', player.inj_av !== '0' ? ('<span class="injury">' + player.av + '</span>') : player.av);
+    self.statsString = statsString;
 };
