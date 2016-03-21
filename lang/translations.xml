@@ -2223,7 +2223,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <star_stn>Position de la Star</star_stn>
 </statistics_menu>
 <admin_menu>
-        <name>Admininstration</name>
+        <name>Administración</name>
         <nodes>Ligues, divisions, tournois</nodes>
         <ct_man>Gérer : Coachs &amp; équipes</ct_man>
         <usr_man>Gerer : Utilisateurs</usr_man>
