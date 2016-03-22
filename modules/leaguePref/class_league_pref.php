@@ -223,40 +223,74 @@ public static function showLeaguePreferences() {
 	// check this coach is allowed to administer this league
 	$canEdit = is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $l_pref->lid) ? "" : "DISABLED";
 
-echo<<< EOQ
+    ?>
 	<div class='boxWide'>
-		<h3 class='boxTitle4'>$l_pref->l_name</h3>
+		<h3 class='boxTitle4'><?php echo $l_pref->l_name; ?></h3>
 		<div class='boxConf'>
 			<table width="100%" border="0">
 			<form method="POST">
-				<tr><td><span title="$league_name_help">$league_name_title:</span></td>
-				<td><span title="$league_name_help"><input type="text" size="118" maxsize="128" name="league_name" value="$l_pref->league_name" $canEdit/></span></td></tr>
-				<tr><td><span title="$forum_url_help">$forum_url_title:</span></td>
-				<td><span title="$forum_url_help"><input type="text" size="118" maxsize="256" name="forum_url" value="$l_pref->forum_url" $canEdit/></span></td></tr>
-				<tr><td><span title="$welcome_help">$welcome_title:</span></td>
-				<td><span title="$welcome_help"><textarea rows="4" cols="90" class="html_edit" name="welcome" $canEdit>$l_pref->welcome</textarea></span></td></tr>
-				<tr><td><span title="$rules_help">$rules_title:</span></td>
-				<td><span title="$rules_help"><textarea rows="4" cols="90" class="html_edit" name="rules" $canEdit>$l_pref->rules</textarea></span></td></tr>
-				<input type="hidden" name="lid" value="$l_pref->lid" />
-				<input type="hidden" name="existing" value="$l_pref->existing" />
-				<tr><td><span title="$prime_help">$prime_title:</span></td>
-				<td><span title="$prime_help"><select name="p_tour">
-EOQ;
-	foreach ($rTours as $trid => $desc) {
-		echo "<option value='$trid'" . ($trid==$l_pref->p_tour ? 'SELECTED' : ''). " $canEdit >$desc[tname]</option>\n";
-	}
-echo<<< EOQ
-				</select></span></td></tr>
+				<tr>
+                    <td>
+                        <span title="<?php echo $league_name_help; ?>"><?php echo $league_name_title; ?>:</span>
+                    </td>
+                    <td>
+                        <input type="text" size="118" maxsize="128" name="league_name" title="<?php echo $league_name_help; ?>" value="<?php echo $l_pref->league_name; ?>" <?php echo $canEdit; ?>/>
+                    </td>
+                </tr>
+				<tr>
+                    <td>
+                        <span title="<?php echo $forum_url_help; ?>"><?php echo $forum_url_title; ?>:</span>
+                    </td>
+                    <td>
+                        <input type="text" size="118" maxsize="256" name="forum_url" title="<?php echo $forum_url_help; ?>" value="<?php echo $l_pref->forum_url; ?>" <?php echo $canEdit; ?>/>
+                    </td>
+                </tr>
+				<tr>
+                    <td>
+                        <span title="<?php echo $welcome_help; ?>"><?php echo $welcome_title; ?>:</span>
+                    </td>
+                    <td>
+                        <textarea rows="4" cols="90" class="html_edit" name="welcome" title="<?php echo $welcome_help; ?>" <?php echo $canEdit; ?>><?php echo $l_pref->welcome; ?></textarea>
+                    </td>
+                </tr>
+				<tr>
+                    <td>
+                        <span title="<?php echo $rules_help; ?>"><?php echo $rules_title; ?>:</span>
+                    </td>
+                    <td>
+                        <textarea rows="4" cols="90" class="html_edit" name="rules" title="<?php echo $rules_help; ?>" <?php echo $canEdit; ?>><?php echo $l_pref->rules; ?></textarea>
+                    </td>
+                </tr>
+				<input type="hidden" name="lid" value="<?php echo $l_pref->lid; ?>" />
+				<input type="hidden" name="existing" value="<?php echo $l_pref->existing; ?>" />
+				<tr>
+                    <td>
+                        <span title="<?php echo $prime_help; ?>"><?php echo $prime_title; ?>:</span>
+                    </td>
+                    <td>
+                        <select name="p_tour" title="<?php echo $prime_help; ?>">
+                            <?php
+                                foreach ($rTours as $trid => $desc) {
+                                    echo "<option value='$trid'" . ($trid==$l_pref->p_tour ? 'SELECTED' : ''). " " . $canEdit . ">" . $desc[tname] . "</option>\n";
+                                }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
 
-				<tr><td colspan="2"><input type="submit" name="action" $canEdit title="$submit_title" value="$submit_text" style="position:relative; right:-200px;"></td></tr>
+				<tr>
+                    <td colspan="2">
+                        <input type="submit" name="action" <?php echo $canEdit; ?> title="<?php echo $submit_title; ?>" value="<?php echo $submit_text; ?>" style="position:relative; right:-200px;">
+                    </td>
+                </tr>
 			</form>
 			</table>
 		</div>
 	</div>
-EOQ;
-	echo "<div class='boxWide'>";
-	HTMLOUT::helpBox($lng->getTrn('help', 'LeaguePref'), '');
-	echo "</div>";
+    <div class='boxWide'>
+        <?php HTMLOUT::helpBox($lng->getTrn('help', 'LeaguePref'), ''); ?>
+	</div>
+    <?php
 }
 
 public static function handleActions() {
