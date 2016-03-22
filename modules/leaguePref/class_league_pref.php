@@ -227,64 +227,64 @@ public static function showLeaguePreferences() {
 	<div class='boxWide'>
 		<h3 class='boxTitle4'><?php echo $l_pref->l_name; ?></h3>
 		<div class='boxConf'>
-			<table width="100%" border="0">
-			<form method="POST">
-				<tr>
-                    <td>
-                        <span title="<?php echo $league_name_help; ?>"><?php echo $league_name_title; ?>:</span>
-                    </td>
-                    <td>
-                        <input type="text" size="118" maxsize="128" name="league_name" title="<?php echo $league_name_help; ?>" value="<?php echo $l_pref->league_name; ?>" <?php echo $canEdit; ?>/>
-                    </td>
-                </tr>
-				<tr>
-                    <td>
-                        <span title="<?php echo $forum_url_help; ?>"><?php echo $forum_url_title; ?>:</span>
-                    </td>
-                    <td>
-                        <input type="text" size="118" maxsize="256" name="forum_url" title="<?php echo $forum_url_help; ?>" value="<?php echo $l_pref->forum_url; ?>" <?php echo $canEdit; ?>/>
-                    </td>
-                </tr>
-				<tr>
-                    <td>
-                        <span title="<?php echo $welcome_help; ?>"><?php echo $welcome_title; ?>:</span>
-                    </td>
-                    <td>
-                        <textarea rows="4" cols="90" class="html_edit" name="welcome" title="<?php echo $welcome_help; ?>" <?php echo $canEdit; ?>><?php echo $l_pref->welcome; ?></textarea>
-                    </td>
-                </tr>
-				<tr>
-                    <td>
-                        <span title="<?php echo $rules_help; ?>"><?php echo $rules_title; ?>:</span>
-                    </td>
-                    <td>
-                        <textarea rows="4" cols="90" class="html_edit" name="rules" title="<?php echo $rules_help; ?>" <?php echo $canEdit; ?>><?php echo $l_pref->rules; ?></textarea>
-                    </td>
-                </tr>
-				<input type="hidden" name="lid" value="<?php echo $l_pref->lid; ?>" />
-				<input type="hidden" name="existing" value="<?php echo $l_pref->existing; ?>" />
-				<tr>
-                    <td>
-                        <span title="<?php echo $prime_help; ?>"><?php echo $prime_title; ?>:</span>
-                    </td>
-                    <td>
-                        <select name="p_tour" title="<?php echo $prime_help; ?>">
-                            <?php
-                                foreach ($rTours as $trid => $desc) {
-                                    echo "<option value='$trid'" . ($trid==$l_pref->p_tour ? 'SELECTED' : ''). " " . $canEdit . ">" . $desc[tname] . "</option>\n";
-                                }
-                            ?>
-                        </select>
-                    </td>
-                </tr>
+            <form method="POST">
+                <input type="hidden" name="lid" value="<?php echo $l_pref->lid; ?>" />
+                <input type="hidden" name="existing" value="<?php echo $l_pref->existing; ?>" />
+                <table width="100%" border="0">
+                    <tr title="<?php echo $league_name_help; ?>">
+                        <td>
+                            <?php echo $league_name_title; ?>:
+                        </td>
+                        <td>
+                            <input type="text" size="118" maxsize="128" name="league_name" <?php echo $canEdit; ?> value="<?php echo $l_pref->league_name; ?>" />
+                        </td>
+                    </tr>
+                    <tr title="<?php echo $forum_url_help; ?>">
+                        <td>
+                            <?php echo $forum_url_title; ?>:
+                        </td>
+                        <td>
+                            <input type="text" size="118" maxsize="256" name="forum_url" <?php echo $canEdit; ?> value="<?php echo $l_pref->forum_url; ?>" />
+                        </td>
+                    </tr>
+                    <tr title="<?php echo $welcome_help; ?>">
+                        <td>
+                            <?php echo $welcome_title; ?>:
+                        </td>
+                        <td>
+                            <textarea rows="4" cols="90" class="html_edit" name="welcome" <?php echo $canEdit; ?>><?php echo $l_pref->welcome; ?></textarea>
+                        </td>
+                    </tr>
+                    <tr title="<?php echo $rules_help; ?>">
+                        <td>
+                            <?php echo $rules_title; ?>:
+                        </td>
+                        <td>
+                            <textarea rows="4" cols="90" class="html_edit" name="rules" <?php echo $canEdit; ?>><?php echo $l_pref->rules; ?></textarea>
+                        </td>
+                    </tr>
+                    <tr title="<?php echo $prime_help; ?>">
+                        <td>
+                            <?php echo $prime_title; ?>:
+                        </td>
+                        <td>
+                            <select name="p_tour">
+                                <?php
+                                    foreach ($rTours as $trid => $desc) {
+                                        echo "<option value='$trid'" . ($trid==$l_pref->p_tour ? 'SELECTED' : ''). " " . $canEdit . ">" . $desc[tname] . "</option>\n";
+                                    }
+                                ?>
+                            </select>
+                        </td>
+                    </tr>
 
-				<tr>
-                    <td colspan="2">
-                        <input type="submit" name="action" <?php echo $canEdit; ?> title="<?php echo $submit_title; ?>" value="<?php echo $submit_text; ?>" style="position:relative; right:-200px;">
-                    </td>
-                </tr>
-			</form>
-			</table>
+                    <tr title="<?php echo $submit_title; ?>">
+                        <td colspan="2">
+                            <input type="submit" name="action" <?php echo $canEdit; ?> value="<?php echo $submit_text; ?>" style="position:relative; right:-200px;">
+                        </td>
+                    </tr>
+                </table>
+            </form>
 		</div>
 	</div>
     <div class='boxWide'>
