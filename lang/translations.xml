@@ -2353,12 +2353,12 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <buy_goods_warn> &lt;br&gt;&lt;br&gt;Notez que les relances d'équipes coutent le &lt;font color='red'&gt;&lt;b&gt;double&lt;/b&gt;&lt;/font&gt;.&lt;br&gt;Si vous souhaitez acheter une elance au prix de base, demandez à l'Administrateur un remboursement de la différence. </buy_goods_warn>
         <drop_goods> Se séparer de biens sans remboursement. </drop_goods>
         <ready_state> Cet attribut d'équipe indique que l'équipe accepte les matchs ou non. </ready_state>
-        <retire> Mise en retraite de l'équipe.&lt;br&gt;Une fois à la retraite, l'équipe n'est plus gérable.&lt;br&gt;Seul l'Admininstrateur peut remettre l'équipe en service actif. La mise à la retraite est immédiate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </retire>
+        <retire> Mise en retraite de l'équipe.&lt;br&gt;Une fois à la retraite, l'équipe n'est plus gérable.&lt;br&gt;Seul l'Administrateur peut remettre l'équipe en service actif. La mise à la retraite est immédiate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </retire>
         <delete> Effacer l'équipe.&lt;br&gt;Pour le bien des statistiques, vous ne pouvez plus effacer d'équipe ayant joué un match. L'effacement est immédiat mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </delete>
 </desc>
 </box_tm>
 <box_admin>
-        <title>Outils d'Admininstration</title>
+        <title>Outils d'Administration</title>
         <unhire_journeyman>Désembaucher un journalier</unhire_journeyman>
         <unsell_player>Ré-embaucher un joueur</unsell_player>
         <unbuy_goods>Annuler les achats de bien d'équipe.</unbuy_goods>
