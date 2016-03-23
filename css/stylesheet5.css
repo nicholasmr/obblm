@@ -217,4 +217,8 @@ ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li > a.pressed{
     div.section {
         margin: 5px;
     }
+    
+    div.main_leftColumn, div.main_rightColumn {
+        width: 50%;
+    }
 }
