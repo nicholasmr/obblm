@@ -868,6 +868,7 @@ public static function frame_begin($menu = true)
         <title><?php echo $settings['site_name']; ?></title>
         <link type="text/css" href="css/stylesheet_default.css" rel="stylesheet">
         <link type="text/css" href="css/stylesheet<?php echo $settings['stylesheet']; ?>.css" rel="stylesheet">
+        <link type="text/css" href="css/league_override_<?php echo self::getSelectedNodeLid(); ?>.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
@@ -907,6 +908,7 @@ public static function frame_begin($menu = true)
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css">
         <link type="text/css" href="css/stylesheet_default.css" rel="stylesheet">
         <link type="text/css" href="css/stylesheet<?php echo $settings['stylesheet']; ?>.css" rel="stylesheet">
+        <link type="text/css" href="css/league_override_<?php echo self::getSelectedNodeLid(); ?>.css" rel="stylesheet">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script type="text/javascript" src="js/lib/underscore-1.8.3.min.js"></script>
