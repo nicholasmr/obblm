@@ -963,6 +963,7 @@ private static function make_menu()
                             <li><a href="index.php?SLS_lid=12" >DSBBTT (London)</a></li>
                             <li><a href="index.php?SLS_lid=13" >KRBBL (Folkestone)</a></li>
                             <li><a href="index.php?SLS_lid=26" >Headingley Blood Bowl (Leeds)</a></li>
+                            <li><a href="index.php?SLS_lid=31" >Dragon Alley (Pembroke, Wales)</a></li>
 						</ul>
                     </li>
 					<li><a href="#" >Sweden ></a>
@@ -974,7 +975,7 @@ private static function make_menu()
 						<ul>
 							<li><a href="index.php?SLS_lid=18" >Liga Burgalesa</a></li>
 							<li><a href="index.php?SLS_lid=24" >Mecaliga (Madrid)</a></li>
-						<li><a href="index.php?SLS_lid=28" >Liga de la Sección de Reconocimiento (El Prat de Llobregat, Barcelona)</a></li>
+                            <li><a href="index.php?SLS_lid=28" >Liga de la Sección de Reconocimiento (El Prat de Llobregat, Barcelona)</a></li>
 							<li><a href="index.php?SLS_lid=29" >Victoria City Blood Bowl League (Vitoria-Gasteiz)</a></li>
 						</ul>
                     </li>                      
@@ -1015,14 +1016,13 @@ private static function make_menu()
 				<ul>
 					<li><a href="#" >Australia ></a>
                 		<ul>
-							<li><a href="index.php?SLS_lid=17" >Newcastle Legion</a>
-</li>
+							<li><a href="index.php?SLS_lid=17" >Newcastle Legion</a></li>
 						</ul>  
                     </li>
 				</ul>
             </li>
             <li><a href="http://www.thenaf.net/leagues/leagues-locator/" >TheNAF.net League Locator</a></li>
-<li><a href="index.php?SLS_lid=1" >League Hosting Home</a></li>
+            <li><a href="index.php?SLS_lid=1" >League Hosting Home</a></li>
             <li><a href="index.php?section=about">About OBBLM</a></li>
 		</ul>
     </li>
