@@ -120,6 +120,7 @@ require_once('lib/class_tablehandler.php');
 require_once('lib/class_image.php');
 require_once('lib/class_translations.php');
 require_once('lib/class_objevent.php');
+require_once('lib/class_filemanager.php');
 
 // External libraries.
 require_once('lib/class_arraytojs.php');

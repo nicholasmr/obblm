@@ -124,6 +124,15 @@ public static function getModuleUpgradeSQL()
 }
 
 public static function triggerHandler($type, $argv){
+    global $settings;
+    
+    switch ($type) {
+        case ( $type == T_TRIGGER_BEFORE_PAGE_RENDER ):
+            if(isset($_POST['core_theme_id']))
+                $settings['stylesheet'] = $_POST['core_theme_id'];
+        
+            break;
+    }
 }
 
 /***************
@@ -145,8 +154,9 @@ public $welcome = '';
 public $rules = '';
 public $existing = false;
 public $theme_css = '';
+public $core_theme_id = 0;
 
-function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $rules, $existing, $theme_css) {
+function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $rules, $existing, $theme_css, $core_theme_id) {
 	global $settings;
 	$this->lid = $lid;
 	$this->l_name = $name;
@@ -157,6 +167,7 @@ function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $ru
 	$this->rules = isset($rules) ? $rules: $settings['rules'];
 	$this->existing = $existing;
     $this->theme_css = $theme_css;
+    $this->core_theme_id = $core_theme_id;
 }
 
 /* Gets the preferences for the current league */
@@ -173,15 +184,12 @@ public static function getLeaguePreferences() {
 
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
-            $theme_css = ''; 
-            $leagueOverrideCssFile = @fopen(realpath('./css') . "/league_override_$sel_lid.css", 'r');
-            while($leagueOverrideCssFile && !feof($leagueOverrideCssFile))
-                 $theme_css .= fgets($leagueOverrideCssFile);
+            $theme_css = FileManager::readFile(FileManager::getCssDirectoryName() . "/league_override_$sel_lid.css"); 
             
-            return new LeaguePref($row['lid'],$row['name'],$row['prime_tid'],$row['league_name'],$row['forum_url'],$row['welcome'],$row['rules'], true,$theme_css);
+            return new LeaguePref($row['lid'],$row['name'],$row['prime_tid'],$row['league_name'],$row['forum_url'],$row['welcome'],$row['rules'], true,$theme_css,$settings['stylesheet']);
         }
     } else {
-		return new LeaguePref($sel_lid,$leagues['lname'],null,null,null,null,null,null,false, null);
+		return new LeaguePref($sel_lid,$leagues['lname'],null,null,null,null,null,null,false, null, $settings['stylesheet']);
 	}
 }
 
@@ -196,16 +204,18 @@ function save() {
     } else {
         $query = "INSERT INTO league_prefs (f_lid, prime_tid, second_tid, league_name, forum_url, welcome, rules) VALUE ($this->lid, $this->p_tour, $this->s_tour, '".mysql_real_escape_string($this->league_name)."', '".mysql_real_escape_string($this->forum_url)."', '".mysql_real_escape_string($this->welcome)."', '".mysql_real_escape_string($this->rules)."')";
     }
-        
-    $leagueOverrideCssFile = fopen(realpath('./css') . "/league_override_$this->lid.css", 'w');
-    fwrite($leagueOverrideCssFile, $this->theme_css);
-    fclose($leagueOverrideCssFile);
+           
+    FileManager::writeFile(FileManager::getCssDirectoryName() . "/league_override_$this->lid.css", $this->theme_css);
     
-	return mysql_query($query);
+    $settingsFileContents = FileManager::readFile(FileManager::getSettingsDirectoryName() . "/settings_$this->lid.php");
+    $settingsFileContents = preg_replace("/settings\['stylesheet'\]\s*=\s[0-9]+/", "settings['stylesheet'] = $this->core_theme_id", $settingsFileContents);
+    FileManager::writeFile(FileManager::getSettingsDirectoryName() . "/settings_$this->lid.php", $settingsFileContents);
+        
+    return mysql_query($query);
 }
 
 public static function showLeaguePreferences() {
-    global $lng, $tours, $coach, $leagues;
+    global $lng, $tours, $coach, $leagues, $settings;
 
     title($lng->getTrn('name', 'LeaguePref'));
 
@@ -283,9 +293,31 @@ public static function showLeaguePreferences() {
                             <select name="p_tour">
                                 <?php
                                     foreach ($rTours as $trid => $desc) {
-                                        echo "<option value='$trid'" . ($trid==$l_pref->p_tour ? 'SELECTED' : ''). " " . $canEdit . ">" . $desc['tname'] . "</option>\n";
+                                        echo "<option value='$trid'" . ($trid==$l_pref->p_tour ? 'SELECTED' : '') . " " . $canEdit . ">" . $desc['tname'] . "</option>\n";
                                     }
                                 ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr title="<?php echo $lng->getTrn('core_theme_help', 'LeaguePref'); ?>">
+                        <td>
+                            <?php echo $lng->getTrn('core_theme_title', 'LeaguePref'); ?>:
+                        </td>
+                        <td>
+                            <select name="core_theme_id">
+                            <?php
+                                $stylesheetLength = strlen('stylesheet');
+                                foreach(FileManager::getAllCoreCssSheetFileNames() as $cssFileName) {
+                                    $extensionIndex = strrpos($cssFileName, '.');
+                                    $fileStartIndex = strrpos($cssFileName, 'stylesheet');
+                                    $idLength = $extensionIndex - $fileStartIndex -$stylesheetLength;
+                                    $cssId = substr($cssFileName, $fileStartIndex + $stylesheetLength, $idLength);
+                                    
+                                    // '_default' isn't a valid option, it's the default.
+                                    if($cssId != '_default')
+                                        echo '<option value="' . $cssId . '"' . ($cssId == $settings['stylesheet'] ? 'SELECTED' : '') . '>' . $cssId . '</option>';
+                                }
+                            ?>
                             </select>
                         </td>
                     </tr>
@@ -315,10 +347,10 @@ public static function showLeaguePreferences() {
 
 public static function handleActions() {
     global $lng, $coach;
-
+    
     if (isset($_POST['action'])) {
     	if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $_POST['lid'])) {
-			$l_pref = new LeaguePref($_POST['lid'],"",$_POST['p_tour'],$_POST['league_name'],$_POST['forum_url'],$_POST['welcome'],$_POST['rules'],$_POST['existing'],$_POST['theme_css']);
+			$l_pref = new LeaguePref($_POST['lid'],"",$_POST['p_tour'],$_POST['league_name'],$_POST['forum_url'],$_POST['welcome'],$_POST['rules'],$_POST['existing'],$_POST['theme_css'],$_POST['core_theme_id']);
 			if($l_pref->validate()) {
 				if($l_pref->save()) {
 					echo "<div class='boxWide'>";

@@ -860,6 +860,8 @@ public static function nodeList($node, $nameid, $filter = array(), $disCond = ar
 public static function frame_begin($menu = true)
 {
     global $settings;
+    
+    Module::runTriggers(T_TRIGGER_BEFORE_PAGE_RENDER);
     ?>
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
     <html>
@@ -898,6 +900,8 @@ public static function frame_begin($menu = true)
 }public static function mobile_frame_begin($menu = true)
 {
     global $settings;
+    
+    Module::runTriggers(T_TRIGGER_BEFORE_PAGE_RENDER);
     ?>
     <!DOCTYPE HTML>
     <html>

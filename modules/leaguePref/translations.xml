@@ -38,4 +38,8 @@
 <css_title>League CSS&lt;br/&gt; &lt;i&gt;(careful if you don't know CSS)&lt;/i&gt;&lt;br/&gt;You may need to clear cache after editing.</css_title>
 <css_help>You can theme your League, but you need to know CSS!</css_help>
 
+<core_theme_title>Core Theme</core_theme_title>
+<core_theme_help>These numbers aren't super helpful, but these are the core themes available. You can select one, then build off it in the League CSS field. 0 is the default!</core_theme_help>
+
+
 </en-GB>
