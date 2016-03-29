@@ -314,8 +314,10 @@ public static function showLeaguePreferences() {
                                     $cssId = substr($cssFileName, $fileStartIndex + $stylesheetLength, $idLength);
                                     
                                     // '_default' isn't a valid option, it's the default.
-                                    if($cssId != '_default')
-                                        echo '<option value="' . $cssId . '"' . ($cssId == $settings['stylesheet'] ? 'SELECTED' : '') . '>' . $cssId . '</option>';
+                                    if($cssId != '_default') {
+                                        $coreThemeName = isset($settings['core_theme_names'][$cssId]) ? $settings['core_theme_names'][$cssId] : $cssId;
+                                        echo '<option value="' . $cssId . '"' . ($cssId == $settings['stylesheet'] ? 'SELECTED' : '') . '>' . $coreThemeName . '</option>';
+                                    }
                                 }
                             ?>
                             </select>

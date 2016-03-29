@@ -97,6 +97,7 @@ if ($settings['custom_races']['Apes of wrath'])     {require_once('lib/game_data
 # Module settings
 require_once('lib/settings_modules_default.php'); # Defaults
 require_once('settings_modules.php');             # Overrides
+require_once('settings_css.php');
 
 // OBBLM libraries.
 require_once('lib/mysql.php');
