@@ -1,7 +1,11 @@
 <?php
 
-$get_lid = 1;
-$settings['stylesheet']      = 1; 
+/*************************
+ * Local settings for League with ID = X, as per settings_X.php
+ *************************/
+preg_match('/settings_(.*?)\.php/', __FILE__, $match);
+$get_lid = $match[1];
+$settings['stylesheet'] = 1; 
 $settings['lang']            = 'en-GB';
 
 /*********************
@@ -24,6 +28,8 @@ $settings['league_url']      = get_alt_col('league_prefs','f_lid',$get_lid,'foru
 $settings['welcome']         = get_alt_col('league_prefs','f_lid',$get_lid,'welcome'); 
 // The next text appears when you click the rules button.
 $settings['rules']           = get_alt_col('league_prefs','f_lid',$get_lid,'rules'); 
+$get_prime = get_alt_col('league_prefs','f_lid',$get_lid,'prime_tid');
+$get_second = get_alt_col('league_prefs','f_lid',$get_lid,'second_tid');
 
 // Keep the following the same.
 $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the division nodes in the tournament lists section will automatically be folded up if all child tournaments in that division are marked as finished.
@@ -99,32 +105,12 @@ Also note that using HRSs with fields such as points (pts) for leagues/divisions
 */
 'HRS' => get_alt_col('tours','tour_id',$get_prime,'rs'), # Note: this must be a existing and valid HRS number from the main settings.php file.
 'title' => get_alt_col('tours','tour_id',$get_prime,'name'), # Table title
-'length' => 12, # Number of entries in table
+'length' => 40, # Number of entries in table
 # Format: "Displayed table column name" => "OBBLM field name". For the OBBLM fields available see http://nicholasmr.dk/obblmwiki/index.ph ... tomization
 'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
 ),
-
-# This will display a standings box of the top 6 teams in node (league, division or tournament) with ID = 1
-array(
-'id' => $get_second, # Node ID
-'box_ID' => 2,
-// Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
-'type' => 'tournament', # This sets the node to be a tournament. I.e. this will make a standings box for the tournament with ID = 1
-'infocus' => false, # If true a random team from the standings will be selected and its top players displayed.
-/*
-The house ranking system (HRS) NUMBER to sort the table against.
-Note, this is ignored for "type = tournament", since tours have an assigned HRS.
-Also note that using HRSs with fields such as points (pts) for leagues/divisions standings makes no sense as they are tournament specific fields (i.e. it makes no sense to sum the points for teams across different tours to get the teams' "league/division points", as the points definitions for tours may vary).
-*/
-'HRS' => get_alt_col('tours','tour_id',$get_prime,'rs'), # Note: this must be a existing and valid HRS number from the main settings.php file.
-'title' => get_alt_col('tours','tour_id',$get_prime,'name'), # Table title
-'length' => 12, # Number of entries in table
-# Format: "Displayed table column name" => "OBBLM field name". For the OBBLM fields available see http://nicholasmr.dk/obblmwiki/index.ph ... tomization
-'fields' => array('Name' => 'name', 'PTS' => 'pts', 'TV' => 'tv', 'CAS' => 'cas', 'W' => 'won', 'L' => 'lost', 'D' => 'draw', 'GF' => 'gf', 'GA' => 'ga',),
-),
+    
 );
-
-
 
 /*********************
  *   Front page: leaders boxes
@@ -134,22 +120,22 @@ $settings['fp_leaders'] = array(
     # Please note: You can NOT make expressions out of leader fields e.g.: 'field' => 'cas+td'
     # This will display a 'most CAS' player leaders box for the node (league, division or tournament) with ID = 1
     array(
-        'id'        => $get_lid, # Node ID
+        'id'        => get_alt_col('tours','tour_id',$get_prime,'f_did'), # Node ID
         'box_ID'    => 3,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
-        'type'      => 'league', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Most Individual Casualties (League)', # Table title
+        'type'      => 'division', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
+        'title'     => 'Most Individual Casualties (Division)', # Table title
         'field'     => 'cas', # For the OBBLM fields available see http://nicholasmr.dk/obblmwiki/index.php?title=Customization
         'length'    => 5, # Number of entries in table
         'show_team' => true, # Show player's team name?
     ),
     # This will display a 'most TD' player leaders box for the node (league, division or tournament) with ID = 2
     array(
-        'id'        => $get_lid, # Node ID
+        'id'        => get_alt_col('tours','tour_id',$get_prime,'f_did'), # Node ID
         'box_ID'    => 4,
         // Please note: 'type' may be either one of: 'league', 'division' or 'tournament'
-        'type'      => 'league', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
-        'title'     => 'Most Individual Touchdowns (League)', # Table title
+        'type'      => 'division', # This sets the node to be a tournament. I.e. this will make a leaders box for the tournament with ID = 1
+        'title'     => 'Most Individual Touchdowns (Division)', # Table title
         'field'     => 'td', # For the OBBLM fields available see http://nicholasmr.dk/obblmwiki/index.php?title=Customization
         'length'    => 5, # Number of entries in table
         'show_team' => true, # Show player's team name?
