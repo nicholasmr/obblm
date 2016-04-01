@@ -542,6 +542,8 @@ function sec_main() {
         This web site is completely unofficial and in no way endorsed by Games Workshop Limited.
         <br>
         Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either (R), TM and/or (C) Games Workshop Ltd 2000-2006, variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
+        <br>
+        FUMBBL icons are used with permission.  See 'about OBBLM' for credits.
     </div>
     <?php
 }
@@ -822,9 +824,17 @@ function sec_about() {
             <li> <a href="http://www.mercuryvps.com">William Leonard</a>
             <li> Niels Orsleff Justesen</a>
         </ul>
+         <br>
         With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
         Bugs reports and suggestions are welcome.
-        <br>
+        <br><br>
+        Further development carried out under the <a href="https://github.com/TheNAF/naflm">NAFLM fork</a> by
+        <ul>
+            <li> Steve Arthurs</a>
+            <li> Craig Fleming</a>
+        </ul>
+        <br><br>With special thanks to Scott Bartel, Tom "Hutchinsfairy" and Michael Franchetti.
+        <br><br>
         OBBLM consists of valid HTML 4.01 transitional document type pages.
         <br><br>
         <img src="http://www.w3.org/Icons/valid-html401" alt="Valid HTML 4.01 Transitional" height="31" width="88">
@@ -858,6 +868,8 @@ function sec_about() {
         Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, 
         and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either ®, TM and/or © Games Workshop Ltd 2000-2006, 
         variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
+        <br><br>
+        Fumbbl icons are used with permission.  Credits: harvestmouse, garion, christer, whatball.
     </p>
 
     <?php title("License");?>
@@ -873,6 +885,8 @@ function sec_about() {
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
         GNU General Public License for more details.
+        <br><br>
+        NAFLM is a fork of the original OBBLM programme and inherits all license and copyrights of the original.
         <br><br>
         You should have received a copy of the GNU General Public License
         along with this program.  If not, see http://www.gnu.org/licenses/.
