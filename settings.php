@@ -9,8 +9,6 @@ $db_user   = 'root';
 $db_passwd = '';
 $db_host   = 'localhost';
 
-include('config.php');
-
 /*************************
  * Global settings 
  *************************/
