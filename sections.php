@@ -888,11 +888,11 @@ function sec_requestleague() {
     if(isset($_POST['requesting_league'])) {
         $to = $settings["league_coordinator_email"];
         $subject = 'Request to create a league on TheNAF OBBLM.';
-        $message = '<strong>Commissioner Username:</strong> ' . $coach->name .
-            ' <strong>Full League Name:</strong> ' . $_POST['full_league_name'] .
-            ' <strong>Short League Name:</strong> ' . $_POST['short_league_name'] .
-            ' <strong>League City, State, Province:</strong> ' . $_POST['league_city_state_province'] .
-            ' <strong>League Country:</strong> ' . $_POST['league_country'];
+        $message = 'Commissioner Username: ' . $coach->name .
+            ' Full League Name: ' . $_POST['full_league_name'] .
+            ' Short League Name: ' . $_POST['short_league_name'] .
+            ' League City, State, Province: ' . $_POST['league_city_state_province'] .
+            ' League Country: ' . $_POST['league_country'];
         $headers = 'From: '.$_POST['email']. "\r\n" .
                    'Reply-To: '.$_POST['email']. "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
