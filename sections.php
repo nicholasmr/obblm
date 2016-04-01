@@ -879,3 +879,55 @@ function sec_about() {
     </p>
     <?php
 }
+
+function sec_requestleague() {
+    global $coach, $settings, $db_user, $db_passwd;
+    
+    title("Request League");
+    
+    if(isset($_POST['requesting_league'])) {
+        $to = $settings["league_coordinator_email"];
+        $subject = 'Request to create a league on TheNAF OBBLM.';
+        $message = '<strong>Commissioner Username:</strong> ' . $coach->name .
+            ' <strong>Full League Name:</strong> ' . $_POST['full_league_name'] .
+            ' <strong>Short League Name:</strong> ' . $_POST['short_league_name'] .
+            ' <strong>League City, State, Province:</strong> ' . $_POST['league_city_state_province'] .
+            ' <strong>League Country:</strong> ' . $_POST['league_country'];
+        $headers = 'From: '.$_POST['email']. "\r\n" .
+                   'Reply-To: '.$_POST['email']. "\r\n" .
+                   'X-Mailer: PHP/' . phpversion();
+
+        if (!mail($to, $subject, $message, $headers)) {
+            ?>
+            <div class="boxWide">
+                <div class="boxTitle3">There was an error sending your message!</div>
+                <div class="boxBody">
+                    So you should try your favourite e-mail client instead.
+                    <div class="quote">
+                        <div><strong>To: </strong><?php echo $to; ?></div>
+                        <div><strong>Subject: </strong><?php echo $subject; ?></div>
+                        <div><strong>Body: </strong><?php echo $message; ?></div>
+                    </div>
+                </div>
+            <?php
+        } else {
+            ?>
+            Your message was sent successfully. An administrator will get back to you soon!
+            <?php
+        }
+    }
+    else {
+        ?>
+        <form method="POST" id="RequestLeagueForm">
+            <input type="hidden" name="section" value="requestleague" />
+            <input type="hidden" name="requesting_league" value="true" />
+            <div class="input-item"><label>Your e-mail: </label><input type="text" name="email" /></div>
+            <div class="input-item"><label>Full League Name: </label><input type="text" name="full_league_name" /></div>
+            <div class="input-item"><label>Short League Name: </label><input type="text" name="short_league_name" /></div>
+            <div class="input-item"><label>League City, State, Province: </label><input type="text" name="league_city_state_province" /></div>
+            <div class="input-item"><label>League Country: </label><input type="text" name="league_country" /></div>
+            <input type="submit" value="Send" />
+        </form>
+        <?php
+    }
+}

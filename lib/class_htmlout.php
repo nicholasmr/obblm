@@ -1025,6 +1025,9 @@ private static function make_menu()
                     </li>
 				</ul>
             </li>
+            <?php if (isset($_SESSION['logged_in'])) { ?>
+                <li><a href="index.php?section=requestleague">Request a League</a></li>
+            <?php } ?>
             <li><a href="http://www.thenaf.net/leagues/leagues-locator/" >TheNAF.net League Locator</a></li>
             <li><a href="index.php?SLS_lid=1" >League Hosting Home</a></li>
             <li><a href="index.php?section=about">About OBBLM</a></li>

@@ -211,6 +211,23 @@ ul.topmenu > li > a { /* Top menu bar sizing */
     line-height: 20px !important; /* Seems to get overridden by something in the CSSmenu code */
 }
 
+div.quote {
+    padding-left: 4em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+form#RequestLeagueForm div.input-item label {
+    display: inline-block;
+    width: 170px;
+    text-align: right;
+    padding-right: 1em;
+}
+
+form#RequestLeagueForm input[type="submit"] {
+    margin-left: 13.6em;
+}
+
 /*********************
  CSS Menu
  *********************/

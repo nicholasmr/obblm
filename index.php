@@ -90,15 +90,16 @@ if(Mobile::isMobile()) {
 	// Check if a menu-link was picked, and execute section code from sections.php accordingly.
 	switch ($_GET['section'])
 	{
-		case 'login':        sec_login();           break;
-		case 'admin':        sec_admin();           break;
-		case 'teamlist':     sec_teamlist();        break;
-		case 'coachlist':    sec_coachlist();       break;
-		case 'rules':        sec_rules();           break;
-		case 'about':        sec_about();           break;
-		case 'matches':      sec_matcheshandler();  break; // Tournaments, matches, match reports, recent matches, upcoming matches etc.
-		case 'objhandler':   sec_objhandler();      break; // Object profiles, object standings.
-		default:             sec_main();
+        case 'login':           sec_login();            break;
+        case 'admin':           sec_admin();            break;
+        case 'teamlist':        sec_teamlist();         break;
+        case 'coachlist':       sec_coachlist();        break;
+        case 'rules':           sec_rules();            break;
+        case 'about':           sec_about();            break;
+        case 'matches':         sec_matcheshandler();   break; // Tournaments, matches, match reports, recent matches, upcoming matches etc.
+        case 'objhandler':      sec_objhandler();       break; // Object profiles, object standings.
+        case 'requestleague':   sec_requestleague();    break;   
+        default:             sec_main();
 	}
 }
 

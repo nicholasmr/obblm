@@ -23,10 +23,11 @@ include('config.php');
     For LOCAL settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
 */
 
-$settings['site_name'] = 'My OBBLM portal'; // Site name.
-$settings['default_visitor_league'] = 1;    // ID of default league to show on front page when not logged in OR coach has not selected a home league.
-$settings['default_leagues'] = array();    // When creating a coach the coach will automatically become a regular coach in leagues with these IDs.
-$settings['hide_ES_extensions'] = false;    // Default is false. Hides ES (Extra Stats) tables and ES references.
+$settings['site_name'] = 'My OBBLM portal';                         // Site name.
+$settings['default_visitor_league'] = 1;                            // ID of default league to show on front page when not logged in OR coach has not selected a home league.
+$settings['default_leagues'] = array();                             // When creating a coach the coach will automatically become a regular coach in leagues with these IDs.
+$settings['hide_ES_extensions'] = false;                            // Default is false. Hides ES (Extra Stats) tables and ES references.
+$settings['league_coordinator_email'] = 'webmaster@example.com';    // Sent "Request League" e-mails
 
 $rules['bank_threshold'] = 0; // Default is 0 (banking rule disabled). Amount of team treasury in kilos (k) above which it will count towards the team value (TV). NOTE: 1) This feature is not yet available on a per-league basis, it works across all leagues! 2) When changing this value run "Re-install DB back-end procedures and functions" under "DB maintenance" from the "Admin -> Core panel" menu.
 $rules['force_IR'] = false; // Default is false. Setting this to true will remove the ability of selecting 0-0 as 2D6 injury rolls (IR) in match reports (of all leagues).
