@@ -488,19 +488,27 @@ public static function updateNodeSelectorLeagueVars()
         $_SESSION[self::T_NSStr__node_id] = (int) $_POST[$rel[$_SESSION[self::T_NSStr__node]].'_in'];
     }
 }
+
+public static function getSelectedNodeLidOrDefault() {
+    global $leagues, $coach, $settings;
+    
+    $lids = array_keys($leagues); # Used multiple times below to determine selected FP league.
+    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], $lids)) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
+    
+    if ($_lid = self::getSelectedNodeLid())
+        $sel_lid = $_lid;
+    
+    return $sel_lid;
+}
+
 const T_NSStr__node    = 'NS_node';
 const T_NSStr__node_id = 'NS_node_id';
 public static function simpleLeagueSelector()
 {
-    global $lng, $leagues, $coach, $settings;
-    $lids = array_keys($leagues); # Used multiple times below to determine selected FP league.
-    # Default league.
-    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], $lids)) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
-    # Update league view?
-    # NOTE: Form selections updates of $_SESSION node vars are done via self::updateNodeSelectorLeagueVars().
-    if ($_lid = self::getSelectedNodeLid()) {
-        $sel_lid = $_lid;
-    }
+    global $lng;
+
+    $sel_lid = self::getSelectedNodeLidOrDefault();
+    
     # Save league view.
     $_SESSION[self::T_NSStr__node]    = T_NODE_LEAGUE;
     $_SESSION[self::T_NSStr__node_id] = (int) $sel_lid;
@@ -870,7 +878,7 @@ public static function frame_begin($menu = true)
         <title><?php echo $settings['site_name']; ?></title>
         <link type="text/css" href="css/stylesheet_default.css" rel="stylesheet">
         <link type="text/css" href="css/stylesheet<?php echo $settings['stylesheet']; ?>.css" rel="stylesheet">
-        <link type="text/css" href="css/league_override_<?php echo self::getSelectedNodeLid(); ?>.css" rel="stylesheet">
+        <link type="text/css" href="css/league_override_<?php echo self::getSelectedNodeLidOrDefault(); ?>.css" rel="stylesheet">
         <link rel="alternate" type="application/rss+xml" title="RSS Feed"href="rss.xml">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
@@ -912,7 +920,7 @@ public static function frame_begin($menu = true)
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css">
         <link type="text/css" href="css/stylesheet_default.css" rel="stylesheet">
         <link type="text/css" href="css/stylesheet<?php echo $settings['stylesheet']; ?>.css" rel="stylesheet">
-        <link type="text/css" href="css/league_override_<?php echo self::getSelectedNodeLid(); ?>.css" rel="stylesheet">
+        <link type="text/css" href="css/league_override_<?php echo self::getSelectedNodeLidOrDefault(); ?>.css" rel="stylesheet">
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script type="text/javascript" src="js/lib/underscore-1.8.3.min.js"></script>
