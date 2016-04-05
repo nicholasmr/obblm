@@ -976,6 +976,7 @@ private static function make_menu()
                             <li><a href="index.php?SLS_lid=13" >KRBBL (Folkestone)</a></li>
                             <li><a href="index.php?SLS_lid=26" >Headingley Blood Bowl (Leeds)</a></li>
                             <li><a href="index.php?SLS_lid=31" >Dragon Alley (Pembroke, Wales)</a></li>
+                            <li><a href="index.php?SLS_lid=32" >Hastings BBL  (Hastings, East Sussex, UK)</a></li>
 						</ul>
                     </li>
 					<li><a href="#" >Sweden ></a>
