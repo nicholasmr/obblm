@@ -492,6 +492,9 @@ public static function updateNodeSelectorLeagueVars()
 public static function getSelectedNodeLidOrDefault() {
     global $leagues, $coach, $settings;
     
+    if(!isset($leagues))
+        return 1;
+    
     $lids = array_keys($leagues); # Used multiple times below to determine selected FP league.
     $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], $lids)) ? $coach->settings['home_lid'] : $settings['default_visitor_league'];
     
