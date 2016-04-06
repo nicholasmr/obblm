@@ -398,8 +398,6 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
 
         $x = '';
         if ($ALLOW_EDIT && $p->mayHaveNewSkill()) {
-            $p->setChoosableSkills();
-
             $x .= "<form method='POST'>\n";
             $x .= "<select name='skill'>\n";
 
