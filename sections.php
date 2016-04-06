@@ -900,7 +900,8 @@ function sec_requestleague() {
     title("Request League");
     
     if(isset($_POST['requesting_league'])) {
-        $to = $settings["league_coordinator_email"];
+        $to = Email::getAdministratorEmails();
+        echo 'asdf' . $to . 'qwer';
         $subject = 'Request to create a league on TheNAF OBBLM.';
         $message = 'Commissioner Username: ' . $coach->name .
             ' Full League Name: ' . $_POST['full_league_name'] .

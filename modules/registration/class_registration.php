@@ -35,11 +35,6 @@ class Registration implements ModuleInterface
     public $email           = '';
     public $error           = '';
 
-    //admin email
-    public $email_admin     = ''; //This will be concatenated to with admin emails by the sendemail() method.
-                                  //If you specify email addresses here, each address must be separated by a comma.
-                                  //Example: 'john@example.com, jean@example.com' or 'john@example.com'
-
     //Password reset specific values
     public $reset_code      = '';
     
@@ -230,7 +225,7 @@ class Registration implements ModuleInterface
         global $settings;
         $webmaster = $settings['registration_webmaster'];
 
-        $to      = $this->AdminEmails();
+        $to      = Email::getAdministratorEmails();
         $subject = EMAIL_SUBJECT;
         $message = EMAIL_MESSAGE.$this->username.", ".$this->email."\n"."http://".$_SERVER["SERVER_NAME"]."/handler.php?type=registration&form=activate";
         $headers = 'From: '.$webmaster. "\r\n" .
@@ -240,47 +235,6 @@ class Registration implements ModuleInterface
         $mailed = mail($to, $subject, $message, $headers);
 
         if ( !$mailed ) $status = false;
-
-        return $status;
-
-    }
-
-    public function AdminEmails() {
-
-        $email = $this->email_admin;
-        $sep_comma = "";
-        if ( $email ) $sep_comma = ", ";
-        $coaches = Coach::getCoaches();
-        foreach ( $coaches as $c )
-        {
-            if ( $c->ring === Coach::T_RING_GLOBAL_ADMIN && $this->chk_email_Admin($c->mail) )
-            {
-                $email = $email.$sep_comma.$c->mail;
-                if ( $email ) $sep_comma = ", ";
-            }
-
-        }
-        return $email;
-
-    }
-
-    public function chk_email_Admin($email) {
-
-        #'/^([.0-9a-z_-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i' : 
-        #'/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i' 
-
-        $status = true;
-        $domain = '';
-        if ( strpos($email, '@') ) list($emailuser,$domain) = split("@",$email);
-
-        $emailexp = "/^([.0-9a-z_-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i";
-
-        if ( !preg_match($emailexp, $email) ) $status = false;
-
-        if ( !getmxrr($domain, $mxrecords) || !$status )
-        {
-            $status = false;
-        }
 
         return $status;
 
