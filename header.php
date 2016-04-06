@@ -100,6 +100,7 @@ require_once('settings_modules.php');             # Overrides
 require_once('settings_css.php');
 
 // OBBLM libraries.
+require_once('lib/class_settings.php');
 require_once('lib/mysql.php');
 require_once('lib/misc_functions.php');
 require_once('lib/class_email.php');
