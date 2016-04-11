@@ -290,7 +290,7 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             Location<br>
             <input type="text" name="location" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
             Tie teams to divisions?
-            <input type="checkbox" CHECKED name="tie_teams" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
+            <input type="checkbox" name="tie_teams" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
             <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
             <input type='submit' value='Create' <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>>
             <input type='hidden' name='type' value='new_league'>
