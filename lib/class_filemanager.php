@@ -45,4 +45,8 @@ class FileManager {
         fclose($file);
         return $fileContents;
     }
+    
+    static function copyFile($fileName, $newName) {
+        return copy($fileName, $newName);
+    }
 }

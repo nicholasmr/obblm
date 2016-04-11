@@ -102,8 +102,24 @@ public static function getLeagues($onlyIds = false)
 
 public static function create($name, $location, $tie_teams)
 {
+    global $lng;
+    
     $query = "INSERT INTO leagues (date, location, name, tie_teams) VALUES (NOW(), '".mysql_real_escape_string($location)."', '".mysql_real_escape_string($name)."', ".((int) $tie_teams).")";
-    return (get_alt_col('leagues', 'name', $name, 'lid')) ? false : mysql_query($query);
+    if(get_alt_col('leagues', 'name', $name, 'lid'))
+        return $lng->getTrn('admin/nodes/errors/league_already_exists');
+    
+    // Create the league
+    mysql_query($query);
+    
+    // Make a new settings file for that league.
+    $new_lid = get_alt_col('leagues', 'name', $name, 'lid');
+    $settings_new_filename = FileManager::getSettingsDirectoryName() . "/settings_$new_lid.php";
+    $settings_template_filename = FileManager::getSettingsDirectoryName() . "/settings_new_league_template.php";
+    
+    if(!FileManager::copyFile($settings_template_filename, $settings_new_filename))
+        return $lng->getTrn('admin/nodes/errors/settings_file_copy_failed');
+    
+    return false;
 }
 
 public static function getLeagueUrl($lid, $l_name = null) {

@@ -492,6 +492,13 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
                 <new_tour>A new FFA tournament</new_tour>
             <as_type>Match type</as_type>
     </schedule>
+    
+    <nodes>
+        <errors>
+            <league_already_exists>There is already a league by that name.</league_already_exists>
+            <settings_file_copy_failed>The league was created, but the settings file was not copied correctly.</settings_file_copy_failed>
+        </errors>
+    </nodes>
 </admin>
 
 <race>

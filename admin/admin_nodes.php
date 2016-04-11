@@ -26,7 +26,10 @@ if (isset($_POST['type'])) {
     switch ($_POST['type'])
     {
         case 'QUIT': break;
-        case 'new_league':      status($IS_GLOBAL_ADMIN && League::create($_POST['name'], $_POST['location'], isset($_POST['tie_teams']) && $_POST['tie_teams'])); break;
+        case 'new_league':      
+            $create_league_failure_message = League::create($_POST['name'], $_POST['location'], isset($_POST['tie_teams']) && $_POST['tie_teams']);
+            status($IS_GLOBAL_ADMIN && !$create_league_failure_message, $create_league_failure_message); 
+            break;
         case 'new_division':    status(Division::create($_POST['lid'], $_POST['name'])); break;
         case 'mod_league':      status($l->setName($_POST['name']) && $l->setLocation($_POST['location']) && $l->setTeamDivisionTies(isset($_POST['tie_teams']) && $_POST['tie_teams'])); break;
         case 'mod_division':    status($d->setName($_POST['name'])); break;
