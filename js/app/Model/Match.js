@@ -1,3 +1,4 @@
+
 var Match = function(playersOnSelectedTeam) {
     var self = this,
         playerEntries = ko.observable({}),
@@ -52,14 +53,10 @@ var Match = function(playersOnSelectedTeam) {
         });
     });
     
-    self.onMatchLoaded = function(handler) {
-        onMatchLoadedHandler = handler;
-    };
-    
-    self.serverMatch.subscribe(function(newMatch) {
+    self.load = function(newMatch) {
         self.selectedPlayer(_.first(playersOnSelectedTeam));
         
-        $.ajax({
+        return $.ajax({
             type: 'GET',
             url: 'match_webservice.php',
             data: {
@@ -76,9 +73,6 @@ var Match = function(playersOnSelectedTeam) {
                     
                     playerEntries(JSON.parse(result));
                     self.selectedPlayer.valueHasMutated();
-                    
-                    if(onMatchLoadedHandler)
-                        onMatchLoadedHandler();
                 } catch(error) {
                     alert('AJAX Error: ' + error + '. Please report this to an admin!');
                 }
@@ -87,7 +81,7 @@ var Match = function(playersOnSelectedTeam) {
                 alert('AJAX Error: ' + textStatus + '. Please report this to an admin!');
             }
         });
-    });
+    };
     
     self.selectedPlayerViewModel = new SelectedPlayerViewModel();
 

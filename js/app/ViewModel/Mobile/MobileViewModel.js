@@ -27,8 +27,7 @@ var MobileViewModel = function(playersOnSelectedTeam, matches, lastMatchId) {
             return match.match_id === matchId || match.match_id === matchId + '';
         });
 
-        self.matchDialogViewModel.serverMatch(match);
-        // opens after onMatchLoaded in MatchDialogViewModel
+        self.matchDialogViewModel.openMatch(match);
     }
     
     self.hasLastOpenedMatchId = function() {

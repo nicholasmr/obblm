@@ -2,10 +2,6 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
     var self = this,
         match = new Match(playersOnSelectedTeam);
             
-    match.onMatchLoaded(function() {
-        $('#MatchDialog').dialog({modal: true});
-    });
-    
     // Just copy straight from Match
     self.serverMatch = match.serverMatch;
     self.myTeamId = match.myTeamId;
@@ -18,6 +14,15 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
     self.selectedPlayer = match.selectedPlayer;
     self.playersInMatch = match.playersInMatch;
     self.selectedPlayerViewModel = match.selectedPlayerViewModel;
+    
+    self.openMatch = function(serverMatch) {
+        self.serverMatch(serverMatch);
+        match
+            .load(serverMatch)
+            .then(function() {
+                $('#MatchDialog').dialog({modal: true});
+            });
+    };
     
     self.saveMatch = function() {
         match.saveMatch().done(function() {
