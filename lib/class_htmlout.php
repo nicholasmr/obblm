@@ -886,6 +886,8 @@ public static function frame_begin($menu = true)
         <script type="text/javascript" src="lib/misc_functions.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="js/lib/underscore-1.8.3.min.js"></script>
+        <script type="text/javascript" src="js/lib/knockout-3.3.0.min.js"></script>
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
         <script type="text/javascript" src="lib/jquery.expander.js"></script>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
@@ -895,6 +897,8 @@ public static function frame_begin($menu = true)
             width: 860,
             height: 150
         });</script>
+        
+        <script type="text/javascript" src="js/app/ViewModel/Common/RegistrationViewModel.js"></script>
     </head>
     <body>
         <div class="everything">
@@ -932,12 +936,13 @@ public static function frame_begin($menu = true)
         <script type="text/javascript" src="lib/jquery.autocomplete-min.js"></script>
 
         <script type="text/javascript" src="js/app/Model/Match.js"></script>
-        <script type="text/javascript" src="js/app/ViewModel/MobileViewModel.js"></script>
-        <script type="text/javascript" src="js/app/ViewModel/TeamViewModel.js"></script>
-        <script type="text/javascript" src="js/app/ViewModel/PlayerViewModel.js"></script>
-        <script type="text/javascript" src="js/app/ViewModel/PlayerDialogViewModel.js"></script>
-        <script type="text/javascript" src="js/app/ViewModel/MatchDialogViewModel.js"></script>
-        <script type="text/javascript" src="js/app/ViewModel/SelectedPlayerViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/Mobile/MobileViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/Mobile/TeamViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/Mobile/PlayerViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/Mobile/PlayerDialogViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/Mobile/MatchDialogViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/Mobile/SelectedPlayerViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/Common/RegistrationViewModel.js"></script>
         
     </head>
     <body>

@@ -50,4 +50,19 @@ class Email {
         }
         return $email;
     }
+    
+    public static function getLeagueCommissionerEmails($leagueID) {
+        $email = '';
+        $sep_comma = "";
+        $coaches = Coach::getCoaches();
+        foreach ($coaches as $c) {
+            if($c->isNodeCommish(T_NODE_LEAGUE, $leagueID) && Email::checkEmail($c->mail)) {
+                $email = $email.$sep_comma.$c->mail;
+                
+                if ( $email ) 
+                    $sep_comma = ", ";
+            }
+        }
+        return $email;
+    }
 }
