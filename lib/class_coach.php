@@ -89,6 +89,17 @@ class Coach
         }
     }
     
+    public static function getByName($coachName) {
+        $result = mysql_query("SELECT coach_id FROM coaches WHERE name = '$coachName'");
+        $theCoach = null;
+        if ($result && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                $theCoach = new Coach($row['coach_id']);
+            }
+        }
+        return $theCoach;
+    }
+    
     public function setStats($node, $node_id, $set_avg = false)
     {
         foreach (Stats::getAllStats(T_OBJ_COACH, $this->coach_id, $node, $node_id, $set_avg) as $key => $val) {

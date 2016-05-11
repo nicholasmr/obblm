@@ -287,17 +287,22 @@ $T_LOCAL_RINGS = array(
                     echo 'No coaches to activate!';
                 } else { ?>
                     <table>
-                        <?php foreach($retiredCoaches as $coach) { ?>
-                            <tr>
-                                <td><?php echo $coach->name; ?></td>
-                                <td>
-                                    <form method="POST" action="handler.php?type=registration&form=activate">
-                                        <input type="hidden" name="activate_name" value="<?php echo $coach->name; ?>" />
-                                        <button>Activate</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php } ?>
+                        <?php 
+                            foreach($retiredCoaches as $retiredCoach) { 
+                                if($coach->mayManageObj(T_OBJ_COACH, $retiredCoach->coach_id)) {
+                                ?>
+                                    <tr>
+                                        <td><?php echo $retiredCoach->name; ?></td>
+                                        <td>
+                                            <form method="POST" action="handler.php?type=registration&form=activate">
+                                                <input type="hidden" name="activate_name" value="<?php echo $retiredCoach->name; ?>" />
+                                                <button>Activate</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php 
+                                }
+                            } ?>
                     </table>
                 <?php } ?>
         </div>

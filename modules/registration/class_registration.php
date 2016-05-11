@@ -34,6 +34,8 @@ class Registration implements ModuleInterface
     public $password        = '';
     public $email           = '';
     public $error           = '';
+    public $isCommissioner  = false;
+    public $leagueId          = '';
 
     //Password reset specific values
     public $reset_code      = '';
@@ -42,7 +44,7 @@ class Registration implements ModuleInterface
      * Methods 
      ***************/
     
-    function __construct($username, $password = "", $email = "", $form = "register") {
+    function __construct($username, $password = "", $email = "", $isCommissioner, $leagueId, $form = "register") {
 
         switch ( $form ){
 
@@ -50,15 +52,22 @@ class Registration implements ModuleInterface
                 $this->username = $username;
                 $this->password = $password;
                 $this->email = $email;
+                $this->isCommissioner = $isCommissioner;
+                $this->leagueId = $leagueId;
 
                 // Check to see if coach name already exists.
                 if ( !$this->chk_username() || !$this->chk_password() || !$this->chk_email() )
                 {
                     return false;  //Use ->error to display the error message to the user.
                 }
-
+                
+                if(!$leagueId && !$isCommissioner) {
+                    $this->error = 'You must either select a league or be a league commissioner. If your league isn\'t listed, talk with your commissioner!';
+                    return false;                    
+                }
+                
                 $this->create();
-                if ( !$this->sendemail() )
+                if ( !$this->sendemail($leagueId) )
                 {
                     $this->error = SEND_EMAIL_ERROR;
                 }
@@ -87,9 +96,9 @@ class Registration implements ModuleInterface
                     return false;
                 }
 
-                $coach_id = $_SESSION['coach_id'];
-                $c = new Coach($coach_id);
-                if ( $c->ring != Coach::T_RING_GLOBAL_ADMIN )
+                $myCoach = new Coach($_SESSION['coach_id']);
+                $coachToActivate = Coach::getByName($username);
+                if ( !$myCoach->mayManageObj(T_OBJ_COACH, $coachToActivate->coach_id) )
                 {
                     $this->error = "You must be an administrator to access this page.";
                     return false;
@@ -187,13 +196,14 @@ class Registration implements ModuleInterface
                 'name' => $this->username,
                 'passwd' => $this->password,
                 'mail' => $this->email,
-                'def_leagues' => array(),#$settings['default_leagues'],
+                'def_leagues' => array($this->leagueId),
                 'ring' => ACCESS_LEVEL,
                 'realname' => '',
                 'phone' => '',
                 'settings' => array('lang' => $settings['lang'])
             )
         );
+        
         #Input: name, realname, passwd, mail, phone, ring, settings, def_leagues (array of LIDs)
 
 #        $query = sprintf( "INSERT INTO %s ( %s, %s, %s, %s, %s ) VALUES ( '%s', '%s', '%s', %d, %d )",
@@ -218,14 +228,17 @@ class Registration implements ModuleInterface
 
     }
 
-    public function sendemail() {
-
+    private function sendemail($leagueId) {
         $status = true;
 
         global $settings;
         $webmaster = $settings['registration_webmaster'];
 
-        $to      = Email::getAdministratorEmails();
+        if($leagueId)
+            $to = Email::getLeagueCommissionerEmails($leagueId);
+        else
+            $to = Email::getAdministratorEmails();
+        
         $subject = EMAIL_SUBJECT;
         $message = EMAIL_MESSAGE.$this->username.", ".$this->email."\n"."http://".$_SERVER["SERVER_NAME"]."/handler.php?type=registration&form=activate";
         $headers = 'From: '.$webmaster. "\r\n" .
@@ -234,7 +247,8 @@ class Registration implements ModuleInterface
 
         $mailed = mail($to, $subject, $message, $headers);
 
-        if ( !$mailed ) $status = false;
+        if ( !$mailed ) 
+            $status = false;
 
         return $status;
 
@@ -252,30 +266,43 @@ class Registration implements ModuleInterface
          * 
          **/
 
-        $form = "
-        <form method='POST' action='handler.php?type=registration'>
-            <div class='boxCommon'>
-                <div class='boxTitle".T_HTMLBOX_COACH."'>
+        $form = '
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var leagues = ' . json_encode(League::getLeagues()) . ';
+                var viewModel = new RegistrationViewModel(leagues);
+                ko.applyBindings(viewModel, document.getElementById(\'registrationForm\'));
+            });
+        </script>
+        <form id="registrationForm" method="POST" action="handler.php?type=registration">
+            <div class="boxCommon">
+                <div class="boxTitle'.T_HTMLBOX_COACH.'">
                     Register
                 </div>
-                <div class='boxBody'>
-                    Username<br> <input type='text' name='new_name' size='20' maxlength='50'><br><br>
-                    Email<br> <input type='text' name='new_mail' size='20' maxlength='129'><br><br>
-                    Password<br> <input type='password' name='new_passwd' size='20' maxlength='50'><br><br>
+                <div class="boxBody">
+                    Username<br> <input type="text" name="new_name" size="20" maxlength="50"><br><br>
+                    Email<br> <input type="text" name="new_mail" size="20" maxlength="129"><br><br>
+                    Password<br> <input type="password" name="new_passwd" size="20" maxlength="50"><br><br>
+                    <strong>I\'m a league commissioner:</strong> <input type="checkbox" name="is_commissioner" data-bind="checked: isCommissioner"><br /><br />
+                    <div data-bind="visible: showLeagueSelection">
+                        <div>League</div>
+                        <select name="new_league" data-bind="options: leagues, optionsText: \'name\', optionsValue: \'lid\', value: selectedLeague, optionsCaption: \'Select a league.\'"></select>
+                    </div>
+                    <br />
                     *Admin activation is required.
                     <br><br>
-                    <input type='submit' name='button' value='Create user'>
+                    <input type="submit" name="button" value="Create user">
                 </div>
             </div>
         </form>
-        ";
-
+        ';
+        
         return $form;
     }
 
-    private static function submitForm($username, $password, $email) {
+    private static function submitForm($username, $password, $email, $isCommissioner, $league) {
 
-        $register = new Registration($username, $password, $email);
+        $register = new Registration($username, $password, $email, $isCommissioner, $league);
         if ( !$register->error )
         {
             Print SUCCESS_MSG;
@@ -325,13 +352,13 @@ class Registration implements ModuleInterface
 
         if ( isset($_POST['new_name']) && isset($_POST['new_mail']) && isset($_POST['new_passwd']) )
         {
-
             $username = $_POST['new_name'];
             $password = $_POST['new_passwd'];
             $email = $_POST['new_mail'];
-            self::submitForm($username, $password, $email);
+            $isCommissioner = isset($_POST['is_commissioner']);
+            $league = $_POST['new_league'];
+            self::submitForm($username, $password, $email, $isCommissioner, $league);
             return true;
-
         }
         if ( $form == "forgot" )
         {
@@ -357,24 +384,23 @@ class Registration implements ModuleInterface
                 Print "You must be logged in to use this page.";
                 return false;
             }
-
-            $coach_id = $_SESSION['coach_id'];
-            $c = new Coach($coach_id);
-            if ( $c->ring != Coach::T_RING_GLOBAL_ADMIN )
-            {
-                Print "You must be an administrator to access this page.";
-            }
-
-            if ( isset($_POST['activate_name']) )
-            {
-                $username = $_POST['activate_name'];
-                self::activatesubmitForm($username);
-            }
-            else
-            {
+            
+            
+            if(!isset($_POST['activate_name'])) {
                 Print "<html><body>";
                 Print Registration::activateform();
                 Print "</body></html>";
+            } else {
+                $coachToActivate = Coach::getByName($_POST['activate_name']);
+                $myCoach = new Coach($_SESSION['coach_id']);
+                
+                if ( !$myCoach->mayManageObj(T_OBJ_COACH, $coachToActivate->coach_id) ) {
+                    Print "You must be an administrator to access this page.";
+                    return;
+                }
+
+                $username = $_POST['activate_name'];
+                self::activatesubmitForm($username);
             }
         }
 
@@ -418,7 +444,7 @@ class Registration implements ModuleInterface
 
     private static function forgotsubmitForm($username) {
 
-        $register = new Registration($username, '', '',"forgot");
+        $register = new Registration($username, '', '', '', '', "forgot");
         if ( !$register->error )
         {
             Print "Instructions to reset your password have been sent to the email address on file.";
@@ -500,7 +526,7 @@ class Registration implements ModuleInterface
 
     private static function activatesubmitForm($username) {
 
-        $register = new Registration($username, '', '',"activate");
+        $register = new Registration($username, '', '', '', '', "activate");
         if ( !$register->error )
         {
             Print "The user was successfully activated.";
