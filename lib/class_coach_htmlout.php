@@ -138,6 +138,20 @@ private function _menu($ALLOW_EDIT)
     global $lng, $settings, $rules;
     $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false);
     ?>
+    <ul id="css3menu1" class="menu">
+        <li><a href="<?php echo $url.'&amp;subsec=teams';?>"><?php echo $lng->getTrn('cc/coach_teams');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=profile';?>"><?php echo $lng->getTrn('cc/profile');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=stats';?>"><?php echo $lng->getTrn('common/stats');?></a></li>
+        <li><a href="<?php echo $url.'&amp;subsec=recentmatches';?>"><?php echo $lng->getTrn('common/recentmatches');?></a></li>
+        <?php
+        if ($ALLOW_EDIT) {
+            ?><li><a href="<?php echo $url.'&amp;subsec=newteam';?>"><?php echo $lng->getTrn('cc/new_team');?></a></li><?php
+        }
+        if (Module::isRegistered('SGraph')) {
+            echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$this->coach_id'>Vis. stats</a></li>\n";
+        }
+        ?>
+    </ul>
     <?php
 }
 
