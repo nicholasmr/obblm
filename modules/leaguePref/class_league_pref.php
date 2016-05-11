@@ -208,7 +208,7 @@ function save() {
     FileManager::writeFile(FileManager::getCssDirectoryName() . "/league_override_$this->lid.css", $this->theme_css);
     
     $settingsFileContents = FileManager::readFile(FileManager::getSettingsDirectoryName() . "/settings_$this->lid.php");
-    $settingsFileContents = preg_replace("/settings\['stylesheet'\]\s*=\s[0-9]+/", "settings['stylesheet'] = $this->core_theme_id", $settingsFileContents);
+    $settingsFileContents = preg_replace("/settings\['stylesheet'\]\s*=\s['A-Za-z0-9_]+/", "settings['stylesheet'] = $this->core_theme_id", $settingsFileContents);
     FileManager::writeFile(FileManager::getSettingsDirectoryName() . "/settings_$this->lid.php", $settingsFileContents);
         
     return mysql_query($query);
