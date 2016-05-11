@@ -138,7 +138,7 @@ private function _menu($ALLOW_EDIT)
     global $lng, $settings, $rules;
     $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false);
     ?>
-    <ul id="css3menu1" class="menu">
+    <ul id="css3menu1" class="menu" style="z-index:0">
         <li><a href="<?php echo $url.'&amp;subsec=teams';?>"><?php echo $lng->getTrn('cc/coach_teams');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=profile';?>"><?php echo $lng->getTrn('cc/profile');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=stats';?>"><?php echo $lng->getTrn('common/stats');?></a></li>
