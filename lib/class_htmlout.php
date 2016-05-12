@@ -1106,7 +1106,10 @@ private static function make_menu()
                 <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a>
                 <?php
         if (!empty($settings['league_url'])) {
-            ?>  <li><a href="<?php echo $settings['league_url'];?>"><?php echo $settings['league_url_name'];?></a></li><?php
+            $leagueUrl = $settings['league_url'];
+            $leagueUrl = !strpos($leagueUrl, 'http') ? 'http://' . $leagueUrl : $leagueUrl;
+            
+            ?>  <li><a href="<?php echo $leagueUrl;?>"><?php echo $settings['league_url_name'];?></a></li><?php
         }
         ?>
             </ul>
