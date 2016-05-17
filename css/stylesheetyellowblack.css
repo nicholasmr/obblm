@@ -18,18 +18,17 @@ body
    
     background-color: #161616;
     font: 12px "Lucida Grande", "Trebuchet MS", Verdana, Helvetica, Arial, sans-serif;
+background: black url(../images/.png) repeat-x;
 }
 
 f1 {
-	/* Forum name */
+	/* Forum header titles */
 	font-family: Verdana, "Trebuchet MS", Arial, Helvetica, sans-serif;
-	margin-right: 200px;
+	font-weight: normal;
 	color: #201d0e;
-	margin-top: 15px;
-	font-weight: bold;
-	font-size: 1.7em;
-	padding-top: 0px;
-	padding-left: 100px;
+	font-size: 14px;
+	margin: 0.8em 0 0.2em 0;
+	padding-left: 102px;
 }
 
 f2 {
@@ -99,6 +98,9 @@ div.banner {
 	-webkit-border-radius: 7px;
 	color: black;
 	border-radius: 7px;
+    background: yellow url(../images/banner9.png); /* 150x1000px */
+    background-repeat: no-repeat;
+    background-position: top left;
 }
 
 /* Menu */
