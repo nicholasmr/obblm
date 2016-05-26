@@ -240,7 +240,12 @@ class Registration implements ModuleInterface
             $to = Email::getAdministratorEmails();
         
         $subject = EMAIL_SUBJECT;
-        $message = EMAIL_MESSAGE.$this->username.", ".$this->email."\n"."http://".$_SERVER["SERVER_NAME"]."/handler.php?type=registration&form=activate";
+        $message = EMAIL_MESSAGE 
+                    . $this->username . ", " 
+                    . $this->email . "\n" 
+                    . "http://" . $_SERVER["SERVER_NAME"]."/handler.php?type=registration&form=activate\n"
+                    . "League ID: " . $leagueId . "\n"
+                    . "Is Commissioner: " . $this->isCommissioner;
         $headers = 'From: '.$webmaster. "\r\n" .
                    'Reply-To: '.$webmaster. "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
