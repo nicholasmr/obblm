@@ -1,15 +1,15 @@
 /*************************
- * General - THIS is the OSBBL sheet
+ * General - THIS is the ABBF sheet
  *************************/
 
 html {overflow-y: scroll;} /* Keep page alignment uniform. */
 
 a {
-color: #215C25;
+color: blue;
 }
 a:link, a:visited {text-decoration: none;}
 
-a:hover { color:orange;
+a:hover { color:blue;
 text-decoration: underline;
 }
 
@@ -18,6 +18,7 @@ body
    
     background-color: white;
     font: 12px "Lucida Grande", "Trebuchet MS", Verdana, Helvetica, Arial, sans-serif;
+background: white url(../images/.png) repeat-x;
 }
 
 f1 {
@@ -29,7 +30,7 @@ f1 {
 	font-weight: bold;
 	font-size: 1.7em;
 	padding-top: 0px;
-	padding-left: 130px;
+	padding-left: 100px;
 }
 
 f2 {
@@ -39,7 +40,7 @@ f2 {
 	color: white;
 	font-size: 1em;
 	margin: 0.8em 0 0.2em 0;
-	padding-left: 132px;
+	padding-left: 102px;
 }
 
 f0 {
@@ -97,9 +98,12 @@ div.banner {
     background: url(../images/logo.png) left 18px center no-repeat, url(../images/bg_header.gif) left top repeat-x;
     -moz-border-radius: 7px;
 	-webkit-border-radius: 7px;
-	background-color: #3A9C33;
+	background-color: #1192d3;
 	color: black;
 	border-radius: 7px;
+    background: blue url(../images/banner9.png); /* 150x1000px */
+    background-repeat: no-repeat;
+    background-position: top left;
 }
 
 /* Menu */
@@ -115,7 +119,7 @@ div.section {
     margin: px;
     padding-bottom: 0px; 
     background-color: inherit;
-    color: #215C25;
+    color: #284c80;
 }
 
 /*
@@ -152,7 +156,7 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
     text-transform: uppercase;
     font-size: 10px;
     font-weight: bold;}
-.boxBody   { background-color: #A9C9AB; padding: 5px;
+.boxBody   { background-color: #ebf6fc; padding: 5px;
 
     background-image: url(../images/gradient.gif);
     background-repeat: repeat-x;
@@ -171,7 +175,7 @@ div.boxPlayerPageInfo   {float: left; width: 325px; margin-left: 30px;}
 	border-top-width: 0px;
 	border-right-width: 6px;
 	border-bottom-width: 6px;
-	border-color: #3A9C33;
+	border-color: #0b8ccd;
 
 }
 table.boxTable {border-spacing: 5px; width: 100%;}
