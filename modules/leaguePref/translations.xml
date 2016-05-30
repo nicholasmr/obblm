@@ -41,5 +41,11 @@
 <core_theme_title>Core Theme</core_theme_title>
 <core_theme_help>These are pre-built themes you can use, or build from using the League CSS below.</core_theme_help>
 
+<tv_title>Initial Treasury</tv_title>
+<tv_help>Usually set this to 1000000, but you can pick other values.</tv_help>
+
+<language_title>Language</language_title>
+<language_help>Your leagues default language.</language_help>
+
 
 </en-GB>

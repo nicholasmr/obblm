@@ -151,6 +151,12 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <!-- use "all-time" string from nodeSelect() translation -->
     <matchavg><![CDATA[Match&nbsp;avg.]]></matchavg> <!-- "Match avg." -->
     
+    <english>English</english>
+    <spanish>Spanish</spanish>
+    <german>German</german>
+    <french>French</french>
+    <italian>Italian</italian>
+    
 </common>
 
 <!-- Link names for menu elements -->

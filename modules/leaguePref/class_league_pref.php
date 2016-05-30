@@ -155,8 +155,10 @@ public $rules = '';
 public $existing = false;
 public $theme_css = '';
 public $core_theme_id = 0;
+public $tv = 0;
+public $language = 'en-GB';
 
-function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $rules, $existing, $theme_css, $core_theme_id) {
+function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $rules, $existing, $theme_css, $core_theme_id, $tv, $language) {
 	global $settings;
 	$this->lid = $lid;
 	$this->l_name = $name;
@@ -168,17 +170,16 @@ function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $ru
 	$this->existing = $existing;
     $this->theme_css = $theme_css;
     $this->core_theme_id = $core_theme_id;
+    $this->tv = $tv;
+    $this->language = $language;
 }
 
 /* Gets the preferences for the current league */
 public static function getLeaguePreferences() {
-
-	global $settings, $coach, $leagues;
+	global $settings, $coach, $leagues, $rules;
 
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     echo $HTML_LeagueSelector;
-
-/*    $sel_lid = (is_object($coach) && isset($coach->settings['home_lid']) && in_array($coach->settings['home_lid'], array_keys($leagues))) ? $coach->settings['home_lid'] : $settings['default_visitor_league']; */
 
 	$result = mysql_query("SELECT lid, name, prime_tid, league_name, forum_url, welcome, rules FROM leagues LEFT OUTER JOIN league_prefs on lid=f_lid WHERE lid=$sel_lid");
 
@@ -186,10 +187,14 @@ public static function getLeaguePreferences() {
         while ($row = mysql_fetch_assoc($result)) {
             $theme_css = FileManager::readFile(FileManager::getCssDirectoryName() . "/league_override_$sel_lid.css"); 
             
-            return new LeaguePref($row['lid'],$row['name'],$row['prime_tid'],$row['league_name'],$row['forum_url'],$row['welcome'],$row['rules'], true,$theme_css,$settings['stylesheet']);
+            return new LeaguePref($row['lid'], $row['name'],
+                $row['prime_tid'], $row['league_name'], $row['forum_url'],
+                $row['welcome'], $row['rules'], true, $theme_css, 
+                $settings['stylesheet'], $rules['initial_treasury'], $settings['lang']);
         }
     } else {
-		return new LeaguePref($sel_lid,$leagues['lname'],null,null,null,null,null,null,false, null, $settings['stylesheet']);
+		return new LeaguePref($sel_lid, $leagues['lname'], null, null, null, null, null, null, false, null, 
+            $settings['stylesheet'], $rules['initial_treasury'], $settings['lang']);
 	}
 }
 
@@ -198,6 +203,8 @@ function validate() {
 }
 
 function save() {
+    global $settings, $rules;
+    
     $hasLeaguePref = mysql_fetch_object(mysql_query("SELECT f_lid from league_prefs where f_lid=$this->lid"));
     if($hasLeaguePref) {
         $query = "UPDATE league_prefs SET prime_tid=$this->p_tour, league_name='".mysql_real_escape_string($this->league_name)."', forum_url='".mysql_real_escape_string($this->forum_url)."' , welcome='".mysql_real_escape_string($this->welcome)."' , rules='".mysql_real_escape_string($this->rules)."'  WHERE f_lid=$this->lid";
@@ -209,14 +216,19 @@ function save() {
     
     $settingsFileContents = FileManager::readFile(FileManager::getSettingsDirectoryName() . "/settings_$this->lid.php");
     $settingsFileContents = preg_replace("/settings\['stylesheet'\]\s*=\s['A-Za-z0-9_]+/", "settings['stylesheet'] = $this->core_theme_id", $settingsFileContents);
+    $settingsFileContents = preg_replace("/settings\['lang'\]\s*=\s['A-Za-z0-9_\-]+/", "settings['lang'] = '$this->language'", $settingsFileContents);
+    $settingsFileContents = preg_replace("/rules\['initial_treasury'\]\s*=\s['A-Za-z0-9_]+/", "rules['initial_treasury'] = $this->tv", $settingsFileContents);
     FileManager::writeFile(FileManager::getSettingsDirectoryName() . "/settings_$this->lid.php", $settingsFileContents);
-        
+    
+    $settings['stylesheet'] = $this->core_theme_id;
+    $settings['lang'] = $this->language;
+    $rules['initial_treasury'] = $this->tv;
+            
     return mysql_query($query);
 }
 
 public static function showLeaguePreferences() {
-    global $lng, $tours, $coach, $leagues, $settings;
-
+    global $lng, $tours, $coach, $leagues, $settings, $rules;
     title($lng->getTrn('name', 'LeaguePref'));
 
 	self::handleActions();
@@ -244,7 +256,6 @@ public static function showLeaguePreferences() {
 	$l_pref = self::getLeaguePreferences();
 	// check this coach is allowed to administer this league
 	$canEdit = is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $l_pref->lid) ? "" : "DISABLED";
-
     ?>
 	<div class='boxWide'>
 		<h3 class='boxTitle4'><?php echo $l_pref->l_name; ?></h3>
@@ -259,6 +270,29 @@ public static function showLeaguePreferences() {
                         </td>
                         <td>
                             <input type="text" size="118" maxsize="128" name="league_name" <?php echo $canEdit; ?> value="<?php echo $l_pref->league_name; ?>" />
+                        </td>
+                    </tr>
+                    <tr title="<?php echo $lng->getTrn('tv_help', 'LeaguePref'); ?>">
+                        <td>
+                            <?php echo $lng->getTrn('tv_title', 'LeaguePref'); ?>:
+                        </td>
+                        <td>
+                            <input type="number" min="0" name="tv" <?php echo $canEdit; ?> value="<?php echo $l_pref->tv; ?>" />
+                        </td>
+                    </tr>
+                    <tr title="<?php echo $lng->getTrn('language_help', 'LeaguePref'); ?>">
+                        <td>
+                            <?php echo $lng->getTrn('language_title', 'LeaguePref'); ?>:
+                        </td>
+                        <td>
+                            <select name="language" <?php echo $canEdit; ?>>
+                                
+                                <option value="en-GB" <? echo 'en-GB' == $settings['lang'] ? 'selected' : '' ?>><?php echo $lng->getTrn('common/english'); ?></option>
+                                <option value="es-ES" <? echo 'es-ES' == $settings['lang'] ? 'selected' : '' ?>><?php echo $lng->getTrn('common/spanish'); ?></option>
+                                <option value="de-DE" <? echo 'de-DE' == $settings['lang'] ? 'selected' : '' ?>><?php echo $lng->getTrn('common/german'); ?></option>
+                                <option value="fr-FR" <? echo 'fr-FR' == $settings['lang'] ? 'selected' : '' ?>><?php echo $lng->getTrn('common/french'); ?></option>
+                                <option value="it-IT" <? echo 'it-IT' == $settings['lang'] ? 'selected' : '' ?>><?php echo $lng->getTrn('common/italian'); ?></option>
+                            </select>
                         </td>
                     </tr>
                     <tr title="<?php echo $forum_url_help; ?>">
@@ -352,7 +386,10 @@ public static function handleActions() {
     
     if (isset($_POST['action'])) {
     	if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $_POST['lid'])) {
-			$l_pref = new LeaguePref($_POST['lid'],"",$_POST['p_tour'],$_POST['league_name'],$_POST['forum_url'],$_POST['welcome'],$_POST['rules'],$_POST['existing'],$_POST['theme_css'],$_POST['core_theme_id']);
+			$l_pref = new LeaguePref($_POST['lid'], "", $_POST['p_tour'],
+                $_POST['league_name'], $_POST['forum_url'], $_POST['welcome'], 
+                $_POST['rules'], $_POST['existing'], $_POST['theme_css'], 
+                $_POST['core_theme_id'], $_POST['tv'], $_POST['language']);
 			if($l_pref->validate()) {
 				if($l_pref->save()) {
 					echo "<div class='boxWide'>";
@@ -375,8 +412,5 @@ public static function handleActions() {
 		}
     }
 }
-
-
-
 }
 ?>
