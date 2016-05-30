@@ -88,12 +88,17 @@ function sec_login() {
     else {
         title($lng->getTrn('menu/login'));
         ?>
+        <script lang="text/javascript">
+            $(document).ready(function() {
+                $('#coach').focus();
+            });
+        </script>
         <div class='boxCommon'>
             <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('menu/login');?></h3>
             <div class='boxBody'>
             <form method="POST" action="<?php echo getFormAction(''); ?>">
                 <?php echo $lng->getTrn('login/loginname');?><br>
-                <input type="text" name="coach" size="20" maxlength="50"><br><br>
+                <input type="text" id="coach" name="coach" size="20" maxlength="50"><br><br>
                 <?php echo $lng->getTrn('login/passwd');?><br>
                 <input type="password" name="passwd" size="20" maxlength="50">
                 <div style='display: none;'><input type='text' name='hackForHittingEnterToLogin' size='1'></div>

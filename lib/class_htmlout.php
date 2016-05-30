@@ -970,68 +970,14 @@ private static function make_menu()
         <li class="topfirst"><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a>
 		 <ul>
             <?php if(Settings::getValueOrDefault('show-regional-menu', false)) { ?>
-                <li class="subfirst"><a href="#" >Europe ></a>
+                <li>
+                    <a href="#">Everyone ></a>
                     <ul>
-                        <li><a href="#" >UK ></a>
-                            <ul>
-                                <li><a href="index.php?SLS_lid=5" >Essex Bloodbowl (Formerly Basildon Warboyz)</a></li>
-                                <li><a href="index.php?SLS_lid=4" >FennLong (Basildon)</a></li>
-                                <li><a href="index.php?SLS_lid=6" >League of Extraordinary Gentlemen (Swindon)</a></li>
-                                <li><a href="index.php?SLS_lid=8" >Rom-at-the-Ford's Blood Bowl League (Romford)</a></li>
-                                <li><a href="index.php?SLS_lid=9" >ARBBL (Andover)</a></li>
-                                <li><a href="index.php?SLS_lid=15" >Bristol Vanguard (Bristol)</a></li>
-                                <li><a href="index.php?SLS_lid=14" >MAD League (Ashfordby)</a></li>
-                                <li><a href="index.php?SLS_lid=12" >DSBBTT (London)</a></li>
-                                <li><a href="index.php?SLS_lid=13" >KRBBL (Folkestone)</a></li>
-                                <li><a href="index.php?SLS_lid=26" >Headingley Blood Bowl (Leeds)</a></li>
-                                <li><a href="index.php?SLS_lid=31" >Dragon Alley (Pembroke, Wales)</a></li>
-                                <li><a href="index.php?SLS_lid=32" >Hastings BBL  (Hastings, East Sussex, UK)</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#" >Sweden ></a>
-                            <ul>
-                                <li><a href="index.php?SLS_lid=2" >MARBBL (Malmo)</a></li>
-                            </ul>
-                        </li>    
-                        <li><a href="#" >Spain ></a>
-                            <ul>
-                                <li><a href="index.php?SLS_lid=18" >Liga Burgalesa</a></li>
-                                <li><a href="index.php?SLS_lid=24" >Mecaliga (Madrid)</a></li>
-                                <li><a href="index.php?SLS_lid=28" >Liga de la Sección de Reconocimiento (El Prat de Llobregat, Barcelona)</a></li>
-                                <li><a href="index.php?SLS_lid=29" >Victoria City Blood Bowl League (Vitoria-Gasteiz)</a></li>
-                            </ul>
-                        </li>                      
-                        <li><a href="#" >Germany ></a>
-                            <ul>
-                                <li><a href="index.php?SLS_lid=7" >United Friends</a></li>
-                            </ul>
-                        </li>  
-                        <li><a href="#" >Malta ></a>
-                            <ul>
-                                <li><a href="index.php?SLS_lid=20" >MaltaBowl</a></li>
-                            </ul>
-                        </li>  
-                    </ul>
-                </li>
-                <li><a href="#" >North America ></a>
-                    <ul>
-                        <li><a href="#" >USA ></a>
-                            <ul>
-                                <li><a href="index.php?SLS_lid=11" >KABBL (Knoxville)</a></li>
-                                <li><a href="index.php?SLS_lid=16" >KIL (Denver)</a></li>
-                                <li><a href="index.php?SLS_lid=19" >PaDGBBL (Vista CA)</a></li>
-                                <li><a href="index.php?SLS_lid=21" >NYCBBL (New York City)</a></li>
-                                <li><a href="index.php?SLS_lid=23" >RABBL (Richmond VA)</a></li>
-                                <li><a href="index.php?SLS_lid=25" >FABBL (Greater Los Angeles CA)</a></li>
-                                <li><a href="index.php?SLS_lid=30" >GCBB (Toledo Ohio)</a></li>
-                            </ul>                                             
-                        </li>
-                        <li><a href="#" >Canada ></a>
-                            <ul>
-                                <li><a href="index.php?SLS_lid=10" >CHOP (Vancouver)</a></li>
-                                <li><a href="index.php?SLS_lid=22" >ERL (Edmonton AB)</a></li>
-                            </ul>     
-                        </li>
+                        <?php
+                            foreach(League::getLeagues() as $league) {
+                                echo '<li><a href="#">' . $league->name . '</a></li>';
+                            }
+                        ?>
                     </ul>
                 </li>
                 <li><a href="#" >Rest of the World ></a>
