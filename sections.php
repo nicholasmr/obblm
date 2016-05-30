@@ -899,6 +899,11 @@ function sec_requestleague() {
     
     title("Request League");
     
+    if (!isset($_SESSION['logged_in'])) {
+        echo 'You must <a href="handler.php?type=registration"><b>register</b></a> as a League Commissioner before you can request a league.';
+        return;
+    }
+    
     if(isset($_POST['requesting_league'])) {
         $to = Email::getAdministratorEmails();
         echo 'asdf' . $to . 'qwer';
