@@ -909,10 +909,10 @@ function sec_requestleague() {
         echo 'asdf' . $to . 'qwer';
         $subject = 'Request to create a league on TheNAF OBBLM.';
         $message = 'Commissioner Username: ' . $coach->name .
-            ' Full League Name: ' . $_POST['full_league_name'] .
-            ' Short League Name: ' . $_POST['short_league_name'] .
-            ' League City, State, Province: ' . $_POST['league_city_state_province'] .
-            ' League Country: ' . $_POST['league_country'];
+            '\n Full League Name: ' . $_POST['full_league_name'] .
+            '\n Short League Name: ' . $_POST['short_league_name'] .
+            '\n League City, State, Province: ' . $_POST['league_city_state_province'] .
+            '\n League Country: ' . $_POST['league_country'];
         $headers = 'From: '.$_POST['email']. "\r\n" .
                    'Reply-To: '.$_POST['email']. "\r\n" .
                    'X-Mailer: PHP/' . phpversion();
