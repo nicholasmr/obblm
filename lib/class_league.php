@@ -110,9 +110,12 @@ public static function getLeaguesByLocation() {
             if(!isset($locations[$league->location]))
                 $locations[$league->location] = array();
             
-            $locations[$league->location][] = $league;
+            if($league->location)            
+                $locations[$league->location][] = $league;
          }
     }
+    
+    ksort($locations);
         
     return $locations;
 }
