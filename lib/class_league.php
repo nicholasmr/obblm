@@ -100,6 +100,23 @@ public static function getLeagues($onlyIds = false)
     return $leagues;
 }
 
+public static function getLeaguesByLocation() {
+    $locations = array();
+    $result = mysql_query("SELECT lid FROM leagues");
+    if ($result && mysql_num_rows($result) > 0) {
+        while ($row = mysql_fetch_assoc($result)) {
+            $league = new League($row['lid']);
+            
+            if(!isset($locations[$league->location]))
+                $locations[$league->location] = array();
+            
+            $locations[$league->location][] = $league;
+         }
+    }
+        
+    return $locations;
+}
+
 public static function create($name, $location, $tie_teams)
 {
     global $lng;
