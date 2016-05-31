@@ -107,11 +107,12 @@ public static function getLeaguesByLocation() {
         while ($row = mysql_fetch_assoc($result)) {
             $league = new League($row['lid']);
             
-            if(!isset($locations[$league->location]))
-                $locations[$league->location] = array();
-            
-            if($league->location)            
+            if($league->location) {
+                if(!isset($locations[$league->location]))
+                    $locations[$league->location] = array();
+                
                 $locations[$league->location][] = $league;
+            }
          }
     }
     
