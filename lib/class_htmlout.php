@@ -1008,74 +1008,78 @@ private static function make_menu()
 ?><li class="topfirst"><a rel="nofollow" href="index.php?section=login" style="height:20px;line-height:20px;"><?php echo $lng->getTrn('menu/login');?></a></li><?php }
 ?>
 
-<?php if (!empty($admin_menu)) {    
-        ?>
-		<li class="topmenu"><a href="#"><?php echo $lng->getTrn('menu/admin_menu/name');?></a>
-					<ul>
-                        <li class="subfirst"><a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('name', 'LeaguePref');?></a></li>
-<?php if (Module::isRegistered('Conference'))        { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('name', 'Conference');?></a></li><?php } ?>
-                        <?php foreach ($admin_menu as $lnk => $desc) {
-                        if (!is_array($desc)) {echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";}
-                        else {?>
-                        <li><a href="#"><?php echo $desc['title'];?>
-                            <ul><?php foreach ($desc['sub'] as $sub) {
-                                echo "<li><a href='index.php?section=admin&amp;subsec=$lnk&amp;$sub[href]'>$sub[title]</a></li>\n";                            }
-                            ?>
-                            </ul>
-                            </li>
-                            <?php
-                        }
+<?php if (!empty($admin_menu)) { ?>
+    <li class="topmenu">
+        <a href="#"><?php echo $lng->getTrn('menu/admin_menu/name');?></a>
+        <ul>
+            <li class="subfirst">
+                <a href="handler.php?type=leaguepref"><?php echo $lng->getTrn('name', 'LeaguePref');?></a>
+            </li>
+            <?php 
+                if (Module::isRegistered('Conference'))
+                    echo '<li><a href="handler.php?type=conference">' . $lng->getTrn('name', 'Conference') . '</a></li>';
+                
+                if (Module::isRegistered('Scheduler'))
+                    echo '<li><a href="handler.php?type=scheduler">' . $lng->getTrn('menu/admin_menu/schedule') . '</a></li>';
+
+                foreach ($admin_menu as $lnk => $desc) {
+                    if (!is_array($desc)) {
+                        echo "<li><a href='index.php?section=admin&amp;subsec=$lnk'>$desc</a></li>\n";
                     }
-                    ?>
-                </ul>
-                </li>
-                <?php
+                    else { 
+                        echo '<li><a href="#">' . $desc['title'] . '<ul>';
+                        foreach ($desc['sub'] as $sub) {
+                            echo "<li><a href='index.php?section=admin&amp;subsec=$lnk&amp;$sub[href]'>$sub[title]</a></li>\n";
+                        }
+                        echo '</ul></li>';
+                    }
+                }
+            ?>
+        </ul>
+    </li>
+<?php } ?>        
+
+<li class="topmenu">
+    <a href="#">League Menu</a>
+    <ul>
+        <li class="subfirst"><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
+        <li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('name', 'LeagueTables');?></a></li>
+        <li><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
+        <li><a href="index.php?section=coachlist"><?php echo $lng->getTrn('menu/coaches');?></a></li>
+        <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
+        <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a>
+        <?php
+            if (!empty($settings['league_url'])) {
+                $leagueUrl = $settings['league_url'];
+                $leagueUrl = !strpos($leagueUrl, 'http') ? 'http://' . $leagueUrl : $leagueUrl;
+                
+                ?>  <li><a href="<?php echo $leagueUrl;?>"><?php echo $settings['league_url_name'];?></a></li><?php
             }
         ?>
-        
-
-<li class="topmenu"><a href="#">League Menu</a>
-            <ul>
-                <li class="subfirst"><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
-                <li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('name', 'LeagueTables');?></a></li>
-                <li><a href="index.php?section=teamlist"><?php echo $lng->getTrn('menu/teams');?></a></li>
-                <li><a href="index.php?section=coachlist"><?php echo $lng->getTrn('menu/coaches');?></a></li>
-                <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
-                <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a>
-                <?php
-        if (!empty($settings['league_url'])) {
-            $leagueUrl = $settings['league_url'];
-            $leagueUrl = !strpos($leagueUrl, 'http') ? 'http://' . $leagueUrl : $leagueUrl;
-            
-            ?>  <li><a href="<?php echo $leagueUrl;?>"><?php echo $settings['league_url_name'];?></a></li><?php
-        }
-        ?>
-            </ul>
-    </li>
+    </ul>
+</li>
         
 <li class="topmenu"><a rel="nofollow" href="index.php?section=rules">League History</a>
     <ul>   
-                <?php if (Module::isRegistered('Gallery'))        { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Wanted'))        { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Prize'))        { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('HOF'))        { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('FamousTeams'))        { ?><li><a href="handler.php?type=famousteams"><?php echo $lng->getTrn('name', 'FamousTeams');?></a></li><?php } ?>
-                <?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
-                <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
-    </ul></li>
-
-
-        
+        <?php if (Module::isRegistered('Gallery'))        { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Wanted'))        { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Prize'))        { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('HOF'))        { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('FamousTeams'))        { ?><li><a href="handler.php?type=famousteams"><?php echo $lng->getTrn('name', 'FamousTeams');?></a></li><?php } ?>
+        <?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
+        <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
+    </ul>
+</li>
         
 <li class="topmenu"><a rel="nofollow" href="#">Statistics</a>
-            <ul>
-                <li class="subfirst"><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/team_stn');?></a></li>
-                <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/player_stn');?></a></li>
-                <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_COACH,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/coach_stn');?></a></li>
-                <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_RACE,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/race_stn');?></a></li>
-                <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
-            </ul>
-        </li>
+    <ul>
+        <li class="subfirst"><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/team_stn');?></a></li>
+        <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/player_stn');?></a></li>
+        <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_COACH,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/coach_stn');?></a></li>
+        <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_RACE,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/race_stn');?></a></li>
+        <li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
+    </ul>
+</li>
         
 <li class="topmenu"><a rel="nofollow" href="#">Game Rules</a>
     <ul> 

@@ -257,17 +257,21 @@ class Coach
             'log' => $lng->getTrn('name', 'LogSubSys'), 
             'cpanel' => $lng->getTrn('menu/admin_menu/cpanel')
         );
-        $ring_com_access = array(
-            'schedule' => $lng->getTrn('menu/admin_menu/schedule'), 
-            'nodes' => array('title' => $lng->getTrn('menu/admin_menu/nodes'), 'sub' => array(
+        
+        $ring_com_access = array();
+        
+        if(!Module::isRegistered('Scheduler'))
+            $ring_com_access['schedule'] = $lng->getTrn('menu/admin_menu/schedule');
+        
+        $ring_com_access['nodes'] =array('title' => $lng->getTrn('menu/admin_menu/nodes'), 'sub' => array(
                 array('title' => $lng->getTrn('common/tournament'), 'href' => 'node='.T_NODE_TOURNAMENT),
                 array('title' => $lng->getTrn('common/division'),   'href' => 'node='.T_NODE_DIVISION),
                 array('title' => $lng->getTrn('common/league'),     'href' => 'node='.T_NODE_LEAGUE),
-            )), 
-            'usr_man' => $lng->getTrn('menu/admin_menu/usr_man'), 
-            'ct_man' => $lng->getTrn('menu/admin_menu/ct_man'), 
-            'import' => $lng->getTrn('menu/admin_menu/import'), 
-        );
+            ));
+        $ring_com_access['usr_man'] = $lng->getTrn('menu/admin_menu/usr_man');
+        $ring_com_access['ct_man'] = $lng->getTrn('menu/admin_menu/ct_man');
+        $ring_com_access['import'] = $lng->getTrn('menu/admin_menu/import');
+
         $my_admin_menu = array();
 
         $result = mysql_query("SELECT COUNT(*) FROM memberships WHERE cid = $this->coach_id AND ring = ".self::T_RING_LOCAL_ADMIN);
