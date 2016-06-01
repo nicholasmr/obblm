@@ -26,6 +26,7 @@ module.exports = function (grunt) {
                     'test',
                     'install.php',   // It won't run if install.php is on the server.
                     'settings.php',  // Don't overwrite the database settings with the development ones!
+                    'settings_modules.php',  // Don't overwrite the module settings with the development ones!
                     'localsettings/*.php'
                     ]
 			}
