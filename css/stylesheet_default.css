@@ -460,4 +460,44 @@ ul#css3menu1>li:nth-of-type(1){width:25%}ul#css3menu1>li:nth-of-type(2){width:25
         padding: 0.6em;
     }
 }
- 
+
+/*************************
+*
+* Icon Fonts
+*
+*************************/
+@font-face {
+    font-family: 'icomoon';
+    src:    url('fonts/icomoon.eot?vbxqtd');
+    src:    url('fonts/icomoon.eot?vbxqtd#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?vbxqtd') format('truetype'),
+        url('fonts/icomoon.woff?vbxqtd') format('woff'),
+        url('fonts/icomoon.svg?vbxqtd#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a.icon-link {
+    text-decoration: none;
+    color: default;
+    padding-left: 3px;
+}
+
+.icon-info:before {
+    content: "\e900";
+}

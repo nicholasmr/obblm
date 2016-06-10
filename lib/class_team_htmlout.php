@@ -349,6 +349,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         */
         $p->name = preg_replace('/\s/', '&nbsp;', $p->name);
         $p->position = preg_replace('/\s/', '&nbsp;', $p->position);
+        $p->info = '<i class="icon-info"></i>';
 
         /*
             Colors
@@ -439,6 +440,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         $stars = array();
         foreach (Star::getStars(STATS_TEAM, $team->team_id, false, false) as $s) {
             $s->name = preg_replace('/\s/', '&nbsp;', $s->name);
+            $s->info = '<i class="icon-info"></i>';
             $s->player_id = $s->star_id;
             $s->nr = 0;
             $s->position = "<table style='border-spacing:0px;'><tr><td><img align='left' src='$s->icon' alt='player avatar'></td><td><i>Star&nbsp;player</i></td></tr></table>";
@@ -471,6 +473,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
         $smerc->player_id = ID_MERCS;
         $smerc->nr = 0;
         $smerc->name = 'All&nbsp;mercenary&nbsp;hirings';
+        $smerc->info = '<i class="icon-info"></i>';
         $smerc->position = "<i>Mercenaries</i>";
         $smerc->mv_cas = "$smerc->mv_bh/$smerc->mv_si/$smerc->mv_ki";
         $smerc->ma = '-';
@@ -498,7 +501,8 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
 
     $fields = array(
         'nr'        => array('desc' => '#'),
-        'name'      => array('desc' => $lng->getTrn('common/name'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
+        'name'      => array('desc' => $lng->getTrn('common/name')),
+        'info'      => array('desc' => '', 'nosort' => true, 'icon' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
         'position'  => array('desc' => $lng->getTrn('common/pos'), 'nosort' => true),
         'ma'        => array('desc' => 'Ma'),
         'st'        => array('desc' => 'St'),
