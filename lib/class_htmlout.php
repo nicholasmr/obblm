@@ -899,6 +899,14 @@ public static function frame_begin($menu = true)
         });</script>
         
         <script type="text/javascript" src="js/app/ViewModel/Common/RegistrationViewModel.js"></script>
+        <script type="text/javascript" src="js/app/ViewModel/Common/PageViewModel.js"></script>
+        <script type="text/javascript" src="js/app/CustomBinders/EditableCustomBinder.js"></script>
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                ko.applyBindings(new PageViewModel());
+            });
+        </script>
     </head>
     <body>
         <div class="everything">
@@ -1247,6 +1255,16 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                             . ">"
                             . $cpy
                             . "</a>";
+                    }
+                    if (array_key_exists('editable', $a) && $a['editable']) {
+                        $args = "";
+                        if(array_key_exists('javaScriptArg', $a) && $a['javaScriptArg']) {
+                            $propertyKey = $a['javaScriptArg'];
+                            $args = $o->$propertyKey;
+                        }
+                        $cpy = '<div data-bind="editable: {update: ' . $a['editable'] . ', args: [' . $args . ']}">'
+                            . $cpy
+                            . '</div>';
                     }
                     if (isset($o->{"${f}_color"})) {
                         echo "<td style='background-color: ".$o->{"${f}_color"}."; color: black;'>".$cpy."</td>";
