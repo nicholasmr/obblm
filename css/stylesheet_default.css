@@ -6,12 +6,6 @@ html {overflow-y: scroll;} /* Keep page alignment uniform. */
 
 body 
 {
-    /*
-    background-color: black;
-    background-image: url(../images/bg2.jpg);
-    background-repeat: repeat-y;
-    background-position: top center;
-    */
     background: #0a1e2e url(../images/bg.png) repeat-x;
 
     font: 12px Tahoma;
@@ -132,16 +126,6 @@ table.boxTable {border-spacing: 5px; width: 100%;}
     line-height:1.4em;
 }
 
-/*
-.assistantBox {
-    color: #000000;
-    border: 2px solid #3D3D3D;
-    background-color: #FFCCFF;
-    padding:10px;
-    line-height:1.4em;
-}
-*/
-
 /* 
  *   Tables, TRs and TDs 
  */
@@ -189,6 +173,10 @@ div.main_leftColumn {float: left; width: 540px; background-color: inherit;}
 /* 
  *  Other
  */
+ 
+input.number {
+    width: 4em;
+}
 
 /* Status bar */
 div.messageContainer    {width:100%;padding:6px 0px 6px 0px;color:#fff;font-weight:bold;}

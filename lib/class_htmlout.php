@@ -1262,7 +1262,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                             $propertyKey = $a['javaScriptArg'];
                             $args = $o->$propertyKey;
                         }
-                        $cpy = '<div data-bind="editable: {update: ' . $a['editable'] . ', args: [' . $args . ']}">'
+                        $cpy = '<div data-bind="editable: {update: ' . $a['editable'] . ', args: [' . $args . '], cssClass: \'' . $a['editableClass'] . '\'}">'
                             . $cpy
                             . '</div>';
                     }

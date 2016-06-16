@@ -11,5 +11,21 @@ var PageViewModel = function() {
                 'name': newName
             }
         });
+    }; 
+    
+    self.updatePlayerNumber = function(newNumber, playerId) {
+        newNumber = parseInt(newNumber, 10);
+        if(isNaN(newNumber))
+            return;
+        
+        return $.ajax({
+            type: 'POST',
+            url: 'team_webservice.php',
+            data: {
+                'type': 'renumber_player',
+                'player': playerId,
+                'number': newNumber
+            }
+        });
     };
 }

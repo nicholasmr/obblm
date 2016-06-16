@@ -12,6 +12,9 @@ ko.bindingHandlers.editable = {
             element.parent().append(inputElement);
             inputElement.focus();
             
+            if(bindingParameters.cssClass)
+                inputElement.addClass(bindingParameters.cssClass);
+            
             inputElement.keyup(function(event){
                 switch(event.keyCode) {
                     case 13: /* return */

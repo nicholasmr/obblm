@@ -500,7 +500,7 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
     title($team->name . (($team->is_retired) ? ' <font color="red"> (Retired)</font>' : ''));
 
     $fields = array(
-        'nr'        => array('desc' => '#'),
+        'nr'        => array('desc' => '#', 'editable' => 'updatePlayerNumber', 'javaScriptArg' => 'player_id', 'editableClass' => 'number'),
         'name'      => array('desc' => $lng->getTrn('common/name'), 'editable' => 'updatePlayerName', 'javaScriptArg' => 'player_id' ),
         'info'      => array('desc' => '', 'nosort' => true, 'icon' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
         'position'  => array('desc' => $lng->getTrn('common/pos'), 'nosort' => true),
