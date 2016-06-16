@@ -183,15 +183,16 @@ table.common  {background-color: transparent;}
 /*********************
  CSS Menu
  *********************/
- ul#css3menu1 a{
+ ul.css3menu1 a{
     background: rgb(253,246,205); /* Old browsers */
     background: -moz-linear-gradient(top, rgba(253,246,205,1) 0%, rgba(240,209,36,1) 100%); /* FF3.6-15 */
     background: -webkit-linear-gradient(top, rgba(253,246,205,1) 0%,rgba(240,209,36,1) 100%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to bottom, rgba(253,246,205,1) 0%,rgba(240,209,36,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdf6cd', endColorstr='#f0d124',GradientType=0 ); /* IE6-9 */
+    color:#000000;
 }
 
-ul#css3menu1 li:hover>a,ul#css3menu1 li > a.pressed{
+ul.css3menu1 li:hover>a,ul.css3menu1 li > a.pressed{
     color: black;
     
     background: rgb(247,232,95); /* Old browsers */
@@ -201,7 +202,7 @@ ul#css3menu1 li:hover>a,ul#css3menu1 li > a.pressed{
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7e85f', endColorstr='#c1ac0d',GradientType=0 ); /* IE6-9 */
 }
 
-ul#css3menu1 ul li:hover>a,ul#css3menu1 ul li > a.pressed{
+ul.css3menu1 ul li:hover>a,ul.css3menu1 ul li > a.pressed{
     color:#bb0000;
 }
 

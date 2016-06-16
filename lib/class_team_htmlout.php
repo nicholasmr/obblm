@@ -651,7 +651,7 @@ border-bottom:0px;border-left:0px;border-top:0px;border-right:0px;
 #cycolors .grey7 a {top:96px;left: 112px;}
 </style>
 
-    <ul id="css3menu1" class="topmenu" style="position:static; z-index:0;">
+    <ul class="css3menu1 topmenu" style="position:static; z-index:0;">
         <li class="topfirst"><a href="<?php echo $url.'&amp;subsec=man';?>"><?php echo $lng->getTrn('profile/team/tmanage');?></a></li>
         <li class="topmenu"><a href="<?php echo $url.'&amp;subsec=news';?>"><?php echo $lng->getTrn('profile/team/news');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=about';?>"><?php echo $lng->getTrn('common/about');?></a></li>

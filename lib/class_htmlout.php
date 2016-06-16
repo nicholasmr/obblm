@@ -975,7 +975,7 @@ private static function make_menu()
 {
     global $lng, $coach, $settings, $rules, $admin_menu;
     ?>
-    <ul id="css3menu1" class="topmenu">
+    <ul class="css3menu1 topmenu">
         <li class="topfirst"><a href="index.php?section=main"><?php echo $lng->getTrn('menu/home');?></a>
 		 <ul>
             <?php 
