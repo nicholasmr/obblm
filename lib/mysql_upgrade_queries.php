@@ -5,7 +5,8 @@
 */
 
 $upgradeSQLs = array(
-    '097-101' => array(
+    // future upgrade versions should be "to" version, not "from-to".
+    '101' => array(
         SQLUpgrade::runIfColumnNOTExists('version', 'version', 'CREATE TABLE IF NOT EXISTS version (version MEDIUMINT UNSIGNED NOT NULL)'),
         SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 from version', 'INSERT INTO version (version) VALUES (101)')
     ),
@@ -197,7 +198,6 @@ If you don\'t do this the non-tied teams may not be scheduled to play in any mat
 '090-091' => array(),
 '091-095' => array(),
 '096-097' => array(),
-'097-101' => array(),
 );
 
 $upgradeSettings = array(
@@ -206,6 +206,5 @@ $upgradeSettings = array(
 '090-091' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 '091-095' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 '096-097' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
-'097-101' => array('syncall' => false, 'sync_gamedata' => false, 'reload_indexes' => false),
 );
 

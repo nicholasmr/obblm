@@ -50,8 +50,8 @@ Now, click the appropriate SQL code to run depending on the version upgrade you 
 <table border='1' style='font-size:small; mergin: 5px;'>
     <tr style='font-weight:bold;'><td></td><td>Version upgrade</td><td>Required upgrade parameters</td></tr>
     <tr>
-        <td><INPUT TYPE=RADIO NAME="version" VALUE="097-101"></td>
-        <td>0.97 to 1.01</td>
+        <td><INPUT TYPE=RADIO NAME="version" VALUE="101"></td>
+        <td>to 1.01</td>
         <td><i>None</i></td>
     </tr>
     <tr>

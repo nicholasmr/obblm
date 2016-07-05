@@ -803,7 +803,7 @@ function upgrade_database($version, $opts)
     // Core
     echo "<b>Running tasks for core system upgrade...</b><br>\n";
 
-    if ($upgradeSettings[$version]['sync_gamedata']) {
+    if (isset($upgradeSettings[$version]) && $upgradeSettings[$version]['sync_gamedata']) {
         echo (SQLCore::syncGameData())
             ? "<font color='green'>OK &mdash; Synchronized game data with database</font><br>\n"
             : "<font color='red'>FAILED &mdash; Error whilst synchronizing game data with database</font><br>\n";
@@ -828,7 +828,7 @@ function upgrade_database($version, $opts)
 		echo ($status) ? "<font color='green'>OK &mdash; Custom PHP upgrade code (<i>".implode(', ',$core_Funcs)."</i>)</font><br>\n" : "<font color='red'>FAILED &mdash; Custom PHP upgrade code</font><br>\n";
     }
 
-    if ($upgradeSettings[$version]['syncall']) {
+    if (isset($upgradeSettings[$version]) && $upgradeSettings[$version]['syncall']) {
         echo (SQLCore::installMVs())
             ? "<font color='green'>OK &mdash; created MV tables</font><br>\n"
             : "<font color='red'>FAILED &mdash; could not create MV tables</font><br>\n";
@@ -839,7 +839,7 @@ function upgrade_database($version, $opts)
             : "<font color='red'>FAILED &mdash; create/update ES tables</font><br>\n";
     }
 
-    if ($upgradeSettings[$version]['reload_indexes']) {
+    if (isset($upgradeSettings[$version]) && $upgradeSettings[$version]['reload_indexes']) {
         echo (SQLCore::installTableIndexes())
             ? "<font color='green'>OK &mdash; applied table indexes</font><br>\n"
             : "<font color='red'>FAILED &mdash; could not apply one more more table indexes</font><br>\n";
@@ -856,7 +856,7 @@ function upgrade_database($version, $opts)
             break;
     }
 
-    if ($upgradeSettings[$version]['syncall']) {
+    if (isset($upgradeSettings[$version]) && $upgradeSettings[$version]['syncall']) {
         echo (mysql_query("CALL syncAll()"))
             ? "<font color='green'>OK &mdash; synchronised all dynamic stats and properties</font><br>\n"
             : "<font color='red'>FAILED &mdash; could not synchronise all dynamic stats and properties</font><br>\n";
@@ -864,7 +864,7 @@ function upgrade_database($version, $opts)
     
     // Done!
     mysql_close($conn);
-    return $upgradeMsgs[$version];
+    return isset($upgradeMsgs[$version]) ? $upgradeMsgs[$version] : '' ;
 }
 
 /*
