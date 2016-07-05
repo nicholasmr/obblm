@@ -916,5 +916,11 @@ class SQLUpgrade
         $row = mysql_fetch_row($result);
         return (int) $row[0];
     }
+    
+    public static function updateDatabaseVersion($version) {
+        // Drop table and create
+        Table::createTable('version', array('version' => 'MEDIUMINT UNSIGNED NOT NULL'));
+        return "INSERT INTO version (version) VALUES ($version)";
+    }
 }
 

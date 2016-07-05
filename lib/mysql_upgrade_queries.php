@@ -5,10 +5,9 @@
 */
 
 $upgradeSQLs = array(
-    // future upgrade versions should be "to" version, not "from-to".
+    // future upgrade versions should be "to" version, rather than "from-to".
     '101' => array(
-        SQLUpgrade::runIfColumnNOTExists('version', 'version', 'CREATE TABLE IF NOT EXISTS version (version MEDIUMINT UNSIGNED NOT NULL)'),
-        SQLUpgrade::runIfTrue('SELECT COUNT(*) = 0 from version', 'INSERT INTO version (version) VALUES (101)')
+        SQLUpgrade::updateDatabaseVersion(101)
     ),
     '096-097' => array(
         SQLUpgrade::runIfColumnNOTExists('texts', 'pinned', 'ALTER TABLE texts ADD COLUMN pinned TINYINT UNSIGNED NOT NULL DEFAULT 0'),
