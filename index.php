@@ -74,6 +74,10 @@ if($coach && $coach->isGlobalAdmin()) {
     if(!$databaseVersion) {
         // running from pre-auto-SQL version
         echo '<div class="messagecontainer red">Your database version cannot be determined. Please ensure you are up to date with <a href="upgrade.php">upgrade.php</a>.</div>';
+    } else if($databaseVersion < $db_version) {
+        echo '<div class="messagecontainer green"><div>Your database will now be upgraded to version ' . $db_version . '.</div>';
+        upgrade_database($db_version, null, false);
+        echo '</div>';
     }
 }
 

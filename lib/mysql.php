@@ -766,9 +766,10 @@ function setup_database() {
     return true;
 }
 
-function upgrade_database($version, $opts)
+function upgrade_database($version, $opts, $newConnection = true)
 {
-    $conn = mysql_up();
+    if($newConnection)
+        $conn = mysql_up();
 
     switch ($version) {
         case '075-080':
@@ -863,7 +864,8 @@ function upgrade_database($version, $opts)
     }
     
     // Done!
-    mysql_close($conn);
+    if($newConnection)
+        mysql_close($conn);
     return isset($upgradeMsgs[$version]) ? $upgradeMsgs[$version] : '' ;
 }
 
