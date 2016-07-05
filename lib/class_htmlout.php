@@ -1262,6 +1262,8 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                             $propertyKey = $a['javaScriptArg'];
                             $args = $o->$propertyKey;
                         }
+                        if(!isset($a['editableClass']))
+                            $a['editableClass'] = '';
                         $cpy = '<div data-bind="editable: {update: ' . $a['editable'] . ', args: [' . $args . '], cssClass: \'' . $a['editableClass'] . '\'}">'
                             . $cpy
                             . '</div>';
