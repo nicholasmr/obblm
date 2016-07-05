@@ -1258,9 +1258,13 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                     }
                     if (array_key_exists('editable', $a) && $a['editable']) {
                         $args = "";
-                        if(array_key_exists('javaScriptArg', $a) && $a['javaScriptArg']) {
-                            $propertyKey = $a['javaScriptArg'];
-                            $args = $o->$propertyKey;
+                        if(array_key_exists('javaScriptArgs', $a) && $a['javaScriptArgs']) {
+                            $args = '';
+                            $prefix = '';
+                            foreach($a['javaScriptArgs'] as $propertyKey) {
+                                $args .= ($prefix . $o->$propertyKey);
+                                $prefix = ',';
+                            }
                         }
                         if(!isset($a['editableClass']))
                             $a['editableClass'] = '';

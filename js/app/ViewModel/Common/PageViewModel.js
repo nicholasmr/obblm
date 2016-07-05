@@ -1,19 +1,20 @@
 var PageViewModel = function() {
     var self = this;
         
-    self.updatePlayerName = function(newName, playerId) {
+    self.updatePlayerName = function(newName, teamId, playerId) {
         return $.ajax({
             type: 'POST',
             url: 'team_webservice.php',
             data: {
                 'type': 'rename_player',
                 'player': playerId,
+                'teamId': teamId,
                 'name': newName
             }
         });
     }; 
     
-    self.updatePlayerNumber = function(newNumber, playerId) {
+    self.updatePlayerNumber = function(newNumber, teamId, playerId) {
         newNumber = parseInt(newNumber, 10);
         if(isNaN(newNumber))
             return;
@@ -24,6 +25,7 @@ var PageViewModel = function() {
             data: {
                 'type': 'renumber_player',
                 'player': playerId,
+                'teamId': teamId,
                 'number': newNumber
             }
         });
