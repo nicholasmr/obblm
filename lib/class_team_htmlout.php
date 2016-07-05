@@ -333,7 +333,7 @@ private function _loadPlayers($DETAILED)
 
 private function _roster($ALLOW_EDIT, $DETAILED, $players)
 {
-    global $rules, $settings, $lng, $skillididx;
+    global $rules, $settings, $lng, $skillididx, $coach;
     $team = $this; // Copy. Used instead of $this for readability.
 
     /******************************
@@ -501,10 +501,12 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
      ******************************/
 
     title($team->name . (($team->is_retired) ? ' <font color="red"> (Retired)</font>' : ''));
+    
+    $allowEdit = $coach->isMyTeam($team->team_id) || $coach->mayManageObj(T_OBJ_TEAM, $team->team_id);
 
     $fields = array(
-        'nr'        => array('desc' => '#', 'editable' => 'updatePlayerNumber', 'javaScriptArgs' => array('team_id', 'player_id'), 'editableClass' => 'number'),
-        'name'      => array('desc' => $lng->getTrn('common/name'), 'editable' => 'updatePlayerName', 'javaScriptArgs' => array('team_id', 'player_id') ),
+        'nr'        => array('desc' => '#', 'editable' => 'updatePlayerNumber', 'javaScriptArgs' => array('team_id', 'player_id'), 'editableClass' => 'number', 'allowEdit' => $allowEdit),
+        'name'      => array('desc' => $lng->getTrn('common/name'), 'editable' => 'updatePlayerName', 'javaScriptArgs' => array('team_id', 'player_id'), 'allowEdit' => $allowEdit),
         'info'      => array('desc' => '', 'nosort' => true, 'icon' => true, 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_PLAYER,false,false,false), 'field' => 'obj_id', 'value' => 'player_id')),
         'position'  => array('desc' => $lng->getTrn('common/pos'), 'nosort' => true),
         'ma'        => array('desc' => 'Ma'),

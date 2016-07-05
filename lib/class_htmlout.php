@@ -1257,9 +1257,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                             . "</a>";
                     }
                     if (array_key_exists('editable', $a) && $a['editable']) {
-                        if(!$coach->isMyTeam($o->team_id) && !$coach->mayManageObj(T_OBJ_TEAM, $o->team_id)) {
-                            $cpy = '<div>' . $cpy . '</div>';
-                        } else {
+                        if($a['allowEdit']) {
                             $args = "";
                             if(array_key_exists('javaScriptArgs', $a) && $a['javaScriptArgs']) {
                                 $args = '';
