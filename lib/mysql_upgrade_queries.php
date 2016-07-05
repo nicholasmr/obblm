@@ -5,9 +5,13 @@
 */
 
 $upgradeSQLs = array(
+    '097-101' => array(
+        SQLUpgrade::runIfColumnNOTExists('version', 'version', 'CREATE TABLE IF NOT EXISTS version (version MEDIUMINT UNSIGNED NOT NULL)'),
+        'INSERT INTO version (version) VALUES (101)'
+    ),
     '096-097' => array(
         SQLUpgrade::runIfColumnNOTExists('texts', 'pinned', 'ALTER TABLE texts ADD COLUMN pinned TINYINT UNSIGNED NOT NULL DEFAULT 0'),
-),
+    ),
     '095-096' => array(),
     '091-095' => array(),
     '090-091' => array(),

@@ -248,6 +248,10 @@ class Coach
         }
         return false;
     }
+    
+    public function isGlobalAdmin() {
+        return $this->ring == Coach::T_RING_GLOBAL_ADMIN;
+    }
 
     public function getAdminMenu()
     {

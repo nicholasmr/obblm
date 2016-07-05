@@ -904,5 +904,17 @@ class SQLUpgrade
         $row = mysql_fetch_row($result);
         return ((int) $row[0]) ? $query : self::NONE;
     }
+    
+    public static function getCurrentDatabaseVersion() {
+        if(!self::doesColExist('version', 'version'))
+            return false;
+        
+        $result = mysql_query("SELECT version from version");
+        if (!$result || mysql_num_rows($result) == 0)
+            return false;
+
+        $row = mysql_fetch_row($result);
+        return (int) $row[0];
+    }
 }
 

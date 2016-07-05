@@ -68,6 +68,15 @@ if ($_VISSTATE['COOCKIE'] || $_VISSTATE['POST_IN'] || $_VISSTATE['POST_OUT']) {
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT);
 }
 
+if($coach && $coach->isGlobalAdmin()) {
+    $databaseVersion = SQLUpgrade::getCurrentDatabaseVersion();
+    
+    if(!$databaseVersion) {
+        // running from pre-auto-SQL version
+        echo '<div class="messagecontainer red">Your database version cannot be determined. Please ensure you are up to date with <a href="upgrade.php">upgrade.php</a>.</div>';
+    }
+}
+
 if(Mobile::isMobile()) {
 	HTMLOUT::mobile_frame_begin(); # Make page frame, banner and menu.
 	MTS('Header loaded, login auth, html frame generated');
@@ -106,4 +115,5 @@ if(Mobile::isMobile()) {
 HTMLOUT::frame_end(); // Spit out all the end-tags.
 mysql_close($conn);
 MTS('END OF SCRIPT');
+
 
