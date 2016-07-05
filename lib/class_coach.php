@@ -200,6 +200,14 @@ class Coach
         
         return false;
     }
+    
+    public function isMyTeam($teamId) {
+        foreach($this->getTeams() as $team) {
+            if($team->team_id == $teamId)
+                return true;
+        }
+        return false;
+    }
 
     public function mayManageObj($obj, $id) { 
         

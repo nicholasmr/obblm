@@ -1159,7 +1159,7 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
             page => current page being viewed
             pages => total number of pages
     */
-    global $settings, $lng;
+    global $settings, $lng, $coach;
     if (array_key_exists('remove', $extra)) {
         $objs = array_filter($objs, create_function('$obj', 'return ($obj->'.$extra['remove']['condField'].' != '.$extra['remove']['fieldVal'].');'));
     }
@@ -1257,20 +1257,25 @@ public static function sort_table($title, $lnk, array $objs, array $fields, arra
                             . "</a>";
                     }
                     if (array_key_exists('editable', $a) && $a['editable']) {
-                        $args = "";
-                        if(array_key_exists('javaScriptArgs', $a) && $a['javaScriptArgs']) {
-                            $args = '';
-                            $prefix = '';
-                            foreach($a['javaScriptArgs'] as $propertyKey) {
-                                $args .= ($prefix . $o->$propertyKey);
-                                $prefix = ',';
+                        if(!$coach->isMyTeam($o->team_id) && !$coach->mayManageObj(T_OBJ_TEAM, $o->team_id)) {
+                            $cpy = '<div>' . $cpy . '</div>';
+                        } else {
+                            $args = "";
+                            if(array_key_exists('javaScriptArgs', $a) && $a['javaScriptArgs']) {
+                                $args = '';
+                                $prefix = '';
+                                foreach($a['javaScriptArgs'] as $propertyKey) {
+                                    $args .= ($prefix . $o->$propertyKey);
+                                    $prefix = ',';
+                                }
                             }
+                            if(!isset($a['editableClass']))
+                                $a['editableClass'] = '';
+                            
+                            $cpy = '<div data-bind="editable: {update: ' . $a['editable'] . ', args: [' . $args . '], cssClass: \'' . $a['editableClass'] . '\'}">'
+                                . $cpy
+                                . '</div>';
                         }
-                        if(!isset($a['editableClass']))
-                            $a['editableClass'] = '';
-                        $cpy = '<div data-bind="editable: {update: ' . $a['editable'] . ', args: [' . $args . '], cssClass: \'' . $a['editableClass'] . '\'}">'
-                            . $cpy
-                            . '</div>';
                     }
                     if (isset($o->{"${f}_color"})) {
                         echo "<td style='background-color: ".$o->{"${f}_color"}."; color: black;'>".$cpy."</td>";
