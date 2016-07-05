@@ -1,5 +1,7 @@
-var PageViewModel = function() {
+var PageViewModel = function(leaguesJson) {
     var self = this;
+    
+    self.registrationViewModel = new RegistrationViewModel(leaguesJson);
         
     self.updatePlayerName = function(newName, teamId, playerId) {
         return $.ajax({

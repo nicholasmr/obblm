@@ -272,14 +272,7 @@ class Registration implements ModuleInterface
          **/
 
         $form = '
-        <script type="text/javascript">
-            $(document).ready(function() {
-                var leagues = ' . json_encode(League::getLeagues()) . ';
-                var viewModel = new RegistrationViewModel(leagues);
-                ko.applyBindings(viewModel, document.getElementById(\'registrationForm\'));
-            });
-        </script>
-        <form id="registrationForm" method="POST" action="handler.php?type=registration">
+        <form id="registrationForm" method="POST" action="handler.php?type=registration" data-bind="with: registrationViewModel">
             <div class="boxCommon">
                 <div class="boxTitle'.T_HTMLBOX_COACH.'">
                     Register

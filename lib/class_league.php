@@ -100,6 +100,17 @@ public static function getLeagues($onlyIds = false)
     return $leagues;
 }
 
+public static function getLeaguesWithLocation() {
+    $leagues = array();
+    $result = mysql_query("SELECT lid FROM leagues where location <> '' and location is not null");
+    if ($result && mysql_num_rows($result) > 0) {
+        while ($row = mysql_fetch_assoc($result)) {
+            array_push($leagues, new League($row['lid']));
+        }
+    }
+    return $leagues;
+}
+
 public static function getLeaguesByLocation() {
     $locations = array();
     $result = mysql_query("SELECT lid FROM leagues");

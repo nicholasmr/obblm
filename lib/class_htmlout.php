@@ -904,7 +904,8 @@ public static function frame_begin($menu = true)
         
         <script type="text/javascript">
             $(document).ready(function() {
-                ko.applyBindings(new PageViewModel());
+                var leaguesJson = <?php echo json_encode(League::getLeaguesWithLocation()); ?>;
+                ko.applyBindings(new PageViewModel(leaguesJson));
             });
         </script>
     </head>
