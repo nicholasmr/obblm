@@ -180,6 +180,7 @@ input.number {
 
 /* Status bar */
 div.messageContainer    {width:100%;padding:6px 0px 6px 0px;color:#fff;font-weight:bold;}
+div.lightgreen          {clear:both;background-color:#3D0;border:1px solid #298000;}
 div.green               {clear:both;background-color:#390;border:1px solid #298000;}
 div.red                 {clear:both;background-color:#F20000;border:1px solid #c00;}
 

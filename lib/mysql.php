@@ -766,11 +766,31 @@ function setup_database() {
     return true;
 }
 
-function upgrade_database($version, $opts, $newConnection = true)
-{
-    if($newConnection)
-        $conn = mysql_up();
+function upgrade_database_to_version($toVersion, $fromVersion) {
+    global $db_upgrade_options;
+    
+    require_once('lib/class_sqlcore.php');
+    require_once('lib/mysql_upgrade_queries.php');
+    
+    $reversedUpgradeSqls = array_reverse($upgradeSQLs, true);
+    $upgrading = false;
+    
+    foreach($reversedUpgradeSqls as $versionNumber => $sqlList) {
+        if($versionNumber == $fromVersion || $versionNumber > $fromVersion)
+            $upgrading = true;
+        
+        if($upgrading) {
+            echo '<div>Upgrading to version ' . $versionNumber . '.</div>';
+            upgrade_database($versionNumber, $db_upgrade_options, $upgradeSQLs);
+        }
 
+        if($versionNumber == $toVersion)
+            $upgrading = false;
+    }
+}
+
+function upgrade_database($version, $opts, $upgradeSQLs)
+{
     switch ($version) {
         case '075-080':
             # Migrating position IDs correctly requires having loaded the correct LRB used in the v0.75 league.
@@ -785,9 +805,6 @@ function upgrade_database($version, $opts, $newConnection = true)
         default:
             break;
     }
-
-    require_once('lib/class_sqlcore.php');
-    require_once('lib/mysql_upgrade_queries.php');
 
     // Modules
     echo "<b>Running SQLs for modules upgrade...</b><br>\n";
@@ -864,8 +881,6 @@ function upgrade_database($version, $opts, $newConnection = true)
     }
     
     // Done!
-    if($newConnection)
-        mysql_close($conn);
     return isset($upgradeMsgs[$version]) ? $upgradeMsgs[$version] : '' ;
 }
 

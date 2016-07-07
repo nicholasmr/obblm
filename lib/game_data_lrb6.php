@@ -26,11 +26,16 @@ require_once('lib/game_data_lrb6x.php');
 // Changes to present teams/positionals from LRB5b to LRB6.
 
 $DEA['Necromantic']['players']['Flesh Golem']['cost'] = 110000;
-$DEA['Necromantic']['players']['Necromantic Werewolf'] = $DEA['Necromantic']['players']['Werewolf']; unset($DEA['Necromantic']['players']['Werewolf']);
-$DEA['Norse']['players']['Norse Werewolf'] = $DEA['Norse']['players']['Ulfwerener']; unset($DEA['Norse']['players']['Ulfwerener']);
-$DEA['Norse']['players']['Yhetee'] = $DEA['Norse']['players']['Snow Troll']; unset($DEA['Norse']['players']['Snow Troll']);
-$DEA['Norse']['players']['Catcher'] = $DEA['Norse']['players']['Runner']; unset($DEA['Norse']['players']['Runner']);
-$DEA['Norse']['players']['Blitzer'] = $DEA['Norse']['players']['Berserker']; unset($DEA['Norse']['players']['Berserker']);
+if(isset($DEA['Necromantic']['players']['Werewolf']))
+    $DEA['Necromantic']['players']['Necromantic Werewolf'] = $DEA['Necromantic']['players']['Werewolf']; unset($DEA['Necromantic']['players']['Werewolf']);
+if(isset($DEA['Norse']['players']['Ulfwerener']))
+    $DEA['Norse']['players']['Norse Werewolf'] = $DEA['Norse']['players']['Ulfwerener']; unset($DEA['Norse']['players']['Ulfwerener']);
+if(isset($DEA['Norse']['players']['Snow Troll']))
+    $DEA['Norse']['players']['Yhetee'] = $DEA['Norse']['players']['Snow Troll']; unset($DEA['Norse']['players']['Snow Troll']);
+if(isset($DEA['Norse']['players']['Runner']))
+    $DEA['Norse']['players']['Catcher'] = $DEA['Norse']['players']['Runner']; unset($DEA['Norse']['players']['Runner']);
+if(isset($DEA['Norse']['players']['Berserker']))
+    $DEA['Norse']['players']['Blitzer'] = $DEA['Norse']['players']['Berserker']; unset($DEA['Norse']['players']['Berserker']);
 
 // Changes in star players from LRB5b to LRB6.
 

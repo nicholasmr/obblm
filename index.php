@@ -69,17 +69,22 @@ if ($_VISSTATE['COOCKIE'] || $_VISSTATE['POST_IN'] || $_VISSTATE['POST_OUT']) {
 }
 
 if($coach && $coach->isGlobalAdmin()) {
-    $databaseVersion = SQLUpgrade::getCurrentDatabaseVersion();
-    
-    if(!$databaseVersion) {
-        // running from pre-auto-SQL version
-        echo '<div class="messagecontainer red">Your database version cannot be determined. Please ensure you are up to date with <a href="upgrade.php">upgrade.php</a>.</div>';
-    } else if(!isset($db_version)) {
-        echo '<div class="messagecontainer red">Your desired database version cannot be determined. Please ensure $db_version is set to a value. If you aren\'t certain what to set it to, ask a NAFLM developer. 101 could be an appropriate default.</div>';
-    } else if($databaseVersion < $db_version) {
-        echo '<div class="messagecontainer green"><div>Your database will now be upgraded to version ' . $db_version . '.</div>';
-        upgrade_database($db_version, null, false);
-        echo '</div>';
+    if(!isset($db_version)) {
+        echo '<div class="messagecontainer red">Your desired database version cannot be determined. Please ensure $db_version is set to a value in settings.php. If you aren\'t certain what to set it to, ask a NAFLM developer. 101 could be an appropriate default.</div>';
+    } else {
+        $databaseVersion = SQLUpgrade::getCurrentDatabaseVersion();
+        $fromVersion = $databaseVersion ? $databaseVersion : '075-080'; // set to earliest auto-upgrade version by default
+        
+        if(!$databaseVersion || $fromVersion < $db_version) {
+            echo '<div class="messagecontainer lightgreen">';
+        
+            if(!$databaseVersion)
+                echo '<div>Your database version cannot be determined. Your system will run <strong>all</strong> automatic upgrades.</div>';
+            echo '<div>Your database will now be upgraded to version ' . $db_version . '.</div>';
+            
+            upgrade_database_to_version($db_version, $fromVersion);
+            echo '</div>';
+        }
     }
 }
 
