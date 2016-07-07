@@ -502,7 +502,9 @@ private function _roster($ALLOW_EDIT, $DETAILED, $players)
 
     title($team->name . (($team->is_retired) ? ' <font color="red"> (Retired)</font>' : ''));
     
-    $allowEdit = $coach->isMyTeam($team->team_id) || $coach->mayManageObj(T_OBJ_TEAM, $team->team_id);
+    $allowEdit = (isset($coach) && $coach)
+        ? $coach->isMyTeam($team->team_id) || $coach->mayManageObj(T_OBJ_TEAM, $team->team_id)
+        : false;
 
     $fields = array(
         'nr'        => array('desc' => '#', 'editable' => 'updatePlayerNumber', 'javaScriptArgs' => array('team_id', 'player_id'), 'editableClass' => 'number', 'allowEdit' => $allowEdit),
