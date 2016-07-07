@@ -16,11 +16,15 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
     self.selectedPlayerViewModel = match.selectedPlayerViewModel;
     
     self.openMatch = function(serverMatch) {
+        var theirTeamName = parseInt(serverMatch.team1_id, 10) === match.myTeamId() 
+            ? serverMatch.team2_name
+            : serverMatch.team1_name;
+        
         self.serverMatch(serverMatch);
         match
             .load(serverMatch)
             .then(function() {
-                $('#MatchDialog').dialog({modal: true});
+                $('#MatchDialog').dialog({modal: true, title: 'vs. ' + theirTeamName});
             });
     };
     
