@@ -255,7 +255,7 @@ public static function getMatches($obj, $obj_id, $node, $node_id, $opp_obj, $opp
     $query_cnt = str_replace($LIMIT, '', $query_cnt);
     $result = mysql_query($query_cnt);
     $row = mysql_fetch_assoc($result);
-    $pages = ceil($row['cnt']/$delta);
+    $pages = (!isset($delta) || !$delta) ? 1 : ceil($row['cnt']/$delta);
 
     return array($matches, $pages);
 }
