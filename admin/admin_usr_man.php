@@ -293,6 +293,7 @@ $T_LOCAL_RINGS = array(
                                 ?>
                                     <tr>
                                         <td><?php echo $retiredCoach->name; ?></td>
+                                        <td><?php echo join(', ', $retiredCoach->getLeagues()); ?></td>
                                         <td>
                                             <form method="POST" action="handler.php?type=registration&form=activate">
                                                 <input type="hidden" name="activate_name" value="<?php echo $retiredCoach->name; ?>" />
@@ -304,6 +305,8 @@ $T_LOCAL_RINGS = array(
                                 }
                             } ?>
                     </table>
+                    <br />
+                    <em>Admin:</em> Avoid activating users from other leagues.
                 <?php } ?>
         </div>
     </div>

@@ -184,6 +184,16 @@ class Coach
     public function setRetired($bool) {
         return mysql_query("UPDATE coaches SET retired = ".(($bool) ? 1 : 0)." WHERE coach_id = $this->coach_id");
     }
+    
+    public function getLeagues() {
+        $result = mysql_query("select name from memberships join leagues on memberships.lid=leagues.lid where cid = $this->coach_id");
+        $leagues = array();
+        while($league = mysql_fetch_object($result)) {
+            array_push($leagues, $league->name);
+        }
+        
+        return $leagues;
+    }
 
     public function setRing($rtype, $ring, $lid = false) {
         if ($rtype == self::T_RING_GROUP_GLOBAL && in_array($ring, self::$RINGS[self::T_RING_GROUP_GLOBAL])) {
