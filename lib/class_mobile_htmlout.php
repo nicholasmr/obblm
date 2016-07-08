@@ -4,10 +4,10 @@ class Mobile_HTMLOUT {
         global $coach;
         
         if(isset($_SESSION["SelectedTeam"])) {
-            return (isset($_POST["SelectedTeam"]) && $_POST["SelectedTeam"] != $_SESSION["SelectedTeam"]) ? $_POST["SelectedTeam"] : $_SESSION["SelectedTeam"];
+            return (isset($_REQUEST["SelectedTeam"]) && $_REQUEST["SelectedTeam"] != $_SESSION["SelectedTeam"]) ? $_REQUEST["SelectedTeam"] : $_SESSION["SelectedTeam"];
         } else {
             $teams = $coach->getTeams();
-            return isset($_POST["SelectedTeam"]) ? $_POST["SelectedTeam"] : $teams[0]->team_id;
+            return isset($_REQUEST["SelectedTeam"]) ? $_REQUEST["SelectedTeam"] : $teams[0]->team_id;
         }
     }
     

@@ -31,7 +31,7 @@ var MatchDialogViewModel = function(playersOnSelectedTeam) {
     self.saveMatch = function() {
         match.saveMatch().done(function() {
             // reload page so updates are made
-            window.location.search = '?mobile=1&lastMatchId=' + match.getMatchId();
+            window.location.search = '?mobile=1&lastMatchId=' + match.getMatchId() + '&SelectedTeam=' + self.myTeamId();
         });
     };
     
