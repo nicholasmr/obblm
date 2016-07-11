@@ -139,7 +139,19 @@ class Coach
         }
         
         return $teams;
-    }    
+    }
+    
+    public function getReadyTeams() {
+        $teams = array();
+        $result = mysql_query("SELECT team_id FROM teams WHERE owned_by_coach_id = $this->coach_id AND rdy = 1");
+        if ($result && mysql_num_rows($result) > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                array_push($teams, new Team($row['team_id']));
+            }
+        }
+        
+        return $teams;
+    }
 
     public function getWonTours() {
 

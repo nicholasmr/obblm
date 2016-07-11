@@ -6,7 +6,7 @@ class Mobile_HTMLOUT {
         if(isset($_SESSION["SelectedTeam"])) {
             return (isset($_REQUEST["SelectedTeam"]) && $_REQUEST["SelectedTeam"] != $_SESSION["SelectedTeam"]) ? $_REQUEST["SelectedTeam"] : $_SESSION["SelectedTeam"];
         } else {
-            $teams = $coach->getTeams();
+            $teams = $coach->getReadyTeams();
             return isset($_REQUEST["SelectedTeam"]) ? $_REQUEST["SelectedTeam"] : $teams[0]->team_id;
         }
     }
@@ -14,7 +14,7 @@ class Mobile_HTMLOUT {
     public static function sec_mobile_main() {
         global $coach, $lng, $T_INJS;
         
-        $teams = $coach->getTeams();
+        $teams = $coach->getReadyTeams();
         $selectedTeamId = Mobile_HTMLOUT::getSelectedTeamId();
         $_SESSION["SelectedTeam"] = $selectedTeamId;
 
