@@ -47,7 +47,7 @@ $rules['player_refund']         = 0;        // Player sell value percentage. Def
 $rules['journeymen_limit']      = 11;       // Until a team can field this number of players, it may fill team positions with journeymen.
 $rules['post_game_ff']          = false;    // Default is false. Allows teams to buy and drop fan factor even though their first game has been played.
 
-$rules['initial_treasury']      = 1100000;  // Default is 1000000.
+$rules['initial_treasury']      = 1000000;  // Default is 1000000.
 $rules['initial_rerolls']       = 0;        // Default is 0.
 $rules['initial_fan_factor']    = 0;        // Default is 0.
 $rules['initial_ass_coaches']   = 0;        // Default is 0.
@@ -58,6 +58,36 @@ $rules['max_rerolls']           = -1;       // Default is -1.
 $rules['max_fan_factor']        = 9;        // Default is 9.
 $rules['max_ass_coaches']       = -1;       // Default is -1.
 $rules['max_cheerleaders']      = -1;       // Default is -1.
+
+// Remove double backslashes in front of team number to enable team specific starting treasuries.
+$rules['initial_team_treasury'] = array(	//	0			=>	1000000,	// Amazon
+											//	1			=>	1000000,	// Chaos
+											//	2			=>	1000000,	// Chaos Dwarf
+											//	3			=>	1000000,	// Dark Elf
+											//	4			=>	1000000,	// Dwarf
+											//	5			=>	1000000,	// Elf
+											//	6			=>	1000000,	// Goblin
+											//	7			=>	1000000,	// Halfling
+											//	8			=>	1000000,	// High Elf
+											//	9			=>	1000000,	// Human
+											//	10			=>	1000000,	// Khemri
+											//	11			=>	1000000,	// Lizardman
+											//	12			=>	1000000,	// Orc
+											//	13			=>	1000000,	// Necromantic
+											//	14			=>	1000000,	// Norse
+											//	15			=>	1000000,	// Nurgle
+											//	16			=>	1000000,	// Ogre
+											//	17			=>	1000000,	// undead
+											//	18			=>	1000000,	// Vampire
+											//	19			=>	1000000,	// Skaven
+											//	20			=>	1000000,	// Wood Elf
+											//	21			=>	1000000,	// Chaos Pact
+											//	22			=>	1000000,	// Slann
+											//	23			=>	1000000,	// Underworld
+											//	24			=>	1000000,	// Bretonnia
+											//	25			=>	1000000,	// Daemons of Khorne
+											//	26			=>	1000000,	// Apes of Wrath
+										);	
 
 /*********************
  *   Standings pages
