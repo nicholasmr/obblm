@@ -291,7 +291,7 @@ public static function handlePost($cid) {
    /* Enforce league rules and common BB ones */
    $errors = array();
    if ($treasury < 0) {
-      $errors[] = $lng->getTrn('tooExpensive', 'TeamCreator') . ' (' . $initTreasury/1000 . ' kGP)';
+      $errors[] = $lng->getTrn('tooExpensive', 'TeamCreator') . ' (' . $race['treasury']/1000 . ' kGP)';
    }
    if (sizeof($players) < 11) {
       $errors[] = $lng->getTrn('tooFewPlayers', 'TeamCreator');
@@ -553,7 +553,6 @@ echo<<< EOQ
       setText("total", "0");
 	  setText("total", '0/' + maximum.toString());
       document.getElementById("raceid").value = race.rid;
-	  document.getElementById("initTreasury").value = race.treasury;
 
       rowIdx = 0;
       for (i = 0; i < race["player_count"]; i++) {
@@ -651,9 +650,8 @@ echo<<< EOQ
 
    </script>
    <form method="POST" id="form_team">
-   <input  id="action" name="action" value="create" />
-   <input  id="raceid" name="raceid" value="" />
-   <input  id="initTreasury" name="initTreasury" value="" />
+   <input type="hidden" id="action" name="action" value="create" />
+   <input type="hidden" id="raceid" name="raceid" value="" />
    <div class='boxWide'>
       <table class="common"><tr><td>
       <b>$txtRaceSelectTitle</b>: <select id="rid" name="rid" onchange="changeRace(this.options[this.selectedIndex].value)">
