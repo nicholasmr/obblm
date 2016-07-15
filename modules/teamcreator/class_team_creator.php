@@ -139,6 +139,11 @@ public static function getRaceArray() {
       $race['name'] = $rname;
       $race['rid'] = $rid;
       $race['apoth'] = !in_array($rid, $racesNoApothecary);
+	  if (array_key_exists($rid, $rules['initial_team_treasury'])) {
+        $race['treasury'] = $rules['initial_team_treasury'][$rid];
+	  } else {
+		$race['treasury'] = $rules['initial_treasury'];
+      };
       $race['players'] = array();
       $race['others'] = array();
       foreach ($DEA[$raceididx[$rid]]['players'] as $pos => $d) {
@@ -241,8 +246,8 @@ public static function handlePost($cid) {
    $rerolls = $_POST['qtyo0'];
    $fans = $_POST['qtyo1'];
    $cl = $_POST['qtyo2'];
-   $ac = $_POST['qtyo3'];
-   $treasury = $rules['initial_treasury'];
+   $ac = $_POST['qtyo3'];   
+   $treasury = $race['treasury'];
    $treasury -= $rerolls * $race['other']['rr_cost'];
    $treasury -= $fans * 10000;
    $treasury -= $cl * 10000;
@@ -286,7 +291,7 @@ public static function handlePost($cid) {
    /* Enforce league rules and common BB ones */
    $errors = array();
    if ($treasury < 0) {
-      $errors[] = $lng->getTrn('tooExpensive', 'TeamCreator');
+      $errors[] = $lng->getTrn('tooExpensive', 'TeamCreator') . ' (' . $initTreasury/1000 . ' kGP)';
    }
    if (sizeof($players) < 11) {
       $errors[] = $lng->getTrn('tooFewPlayers', 'TeamCreator');
@@ -536,6 +541,7 @@ echo<<< EOQ
       var race = races[raceId];
       var players = race["players"];
       var others = race["others"];
+	  var maximum = race['treasury']/1000;
       var i;
       var rowIdx;
       var table = document.getElementById('teamTable');
@@ -545,7 +551,9 @@ echo<<< EOQ
       }
       setText("pcnt", "0");
       setText("total", "0");
+	  setText("total", '0/' + maximum.toString());
       document.getElementById("raceid").value = race.rid;
+	  document.getElementById("initTreasury").value = race.treasury;
 
       rowIdx = 0;
       for (i = 0; i < race["player_count"]; i++) {
@@ -595,6 +603,7 @@ echo<<< EOQ
    function updateTotal() {
       var race = races[getValue("rid")];
       var playerCount = race['player_count'];
+	  var maximum = race['treasury']/1000;
 
       var pCount = 0;
       var total = 0;
@@ -614,7 +623,7 @@ echo<<< EOQ
             total +=  new Number(subTot);
          }
       }
-      setText("total",total);
+      setText("total", total.toString() + '/' + maximum.toString());
    }
 
    function createTeam() {
@@ -642,8 +651,9 @@ echo<<< EOQ
 
    </script>
    <form method="POST" id="form_team">
-   <input type="hidden" id="action" name="action" value="create" />
-   <input type="hidden" id="raceid" name="raceid" value="" />
+   <input  id="action" name="action" value="create" />
+   <input  id="raceid" name="raceid" value="" />
+   <input  id="initTreasury" name="initTreasury" value="" />
    <div class='boxWide'>
       <table class="common"><tr><td>
       <b>$txtRaceSelectTitle</b>: <select id="rid" name="rid" onchange="changeRace(this.options[this.selectedIndex].value)">
