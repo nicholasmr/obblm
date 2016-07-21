@@ -230,7 +230,7 @@ public static function handlePost($cid) {
       status(false, $lng->getTrn('notallowed', 'TeamCreator'));
       return;
    }
-
+   
    $lid_did = $_POST['lid_did'];
    @list($lid,$did) = explode(',',$_POST['lid_did']);
    setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
@@ -247,7 +247,12 @@ public static function handlePost($cid) {
    $fans = $_POST['qtyo1'];
    $cl = $_POST['qtyo2'];
    $ac = $_POST['qtyo3'];   
-   $treasury = $race['treasury'];
+   if (array_key_exists($rid, $rules['initial_team_treasury'])) {
+        $init_treasury = $rules['initial_team_treasury'][$rid];
+	  } else {
+		$init_treasury = $rules['initial_treasury'];
+      };
+   $treasury = $init_treasury;
    $treasury -= $rerolls * $race['other']['rr_cost'];
    $treasury -= $fans * 10000;
    $treasury -= $cl * 10000;
@@ -291,7 +296,7 @@ public static function handlePost($cid) {
    /* Enforce league rules and common BB ones */
    $errors = array();
    if ($treasury < 0) {
-      $errors[] = $lng->getTrn('tooExpensive', 'TeamCreator') . ' (' . $race['treasury']/1000 . ' kGP)';
+      $errors[] = $lng->getTrn('tooExpensive', 'TeamCreator') . ' (' . $init_treasury/1000 . ' kGP)';
    }
    if (sizeof($players) < 11) {
       $errors[] = $lng->getTrn('tooFewPlayers', 'TeamCreator');
@@ -374,7 +379,7 @@ EOQ;
 echo<<< EOQ
       var lid = document.getElementById('lid_did');
       for (var i = 0; i < lid.options.length; i++) {
-         if (lid.options[i].value==$post->lid_did) {
+         if (lid.options[i].value=="$post->lid_did") {
             lid.selectedIndex = i;
             break;
          }
@@ -702,6 +707,7 @@ EOQ;
    $txtDollar = $lng->getTrn('dollar', 'TeamCreator');
    $txtQuantity = $lng->getTrn('quantity', 'TeamCreator');
    $txtSubtotal = $lng->getTrn('subtotal', 'TeamCreator');
+   
 
 echo<<< EOQ
        <td align="right" id="indTxt">$txtInducements:</td>
