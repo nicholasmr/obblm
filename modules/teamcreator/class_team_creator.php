@@ -356,7 +356,9 @@ public static function handlePost($cid) {
    /* Report errors and reset the form, or redirect to the team page */
    if (sizeof($errors) > 0) {
       $msg = implode(",<br />", $errors);
-      status(false, $msg);
+	  if ($_POST['action'] == 'create') {
+		status(false, $msg); // Don't show error messages if there was no attempt to create team
+	  }
       $post = (object) $_POST;
 echo<<< EOQ
    <script type="text/javascript">
@@ -652,6 +654,14 @@ echo<<< EOQ
       }
 
    }
+   
+   function changeLeague() {
+      // Reload page with new league rules when League dropdown changes
+	  // Set action field to 'leagueChange' for $_POST handling
+	  document.getElementById("action").value = 'leagueChange';
+	  // Submit form
+	  document.getElementById("form_team").submit();
+   }
 
    </script>
    <form method="POST" id="form_team">
@@ -675,7 +685,7 @@ EOQ;
          $lgeDiv = $lng->getTrn('common/league') . '/' . $lng->getTrn('common/division');
 echo<<< EOQ
       <td align="right"><b>$txtTeamName</b>:</td><td><input type="text" id="tname" name="tname" size="20" maxlength="50"></td>
-      <td align="right"><b>$lgeDiv</b>:</td><td><select name="lid_did" id="lid_did">
+      <td align="right"><b>$lgeDiv</b>:</td><td><select name="lid_did" id="lid_did" onChange="changeLeague()">
 EOQ;
          foreach ($leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, $coach->coach_id, array(T_NODE_LEAGUE => array('tie_teams' => 'tie_teams'))) as $lid => $lstruct) {
             if ($lstruct['desc']['tie_teams']) {
