@@ -103,7 +103,7 @@ class PDFMatchReport implements ModuleInterface
         // Text in headline
         $pdf->SetXY($currentx+30,$currenty);
         $pdf->SetFont('Tahoma','B',22);
-        $pdf->Cell(360, 20, 'OBBLM Match Report', 0, 0, 'R', false, '');
+        $pdf->Cell(360, 20, $lng->getTrn('title', __CLASS__), 0, 0, 'R', false, '');
 
 
         //Printing game info rounded box
@@ -141,10 +141,10 @@ class PDFMatchReport implements ModuleInterface
         $space = '        ';
         $currenty += 26;
         $pdf->SetXY($currentx,$currenty);
-        $pdf->Cell(210, 50, "Score:       -", 0, 0, 'R', false, '');
+        $pdf->Cell(210, 50, $lng->getTrn('score', 'PDFMatchReport')."${space}-", 0, 0, 'R', false, '');
         $currenty += 18;
         $pdf->SetXY($currentx,$currenty);
-        $pdf->Cell(210, 50, "Gate:${space}k", 0, 0, 'R', false, '');
+        $pdf->Cell(210, 50, $lng->getTrn('gate', 'PDFMatchReport')."${space}k", 0, 0, 'R', false, '');
 
         //Printing headers for player rows. Do all this twice
         $smallFieldSize = 25;
@@ -191,10 +191,10 @@ class PDFMatchReport implements ModuleInterface
             $pdf->setLineWidth(1.5);
 
             // Printing headline for team table
-            $pdf->Cell(50, $h, 'Winnings', 1, 0, 'L', true, '');
-            $pdf->Cell(60, $h, 'Fan Factor', 1, 0, 'C', true, '');
-            $pdf->Cell(70, $h, 'Total team CAS', 1, 0, 'C', true, '');
-            $pdf->Cell(35, $h, 'FAME', 1, 0, 'C', true, '');
+            $pdf->Cell(50, $h, $lng->getTrn('winn', 'PDFMatchReport'), 1, 0, 'L', true, '');
+            $pdf->Cell(60, $h, $lng->getTrn('fanf', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell(70, $h, $lng->getTrn('castotal', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell(35, $h, $lng->getTrn('fame', 'PDFMatchReport'), 1, 0, 'C', true, '');
             
             if (1 && $FILLED) {
                     $pdf->SetFont('Tahoma','B',11);
@@ -240,7 +240,7 @@ class PDFMatchReport implements ModuleInterface
             if (1 && $FILLED) {
                     $t = ${"team$i"};
                     $pdf->SetFont('Tahoma','',8);
-                   $statsstr = sprintf('TV: %uk  -  Played: %u  -  Win pct.: %1.0f  -  ELO: %1.0f  -  CAS inflicted: %u', $t->tv/1000, $t->mv_played, $t->rg_win_pct, $t->rg_elo, $t->mv_cas);
+                   $statsstr = sprintf($lng->getTrn('teamvalue', 'PDFMatchReport').' %uk  -  '.$lng->getTrn('played', 'PDFMatchReport').' %u  -  '.$lng->getTrn('winpct', 'PDFMatchReport').' %1.0f  -  ELO: %1.0f  -  CAS: %u', $t->tv/1000, $t->mv_played, $t->rg_win_pct, $t->rg_elo, $t->mv_cas);
 #                    $statsstr = sprintf('TV: %uk', $t->tv/1000);
                     $pdf->Cell(250, $h, '    '.$statsstr, 0, 0, 'L', false, '');
             }         
@@ -256,18 +256,18 @@ class PDFMatchReport implements ModuleInterface
             $pdf->setLineWidth(1.5);
 
             // Printing headline for player table
-            $pdf->Cell($smallFieldSize, $h, 'Nr', 1, 0, 'C', true, '');
-            $pdf->Cell($nameFieldSize, $h, 'Name', 1, 0, 'L', true, '');
-            $pdf->Cell($smallFieldSize, $h, 'MVP', 1, 0, 'C', true, '');
-            $pdf->Cell($smallFieldSize, $h, 'Cp', 1, 0, 'C', true, '');
-            $pdf->Cell($smallFieldSize, $h, 'Td', 1, 0, 'C', true, '');
-            $pdf->Cell($smallFieldSize, $h, 'Int', 1, 0, 'C', true, '');
-            $pdf->Cell($smallFieldSize, $h, 'BH', 1, 0, 'C', true, '');
-            $pdf->Cell($smallFieldSize, $h, 'SI', 1, 0, 'C', true, '');
-            $pdf->Cell($smallFieldSize, $h, 'Ki', 1, 0, 'C', true, '');
-            $pdf->Cell($mediumFieldSize, $h, 'IR D1', 1, 0, 'C', true, '');
-            $pdf->Cell($mediumFieldSize, $h, 'IR D2', 1, 0, 'C', true, '');
-            $pdf->Cell($mediumFieldSize, $h, 'Inj', 1, 0, 'C', true, '');
+            $pdf->Cell($smallFieldSize, $h, $lng->getTrn('number', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($nameFieldSize, $h, $lng->getTrn('playername', 'PDFMatchReport'), 1, 0, 'L', true, '');
+            $pdf->Cell($smallFieldSize, $h, $lng->getTrn('mvplayer', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($smallFieldSize, $h, $lng->getTrn('cpass', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($smallFieldSize, $h, $lng->getTrn('tdown', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($smallFieldSize, $h, $lng->getTrn('intercep', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($smallFieldSize, $h, $lng->getTrn('bhurt', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($smallFieldSize, $h, $lng->getTrn('sinj', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($smallFieldSize, $h, $lng->getTrn('kill', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($mediumFieldSize, $h, $lng->getTrn('improll1', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($mediumFieldSize, $h, $lng->getTrn('improll2', 'PDFMatchReport'), 1, 0, 'C', true, '');
+            $pdf->Cell($mediumFieldSize, $h, $lng->getTrn('injur', 'PDFMatchReport'), 1, 0, 'C', true, '');
 
             $currenty+=23;
 
@@ -304,15 +304,15 @@ class PDFMatchReport implements ModuleInterface
                   $name = $p->name;
                   $bgc = COLOR_ROSTER_NORMAL;
                   if ($p->is_journeyman) {
-                       $name = "$p->name [J]";
+                       $name = "$p->name ".$lng->getTrn('journ2', 'PDFMatchReport');
                        $bgc = COLOR_ROSTER_JOURNEY;
                   }
                   if ($p->is_journeyman_used) {
-                       $name = "$p->name [J]";
+                       $name = "$p->name ".$lng->getTrn('journ2', 'PDFMatchReport');
                        $bgc = COLOR_ROSTER_JOURNEY_USED;
                   }
                   if ($p->is_mng) {
-                       $name = "$p->name [MNG]";
+                       $name = "$p->name ".$lng->getTrn('mng2', 'PDFMatchReport');
                        $bgc = COLOR_ROSTER_MNG;
                   }
                   if ($p->mayHaveNewSkill()) {
@@ -361,20 +361,20 @@ class PDFMatchReport implements ModuleInterface
             $pdf->SetXY($currentx, $currenty);
             $pdf->Rect($currentx, $currenty, 5, 5, 'DF');
             $pdf->SetXY($currentx+=5, $currenty-=1);
-            $pdf->Cell(20, 8, 'MNG', 0, 0, 'L', false);
+            $pdf->Cell(20, 8, $lng->getTrn('mng', 'PDFMatchReport'), 0, 0, 'L', false);
             $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY));
             $pdf->Rect($currentx+=22+$dd, $currenty+=1, 5, 5, 'DF');
             $pdf->SetXY($currentx+=5, $currenty-=1);
-            $pdf->Cell(45, 8, 'Journeyman', 0, 0, 'L', false);
+            $pdf->Cell(45, 8, $lng->getTrn('journeyman', 'PDFMatchReport'), 0, 0, 'L', false);
 
             $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY_USED));
             $pdf->Rect($currentx+=47+$dd, $currenty+=1, 5, 5, 'DF');
             $pdf->SetXY($currentx+=5, $currenty-=1);
-            $pdf->Cell(45, 8, 'Used journeyman', 0, 0, 'L', false);
+            $pdf->Cell(45, 8, $lng->getTrn('usedjourn', 'PDFMatchReport'), 0, 0, 'L', false);
             $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NEWSKILL));
             $pdf->Rect($currentx+=64+$dd, $currenty+=1, 5, 5, 'DF');
             $pdf->SetXY($currentx+=5, $currenty-=1);
-            $pdf->Cell(70, 8, 'New skill available', 0, 0, 'L', false);
+            $pdf->Cell(70, 8, $lng->getTrn('newskillav', 'PDFMatchReport'), 0, 0, 'L', false);
 
         }
 

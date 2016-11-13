@@ -2,9 +2,115 @@
 <translations>
   <en-GB>
    <name>PDF Match Report</name>
+
+   <title>OBBLM Match Report</title>
+   <score>Score:</score>
+   <gate>Gate:</gate>
+   <winn>Winnings</winn>
+   <fanf>Fan Factor</fanf>
+   <castotal>Total team CAS</castotal>
+   <fame>FAME</fame>
+
+   <number>Nr</number>
+   <playername>Name</playername>
+   <mvplayer>MVP</mvplayer>
+   <cpass>Cp</cpass>
+   <tdown>Td</tdown>
+   <intercep>Int</intercep>
+   <bhurt>BH</bhurt>
+   <sinj>SI</sinj>
+   <kill>Ki</kill>
+   <improll1>IR D1</improll1>
+   <improll2>IR D2</improll2>
+   <injur>Inj</injur>
+
+   <teamvalue>TV:</teamvalue>
+   <played>Played:</played>
+   <winpct>Win pct.:</winpct>
+
+   <mng>MNG</mng>
+   <mng2>[MNG]</mng2>
+   <journeyman>Journeyman</journeyman>
+   <journ2>[J]</journ2>
+   <usedjourn>Used journeyman</usedjourn>
+   <newskillav>New skill available</newskillav>
+
   </en-GB>
+
+
+<!--    SPANISH        VERSION     -->
+<es-ES>
+   <name>Reporte de partido PDF</name>
+
+   <title>Reporte de Partido OBBLM</title>
+   <score>Resultado:</score>
+   <gate>Aforo:</gate>
+   <winn>Ganancias</winn>
+   <fanf>Fact.Hinchas</fanf>
+   <castotal>Castigos</castotal>
+   <fame>FAMA</fame>
+
+   <number>#</number>
+   <playername>Nombre</playername>
+   <mvplayer>MJE</mvplayer>
+   <cpass>PC</cpass>
+   <tdown>Td</tdown>
+   <intercep>Int</intercep>
+   <bhurt>HL</bhurt>
+   <sinj>HG</sinj>
+   <kill>Kill</kill>
+   <improll1>TM D1</improll1>
+   <improll2>TM D2</improll2>
+   <injur>Lesion</injur>
+
+   <teamvalue>VE:</teamvalue>
+   <played>Jugados:</played>
+   <winpct>Vict(pctg):</winpct>
+
+   <mng>LPPE</mng>
+   <mng2>[LPPE]</mng2>
+   <journeyman>Independiente</journeyman>
+   <journ2>[I]</journ2>
+   <usedjourn>Independiente usado</usedjourn>
+   <newskillav>Subida pendiente</newskillav>
+ 
+</es-ES>
+
   <fr-FR>
    <name>Rapport de match PDF</name>
+
+   <title>OBBLM Match Report</title>
+   <score>Score:</score>
+   <gate>Gate:</gate>
+   <winn>Winnings</winn>
+   <fanf>Fan Factor</fanf>
+   <castotal>Total team CAS</castotal>
+   <fame>FAME</fame>
+
+   <number>Nr</number>
+   <playername>Name</playername>
+   <mvplayer>MVP</mvplayer>
+   <cpass>Cp</cpass>
+   <tdown>Td</tdown>
+   <intercep>Int</intercep>
+   <bhurt>BH</bhurt>
+   <sinj>SI</sinj>
+   <kill>Ki</kill>
+   <improll1>IR D1</improll1>
+   <improll2>IR D2</improll2>
+   <injur>Inj</injur>
+
+   <teamvalue>TV:</teamvalue>
+   <played>Jugados:</played>
+   <winpct>Win pctg</winpct>
+
+   <mng>MNG</mng>
+   <mng2>[MNG]</mng2>
+   <journeyman>Journeyman</journeyman>
+   <journ2>[J]</journ2>
+   <usedjourn>Used journeyman</usedjourn>
+   <newskillav>New skill available</newskillav>
+
   </fr-FR>
 </translations>
 

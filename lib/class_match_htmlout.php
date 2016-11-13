@@ -24,17 +24,17 @@
 // Fields used in match reports
 # Stored name => display name
 # Don't touch - order denpendant entries!!!
-$T_MOUT_REL = array('nr' => '#', 'name' => 'Name', 'pos' => 'Position',);
-$T_MOUT_ACH = array_combine($T_PMD_ACH, array('MVP','Cp','Td','Int','BH','SI','Ki',));
-$T_MOUT_IR = array_combine($T_PMD_IR, array('IR1 D1','IR1 D2','IR2 D1','IR2 D2','IR3 D1','IR3 D2',));
-$T_MOUT_INJ = array_combine($T_PMD_INJ, array('Inj','Ageing 1','Ageing 2'));
+$T_MOUT_REL = array('nr' => '#', 'name' => 'Nombre', 'pos' => 'Posición',);
+$T_MOUT_ACH = array_combine($T_PMD_ACH, array('MJP','PaseC','Td','Int','HLeve','HGrave','Kill',));
+$T_MOUT_IR = array_combine($T_PMD_IR, array('TM1 D1','TM1 D2','TM2 D1','TM2 D2','TM3 D1','TM3 D2',));
+$T_MOUT_INJ = array_combine($T_PMD_INJ, array('Lesión','Envejec 1','Envejec 2'));
 
 class Match_HTMLOUT extends Match
 {
 
 const T_HTML_MATCHES_PER_PAGE = 100;
 
-public static function recentMatches() {
+function recentMatches() {
 
     global $lng;
     title($lng->getTrn('menu/matches_menu/recent'));
@@ -43,7 +43,7 @@ public static function recentMatches() {
     HTMLOUT::recentGames(false,false,$node,$node_id, false,false,array('url' => 'index.php?section=matches&amp;type=recent', 'n' => MAX_RECENT_GAMES));
 }
 
-public static function upcomingMatches() {
+function upcomingMatches() {
 
     global $lng;
     title($lng->getTrn('menu/matches_menu/upcoming'));
@@ -265,7 +265,7 @@ public static function report() {
     global $lng, $stars, $rules, $settings, $coach, $racesHasNecromancer, $racesMayRaiseRotters, $DEA, $T_PMD__ENTRY_EXPECTED;
     global $T_MOUT_REL, $T_MOUT_ACH, $T_MOUT_IR, $T_MOUT_INJ;
     global $leagues,$divisions,$tours;
-    $T_ROUNDS = Match::getRounds();
+    global $T_ROUNDS;
 
 	// Perform actions (delete, lock/unlock and reset). Needs the
     $IS_LOCAL_ADMIN = (is_object($coach) && $coach->isNodeCommish(T_NODE_TOURNAMENT, get_alt_col('matches', 'match_id', $match_id, 'f_tour_id')));
@@ -280,16 +280,6 @@ public static function report() {
     $lid = $divisions[$tours[$m->f_tour_id]['f_did']]['f_lid'];
     $ALLOW_EDIT = (!$m->locked && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $leagues[$lid]['ring'] == Coach::T_RING_LOCAL_ADMIN || $coach->isInMatch($m->match_id)));
     $DIS = ($ALLOW_EDIT) ? '' : 'DISABLED';
-
-    // Lock page for other reasons? (Used journeys etc)
-    $USED_JOURNEYMAN_PRESENT = false;
-    foreach (array(1 => $team1, 2 => $team2) as $id => $t) {
-        foreach ($t->getPlayers() as $p) {
-            if (!self::player_validation($p, $m)) {continue;}
-            if (!$m->is_played && $p->is_journeyman_used) {$USED_JOURNEYMAN_PRESENT = true;}
-        }
-    }
-    if ($USED_JOURNEYMAN_PRESENT) {$DIS = 'DISABLED';}
 
     // Relay to ES report page?
     if (isset($_GET['es_report'])) { # Don't care what value the GET field has!
@@ -549,9 +539,8 @@ public static function report() {
     $teamUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false) . "\">" . $m->team2_name . "</a>";
     $coachUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team1->owned_by_coach_id,false,false) . "\">" . $team1->f_cname . "</a>";
     $coachUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_COACH,$team2->owned_by_coach_id,false,false) . "\">" . $team2->f_cname . "</a>";
-    $raceUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team1->f_race_id,false,false) . "\">" .$lng->getTrn('race/'.strtolower(str_replace(' ','', $team1->f_rname))) . "</a>";
-    $raceUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team2->f_race_id,false,false) . "\">" .$lng->getTrn('race/'.strtolower(str_replace(' ','', $team2->f_rname))). "</a>";
-
+    $raceUrl1 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team1->f_race_id,false,false) . "\">" . $team1->f_rname . "</a>";
+    $raceUrl2 = "<a href=\"" . urlcompile(T_URL_PROFILE,T_OBJ_RACE,$team2->f_race_id,false,false) . "\">" . $team2->f_rname . "</a>";
     $leagueUrl = League::getLeagueUrl(get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_LEAGUE));
     $divUrl = "<a href=\"" . urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,T_NODE_DIVISION,get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION)) . "\">" . get_parent_name(T_NODE_MATCH, $m->match_id, T_NODE_DIVISION) . "</a>";
     $tourUrl = Tour::getTourUrl(get_parent_id(T_NODE_MATCH, $m->match_id, T_NODE_TOURNAMENT));
@@ -566,10 +555,10 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/coaches');?></b>:</td><td style='text-align: right;'><?php echo "$coachUrl1</td><td> &mdash; </td><td style='text-align: left;'>$coachUrl2";?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/races');?></b>:</td><td style='text-align: right;'><?php echo "$raceUrl1</td><td> &mdash; </td><td style='text-align: left;'>$raceUrl2";?></td></tr>
     <tr><td colspan="4"><hr></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3">    <?php   echo $leagueUrl; ?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3">  <?php   echo $divUrl;?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/league');?></b>:</td><td colspan="3"><?php  echo $leagueUrl; ?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/division');?></b>:</td><td colspan="3"><?php     echo $divUrl;?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/tournament');?></b>:</td><td colspan="3"><?php   echo $tourUrl;?></td></tr>
-    <tr><td><b><?php echo $lng->getTrn('common/round');?></b>:</td><td colspan="3">     <?php   echo $T_ROUNDS[$m->round];?></td></tr>
+    <tr><td><b><?php echo $lng->getTrn('common/round');?></b>:</td><td colspan="3"><?php   echo $lng->getTrn($T_ROUNDS[$m->round]);?></td></tr>
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
     if (Module::isRegistered('PDFMatchReport')) {
@@ -600,8 +589,8 @@ public static function report() {
 		echo "<br><a href='javascript:void(0);' onClick='slideToggleFast(\"chRound\");'>".$lng->getTrn('matches/report/chround')."</a><div id='chRound' style='display:none;'>
 		<form method='POST'>
 		<select name='round'>";
-		foreach ($T_ROUNDS as $id => $desc ) {
-		    echo "<option value='$id'>".$desc."</option>\n";
+		foreach ($T_ROUNDS as $id => $lngidx ) {
+		    echo "<option value='$id'>".$lng->getTrn($lngidx)."</option>\n";
 	    }
 		echo "</select>
 		<input type='submit' value='".$lng->getTrn('matches/report/chround')."'>
@@ -692,31 +681,10 @@ public static function report() {
             <?php
             echo "<tr>\n";
             foreach (array_values($playerFields) as $f) {
-               // We need to translate table headers
-               switch(strtolower(str_replace(' ', '', $f)))
-               {
-                   case 'name': $header_text = $lng->getTrn('common/name'); break;
-                   case 'mvp': $header_text = $lng->getTrn('matches/report/mvp'); break;
-                   case 'cp': $header_text = $lng->getTrn('matches/report/cp'); break;
-                   case 'bh': $header_text = $lng->getTrn('matches/report/bh'); break;
-                   case 'si': $header_text = $lng->getTrn('matches/report/si'); break;
-                   case 'ki': $header_text = $lng->getTrn('matches/report/ki'); break;
-                   case 'ir1d1': $header_text = $lng->getTrn('matches/report/ir1')." D1"; break;
-                   case 'ir1d2': $header_text = $lng->getTrn('matches/report/ir1')." D2"; break;
-                   case 'ir2d1': $header_text = $lng->getTrn('matches/report/ir2')." D1"; break;
-                   case 'ir2d2': $header_text = $lng->getTrn('matches/report/ir2')." D2"; break;
-                   case 'ir3d1': $header_text = $lng->getTrn('matches/report/ir3')." D1"; break;
-                   case 'ir3d2': $header_text = $lng->getTrn('matches/report/ir3')." D2"; break;
-                   case 'inj': $header_text = $lng->getTrn('matches/report/inj'); break;
-                   case 'ageing1': $header_text = $lng->getTrn('matches/report/ageing1'); break;
-                   case 'ageing2': $header_text = $lng->getTrn('matches/report/ageing2'); break;
-                   default: $header_text = $f;
-                 }
-                 echo "<td><i>$header_text</i></td>\n";
+                echo "<td><i>$f</i></td>\n";
             }
             echo "</tr>\n";
 
-            $NORMSTAT = true; // only normal player statuses
             foreach ($t->getPlayers() as $p) {
 
                 if (!self::player_validation($p, $m))
@@ -727,33 +695,18 @@ public static function report() {
                 $mdat   = $m->getPlayerEntry($p->player_id);
 
                 // Print player row
-                if ($p->is_journeyman_used && !$m->is_played)   {$bgcolor = COLOR_HTML_JOURNEY_USED;    $NORMSTAT = false;}
-                elseif ($p->is_journeyman)                      {$bgcolor = COLOR_HTML_JOURNEY;         $NORMSTAT = false;}
-                elseif ($status == MNG)                         {$bgcolor = COLOR_HTML_MNG;             $NORMSTAT = false;}
-                elseif ($p->mayHaveNewSkill())                  {$bgcolor = COLOR_HTML_NEWSKILL;        $NORMSTAT = false;}
+                if ($p->is_journeyman) {$bgcolor = COLOR_HTML_JOURNEY;}
+                elseif ($status == MNG) {$bgcolor = COLOR_HTML_MNG;}
                 else {$bgcolor = false;}
-                self::_print_player_row($p->player_id, $p->name, $p->nr, $lng->getTrn('position/'.strtolower($lng->FilterPosition($p->position))).(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
+                self::_print_player_row($p->player_id, $p->name, $p->nr, $p->position.(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
             }
             echo "</table>\n";
-            echo "<br>\n";
-            if (!$NORMSTAT) {
-            ?><table class="text"><tr><td style="width: 100%;"></td><?php
-                if (1) {
-                    ?>
-                    <td style="background-color: <?php echo COLOR_HTML_MNG;     ?>;"><font color='black'><b>&nbsp;MNG&nbsp;</b></font></td>
-                    <td style="background-color: <?php echo COLOR_HTML_JOURNEY; ?>;"><font color='black'><b>&nbsp;Journeyman&nbsp;</b></font></td>
-                    <td style="background-color: <?php echo COLOR_HTML_JOURNEY_USED; ?>;"><font color='black'><b>&nbsp;Used&nbsp;journeyman&nbsp;</b></font></td>
-                    <td style="background-color: <?php echo COLOR_HTML_NEWSKILL;?>;"><font color='black'><b>&nbsp;New&nbsp;skill&nbsp;available&nbsp;</b></font></td>
-                    <?php
-                }
-            ?></tr></table><?php
-            }
 
             // Add raised zombies
             global $racesHasNecromancer;
             if (in_array($t->f_race_id, $racesHasNecromancer)) {
                 echo "<hr style='width:200px;float:left;'><br>
-                <b>Raised zombie?:</b> <input type='checkbox' name='t${id}zombie' value='1' onclick='slideToggleFast(\"t${id}zombie\");'><br>\n";
+                <b>Zombi por muerte rival?:</b> <input type='checkbox' name='t${id}zombie' value='1' onclick='slideToggleFast(\"t${id}zombie\");'><br>\n";
                 echo "<div id='t${id}zombie' style='display:none;'>\n";
                 echo "<table class='common'>\n";
                 self::_print_player_row("t${id}zombie", 'Raised zombie', '&mdash;', 'Zombie', false, array(), $DIS);
@@ -765,7 +718,7 @@ public static function report() {
             if (in_array($t->f_race_id, $racesMayRaiseRotters)) {
                 $maxRotters = 6; # Note there is no real limit for raised rotters.
                 echo "<hr style='width:200px;float:left;'><br>
-                <b>Raised rotters?:</b>
+                <b>Putrefactos por muerte rival?:</b>
                 <select name='t${id}rotterCnt' onChange='var i = this.options[this.selectedIndex].value; var j=1; for (j=1; j<=$maxRotters; j++) {if (j<=i) {slideDownFast(\"t${id}rotter\"+j);} else {slideUpFast(\"t${id}rotter\"+j);}}' >";
                 foreach (range(0,$maxRotters) as $n) {echo "<option value='$n'>$n</option>";}
                 echo "</select>\n";
@@ -779,7 +732,7 @@ public static function report() {
 
             <table style='border-spacing: 0px 10px;'>
                 <tr><td align="left" valign="top">
-                    <b>Star Players</b>:
+                    <b>Jugadores Estrella</b>:
                     <input type='button' id="addStarsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>"
                     onClick="stars = document.getElementById('stars_<?php echo $id;?>'); addStarMerc(<?php echo $id;?>, stars.options[stars.selectedIndex].value);" <?php echo $DIS; ?>>
                     <select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
@@ -791,7 +744,7 @@ public static function report() {
                     </select>
                 </td></tr>
                 <tr><td align="left" valign="top">
-                    <b>Mercenaries</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
+                    <b>Mercenarios</b>: <input type='button' id="addMercsBtn_<?php echo $id;?>" value="<?php echo $lng->getTrn('common/add');?>" onClick="addStarMerc(<?php echo "$id, ".ID_MERCS;?>);" <?php echo $DIS; ?>>
                 </td></tr>
             </table>
 
@@ -805,11 +758,7 @@ public static function report() {
             <tr class='commonhead'><td colspan='13'><b><?php echo $lng->getTrn('matches/report/summary');?></b></td></tr>
             <tr><td colspan='13'><textarea name='summary' rows='10' cols='100' <?php echo $DIS . ">" . $m->getText(); ?></textarea></td></tr>
         </table>
-        <br>
-        <center>
-            <input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>>
-            <?php if ($USED_JOURNEYMAN_PRESENT) {echo "<br><br><b>".$lng->getTrn('matches/report/usedjourney')."</b>";} ?>
-        </center>
+        <br><center><input type="submit" name='button' value="<?php echo $lng->getTrn('common/save');?>" <?php echo $DIS; ?>></center>
     </form>
     <br><br>
     <?php
@@ -913,7 +862,6 @@ public static function report_ES($mid, $DIS)
         }
         }
         status($status);
-        $m->finalizeMatchSubmit(); // Run MySQL triggers
         $players = self::report_ES_loadPlayers($mid); # Reload!
     }
 
@@ -1029,9 +977,9 @@ public static function userSched() {
                 echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'index.php?section=matches&type=usersched&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
                 echo ' as ';
                 echo '<select name="round" id="round" '.$_DISABLED.'>';
-                $T_ROUNDS = Match::getRounds();
+                global $T_ROUNDS;
                 foreach ($T_ROUNDS as $r => $d) {
-                    echo "<option value='$r' ".(($r == 1) ? 'SELECTED' : '').">".$d."</option>\n";
+                    echo "<option value='$r' ".(($r == 1) ? 'SELECTED' : '').">".$lng->getTrn($d)."</option>\n";
                 }
                 ?>
                 </select>

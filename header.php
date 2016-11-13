@@ -30,15 +30,14 @@ if (strtolower($iniRG = ini_get('register_globals')) == 'on' || $iniRG == 1)
 if (!defined('T_NO_STARTUP') && file_exists('install.php'))
     die('Please remove <i>install.php</i> before using OBBLM.');
 
-//error_reporting(E_ALL);
-error_reporting((E_ALL | E_STRICT) & ~E_DEPRECATED);
+error_reporting(E_ALL);
 session_start();
 
 /*********************
  *   General
  *********************/
 
-define('OBBLM_VERSION', '0.97 SVN');
+define('OBBLM_VERSION', '0.96');
 $credits = array('Pierluigi Masia', 'Mag Merli', 'Lars Scharrenberg', 'Tim Haini', 'Daniel Straalman', 'Juergen Unfried', 'Sune Radich Christensen', 'Michael Bielec', 'Grégory Romé', 'Goiz Ruiz de Gopegui', 'Ryan Williams', 'Ian Williams');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcoming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
@@ -157,11 +156,3 @@ else {
     require_once('modules/modsheader.php'); # Registration of modules.
     setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
 }
-
-/******************************
-   Translate skills globally
-******************************/
-global $lng;
-$lng->TranslateSkills();
-
-

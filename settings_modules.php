@@ -38,8 +38,8 @@ $settings['modules_enabled'] = array(
 */
 
 $settings['allow_registration'] = true; // Default is true.
-$settings['registration_webmaster'] = "webmaster@example.com"; // Default is "webmaster@example.com".
-$settings['lang'] = 'en-GB'; // Default language for registred user.
+$settings['registration_webmaster'] = "odt.xwing@gmail.com"; // Default is "webmaster@example.com".
+$settings['lang'] = 'es-ES'; // Default language for registred user.
 
 /*
     Leegmgr
@@ -63,4 +63,3 @@ $settings['leegmgr_botocs'] = true; // Setting to false here is preferred as thi
 */
 
 $settings['enable_pdf_logos'] = true;
-

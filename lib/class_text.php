@@ -74,11 +74,6 @@ class TextSubSys
     {
         return (mysql_query("DELETE FROM texts WHERE txt_id = $this->txt_id"));
     }
-
-    public function pin($bool)
-    {
-        return (mysql_query("UPDATE texts SET pinned = $bool WHERE txt_id = $this->txt_id"));
-    }
     
     public function edit($txt, $txt2, $f_id = false, $type = false)
     {
@@ -125,7 +120,6 @@ class TextSubSys
             $o->title     = $m->title;
             $o->message   = $m->message;
             $o->date      = $m->date_posted;
-            $o->pinned    = $m->pinned;
             array_push($board, $o);
         }
 
@@ -144,7 +138,6 @@ class TextSubSys
                 $o->title     = "Match: $m->team1_name $m->team1_score&mdash;$m->team2_score $m->team2_name";
                 $o->message   = $m->getText();
                 $o->date      = $m->date_played;
-                $o->pinned    = 0; // Not allowed for other types than board messages
                 array_push($board, $o);
             }
         }
@@ -162,14 +155,13 @@ class TextSubSys
                 $o->title     = "Team news: $o->author";
                 $o->message   = $t->txt;
                 $o->date      = $t->date;
-                $o->pinned    = 0; // Not allowed for other types than board messages
                 array_push($board, $o);
             }
         }
 
         // Last touch on the board.
         if (!empty($board)) {
-            objsort($board, array('-pinned','-date'));
+            objsort($board, array('-date'));
             if ($n) {
                 $board = array_slice($board, 0, $n);
             }
@@ -258,9 +250,9 @@ class Message extends TextSubSys
         unset($this->txt);
     }
 
-    public function edit($new_title, $new_msg, $f_coach_id = false, $type = T_TEXT_MSG) 
+    public function edit($new_title, $new_msg, $f_coach_id = false) 
     {
-        return (parent::edit($new_msg, $new_title, $f_coach_id, $type) && ($this->title = $this->txt2) && ($this->message = $this->txt));
+        return (parent::edit($new_msg, $new_title, $f_coach_id, T_TEXT_MSG) && ($this->title = $this->txt2) && ($this->message = $this->txt));
     }
 
     /***************
@@ -274,7 +266,7 @@ class Message extends TextSubSys
         $result = mysql_query("SELECT txt_id 
             FROM texts
             WHERE type = ".T_TEXT_MSG." AND (f_id2 = ".self::T_BROADCAST." OR ".(($lid) ? "f_id2 = $lid" : 'TRUE').") 
-            ORDER BY pinned DESC, date DESC LIMIT $n");
+            ORDER BY date DESC LIMIT $n");
         if ($result && mysql_num_rows($result) > 0) {
             while ($row = mysql_fetch_assoc($result)) {
                 array_push($m, new Message($row['txt_id']));
@@ -284,9 +276,9 @@ class Message extends TextSubSys
         return $m;
     }
 
-    public static function create($input, $type = T_TEXT_MSG, $txt = '', $txt2 = '', $f_id2 = false)
+    public static function create($input) 
     {
-        return parent::create($input['f_coach_id'], $type, $input['msg'], $input['title'], $input['f_lid']);
+        return parent::create($input['f_coach_id'], T_TEXT_MSG, $input['msg'], $input['title'], $input['f_lid']);
     }
 }
 
@@ -385,9 +377,9 @@ class TeamNews extends TextSubSys
         parent::__construct($nid);
     }
 
-    public function edit($txt, $txt2 = '', $f_id = false, $type = false)
+    public function edit($txt)
     {
-        return parent::edit($txt, $txt2, $f_id, $type);    
+        return parent::edit($txt, '', false, false);    
     }
 
     /* 
@@ -398,9 +390,9 @@ class TeamNews extends TextSubSys
      * Statics
      ***************/
     
-    public static function create($str, $tid, $type = T_TEXT_TNEWS, $txt2 = '', $f_id2 = false)//Should be $f_id, $type, $txt, $txt2, $f_id2 = false
+    public static function create($str, $tid)
     {
-        return parent::create($tid, $type, $str, $f_id2);
+        return parent::create($tid, T_TEXT_TNEWS, $str, false);
     }
     
     public static function getNews($tid = false, $n = false, $lid = false)

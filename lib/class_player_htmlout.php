@@ -31,7 +31,6 @@ define('COLOR_HTML_DEAD',     '#F78771');
 define('COLOR_HTML_SOLD',     '#D2B477');
 define('COLOR_HTML_STARMERC', '#bb99bb');
 define('COLOR_HTML_JOURNEY',  '#99BBBB');
-define('COLOR_HTML_JOURNEY_USED', '#FF99FF');
 define('COLOR_HTML_NEWSKILL', '#BBBBBB');
 //-----
 define('COLOR_HTML_CHR_EQP1', '#B3F0B3'); // Characteristic equal plus one.
@@ -149,7 +148,7 @@ private function _about($ALLOW_EDIT)
                     </tr>
                     <tr>
                         <td><b><?php echo $lng->getTrn('common/pos');?></b></td>
-                        <td><?php echo $lng->getTrn('position/'.strtolower($lng->FilterPosition($p->position))); ?></td>
+                        <td><?php echo $p->position; ?></td>
                     </tr>
                     <tr>
                         <td><b><?php echo $lng->getTrn('common/team');?></b></td>
@@ -182,14 +181,14 @@ private function _about($ALLOW_EDIT)
                         <td><?php echo $p->value/1000 .'k' ?></td>
                     </tr>
                     <tr>
-                        <td><b>SPP/extra</b></td>
+                        <td><b>PE/extra</b></td>
                         <td><?php echo "$p->mv_spp/$p->extra_spp" ?></td>
                     </tr>
                     <?php
                     if (Module::isRegistered('Wanted')) {
                         ?>
                         <tr>
-                            <td><b>Wanted</b></td>
+                            <td><b>Se Busca</b></td>
                             <td><?php echo (Module::run('Wanted', array('isWanted', $p->player_id))) ? '<b><font color="red">Yes</font></b>' : 'No';?></td>
                         </tr>
                         <?php
@@ -197,7 +196,7 @@ private function _about($ALLOW_EDIT)
                     if (Module::isRegistered('HOF')) {
                         ?>
                         <tr>
-                            <td><b>In HoF</b></td>
+                            <td><b>Hall of Fame</b></td>
                             <td><?php echo (Module::run('HOF', array('isInHOF', $p->player_id))) ? '<b><font color="green">Yes</font></b>' : 'No';?></td>
                         </tr>
                         <?php
@@ -208,14 +207,14 @@ private function _about($ALLOW_EDIT)
                         <td><?php echo $p->mv_played;?></td>
                     </tr>
                     <tr>
-                        <td><b>W/L/D</b></td>
+                        <td><b>G/P/E</b></td>
                         <td><?php echo "$p->mv_won/$p->mv_lost/$p->mv_draw"; ?></td>
                     </tr>
                     <?php
                     if (Module::isRegistered('SGraph')) {
                         ?>
                         <tr>
-                            <td><b>Vis. stats</b></td>
+                            <td><b>Estadísticas</b></td>
                             <td><?php echo "<a href='handler.php?type=graph&amp;gtype=".SG_T_PLAYER."&amp;id=$p->player_id''>".$lng->getTrn('common/view')."</a>\n";?></td>
                         </tr>
                         <?php                    
@@ -225,19 +224,19 @@ private function _about($ALLOW_EDIT)
                         <td colspan="2"><hr></td>
                     </tr> 
                     <tr>
-                        <td><b>Ma</b></td>
+                        <td><b>MO</b></td>
                         <td><?php echo $p->ma; ?></td>
                     </tr>
                     <tr>
-                        <td><b>St</b></td>
+                        <td><b>FU</b></td>
                         <td><?php echo $p->st; ?></td>
                     </tr>
                     <tr>
-                        <td><b>Ag</b></td>
+                        <td><b>AG</b></td>
                         <td><?php echo $p->ag; ?></td>
                     </tr>
                     <tr>
-                        <td><b>Av</b></td>
+                        <td><b>AR</b></td>
                         <td><?php echo $p->av; ?></td>
                     </tr>
                     <tr valign="top">
@@ -249,7 +248,7 @@ private function _about($ALLOW_EDIT)
                         <td><?php echo (empty($p->injs)) ? '<i>'.$lng->getTrn('common/none').'</i>' : $p->injs; ?></td>
                     </tr>
                     <tr>
-                        <td><b>Cp</b></td>
+                        <td><b>PC</b></td>
                         <td><?php echo $p->mv_cp; ?></td>
                     </tr>
                     <tr>
@@ -261,7 +260,7 @@ private function _about($ALLOW_EDIT)
                         <td><?php echo $p->mv_intcpt; ?></td>
                     </tr>
                     <tr>
-                        <td><b>BH/SI/Ki</b></td>
+                        <td><b>HL/HG/Kill</b></td>
                         <td><?php echo "$p->mv_bh/$p->mv_si/$p->mv_ki"; ?></td>
                     </tr>
                     <tr>
@@ -269,7 +268,7 @@ private function _about($ALLOW_EDIT)
                         <td><?php echo $p->mv_cas; ?></td>
                     </tr>
                     <tr>
-                        <td><b>MVP</b></td>
+                        <td><b>MJE</b></td>
                         <td><?php echo $p->mv_mvp; ?></td>
                     </tr>
                 </table>
@@ -324,8 +323,8 @@ private function _achievements()
                         <td><b><?php echo $lng->getTrn('common/type');?></b></td>
                         <td><b><?php echo $lng->getTrn('common/tournament');?></b></td>
                         <td><b><?php echo $lng->getTrn('common/opponent');?></b></td>
-                        <td><b>MVP</b></td>
-                        <td><b>Cp</b></td>
+                        <td><b>MJE</b></td>
+                        <td><b>PC</b></td>
                         <td><b>Td</b></td>
                         <td><b>Int</b></td>
                         <td><b>Cas</b></td>
@@ -467,8 +466,8 @@ private function _injuryHistory()
                         <td><b><?php echo $lng->getTrn('common/injs');?></b></td>
                         <td><b><?php echo $lng->getTrn('common/tournament');?></b></td>
                         <td><b><?php echo $lng->getTrn('common/opponent');?></b></td>
-                        <td><b>MVP</b></td>
-                        <td><b>Cp</b></td>
+                        <td><b>MJE</b></td>
+                        <td><b>PC</b></td>
                         <td><b>Td</b></td>
                         <td><b>Int</b></td>
                         <td><b>Cas</b></td>

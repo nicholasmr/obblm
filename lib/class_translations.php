@@ -40,10 +40,6 @@ public function setLanguage($lang) {
     $this->lang = in_array($lang, self::$registeredLanguages) ? $lang : self::fallback;
 }
 
-public function getLanguage() {
-    return $this->lang;
-}
-
 public function registerTranslationFile($doc, $file) {
 	$this->translationFiles[$doc] = $file;
 	$this->docs[$doc] = new DOMDocument();
@@ -64,41 +60,8 @@ public function getTrn($key, $doc = false) {
     if ($query->length == 0) {
         # Try fallback language
         $query = $xpath->query("//".self::fallback."/$key");
-        if ($query->length == 0)
-          return (string) "TRANSLATION ERR ! $key";
     }
     return (string) $query->item(0)->nodeValue;
-}
-
-// Filter some characters from the players positions ([J]  &nbsp; spaces etc...)
-public function FilterPosition($position)
-{
-  $position = str_replace(array('&nbsp;',' ','-','[J]'),'',$position);
-  return $position;
-}
-
-
-/***************************
-   Translate skills
-***************************/
-public function TranslateSkills()
-{
-  global $skillarray;
-  foreach($skillarray as $cat => $val)
-  {
-    foreach($skillarray[$cat] as &$skl)
-    {
-      $skl = $this->getTrn('skill/'.strtolower(str_replace(array(' ','-','&',"'",'/'),'',$skl)));
-    }
-  }
-  unset($skl);
-    
-  global $skillididx;
-  foreach($skillididx as &$skill)
-  {
-    $skill = $this->getTrn('skill/'.strtolower(str_replace(array(' ','-','&',"'",'/'),'',$skill)));
-  }
-  unset($skill);
 }
 
 }	
