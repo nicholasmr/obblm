@@ -108,18 +108,20 @@ function SendToPDF()
 <div class="everything">
 <div class="section">
 -->
-<?php title('Inducements try-out');?>
+<?php 
+global $lng;
+title($lng->getTrn('name', __CLASS__));?>
 <form action="" method="post" name="InduceForm">
 
 <table>
     <tr>
-        <td class="indtitle">Star Name</td>
-        <td class="indtitle">Cost</td>
-        <td class="indtitle">MA</td>
-        <td class="indtitle">ST</td>
-        <td class="indtitle">AG</td>
-        <td class="indtitle">AV</td>
-        <td class="indtitle">Skills</td> <!-- <td>Cp</td><td>Td</td><td>Int</td><td>Cas</td><td>BH</td><td>Si</td><td>Ki</td><td>MVP</td><td>SPP</td> -->
+        <td class="indtitle"><?php echo $lng->getTrn('starname', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('cost', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('movement', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('strength', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('agility', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('armor', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('skills', __CLASS__);?></td> <!-- <td>Cp</td><td>Td</td><td>Int</td><td>Cas</td><td>BH</td><td>Si</td><td>Ki</td><td>MVP</td><td>SPP</td> -->
     </tr>
 <?php
 $brick_n_grotty = false;
@@ -186,15 +188,15 @@ if ($brick_n_grotty) { // Print Grotty and add hidden input field
 </table>
 <table>
     <tr>
-        <td class="indtitle">Mercenaries</td>
-        <td class="indtitle">Position</td>
-        <td class="indtitle">Cost</td>
-        <td class="indtitle">MA</td>
-        <td class="indtitle">ST</td>
-        <td class="indtitle">AG</td>
-        <td class="indtitle">AV</td>
-        <td class="indtitle">Skills</td>
-        <td class="indtitle">Extra Skill</td>
+        <td class="indtitle"><?php echo $lng->getTrn('mercenaries', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('position', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('cost', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('movement', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('strength', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('agility', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('armor', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('skills', __CLASS__);?></td>
+        <td class="indtitle"><?php echo $lng->getTrn('extraskill', __CLASS__);?></td>
     </tr>
 <?php
 // Validate to not exceed maximum number of positionals? Leaving it open for now.
@@ -270,12 +272,12 @@ echo "    </tr>\n";
 <tr><td>
 <table>
     <tr>
-        <td class="indtitle">Inducement</td>
+        <td class="indtitle"><?php echo $lng->getTrn('inducement', __CLASS__);?></td>
         <td class="indtitle">#</td>
         <td class="indtitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td class="indtitle">Cost</td>
+        <td class="indtitle"><?php echo $lng->getTrn('cost', __CLASS__);?></td>
         <td class="indtitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td class="indtitle">Total Cost</td>
+        <td class="indtitle"><?php echo $lng->getTrn('totalcost', __CLASS__);?></td>
     </tr>
 <?php
 
@@ -284,7 +286,7 @@ echo "    </tr>\n";
 $r=$t->f_rname;
 $rid=$t->f_race_id;
 // Checking if team can hire Igor or Wandering Apo
-unset($inducements[in_array($rid, $racesNoApothecary) ? 'Wandering Apothecaries' : 'Igor']);
+unset($inducements[in_array($rid, $racesNoApothecary) ? 'Medicos Ambulantes' : 'Igor']);
 
 foreach ($inducements as $ind_name => $ind) {
   $this_cost = $ind[in_array($rid, $ind['reduced_cost_races']) ? 'reduced_cost' : 'cost']; # Reduced cost?
@@ -313,7 +315,7 @@ foreach ($inducements as $ind_name => $ind) {
 // Cards
 $card_list = ''; # Declare.
 echo '<tr>';
-echo '<td>Card budget</td><td class="cent2">&nbsp;</td><td class="cent2">&nbsp;</td>';
+echo '<td>'.$lng->getTrn('cardbudget', __CLASS__).'</td><td class="cent2">&nbsp;</td><td class="cent2">&nbsp;</td>';
 echo '<td><SELECT name="Card" onChange="this.form.submit()">';
 for ($i=0;$i<=1000;$i+=50) {
   $card_list .= '<option>'.$i."k</option>\n";
@@ -334,8 +336,8 @@ echo '<td class="cent2">=</td><td class="cent">'.$cardb.'</td>';
 echo '</tr>';
 ?>
 <tr>
-<td class="right" colspan="6"><br><input type="submit" name="Submit" value="Create PDF roster" onclick="return SendToPDF();"></td></tr>
-<tr><td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team_id,false,false); ?>"> <- Back to team page</a></td></tr>
+<td class="right" colspan="6"><br><input type="submit" name="Submit" value=<?php echo $lng->getTrn('createpdf', __CLASS__);?> onclick="return SendToPDF();"></td></tr>
+<tr><td><a href="<?php echo urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$team_id,false,false); ?>"><?php echo $lng->getTrn('backhref', __CLASS__);?></a></td></tr>
 </table>
 </td><td class="cent2">
 <table>
@@ -345,9 +347,9 @@ function kilo($str) {
   else return str_replace('000','',$str);
 }
 
-echo '<tr><td class="indtitle">Team Value:</td><td class="indtitle">'.kilo($t->value).'k</td></tr>';
-echo '<tr><td class="indtitle">Inducements Value:</td><td class="indtitle">'.kilo($ind_cost).'k</td></tr>';
-echo '<tr><td class="indtitle">Match Value:</td><td class="indtitle">'.kilo($ind_cost + $t->value).'k</td></tr>';
+echo '<tr><td class="indtitle">'.$lng->getTrn('teamvalue', __CLASS__).'</td><td class="indtitle">'.kilo($t->value).'k</td></tr>';
+echo '<tr><td class="indtitle">'.$lng->getTrn('indvalue', __CLASS__).'</td><td class="indtitle">'.kilo($ind_cost).'k</td></tr>';
+echo '<tr><td class="indtitle">'.$lng->getTrn('matchvalue', __CLASS__).'</td><td class="indtitle">'.kilo($ind_cost + $t->value).'k</td></tr>';
 ?>
 
 </table>

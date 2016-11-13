@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<translations>
+<en-GB>
+
+<name>Inducements try-out</name>
+
+<starname>Star Name</starname>
+<cost>Cost</cost>
+<movement>MA</movement>
+<strength>ST</strength>
+<agility>AG</agility>
+<armor>AV</armor>
+<skills>Skills</skills>
+
+<mercenaries>Mercenaries</mercenaries>
+<position>Position</position>
+<extraskill>Extra Skill</extraskill>
+
+<inducement>Inducement</inducement>
+<totalcost>Total Cost</totalcost>
+<cardbudget>Card budget</cardbudget>
+
+<teamvalue>Team Value:</teamvalue>
+<indvalue>Inducements Value:</indvalue>
+<matchvalue>Match Value:</matchvalue>
+
+<createpdf>CreatePDFRoster</createpdf>
+<backhref>Back to team page</backhref>
+
+</en-GB>
+
+<es-ES>
+
+<name>Gestión de Incentivos</name>
+
+<starname>Jugador Estrella</starname>
+<cost>Coste</cost>
+<movement>MO</movement>
+<strength>FU</strength>
+<agility>AG</agility>
+<armor>AR</armor>
+<skills>Habilidades</skills>
+
+<mercenaries>Mercenarios</mercenaries>
+<position>Posición</position>
+<extraskill>Habilidad Extra</extraskill>
+
+<inducement>Incentivos</inducement>
+<totalcost>Coste Total</totalcost>
+<cardbudget>Carta Especial</cardbudget>
+
+<teamvalue>Valor de Equipo:</teamvalue>
+<indvalue>Valor de Incentivos:</indvalue>
+<matchvalue>Valor para el Partido:</matchvalue>
+
+<createpdf>CrearRosterPDF</createpdf>
+<backhref>Volver a la página del equipo</backhref>
+
+</es-ES>
+</translations>

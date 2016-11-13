@@ -99,11 +99,10 @@ class Player
     public $inj_ni = 0;
 
     // Player status
-    public $is_sold             = false;
-    public $is_dead             = false;
-    public $is_mng              = false;
-    public $is_journeyman       = false;
-    public $is_used_journeyman  = false;
+    public $is_sold       = false;
+    public $is_dead       = false;
+    public $is_mng        = false;
+    public $is_journeyman = false;
 
     // Others
     public $icon = "";
@@ -144,11 +143,10 @@ class Player
         $this->def_skills = empty($this->def_skills) ? array() : explode(',', $this->def_skills);
         $this->setSkills();
         
-        $this->is_dead              = ($this->status == DEAD);
-        $this->is_mng               = !in_array($this->status, array(NONE, DEAD));
-        $this->is_sold              = (bool) $this->date_sold;
-        $this->is_journeyman        = ($this->type == PLAYER_TYPE_JOURNEY);
-        $this->is_journeyman_used   = ($this->type == PLAYER_TYPE_JOURNEY) && ($this->mv_played > 0);
+        $this->is_dead       = ($this->status == DEAD);
+        $this->is_mng        = !in_array($this->status, array(NONE, DEAD));
+        $this->is_sold       = (bool) $this->date_sold;
+        $this->is_journeyman = ($this->type == PLAYER_TYPE_JOURNEY);
         
         /*
             Misc
@@ -157,11 +155,11 @@ class Player
         $this->icon = PLAYER_ICONS.'/' . $DEA[$this->f_rname]['players'][$this->pos]['icon'] . '.gif';
         
         if (empty($this->name)) {
-            $this->name = 'Unnamed';
+            $this->name = 'Fulanito';
         }
         
         if ($this->type == PLAYER_TYPE_JOURNEY) { # Check if player is journeyman like this - don't assume setStatusses() has ben called setting $this->is_journeyman.
-            $this->position .= ' [J]';
+            $this->position .= ' [I]';
             $this->def_skills[] = 99; # Loner.
         }
     }
@@ -307,7 +305,7 @@ class Player
          **/
     
         global $rules;
-        $lid = get_alt_col('teams', 'team_id', $this->owned_by_team_id, 'f_lid');
+        $lid = get_alt_col('teams', 'team_id̈́', $this->owned_by_team_id, 'f_lid');
         setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
     
         if ($this->is_sold || $this->is_dead)
@@ -647,10 +645,10 @@ class Player
         $chrs = array();
         $extras = empty($this->extra_skills) ? array() : array_strpack(($HTML) ? '<u>%s</u>' : '%s*', skillsTrans($this->extra_skills));
 
-        if ($this->ach_ma > 0) array_push($chrs, "+$this->ach_ma Ma");
-        if ($this->ach_st > 0) array_push($chrs, "+$this->ach_st St");
-        if ($this->ach_ag > 0) array_push($chrs, "+$this->ach_ag Ag");
-        if ($this->ach_av > 0) array_push($chrs, "+$this->ach_av Av");
+        if ($this->ach_ma > 0) array_push($chrs, "+$this->ach_ma MO");
+        if ($this->ach_st > 0) array_push($chrs, "+$this->ach_st FU");
+        if ($this->ach_ag > 0) array_push($chrs, "+$this->ach_ag AG");
+        if ($this->ach_av > 0) array_push($chrs, "+$this->ach_av AR");
 
         $defs = skillsTrans($this->def_skills);
         if ($HTML) { $defs = array_strpack('<i>%s</i>', $defs); }
@@ -666,17 +664,17 @@ class Player
     
         $injs = array();
         
-        if ($this->inj_ma > 0) array_push($injs, "-$this->inj_ma Ma");
-        if ($this->inj_st > 0) array_push($injs, "-$this->inj_st St");
-        if ($this->inj_ag > 0) array_push($injs, "-$this->inj_ag Ag");
-        if ($this->inj_av > 0) array_push($injs, "-$this->inj_av Av");
+        if ($this->inj_ma > 0) array_push($injs, "-$this->inj_ma MO");
+        if ($this->inj_st > 0) array_push($injs, "-$this->inj_st FU");
+        if ($this->inj_ag > 0) array_push($injs, "-$this->inj_ag AG");
+        if ($this->inj_av > 0) array_push($injs, "-$this->inj_av AR");
         if ($HTML) {
-            if ($this->inj_ni > 0) array_push($injs, "<font color='red'>$this->inj_ni Ni</font>");
+            if ($this->inj_ni > 0) array_push($injs, "<font color='red'>$this->inj_ni LP</font>");
         }
         else {
-            if ($this->inj_ni > 0) array_push($injs, "$this->inj_ni Ni");
+            if ($this->inj_ni > 0) array_push($injs, "$this->inj_ni LP");
         }
-        if ($this->is_mng)     array_push($injs, "MNG");
+        if ($this->is_mng)     array_push($injs, "LPPE");
         
         return implode(', ', $injs);
     }

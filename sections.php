@@ -148,9 +148,6 @@ function sec_main() {
                     'msg'        => $_POST['txt'])
                 )); break;
             case 'msgedit': status($msg->edit($_POST['title'], $_POST['txt'])); break;
-            case 'pin':     status($msg->pin(1)); break;
-            case 'unpin':   status($msg->pin(0)); break;
-
         }
     }
 
@@ -167,8 +164,7 @@ function sec_main() {
             echo $settings['welcome'];
             echo "</div>\n";
             echo "<div class='main_leftColumn_left'>\n";
-            if(count($leagues) > 1)
-              echo $HTML_LeagueSelector;
+            echo $HTML_LeagueSelector;
             echo "</div>\n";
             echo "<div class='main_leftColumn_right'>\n";
             if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $sel_lid)) {
@@ -201,12 +197,8 @@ function sec_main() {
             Left column is the message board, consisting of both commissioner messages and game summaries/results.
             To generate this table we create a general array holding the content of both.
         */
-        $j = 1; $prevPinned = 0;
+        $j = 1;
         foreach (TextSubSys::getMainBoardMessages($settings['fp_messageboard']['length'], $sel_lid, $settings['fp_messageboard']['show_team_news'], $settings['fp_messageboard']['show_match_summaries']) as $e) {
-
-            if ($prevPinned == 1 && !$e->pinned) { echo "<hr>\n"; }
-            $prevPinned = $e->pinned;
-
             echo "<div class='boxWide'>\n";
                 echo "<h3 class='boxTitle$e->cssidx'>$e->title</h3>\n";
                 echo "<div class='boxBody'>\n";
@@ -233,10 +225,6 @@ function sec_main() {
                                 echo "<td align='left' width='100%'>".$lng->getTrn('main/posted')." ".textdate($e->date)." ".$lng->getTrn('main/by')." $e->author</td>\n";
                                 if (is_object($coach) && ($IS_GLOBAL_ADMIN || $coach->coach_id == $e->author_id)) { // Only admins may delete messages, or if it's a commissioner's own message.
                                     echo "<td align='right'><a href='javascript:void(0);' onClick=\"slideToggle('msgedit$e->msg_id');\">".$lng->getTrn('common/edit')."</a></td>\n";
-                                    echo "<td align='right'>";
-                                    $fieldname = 'pin'; if ($e->pinned) {$fieldname = 'unpin';}
-                                    echo inlineform(array('type' => "$fieldname", 'msg_id' => $e->msg_id), "${fieldname}$e->msg_id", $lng->getTrn("main/$fieldname"));
-                                    echo "</td>";
                                     echo "<td align='right'>";
                                     echo inlineform(array('type' => 'msgdel', 'msg_id' => $e->msg_id), "msgdel$e->msg_id", $lng->getTrn('common/delete'));
                                     echo "</td>";
@@ -410,7 +398,7 @@ function sec_main() {
                             echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
                             echo "<td style='text-align: left;'>$t2name</td>\n";
                             echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
-                            echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
+                            echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Ver</a></td>";
                             echo "</tr>";
                         }
                         ?>
@@ -760,13 +748,10 @@ function sec_objhandler() {
 
 function sec_rules() {
 
-    global $lng, $settings, $leagues;
+    global $lng, $settings;
     title($lng->getTrn('menu/rules'));
-    if(count($leagues) > 1)
-    {
-      list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
-      echo $HTML_LeagueSelector;
-    }
+    list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
+    echo $HTML_LeagueSelector;
     echo "<br><br>";
     echo $settings['rules'];
 }

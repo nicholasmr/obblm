@@ -46,8 +46,7 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
          );
     */
 
-    global $lng;
-    $T_ROUNDS = Match::getRounds();
+    global $lng, $T_ROUNDS;
 
     $extra = array('doNr' => false, 'noHelp' => true);
 
@@ -83,7 +82,7 @@ public static function recentGames($obj, $obj_id, $node, $node_id, $opp_obj, $op
             $m->result = matchresult_icon($m->result);
         }
         if (in_array($m->round,array_keys($T_ROUNDS))) {
-            $m->round = $T_ROUNDS[$m->round];
+            $m->round = $lng->getTrn($T_ROUNDS[$m->round]);
         }
         $m->team1_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach1_id,false,false)."'>$m->coach1_name</a>)</i>";
         $m->team2_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach2_id,false,false)."'>$m->coach2_name</a>)</i>";
@@ -128,8 +127,7 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
          );
     */
 
-    global $lng;
-    $T_ROUNDS = Match::getRounds();
+    global $lng, $T_ROUNDS;
 
     $extra = array('doNr' => false, 'noHelp' => true);
 
@@ -159,7 +157,7 @@ public static function upcomingGames($obj, $obj_id, $node, $node_id, $opp_obj, $
         $m->tour_name = Tour::getTourUrl($m->f_tour_id);
         $m->league_name = League::getLeagueUrl(get_parent_id(T_NODE_TOURNAMENT, $m->f_tour_id, T_NODE_LEAGUE));
         if (in_array($m->round,array_keys($T_ROUNDS))) {
-            $m->round = $T_ROUNDS[$m->round];
+            $m->round = $lng->getTrn($T_ROUNDS[$m->round]);
         }
         $m->team1_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach1_id,false,false)."'>$m->coach1_name</a>)</i>";
         $m->team2_name = "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>&nbsp;<i>(<a href='".urlcompile(T_URL_PROFILE,T_OBJ_COACH,$m->coach2_id,false,false)."'>$m->coach2_name</a>)</i>";
@@ -201,22 +199,22 @@ private static function _getDefFields($obj, $node, $node_id)
     global $lng;
 
     $fields = array(
-        'mv_won'     => array('desc' => 'W'),
-        'mv_draw'    => array('desc' => 'D'),
-        'mv_lost'    => array('desc' => 'L'),
-        'mv_played'  => array('desc' => 'GP'),
-        'rg_win_pct' => array('desc' => 'WIN%'),
-        'rg_swon'    => array('desc' => 'SW'),
-        'rg_sdraw'   => array('desc' => 'SD'),
-        'rg_slost'   => array('desc' => 'SL'),
+        'mv_won'     => array('desc' => 'G'),
+        'mv_draw'    => array('desc' => 'E'),
+        'mv_lost'    => array('desc' => 'P'),
+        'mv_played'  => array('desc' => 'J'),
+        'rg_win_pct' => array('desc' => '%Vict'),
+        'rg_swon'    => array('desc' => 'RG'),
+        'rg_sdraw'   => array('desc' => 'RE'),
+        'rg_slost'   => array('desc' => 'RP'),
         'mv_gf'      => array('desc' => 'GF'),
-        'mv_ga'      => array('desc' => 'GA'),
+        'mv_ga'      => array('desc' => 'GC'),
         'mv_td'      => array('desc' => 'Td'),
-        'mv_cp'      => array('desc' => 'Cp'),
+        'mv_cp'      => array('desc' => 'PC'),
         'mv_intcpt'  => array('desc' => 'Int'),
         'mv_cas'     => array('desc' => 'Cas'),
-        'mv_bh'      => array('desc' => 'BH'),
-        'mv_si'      => array('desc' => 'Si'),
+        'mv_bh'      => array('desc' => 'HL'),
+        'mv_si'      => array('desc' => 'HG'),
         'mv_ki'      => array('desc' => 'Ki'),
     );
 
@@ -261,7 +259,7 @@ private static function _getDefFields($obj, $node, $node_id)
             );
             $fields_after = array(
                 'mv_tcasf' => array('desc' => 'tcasf'),
-                'mv_tcasa' => array('desc' => 'tcasa'),
+                'mv_tcasa' => array('desc' => 'tcasc'),
                 'mv_tcdiff' => array('desc' => 'tcdiff'),
             	'mv_smp' => array('desc' => 'SMP'),
             );
@@ -450,11 +448,6 @@ public static function standings($obj, $node, $node_id, array $opts)
                     $PAGELENGTH = $settings['standings']['length_teams'];
                     list($objs, $PAGES) = Stats::getRaw(T_OBJ_TEAM, $filter_node+$filter_having+$filter_race, array($PAGE, $PAGELENGTH), $sortRule, $set_avg);
             }
-
-            // Translating race name
-            foreach($objs as &$o)
-              $o['f_rname'] = $lng->getTrn('race/'.strtolower(str_replace(' ','', $o['f_rname'])));
-
             break;
 
         case STATS_RACE:
@@ -474,10 +467,6 @@ public static function standings($obj, $node, $node_id, array $opts)
             }
             list($objs, $PAGES) = Stats::getRaw(T_OBJ_RACE, $filter_node+$filter_having, false, $sortRule, $set_avg);
 
-            // Translating race name
-            foreach($objs as &$o)
-              $o['name'] = $lng->getTrn('race/'.strtolower(str_replace(' ','', $o['name'])));
-
             break;
 
         case STATS_COACH:
@@ -494,11 +483,11 @@ public static function standings($obj, $node, $node_id, array $opts)
             $fields_before = array(
                 'name' => array('desc' => $lng->getTrn('common/star'), 'href' => array('link' => urlcompile(T_URL_PROFILE,T_OBJ_STAR,false,false,false), 'field' => 'obj_id', 'value' => 'star_id')),
                 // Statics
-                'cost'   => array('desc' => 'Price', 'kilo' => true, 'suffix' => 'k'),
-                'ma'     => array('desc' => 'Ma'),
-                'st'     => array('desc' => 'St'),
-                'ag'     => array('desc' => 'Ag'),
-                'av'     => array('desc' => 'Av'),
+                'cost'   => array('desc' => 'Valor', 'kilo' => true, 'suffix' => 'k'),
+                'ma'     => array('desc' => 'MO'),
+                'st'     => array('desc' => 'FU'),
+                'ag'     => array('desc' => 'AG'),
+                'av'     => array('desc' => 'AV'),
             );
             $extra['dashed'] = array('condField' => 'mv_played', 'fieldVal' => 0, 'noDashFields' => array('name'));
             list($objs, $PAGES) = Stats::getRaw(T_OBJ_STAR, $filter_node+$filter_having, false, $sortRule, $set_avg);
@@ -1021,7 +1010,7 @@ private static function make_menu()
         else                               { ?><li><a href="index.php?section=login"><?php echo $lng->getTrn('menu/login');?></a></li><?php }
 
         if (isset($_SESSION['logged_in']) && is_object($coach)) {
-            echo '<li><a href="'.urlcompile(T_URL_PROFILE,T_OBJ_COACH,$coach->coach_id,false,false).'">'.$lng->getTrn('menu/cc').' ('.ucfirst($coach->name).')</a></li>';
+            echo '<li><a href="'.urlcompile(T_URL_PROFILE,T_OBJ_COACH,$coach->coach_id,false,false).'">'.$lng->getTrn('menu/cc').'</a></li>';
             if (!empty($admin_menu)) {
                 ?>
                 <li><span class="dir"><?php echo $lng->getTrn('menu/admin_menu/name');?></span>
@@ -1060,9 +1049,7 @@ private static function make_menu()
                 <li><a href="index.php?section=matches&amp;type=tours"><?php echo $lng->getTrn('menu/matches_menu/tours');?></a></li>
                 <li><a href="index.php?section=matches&amp;type=recent"><?php echo $lng->getTrn('menu/matches_menu/recent');?></a></li>
                 <li><a href="index.php?section=matches&amp;type=upcoming"><?php echo $lng->getTrn('menu/matches_menu/upcoming');?></a></li>
-                <?php if (isset($_SESSION['logged_in'])) {?>
-                  <li><a href="index.php?section=matches&amp;type=usersched"><?php echo $lng->getTrn('menu/matches_menu/usersched');?></a></li>
-                <?php }?>
+                <li><a href="index.php?section=matches&amp;type=usersched"><?php echo $lng->getTrn('menu/matches_menu/usersched');?></a></li>
             </ul>
         </li>
         <li><span class="dir"><?php echo $lng->getTrn('menu/statistics_menu/name');?></span>
@@ -1074,38 +1061,27 @@ private static function make_menu()
                 <li><a href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
             </ul>
         </li>
-        <?php
-        // To avoid showing the plugin menu if no plugins are loaded, we start output buffering here
-        ob_start();?>
-        <?php if (Module::isRegistered('Search'))            { ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('TeamCompare'))       { ?><li><a href="handler.php?type=teamcompare"><?php echo $lng->getTrn('name', 'TeamCompare');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('HOF'))               { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('FamousTeams'))       { ?><li><a href="handler.php?type=famousteams"><?php echo $lng->getTrn('name', 'FamousTeams');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('Wanted'))            { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('Prize'))             { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('Cemetery'))          { ?><li><a href="handler.php?type=cemetery&amp;tid=0"><?php echo $lng->getTrn('name', 'Cemetery');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('SGraph'))            { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('Gallery'))           { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('LeagueTables'))      { ?><li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('Conference'))        { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
-        <?php if (isset($_SESSION['logged_in']) && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $coach->ring == Coach::T_RING_LOCAL_ADMIN)) { ?>
-        <?php if (Module::isRegistered('Scheduler'))     { ?><li><a href="handler.php?type=scheduler"><?php echo $lng->getTrn('name', 'Scheduler');?></a></li><?php } ?>
-        <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
-        <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
-        <?php } ?>
-        <?php
-        $plugin_menu = trim(ob_get_contents());
-        ob_end_clean();
-        if(strlen($plugin_menu) > 0)
-        {
-        ?>
         <li><span class="dir"><?php echo $lng->getTrn('menu/plugins');?></span>
             <ul>
-              <?php echo $plugin_menu?>
+                <?php if (Module::isRegistered('Search'))            { ?><li><a href="handler.php?type=search"><?php echo $lng->getTrn('name', 'Search');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('TeamCompare'))       { ?><li><a href="handler.php?type=teamcompare"><?php echo $lng->getTrn('name', 'TeamCompare');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('HOF'))               { ?><li><a href="handler.php?type=hof"><?php echo $lng->getTrn('name', 'HOF');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('FamousTeams'))       { ?><li><a href="handler.php?type=famousteams"><?php echo $lng->getTrn('name', 'FamousTeams');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Wanted'))            { ?><li><a href="handler.php?type=wanted"><?php echo $lng->getTrn('name', 'Wanted');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Prize'))             { ?><li><a href="handler.php?type=prize"><?php echo $lng->getTrn('name', 'Prize');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Cemetery'))          { ?><li><a href="handler.php?type=cemetery&amp;tid=0"><?php echo $lng->getTrn('name', 'Cemetery');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Memmatches'))        { ?><li><a href="handler.php?type=memmatches"><?php echo $lng->getTrn('name', 'Memmatches');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('SGraph'))            { ?><li><a href="handler.php?type=graph&amp;gtype=<?php echo SG_T_LEAGUE;?>&amp;id=none"><?php echo $lng->getTrn('name', 'SGraph');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Gallery'))           { ?><li><a href="handler.php?type=gallery"><?php echo $lng->getTrn('name', 'Gallery');?></a></li><?php } ?>
+				<?php if (Module::isRegistered('LeagueTables'))      { ?><li><a href="handler.php?type=leaguetables"><?php echo $lng->getTrn('menu-label', 'LeagueTables');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('Conference'))        { ?><li><a href="handler.php?type=conference"><?php echo $lng->getTrn('menu-conf', 'Conference');?></a></li><?php } ?>
+				<?php if (isset($_SESSION['logged_in']) && is_object($coach) && ($coach->ring == Coach::T_RING_GLOBAL_ADMIN || $coach->ring == Coach::T_RING_LOCAL_ADMIN)) { ?>
+				<?php if (Module::isRegistered('Scheduler'))     { ?><li><a href="handler.php?type=scheduler"><?php echo $lng->getTrn('name', 'Scheduler');?></a></li><?php } ?>
+                <?php if (Module::isRegistered('UPLOAD_BOTOCS') && $settings['leegmgr_enabled']) { ?><li><a href="handler.php?type=leegmgr">Client Match Report Upload</a></li><?php } ?>
+                <?php if (Module::isRegistered('PDFMatchReport'))    { ?><li><a href="handler.php?type=pdfmatchreport"><?php echo $lng->getTrn('name', 'PDFMatchReport');?></a></li><?php } ?>
+				<?php } ?>
             </ul>
         </li>
-        <?php } /*end of output buffering of the plugin menu*/ ?>
 
         <li><a href="index.php?section=rules"><?php echo $lng->getTrn('menu/rules');?></a></li>
         <li><a href="index.php?section=about">OBBLM</a></li>

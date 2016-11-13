@@ -60,6 +60,7 @@ global $DEA;
 global $skillarray;
 global $rules;
 global $inducements;
+global $lng;
 
 define("MARGINX", 20);
 define("MARGINY", 20);
@@ -145,9 +146,9 @@ $pdf->SetDrawColorBB($pdf->hex2cmyk(DEFLINECOLOR));
 $pdf->SetXY($currentx+30,$currenty);
 $pdf->Cell(310, 20, utf8_decode($team->name), 0, 0, 'L', false, '');
 $pdf->SetFont('Tahoma','',12);
-$pdf->Cell(60, 20, "Race:", 0, 0, 'R', false, '');
+$pdf->Cell(60, 20, $lng->getTrn('race', __CLASS__), 0, 0, 'R', false, '');
 $pdf->Cell(70, 20, ($team->f_rname), 0, 0, 'L', false, '');
-$pdf->Cell(300, 20, ("Head Coach: " . utf8_decode($team->f_cname)), 0, 0, 'R', false, '');
+$pdf->Cell(300, 20, ($lng->getTrn('coach', __CLASS__)." " . utf8_decode($team->f_cname)), 0, 0, 'R', false, '');
 
 $currenty+=25;
 $currentx+=6;
@@ -160,22 +161,22 @@ $pdf->SetLineWidth(1.5);
 $h = 14;
 
 // Printing headline for player table
-$pdf->Cell(23, $h, 'Nr', 1, 0, 'C', true, '');
-$pdf->Cell(97, $h, 'Name', 1, 0, 'L', true, '');
-$pdf->Cell(75, $h, 'Position', 1, 0, 'L', true, '');
-$pdf->Cell(18, $h, 'MA', 1, 0, 'C', true, '');
-$pdf->Cell(18, $h, 'ST', 1, 0, 'C', true, '');
-$pdf->Cell(18, $h, 'AG', 1, 0, 'C', true, '');
-$pdf->Cell(18, $h, 'AV', 1, 0, 'C', true, '');
-$pdf->Cell(329, $h, 'Skills and Injuries', 1, 0, 'L', true, '');
-$pdf->Cell(23, $h, 'MNG', 1, 0, 'C', true, '');
-$pdf->Cell(21, $h, 'CP', 1, 0, 'C', true, '');
-$pdf->Cell(21, $h, 'TD', 1, 0, 'C', true, '');
-$pdf->Cell(21, $h, 'Int', 1, 0, 'C', true, '');
-$pdf->Cell(21, $h, 'Cas', 1, 0, 'C', true, '');
-$pdf->Cell(23, $h, 'MVP', 1, 0, 'C', true, '');
-$pdf->Cell(25, $h, 'SPP', 1, 0, 'C', true, '');
-$pdf->Cell(41, $h, 'Value', 1, 0, 'C', true, '');
+$pdf->Cell(23, $h, $lng->getTrn('number', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(97, $h, $lng->getTrn('playername', __CLASS__), 1, 0, 'L', true, '');
+$pdf->Cell(75, $h, $lng->getTrn('position', __CLASS__), 1, 0, 'L', true, '');
+$pdf->Cell(18, $h, $lng->getTrn('movement', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(18, $h, $lng->getTrn('strength', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(18, $h, $lng->getTrn('agility', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(18, $h, $lng->getTrn('armor', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(329, $h, $lng->getTrn('skillandinj', __CLASS__), 1, 0, 'L', true, '');
+$pdf->Cell(23, $h, $lng->getTrn('mng', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(21, $h, $lng->getTrn('cpass', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(21, $h, $lng->getTrn('tdown', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(21, $h, $lng->getTrn('intercep', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(21, $h, $lng->getTrn('casualty', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(23, $h, $lng->getTrn('mvplayer', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(25, $h, $lng->getTrn('sppoints', __CLASS__), 1, 0, 'C', true, '');
+$pdf->Cell(41, $h, $lng->getTrn('valuep', __CLASS__), 1, 0, 'C', true, '');
 
 $currenty+=17;
 
@@ -206,7 +207,7 @@ foreach ($players as $p) {
   
   // Journeymen
   if ($p->is_journeyman) {
-    $p->position = 'Journeyman';
+    $p->position = $lng->getTrn('journeyman2', __CLASS__);
     $bgc=COLOR_ROSTER_JOURNEY;
     if ($p->is_journeyman_used) {
         $bgc=COLOR_ROSTER_JOURNEY_USED;
@@ -236,10 +237,10 @@ foreach ($players as $p) {
   else {
     $bgc=COLOR_ROSTER_MNG;
     $sum_p_missing_value+=$p->value;
-    $inj="MNG"; // For MNG column
+    $inj=$lng->getTrn('mng', __CLASS__); // For MNG column
     // Removing MNG from skills and injuries
-    $skills_injuries = str_replace(', MNG', '', $skills_injuries);
-    $skills_injuries = str_replace('MNG', '', $skills_injuries);
+    $skills_injuries = str_replace(', '.$lng->getTrn('mng', __CLASS__), '', $skills_injuries);
+    $skills_injuries = str_replace($lng->getTrn('mng', __CLASS__), '', $skills_injuries);
     $skills_injuries = str_replace('  ', ' ', $skills_injuries);    // Maybe not needed after changes to rest of code?
   }
   
@@ -286,11 +287,11 @@ while ($i<$rules['max_team_players']) {
 // Sums
 $sum_pvalue -= $sum_p_missing_value;
 $pdf->SetXY(($currentx=MARGINX+6+23), ($currenty+=4));
-$pdf->print_box($currentx, $currenty, 172, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'R', 'Total number of players next game:');
+$pdf->print_box($currentx, $currenty, 172, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'R', $lng->getTrn('totalnumberpng', __CLASS__));
 $pdf->print_box($currentx+=172, $currenty, 30, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'R', $sum_avail_players . '/' . $sum_players);
 
 $pdf->SetX($currentx=MARGINX+6+559);
-$pdf->print_box($currentx, $currenty, 60, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'R', 'Totals (excl TV for MNG players):');
+$pdf->print_box($currentx, $currenty, 60, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'R', $lng->getTrn('totalexcludev', __CLASS__));
 $pdf->print_box($currentx+=60, $currenty, 21, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'C', $sum_cp);
 $pdf->print_box($currentx+=21, $currenty, 21, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'C', $sum_td);
 $pdf->print_box($currentx+=21, $currenty, 21, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'C', $sum_int);
@@ -311,20 +312,20 @@ $pdf->RoundedRect(MARGINX+6, $currenty, 792, (560-$currenty-130), 5, 'D');
 $pdf->SetXY($currentx, $currenty+=2);
 $h=14;
 $pdf->SetFont('Tahoma', 'B', 8);
-$pdf->Cell(97+75, $h, 'Induced Stars and Mercenaries', 0, 0, 'L', true, '');
-$pdf->Cell(18, $h, 'MA', 0, 0, 'C', true, '');
-$pdf->Cell(18, $h, 'ST', 0, 0, 'C', true, '');
-$pdf->Cell(18, $h, 'AG', 0, 0, 'C', true, '');
-$pdf->Cell(18, $h, 'AV', 0, 0, 'C', true, '');
-$pdf->Cell(329, $h, 'Skills', 0, 0, 'L', true, '');
+$pdf->Cell(97+75, $h, $lng->getTrn('inducedsm', __CLASS__), 0, 0, 'L', true, '');
+$pdf->Cell(18, $h, $lng->getTrn('movement', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(18, $h, $lng->getTrn('strength', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(18, $h, $lng->getTrn('agility', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(18, $h, $lng->getTrn('armor', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(329, $h, $lng->getTrn('skills', __CLASS__), 0, 0, 'L', true, '');
 //$pdf->Cell(23, $h, 'MNG', 1, 0, 'C', true, ''); // No MNG stars/mercs. They heal. ;-)
-$pdf->Cell(21, $h, 'CP', 0, 0, 'C', true, '');
-$pdf->Cell(21, $h, 'TD', 0, 0, 'C', true, '');
-$pdf->Cell(21, $h, 'Int', 0, 0, 'C', true, '');
-$pdf->Cell(21, $h, 'Cas', 0, 0, 'C', true, '');
-$pdf->Cell(23, $h, 'MVP', 0, 0, 'C', true, '');
-$pdf->Cell(25, $h, 'SPP', 0, 0, 'C', true, '');
-$pdf->Cell(41, $h, 'Value', 0, 0, 'R', true, '');
+$pdf->Cell(21, $h, $lng->getTrn('cpass', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(21, $h, $lng->getTrn('tdown', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(21, $h, $lng->getTrn('intercep', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(21, $h, $lng->getTrn('casualty', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(23, $h, $lng->getTrn('mvplayer', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(25, $h, $lng->getTrn('sppoints', __CLASS__), 0, 0, 'C', true, '');
+$pdf->Cell(41, $h, $lng->getTrn('valuep', __CLASS__), 0, 0, 'R', true, '');
 $currenty+=14;
 $pdf->SetXY($currentx, $currenty);
 $h=13;
@@ -362,14 +363,14 @@ if ($_POST) {
       else $extra_array_tmp[$merc_nr] = '';
       continue;
     }
-    elseif ($key == 'Bloodweiser Babes') { $ind_babes = (int) $val; continue; }
-    elseif ($key == 'Bribes') { $ind_bribes = (int) $val; continue; }
+    elseif ($key == 'Chicas Bloodweiser') { $ind_babes = (int) $val; continue; }
+    elseif ($key == 'Sobornos') { $ind_bribes = (int) $val; continue; }
     elseif ($key == 'Card') { $ind_card = (int) str_replace('k','000',$val); continue; }
-    elseif ($key == 'Extra Training') { $ind_rr = (int) $val; continue; }
-    elseif ($key == 'Halfling Master Chef') { $ind_chef = (int) $val; continue; }
+    elseif ($key == 'Entrenamiento Adicional') { $ind_rr = (int) $val; continue; }
+    elseif ($key == 'Gran Chef Halfling') { $ind_chef = (int) $val; continue; }
     elseif ($key == 'Igor') { $ind_igor = (int) $val; continue; }
-    elseif ($key == 'Wandering Apothecaries') { $ind_apo = (int) $val; continue; }
-    elseif ($key == 'Wizard') { $ind_wiz = (int) $val; continue; }
+    elseif ($key == 'Medicos Ambulantes') { $ind_apo = (int) $val; continue; }
+    elseif ($key == 'Hechicero') { $ind_wiz = (int) $val; continue; }
   }
 
   // Printing stars first
@@ -424,15 +425,15 @@ $currenty = 435;
 
 //print_box($x, $y, $w, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth=1, $borderstyle, $fontsize, $font, $bold=false, $align, $text)
 $h = 13; // Height of cells
-$pdf->print_box($currentx, $currenty, 170, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Inducements ');
-$pdf->print_box(($currentx += 170), $currenty, 120, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'L', '(for next match)');
-$pdf->print_box(($currentx = 630), $currenty, 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Team Goods'); // 156 to margin
+$pdf->print_box($currentx, $currenty, 170, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $lng->getTrn('inducement', __CLASS__));
+$pdf->print_box(($currentx += 170), $currenty, 120, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'L', $lng->getTrn('fornextm', __CLASS__));
+$pdf->print_box(($currentx = 630), $currenty, 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $lng->getTrn('tgoods', __CLASS__)); // 156 to margin
 
 // Checking if Wandering Apothecary should be replaced with Igor
 $r=$team->f_rname;
-if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Undead')) {
+if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Nigromantes') || ($r == 'No Muertos')) {
   $apo_igor = 'Igor (0-1):';
-  unset($inducements['Wandering Apothecaries']);
+  unset($inducements['Medicos Ambulantes']);
   if (isset($ind_igor)) { 
     $ind_apo_igor_cost = $ind_igor*$inducements['Igor']['cost'];
     $ind_cost += $ind_igor*$ind_apo_igor_cost; 
@@ -441,67 +442,67 @@ if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Und
   else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Igor']['cost']; }
 }
 else {
-  $apo_igor = 'Wandering Apothecaries (0-2):';
+  $apo_igor = 'Medicos Ambulantes (0-2):';
   unset($inducements['Igor']);
   if (isset($ind_apo)) { 
-    $ind_apo_igor_cost = $inducements['Wandering Apothecaries']['cost'];
+    $ind_apo_igor_cost = $inducements['Medicos Ambulantes']['cost'];
     $ind_cost += $ind_apo*$ind_apo_igor_cost; 
     $ind_apo_igor = $ind_apo;
   }
-  else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Wandering Apothecaries']['cost']; }
+  else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Medicos Ambulantes']['cost']; }
 }
 // Checking LRB6 cheaper Chef for Halfling
-$chef_cost = $inducements['Halfling Master Chef'][(($r == 'Halfling') ? 'reduced_cost' : 'cost')];
+$chef_cost = $inducements['Gran Chef Halfling'][(($r == 'Halfling') ? 'reduced_cost' : 'cost')];
 // Checking LRB6 cheaper bribes for Goblin
-$bribe_cost = $inducements['Bribes'][(($r == 'Goblin') ? 'reduced_cost' : 'cost')];
+$bribe_cost = $inducements['Sobornos'][(($r == 'Goblin') ? 'reduced_cost' : 'cost')];
 
-if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; }
+if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Chicas Bloodweiser']['cost']; }
 else $ind_babes = '__';
-if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$inducements['Bribes']['cost']; }
+if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$inducements['Sobornos']['cost']; }
 else $ind_bribes = '__';
 if (isset($ind_card)) { $ind_cost += $ind_card; }
 else $ind_card = '__';
-if (isset($ind_rr)) { $ind_cost += $ind_rr*$inducements['Extra Training']['cost']; }
+if (isset($ind_rr)) { $ind_cost += $ind_rr*$inducements['Entrenamiento Adicional']['cost']; }
 else $ind_rr = '__';
-if (isset($ind_chef)) { $ind_cost += $ind_chef*$chef_cost;} #Not $inducements['Halfling Master Chef']['cost']; }
+if (isset($ind_chef)) { $ind_cost += $ind_chef*$chef_cost;} #Not $inducements['Gran Chef Halfling']['cost']; }
 else $ind_chef = '__';
-if (isset($ind_wiz)) { $ind_cost += $ind_wiz*$inducements['Wizard']['cost']; }
+if (isset($ind_wiz)) { $ind_cost += $ind_wiz*$inducements['Hechicero']['cost']; }
 else $ind_wiz = '__';
 
 // print_inducements($x, $y, $h, $bgcol, $linecol, $fontsize, $ind_name, $ind_amount, $ind_value)
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bloodweiser Babes (0-2):', $ind_babes, $pdf->Mf($inducements['Bloodweiser Babes']['cost']));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bribes (0-3):', $ind_bribes, $pdf->Mf($bribe_cost));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Extra Training (0-4):', $ind_rr, $pdf->Mf($inducements['Extra Training']['cost']));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Halfling Master Chef (0-1):', $ind_chef, $pdf->Mf($chef_cost));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Chicas Bloodweiser (0-2):', $ind_babes, $pdf->Mf($inducements['Chicas Bloodweiser']['cost']));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Sobornos (0-3):', $ind_bribes, $pdf->Mf($bribe_cost));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Entrenamiento Adicional (0-4):', $ind_rr, $pdf->Mf($inducements['Entrenamiento Adicional']['cost']));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Gran Chef Halfling (0-1):', $ind_chef, $pdf->Mf($chef_cost));
 $pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, $apo_igor, $ind_apo_igor, $pdf->Mf($ind_apo_igor_cost));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Wizard (0-1):', $ind_wiz, $pdf->Mf($inducements['Wizard']['cost']));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Card budget:', ' ', $pdf->Mf($ind_card));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Gate:', null, '');
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'FAME:', null, '');
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Hechicero (0-1):', $ind_wiz, $pdf->Mf($inducements['Hechicero']['cost']));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Carta Especial:', ' ', $pdf->Mf($ind_card));
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, $lng->getTrn('gate', __CLASS__), null, '');
+$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, $lng->getTrn('fame', __CLASS__), null, '');
 
 $currenty=435;
 $currentx=630;
 // print_team_goods($x, $y, $h, $bgcol, $linecol, $perm_name, $perm_nr, $perm_value, $perm_total_value, $bold=false)
-$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Rerolls:', ($team->rerolls), $pdf->Mf($rerollcost), $pdf->Mf($team->rerolls * $rerollcost), false);
-$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Fan Factor:', ($team->rg_ff), $pdf->Mf($rules['cost_fan_factor']), $pdf->Mf($team->rg_ff * $rules['cost_fan_factor']), false);
-$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Assistant Coaches:', ($team->ass_coaches), $pdf->Mf($rules['cost_ass_coaches']), $pdf->Mf($team->ass_coaches * $rules['cost_ass_coaches']), false);
-$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Cheerleaders:', ($team->cheerleaders), $pdf->Mf($rules['cost_cheerleaders']), $pdf->Mf($team->cheerleaders * $rules['cost_cheerleaders']), false);
-if ($r == 'Undead' || $r == 'Necromantic') // Swap Apothecary for Necromancer
-  $pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Necromancer:', 1, 0, 0, false);
+$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, $lng->getTrn('reroll', __CLASS__), ($team->rerolls), $pdf->Mf($rerollcost), $pdf->Mf($team->rerolls * $rerollcost), false);
+$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, $lng->getTrn('fanf', __CLASS__), ($team->rg_ff), $pdf->Mf($rules['cost_fan_factor']), $pdf->Mf($team->rg_ff * $rules['cost_fan_factor']), false);
+$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, $lng->getTrn('asscoaches', __CLASS__), ($team->ass_coaches), $pdf->Mf($rules['cost_ass_coaches']), $pdf->Mf($team->ass_coaches * $rules['cost_ass_coaches']), false);
+$pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, $lng->getTrn('cheer', __CLASS__), ($team->cheerleaders), $pdf->Mf($rules['cost_cheerleaders']), $pdf->Mf($team->cheerleaders * $rules['cost_cheerleaders']), false);
+if ($r == 'No Muertos' || $r == 'Nigromantes') // Swap Apothecary for Necromancer
+  $pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, $lng->getTrn('necromancer', __CLASS__), 1, 0, 0, false);
 elseif ($r == 'Nurgle' || $r == 'Khemri')  // Remove Apothecary
   $currenty+=$h;
 else  // Normal case
-  $pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 'Apothecary:', ($team->apothecary), $pdf->Mf($rules['cost_apothecary']), $pdf->Mf($team->apothecary * $rules['cost_apothecary']), false);
-$pdf->print_box($currentx+=70, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'R', 'Treasury:' );
+  $pdf->print_team_goods($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, $lng->getTrn('apoth', __CLASS__), ($team->apothecary), $pdf->Mf($rules['cost_apothecary']), $pdf->Mf($team->apothecary * $rules['cost_apothecary']), false);
+$pdf->print_box($currentx+=70, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'R', $lng->getTrn('treasury', __CLASS__));
 $pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'R', $pdf->Mf($team->treasury));
 
 // Team Value, Inducements Value, Match Value
 $h=13;
-$pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Team Value (incl MNGs value):');
+$pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $lng->getTrn('tvverbose', __CLASS__));
 $pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $pdf->Mf($team->value+$sum_p_missing_value));
-$pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Induced Value:');
+$pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $lng->getTrn('indvalue', __CLASS__));
 $pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $pdf->Mf($ind_cost));
-$pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Match Value (TV for match):');
+$pdf->print_box($currentx-=40, ($currenty+=$h), 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $lng->getTrn('matchvalue', __CLASS__));
 $pdf->print_box($currentx+=40, ($currenty), 65, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', $pdf->Mf($team->value + $ind_cost));
 
 // Drawing a rectangle around inducements
@@ -528,27 +529,27 @@ $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_MNG));
 $pdf->SetXY($currentx, $currenty);
 $pdf->Rect($currentx, $currenty, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
-$pdf->Cell(20, 8, 'MNG', 0, 0, 'L', false);
+$pdf->Cell(20, 8, $lng->getTrn('mng', __CLASS__), 0, 0, 'L', false);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY));
 $pdf->Rect($currentx+=22+5, $currenty+=1, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
-$pdf->Cell(45, 8, 'Journeyman', 0, 0, 'L', false);
+$pdf->Cell(45, 8, $lng->getTrn('journeyman', __CLASS__), 0, 0, 'L', false);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_JOURNEY_USED));
 $pdf->Rect($currentx+=47+5, $currenty+=1, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
-$pdf->Cell(45, 8, 'Used journeyman', 0, 0, 'L', false);
+$pdf->Cell(45, 8, $lng->getTrn('usedjourn', __CLASS__), 0, 0, 'L', false);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NEWSKILL));
 $pdf->Rect($currentx+=67+5, $currenty+=1, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
-$pdf->Cell(70, 8, 'New skill available', 0, 0, 'L', false);
+$pdf->Cell(70, 8, $lng->getTrn('newskillav', __CLASS__), 0, 0, 'L', false);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_CHR_GTP1));
 $pdf->Rect($currentx+=70+5, $currenty+=1, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
-$pdf->Cell(50, 8, 'Stat upgrade', 0, 0, 'L', false);
+$pdf->Cell(50, 8, $lng->getTrn('statup', __CLASS__), 0, 0, 'L', false);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_CHR_LTM1));
 $pdf->Rect($currentx+=50+5, $currenty+=1, 5, 5, 'DF');
 $pdf->SetXY($currentx+=5, $currenty-=1);
-$pdf->Cell(50, 8, 'Stat downgrade', 0, 0, 'L', false);
+$pdf->Cell(50, 8, $lng->getTrn('statdown', __CLASS__), 0, 0, 'L', false);
 
 $pdf->SetFont('Tahoma', '', 7);
 $pdf->SetFillColorBB($pdf->hex2cmyk(COLOR_ROSTER_NORMAL));

@@ -29,11 +29,12 @@ public static function profile($rid)
     global $lng, $DEA;
     $race = new Race($rid);
     $roster = $DEA[$race->name];
-    title($lng->getTrn('race/'.strtolower(str_replace(' ','', $race->name))));
+    title($race->name);
     ?>
     <center><img src="<?php echo RACE_ICONS.'/'.$roster['other']['icon'];?>" alt="Race icon"></center>
     <ul>
-        <li><?php echo $lng->getTrn('common/reroll')?>: <?php echo $roster['other']['rr_cost']/1000;?>k</li>
+        <li>ID: <?php echo $roster['other']['race_id'];?></li>
+        <li>Re-roll cost: <?php echo $roster['other']['rr_cost']/1000;?>k</li>
     </ul><br>
     <?php
     $players = array();
@@ -42,16 +43,15 @@ public static function profile($rid)
         $p->skills = implode(', ', skillsTrans($p->def));
         $p->N = implode('',$p->norm);
         $p->D = implode('',$p->doub);
-        $p->position = $lng->getTrn("position/".strtolower(str_replace(' ','',$p->position)));
         $players[] = $p;
     }
     $fields = array(
         'position'  => array('desc' => $lng->getTrn('common/pos')),
         'pos_id'    => array('desc' => 'ID'),
-        'ma'        => array('desc' => 'Ma'),
-        'st'        => array('desc' => 'St'),
-        'ag'        => array('desc' => 'Ag'),
-        'av'        => array('desc' => 'Av'),
+        'ma'        => array('desc' => 'MO'),
+        'st'        => array('desc' => 'FU'),
+        'ag'        => array('desc' => 'AG'),
+        'av'        => array('desc' => 'AR'),
         'skills'    => array('desc' => $lng->getTrn('common/skills'), 'nosort' => true),
         'N'         => array('desc' => 'Normal', 'nosort' => true),
         'D'         => array('desc' => 'Double', 'nosort' => true),
