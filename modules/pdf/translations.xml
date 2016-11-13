@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<translations>
+<en-GB>
+
+<race>Race:</race>
+<coach>Head Coach:</coach>
+<number>Nr</number>
+<playername>Name</playername>
+<skillandinj>Skills and Injuries</skillandinj>
+
+<mng>MNG</mng>
+<cpass>CP</cpass>
+<tdown>Td</tdown>
+<intercep>Int</intercep>
+<casualty>Cas</casualty>
+<mvplayer>MVP</mvplayer>
+<sppoints>SPP</sppoints>
+<valuep>Value</valuep>
+
+<totalnumberpng>Total number of players next game:</totalnumberpng>
+<totalexcludev>Totals (excl TV for MNG players):</totalexcludev>
+
+<inducedsm>Induced Stars and Mercenaries</inducedsm>
+<fornextm> (for next match)</fornextm>
+<gate>Gate:</gate>
+<fame>FAME:</fame>
+
+<!-- Team Goods-->
+<tgoods>Team Goods</tgoods>
+<reroll>Rerolls:</reroll>
+<fanf>Fan Factor:</fanf>
+<asscoaches>Assistant Coaches:</asscoaches>
+<cheer>Cheerleaders:</cheer>
+<apoth>Apothecary:</apoth>
+<necromancer>Necromancer:</necromancer>
+<treasury>Treasury:</treasury>
+
+<tvverbose>Team Value (incl MNGs value):</tvverbose>
+
+<journeyman>Journeyman</journeyman>
+<journeyman2>Journeyman</journeyman2>
+<usedjourn>Used journeyman</usedjourn>
+<newskillav>New skill available</newskillav>
+<statup>Stat upgrade</statup>
+<statdown>Stat downgrade</statdown>
+
+
+
+<!--Inducements--> 
+
+<name>Inducements try-out</name>
+
+<starname>Star Name</starname>
+<cost>Cost</cost>
+<movement>MA</movement>
+<strength>ST</strength>
+<agility>AG</agility>
+<armor>AV</armor>
+<skills>Skills</skills>
+
+<mercenaries>Mercenaries</mercenaries>
+<position>Position</position>
+<extraskill>Extra Skill</extraskill>
+
+<inducement>Inducement</inducement>
+<totalcost>Total Cost</totalcost>
+<cardbudget>Card budget</cardbudget>
+
+<teamvalue>Team Value:</teamvalue>
+<indvalue>Inducements Value:</indvalue>
+<matchvalue>Match Value:</matchvalue>
+
+<createpdf>CreatePDFRoster</createpdf>
+<backhref>Back to team page</backhref>
+
+</en-GB>
+
+<!--                    Spanish translation                    -->
+
+<es-ES>
+
+<race>Raza:</race>
+<coach>Entrenador:</coach>
+<number>#</number>
+<playername>Nombre</playername>
+<skillandinj>Habilidades y Lesiones</skillandinj>
+
+<mng>LPPE</mng>
+<cpass>PC</cpass>
+<tdown>Td</tdown>
+<intercep>Int</intercep>
+<casualty>Cas</casualty>
+<mvplayer>MJE</mvplayer>
+<sppoints>PE</sppoints>
+<valuep>Coste</valuep>
+
+<totalnumberpng>Jugadores disponibles para el partido:</totalnumberpng>
+<totalexcludev>Total (sin contar coste de LPPE):</totalexcludev>
+
+<inducedsm>Estrellas y Mercenarios contratados</inducedsm>
+<fornextm> (para el partido)</fornextm>
+<gate>Aforo:</gate>
+<fame>FAMA:</fame>
+
+<!-- Bienes de Equipo-->
+<tgoods>Bienes de Equipo</tgoods>
+<reroll>Segundas Oportunidades:</reroll>
+<fanf>Factor de Hinchas:</fanf>
+<asscoaches>Ayudantes de Entrenador:</asscoaches>
+<cheer>Animadoras:</cheer>
+<apoth>Medico:</apoth>
+<necromancer>Nigromante:</necromancer>
+<treasury>Tesoreria:</treasury>
+
+<tvverbose>Valor de Equipo (incluyendo LPPEs):</tvverbose>
+
+<journeyman>Independ.</journeyman>
+<journeyman2>Independiente</journeyman2>
+<usedjourn>Independ. usado</usedjourn>
+<newskillav>Subida pendiente</newskillav>
+<statup>Caract. subida</statup>
+<statdown>Caract. bajada</statdown>
+
+
+<!--Incentivos-->
+<name>Gestión de Incentivos</name>
+
+<starname>Jugador Estrella</starname>
+<cost>Coste</cost>
+<movement>MO</movement>
+<strength>FU</strength>
+<agility>AG</agility>
+<armor>AR</armor>
+<skills>Habilidades</skills>
+
+<mercenaries>Mercenarios</mercenaries>
+<position>Posicion</position>
+<extraskill>Habilidad Extra</extraskill>
+
+<inducement>Incentivos</inducement>
+<totalcost>Coste Total</totalcost>
+<cardbudget>Carta Especial</cardbudget>
+
+<teamvalue>Valor de Equipo:</teamvalue>
+<indvalue>Valor de Incentivos:</indvalue>
+<matchvalue>Valor para el Partido:</matchvalue>
+
+<createpdf>CrearRosterPDF</createpdf>
+<backhref>Volver a la página del equipo</backhref>
+
+</es-ES>
+</translations>

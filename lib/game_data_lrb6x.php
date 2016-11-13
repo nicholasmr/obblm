@@ -186,7 +186,7 @@ $DEA['Slann'] = array (
     				'doub'		=> array ('A', 'S', 'P'),
     				'qty'			  => 16,
     				'cost'			  => 60000,
-    				'icon'			  => 'lmskink2an',
+    				'icon'			  => 'slannlinea',
     			    'pos_id'          => 220,
   			),
   			'Catcher'	=> array (
@@ -199,7 +199,7 @@ $DEA['Slann'] = array (
     				'doub'		=> array ('S', 'P'),
     				'qty'			  => 4,
     				'cost'			  => 80000,
-    				'icon'			  => 'lmskink1an',
+    				'icon'			  => 'slannrecep',
     			    'pos_id'          => 221,
   			),
   			'Blitzer'	=> array (
@@ -212,7 +212,7 @@ $DEA['Slann'] = array (
     				'doub'		=> array ('P'),
     				'qty'			  => 4,
     				'cost'			  => 110000,
-    				'icon'			  => 'lmskink1ban',
+    				'icon'			  => 'slannblitz',
     			    'pos_id'          => 222,
   			),
   			'Kroxigor'	=> array (
