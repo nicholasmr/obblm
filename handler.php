@@ -257,4 +257,3 @@ switch ($_GET['type'])
 }
 
 mysql_close($conn);
-

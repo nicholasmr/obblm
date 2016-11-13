@@ -5,9 +5,11 @@
  **************************/
 
 $db_name   = 'obblmdb';
-$db_user   = 'root';
-$db_passwd = '';
+$db_user   = 'obblm';
+$db_passwd = 'obblm';
 $db_host   = 'localhost';
+
+include('config.php');
 
 /*************************
  * Global settings 
@@ -21,7 +23,7 @@ $db_host   = 'localhost';
     For LOCAL settings, ie. per league settings, edit the localsettings/settings_<LEAGUE ID>.php files.
 */
 
-$settings['site_name'] = 'My OBBLM portal'; // Site name.
+$settings['site_name'] = 'Liga Profesional de BloodBowl de Getafe'; // Site name.
 $settings['default_visitor_league'] = 1;    // ID of default league to show on front page when not logged in OR coach has not selected a home league.
 $settings['default_leagues'] = array(1);    // When creating a coach the coach will automatically become a regular coach in leagues with these IDs.
 $settings['hide_ES_extensions'] = false;    // Default is false. Hides ES (Extra Stats) tables and ES references.
@@ -65,5 +67,10 @@ $hrs[3]['rule']   = array('-sdiff', '-smp'); // Sort teams against: largest scor
 $hrs[3]['points'] = '';                      // Points not used.
 
 // Add you own rules here...
+// Rule #4
+$hrs[4]['rule']   = array('-pts', '-elo'); // Sort teams against: most points, then elo.
+$hrs[4]['points'] = '300*[won] + 100*[draw] + 0*[lost] + 3*[sdiff] + 2*[tcdiff]'; // The definition of points.
 
-
+// Rule #5
+$hrs[5]['rule']   = array('-pts', '-sdiff', '-tcdiff', '-elo'); // Sort teams against: most points, then most goalaverage, then most cas average and then most elo.
+$hrs[5]['points'] = '3*[won] + 1*[draw] + 0*[lost]'; // The definition of points.

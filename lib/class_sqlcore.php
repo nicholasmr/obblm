@@ -91,10 +91,6 @@ public static function mkHRS(array $HRSs)
                         continue;
                     }
                     $pts = preg_replace('/\[(\w*)\]/', "IFNULL(SUM(\\1),0)", $rs['points']);
-# Start developing per match points:
-#                    preg_match('/permatch\((.*)\)/', $rs['points'], $permatch);
-#SELECT match_id, IF(team1_id = @TID,tcas1,tcas2) AS F_tcas, ki AS F_ki, td AS F_td FROM matches, (SELECT f_team_id, f_match_id, f_tour_id, SUM(td) AS td, SUM(ki) AS ki FROM match_data WHERE f_team_id = @TID AND f_tour_id = @TRID GROUP BY f_match_id) AS TBL_MDAT WHERE match_id = f_match_id;
-
                     $query .= "WHEN $nr THEN RETURN (SELECT $pts FROM mv_teams WHERE f_tid = tid AND f_trid = trid);\n";
                 }
                 $query .= '
