@@ -251,7 +251,7 @@ foreach ($players as $p) {
       elseif ($sub <= -1) $p->{"${chr}_color"} = COLOR_ROSTER_CHR_LTM1;
   }
 
-  $pp = array('nr'=>$p->nr, 'name'=>utf8_decode($p->name), 'pos'=>$p->position, 'ma'=>$p->ma, 'st'=>$p->st, 'ag'=>$p->ag, 'av'=>$p->av, 'skills'=>$skills_injuries, 'inj'=>$inj,
+  $pp = array('nr'=>$p->nr, 'name'=>utf8_decode($p->name), 'pos'=>$p->position, 'ma'=>$p->ma, 'st'=>$p->st, 'ag'=>$p->ag, 'av'=>$p->av, 'skills'=>utf8_decode($skills_injuries), 'inj'=>$inj,
      'cp'=>$p->mv_cp, 'td'=>$p->mv_td, 'int'=>$p->mv_intcpt, 'cas'=>$p->mv_cas, 'mvp'=>$p->mv_mvp, 'spp'=>$p->mv_spp, 'value'=>$pdf->Mf($p->value));
   $sum_spp+=$p->mv_spp;
   $sum_pvalue+=$p->value;
@@ -378,7 +378,7 @@ if ($_POST) {
     foreach ($star_array_tmp as $sid) {
       $s = new Star($sid);
       $s->setSkills(true);
-      $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>$s->skills,
+      $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>utf8_decode($s->skills),
             'cp'=>$s->mv_cp, 'td'=>$s->mv_td, 'int'=>$s->mv_intcpt, 'cas'=>$s->mv_cas, 'mvp'=>$s->mv_mvp, 'spp'=>$s->mv_spp, 'value'=>$pdf->Mf($s->cost));
       $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
       $ind_cost += $s->cost;
@@ -409,7 +409,7 @@ if ($_POST) {
         if ($m['skills'] == '') $m['skills'] = $m['extra']; 
         else $m['skills'] = $m['skills'] . ', ' . $m['extra'];
       }
-      $ss = array('name'=>utf8_decode($m['name']), 'ma'=>$m['ma'], 'st'=>$m['st'], 'ag'=>$m['ag'], 'av'=>$m['av'], 'skills'=>$m['skills'],
+      $ss = array('name'=>utf8_decode($m['name']), 'ma'=>$m['ma'], 'st'=>$m['st'], 'ag'=>$m['ag'], 'av'=>$m['av'], 'skills'=>utf8_decode($m['skills']),
             'cp'=>' ', 'td'=>' ', 'int'=>' ', 'cas'=>' ', 'mvp'=>' ', 'spp'=>' ', 'value'=>$pdf->Mf($m['cost']));
       $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
       $ind_cost += $m['cost'];
