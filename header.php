@@ -140,9 +140,9 @@ require_once('lib/class_mobile_htmlout.php');
  *   Final setup
  ********************/
 
-//if (!is_writable(IMG)) {
-//    die('OBBLM needs to be able to write to the <i>images</i> directory in order to work properly. Please check the directory permissions.');
-//}
+if (!is_writable(IMG)) {
+    die('OBBLM needs to be able to write to the <i>images</i> directory in order to work properly. Please check the directory permissions.');
+}
 
 
 /********************
