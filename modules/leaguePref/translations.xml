@@ -47,5 +47,8 @@
 <language_title>Language</language_title>
 <language_help>Your leagues default language.</language_help>
 
+<core_rules_title>Core Rules</core_rules_title>
+<core_rules_help>What version of the Blood Bowl rules you want to use.</core_rules_help>
+
 
 </en-GB>
