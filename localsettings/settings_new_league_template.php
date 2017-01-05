@@ -30,7 +30,6 @@ $settings['welcome']         = get_alt_col('league_prefs','f_lid',$get_lid,'welc
 $settings['rules']           = get_alt_col('league_prefs','f_lid',$get_lid,'rules'); 
 $get_prime = get_alt_col('league_prefs','f_lid',$get_lid,'prime_tid');
 $get_second = get_alt_col('league_prefs','f_lid',$get_lid,'second_tid');
-$settings['core_rules_file'] = 'lib/game_data_lrb6.php';
 
 // Keep the following the same.
 $settings['tourlist_foldup_fin_divs'] = false; // Default is false. If true the division nodes in the tournament lists section will automatically be folded up if all child tournaments in that division are marked as finished.

@@ -38,8 +38,8 @@
         The second argument passed to Module::run() is the $argv array passed on to main() (see below).
 */
 /*
-    Using the league prefences league and global administrators can change the touranments displayed on the homepage dynamically.
-    Within the settings_xxx.php file the ID for each box should be set to 'prime' or 'second' to pick up the tournaments selected as primary and secondary.
+	Using the league prefences league and global administrators can change the touranments displayed on the homepage dynamically.
+	Within the settings_xxx.php file the ID for each box should be set to 'prime' or 'second' to pick up the tournaments selected as primary and secondary.
     In addition the primary tournament will be selected by default on the league tables page.
 */
 
@@ -90,16 +90,16 @@ public static function getModuleTables()
 {
     global $CT_cols;
 
-    return array(
+	return array(
         # Table name => column definitions
         'league_prefs' => array(
-            'f_lid'       => $CT_cols[T_NODE_LEAGUE].' NOT NULL PRIMARY KEY ',
-            'prime_tid'   => $CT_cols[T_NODE_TOURNAMENT],
-            'second_tid'  => $CT_cols[T_NODE_DIVISION],
-            'league_name' => 'VARCHAR(128) ',
-            'forum_url'   => 'VARCHAR(256) ',
-            'welcome'     => 'TEXT ',
-            'rules'       => 'TEXT ',
+			'f_lid'       => $CT_cols[T_NODE_LEAGUE].' NOT NULL PRIMARY KEY ',
+	        'prime_tid'   => $CT_cols[T_NODE_TOURNAMENT],
+	        'second_tid'  => $CT_cols[T_NODE_DIVISION],
+	        'league_name' => 'VARCHAR(128) ',
+	        'forum_url'   => 'VARCHAR(256) ',
+	        'welcome'     => 'TEXT ',
+	        'rules'       => 'TEXT ',
         ),
     );
 }
@@ -157,33 +157,31 @@ public $theme_css = '';
 public $core_theme_id = 0;
 public $tv = 0;
 public $language = 'en-GB';
-public $core_rules_file = 'lib/game_data_lrb6.php';
 
-function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $rules, $existing, $theme_css, $core_theme_id, $tv, $language, $core_rules_file) {
-    global $settings;
-    $this->lid = $lid;
-    $this->l_name = $name;
-    $this->p_tour = $ptid;
-    $this->league_name = isset($league_name) ? $league_name: $settings['league_name'];
-    $this->forum_url = isset($forum_url) ? $forum_url: $settings['forum_url'];
-    $this->welcome = isset($welcome) ? $welcome: $settings['welcome'];
-    $this->rules = isset($rules) ? $rules: $settings['rules'];
-    $this->existing = $existing;
+function __construct($lid, $name, $ptid, $league_name, $forum_url, $welcome, $rules, $existing, $theme_css, $core_theme_id, $tv, $language) {
+	global $settings;
+	$this->lid = $lid;
+	$this->l_name = $name;
+	$this->p_tour = $ptid;
+	$this->league_name = isset($league_name) ? $league_name: $settings['league_name'];
+	$this->forum_url = isset($forum_url) ? $forum_url: $settings['forum_url'];
+	$this->welcome = isset($welcome) ? $welcome: $settings['welcome'];
+	$this->rules = isset($rules) ? $rules: $settings['rules'];
+	$this->existing = $existing;
     $this->theme_css = $theme_css;
     $this->core_theme_id = $core_theme_id;
     $this->tv = $tv;
     $this->language = $language;
-    $this->core_rules_file = $core_rules_file;
 }
 
 /* Gets the preferences for the current league */
 public static function getLeaguePreferences() {
-    global $settings, $coach, $leagues, $rules;
+	global $settings, $coach, $leagues, $rules;
 
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     echo $HTML_LeagueSelector;
 
-    $result = mysql_query("SELECT lid, name, prime_tid, league_name, forum_url, welcome, rules FROM leagues LEFT OUTER JOIN league_prefs on lid=f_lid WHERE lid=$sel_lid");
+	$result = mysql_query("SELECT lid, name, prime_tid, league_name, forum_url, welcome, rules FROM leagues LEFT OUTER JOIN league_prefs on lid=f_lid WHERE lid=$sel_lid");
 
     if ($result && mysql_num_rows($result) > 0) {
         while ($row = mysql_fetch_assoc($result)) {
@@ -192,16 +190,16 @@ public static function getLeaguePreferences() {
             return new LeaguePref($row['lid'], $row['name'],
                 $row['prime_tid'], $row['league_name'], $row['forum_url'],
                 $row['welcome'], $row['rules'], true, $theme_css, 
-                $settings['stylesheet'], $rules['initial_treasury'], $settings['lang'], $settings['core_rules_file']);
+                $settings['stylesheet'], $rules['initial_treasury'], $settings['lang']);
         }
     } else {
-        return new LeaguePref($sel_lid, $leagues['lname'], null, null, null, null, null, null, false, null, 
-            $settings['stylesheet'], $rules['initial_treasury'], $settings['lang'], $settings['core_rules_file']);
-    }
+		return new LeaguePref($sel_lid, $leagues['lname'], null, null, null, null, null, null, false, null, 
+            $settings['stylesheet'], $rules['initial_treasury'], $settings['lang']);
+	}
 }
 
 function validate() {
-    return $this->p_tour != $this->s_tour;
+	return $this->p_tour != $this->s_tour;
 }
 
 function save() {
@@ -220,13 +218,11 @@ function save() {
     $settingsFileContents = preg_replace("/settings\['stylesheet'\]\s*=\s['A-Za-z0-9_]+/", "settings['stylesheet'] = $this->core_theme_id", $settingsFileContents);
     $settingsFileContents = preg_replace("/settings\['lang'\]\s*=\s['A-Za-z0-9_\-]+/", "settings['lang'] = '$this->language'", $settingsFileContents);
     $settingsFileContents = preg_replace("/rules\['initial_treasury'\]\s*=\s['A-Za-z0-9_]+/", "rules['initial_treasury'] = $this->tv", $settingsFileContents);
-    $settingsFileContents = preg_replace("/settings\['core_rules_file'\]\s*=\s[\.\/'A-Za-z0-9_]+/", "settings['core_rules_file'] = '$this->core_rules_file'", $settingsFileContents);
     FileManager::writeFile(FileManager::getSettingsDirectoryName() . "/settings_$this->lid.php", $settingsFileContents);
     
     $settings['stylesheet'] = $this->core_theme_id;
     $settings['lang'] = $this->language;
     $rules['initial_treasury'] = $this->tv;
-    $settings['core_rules_file'] = $this->core_rules_file;
             
     return mysql_query($query);
 }
@@ -235,35 +231,35 @@ public static function showLeaguePreferences() {
     global $lng, $tours, $coach, $leagues, $settings, $rules;
     title($lng->getTrn('name', 'LeaguePref'));
 
-    self::handleActions();
+	self::handleActions();
 
-    // short cuts to text lookups
-    $prime_title = $lng->getTrn('prime_title', 'LeaguePref');
-    $prime_help = $lng->getTrn('prime_help', 'LeaguePref');
+	// short cuts to text lookups
+	$prime_title = $lng->getTrn('prime_title', 'LeaguePref');
+	$prime_help = $lng->getTrn('prime_help', 'LeaguePref');
 
-    $league_name_title = $lng->getTrn('league_name_title', 'LeaguePref');
-    $league_name_help = $lng->getTrn('league_name_help', 'LeaguePref');
+	$league_name_title = $lng->getTrn('league_name_title', 'LeaguePref');
+	$league_name_help = $lng->getTrn('league_name_help', 'LeaguePref');
 
-    $forum_url_title = $lng->getTrn('forum_url_title', 'LeaguePref');
-    $forum_url_help = $lng->getTrn('forum_url_help', 'LeaguePref');
+	$forum_url_title = $lng->getTrn('forum_url_title', 'LeaguePref');
+	$forum_url_help = $lng->getTrn('forum_url_help', 'LeaguePref');
 
-    $welcome_title = $lng->getTrn('welcome_title', 'LeaguePref');
-    $welcome_help = $lng->getTrn('welcome_help', 'LeaguePref');
+	$welcome_title = $lng->getTrn('welcome_title', 'LeaguePref');
+	$welcome_help = $lng->getTrn('welcome_help', 'LeaguePref');
 
-    $rules_title = $lng->getTrn('rules_title', 'LeaguePref');
-    $rules_help = $lng->getTrn('rules_help', 'LeaguePref');
+	$rules_title = $lng->getTrn('rules_title', 'LeaguePref');
+	$rules_help = $lng->getTrn('rules_help', 'LeaguePref');
 
-    $submit_text = $lng->getTrn('submit_text', 'LeaguePref');
-    $submit_title = $lng->getTrn('submit_title', 'LeaguePref');
+	$submit_text = $lng->getTrn('submit_text', 'LeaguePref');
+	$submit_title = $lng->getTrn('submit_title', 'LeaguePref');
 
-    $rTours = array_reverse($tours, true);
-    $l_pref = self::getLeaguePreferences();
-    // check this coach is allowed to administer this league
-    $canEdit = is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $l_pref->lid) ? "" : "DISABLED";
+	$rTours = array_reverse($tours, true);
+	$l_pref = self::getLeaguePreferences();
+	// check this coach is allowed to administer this league
+	$canEdit = is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $l_pref->lid) ? "" : "DISABLED";
     ?>
-    <div class='boxWide'>
-        <h3 class='boxTitle4'><?php echo $l_pref->l_name; ?></h3>
-        <div class='boxConf'>
+	<div class='boxWide'>
+		<h3 class='boxTitle4'><?php echo $l_pref->l_name; ?></h3>
+		<div class='boxConf'>
             <form method="POST">
                 <input type="hidden" name="lid" value="<?php echo $l_pref->lid; ?>" />
                 <input type="hidden" name="existing" value="<?php echo $l_pref->existing; ?>" />
@@ -369,17 +365,6 @@ public static function showLeaguePreferences() {
                             <textarea rows="10" cols="120" name="theme_css" <?php echo $canEdit; ?>><?php echo $l_pref->theme_css; ?></textarea>
                         </td>                        
                     </tr>
-                    <tr title="<?php echo $lng->getTrn('core_rules_help', 'LeaguePref'); ?>">
-                        <td>
-                            <?php echo $lng->getTrn('core_rules_title', 'LeaguePref'); ?>:
-                        </td>
-                        <td>
-                            <select name="core_rules_file" <?php echo $canEdit; ?>>
-                                <option value="lib/game_data_lrb6.php" <? echo 'lib/game_data_lrb6.php' == $settings['core_rules_file'] ? 'selected' : '' ?>>LRB6</option>
-                                <option value="lib/game_data_bb16.php" <? echo 'lib/game_data_bb16.php' == $settings['core_rules_file'] ? 'selected' : '' ?>>BB16</option>
-                            </select>
-                        </td>
-                    </tr>
 
                     <tr title="<?php echo $submit_title; ?>">
                         <td colspan="2">
@@ -388,11 +373,11 @@ public static function showLeaguePreferences() {
                     </tr>
                 </table>
             </form>
-        </div>
-    </div>
+		</div>
+	</div>
     <div class='boxWide'>
         <?php HTMLOUT::helpBox($lng->getTrn('help', 'LeaguePref'), ''); ?>
-    </div>
+	</div>
     <?php
 }
 
@@ -400,31 +385,31 @@ public static function handleActions() {
     global $lng, $coach;
     
     if (isset($_POST['action'])) {
-        if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $_POST['lid'])) {
-            $l_pref = new LeaguePref($_POST['lid'], "", $_POST['p_tour'],
+    	if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $_POST['lid'])) {
+			$l_pref = new LeaguePref($_POST['lid'], "", $_POST['p_tour'],
                 $_POST['league_name'], $_POST['forum_url'], $_POST['welcome'], 
                 $_POST['rules'], $_POST['existing'], $_POST['theme_css'], 
-                $_POST['core_theme_id'], $_POST['tv'], $_POST['language'], $_POST['core_rules_file']);
-            if($l_pref->validate()) {
-                if($l_pref->save()) {
-                    echo "<div class='boxWide'>";
-                    HTMLOUT::helpBox($lng->getTrn('saved', 'LeaguePref'), '');
-                    echo "</div>";
-                } else {
-                    echo "<div class='boxWide'>";
-                    HTMLOUT::helpBox($lng->getTrn('failedSave', 'LeaguePref'), '', 'errorBox');
-                    echo "</div>";
-                }
-            } else {
-                echo "<div class='boxWide'>";
-                HTMLOUT::helpBox($lng->getTrn('failedValidate', 'LeaguePref'), '', 'errorBox');
-                echo "</div>";
-            }
-        } else {
-            echo "<div class='boxWide'>";
-            HTMLOUT::helpBox($lng->getTrn('failedSecurity', 'LeaguePref'), '', 'errorBox');
-            echo "</div>";
-        }
+                $_POST['core_theme_id'], $_POST['tv'], $_POST['language']);
+			if($l_pref->validate()) {
+				if($l_pref->save()) {
+					echo "<div class='boxWide'>";
+					HTMLOUT::helpBox($lng->getTrn('saved', 'LeaguePref'), '');
+					echo "</div>";
+				} else {
+					echo "<div class='boxWide'>";
+					HTMLOUT::helpBox($lng->getTrn('failedSave', 'LeaguePref'), '', 'errorBox');
+					echo "</div>";
+				}
+			} else {
+				echo "<div class='boxWide'>";
+				HTMLOUT::helpBox($lng->getTrn('failedValidate', 'LeaguePref'), '', 'errorBox');
+				echo "</div>";
+			}
+		} else {
+			echo "<div class='boxWide'>";
+			HTMLOUT::helpBox($lng->getTrn('failedSecurity', 'LeaguePref'), '', 'errorBox');
+			echo "</div>";
+		}
     }
 }
 }
