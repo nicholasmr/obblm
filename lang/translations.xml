@@ -58,8 +58,11 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <retired>Retired</retired>
     <skills>Skills</skills>
     <skill>Skill</skill>
+    <normal>Normal</normal>
+    <double>Double</double>
     <injs>Injuries</injs>
     <pos>Position</pos>
+    <maxqty>Max. qty</maxqty>
     <price>Price</price>
     <number>Number</number>
     <opponent>Opponent</opponent>
@@ -105,6 +108,9 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <races>Races</races>
     <star>Star</star>
     <stars>Stars</stars>
+
+    <roster>Roster</roster>
+    <availablestars>Available Star Players</availablestars>
     
     <won>Won</won>
     <lost>Lost</lost>
@@ -114,6 +120,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <playedtours>Tours played</playedtours>
     <wontours>Won tours</wontours>
     
+    <ma>Ma</ma>
+    <st>St</st>
+    <ag>Ag</ag>
+    <av>Av</av>
     <ready>Ready</ready>
     <dead>Dead</dead>
     <sold>Sold</sold>
@@ -1623,8 +1633,11 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <page>Seite</page>
     <retired>Im Ruhestand</retired>
     <skills>Fähigkeiten</skills>
+    <normal>Normal</normal>
+    <double>Pasch</double>
     <injs>Verletzungen</injs>
     <pos>Position</pos>
+    <maxqty>Max.Anz.</maxqty>
     <price>Preis</price>
     <number>Nummer</number>
     <opponent>Gegner</opponent>
@@ -1663,6 +1676,9 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <star>Star</star>
     <stars>Stars</stars>
     
+    <roster>Spielerpositionen</roster>
+    <availablestars>Verfügbare Starspieler</availablestars>    
+    
     <won>Gewonnen</won>
     <lost>Verloren</lost>
     <draw>Unentschieden</draw>
@@ -1670,7 +1686,11 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <played>Gespielt</played>
     <playedtours>Turniere gespielt</playedtours>
     <wontours>Turniere gewonnen</wontours>
-    
+
+    <ma>BE</ma>
+    <st>ST</st>
+    <ag>GE</ag>
+    <av>RW</av>
     <ready>Bereit</ready>
     <dead>Tot!</dead>
     <sold>Verkauft</sold>
