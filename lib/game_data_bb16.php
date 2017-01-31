@@ -1,5 +1,4 @@
 <?php
-
 /*
  *  Copyright (c) Daniel Straalman <email is protected> 2009-2012. All Rights Reserved.
  *
@@ -20,23 +19,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 require_once('lib/game_data_lrb6.php');
-
 // New skills added in BB16.
-
 $skillarray['E'][114] = $skillididx[114] = 'Monstrous Mouth';
-$skillarray['E'][115] = $skillididx[115] = 'Timmm-ber!';
+$skillarray['E'][115] = $skillididx[115] = 'Timmmber';
 $skillarray['E'][116] = $skillididx[116] = 'Weeping Blades';
-
 // Changes to present teams/positionals from LRB6 to BB16.
-
 $DEA['Human']['players']['Catcher']['cost'] = 60000;
 $DEA['Skaven']['players']['Gutter Runner']['def'] = array (23, 116);
 $DEA['Halfling']['players']['Treeman']['def'] = array (54, 57, 58, 109, 59, 110, 115);
-
 // New star players in BB16.
-
 $stars['Rasta Tailspike'] = array (
        'id'            => -47,
        'ma'            => 8,
