@@ -640,6 +640,9 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 </position>
 
 <skill>
+    <weepingblades>Weeping Blades</weepingblades>
+  <timmmber>Timmm-ber!</timmmber>
+    <monstrousmouth>Monstrous Mouth</monstrousmouth>
   <block>Block</block>
   <dauntless>Dauntless</dauntless>
   <dirtyplayer>Dirty Player</dirtyplayer>
@@ -776,6 +779,12 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <willowrosebark>Willow Rosebark</willowrosebark>
     <zaratheslayer>Zara the Slayer</zaratheslayer>
     <zzhargmadeye>Zzharg Madeye</zzhargmadeye>
+    
+    <bilerotvomitflesh>Bilerot Vomitflesh</bilerotvomitflesh>
+    <franknstein>Frank N Stein</franknstein>
+    <rastatailspike>Rasta Tailspike</rastatailspike>
+    <gufflepusmaw>Guffle Pusmaw</gufflepusmaw>
+
 </starplayer>
 
 <daysofweek>
@@ -1418,6 +1427,9 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 </position>
 
 <skill>
+      <weepingblades>Daga Envenenada</weepingblades>
+  <timmmber>¡Árbol va!</timmmber>
+  <monstrousmouth>Boca Descomunal</monstrousmouth>
   <block>Placar</block>
   <dauntless>Agallas</dauntless>
   <dirtyplayer>Juego Sucio</dirtyplayer>
@@ -1554,6 +1566,12 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <willowrosebark>Willow Pielderosa</willowrosebark>
     <zaratheslayer>Zara la Cazadora</zaratheslayer>
     <zzhargmadeye>Zzharg Ojorrabioso</zzhargmadeye>
+        
+    <bilerotvomitflesh>Bilerot Vomitflesh</bilerotvomitflesh>
+    <franknstein>Frank N Stein</franknstein>
+    <rastatailspike>Rasta Tailspike</rastatailspike>
+    <gufflepusmaw>Guffle Pusmaw</gufflepusmaw>
+    
 </starplayer>
 
 <daysofweek>
@@ -1707,6 +1725,12 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <matchavg><![CDATA[Durchschnitt der Begegnung]]></matchavg> <!-- "Match avg." -->
     
 </common>
+    
+<skill>
+    <weepingblades>Triefender Dolch</weepingblades>
+    <timmmber>Baum fällt!</timmmber>
+    <monstrousmouth>Monströses Maul</monstrousmouth>
+</skill>
 
 <!-- Link names for menu elements -->
 <menu>
@@ -2589,6 +2613,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 </position>
 
 <skill>
+  <weepingblades>Dague suintante</weepingblades>
+  <timmmber>Timmm-ber!</timmmber>
+  <monstrousmouth>Grande Gueule</monstrousmouth>
+    
     <block>Blocage</block>
     <dauntless>Intrépidité</dauntless>
     <dirtyplayer>Joueur Vicieux</dirtyplayer>
@@ -2723,6 +2751,12 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <willowrosebark>Willow Teinrose</willowrosebark>
     <zaratheslayer>Zara la tueuse</zaratheslayer>
     <zzhargmadeye>Zzharg Le Borgne</zzhargmadeye>
+    
+    <bilerotvomitflesh>Bilerot Vomitflesh</bilerotvomitflesh>
+    <franknstein>Frank N Stein</franknstein>
+    <rastatailspike>Rasta Tailspike</rastatailspike>
+    <gufflepusmaw>Guffle Pusmaw</gufflepusmaw>
+
 </starplayer>
 
 <daysofweek>
