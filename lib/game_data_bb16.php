@@ -30,7 +30,7 @@ $DEA['Skaven']['players']['Gutter Runner']['def'] = array (23, 116);
 $DEA['Halfling']['players']['Treeman']['def'] = array (54, 57, 58, 109, 59, 110, 115);
 // New star players in BB16.
 $stars['Rasta Tailspike'] = array (
-       'id'            => -47,
+       'id'            => -62,
        'ma'            => 8,
        'st'            => 3,
        'ag'            => 3,
@@ -42,7 +42,7 @@ $stars['Rasta Tailspike'] = array (
    );
    
 $stars['Frank N Stein'] = array (
-       'id'            => -48,
+       'id'            => -63,
        'ma'            => 4,
        'st'            => 5,
        'ag'            => 1,
@@ -54,7 +54,7 @@ $stars['Frank N Stein'] = array (
    );
    
 $stars['Bilerot Vomitflesh'] = array (
-       'id'            => -49,
+       'id'            => -64,
        'ma'            => 4,
        'st'            => 5,
        'ag'            => 2,
@@ -66,7 +66,7 @@ $stars['Bilerot Vomitflesh'] = array (
    );
    
 $stars['Guffle Pusmaw'] = array (
-       'id'            => -50,
+       'id'            => -65,
        'ma'            => 5,
        'st'            => 3,
        'ag'            => 4,
