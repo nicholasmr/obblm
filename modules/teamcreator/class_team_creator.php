@@ -139,6 +139,11 @@ public static function getRaceArray() {
       $race['name'] = $rname;
       $race['rid'] = $rid;
       $race['apoth'] = !in_array($rid, $racesNoApothecary);
+	  if (array_key_exists($rid, $rules['initial_team_treasury'])) {
+        $race['treasury'] = $rules['initial_team_treasury'][$rid];
+	  } else {
+		$race['treasury'] = $rules['initial_treasury'];
+      };
       $race['players'] = array();
       $race['others'] = array();
       foreach ($DEA[$raceididx[$rid]]['players'] as $pos => $d) {
@@ -225,7 +230,7 @@ public static function handlePost($cid) {
       status(false, $lng->getTrn('notallowed', 'TeamCreator'));
       return;
    }
-
+   
    $lid_did = $_POST['lid_did'];
    @list($lid,$did) = explode(',',$_POST['lid_did']);
    setupGlobalVars(T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS, array('lid' => (int) $lid)); // Load correct $rules for league.
@@ -241,8 +246,13 @@ public static function handlePost($cid) {
    $rerolls = $_POST['qtyo0'];
    $fans = $_POST['qtyo1'];
    $cl = $_POST['qtyo2'];
-   $ac = $_POST['qtyo3'];
-   $treasury = $rules['initial_treasury'];
+   $ac = $_POST['qtyo3'];   
+   if (array_key_exists($rid, $rules['initial_team_treasury'])) {
+        $init_treasury = $rules['initial_team_treasury'][$rid];
+	  } else {
+		$init_treasury = $rules['initial_treasury'];
+      };
+   $treasury = $init_treasury;
    $treasury -= $rerolls * $race['other']['rr_cost'];
    $treasury -= $fans * 10000;
    $treasury -= $cl * 10000;
@@ -286,7 +296,7 @@ public static function handlePost($cid) {
    /* Enforce league rules and common BB ones */
    $errors = array();
    if ($treasury < 0) {
-      $errors[] = $lng->getTrn('tooExpensive', 'TeamCreator');
+      $errors[] = $lng->getTrn('tooExpensive', 'TeamCreator') . ' (' . $init_treasury/1000 . ' kGP)';
    }
    if (sizeof($players) < 11) {
       $errors[] = $lng->getTrn('tooFewPlayers', 'TeamCreator');
@@ -346,7 +356,9 @@ public static function handlePost($cid) {
    /* Report errors and reset the form, or redirect to the team page */
    if (sizeof($errors) > 0) {
       $msg = implode(",<br />", $errors);
-      status(false, $msg);
+	  if ($_POST['action'] == 'create') {
+		status(false, $msg); // Don't show error messages if there was no attempt to create team
+	  }
       $post = (object) $_POST;
 echo<<< EOQ
    <script type="text/javascript">
@@ -369,7 +381,7 @@ EOQ;
 echo<<< EOQ
       var lid = document.getElementById('lid_did');
       for (var i = 0; i < lid.options.length; i++) {
-         if (lid.options[i].value==$post->lid_did) {
+         if (lid.options[i].value=="$post->lid_did") {
             lid.selectedIndex = i;
             break;
          }
@@ -536,6 +548,7 @@ echo<<< EOQ
       var race = races[raceId];
       var players = race["players"];
       var others = race["others"];
+	  var maximum = race['treasury']/1000;
       var i;
       var rowIdx;
       var table = document.getElementById('teamTable');
@@ -545,6 +558,7 @@ echo<<< EOQ
       }
       setText("pcnt", "0");
       setText("total", "0");
+	  setText("total", '0/' + maximum.toString());
       document.getElementById("raceid").value = race.rid;
 
       rowIdx = 0;
@@ -595,6 +609,7 @@ echo<<< EOQ
    function updateTotal() {
       var race = races[getValue("rid")];
       var playerCount = race['player_count'];
+	  var maximum = race['treasury']/1000;
 
       var pCount = 0;
       var total = 0;
@@ -614,7 +629,7 @@ echo<<< EOQ
             total +=  new Number(subTot);
          }
       }
-      setText("total",total);
+      setText("total", total.toString() + '/' + maximum.toString());
    }
 
    function createTeam() {
@@ -639,6 +654,14 @@ echo<<< EOQ
       }
 
    }
+   
+   function changeLeague() {
+      // Reload page with new league rules when League dropdown changes
+	  // Set action field to 'leagueChange' for $_POST handling
+	  document.getElementById("action").value = 'leagueChange';
+	  // Submit form
+	  document.getElementById("form_team").submit();
+   }
 
    </script>
    <form method="POST" id="form_team">
@@ -662,7 +685,7 @@ EOQ;
          $lgeDiv = $lng->getTrn('common/league') . '/' . $lng->getTrn('common/division');
 echo<<< EOQ
       <td align="right"><b>$txtTeamName</b>:</td><td><input type="text" id="tname" name="tname" size="20" maxlength="50"></td>
-      <td align="right"><b>$lgeDiv</b>:</td><td><select name="lid_did" id="lid_did">
+      <td align="right"><b>$lgeDiv</b>:</td><td><select name="lid_did" id="lid_did" onChange="changeLeague()">
 EOQ;
          foreach ($leagues = Coach::allowedNodeAccess(Coach::NODE_STRUCT__TREE, $coach->coach_id, array(T_NODE_LEAGUE => array('tie_teams' => 'tie_teams'))) as $lid => $lstruct) {
             if ($lstruct['desc']['tie_teams']) {
@@ -694,6 +717,7 @@ EOQ;
    $txtDollar = $lng->getTrn('dollar', 'TeamCreator');
    $txtQuantity = $lng->getTrn('quantity', 'TeamCreator');
    $txtSubtotal = $lng->getTrn('subtotal', 'TeamCreator');
+   
 
 echo<<< EOQ
        <td align="right" id="indTxt">$txtInducements:</td>
