@@ -2182,7 +2182,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <opponent>Adversaire</opponent>
         <reroll>Relance</reroll>
         <apothecary>Apothicaire</apothecary>
-        <ass_coach>Coach Assistant</ass_coach>
+        <ass_coach>Assistant coach</ass_coach>
         <cheerleader>Pom Pom Girl</cheerleader>
         <journeyman>Journalier</journeyman>
         <options>Options</options>
@@ -2242,7 +2242,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <notice_simul>&lt;i&gt;Note&lt;/i&gt;: Les tables ci-dessous sont triées simultanément.</notice_simul>
         <notice_spp>&lt;i&gt;Note&lt;/i&gt;: &lt;b&gt;Si&lt;/b&gt; les stars peuvent gagner des compétences, elles auront le montant correspondant dans la colonne.</notice_spp>
         <sortedagainst>Trié par</sortedagainst>
-        <confirm_box>Etes-vous sur ?</confirm_box>
+        <confirm_box>Etes-vous sûr ?</confirm_box>
 <!-- nodeSelector() -->
         <displayfrom>Afficher depuis</displayfrom>
         <type>Type</type>
@@ -2280,13 +2280,13 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <star_stn>Position de la Star</star_stn>
 </statistics_menu>
 <admin_menu>
-        <name>Administración</name>
+        <name>Administration</name>
         <nodes>Ligues, divisions, tournois</nodes>
         <ct_man>Gérer : Coachs &amp; équipes</ct_man>
         <usr_man>Gerer : Utilisateurs</usr_man>
         <import>Importer une équipe</import>
         <schedule>Planifier un match</schedule>
-        <cpanel>OBBLM panneau principal</cpanel>
+        <cpanel>Panneau principal OBBLM</cpanel>
 </admin_menu>
         <plugins>Modules</plugins>
         <rules>Règles</rules>
@@ -2416,8 +2416,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 </box_tm>
 <box_admin>
         <title>Outils d'Administration</title>
-        <unhire_journeyman>Désembaucher un journalier</unhire_journeyman>
-        <unsell_player>Ré-embaucher un joueur</unsell_player>
+        <unhire_journeyman>Annuler l'embauche d'un journalier</unhire_journeyman>
+        <unsell_player>Annuler la vente d'un joueur</unsell_player>
         <unbuy_goods>Annuler les achats de bien d'équipe.</unbuy_goods>
         <bank>Compte en banque</bank>
         <spp>Gérer l'expérience bonus</spp>
@@ -2425,8 +2425,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <extra_skills>Gérer les compétences suppl. des joueurs</extra_skills>
         <ach_skills>Retirer des compétences de joueurs</ach_skills>
 <desc>
-        <unhire_journeyman> Revenir sur l'embauche d'un journalier en tant que joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
-        <unsell_player> Revenir sur le licenciement d'un joueur. </unsell_player> <unbuy_goods> Revenir sur l'achat de bien d'équipe. </unbuy_goods>
+        <unhire_journeyman> Annuler l'embauche d'un journalier en tant que joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
+        <unsell_player> Annuler le licenciement d'un joueur. </unsell_player> <unbuy_goods> Annuler l'achat de bien d'équipe. </unbuy_goods>
         <unbuy_goods>Revenir sur l'achat de biens d'équipe</unbuy_goods>
         <bank> Modifier la trésorerie d'équipe. </bank>
         <spp> Gérer l'éxperience bonus d'un Joueur. </spp>
