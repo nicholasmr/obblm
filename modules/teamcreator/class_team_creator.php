@@ -197,6 +197,7 @@ public static function getRaceArray() {
          }
          if (in_array($rid, $d['reduced_cost_races'])) {
             $inducement['cost'] = $d['reduced_cost'] / 1000;
+	 } else if ($d['cost'] < 1) {continue; /* eliminates negative value inducements to lock out of non-qualifying races */
          } else {
             $inducement['cost'] = $d['cost'] / 1000;
          }
