@@ -364,6 +364,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
             <extra_skills>Manage extra player skills</extra_skills>
             <ach_skills>Remove ach. player skills</ach_skills>
             <ff>Manage team fan factor</ff>
+            <removeNiggle>Remove player niggle</removeNiggle>
 
             <desc>
                 <unhire_journeyman> <![CDATA[ Regret permanently hiring a journeyman.<br> This only works on players from a 0-16 allowed position on your team's roster. ]]> </unhire_journeyman>
@@ -375,6 +376,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
                 <extra_skills> <![CDATA[ Manage a player's extra skills. ]]> </extra_skills>
                 <ach_skills> <![CDATA[ Remove a players achieved skills. This makes the player able to rechoose a skill. ]]> </ach_skills>
                 <ff> <![CDATA[ Make changes to team's fan factor .]]> </ff>
+                <removeNiggle> <![CDATA[ Remove one of a players niggling injuries.]]> </removeNiggle>
             </desc>
         </box_admin>
     </team>

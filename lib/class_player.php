@@ -440,6 +440,15 @@ class Player
             return false;
         }        
     }
+    
+    public function removeNiggle() {
+        if ($this->is_journeyman || $this->is_sold || $this->is_dead)
+            return false;
+
+        $query = "UPDATE players SET inj_ni = GREATEST(inj_ni - 1, 0) WHERE player_id = $this->player_id";
+        
+        return mysql_query($query);
+    }
 
     public function rename($new_name) {
         return mysql_query("UPDATE players SET name = '" . mysql_real_escape_string($new_name) . "' WHERE player_id = $this->player_id");
