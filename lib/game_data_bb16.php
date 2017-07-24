@@ -42,7 +42,7 @@ $DEA['Goblin']['players']['deathdiver'] = array (
 	'qty'			=> 1,
 	'cost'			=> 60000,
 	'icon'			=> 'goblin1',
-	'pos_id'        => 205,
+	'pos_id'        => 235,
 );
 $DEA['Goblin']['players']['ooligan'] = array (
 	'ma'        	=> 6,
@@ -55,7 +55,7 @@ $DEA['Goblin']['players']['ooligan'] = array (
 	'qty'			=> 1,
 	'cost'			=> 70000,
 	'icon'			=> 'goblin1',
-	'pos_id'        => 206,
+	'pos_id'        => 236,
 );
 
 // New star players in BB16.
