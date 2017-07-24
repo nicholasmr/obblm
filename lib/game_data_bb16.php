@@ -58,6 +58,20 @@ $DEA['Goblin']['players']['ooligan'] = array (
 	'pos_id'        => 236,
 );
 
+$DEA['Chaos Pact']['players']['Orc Renegade'] = array (
+    'ma'        	=> 5,
+	'st'        	=> 3,
+	'ag'        	=> 3,
+	'av'        	=> 9,
+	'def'	    => array (113),
+	'norm'		=> array ('G', 'M'),
+	'doub'		=> array ('S', 'P'),
+	'qty'			  => 1,
+	'cost'			  => 50000,
+	'icon'			  => 'olineman1',
+	'pos_id'          => 237
+);
+
 // New star players in BB16.
 $stars['Rasta Tailspike'] = array (
        'id'            => -62,
