@@ -24,10 +24,54 @@ require_once('lib/game_data_lrb6.php');
 $skillarray['E'][114] = $skillididx[114] = 'Monstrous Mouth';
 $skillarray['E'][115] = $skillididx[115] = 'Timmmber';
 $skillarray['E'][116] = $skillididx[116] = 'Weeping Blades';
+$skillarray['E'][117] = $skillididx[117] = 'Swoop';
+
 // Changes to present teams/positionals from LRB6 to BB16.
 $DEA['Human']['players']['Catcher']['cost'] = 60000;
 $DEA['Skaven']['players']['Gutter Runner']['def'] = array (23, 116);
 $DEA['Halfling']['players']['Treeman']['def'] = array (54, 57, 58, 109, 59, 110, 115);
+
+$DEA['Goblin']['players']['deathdiver'] = array (
+	'ma'        	=> 6,
+	'st'        	=> 2,
+	'ag'        	=> 3,
+	'av'        	=> 7,
+	'def'	    => array (104, 108, 117 ),
+	'norm'		=> array ('A'),
+	'doub'		=> array ('G', 'S', 'P'),
+	'qty'			=> 1,
+	'cost'			=> 60000,
+	'icon'			=> 'goblin1',
+	'pos_id'        => 235,
+);
+$DEA['Goblin']['players']['ooligan'] = array (
+	'ma'        	=> 6,
+	'st'        	=> 2,
+	'ag'        	=> 3,
+	'av'        	=> 7,
+	'def'	    => array (104, 23, 108, 72, 97 ),
+	'norm'		=> array ('A'),
+	'doub'		=> array ('G', 'S', 'P'),
+	'qty'			=> 1,
+	'cost'			=> 70000,
+	'icon'			=> 'goblin1',
+	'pos_id'        => 236,
+);
+
+$DEA['Chaos Pact']['players']['Orc Renegade'] = array (
+    'ma'        	=> 5,
+	'st'        	=> 3,
+	'ag'        	=> 3,
+	'av'        	=> 9,
+	'def'	    => array (113),
+	'norm'		=> array ('G', 'M'),
+	'doub'		=> array ('S', 'P'),
+	'qty'			  => 1,
+	'cost'			  => 50000,
+	'icon'			  => 'olineman1',
+	'pos_id'          => 237
+);
+
 // New star players in BB16.
 $stars['Rasta Tailspike'] = array (
        'id'            => -62,
