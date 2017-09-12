@@ -79,4 +79,3 @@ EOL;
    }
 }
 HTMLOUT::frame_end();
-?>
