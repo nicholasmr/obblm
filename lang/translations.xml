@@ -588,7 +588,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
   <looney>Looney</looney>
   <fanatic>Fanatic</fanatic>
   <troll>Troll</troll>
-  <deathdiver>Death Diver</deathdiver>
+  <doomdiver>Doom Diver</doomdiver>
   <ooligan>'Ooligan</ooligan>
 
   <halfling>Halfling</halfling>
@@ -2610,8 +2610,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <looney>Fanatique</looney>
         <fanatic>Fanatique</fanatic>
         <troll>Troll</troll>
-		<deathdiver>Plongeur de la mort</deathdiver>
-		<oligan>'Ooligan</oligan>
+	<doomdiver>Plongeur de la mort</doomdiver>
+	<ooligan>'Ooligan</ooligan>
         <halfling>Halfling</halfling>
         <treeman>Homme-arbre</treeman>
         <ogre>Ogre</ogre>
