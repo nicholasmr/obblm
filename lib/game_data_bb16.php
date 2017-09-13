@@ -50,7 +50,7 @@ $DEA['Chaos Pact']['players']['Orc Renegade'] = array (
 	'qty'			  => 1,
 	'cost'			  => 50000,
 	'icon'			  => 'orc1',
-	'pos_id'          => 237
+	'pos_id'          => 217
 );
 // New star players in BB2016
 $stars += array(
