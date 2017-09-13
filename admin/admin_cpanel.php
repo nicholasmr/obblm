@@ -1,4 +1,5 @@
 <?php
+
 MTS('Loading SQL core...');
 require('lib/class_sqlcore.php');
 MTS('SQL core loaded.');
@@ -7,8 +8,7 @@ if (isset($_POST['act'])) {
     $act = $_POST['act']; # Shortcut.
     if (preg_match('/\(\)$/', $act)) {
         status(mysql_query("CALL $act"), "Ran $act");
-    }
-    else {
+    } else {
         switch ($act) 
         {
             case 'gdsync': status(SQLCore::syncGameData(), 'PHP game data synced with DB'); break;
@@ -19,6 +19,7 @@ if (isset($_POST['act'])) {
 }
 title($lng->getTrn('menu/admin_menu/cpanel'));
 ?>
+<!-- Following HTML from ./admin/admin_cpanel.php -->
 <p>
 OBBLM database maintenance and synchronisation routines.<br><br>
 </p>
@@ -40,6 +41,3 @@ OBBLM database maintenance and synchronisation routines.<br><br>
 </form>
 <br>
 <hr width='30%' align='left'>
-
-<?php
-?>

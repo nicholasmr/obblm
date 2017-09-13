@@ -1,20 +1,19 @@
 <?php
 
 // DO NOT DELETE THIS FILE!!!
-// Use this local settigns file for leagues which have no local settings file.
-
-$settings['banner_title']    = 'No settings file exists for the selected league';
-$settings['banner_subtitle'] = 'No settings file exists for the selected league';
-$settings['league_name']   = 'No settings file exists for the selected league';
-$settings['league_url']      = '';
-$settings['league_url_name'] = 'League URL disabled';
-$settings['stylesheet']    = 1;
-$settings['lang']          = 'en-GB';
-$settings['fp_links']      = true;
-$settings['welcome']       = 'Could not find the local league settings file for the selected league at <i>localsettings/settings_&lt;LEAGUE ID&gt;.php</i>';
-$settings['rules']         = 'No settings file exists for the selected league';
+// Use this local settings file for leagues which have no local settings file.
+$settings['banner_title']             = 'No settings file exists for the selected league';
+$settings['banner_subtitle']          = 'No settings file exists for the selected league';
+$settings['league_name']              = 'No settings file exists for the selected league';
+$settings['league_url']               = '';
+$settings['league_url_name']          = 'League URL disabled';
+$settings['stylesheet']               = 1;
+$settings['lang']                     = 'en-GB';
+$settings['fp_links']                 = true;
+$settings['welcome']                  = 'Could not find the local league settings file for the selected league at <i>localsettings/settings_&lt;LEAGUE ID&gt;.php</i>';
+$settings['rules']                    = 'No settings file exists for the selected league';
 $settings['tourlist_foldup_fin_divs'] = false;
-$settings['tourlist_hide_nodes'] = array('league', 'division', 'tournament');
+$settings['tourlist_hide_nodes']      = array('league', 'division', 'tournament');
 
 $rules['max_team_players']      = 16;
 $rules['static_rerolls_prices'] = false;
@@ -45,4 +44,3 @@ $settings['fp_standings']   = array();
 $settings['fp_leaders']     = array();
 $settings['fp_events']      = array();
 $settings['fp_latestgames'] = array();
-
