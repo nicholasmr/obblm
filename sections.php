@@ -1,41 +1,15 @@
 <?php
 
-/*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
- *
- *
- *  This file is part of OBBLM.
- *
- *  OBBLM is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  OBBLM is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
 /*************************
- *
  *  Login
- *
  *************************/
- 
 function getFormAction($params) {
     $mobilePrefix =(strpos($params, '?') !== FALSE) ? '&' : '?';    
     return 'index.php' . $params . (Mobile::isMobile() ? ($mobilePrefix . 'mobile=1') : '');
 }
  
 function sec_login() {
-
     global $lng, $settings;
-    
     $_URL_forgotpass = "index.php?section=login&amp;forgotpass=1";
     if (isset($_GET['forgotpass'])) {
         if (!isset($_POST['_retry'])) {
@@ -57,16 +31,14 @@ function sec_login() {
                 $c->requestPasswdReset();
                 echo "<br><br>";
                 echo $lng->getTrn('login/resetpasswdmail').'.';
-            }
-            else {
+            } else {
                 // Return to same page.
                 unset($_POST['coach']);
                 unset($_POST['email']);
                 $_POST['_retry'] = true;
                 sec_login();
             }
-        }
-        else {
+        } else {
             ?>
             <div class='boxCommon'>
                 <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('login/forgotpass');?></h3>
@@ -84,8 +56,7 @@ function sec_login() {
             </div>
             <?php 
         }       
-    }
-    else {
+    } else {
         title($lng->getTrn('menu/login'));
         ?>
         <script lang="text/javascript">
@@ -125,17 +96,11 @@ function sec_login() {
 }
 
 /*************************
- *
- *  MAIN
- *
+ *  Main
  *************************/
-
 function sec_main() {
-
     global $settings, $rules, $coach, $lng, $leagues;
-    
     MTS('Main start');
-
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     $IS_GLOBAL_ADMIN = (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN);
     
@@ -180,7 +145,7 @@ function sec_main() {
             echo "</div>\n";
             echo "<div class='main_leftColumn_left'>\n";
             if(count($leagues) > 1)
-              echo $HTML_LeagueSelector;
+				echo $HTML_LeagueSelector;
             echo "</div>\n";
             echo "<div class='main_leftColumn_right'>\n";
             if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $sel_lid)) {
@@ -671,10 +636,8 @@ function _infocus($teams) {
     </div>
     <script>
     /* 
-     * This script creates a slideshow of all <div>s in the "inFocusContent" div
-     * 
+     * This script creates a slideshow of all <div>s in the "inFocusContent" div 
      * Based on an example by Jon Raasch:
-     *
      * http://jonraasch.com/blog/a-simple-jquery-slideshow
      */
     function nextContent<?php echo $_INFOCUSCNT;?>() {
@@ -778,11 +741,8 @@ function sec_objhandler() {
 }
 
 /*************************
- *
- *  RULES
- *
+ *  Rules
  *************************/
-
 function sec_rules() {
     global $lng, $settings, $leagues;
     title($lng->getTrn('menu/rules'));
@@ -807,13 +767,10 @@ function sec_rules() {
 }
 
 /*************************
- *
- *  ABOUT
- *
+ *  About
  *************************/
 
 function sec_about() {
-
     global $lng, $credits;
     title("About OBBLM");
     HTMLOUT::dnt();
