@@ -588,6 +588,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
   <looney>Looney</looney>
   <fanatic>Fanatic</fanatic>
   <troll>Troll</troll>
+  <deathdiver>Death Diver</deathdiver>
+  <ooligan>'Ooligan</ooligan>
 
   <halfling>Halfling</halfling>
   <treeman>Treeman</treeman>
@@ -730,6 +732,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
   <throwteammate>Throw Team-Mate</throwteammate>
   <titchy>Titchy</titchy>
   <wildanimal>Wild Animal</wildanimal>
+  <swoop>Swoop</swoop>
 </skill>
 
 <starplayer>
@@ -2230,6 +2233,15 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <dead>Mort</dead>
         <sold>Vendu</sold>
         <bought>Acheté</bought>
+		<ma>Mv</ma>
+		<st>F</st>
+		<ag>Ag</ag>
+		<av>Ar</av>
+		<english>Anglais</english>
+		<spanish>Espagnol</spanish>
+		<german>Allemand</german>
+		<french>Français</french>
+		<italian>Italien</italian>
         <td>Touchdowns</td>
         <intcpt>Interceptions</intcpt>
         <cp>Réussites</cp>
@@ -2576,6 +2588,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <goblinrenegade>Renégat Gobelin</goblinrenegade>
         <skavenrenegade>Renégat Skaven</skavenrenegade>
         <darkelfrenegade>Renégat Elfe Noir</darkelfrenegade>
+		<orcrenegade>Renégat Orc</orcrenegade>
         <chaostroll>Troll du Chaos</chaostroll>
         <chaosogre>Ogre du Chaos</chaosogre>
         <necromanticwerewolf>Loup-Garou nécromantique</necromanticwerewolf>
@@ -2597,6 +2610,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <looney>Fanatique</looney>
         <fanatic>Fanatique</fanatic>
         <troll>Troll</troll>
+		<deathdiver>Plongeur de la mort</deathdiver>
+		<oligan>'Ooligan</oligan>
         <halfling>Halfling</halfling>
         <treeman>Homme-arbre</treeman>
         <ogre>Ogre</ogre>
@@ -2714,6 +2729,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <throwteammate>Lancer un Coéquipier</throwteammate>
     <titchy>Microbe</titchy>
     <wildanimal>Animal Sauvage</wildanimal>
+    <swoop>Planeur</swoop>
 </skill>
 
 <starplayer>
@@ -2785,7 +2801,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
   <monday>Lundi</monday>
   <tuesday>Mardi</tuesday>
   <wednesday>Mercredi</wednesday>
-  <thursday>Jeudi></thursday>
+  <thursday>Jeudi</thursday>
   <friday>Vendredi</friday>
   <saturday>Samedi</saturday>
   <sunday>Dimanche</sunday>

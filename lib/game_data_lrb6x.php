@@ -127,7 +127,7 @@ $DEA['Chaos Pact'] = array (
     				'icon'			  => 'delfrenegade1',
     			    'pos_id'          => 213,
   			),
-  			'Chaos Troll'	=> array (
+			'Chaos Troll'	=> array (
     				'ma'        	=> 4,
     				'st'        	=> 5,
     				'ag'        	=> 1,
