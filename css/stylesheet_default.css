@@ -252,7 +252,7 @@ ul.css3menu1 a:active, ul.css3menu1 a:focus{
 ul.css3menu1 a{
     display:block;vertical-align:middle;text-align:left;text-decoration:none;font:bold 12px Arial,Helvetica,sans-serif;color:#000000;text-shadow:#FFF 0 0 1px;cursor:pointer;padding:4px 10px 4px 10px;background-color:#c1c1c1;background-image:url("../images/mainbk.png");background-repeat:repeat;background-position:0 0;border-width:0 0 0 1px;border-style:solid;border-color:#C0C0C0;}
 ul.css3menu1 ul li{
-    float:none;margin:10px 0 0;}
+    float:none;margin:7px 0 0;}
 ul.css3menu1 ul a{
     text-align:left;padding:4px;background-color:#FFFFFF;background-image:none;border-width:0;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;font:bold 12px Arial,Helvetica,sans-serif;color:#000;text-decoration:none;}
 ul.css3menu1 li:hover>a,ul.css3menu1 li a.pressed{

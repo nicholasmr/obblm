@@ -299,6 +299,7 @@ public function handleActions($ALLOW_EDIT)
                 status($team->setff_bought($_POST['amount']));
                 SQLTriggers::run(T_SQLTRIG_TEAM_DPROPS, array('obj' => T_OBJ_TEAM, 'id' => $team->team_id));
                 break;
+            case 'removeNiggle': status($p->removeNiggle()); break;
         }
     }
 
@@ -1034,6 +1035,7 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                         'extra_skills'      => $lng->getTrn($base.'/box_admin/extra_skills'),
                         'ach_skills'        => $lng->getTrn($base.'/box_admin/ach_skills'),
                         'ff'                => $lng->getTrn($base.'/box_admin/ff'),
+                        'removeNiggle'      => $lng->getTrn($base.'/box_admin/removeNiggle'),
                     );
 
                     // Set default choice.
@@ -1307,6 +1309,31 @@ private function _actionBoxes($ALLOW_EDIT, $players)
                                 ?>
                                 </select>
                                 <input type="hidden" name="type" value="ach_skills">
+                                <?php
+                                break;
+                                
+                            /***************
+                             * Remove niggling injuries
+                             **************/
+
+                            case 'removeNiggle':
+                                echo $lng->getTrn('profile/team/box_admin/desc/removeNiggle');
+                                ?>
+                                <hr><br>
+                                <?php echo $lng->getTrn('common/player');?>:<br>
+                                <select name="player">
+                                <?php
+                                $DISABLE = true;
+                                foreach ($players as $p) {
+                                    if ($p->is_sold || $p->is_dead || $p->is_journeyman || $p->inj_ni == 0)
+                                        continue;
+
+                                    echo "<option value='$p->player_id'>$p->nr $p->name</option>\n";
+                                    $DISABLE = false;
+                                }
+                                ?>
+                                </select>
+                                <input type="hidden" name="type" value="removeNiggle">
                                 <?php
                                 break;
                         }

@@ -27,7 +27,7 @@ require('header.php'); // Includes and constants.
 HTMLOUT::frame_begin(false,false);
 title('OBBLM setup');
 
-if (isset($_POST['setup']) || $argv[1] == 'setup') {
+if (isset($_POST['setup']) || (isset($argv[1]) ? $argv[1] == 'setup' : false)) {
     $setupOK = setup_database();
     if ($setupOK) {
         echo "<br><b><font color='green'>Finished</font></b>";
@@ -79,4 +79,3 @@ EOL;
    }
 }
 HTMLOUT::frame_end();
-?>

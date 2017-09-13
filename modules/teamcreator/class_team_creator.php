@@ -26,7 +26,6 @@
 
 class TeamCreator implements ModuleInterface
 {
-
 	/***************
 	 * ModuleInterface requirements. These functions MUST be defined.
 	 ***************/
@@ -139,6 +138,11 @@ class TeamCreator implements ModuleInterface
 			$race['name'] = $rname;
 			$race['rid'] = $rid;
 			$race['apoth'] = !in_array($rid, $racesNoApothecary);
+			if (array_key_exists($rid, $rules['initial_team_treasury'])) {
+				$race['treasury'] = $rules['initial_team_treasury'][$rid];
+			} else {
+				$race['treasury'] = $rules['initial_treasury'];
+			};
 			$race['players'] = array();
 			$race['others'] = array();
 			foreach ($DEA[$raceididx[$rid]]['players'] as $pos => $d) {
@@ -160,24 +164,28 @@ class TeamCreator implements ModuleInterface
 			if ($rules['max_fan_factor'] <> 0) {
 				$race['others'][] = self::addTeamAttribute(	'Fan Factor',
 															$rules['cost_fan_factor'] / 1000,
+
 															$rules['max_fan_factor']);
 			}
 
 			if ($rules['max_cheerleaders'] <> 0) {
 				$race['others'][] = self::addTeamAttribute(	'Cheerleaders',
 															$rules['cost_cheerleaders'] / 1000,
+
 															$rules['max_cheerleaders']);
 			}
 
 			if ($rules['max_ass_coaches'] <> 0) {
 				$race['others'][] = self::addTeamAttribute(	'Ass Coaches',
 															$rules['cost_ass_coaches'] / 1000,
+
 															$rules['max_ass_coaches']);
 			}
 
 			if ($race['apoth']) {
 				$race['others'][] = self::addTeamAttribute(	'Apothecary',
 															$rules['cost_apothecary'] / 1000,
+
 															1);
 			}
 
@@ -192,6 +200,9 @@ class TeamCreator implements ModuleInterface
 				}
 				if (in_array($rid, $d['reduced_cost_races'])) {
 					$inducement['cost'] = $d['reduced_cost'] / 1000;
+				} else if ($d['cost'] < 1) {
+					/* eliminates negative value inducements to lock out of non-qualifying races */
+					continue;
 				} else {
 					$inducement['cost'] = $d['cost'] / 1000;
 				}
@@ -242,11 +253,18 @@ class TeamCreator implements ModuleInterface
 		$fans = $_POST['qtyo1'];
 		$cl = $_POST['qtyo2'];
 		$ac = $_POST['qtyo3'];
-		$treasury = $rules['initial_treasury'];
+		if (array_key_exists($rid, $rules['initial_team_treasury'])) {
+			$init_treasury = $rules['initial_team_treasury'][$rid];
+		} else {
+			$init_treasury = $rules['initial_treasury'];
+		};
+		$treasury = $init_treasury;
 		$treasury -= $rerolls * $race['other']['rr_cost'];
 		$treasury -= $fans * $rules['cost_fan_factor'];
 		$treasury -= $cl * $rules['cost_cheerleaders'];
 		$treasury -= $ac * $rules['cost_ass_coaches'] ;
+
+
 		$rerolls += $rules['initial_rerolls'];
 		$fans += $rules['initial_fan_factor'];
 		$cl += $rules['initial_ass_coaches'];
@@ -286,7 +304,7 @@ class TeamCreator implements ModuleInterface
 		/* Enforce league rules and common BB ones */
 		$errors = array();
 		if ($treasury < 0) {
-			$errors[] = $lng->getTrn('tooExpensive', 'TeamCreator');
+			$errors[] = $lng->getTrn('tooExpensive', 'TeamCreator') . ' (' . $init_treasury/1000 . ' kGP)';
 		}
 		if (sizeof($players) < 11) {
 			$errors[] = $lng->getTrn('tooFewPlayers', 'TeamCreator');
@@ -346,7 +364,9 @@ class TeamCreator implements ModuleInterface
 		/* Report errors and reset the form, or redirect to the team page */
 		if (sizeof($errors) > 0) {
 			$msg = implode(",<br />", $errors);
-			status(false, $msg);
+			if ($_POST['action'] == 'create') {
+				status(false, $msg); // Don't show error messages if there was no attempt to create team
+			}
 			$post = (object) $_POST;
 			echo <<<EOQ
 			<script type="text/javascript">
