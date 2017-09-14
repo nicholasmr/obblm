@@ -64,5 +64,14 @@ $DEA['Daemons of Khorne'] = array (
     )
 );
 
-array_push($stars['Grashnak Blackhoof']['races'], T_RACE_DKHORNE);
-array_push($stars['Morg \'n\' Thorg']['races'],   T_RACE_DKHORNE);
+// Stars allowed
+foreach (array(	'Brick Far\'th (+ Grotty)',
+				'Grotty (included in Brick Far\'th)',
+				'Grashnak Blackhoof',
+				'Lewdgrip Whiparm',
+				'Morg \'n\' Thorg',
+				'Lord Borak the Despoiler',
+				'Max Spleenripper',
+				) as $s) {
+    array_push($stars[$s]['races'], T_RACE_DKHORNE);
+}

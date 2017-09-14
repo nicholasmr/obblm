@@ -76,3 +76,13 @@ $DEA['Simyin']  = array (
         )
     )
 );
+// Stars allowed
+foreach (array(	'Bertha Bigfist',
+				'Deeproot Strongbranch',
+				'Puggy Baconbreath',
+				'Morg \'n\' Thorg',
+				'Willow Rosebark',
+				'Zara the Slayer',
+				) as $s) {
+    array_push($stars[$s]['races'], T_RACE_APESOFWRATH);
+}

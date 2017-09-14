@@ -2,7 +2,7 @@
  
 class Translations 
 {
-	public static $registeredLanguages = array('en-GB', 'es-ES', 'de-DE', 'fr-FR', 'it-IT');
+	public static $registeredLanguages = array('en-GB', 'es-ES', 'de-DE', 'fr-FR', 'it-IT', 'tl-TL');
 	const main = 'main'; # $this->docs[] key of main translation file.
 	const fallback = 'en-GB'; # Default language.
 	private $lang = self::fallback; # Translation language used.
