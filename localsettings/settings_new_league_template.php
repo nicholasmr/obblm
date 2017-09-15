@@ -123,7 +123,7 @@ $settings['fp_standings'] = array(
 	 * LENGTH is the number of entries in table
 	 * FIELDS is an array dictating which columns are displayed in the table. Use the format:
 	   "Displayed table column name" => "OBBLM field name"
-	   For the OBBLM fields available see http://nicholasmr.dk/obblmwiki/index.ph/Customization
+	   For the OBBLM fields available see https://github.com/nicholasmr/obblm/wiki
 	 */
 	# This will display a standings box of the top 6 teams in the Prime Tournament
 	array(
