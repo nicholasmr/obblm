@@ -2,7 +2,7 @@
 <translations>
 
 <!-- =================================================================
-    PLEASE READ THIS CARREFULY BEFORE TOUCHING THIS FILE !!
+    PLEASE READ THIS CAREFULLY BEFORE TOUCHING THIS FILE !!
     =================================================================
 This is the main OBBLM XML translation file.
 It must be encoded as UTF-8 to keep special characters from different languages.
@@ -1756,11 +1756,11 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <stat>Statistiken</stat>
     <!-- use "all-time" string from nodeSelect() translation -->
     <matchavg><![CDATA[Durchschnitt der Begegnung]]></matchavg> <!-- "Match avg." -->
-    <!-- <english>English -->
-    <!-- <spanish>Spanish -->
-    <!-- <german>German -->
-    <!-- <french>French -->
-    <!-- <italian>Italian -->  
+    <!-- <english> -->
+    <!-- <spanish> -->
+    <!-- <german> -->
+    <!-- <french> -->
+    <!-- <italian> -->  
 </common>
     
 <!-- Link names for menu elements -->
@@ -3368,11 +3368,11 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <stat>Statostoca</stat>
     <!-- use "all-time" string from nodeSelect() translation -->
     <matchavg><![CDATA[Match&nbsp;avg.]]></matchavg> <!-- "Match avg." -->
-    <!-- <english>English -->
-    <!-- <spanish>Spanish -->
-    <!-- <german>German -->
-    <!-- <french>French -->
-    <!-- <italian>Italian -->
+    <!-- <english> -->
+    <!-- <spanish> -->
+    <!-- <german> -->
+    <!-- <french> -->
+    <!-- <italian> -->
 </common>
 
 <!-- Link names for menu elements -->
