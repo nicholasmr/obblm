@@ -625,6 +625,20 @@ function get_alt_col($V, $X, $Y, $Z) {
     return (mysql_num_rows($result) > 0 && ($r = mysql_fetch_row($result))) ? $r[0] : null;
 }
 
+function get_alt_col_int($V, $X, $Y, $Z) {
+
+    /*
+     *  Get Alternative Column
+     *
+     *  $V = table
+     *  $X = look-up column
+     *  $Y = look-up value
+     *  $Z = column to return value from.
+     */
+
+    $result = mysql_query("SELECT $Z FROM $V WHERE $X = $Y");
+    return (mysql_num_rows($result) > 0 && ($r = mysql_fetch_row($result))) ? $r[0] : null;
+}
 
 function get_rows($tbl, array $getFields, $where = array()) {
     /*

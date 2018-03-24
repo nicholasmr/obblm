@@ -47,7 +47,7 @@ $DEA = array (
 				'doub'		=> array ('A', 'S', 'P'),
 				'qty'			=> 16,
 				'cost'			=> 50000,
-				'icon'			=> 'amlineman1an',
+				'icon'			=> 'amlineman1',
 			    'pos_id'        => 1,
 			),
 			'Thrower'	=> array (
@@ -60,7 +60,7 @@ $DEA = array (
 				'doub'		=> array ('A', 'S'),
 				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'amthrower1an',
+				'icon'			=> 'amthrower1',
 			    'pos_id'        => 2,
 			),
 			'Catcher'	=> array (
@@ -73,7 +73,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'amcatcher1an',
+				'icon'			=> 'amcatcher1',
 			    'pos_id'        => 3,
 			),
 			'Blitzer'	=> array (
@@ -86,7 +86,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 90000,
-				'icon'			=> 'amblitzer1an',
+				'icon'			=> 'amblitzer1',
 			    'pos_id'        => 4,
 			)
 		)
@@ -109,7 +109,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 60000,
-				'icon'			=> 'cbeastman1an',
+				'icon'			=> 'cbeastman1',
 			    'pos_id'        => 10,
 			),
 			'Chaos Warrior'	=> array (
@@ -122,7 +122,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 100000,
-				'icon'			=> 'cwarrior4an',
+				'icon'			=> 'cwarrior1',
 			    'pos_id'        => 11,
 			),
 			'Minotaur'	=> array (
@@ -135,7 +135,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 150000,
-				'icon'			=> 'minotaur2an',
+				'icon'			=> 'minotaur1',
 			    'pos_id'        => 12,
 			)
 		)	
@@ -158,7 +158,7 @@ $DEA = array (
 				'doub'		=> array ('A', 'S', 'P'),
 				'qty'			=> 16,
 				'cost'			=> 40000,
-				'icon'			=> 'cdhobgoblin1an',
+				'icon'			=> 'cdhobgoblin1',
 			    'pos_id'        => 20,
 			),
 			'Chaos Dwarf Blocker'	=> array (
@@ -171,7 +171,7 @@ $DEA = array (
 				'doub'		=> array ('A', 'P', 'M'),
 				'qty'			=> 6,
 				'cost'			=> 70000,
-				'icon'			=> 'cddwarf1an',
+				'icon'			=> 'cddwarf1',
 			    'pos_id'        => 21,
 			),
 			'Bull Centaur'	=> array (
@@ -184,7 +184,7 @@ $DEA = array (
 				'doub'		=> array ('A', 'P'),
 				'qty'			=> 2,
 				'cost'			=> 130000,
-				'icon'			=> 'centaur1an',
+				'icon'			=> 'centaur1',
 			    'pos_id'        => 22,
 			),
 			'Minotaur'	=> array (
@@ -197,7 +197,7 @@ $DEA = array (
 				'doub'		=> array ('G', 'A', 'P', 'M'),
 				'qty'			=> 1,
 				'cost'			=> 150000,
-				'icon'			=> 'minotaur2an',
+				'icon'			=> 'minotaur1',
 			    'pos_id'        => 23,
 			)
 		)
@@ -220,7 +220,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 70000,
-				'icon'			=> 'delineman1an',
+				'icon'			=> 'delineman1',
 			    'pos_id'        => 30,
 			),
 			'Runner'	=> array (
@@ -233,7 +233,7 @@ $DEA = array (
  				'doub'		=> array ('S'),
  				'qty'			=> 2,
 				'cost'			=> 80000,
-				'icon'			=> 'deblitzer1',
+				'icon'			=> 'derunner1',
 			    'pos_id'        => 31,
 			),
 			'Assassin'	=> array (
@@ -259,7 +259,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 100000,
-				'icon'			=> 'deblitzer1an',
+				'icon'			=> 'deblitzer1',
 			    'pos_id'        => 33,
 			),
 			'Witch Elf'	=> array (
@@ -272,7 +272,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 110000,
-				'icon'			=> 'dewitchelf1an',
+				'icon'			=> 'dewitchelf1',
 			    'pos_id'        => 34,
 			)
 		)
@@ -295,7 +295,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 70000,
-				'icon'			=> 'dlongbeard1an',
+				'icon'			=> 'dlongbeard1',
 			    'pos_id'        => 40,
 			),
 			'Runner'	=> array (
@@ -308,7 +308,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S'),
  				'qty'			=> 2,
 				'cost'			=> 80000,
-				'icon'			=> 'drunner1an',
+				'icon'			=> 'drunner1',
 			    'pos_id'        => 41,
 			),
 			'Blitzer'	=> array (
@@ -321,7 +321,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 80000,
-				'icon'			=> 'dblitzer1an',
+				'icon'			=> 'dblitzer1',
 			    'pos_id'        => 42,
 			),
 			'Troll Slayer'	=> array (
@@ -334,7 +334,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'dslayer1an',
+				'icon'			=> 'dslayer1',
 			    'pos_id'        => 43,
 			),
 			'Deathroller'	=> array (
@@ -370,7 +370,7 @@ $DEA = array (
 				'doub'		=> array ('S', 'P'),
 				'qty'			=> 16,
 				'cost'			=> 60000,
-				'icon'			=> 'welineman1an',
+				'icon'			=> 'eplineman1',
 			    'pos_id'        => 50,
 			),
 			'Thrower'	=> array (
@@ -383,7 +383,7 @@ $DEA = array (
 				'doub'		=> array ('S'),
 				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'wethrower1an',
+				'icon'			=> 'epthrower1',
 			    'pos_id'        => 51,
 			),
 			'Catcher'	=> array (
@@ -396,7 +396,7 @@ $DEA = array (
 				'doub'		=> array ('S', 'P'),
 				'qty'			=> 4,
 				'cost'			=> 100000,
-				'icon'			=> 'wecatcher1an',
+				'icon'			=> 'epcatcher1',
 			    'pos_id'        => 52,
 			),
 			'Blitzer'	=> array (
@@ -409,7 +409,7 @@ $DEA = array (
 				'doub'		=> array ('S', 'P'),
 				'qty'			=> 2,
 				'cost'			=> 110000,
-				'icon'			=> 'weblitzer1an',
+				'icon'			=> 'epblitzer1',
 			    'pos_id'        => 53,
 			)
 		)
@@ -432,7 +432,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 40000,
-				'icon'			=> 'goblin4an',
+				'icon'			=> 'goblin1',
 			    'pos_id'        => 60,
 			),
 			'Bombardier'	=> array (
@@ -445,7 +445,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'S', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 40000,
-				'icon'			=> 'goblin3an',
+				'icon'			=> 'bombardier1',
 			    'pos_id'        => 61,
 			),
 			'Pogoer'	=> array (
@@ -458,7 +458,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'S', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 40000,
-				'icon'			=> 'goblin5an',
+				'icon'			=> 'goscrappa1',
 			    'pos_id'        => 62,
 			),
 			'Looney'	=> array (
@@ -471,7 +471,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'S', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 40000,
-				'icon'			=> 'goblin2an',
+				'icon'			=> 'looney1',
 			    'pos_id'        => 63,
 			),
 			'Fanatic'	=> array (
@@ -484,7 +484,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 70000,
-				'icon'			=> 'goball1an',
+				'icon'			=> 'fanatic1',
 			    'pos_id'        => 64,
 			),
 			'Troll'	=> array (
@@ -497,7 +497,7 @@ $DEA = array (
  				'doub'		=> array ('G','A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 110000,
-				'icon'			=> 'troll1an',
+				'icon'			=> 'troll1',
 			    'pos_id'        => 65,
 			)
 		)
@@ -520,7 +520,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 30000,
-				'icon'			=> 'halfling3an',
+				'icon'			=> 'halfling1',
 			    'pos_id'        => 70,
 			),
 			'Treeman'	=> array (
@@ -533,7 +533,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 120000,
-				'icon'			=> 'treeman1an',
+				'icon'			=> 'treeman1',
 			    'pos_id'        => 71,
 			)
 		)
@@ -558,7 +558,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 70000,
-				'icon'			=> 'helineman1an',
+				'icon'			=> 'helineman1',
 			    'pos_id'        => 80,
 			),
 			'Thrower'	=> array (
@@ -571,7 +571,7 @@ $DEA = array (
  				'doub'		=> array ('S'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'hethrower1an',
+				'icon'			=> 'hethrower1',
 			    'pos_id'        => 81,
 			),
 			'Catcher'	=> array (
@@ -584,7 +584,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 90000,
-				'icon'			=> 'hecatcher1an',
+				'icon'			=> 'hecatcher1',
 			    'pos_id'        => 82,
 			),
 			'Blitzer'	=> array (
@@ -597,7 +597,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 100000,
-				'icon'			=> 'heblitzer1an',
+				'icon'			=> 'heblitzer1',
 			    'pos_id'        => 83,
 			)
 		)
@@ -620,7 +620,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 50000,
-				'icon'			=> 'hlineman1an',
+				'icon'			=> 'hlineman1',
 			    'pos_id'        => 90,
 			),
 			'Catcher'	=> array (
@@ -633,7 +633,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 70000,
-				'icon'			=> 'hcatcher1an',
+				'icon'			=> 'hcatcher1',
 			    'pos_id'        => 91,
 			),
 			'Thrower'	=> array (
@@ -646,7 +646,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S'),
  				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'hthrower1an',
+				'icon'			=> 'hthrower1',
 			    'pos_id'        => 92,
 			),
 			'Blitzer'	=> array (
@@ -659,7 +659,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 90000,
-				'icon'			=> 'hblitzer1an',
+				'icon'			=> 'hblitzer1',
 			    'pos_id'        => 93,
 			),
 			'Ogre'	=> array (
@@ -672,7 +672,7 @@ $DEA = array (
  				'doub'		=> array ('G','A', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 140000,
-				'icon'			=> 'ogre4an',
+				'icon'			=> 'ogre1',
 			    'pos_id'        => 94,
 			)
 		)
@@ -695,7 +695,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 30000,
-				'icon'			=> 'kmskeleton1an',
+				'icon'			=> 'kmskeleton1',
 			    'pos_id'        => 100,
 			),
 			'Thro-Ra'	=> array (
@@ -708,7 +708,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S'),
  				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'kmthrower1an',
+				'icon'			=> 'kmthrower1',
 			    'pos_id'        => 101,
 			),
 			'Blitz-Ra'	=> array (
@@ -721,7 +721,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'kmblitzer1an',
+				'icon'			=> 'kmblitzer1',
 			    'pos_id'        => 102,
 			),
 			'Mummy'	=> array (
@@ -734,7 +734,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 110000,
-				'icon'			=> 'kmmummy1an',
+				'icon'			=> 'tomb_guardian1',
 			    'pos_id'        => 103,
 			)
 		)
@@ -757,7 +757,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 60000,
-				'icon'			=> 'lmskink1an',
+				'icon'			=> 'lmskink1',
 			    'pos_id'        => 110,
 			),
 			'Saurus'	=> array (
@@ -770,7 +770,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 6,
 				'cost'			=> 80000,
-				'icon'			=> 'lmsaurus1an',
+				'icon'			=> 'lmsaurus1',
 			    'pos_id'        => 111,
 			),
 			'Kroxigor'	=> array (
@@ -783,7 +783,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 140000,
-				'icon'			=> 'kroxigor1an',
+				'icon'			=> 'kroxigor1',
 			    'pos_id'        => 112,
 			)
 		)
@@ -806,7 +806,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 50000,
-				'icon'			=> 'olineman1an',
+				'icon'			=> 'olineman1',
 			    'pos_id'        => 120,
 			),
 			'Goblin'	=> array (
@@ -819,7 +819,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'S', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 40000,
-				'icon'			=> 'goblin1an',
+				'icon'			=> 'goblin1',
 			    'pos_id'        => 121,
 			),
 			'Thrower'	=> array (
@@ -832,7 +832,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S'),
  				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'othrower1an',
+				'icon'			=> 'othrower1',
 			    'pos_id'        => 122,
 			),
 			'Black Orc Blocker'	=> array (
@@ -845,7 +845,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 80000,
-				'icon'			=> 'oblackorc1an',
+				'icon'			=> 'oblackorc1',
 			    'pos_id'        => 123,
 			),
 			'Blitzer'	=> array (
@@ -858,7 +858,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 80000,
-				'icon'			=> 'oblitzer1an',
+				'icon'			=> 'oblitzer1',
 			    'pos_id'        => 124,
 			),
 			'Troll'	=> array (
@@ -871,7 +871,7 @@ $DEA = array (
  				'doub'		=> array ('G','A', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 110000,
-				'icon'			=> 'troll1an',
+				'icon'			=> 'troll2',
 			    'pos_id'        => 125,
 			)
 		)
@@ -894,7 +894,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 40000,
-				'icon'			=> 'uzombie1',
+				'icon'			=> 'zombie1',
 			    'pos_id'        => 130,
 			),
 			'Ghoul'	=> array (
@@ -907,7 +907,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'ughoul1an',
+				'icon'			=> 'ughoul1',
 			    'pos_id'        => 131,
 			),
 			'Wight'	=> array (
@@ -920,7 +920,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'uwight1an',
+				'icon'			=> 'uwight1',
 			    'pos_id'        => 132,
 			),
 			'Flesh Golem'	=> array (
@@ -933,7 +933,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 110000,
-				'icon'			=> 'ngolem1an',
+				'icon'			=> 'ngolem1',
 			    'pos_id'        => 133,
 			),
 			'Werewolf'	=> array (
@@ -946,7 +946,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 120000,
-				'icon'			=> 'nwerewolf1an',
+				'icon'			=> 'nwerewolf1',
 			    'pos_id'        => 134,
 			)
 		)
@@ -969,7 +969,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 50000,
-				'icon'			=> 'nlineman1an',
+				'icon'			=> 'nlineman1',
 			    'pos_id'        => 140,
 			),
 			'Thrower'	=> array (
@@ -982,7 +982,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S'),
  				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'nthrower1an',
+				'icon'			=> 'nthrower1',
 			    'pos_id'        => 141,
 			),
 			'Runner'	=> array (
@@ -995,7 +995,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'ncatcher1an',
+				'icon'			=> 'norunner2',
 			    'pos_id'        => 142,
 			),
 			'Berserker'	=> array (
@@ -1008,7 +1008,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'ncatcher1an',
+				'icon'			=> 'noberserker1',
 			    'pos_id'        => 143,
 			),
 			'Ulfwerener'	=> array (
@@ -1021,7 +1021,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 110000,
-				'icon'			=> 'nlineman2an',
+				'icon'			=> 'noulfwerener1',
 			    'pos_id'        => 144,
 			),
 			'Snow Troll'	=> array (
@@ -1034,7 +1034,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 140000,
-				'icon'			=> 'troll1an',
+				'icon'			=> 'snowtroll1',
 			    'pos_id'        => 145,
 			)
 		)
@@ -1057,7 +1057,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 40000,
-				'icon'			=> 'troll2an',
+				'icon'			=> 'rotter4',
 			    'pos_id'        => 150,
 			),
 			'Pestigor'	=> array (
@@ -1070,7 +1070,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 80000,
-				'icon'			=> 'troll2an',
+				'icon'			=> 'rtpestigor1',
 			    'pos_id'        => 151,
 			),
 			'Nurgle Warrior'=> array (
@@ -1083,7 +1083,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 110000,
-				'icon'			=> 'troll2an',
+				'icon'			=> 'rtrotter1',
 			    'pos_id'        => 152,
 			),
 			'Beast of Nurgle'	=> array (
@@ -1096,7 +1096,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P', 'M'),
  				'qty'			=> 1,
 				'cost'			=> 140000,
-				'icon'			=> 'troll2an',
+				'icon'			=> 'rtbeast1',
 			    'pos_id'        => 153,
 			)
 		)
@@ -1105,7 +1105,7 @@ $DEA = array (
 	'Ogre'	=> array (
 		'other'	=> array (
 			'rr_cost' => 70000,
-			'icon' => 'ogros.png',
+			'icon' => 'ogres.png',
 			'race_id' => T_RACE_OGRE, # (Ogre)
 		),
 		'players'	=> array (
@@ -1119,7 +1119,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 20000,
-				'icon'			=> 'goblin1an',
+				'icon'			=> 'Snotling1',
 			    'pos_id'        => 160,
 			),
 			'Ogre'	=> array (
@@ -1132,7 +1132,7 @@ $DEA = array (
  				'doub'		=> array ('G','A', 'P'),
  				'qty'			=> 6,
 				'cost'			=> 140000,
-				'icon'			=> 'ogre4an',
+				'icon'			=> 'ogre1',
 			    'pos_id'        => 161,
 			)
 			
@@ -1156,7 +1156,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 30000,
-				'icon'			=> 'kmskeleton1an',
+				'icon'			=> 'kmskeleton1',
 			    'pos_id'        => 170,
 			),
 			'Zombie'	=> array (
@@ -1169,7 +1169,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 40000,
-				'icon'			=> 'uzombie2an',
+				'icon'			=> 'zombie1',
 			    'pos_id'        => 171,
 			),
 			'Ghoul'	=> array (
@@ -1182,7 +1182,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 70000,
-				'icon'			=> 'ughoul4an',
+				'icon'			=> 'ughoul1',
 			    'pos_id'        => 172,
 			),
 			'Wight'	=> array (
@@ -1195,7 +1195,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'uwight2an',
+				'icon'			=> 'uwight1',
 			    'pos_id'        => 173,
 			),
 			'Mummy'	=> array (
@@ -1208,7 +1208,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 110000,
-				'icon'			=> 'uwight2an',
+				'icon'			=> 'umummy1',
 			    'pos_id'        => 174,
 			)
 		)
@@ -1232,7 +1232,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 40000,
-				'icon'			=> 'vampire2an',
+				'icon'			=> 'vthrall1',
 			    'pos_id'        => 180,
 			),
 			'Vampire'	=> array (
@@ -1245,7 +1245,7 @@ $DEA = array (
  				'doub'		=> array ('P'),
  				'qty'			=> 6,
 				'cost'			=> 110000,
-				'icon'			=> 'vampire1an',
+				'icon'			=> 'vampire1',
 			    'pos_id'        => 181,
 			)
 		)
@@ -1269,7 +1269,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'P', 'M'),
  				'qty'			=> 16,
 				'cost'			=> 50000,
-				'icon'			=> 'sklineman1an',
+				'icon'			=> 'sklineman1',
 			    'pos_id'        => 190,
 			),
 			'Thrower'	=> array (
@@ -1282,7 +1282,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'S', 'M'),
  				'qty'			=> 2,
 				'cost'			=> 70000,
-				'icon'			=> 'skthrower1an',
+				'icon'			=> 'skthrower1',
 			    'pos_id'        => 191,
 			),
 			'Gutter Runner'	=> array (
@@ -1295,7 +1295,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P', 'M'),
  				'qty'			=> 4,
 				'cost'			=> 80000,
-				'icon'			=> 'skrunner1an',
+				'icon'			=> 'skrunner1',
 			    'pos_id'        => 192,
 			),
 			'Blitzer'	=> array (
@@ -1308,7 +1308,7 @@ $DEA = array (
  				'doub'		=> array ('A', 'P', 'M'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'skstorm1an',
+				'icon'			=> 'skstorm1',
 			    'pos_id'        => 193,
 			),
 			'Rat Ogre'	=> array (
@@ -1321,7 +1321,7 @@ $DEA = array (
  				'doub'		=> array ('G','A', 'P', 'M'),
  				'qty'			=> 1,
 				'cost'			=> 160000,
-				'icon'			=> 'ratogre1an',
+				'icon'			=> 'ratogre1',
 			    'pos_id'        => 194,
 			)
 		)
@@ -1344,7 +1344,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 16,
 				'cost'			=> 70000,
-				'icon'			=> 'welineman1an',
+				'icon'			=> 'welineman1',
 			    'pos_id'        => 200,
 			),
 			'Catcher'	=> array (
@@ -1357,7 +1357,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 4,
 				'cost'			=> 90000,
-				'icon'			=> 'wecatcher1an',
+				'icon'			=> 'wecatcher2',
 			    'pos_id'        => 201,
 			),
 			'Thrower'	=> array (
@@ -1370,7 +1370,7 @@ $DEA = array (
  				'doub'		=> array ('S'),
  				'qty'			=> 2,
 				'cost'			=> 90000,
-				'icon'			=> 'wethrower1an',
+				'icon'			=> 'wethrower1',
 			    'pos_id'        => 202,
 			),
 			'Wardancer'	=> array (
@@ -1383,7 +1383,7 @@ $DEA = array (
  				'doub'		=> array ('S', 'P'),
  				'qty'			=> 2,
 				'cost'			=> 120000,
-				'icon'			=> 'weblitzer1an',
+				'icon'			=> 'weblitzer2',
 			    'pos_id'        => 203,
 			),
 			'Treeman'	=> array (
@@ -1396,7 +1396,7 @@ $DEA = array (
  				'doub'		=> array ('G', 'A', 'P'),
  				'qty'			=> 1,
 				'cost'			=> 120000,
-				'icon'			=> 'treeman1an',
+				'icon'			=> 'treeman1',
 			    'pos_id'        => 204,
 			)
 		)
@@ -1916,7 +1916,7 @@ $sparray = array (
 
 $skillarray	= array (	
     # ID => "skill name"
-    # Note jumps in ID numbering, this allowed future skills to be added still maintaining some senseable ordering.
+    # Note jumps in ID numbering, this allowed future skills to be added still maintaining some sensible ordering.
 	'G'	=> array (
 		1  => 'Block',
 		2  => 'Dauntless',

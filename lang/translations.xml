@@ -14,9 +14,6 @@ Remember : ENGLISH language is the default language and the most UP TO DATE.
 
 Each registered language have it's data stored in it's own branch.
 For example, english is in <en-GB>, french in <fr-FR>, .......
-
-Each missing string in foreign language (other than english) is present but empty for you
-to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 -->
 
 
@@ -154,6 +151,12 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <!-- use "all-time" string from nodeSelect() translation -->
     <matchavg><![CDATA[Match&nbsp;avg.]]></matchavg> <!-- "Match avg." -->
     
+    <english>English</english>
+    <spanish>Spanish</spanish>
+    <german>German</german>
+    <french>French</french>
+    <italian>Italian</italian>
+    
 </common>
 
 <!-- Link names for menu elements -->
@@ -286,7 +289,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
             <nonews>No entries exist</nonews>
         
         <!-- Games sec. -->
-        <games>Recent &amp; Coming games</games>
+        <games>Recent &amp; Coming Games</games>
         
         <!-- Star/merc HH secs. -->
         
@@ -350,6 +353,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
             <dval>Manage extra player value</dval>
             <extra_skills>Manage extra player skills</extra_skills>
             <ach_skills>Remove ach. player skills</ach_skills>
+            <ff>Manage team fan factor</ff>
 
             <desc>
                 <unhire_journeyman> <![CDATA[ Regret permanently hiring a journeyman.<br> This only works on players from a 0-16 allowed position on your team's roster. ]]> </unhire_journeyman>
@@ -360,6 +364,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
                 <dval> <![CDATA[ Change a player's value by a certain amount. ]]> </dval>
                 <extra_skills> <![CDATA[ Manage a player's extra skills. ]]> </extra_skills>
                 <ach_skills> <![CDATA[ Remove a players achieved skills. This makes the player able to rechoose a skill. ]]> </ach_skills>
+                <ff> <![CDATA[ Make changes to team's fan factor .]]> </ff>
             </desc>
         </box_admin>
     </team>
@@ -449,6 +454,21 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     </report>
 </matches>
 
+<mobile>
+    <team>
+        <miss_next_game>Miss next game</miss_next_game>
+        <may_buy_new_skill>may buy new skill</may_buy_new_skill>
+        <management>Management</management>
+        <desktop_site>Desktop Site</desktop_site>
+        <noteams>You have no teams! This mobile site isn't sophisticated enough to help you -- you'll have use the &lt;a href="index.php"&gt;desktop site&lt;/a&gt;.</noteams>
+    </team>
+    <matches>
+        <match>
+            <for_me_to>for me, to</for_me_to>
+        </match>
+    </matches>
+</mobile>
+
 <rules> </rules>
 
 <about> </about>
@@ -478,12 +498,21 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
                 <new_tour>A new FFA tournament</new_tour>
             <as_type>Match type</as_type>
     </schedule>
+    
+    <nodes>
+        <errors>
+            <league_already_exists>There is already a league by that name.</league_already_exists>
+            <settings_file_copy_failed>The league was created, but the settings file was not copied correctly.</settings_file_copy_failed>
+        </errors>
+    </nodes>
 </admin>
 
 <race>
   <amazon>Amazon</amazon>
+  <bretonnia>Bretonnia</bretonnia>
   <chaos>Chaos</chaos>
   <chaosdwarf>Chaos Dwarf</chaosdwarf>
+  <daemonsofkhorne>Daemons of Khorne</daemonsofkhorne>
   <darkelf>Dark Elf</darkelf>
   <dwarf>Dwarf</dwarf>
   <elf>Elf</elf>
@@ -504,6 +533,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <woodelf>Wood Elf</woodelf>
   <chaospact>Chaos Pact</chaospact>
   <underworld>Underworld</underworld>
+  <simyin>Simyin</simyin>
   <slann>Slann</slann>
 </race>
 
@@ -514,22 +544,22 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <blitzer>Blitzer</blitzer>
 
   <beastman>Beastman</beastman>
-  <chaoswarrior>Chaos warrior</chaoswarrior>
+  <chaoswarrior>Chaos Warrior</chaoswarrior>
   <minotaur>Minotaur</minotaur>
 
   <marauder>Marauder</marauder>
-  <goblinrenegade>Goblin renegade</goblinrenegade>
-  <skavenrenegade>Skaven renegade</skavenrenegade>
-  <darkelfrenegade>Dark elf renegade</darkelfrenegade>
-  <chaostroll>Chaos troll</chaostroll>
-  <chaosogre>Chaos ogre</chaosogre>
-  <necromanticwerewolf>Necromantic werewolf</necromanticwerewolf>
-  <norsewerewolf>Norse werewolf</norsewerewolf>
+  <goblinrenegade>Goblin Renegade</goblinrenegade>
+  <skavenrenegade>Skaven Renegade</skavenrenegade>
+  <darkelfrenegade>Dark Elf Renegade</darkelfrenegade>
+  <chaostroll>Chaos Troll</chaostroll>
+  <chaosogre>Chaos Ogre</chaosogre>
+  <necromanticwerewolf>Necromantic Werewolf</necromanticwerewolf>
+  <norsewerewolf>Norse Werewolf</norsewerewolf>
   <yhetee>Yhetee</yhetee>
 
   <hobgoblin>Hobgoblin</hobgoblin>
-  <chaosdwarfblocker>Chaos dwarf blocker</chaosdwarfblocker>
-  <bullcentaur>Bull centaur</bullcentaur>
+  <chaosdwarfblocker>Chaos Dwarf Blocker</chaosdwarfblocker>
+  <bullcentaur>Bull Centaur</bullcentaur>
 
   <lineman>Lineman</lineman>
   <runner>Runner</runner>
@@ -537,7 +567,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <witchelf>Witchelf</witchelf>
 
   <blocker>Blocker</blocker>
-  <trollslayer>Troll slayer</trollslayer>
+  <trollslayer>Troll Slayer</trollslayer>
   <deathroller>Deathroller</deathroller>
 
   <goblin>Goblin</goblin>
@@ -553,47 +583,60 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <ogre>Ogre</ogre>
 
   <skeleton>Skeleton</skeleton>
-  <throra>Throra</throra>
-  <blitzra>Blitzra</blitzra>
+  <thro-ra>Thro-Ra</thro-ra>
+  <blitz-ra>Blitz-Ra</blitz-ra>
+  <throra>Thro-Ra</throra>
+  <blitzra>Blitz-Ra</blitzra>
   <mummy>Mummy</mummy>
-  <tombguardian>Tomb guardian</tombguardian>
+  <tombguardian>Tomb Guardian</tombguardian>
 
   <skink>Skink</skink>
   <saurus>Saurus</saurus>
   <kroxigor>Kroxigor</kroxigor>
 
-  <blackorcblocker>Black orc blocker</blackorcblocker>
+  <blackorcblocker>Black Orc Blocker</blackorcblocker>
 
   <zombie>Zombie</zombie>
   <ghoul>Ghoul</ghoul>
   <wight>Wight</wight>
-  <fleshgolem>Flesh golem</fleshgolem>
+  <fleshgolem>Flesh Golem</fleshgolem>
   <werewolf>Werewolf</werewolf>
 
   <berserker>Berserker</berserker>
   <ulfwerener>Ulfwerener</ulfwerener>
-  <snowtroll>Snow troll</snowtroll>
+  <snowtroll>Snow Troll</snowtroll>
 
   <rotter>Rotter</rotter>
   <pestigor>Pestigor</pestigor>
-  <nurglewarrior>Nurgle warrior</nurglewarrior>
-  <beastofnurgle>Beast of nurgle</beastofnurgle>
+  <nurglewarrior>Nurgle Warrior</nurglewarrior>
+  <beastofnurgle>Beast of Nurgle</beastofnurgle>
 
-  <underworldgoblin>Underworld goblin</underworldgoblin>
-  <skavenlineman>Skaven lineman</skavenlineman>
-  <skaventhrower>Skaven thrower</skaventhrower>
-  <skavenblitzer>Skaven blitzer</skavenblitzer>
-  <warpstonetroll>Warp stone troll</warpstonetroll>
+  <underworldgoblin>Underworld Goblin</underworldgoblin>
+  <skavenlineman>Skaven Lineman</skavenlineman>
+  <skaventhrower>Skaven Thrower</skaventhrower>
+  <skavenblitzer>Skaven Blitzer</skavenblitzer>
+  <warpstonetroll>Warp Stone Troll</warpstonetroll>
 
   <snotling>Snotling</snotling>
 
   <thrall>Thrall</thrall>
   <vampire>Vampire</vampire>
 
-  <gutterrunner>Gutter runner</gutterrunner>
-  <ratogre>Rat ogre</ratogre>
+  <gutterrunner>Gutter Runner</gutterrunner>
+  <ratogre>Rat Ogre</ratogre>
 
-  <wardancer>War dancer</wardancer>
+  <wardancer>War Dancer</wardancer>
+  
+  <pitfighter>Pit Fighter</pitfighter>
+  <bloodletterdaemon>Bloodletter Daemon</bloodletterdaemon>
+  <khorneherald>Khorne Herald</khorneherald>
+  <bloodthirster>Bloodthirster</bloodthirster>
+  
+  <bonobo>Bonobo</bonobo>
+  <orangutan>Orangutan</orangutan>
+  <gorilla>Gorilla</gorilla>
+  <chimpanzee>Chimpanzee</chimpanzee>
+  <silverback>Silverback</silverback>
 </position>
 
 <skill>
@@ -662,7 +705,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <nohands>No Hands</nohands>
   <nurglesrot>Nurgle's Rot</nurglesrot>
   <reallystupid>Really Stupid</reallystupid>
-  <regeneration>Regenaration</regeneration>
+  <regeneration>Regeneration</regeneration>
   <rightstuff>Right Stuff</rightstuff>
   <secretweapon>Secret Weapon</secretweapon>
   <stab>Stab</stab>
@@ -680,6 +723,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <bomberdribblesnot>Bomber Dribblesnot</bomberdribblesnot>
     <boomereziasson>Boomer Eziasson</boomereziasson>
     <brickfarthgrotty>Brick Far'th and Grotty</brickfarthgrotty>
+    <grottyincludedinbrickfarth>Grotty (included in Brick Far'th)</grottyincludedinbrickfarth>
     <countluthorvondrakenborg>Count Luthor Von Drakenborg</countluthorvondrakenborg>
     <crazyigor>Crazy Igor</crazyigor>
     <deeprootstrongbranch>Deeproot Strongbranch</deeprootstrongbranch>
@@ -688,7 +732,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <fezglitch>Fezglitch</fezglitch>
     <flintchurnblade>Flint Churnblade</flintchurnblade>
     <fungustheloon>Fungus the Loon</fungustheloon>
-    <glartsmarchripjr>Glart Smarchrip Jr.</glartsmarchripjr>
+    <glartsmashripjr>Glart Smashrip Jr.</glartsmashripjr>
     <grashnakblackhoof>Grashnak Blackhoof</grashnakblackhoof>
     <griffoberwald>Griff Oberwald</griffoberwald>
     <grimironjaw>Grim Ironjaw</grimironjaw>
@@ -699,7 +743,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <hemlock>Hemlock</hemlock>
     <horkonheartripper>Horkon Heartripper</horkonheartripper>
     <htharktheunstoppable>Hthark the Unstoppable</htharktheunstoppable>
-    <hubrisrakhart>Hubris Rakhart</hubrisrakhart>
+    <hubrisrakarth>Hubris Rakarth</hubrisrakarth>
     <humeruscarpal>Humerus Carpal</humeruscarpal>
     <icepelthammerblow>Icepelt Hammerblow</icepelthammerblow>
     <ithacabenoin>Ithaca Benoin</ithacabenoin>
@@ -710,7 +754,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <lottabottol>Lottabottol</lottabottol>
     <maxspleenripper>Max Spleenripper</maxspleenripper>
     <mightyzug>Mighty Zug</mightyzug>
-    <morgnthrog>Morg 'N' Throg</morgnthrog>
+    <morgnthorg>Morg 'N' Thorg</morgnthorg>
     <nobblablackwart>Nobbla Blackwart</nobblablackwart>
     <princemoranion>Prince Moranion</princemoranion>
     <puggybaconbreath>Puggy Baconbreath</puggybaconbreath>
@@ -722,13 +766,14 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <scrappasorehead>Scrappa Sorehead</scrappasorehead>
     <setekh>Setekh</setekh>
     <silibili>Silibili</silibili>
+    <slibli>Slibli</slibli>
     <sinnedbad>Sinnedbad</sinnedbad>
     <skitterstabstab>Skitter Stab-Stab</skitterstabstab>
     <soarenhightower>Soaren Hightower</soarenhightower>
     <ugrothbolgrot>Ugroth Bolgrot</ugrothbolgrot>
     <varagghoulchewer>Varag Ghoul-Chewer</varagghoulchewer>
     <wilhelmchaney>Wilhelm Chaney</wilhelmchaney>
-    <wilowrosebark>Wilow Rosebark</wilowrosebark>
+    <willowrosebark>Willow Rosebark</willowrosebark>
     <zaratheslayer>Zara the Slayer</zaratheslayer>
     <zzhargmadeye>Zzharg Madeye</zzhargmadeye>
 </starplayer>
@@ -737,7 +782,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
   <monday>Monday</monday>
   <tuesday>Tuesday</tuesday>
   <wednesday>Wednesday</wednesday>
-  <thursday>Thursday></thursday>
+  <thursday>Thursday</thursday>
   <friday>Friday</friday>
   <saturday>Saturday</saturday>
   <sunday>Sunday</sunday>
@@ -775,7 +820,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <edit>Editar</edit>
     <view>Ver</view>
     <back>Volver</back>
-    <yes>Si</yes>
+    <yes>Sí</yes>
     <no>No</no>
     <none>Ninguno</none>
     <reset>Restablecer</reset>
@@ -801,36 +846,46 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <page>Página</page>
     <retired>Retirado</retired>
     <skills>Habilidades</skills>
+    <skill>Habilidad</skill>
     <injs>Heridas</injs>
     <pos>Posición</pos>
     <price>Precio</price>
     <number>Número</number>
     <opponent>Oponente</opponent>
+    <reroll>Segunda Oportunidad</reroll>
+    <apothecary>Médico</apothecary>
+    <ass_coach>Ayudantes de entrenador</ass_coach>
+    <cheerleader>Animadoras</cheerleader>
+    <journeyman>Independientes</journeyman>
+    <options>Opciones</options>
+    <empty>Vacío</empty>
     
     <needhelp>¿Necesitas ayuda?</needhelp>
     <picof>Imagen de</picof>
-    <about>Sobre</about>
+    <about>Sobre el equipo</about>
     
     <recentmatches>Partidos recientes</recentmatches>
     <upcomingmatches>Próximos partidos</upcomingmatches>
     <dateplayed>Fecha de juego</dateplayed>
-<datecreated>Fecha de creación</datecreated>
+    <datecreated>Fecha de creación</datecreated>
+    <date>Fecha</date>
     <home>Casa</home>
     <away>Fuera</away>
     <score>Tanteo</score>
     <gate>Entrada</gate>
     <result>Resultado</result>
     
-    <starhh>Histórico de contratación de Jugadores Estrella</starhh>
-    <merchh>Histórico de contratación de mercenarios</merchh>
+    <starhh>Registro de Estrellas</starhh>
+    <merchh>Registro de Mercenarios</merchh>
     
     <match>Partido</match>
+    <round>Ronda</round>
     <tournament>Torneo</tournament>
     <division>División</division>
     <league>Liga</league>
     
     <player>Jugador</player>
-     <players>Jugadores</players>
+    <players>Jugadores</players>
     <team>Equipo</team>
     <teams>Equipos</teams>
     <coach>Entrenador</coach>
@@ -848,6 +903,11 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <playedtours>Torneos jugados</playedtours>
     <wontours>Torneos ganados</wontours>
     
+    <ready>Listo</ready>
+    <dead>Muerto</dead>
+    <sold>Vendido</sold>
+    <bought>Comprado</bought>
+
     <td>Touchdowns</td>
     <intcpt>Intercepciones</intcpt>
     <cp>Pases completos</cp>
@@ -863,6 +923,9 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <notice_simul><![CDATA[<i>Nota</i>: Las dos tablas mostradas abajo se ordenan simultaneamente.]]></notice_simul>
     <notice_spp><![CDATA[<i>Nota</i>: <b>Si</b>los jugadores estrella pudiesen ganar PE tendrian la cantidad correspondiente a la columna PE.]]></notice_spp>
     <sortedagainst>Ordenado por</sortedagainst>
+
+    <confirm_box>¿Estás segudo?</confirm_box>
+
     <!-- nodeSelector() -->
     <displayfrom>Mostrar de</displayfrom>
     <type>Tipo</type>
@@ -903,14 +966,13 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <star_stn>Jugadores Estrella</star_stn>
     </statistics_menu>
     <admin_menu>
-        <name>Admin</name> <!-- top level button text -->
-        <ld_man>Gestión: Ligas &amp; divisiones</ld_man>
+        <name>Admin</name>
+        <nodes>Ligas, divisiones &amp; torneos</nodes>
         <ct_man>Gestión: Entrenadores &amp; equipos</ct_man>
         <usr_man>Gestión: Usuarios</usr_man>
-        <tour_man>Gestión: Torneos</tour_man>
         <import>Importar equipo</import>
-        <schedule>Planificar partidos</schedule>
-        <cpanel>Panel principal de OBBLM</cpanel>
+        <schedule>Crear emparejamientos</schedule>
+        <cpanel>Panel central de OBBLM</cpanel>
     </admin_menu>
     <plugins>Plugins</plugins>
     
@@ -920,22 +982,29 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 
 <!-- Section translations -->
 <login>
-    <!-- has no <name> tag! -->
-    <loginname>Nombre de Entrenador</loginname>
+    <loginname>Entrenador</loginname>
     <passwd>Contraseña</passwd>
     <remember>Recordarme</remember>
     <loginbutton>Conectar</loginbutton>
+    <forgotpass>¿Olvidaste la contraseña?</forgotpass>
+        <resetpasswdmail>Deberías recibir un email en breve</resetpasswdmail>
+        <mismatch>El usuario y el email indicados no se corresponden</mismatch>
+        <temppasswd>Tu contraseña ha sido temporalmente establecida como:</temppasswd>
+        <setnewpasswd>Por favor haz click aquí para cambiar tu contraseña</setnewpasswd>
 </login>
 
 <main>
     <!-- has no <name> tag! -->
     <newmsg>Nuevo mensaje</newmsg>
-    <broadcast>¿Publicar mensaje para todas las ligar?</broadcast>
+    <broadcast>¿Publicar mensaje para todas las ligas?</broadcast>
     <nowelcome>Aún no has creado el mensaje de bienvenida</nowelcome>
     <more>más</more>
     <posted>Publicado</posted>
     <by>por</by>
     <lastedit>Última edición</lastedit>
+    <infocus>Equipo mostrado:</infocus>
+    <pin>Pin</pin>
+    <unpin>Unpin</unpin>
 </main>
 
 <cc>
@@ -963,7 +1032,6 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 </cc>
 
 <profile>
-
  <coach>
         <teams_total>Equipos totales</teams_total>
         <teams_active>Equipos activos</teams_active>
@@ -980,12 +1048,10 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 
 
     <player>
-        <about>Sobre el jugador</about>
-        
-        <profile>Perfil de jugador</profile>
-        
+        <about>Sobre el jugador</about>        
+        <profile>Perfil de jugador</profile>        
         <best>Mejor partido</best>
-        
+        <injhist>Historial de heridas</injhist>
     </player>
     
     <team>
@@ -994,7 +1060,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <viewtoggle>Cambiar vista de la plantilla</viewtoggle>
         
         <!-- Team management sec. -->
-        <tmanage>Gestión e información de equipos</tmanage>
+        <tmanage>Gestión &amp; Estadísticas</tmanage>
         
         <!-- About sec. -->
             <logo>Logo del equipo</logo>
@@ -1006,7 +1072,8 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
             <wnews>Escribir noticias</wnews>
             <nonews>No hay entradas</nonews>
         
-        <!-- Recent games sec. -->
+        <!-- Games sec. -->
+        <games>Partidos</games>
         
         <!-- Star/merc HH secs. -->
         
@@ -1044,136 +1111,47 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
             </fdescs>
             
             <desc>
-                <hire_player>
-                <![CDATA[
-                Contratar un nuevo jugador.<br>
-                Contratar a un jugador como independiente es gratis, pero solo puedes contratar independientes de la  posición que permite 0-16 jugadores de tu lista de equipo.
-                ]]>
-                </hire_player>
-                <hire_journeyman>
-                <![CDATA[
-                Contrata permanentemente a uno de tus independientes.
-                ]]>
-                </hire_journeyman>
-                <fire_player>
-                <![CDATA[
-                Despide a un jugador. Tasa de devolución:
-                ]]>
-                </fire_player>
-                <unbuy_player>
-                <![CDATA[
-                ¿Te arrepientes de contratar a un jugador?. Devolución del 100%.<br>
-                Esto es solo posible con jugadores que no han participado en ningún partido.
-                ]]>
-                </unbuy_player>
-                <rename_player>
-                <![CDATA[
-                Renombrar un jugador.
-                ]]>
-                </rename_player>
-                <renumber_player>
-                <![CDATA[
-                Cambiar el dorsal de un jugador.
-                ]]>
-                </renumber_player>
-                <rename_team>
-                <![CDATA[
-                Renombrar tu equipo.
-                ]]>
-                </rename_team>
-                <buy_goods>
-                <![CDATA[
-                Comprar bienes de equipo.
-                ]]>
-                </buy_goods>
-                <buy_goods_warn>
-                <![CDATA[
-                <br><br>Por favor, date cuenta de que el precio de las segundas oportunidades es actualmente el <font color='red'><b>doble</b></font>.<br>Si tu intención es comprar una segunda oportunidad al precio normal, compralo igualmente y pide a un administrador que ajuste tu tesorería.
-                ]]>
-                </buy_goods_warn>
-                <drop_goods>
-                <![CDATA[
-                Deshacerse de bienes de equipo sin recibir una devolución.
-                ]]>
-                </drop_goods>
-                <ready_state>
-                <![CDATA[
-                Este atributo advierte a otros entrenadores de que el equipo está interesado en jugar partidos.
-                ]]>
-                </ready_state>
-                <retire>
-                <![CDATA[
-                Retirar equipo.<br>Una vez retirado, no podrás gestionar el equipo.<br>Los administradores pueden traer de vuelta equipos retirados. El retiro tiene efecto inmediato, pero será visible por  primera vez <b>al recargar la página</b>.
-                ]]>
-                </retire>
-                <delete>
-                <![CDATA[
-                Borrar equipo.<br>Para mantener la integridad de las estadísticas, no se permite borrar equipos que hayan jugado partidos. El borrado tiene efecto inmediato, pero será visible por primera vez <b>al recargar la página</b>.
-                ]]>
-                </delete>
+                <hire_player> <![CDATA[ Contratar un nuevo jugador.<br> Contratar a un jugador como independiente es gratis, pero solo puedes contratar independientes de la  posición que permite 0-16 jugadores de tu lista de equipo. ]]> </hire_player>
+                <hire_journeyman> <![CDATA[ Contrata permanentemente a uno de tus independientes. ]]> </hire_journeyman>
+                <fire_player> <![CDATA[ Despide a un jugador. Tasa de devolución: ]]> </fire_player>
+                <unbuy_player> <![CDATA[ ¿Te arrepientes de contratar a un jugador?. Devolución del 100%.<br> Esto es sólo posible con jugadores que no han participado en ningún partido. ]]> </unbuy_player>
+                <rename_player> <![CDATA[ Renombrar un jugador. ]]> </rename_player>
+                <renumber_player> <![CDATA[ Cambiar el dorsal de un jugador. ]]> </renumber_player>
+                <rename_team> <![CDATA[ Renombrar tu equipo. ]]> </rename_team>
+                <buy_goods> <![CDATA[ Comprar bienes de equipo. ]]> </buy_goods>
+                <buy_goods_warn> <![CDATA[ <br><br>Por favor, date cuenta de que el precio de las segundas oportunidades es actualmente el <font color='red'><b>doble</b></font>.<br>Si tu intención es comprar una segunda oportunidad al precio normal, compralo igualmente y pide a un administrador que ajuste tu tesorería. ]]> </buy_goods_warn>
+                <drop_goods> <![CDATA[ Deshacerse de bienes de equipo sin recibir una devolución. ]]>b</drop_goods>
+                <ready_state> <![CDATA[ Este atributo advierte a otros entrenadores de que el equipo está interesado en jugar partidos. ]]> </ready_state>
+                <retire> <![CDATA[ Retirar equipo.<br>Una vez retirado, no podrás gestionar el equipo.<br>Los administradores pueden traer de vuelta equipos retirados. El retiro tiene efecto inmediato, pero será visible por  primera vez <b>al recargar la página</b>. ]]> </retire>
+                <delete> <![CDATA[ Borrar equipo.<br>Para mantener la integridad de las estadísticas, no se permite borrar equipos que hayan jugado partidos. El borrado tiene efecto inmediato, pero será visible por primera vez <b>al recargar la página</b>. ]]> </delete>
             </desc>
         </box_tm>
         
         <box_admin>
             <title>Herramientas de administrador</title>
 
-            <unhire_journeyman>Deshacer contratación de independiente</unhire_journeyman>
-            <unsell_player>Deshacer despido de jugador</unsell_player>
-            <unbuy_goods>Deshacer compra de bienes de equipo</unbuy_goods>
+            <unhire_journeyman>Descontratar independiente</unhire_journeyman>
+            <unsell_player>Deshacer despido</unsell_player>
+            <unbuy_goods>Deshacer compra de bienes</unbuy_goods>
             <bank>Tesorería</bank>
             <chown>Cambiar dueño</chown>
-            <spp>Gestionar PE extra de jugador</spp>
-            <dval>Gestionar valor extra de jugador</dval>
-            <extra_skills>Gestionar habilidades extra de jugador</extra_skills>
-            <ach_skills>Eliminar habilidades conseguidas por jugador</ach_skills>
+            <spp>Gestionar PE extra</spp>
+            <dval>Gestionar valor extra</dval>
+            <extra_skills>Gestionar habilidades extra</extra_skills>
+            <ach_skills>Eliminar habilidades</ach_skills>
+            <ff>Gestionar FH</ff>
 
             <desc>
-                <unhire_journeyman>
-                <![CDATA[
-                Deshacer la contratación permanente de un independiente.<br>
-				Esto solo funciona con jugadores de la posición que permite 0-16 jugadores de tu lista de equipo.
-                ]]>
-                </unhire_journeyman>
-                <unsell_player>
-                <![CDATA[
-                ¿Te arrepientes de despedir a un jugador?.
-                ]]>
-                </unsell_player>
-                <unbuy_goods>
-                <![CDATA[
-                ¿Te arrepientes de comprar bienes de equipo?.
-                ]]>
-                </unbuy_goods>
-                <bank>
-                <![CDATA[
-                Hacer cambios en la tesorería del equipo.
-                ]]>
-                </bank>
-                <chown>
-                <![CDATA[
-                Asignar el equipo a otro dueño.
-                ]]>
-                </chown>
-                <spp>
-                <![CDATA[
-                Gestionar los PE extra de un jugador.
-                ]]>
-                </spp>
-                <dval>
-                <![CDATA[
-                Cambiar el valor monetario de un jugador.
-                ]]>
-                </dval>
-                <extra_skills>
-                <![CDATA[
-                Gestionar las habilidades extra de un jugador.
-                ]]>
-                </extra_skills>
-                <ach_skills>
-                <![CDATA[
-                Borrar habilidades adquiridas por un jugador. Esto permite volver a seleccionar habilidades.
-                ]]>
-                </ach_skills>
+                <unhire_journeyman> <![CDATA[ Deshacer la contratación permanente de un independiente.<br> Esto solo funciona con jugadores de la posición que permite 0-16 jugadores de tu lista de equipo. ]]> </unhire_journeyman>
+                <unsell_player> <![CDATA[ ¿Te arrepientes de despedir a un jugador? ]]> </unsell_player>
+                <unbuy_goods> <![CDATA[ ¿Te arrepientes de comprar bienes de equipo? ]]> </unbuy_goods>
+                <bank> <![CDATA[ Hacer cambios en la tesorería del equipo. ]]> </bank>
+                <chown> <![CDATA[ Asignar el equipo a otro dueño. ]]> </chown>
+                <spp> <![CDATA[ Gestionar los PE extra de un jugador. ]]> </spp>
+                <dval> <![CDATA[ Cambiar el valor monetario de un jugador. ]]> </dval>
+                <extra_skills> <![CDATA[ Gestionar las habilidades extra de un jugador. ]]> </extra_skills>
+                <ach_skills> <![CDATA[ Borrar habilidades adquiridas por un jugador. Esto permite volver a seleccionar habilidades. ]]> </ach_skills>
+                <ff> <![CDATA[ Gestionar FH del equipo .]]> </ff>
             </desc>
         </box_admin>
     </team>
@@ -1185,17 +1163,35 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 </standings>
 
 <matches>
-    <tours>    
+    <tours>
+        <showhidden>Mostrar nodos ocultos</showhidden>
         <!-- none used - all are in "common". -->
     </tours>
+
+    <usersched>
+        <selecttour>Seleccionar torneo</selecttour>
+    </usersched>
+
     <tourmatches>
         <roundtypes>
             <final>Final</final>
             <thirdPlayoff>Partido por el tercer puesto</thirdPlayoff>
-            <semi>Semifinales</semi>
+            <semi>Semifinal</semi>
             <quarter>Cuartos de final</quarter>
-            <rnd16>Octavos de final</rnd16>
+            <rnd16>Ronda de 16</rnd16>
             <rnd>Ronda</rnd>
+            <rnd1>Ronda 1</rnd1>
+            <rnd2>Ronda 2</rnd2>
+            <rnd3>Ronda 3</rnd3>
+            <rnd4>Ronda 4</rnd4>
+            <rnd5>Ronda 5</rnd5>
+            <rnd6>Ronda 6</rnd6>
+            <rnd7>Ronda 7</rnd7>
+            <rnd8>Ronda 8</rnd8>
+            <rnd9>Ronda 9</rnd9>
+            <rnd10>Ronda 10</rnd10>
+            <rnd11>Ronda 11</rnd11>
+            <rnd12>Ronda 12</rnd12>
         </roundtypes>
         
         <matchdelete><![CDATA[¿Estás seguro de que quieres borrar el partido?\n\nAVISO:\nA no ser que el partido no haya sido jugado aún, esta acción es irreversible y afectará al contenido de las subsiguientes actas de partido de ambos equipos.\nSe recomienda no borrar partidos a no ser que sean para testear o sepas bien lo que estas haciendo.]]></matchdelete>
@@ -1209,6 +1205,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <clickforhelp>Necesitas ayuda?</clickforhelp>
         <notplayed>Aun no jugado</notplayed>
         <report>Acta</report>
+        <chround>Cambiar ronda</chround>
         
         <!-- Subsecs of team page -->
         <info>Información del Partido</info>
@@ -1216,7 +1213,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
             <fans>Fans (Espectadores de carne y hueso)</fans>
             
         <results>Resultados del partido</results>
-            <treas>Tesoreria</treas>
+            <treas>Tesorería</treas>
             <ff>Factor de hinchas</ff>
             <smp>Puntos de deportividad</smp>
                 <pts>puntos</pts>
@@ -1224,17 +1221,365 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
             <fame>FAMA</fame>
             <tv>VE</tv>
             
-        <summary>Sumario del partido</summary>
+        <summary>Resumen del partido</summary>
+        <usedjourney>El partido no puede guardarse hasta que no decidas el destino de los independientes usados en la página del equipo</usedjourney>
+
+        <!-- Match report table header -->
+        <mvp>MJE</mvp>
+        <cp>PC</cp>
+        <bh>HL</bh>
+        <si>HG</si>
+        <ki>Mu</ki>
+        <ir1>IR 1</ir1>
+        <ir2>IR 2</ir2>
+        <ir3>IR 3</ir3>
+        <inj>Her</inj>
+        <ageing1>Envejecimiento 1</ageing1>
+        <ageing2>Envejecimiento 2</ageing2>
+
     </report>
 </matches>
 
-<rules>
-    <!-- None -->
-</rules>
+<mobile>
+    <team>
+        <miss_next_game>Se pierde el próximo encuentro</miss_next_game>
+        <may_buy_new_skill>Nueva habilidad</may_buy_new_skill>
+        <management>Gestión</management>
+        <desktop_site>Página del escritorio</desktop_site>
+    </team>
+    <matches>
+        <match>
+            <for_me_to>A favor, en contra</for_me_to>
+        </match>
+    </matches>
+</mobile>
 
-<about>
-    <!-- None -->
-</about>
+<rules> </rules>
+
+<about> </about>
+
+<!-- NOTE: Translation is NOT supplied for all admin pages. -->
+<admin>
+    <!-- Common -->
+    <prefixes>Los prefijos + y - especifican el mayor y menor de</prefixes>
+
+    <!-- Subsec: Schedule matches -->
+    <schedule>
+        <create_LD>Por favor crea una liga + división(es) antes de crear emparejamientos</create_LD>
+        <tour_name>Nombre del torneo</tour_name>
+        <rank_sys>Sistema de puntuación</rank_sys>
+        <sched_type>Emparejamiento</sched_type>
+        <add_team>Añadir equipo</add_team>
+        <teams_selected>Equipos seleccionados</teams_selected>
+        <!-- Tour Types (TT) -->
+            <TT_FFA><![CDATA[Torneo Free-For-All &mdash; con N partidos]]></TT_FFA>
+            <TT_FFA_SINGLE><![CDATA[Encuentro Free-For-All &mdash; en un torneo FFA existente]]></TT_FFA_SINGLE>
+            <TT_RR><![CDATA[Torneo Round-Robin &mdash; con N partidos]]></TT_RR>
+        <!-- RR -->
+            <rrobin_rnds>Número de rondas</rrobin_rnds>
+            <times>Vueltas</times>
+        <!-- FFA -->
+            <in_tour>En torneo</in_tour>
+                <new_tour>Un nuevo torneo FFA</new_tour>
+            <as_type>Tipo de encuentro</as_type>
+    </schedule>
+</admin>
+
+<race>
+  <amazon>Amazonas</amazon>
+  <bretonnia>Bretonianos</bretonnia>
+  <chaos>Caos</chaos>
+  <chaosdwarf>Enanos del Caos</chaosdwarf>
+  <daemonsofkhorne>Demonios de Khorne</daemonsofkhorne>
+  <darkelf>Elfos Oscuros</darkelf>
+  <dwarf>Enanos</dwarf>
+  <elf>Elfos</elf>
+  <goblin>Goblins</goblin>
+  <halfling>Halflings</halfling>
+  <highelf>Altos Elfos</highelf>
+  <human>Humanos</human>
+  <khemri>Khemri</khemri>
+  <lizardman>Hombres Lagarto</lizardman>
+  <orc>Orcos</orc>
+  <necromantic>Nigromantes</necromantic>
+  <norse>Nórdicos</norse>
+  <nurgle>Nurgle</nurgle>
+  <ogre>Ogros</ogre>
+  <undead>No Muertos</undead>
+  <vampire>Vampiros</vampire>
+  <skaven>Skaven</skaven>
+  <woodelf>Elfos Silvanos</woodelf>
+  <chaospact>Pacto del Caos</chaospact>
+  <underworld>Inframundo</underworld>
+  <simyin>Simyin</simyin>
+  <slann>Slann</slann>
+</race>
+
+<position>
+  <linewoman>Línea</linewoman>
+  <thrower>Lanzador</thrower>
+  <catcher>Receptor</catcher>
+  <blitzer>Blitzer</blitzer>
+
+  <beastman>Hombre Bestia</beastman>
+  <chaoswarrior>Guerrero del Caos</chaoswarrior>
+  <minotaur>Minotauro</minotaur>
+
+  <marauder>Bárbaro</marauder>
+  <goblinrenegade>Renegado Goblin</goblinrenegade>
+  <skavenrenegade>Renegado Skaven</skavenrenegade>
+  <darkelfrenegade>Renegado Elfo Oscuro</darkelfrenegade>
+  <chaostroll>Troll del Caos</chaostroll>
+  <chaosogre>Ogre del Caos</chaosogre>
+  <necromanticwerewolf>Hombre Lobo Nigromántico</necromanticwerewolf>
+  <norsewerewolf>Hombre Lobo Nórdico</norsewerewolf>
+  <yhetee>Yeti</yhetee>
+
+  <hobgoblin>Hobgoblin</hobgoblin>
+  <chaosdwarfblocker>Defensa Enano del Caos</chaosdwarfblocker>
+  <bullcentaur>Centauro Toro</bullcentaur>
+
+  <lineman>Línea</lineman>
+  <runner>Corredor</runner>
+  <assassin>Asesino</assassin>
+  <witchelf>Elfa Bruja</witchelf>
+
+  <blocker>Defensa</blocker>
+  <trollslayer>Matatroll</trollslayer>
+  <deathroller>Apisonadora</deathroller>
+
+  <goblin>Goblin</goblin>
+  <bombardier>Bombardero</bombardier>
+  <pogoer>Pogo</pogoer>
+  <looney>Chiflado</looney>
+  <fanatic>Fanático</fanatic>
+  <troll>Troll</troll>
+
+  <halfling>Halfling</halfling>
+  <treeman>Hombre Árbol</treeman>
+
+  <ogre>Ogro</ogre>
+
+  <skeleton>Esqueleto</skeleton>
+  <thro-ra>Thro-Ra</thro-ra>
+  <blitz-ra>Blitz-Ra</blitz-ra>
+  <throra>Thro-Ra</throra>
+  <blitzra>Blitz-Ra</blitzra>
+  <mummy>Momia</mummy>
+  <tombguardian>Guardián de la Tumba</tombguardian>
+
+  <skink>Eslizón</skink>
+  <saurus>Saurio</saurus>
+  <kroxigor>Króxigor</kroxigor>
+
+  <blackorcblocker>Defensa Orco Negro</blackorcblocker>
+
+  <zombie>Zombi</zombie>
+  <ghoul>Necrófago</ghoul>
+  <wight>Tumulario</wight>
+  <fleshgolem>Gólem de Carne</fleshgolem>
+  <werewolf>Hombre Lobo</werewolf>
+
+  <berserker>Berserker</berserker>
+  <ulfwerener>Hombre Lobo Nórdico</ulfwerener>
+  <snowtroll>Troll de las Nieves</snowtroll>
+
+  <rotter>Putrefactos</rotter>
+  <pestigor>Pestigor</pestigor>
+  <nurglewarrior>Guerreros de Nurgle</nurglewarrior>
+  <beastofnurgle>Bestia de Nurgle</beastofnurgle>
+
+  <underworldgoblin>Goblin del Inframundo</underworldgoblin>
+  <skavenlineman>Línea Skaven</skavenlineman>
+  <skaventhrower>Lanzador Skaven</skaventhrower>
+  <skavenblitzer>Blitzer Skaven</skavenblitzer>
+  <warpstonetroll>Troll de Piedra Bruja</warpstonetroll>
+
+  <snotling>Snotling</snotling>
+
+  <thrall>Siervo</thrall>
+  <vampire>Vampiro</vampire>
+
+  <gutterrunner>Corredor de Alcantarillas</gutterrunner>
+  <ratogre>Rata Ogro</ratogre>
+
+  <wardancer>Bailarín Guerrero</wardancer>
+  
+  <pitfighter>Luchador del Pozo</pitfighter>
+  <bloodletterdaemon>Desangradador</bloodletterdaemon>
+  <khorneherald>Heraldo de Khorne</khorneherald>
+  <bloodthirster>Devorador de Almas</bloodthirster>
+  
+  <bonobo>Bonobo</bonobo>
+  <orangutan>Orangután</orangutan>
+  <gorilla>Gorila</gorilla>
+  <chimpanzee>Chimpancé</chimpanzee>
+  <silverback>Espalda Plateada</silverback>
+</position>
+
+<skill>
+  <block>Placar</block>
+  <dauntless>Agallas</dauntless>
+  <dirtyplayer>Juego Sucio</dirtyplayer>
+  <fend>Zafarse</fend>
+  <frenzy>Furia</frenzy>
+  <kick>Patada</kick>
+  <kickoffreturn>Anticiparse</kickoffreturn>
+  <passblock>Bloquear Pase</passblock>
+  <pro>Profesional</pro>
+  <shadowing>Perseguir</shadowing>
+  <stripball>Robar Balón</stripball>
+  <surehands>Manos Seguras</surehands>
+  <tackle>Placaje Defensivo</tackle>
+  <wrestle>Forcejeo</wrestle>
+  <catch>Atrapar</catch>
+  <divingcatch>Recepción Heroica</divingcatch>
+  <divingtackle>Placaje Heroico</divingtackle>
+  <dodge>Esquivar</dodge>
+  <jumpup>En Pie de un Salto</jumpup>
+  <leap>Saltar</leap>
+  <sidestep>Echarse a un Lado</sidestep>
+  <sneakygit>Rastrero</sneakygit>
+  <sprint>Carrera</sprint>
+  <surefeet>Pies Firmes</surefeet>
+  <accurate>Precisión</accurate>
+  <dumpoff>Pase Precipitado</dumpoff>
+  <hailmarypass>Pase a lo Loco</hailmarypass>
+  <leader>Líder</leader>
+  <nervesofsteel>Nervios de Acero</nervesofsteel>
+  <pass>Pasar</pass>
+  <safethrow>Pase Seguro</safethrow>
+  <breaktackle>Abrirse Paso</breaktackle>
+  <grab>Apartar</grab>
+  <guard>Defensa</guard>
+  <juggernaut>Juggernaut</juggernaut>
+  <mightyblow>Golpe Mortífero</mightyblow>
+  <multipleblock>Placaje Múltiple</multipleblock>
+  <pilingon>Aplastar</pilingon>
+  <standfirm>Mantenerse Firme</standfirm>
+  <strongarm>Brazo Fuerte</strongarm>
+  <thickskull>Cabeza Dura</thickskull>
+  <bighand>Mano Grande</bighand>
+  <clawclaws>Garras</clawclaws>
+  <disturbingpresence>Presencia Perturbadora</disturbingpresence>
+  <extraarms>Brazos Adicionales</extraarms>
+  <foulappearance>Apariencia Asquerosa</foulappearance>
+  <horns>Cuernos</horns>
+  <prehensiletail>Cola Prensil</prehensiletail>
+  <tentacles>Tentáculos</tentacles>
+  <twoheads>Dos Cabezas</twoheads>
+  <verylonglegs>Piernas Muy Largas</verylonglegs>
+  <alwayshungry>Siempre Hambriento</alwayshungry>
+  <animosity>Animosidad</animosity>
+  <ballchain>Bola con Cadena</ballchain>
+  <bloodlust>Sed de Sangre</bloodlust>
+  <bombardier>Bombardero</bombardier>
+  <bonehead>Cabeza Hueca</bonehead>
+  <chainsaw>Sierra Mecánica</chainsaw>
+  <decay>Degenerar</decay>
+  <fanfavourite>Favorito del Público</fanfavourite>
+  <hypnoticgaze>Mirada Hipnótica</hypnoticgaze>
+  <loner>Solitario</loner>
+  <nohands>Sin Manos</nohands>
+  <nurglesrot>Putrefacción de Nurgle</nurglesrot>
+  <reallystupid>Realmente Estúpido</reallystupid>
+  <regeneration>Regeneración</regeneration>
+  <rightstuff>Agilidad Felina</rightstuff>
+  <secretweapon>Arma Secreta</secretweapon>
+  <stab>Puñal</stab>
+  <stakes>Estacas</stakes>
+  <stunty>Escurridizo</stunty>
+  <takeroot>Echar Raíces</takeroot>
+  <throwteammate>Lanzar Compañero de Equipo</throwteammate>
+  <titchy>Canijo</titchy>
+  <wildanimal>Animal Salvaje</wildanimal>
+</skill>
+
+<starplayer>
+    <barikfarblast>Barik Tirolargo</barikfarblast>
+    <berthabigfist>Bertha Puñogrande</berthabigfist>
+    <bomberdribblesnot>Bomber Regateasnotlings</bomberdribblesnot>
+    <boomereziasson>Boomer Eziasson</boomereziasson>
+    <brickfarthgrotty>Brick Far'th y Grotty</brickfarthgrotty>
+    <grottyincludedinbrickfarth>Grotty (junto con Brick Far'th)</grottyincludedinbrickfarth>
+    <countluthorvondrakenborg>Count Luthor Von Drakenborg</countluthorvondrakenborg>
+    <crazyigor>El Loco Igor</crazyigor>
+    <deeprootstrongbranch>Raizprofunda Ramafuerte</deeprootstrongbranch>
+    <dolfarlongstride>Dolfar Zancadalarga</dolfarlongstride>
+    <eldrilsidewinder>Eldril Serpiente</eldrilsidewinder>
+    <fezglitch>Fezglitch</fezglitch>
+    <flintchurnblade>Flint Filotriturador</flintchurnblade>
+    <fungustheloon>Fungus el Chiflado</fungustheloon>
+    <glartsmashripjr>Glart Machacarraja Jr.</glartsmashripjr>
+    <grashnakblackhoof>Grashnak Pezuñanegra</grashnakblackhoof>
+    <griffoberwald>Griff Oberwald</griffoberwald>
+    <grimironjaw>Grim Mandíbuladehierro</grimironjaw>
+    <hackenslash>Hack Enslash</hackenslash>
+    <hakflemskuttlespike>Hakflem Colapincho</hakflemskuttlespike>
+    <headsplitter>Aplastacráneos</headsplitter>
+    <helmutwulf>Helmut Wulf</helmutwulf>
+    <hemlock>Hemlock</hemlock>
+    <horkonheartripper>Horkon Arrancacorazones</horkonheartripper>
+    <htharktheunstoppable>Hthark el Imparable</htharktheunstoppable>
+    <hubrisrakarth>Hubris Rakarth</hubrisrakarth>
+    <humeruscarpal>Húmero Carpo</humeruscarpal>
+    <icepelthammerblow>Pieldehielo Golpedemartillo</icepelthammerblow>
+    <ithacabenoin>Ithaca Benoin</ithacabenoin>
+    <jearlice>J Orejapiojosa</jearlice>
+    <jordellfreshbreeze>Jordell Brisafresca</jordellfreshbreeze>
+    <lewdgripwhiparm>Abrazolascivo Brazolátigo</lewdgripwhiparm>
+    <lordborakthedespoiler>Lord Borak el Saqueador</lordborakthedespoiler>
+    <lottabottol>Mantapalos</lottabottol>
+    <maxspleenripper>Max Arrancabazos</maxspleenripper>
+    <mightyzug>Zug el Poderoso</mightyzug>
+    <morgnthorg>Morg 'N' Thorg</morgnthorg>
+    <nobblablackwart>Nobbla Verruganegra</nobblablackwart>
+    <princemoranion>Príncipe Moranion</princemoranion>
+    <puggybaconbreath>Puggy Alientodebacon</puggybaconbreath>
+    <quetzalleap>Quetzal Brinco</quetzalleap>
+    <ramtutiii>Ramtut III</ramtutiii>
+    <rashnakbackstabber>Rashnak Puñaladaatraición</rashnakbackstabber>
+    <ripper>Ripper</ripper>
+    <roxannadarknail>Roxanna Garraumbría</roxannadarknail>
+    <scrappasorehead>Scrappa Cabezadolorida</scrappasorehead>
+    <setekh>Setekh</setekh>
+    <silibili>Silibili</silibili>
+    <slibli>Slibli</slibli>
+    <sinnedbad>Sinnedbad</sinnedbad>
+    <skitterstabstab>Skitter Klava-Klava</skitterstabstab>
+    <soarenhightower>Soaren Torrealta</soarenhightower>
+    <ugrothbolgrot>Ugroth Bolgrot</ugrothbolgrot>
+    <varagghoulchewer>Varag Masticamuertos</varagghoulchewer>
+    <wilhelmchaney>Wilhelm Chaney</wilhelmchaney>
+    <willowrosebark>Willow Pielderosa</willowrosebark>
+    <zaratheslayer>Zara la Cazadora</zaratheslayer>
+    <zzhargmadeye>Zzharg Ojorrabioso</zzhargmadeye>
+</starplayer>
+
+<daysofweek>
+  <monday>Lunes</monday>
+  <tuesday>Martes</tuesday>
+  <wednesday>Miércoles</wednesday>
+  <thursday>Jueves</thursday>
+  <friday>Viernes</friday>
+  <saturday>Sábado</saturday>
+  <sunday>Domingo</sunday>
+</daysofweek>
+
+<months>
+  <january>Enero</january>
+  <february>Febrero</february>
+  <march>Marzo</march>
+  <april>Abril</april>
+  <may>Mayo</may>
+  <june>Junio</june>
+  <july>Julio</july>
+  <august>Agosto</august>
+  <september>Septiembre</september>
+  <october>Octubre</october>
+  <november>Noviembre</november>
+  <december>Diciembre</december>
+</months>
 
 </es-ES>
 
@@ -1762,17 +2107,17 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <yes>Oui</yes>
         <no>Non</no>
         <none>Rien</none>
-        <reset>Reset</reset>
+        <reset>Remise à zéro</reset>
         <lock>Verrouiller</lock>
         <locked>Verrouillé</locked>
-        <finished>Terminer</finished>
+        <finished>Terminé</finished>
         <unlock>Déverrouiller</unlock>
         <add>Ajouter</add>
         <remove>Retirer</remove>
         <next>Suivant</next>
         <previous>Précédent</previous>
         <name>Nom</name>
-        <status>Status</status>
+        <status>Statut</status>
         <desc>Description</desc>
         <upload>Upload</upload>
         <all>Tous</all>
@@ -1784,8 +2129,8 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <ach>Succès</ach>
         <page>Page</page>
         <retired>Retraite</retired>
-        <skills>Talents</skills>
-        <skill>Talent</skill>
+        <skills>Compétences</skills>
+        <skill>Compétence</skill>
         <injs>Blessures</injs>
         <pos>Position</pos>
         <price>Prix</price>
@@ -1833,8 +2178,8 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <draw>Nuls</draw>
         <streaks>Périodes</streaks>
         <played>Jouée</played>
-        <playedtours>Tours joués</playedtours>
-        <wontours>Tours gagnés</wontours>
+        <playedtours>Tournois joués</playedtours>
+        <wontours>Tournois gagnés</wontours>
         <ready>Prêt</ready>
         <dead>Mort</dead>
         <sold>Vendu</sold>
@@ -1862,8 +2207,8 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <sgrp>Groupe de stats</sgrp>
         <having>Avec</having>
 <!-- ES -->
-        <extrastats>Stats supplémentaires</extrastats>
-        <stat>Stat</stat>
+        <extrastats>Statistiques supplémentaires</extrastats>
+        <stat>Statistiques</stat>
 <!-- use "all-time" string from nodeSelect() translation -->
         <matchavg>Match&amp;nbsp;moy.</matchavg>
 </common>
@@ -1891,10 +2236,10 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <star_stn>Position de la Star</star_stn>
 </statistics_menu>
 <admin_menu>
-        <name>Admin</name>
+        <name>Administración</name>
         <nodes>Ligues, divisions, tournois</nodes>
-        <ct_man>Gérer: Coachs &amp; équipes</ct_man>
-        <usr_man>Gerer: Utilisateurs</usr_man>
+        <ct_man>Gérer : Coachs &amp; équipes</ct_man>
+        <usr_man>Gerer : Utilisateurs</usr_man>
         <import>Importer une équipe</import>
         <schedule>Planifier un match</schedule>
         <cpanel>OBBLM panneau principal</cpanel>
@@ -1969,7 +2314,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 </player>
 <team>
 <!-- sub secs. -->
-        <viewtoggle>Passer en vue Liste</viewtoggle>
+        <viewtoggle>Passer en vue liste</viewtoggle>
 <!-- Team management sec. -->
         <tmanage>Gestion d'équipe + info</tmanage>
 <!-- About sec. -->
@@ -1985,15 +2330,15 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 <!-- Star/merc HH secs. -->
 <!-- For the three team page boxes -->
 <box_info>
-        <title>Informations et stats sur l'équipe</title>
-        <ltour>Dernier&amp;nbsp;tour</ltour>
+        <title>Informations et statistiques sur l'équipe</title>
+        <ltour>Dernier tournoi</ltour>
 </box_info>
 <box_tm>
         <title>Gestion de l'équipe</title>
         <hire_player>Embaucher un joueur</hire_player>
         <hire_journeyman>Embaucher un journalier</hire_journeyman>
-        <fire_player>Virer un joueur</fire_player>
-        <unbuy_player>Désembaucher un joueur</unbuy_player>
+        <fire_player>Renvoyer un joueur</fire_player>
+        <unbuy_player>annuler l'achat d'un joueur</unbuy_player>
         <rename_player>Renommer un joueur</rename_player>
         <renumber_player>Re-numéroter un joueur</renumber_player>
         <rename_team>Renommer une équipe</rename_team>
@@ -2012,7 +2357,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 <desc>
         <hire_player> Embaucher un nouveau joueur.&lt;br&gt; Embaucher un journalier est gratuit, mais seule la position 0-16 est eligible. </hire_player>
         <hire_journeyman> Embaucher un des journaliers de l'équipe en tant que membre définitif. </hire_journeyman>
-        <fire_player> Virer un joueur. Remboursement de : </fire_player>
+        <fire_player> Renvoyer un joueur. Remboursement de : </fire_player>
         <unbuy_player> Erreur sur l'embauche d'un joueur. Rembourser à 100%.&lt;br&gt; Uniquement sur un joueur n'ayant jamais joué de match. </unbuy_player>
         <rename_player> Renommer un joueur. </rename_player>
         <renumber_player> Renuméroter un joueur. </renumber_player>
@@ -2021,29 +2366,29 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <buy_goods_warn> &lt;br&gt;&lt;br&gt;Notez que les relances d'équipes coutent le &lt;font color='red'&gt;&lt;b&gt;double&lt;/b&gt;&lt;/font&gt;.&lt;br&gt;Si vous souhaitez acheter une elance au prix de base, demandez à l'Administrateur un remboursement de la différence. </buy_goods_warn>
         <drop_goods> Se séparer de biens sans remboursement. </drop_goods>
         <ready_state> Cet attribut d'équipe indique que l'équipe accepte les matchs ou non. </ready_state>
-        <retire> Mise en retraite de l'équipe.&lt;br&gt;Une fois à la retraite, l'équipe n'est plus gérable.&lt;br&gt;Seul l'Admin peut remettre l'équipe en service actif. La mise à la retraite est immédiate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </retire>
+        <retire> Mise en retraite de l'équipe.&lt;br&gt;Une fois à la retraite, l'équipe n'est plus gérable.&lt;br&gt;Seul l'Administrateur peut remettre l'équipe en service actif. La mise à la retraite est immédiate mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </retire>
         <delete> Effacer l'équipe.&lt;br&gt;Pour le bien des statistiques, vous ne pouvez plus effacer d'équipe ayant joué un match. L'effacement est immédiat mais n'apparaitra qu'au prochain &lt;b&gt;rechargement de l'affichage&lt;/b&gt;. </delete>
 </desc>
 </box_tm>
 <box_admin>
-        <title>Outils d'Admin</title>
-        <unhire_journeyman>Désembaucher un Journalier</unhire_journeyman>
-        <unsell_player>Ré-embaucher un Joueur</unsell_player>
-        <unbuy_goods>Désacheter un bien d'équipe.</unbuy_goods>
+        <title>Outils d'Administration</title>
+        <unhire_journeyman>Désembaucher un journalier</unhire_journeyman>
+        <unsell_player>Ré-embaucher un joueur</unsell_player>
+        <unbuy_goods>Annuler les achats de bien d'équipe.</unbuy_goods>
         <bank>Compte en banque</bank>
         <spp>Gérer l'expérience bonus</spp>
         <dval>Gérer la valeur bonus des joueurs</dval>
-        <extra_skills>Gérer les talents suppl. des joueurs</extra_skills>
-        <ach_skills>Retirer des talents de joueurs</ach_skills>
+        <extra_skills>Gérer les compétences suppl. des joueurs</extra_skills>
+        <ach_skills>Retirer des compétences de joueurs</ach_skills>
 <desc>
-        <unhire_journeyman> Revenir sur l'embauche d'un journalier en tant que Joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
+        <unhire_journeyman> Revenir sur l'embauche d'un journalier en tant que joueur.&lt;br&gt; Ne fonctionne que sur les positions 0-16 de la fiche d'équipe. </unhire_journeyman>
         <unsell_player> Revenir sur le licenciement d'un joueur. </unsell_player> <unbuy_goods> Revenir sur l'achat de bien d'équipe. </unbuy_goods>
         <unbuy_goods>Revenir sur l'achat de biens d'équipe</unbuy_goods>
         <bank> Modifier la trésorerie d'équipe. </bank>
         <spp> Gérer l'éxperience bonus d'un Joueur. </spp>
         <dval> Changer la valeur d'un joueur d'un montant. </dval>
-        <extra_skills> Gérer les talents supplémentaires d'un joueur. </extra_skills>
-        <ach_skills> Retirer un talent selectionné. Cela permet de choisir un nouveau talent en remplacement. </ach_skills>
+        <extra_skills> Gérer les compétences supplémentaires d'un joueur. </extra_skills>
+        <ach_skills> Retirer une compétence selectionnée. Cela permet de choisir une compétence en remplacement. </ach_skills>
 </desc>
 </box_admin>
 </team>
@@ -2059,12 +2404,12 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
 <!-- none used - all are in "common". -->
 </tours>
 <usersched>
-        <selecttour>Selectionner un tournoi</selecttour>
+        <selecttour>Sélectionner un tournoi</selecttour>
 </usersched>
 <tourmatches>
 <roundtypes>
         <final>Finale</final>
-        <thirdPlayoff>Finale des perdants</thirdPlayoff>
+        <thirdPlayoff>Petite finale</thirdPlayoff>
         <semi>Demi-finale</semi>
         <quarter>Quart de finale</quarter>
         <rnd16>16eme de finale</rnd16>
@@ -2082,7 +2427,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <rnd11>Round 11</rnd11>
         <rnd12>Round 12</rnd12>
 </roundtypes>
-        <matchdelete>Êtes-vous sur(e) de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n\'a pas encore ete joué, cette action est IRREVERSIBLE et affectera tout les matchs suivants pour les deux equipes.\nIl est conseillé de n\'effacer un match que si vous êtes conscient des risques.</matchdelete>
+        <matchdelete>Êtes-vous sur(e) de vouloir EFFACER ce match?\n\nATTENTION:\nA part si le match n\'a pas encore ete joué, cette action est IRREVERSIBLE et affectera tous les matchs suivants pour les deux equipes.\nIl est conseillé de n\'effacer un match que si vous êtes conscient des risques.</matchdelete>
         <reset_notice>Êtes-vous sur(e) de vouloir REINITIALISER ce match?\n\nATTENTION:\nCette action est IRREVERSIBLE et affectera tous les matchs suivants pour les deux équipes.</reset_notice>
 </tourmatches>
 <!-- Subsection: match report(s) -->
@@ -2102,7 +2447,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <smp>Point de fair-play</smp>
         <pts>points</pts>
         <tcas>Pertes totales de l'équipe</tcas>
-        <fame>FAME</fame>
+        <fame>Popularité</fame>
         <tv>VE</tv>
         <summary>Compte-rendu du match</summary>
         <usedjourney>Le match ne peut pas être sauvegardé tant que vous ne décidez pas du sort des journaliers utilisés (page du roster de votre équipe)</usedjourney>
@@ -2128,10 +2473,10 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <prefixes>Les symboles + et - signifient moins de et plus de</prefixes>
 <!-- Subsec: Schedule matches -->
 <schedule>
-        <create_LD>Merci de créer une Ligue et une Division avant de prévoir des matchs</create_LD>
-        <tour_name>Nom du Tournoi</tour_name>
+        <create_LD>Merci de créer une ligue et une division avant de prévoir des matchs</create_LD>
+        <tour_name>Nom du tournoi</tour_name>
         <rank_sys>Méthode de Classement</rank_sys>
-        <sched_type>Planning</sched_type>
+        <sched_type>Calendrier</sched_type>
         <add_team>Ajouter une équipe</add_team>
         <teams_selected>Choisir une équipe</teams_selected>
 <!-- Tour Types (TT) -->
@@ -2170,7 +2515,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <skaven>Skaven</skaven>
         <woodelf>Elfe Sylvain</woodelf>
         <chaospact>Pacte du Chaos</chaospact>
-        <underworld>Monde souterrain</underworld>
+        <underworld>Bas fond</underworld>
         <slann>Slann</slann>
 </race>
 <position>
@@ -2184,7 +2529,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <marauder>Maraudeur</marauder>
         <goblinrenegade>Renégat Gobelin</goblinrenegade>
         <skavenrenegade>Renégat Skaven</skavenrenegade>
-        <darkelfrenegade>Renégat Elf Noir</darkelfrenegade>
+        <darkelfrenegade>Renégat Elfe Noir</darkelfrenegade>
         <chaostroll>Troll du Chaos</chaostroll>
         <chaosogre>Ogre du Chaos</chaosogre>
         <necromanticwerewolf>Loup-Garou nécromantique</necromanticwerewolf>
@@ -2203,7 +2548,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <goblin>Gobelin</goblin>
         <bombardier>Bombardier</bombardier>
         <pogoer>Bâton à ressort</pogoer>
-        <looney>Barjot</looney>
+        <looney>Fanatique</looney>
         <fanatic>Fanatique</fanatic>
         <troll>Troll</troll>
         <halfling>Halfling</halfling>
@@ -2219,7 +2564,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
         <kroxigor>Kroxigor</kroxigor>
         <blackorcblocker>Bloqueur Orc Noir</blackorcblocker>
         <zombie>Zombie</zombie>
-        <ghoul>Goules</ghoul>
+        <ghoul>Goule</ghoul>
         <wight>Revenant</wight>
         <fleshgolem>Golem de chair</fleshgolem>
         <werewolf>Loup-Garou</werewolf>
@@ -2270,7 +2615,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <surefeet>Équilibre</surefeet>
     <accurate>Précision</accurate>
     <dumpoff>Passe Rapide</dumpoff>
-    <hailmarypass>La Main de Dieu</hailmarypass>
+    <hailmarypass>Main de Dieu</hailmarypass>
     <leader>Chef</leader>
     <nervesofsteel>Nerfs d'Acier</nervesofsteel>
     <pass>Passe</pass>
@@ -2295,7 +2640,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <tentacles>Tentacules</tentacles>
     <twoheads>Deux Têtes</twoheads>
     <verylonglegs>Très Longues Jambes</verylonglegs>
-    <alwayshungry>Toujours Affamé</alwayshungry>
+    <alwayshungry>Toujours faim</alwayshungry>
     <animosity>Animosité</animosity>
     <ballchain>Chaîne et Boulet</ballchain>
     <bloodlust>Soif de Sang</bloodlust>
@@ -2327,7 +2672,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <bomberdribblesnot>Boomer Morvonez</bomberdribblesnot>
     <boomereziasson>Blam’ Eziasson</boomereziasson>
     <brickfarthgrotty>Pèt’Brik et Minab’</brickfarthgrotty>
-    <countluthorvondrakenborg>Compte Luthor Von Drakenborg</countluthorvondrakenborg>
+    <countluthorvondrakenborg>Comte Luthor Von Drakenborg</countluthorvondrakenborg>
     <crazyigor>Igor LeFou</crazyigor>
     <deeprootstrongbranch>Racine Dutronc</deeprootstrongbranch>
     <dolfarlongstride>Dolfar Long’jambes</dolfarlongstride>
@@ -2335,8 +2680,8 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <fezglitch>Fezglish</fezglitch>
     <flintchurnblade>Tronçonneuse Flint</flintchurnblade>
     <fungustheloon>Fungus le Cingle</fungustheloon>
-    <glartsmarchripjr>Glart Lavollée Jr.</glartsmarchripjr>
-    <grashnakblackhoof>Grashnak Noirsabo</grashnakblackhoof>
+    <glartsmashripjr>Glart Lavollée Jr.</glartsmashripjr>
+    <grashnakblackhoof>Grashnak Noirsabots</grashnakblackhoof>
     <griffoberwald>Griff Oberwald</griffoberwald>
     <grimironjaw>Grim Croc d'Acier</grimironjaw>
     <hackenslash>Hack l’Étripeur</hackenslash>
@@ -2357,7 +2702,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <lottabottol>Boutaïdo</lottabottol>
     <maxspleenripper>Max Éclaterate</maxspleenripper>
     <mightyzug>Zug la Bete</mightyzug>
-    <morgnthrog>Morg 'N'Thorg</morgnthrog>
+    <morgnthorg>Morg 'N'Thorg</morgnthorg>
     <nobblablackwart>Nobbla la Teigne</nobblablackwart>
     <princemoranion>Prince Moranion</princemoranion>
     <puggybaconbreath>Puggy Haleinedebacon</puggybaconbreath>
@@ -2375,7 +2720,7 @@ to translate. ! DO NOT CHANGE ORDER OF THE STRINGS OR ADD CUSTOM STRINGS !
     <ugrothbolgrot>Ugroth Tranchegrots</ugrothbolgrot>
     <varagghoulchewer>Varag Mache Goule</varagghoulchewer>
     <wilhelmchaney>Wilhelm Chaney</wilhelmchaney>
-    <wilowrosebark>Willow Teinrose</wilowrosebark>
+    <willowrosebark>Willow Teinrose</willowrosebark>
     <zaratheslayer>Zara la tueuse</zaratheslayer>
     <zzhargmadeye>Zzharg Le Borgne</zzhargmadeye>
 </starplayer>

@@ -138,22 +138,20 @@ private function _menu($ALLOW_EDIT)
     global $lng, $settings, $rules;
     $url = urlcompile(T_URL_PROFILE,T_OBJ_COACH,$this->coach_id,false,false);
     ?>
-    <br>
-    <ul id="nav" class="dropdown dropdown-horizontal" style="position:static; z-index:0;">
+    <ul id="css3menu1" class="menu" style="z-index:0">
         <li><a href="<?php echo $url.'&amp;subsec=teams';?>"><?php echo $lng->getTrn('cc/coach_teams');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=profile';?>"><?php echo $lng->getTrn('cc/profile');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=stats';?>"><?php echo $lng->getTrn('common/stats');?></a></li>
         <li><a href="<?php echo $url.'&amp;subsec=recentmatches';?>"><?php echo $lng->getTrn('common/recentmatches');?></a></li>
         <?php
         if ($ALLOW_EDIT) {
-            ?><li><a href="<?php echo $url.'&amp;subsec=newteam';?>"><?php echo $lng->getTrn('cc/new_team');?></a></li><?php
+            ?><li><a href="handler.php?type=teamcreator"><?php echo $lng->getTrn('cc/new_team');?></a></li><?php
         }
         if (Module::isRegistered('SGraph')) {
             echo "<li><a href='handler.php?type=graph&amp;gtype=".SG_T_COACH."&amp;id=$this->coach_id'>Vis. stats</a></li>\n";
         }
         ?>
     </ul>
-    <br><br>
     <?php
 }
 
@@ -270,7 +268,6 @@ private function _CCprofile($ALLOW_EDIT)
             case 'chmail':      status($this->setMail($_POST['new_email'])); break;
             case 'chlogin':     status($this->setName($_POST['new_name'])); break;
             case 'chname':      status($this->setRealName($_POST['new_realname'])); break;
-            case 'chtheme':     status($this->setSetting('theme', (int) $_POST['new_theme'])); break;
             case 'chlang':      status($this->setSetting('lang', $_POST['new_lang'])); break;
             case 'chhomelid':   status(isset($_POST['new_homelid']) && get_alt_col('leagues', 'lid', (int) $_POST['new_homelid'], 'lid') && $this->setSetting('home_lid', $_POST['new_homelid'])); break;
 
@@ -367,24 +364,6 @@ private function _CCprofile($ALLOW_EDIT)
                 <td><?php echo $lng->getTrn('cc/new');?>:<input type='text' name='new_realname' size="20" maxlength="50"></td>
                 <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chname');?>"></td>
                 <input type='hidden' name='type' value='chname'>
-                </form>
-            </tr>
-            <tr>
-                <form method="POST">
-                <td><?php echo $lng->getTrn('cc/chtheme');?>:</td>
-                <td><?php echo $lng->getTrn('cc/current');?>: <?php echo $this->settings['theme'];?></td>
-                <td>
-                    <?php echo $lng->getTrn('cc/new');?>:
-                    <select name='new_theme'>
-                        <?php
-                        foreach (array(1 => 'Classic') as $theme => $desc) {
-                            echo "<option value='$theme'>$theme: $desc</option>\n";
-                        }
-                        ?>
-                    </select>
-                </td>
-                <td><input type="submit" name="button" value="<?php echo $lng->getTrn('cc/chtheme');?>"></td>
-                <input type='hidden' name='type' value='chtheme'>
                 </form>
             </tr>
             <tr>
@@ -570,4 +549,3 @@ private function _recentGames()
 }
 
 }
-

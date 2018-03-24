@@ -26,8 +26,6 @@ require('header.php'); // Includes and constants.
 if (!isset($_GET['type']))
     fatal("Sorry. Don't know what to do. Please specify 'type' via GET.");
 
-$COACH_IS_ADMIN = (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN);
-
 switch ($_GET['type'])
 {
     /* PDF-roster */
@@ -72,22 +70,22 @@ switch ($_GET['type'])
 
     /* Hall of fame */
     case 'hof':
-        Module::run('HOF', array('makeList', $COACH_IS_ADMIN));
+        Module::run('HOF', array('makeList'));
         break;
 
     /* Famous Teams */
     case 'famousteams':
-        Module::run('FamousTeams', array('makeList', $COACH_IS_ADMIN));
+        Module::run('FamousTeams', array('makeList'));
         break;
 
     /* Wanted */
     case 'wanted':
-        Module::run('Wanted', array('makeList', $COACH_IS_ADMIN));
+        Module::run('Wanted', array('makeList'));
         break;
 
     /* Prizes */
     case 'prize':
-        Module::run('Prize', array('makeList', $COACH_IS_ADMIN));
+        Module::run('Prize', array('makeList'));
         break;
 
     /* Gallery */
@@ -109,6 +107,17 @@ switch ($_GET['type'])
     /* Conference */
     case 'conference':
         Module::run('Conference', array('conferenceAdmin'));
+        break;
+
+
+    /* Team Creator */
+    case 'teamcreator':
+        Module::run('TeamCreator', array('teamCreator'));
+        break;
+
+    /* League Preferences */
+    case 'leaguepref':
+        Module::run('LeaguePref', array('showLeaguePreferences'));
         break;
 
     /* Name autocompletion - AJAX */

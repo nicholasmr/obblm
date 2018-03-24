@@ -3,6 +3,8 @@
 // DO NOT DELETE THIS FILE!!!
 // Use this local settigns file for leagues which have no local settings file.
 
+$settings['banner_title']    = 'No settings file exists for the selected league';
+$settings['banner_subtitle'] = 'No settings file exists for the selected league';
 $settings['league_name']   = 'No settings file exists for the selected league';
 $settings['league_url']      = '';
 $settings['league_url_name'] = 'League URL disabled';

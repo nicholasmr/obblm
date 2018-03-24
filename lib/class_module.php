@@ -87,7 +87,7 @@ class Module
         foreach (self::$modules[$class]['filesRunTime'] as $file) {require_once(self::MOD_RPATH . $file);} # Load module files.
         $module = array_merge(self::$modules[$class], call_user_func(array($class, 'getModuleAttributes'))); # Shortcut.
         global $coach; # Used for fetching stylesheet.
-        if ($module['setCanvas']) {HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : false);}
+        if ($module['setCanvas']) {HTMLOUT::frame_begin();}
         // Test if module implements the required interface.
         $reflection = new ReflectionClass($class);
         if (!$reflection->implementsInterface($modIntf = 'ModuleInterface')) {fatal("Module registered by class name '$class' does not implement the interface '$modIntf'");}
@@ -145,7 +145,7 @@ class Module
     private static $TRIGGER_CNT = 1;
     const TRIGGER_TYPE_PREFIX = 'T_TRIGGER_'; # Ex T_TRIGGER_MATCH_SAVE
     
-    public static function runTriggers($type, array $argv)
+    public static function runTriggers($type, array $argv = null)
     {
         foreach (array_keys(self::$modules) as $class) {
             call_user_func(array($class, 'triggerHandler'), $type, $argv);
@@ -166,7 +166,7 @@ class Module
 }
 
 // Register core triggers.
-foreach (array('MATCH_CREATE', 'MATCH_SAVE', 'MATCH_DELETE', 'MATCH_RESET') as $name) {
+foreach (array('MATCH_CREATE', 'MATCH_SAVE', 'MATCH_DELETE', 'MATCH_RESET', 'BEFORE_PAGE_RENDER') as $name) {
     Module::registerTrigger($name);
 }
 

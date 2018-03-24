@@ -573,7 +573,7 @@ public static function report() {
     <tr><td><b><?php echo $lng->getTrn('common/dateplayed');?></b>:</td><td colspan="3"><?php   echo ($m->is_played) ? textdate($m->date_played) : '<i>'.$lng->getTrn('matches/report/notplayed').'</i>';?></td></tr>
     <?php
     if (Module::isRegistered('PDFMatchReport')) {
-        $str = '<a href="handler.php?type=pdfmatchreport&amp;tid1='.$team1->team_id.'&amp;tid2='.$team2->team_id.'&amp;mid='.$m->match_id.'">Download PDF report</a>';
+        $str = '<a href="handler.php?type=pdfmatchreport&amp;tid1='.$team1->team_id.'&amp;tid2='.$team2->team_id.'&amp;mid='.$m->match_id.'" TARGET="_blank">Download PDF report</a>';
         echo "<tr><td><b>Match report</b>:</td><td>$str</td></tr>";
     }
     if (Module::isRegistered('UPLOAD_BOTOCS')) {
@@ -663,7 +663,7 @@ public static function report() {
                 echo "<tr>\n";
                 echo "<td>".${"teamUrl$N"}."</td>\n";
                 echo "<td><input type='text' onChange='numError(this);' name='result$N' value='".((int) $m->{"team${N}_score"})."' size='1' maxlength='2' $DIS></td>\n";
-                echo "<td><input type='text' onChange='numError(this);' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
+                echo "<td><input type='text' onChange='numErrorAllowNegative(this);' name='inc$N' value='".(((int) $m->{"income$N"})/1000)."' size='4' maxlength='4' $DIS>k</td>\n";
                 echo "<td>";
                 foreach (array('1' => 'green', '0' => 'blue', '-1' => 'red') as $Nff => $color) {
                     echo "<input $DIS type='radio' name='ff$N' value='$Nff' ".(($m->{"ffactor$N"} == (int) $Nff) ? 'CHECKED' : '')."><font color='$color'><b>$Nff</b></font>";
@@ -732,7 +732,7 @@ public static function report() {
                 elseif ($status == MNG)                         {$bgcolor = COLOR_HTML_MNG;             $NORMSTAT = false;}
                 elseif ($p->mayHaveNewSkill())                  {$bgcolor = COLOR_HTML_NEWSKILL;        $NORMSTAT = false;}
                 else {$bgcolor = false;}
-                self::_print_player_row($p->player_id, $p->name, $p->nr, $lng->getTrn('position/'.strtolower($lng->FilterPosition($p->position))).(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
+                self::_print_player_row($p->player_id, '<a href="index.php?section=objhandler&type=1&obj=1&obj_id='.$p->player_id.'">'.$p->name.'</a>', $p->nr, $lng->getTrn('position/'.strtolower($lng->FilterPosition($p->position))).(($status == MNG) ? '&nbsp;[MNG]' : ''),$bgcolor, $mdat, $DIS || ($status == MNG));
             }
             echo "</table>\n";
             echo "<br>\n";
@@ -999,7 +999,16 @@ public static function userSched() {
                 'round'     => $round,
                 'f_tour_id' => $trid,
             ));
-            status(!$exitStatus, $exitStatus ? Match::$T_CREATE_ERROR_MSGS[$exitStatus] : "<a href='index.php?section=matches&amp;type=report&amp;mid=$mid'>Click here</a> to open the match report");
+            
+            $backFromMatchLink = 
+                Mobile::isMobile() 
+                    ? "index.php?mobile=1"
+                    : "index.php?section=matches&amp;type=report&amp;mid=$mid";
+            
+            status(!$exitStatus, 
+                $exitStatus 
+                    ? Match::$T_CREATE_ERROR_MSGS[$exitStatus] 
+                    : "<a href='$backFromMatchLink'>Click here</a> to open the match report");
             if (!$exitStatus) {
                 echo "<br>";
             }
@@ -1023,10 +1032,10 @@ public static function userSched() {
     <div class='boxCommon'>
         <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $lng->getTrn('menu/matches_menu/usersched');?></h3>
         <div class='boxBody'>
-            <form method="POST">
+            <form method="POST" id="usersched">
                 <?php 
                 echo "In tournament "; 
-                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'index.php?section=matches&type=usersched&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
+                echo HTMLOUT::nodeList(T_NODE_TOURNAMENT,'trid',array(T_NODE_TOURNAMENT => array('locked' => 0, 'type' => TT_FFA, 'allow_sched' => 1)), array(), array('sel_id' => $trid, 'extra_tags' => array('onChange="document.location.href = \'' . getFormAction('?section=matches&type=usersched') . '&trid=\' + $(this).val();"' ), 'init_option' => '<option value="0">- '.$lng->getTrn('matches/usersched/selecttour')." -</option>\n"));
                 echo ' as ';
                 echo '<select name="round" id="round" '.$_DISABLED.'>';
                 $T_ROUNDS = Match::getRounds();
@@ -1072,6 +1081,10 @@ public static function userSched() {
                 </script>
                 <br><br><br>
                 <input type="submit" name="creategame" value="<?php echo $lng->getTrn('menu/matches_menu/usersched');?>" <?php if (empty($teams) || $_DISABLED) echo 'DISABLED';?>>
+                
+                <?php if(Mobile::isMobile()) {
+                    echo '<a href="' . getFormAction('') . '">' . $lng->getTrn('common/back') . '</a>';
+                } ?>
             </form>
         </div>
     </div>

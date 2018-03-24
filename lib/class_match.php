@@ -112,7 +112,13 @@ class Match
         $result = mysql_query($query);
         foreach (mysql_fetch_assoc($result) as $col => $val) {
             $this->$col = $val;
-        }                
+        }
+
+        $tvQuery = "SELECT t1.tv as 'team1_tv', t2.tv as 'team2_tv' FROM teams as t1, teams as t2 WHERE t1.team_id = $this->team1_id AND t2.team_id = $this->team2_id";
+        $tvResult = mysql_query($tvQuery);
+        foreach(mysql_fetch_assoc($tvResult) as $col => $tv) {
+            $this->$col = $tv;
+        }
 
         // Determine winner's team ID.
         if ($this->team1_score > $this->team2_score) {
@@ -197,6 +203,45 @@ class Match
         Module::runTriggers(T_TRIGGER_MATCH_RESET, array($this->match_id));
         
         return $status;
+    }
+    
+    public function updatePartial(array $input) {
+        if(!isset($input['submitter_id']))
+            return false;
+
+        // Input check.
+        if ($this->locked || !get_alt_col('coaches', 'coach_id', $input['submitter_id'], 'coach_id')) # If invalid submitter ID (coach ID) then quit.
+            return false;
+
+        // Determine if team fan-factors are within the "> 0" limit. If not, don't save the negative fan-factor.
+        if(isset($input['ffactor1'])) {
+            $team1 = new Team($this->team1_id);
+            if ($team1->rg_ff - $this->ffactor1 + $input['ffactor1'] < 0) 
+                $input['ffactor1'] = $this->ffactor1;
+        }
+        
+        if(isset($input['ffactor2'])) {
+            $team2 = new Team($this->team2_id);
+            if ($team2->rg_ff - $this->ffactor2 + $input['ffactor2'] < 0) 
+                $input['ffactor2'] = $this->ffactor2;
+        }
+
+        // Entry corrections
+        $input['date_played'] = ($this->is_played) ? 'date_played' : 'NOW()';
+        $input['date_modified'] = 'NOW()';
+
+        // Update match entry.
+        $query = "UPDATE matches SET ".array_strpack_assoc('%k = %v',$input,',')." WHERE match_id = $this->match_id";
+        if (!mysql_query($query))
+            return false;
+            
+        // Update team treasury
+        if(isset($input['income1']))
+            $team1->dtreasury($input['income1'] - $this->income1);
+        if(isset($input['income2']))
+            $team2->dtreasury($input['income2'] - $this->income2);
+
+        return true;
     }
 
     public function update(array $input) {

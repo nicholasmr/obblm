@@ -318,6 +318,23 @@ class Team
         }
     }
 
+	public function setff_bought($integer) {
+
+        /**
+         * Set team's bought fan factor
+         **/
+        $integer = intval(max($integer,0));
+
+        $query = "UPDATE teams SET ff_bought = $integer WHERE team_id = $this->team_id";
+        if (mysql_query($query)) {
+            $this->ff_bought+= $integer;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public function setReady($bool) {
 
         mysql_query("UPDATE teams SET rdy = ".(($bool) ? 1 : 0)." WHERE team_id = $this->team_id");
@@ -474,6 +491,13 @@ class Team
     // Run this after having imported THIS team.
     public function postImportSync() {
         return mysql_query("CALL match_sync(0,0,$this->team_id,$this->team_id,0)");
+    }
+    
+    public function allowEdit() {
+        global $coach;
+        return is_object($coach) 
+            && ($this->owned_by_coach_id == $coach->coach_id || $coach->mayManageObj(T_OBJ_TEAM, $this->team_id)) 
+            && !$this->is_retired;
     }
 
     /***************

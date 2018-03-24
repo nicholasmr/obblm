@@ -108,7 +108,24 @@ public static function getModuleTables()
 
 public static function getModuleUpgradeSQL()
 {
-    return array();
+    return array(
+        '096-097' => array(
+            'CREATE TABLE IF NOT EXISTS conferences
+            (
+                conf_id         MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                f_tour_id       MEDIUMINT UNSIGNED NOT NULL,
+                name            VARCHAR(60),
+                type            TINYINT UNSIGNED,
+                date_created    DATETIME
+            )',
+            'CREATE TABLE IF NOT EXISTS conference_teams
+            (
+                f_conf_id       MEDIUMINT UNSIGNED NOT NULL,
+                f_tour_id       MEDIUMINT UNSIGNED NOT NULL,
+                primary key     (f_conf_id, f_tour_id)
+            )'            
+        ),
+    );
 }
 
 public static function triggerHandler($type, $argv){
@@ -301,7 +318,6 @@ public static function tournamentSelector($tour_id) {
 
 /* Main function for displaying conference administration page */
 public static function conferenceAdmin() {
-	LeagueTables::styles();
     global $lng, $tours, $coach;
     title($lng->getTrn('name', 'Conference'));
     self::handleActions();

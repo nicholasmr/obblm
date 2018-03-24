@@ -244,14 +244,19 @@ public static function main($argv)
  ***************/
 
 // Main prizes page.
-public static function makeList($ALLOW_EDIT)
+public static function makeList()
 {
     
     global $lng, $coach, $settings;
-    HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
+    HTMLOUT::frame_begin(); # Make page frame, banner and menu.
+    
+    title($lng->getTrn('name', __CLASS__));
+    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
+    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
+
+    $ALLOW_EDIT = (is_object($coach) && $coach->isNodeCommish($sel_node, $sel_node_id));
     
     /* A new entry was sent. Add it to system */
-    
     if ($ALLOW_EDIT && isset($_POST['tid']) && isset($_POST['trid'])) {
         if (get_magic_quotes_gpc()) {
             $_POST['title'] = stripslashes($_POST['title']);
@@ -264,12 +269,9 @@ public static function makeList($ALLOW_EDIT)
                 break;
         }
     }
-    title($lng->getTrn('name', 'Prize'));
     
     /* Was a request for a new entry made? */ 
-    
     if (isset($_GET['action']) && $ALLOW_EDIT) {
-        
         switch ($_GET['action'])
         {
             case 'delete':
@@ -333,13 +335,11 @@ public static function makeList($ALLOW_EDIT)
         }
     }
     
-    /* Print the prizes */
-    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
-    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
     if ($ALLOW_EDIT) {
         echo "<br><a href='handler.php?type=prize&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
+    /* Print the prizes */
     self::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
     HTMLOUT::frame_end();
 }

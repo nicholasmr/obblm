@@ -207,13 +207,17 @@ public static  function isWanted($pid)
     return (($result = mysql_query($query)) && mysql_num_rows($result) > 0);
 }
 
-public static function makeList($ALLOW_EDIT) {
-
+public static function makeList() {
     global $lng, $coach, $settings;
-    HTMLOUT::frame_begin(is_object($coach) ? $coach->settings['theme'] : $settings['stylesheet']); # Make page frame, banner and menu.
+    HTMLOUT::frame_begin(); # Make page frame, banner and menu.
+    
+    title($lng->getTrn('name', __CLASS__));
+    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
+    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
+
+    $ALLOW_EDIT = (is_object($coach) && $coach->isNodeCommish($sel_node, $sel_node_id));
     
     /* A new entry was sent. Add it to system */
-    
     if (isset($_POST['player_id']) && $ALLOW_EDIT) {
         if (get_magic_quotes_gpc()) {
             $_POST['bounty'] = stripslashes($_POST['bounty']);
@@ -231,7 +235,6 @@ public static function makeList($ALLOW_EDIT) {
                 break;
         }
     }
-    title($lng->getTrn('name', __CLASS__));
     
     /* Was a request for a new entry made? */ 
     
@@ -285,7 +288,7 @@ public static function makeList($ALLOW_EDIT) {
                 <form method="POST">
                 <b><?php echo $lng->getTrn('player', __CLASS__).'</b>&nbsp;&mdash;&nbsp;'.$lng->getTrn('sort_hint', __CLASS__);?><br>
                 <?php
-                $query = "SELECT player_id, f_tname, name FROM players, mv_players WHERE player_id = f_pid AND f_lid = $node_id ORDER by f_tname ASC, name ASC";
+                $query = "SELECT DISTINCT player_id, f_tname, name FROM players, mv_players WHERE player_id = f_pid AND f_lid = $node_id ORDER by f_tname ASC, name ASC";
                 $result = mysql_query($query);
                 if ($result && mysql_num_rows($result) == 0) {
                     $_DISABLED = 'DISABLED';
@@ -316,15 +319,12 @@ public static function makeList($ALLOW_EDIT) {
 
         }
     }
-
-    /* Print the wanted players */
     
-    echo $lng->getTrn('desc', __CLASS__)."<br><br>\n";
-    list($sel_node, $sel_node_id) = HTMLOUT::nodeSelector(array());
     if ($ALLOW_EDIT) {
         echo "<br><a href='handler.php?type=wanted&amp;action=new'>".$lng->getTrn('new', __CLASS__)."</a><br>\n";
     }
     
+    /* Print the wanted players */
     self::printList($sel_node, $sel_node_id, $ALLOW_EDIT);
     HTMLOUT::frame_end();
 }

@@ -85,7 +85,7 @@ $DEA['Chaos Pact'] = array (
     				'doub'		=> array ('A'),
     				'qty'			  => 12,
     				'cost'			  => 50000,
-    				'icon'			  => 'nlineman1an',
+    				'icon'			  => 'marauder1',
     			    'pos_id'          => 210,
   			),
   			'Goblin Renegade'	=> array (
@@ -98,7 +98,7 @@ $DEA['Chaos Pact'] = array (
     				'doub'		=> array ('G', 'S', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 40000,
-    				'icon'			  => 'goblin1an',
+    				'icon'			  => 'gobrenegade1',
     			    'pos_id'          => 211,
   			),
   			'Skaven Renegade'	=> array (
@@ -111,7 +111,7 @@ $DEA['Chaos Pact'] = array (
     				'doub'		=> array ('A', 'S', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 50000,
-    				'icon'			  => 'sklineman1an',
+    				'icon'			  => 'skavenrenegade1',
     			    'pos_id'          => 212,
   			),
   			'Dark Elf Renegade'	=> array (
@@ -124,7 +124,7 @@ $DEA['Chaos Pact'] = array (
     				'doub'		=> array ('S', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 70000,
-    				'icon'			  => 'delineman1an',
+    				'icon'			  => 'delfrenegade1',
     			    'pos_id'          => 213,
   			),
   			'Chaos Troll'	=> array (
@@ -137,7 +137,7 @@ $DEA['Chaos Pact'] = array (
     				'doub'		=> array ('G', 'A', 'M', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 110000,
-    				'icon'			  => 'troll1an',
+    				'icon'			  => 'chaostroll1',
     			    'pos_id'          => 214,
   			),
   			'Chaos Ogre'	=> array (
@@ -150,7 +150,7 @@ $DEA['Chaos Pact'] = array (
     				'doub'		=> array ('G', 'A', 'M', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 140000,
-    				'icon'			  => 'ogre4an',
+    				'icon'			  => 'pact_ogre1',
     			    'pos_id'          => 215,
   			),
   			'Minotaur'	=> array (
@@ -163,7 +163,7 @@ $DEA['Chaos Pact'] = array (
     				'doub'		=> array ('G', 'A', 'M', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 150000,
-    				'icon'			  => 'minotaur2an',
+    				'icon'			  => 'minotaur1',
     			    'pos_id'          => 216,
   			)
     )
@@ -186,7 +186,7 @@ $DEA['Slann'] = array (
     				'doub'		=> array ('A', 'S', 'P'),
     				'qty'			  => 16,
     				'cost'			  => 60000,
-    				'icon'			  => 'lmskink2an',
+    				'icon'			  => 'slannlino1',
     			    'pos_id'          => 220,
   			),
   			'Catcher'	=> array (
@@ -199,7 +199,7 @@ $DEA['Slann'] = array (
     				'doub'		=> array ('S', 'P'),
     				'qty'			  => 4,
     				'cost'			  => 80000,
-    				'icon'			  => 'lmskink1an',
+    				'icon'			  => 'slanncatcher1',
     			    'pos_id'          => 221,
   			),
   			'Blitzer'	=> array (
@@ -212,7 +212,7 @@ $DEA['Slann'] = array (
     				'doub'		=> array ('P'),
     				'qty'			  => 4,
     				'cost'			  => 110000,
-    				'icon'			  => 'lmskink1ban',
+    				'icon'			  => 'slannblitzer1',
     			    'pos_id'          => 222,
   			),
   			'Kroxigor'	=> array (
@@ -225,7 +225,7 @@ $DEA['Slann'] = array (
     				'doub'		=> array ('G', 'A', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 140000,
-    				'icon'			  => 'kroxigor1an',
+    				'icon'			  => 'slannkrox1',
     			    'pos_id'          => 223,
   			)
     )
@@ -248,7 +248,7 @@ $DEA['Underworld'] = array (
     				'doub'		=> array ('G', 'S', 'P'),
     				'qty'			  => 12,
     				'cost'			  => 40000,
-    				'icon'			  => 'goblin1an',
+    				'icon'			  => 'uwgoblin1',
     			    'pos_id'          => 230,
   			),
   			'Skaven Lineman'	=> array (
@@ -261,7 +261,7 @@ $DEA['Underworld'] = array (
     				'doub'		=> array ('A', 'S', 'P'),
     				'qty'			  => 2,
     				'cost'			  => 50000,
-    				'icon'			  => 'sklineman1an',
+    				'icon'			  => 'sklineman1',
     			    'pos_id'          => 231,
   			),
   			'Skaven Thrower'	=> array (
@@ -274,7 +274,7 @@ $DEA['Underworld'] = array (
     				'doub'		=> array ('A', 'S'),
     				'qty'			  => 2,
     				'cost'			  => 70000,
-    				'icon'			  => 'skthrower1an',
+    				'icon'			  => 'skthrower1',
     			    'pos_id'          => 232,
   			),
   			'Skaven Blitzer'	=> array (
@@ -287,7 +287,7 @@ $DEA['Underworld'] = array (
     				'doub'		=> array ('A', 'P'),
     				'qty'			  => 2,
     				'cost'			  => 90000,
-    				'icon'			  => 'skstorm1an',
+    				'icon'			  => 'skstorm1',
     			    'pos_id'          => 233,
   			),
   			'Warpstone Troll'	=> array (
@@ -300,7 +300,7 @@ $DEA['Underworld'] = array (
     				'doub'		=> array ('G', 'A', 'P'),
     				'qty'			  => 1,
     				'cost'			  => 110000,
-    				'icon'			  => 'troll1an',
+    				'icon'			  => 'warptroll1',
     			    'pos_id'          => 234,
   			)
     )
