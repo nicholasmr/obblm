@@ -1,7 +1,7 @@
 <?php
 require("header.php");
 
-$_VISSTATE['COOCKIE'] = Coach::cookieLogin(); # If not already logged in then check for login-cookie and try to log in using the stored credentials.
+$_VISSTATE['COOKIE'] = Coach::cookieLogin(); # If not already logged in then check for login-cookie and try to log in using the stored credentials.
 
 if (!Coach::isLoggedIn())
     die("You must be logged into OBBLM to use this webservice.");
@@ -124,5 +124,3 @@ if($action == "update") {
     
     echo json_encode($playerEntries);
 }
-
-?>

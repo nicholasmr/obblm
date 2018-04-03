@@ -1,4 +1,5 @@
 <?php
+
 $_SHOW = array(T_NODE_LEAGUE, T_NODE_DIVISION, T_NODE_TOURNAMENT);
 if (isset($_GET['node']) && in_array($_GET['node'], $_SHOW)) {
     $_SHOW = array($_GET['node']);
@@ -16,8 +17,7 @@ if (isset($_POST['type'])) {
        ) {
         status(false, 'You do not have permissions to administrate the chosen node');
         $_POST['type'] = 'QUIT';
-    }
-    else {
+    } else {
         $l = (isset($_POST['lid'])) ? new League($_POST['lid']) : null;
         $d = (isset($_POST['did'])) ? new Division($_POST['did']) : null;
         $t = (isset($_POST['trid'])) ? new Tour($_POST['trid']) : null;
@@ -48,8 +48,7 @@ if (isset($_POST['type'])) {
 			$lid = $divisions[$input['did']]['f_lid'];
 			if (strlen($input['name']) == 0) {
 		        status(false, 'You must enter a name for the tournament.');
-            }
-            else {
+            } else {
 				status(Tour::create($input));
 				if (isset($_POST['locked'])) {
 				    // N/A, locked for new_toursnament type
@@ -80,6 +79,7 @@ if (isset($_POST['type'])) {
 title($lng->getTrn('menu/admin_menu/nodes'));
 
 ?>
+<!-- Following HTML from ./admin/admin_nodes.php -->
 <b>Please note:</b> When deleting any node (i.e. tournaments, divisions or leagues) a "syncAll()" re-synchronisation should be run afterwards from the <a href='index.php?section=admin&amp;subsec=cpanel'>OBBLM core panel</a>.
 <table>
     <?php
@@ -344,4 +344,3 @@ title($lng->getTrn('menu/admin_menu/nodes'));
     }
     ?>
 </table>
-<?php

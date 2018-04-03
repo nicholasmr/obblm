@@ -1,28 +1,6 @@
 <?php
 
-/*
- *  Copyright (c) Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2010. All Rights Reserved.
- *
- *
- *  This file is part of OBBLM.
- *
- *  OBBLM is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  OBBLM is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
 function aasort(&$array, $args) {
-
     $sort_rule = ""; # Must be initialized in outer scope.
     foreach($args as $arg) {
         $order_field = substr($arg, 1, strlen($arg));
@@ -36,12 +14,10 @@ function aasort(&$array, $args) {
 
 // Sorts array of objects by common object properties. 
 // Usage: objsort($obj_array, array('+X', '-Y')) ...to sort objects by X ascending followed by Y descending.
-function objsort(&$obj_array, $fields)
-{
+function objsort(&$obj_array, $fields) {
     $idxs = count($fields)-1;   # Number of fields to sort by.
     $func = 'return ';          # Anonymous function used for sorting the object array.
     $parens = 0;                # Number of parentheses added to end of anonymous function.
-    
     for ($i = 0; $i <= $idxs; $i++) {
         $field = substr($fields[$i], 1, strlen($fields[$i]));
         $sort_type = substr($fields[$i], 0, 1);
@@ -52,22 +28,18 @@ function objsort(&$obj_array, $fields)
                         ? -1 
                         : " . ($i == $idxs ? '0' : '(');
     }
-
     $func .= str_repeat(')', $parens) . ';';
     return usort($obj_array, create_function('$a, $b', $func));
 }
 
-define('T_SETUP_GLOBAL_VARS__COMMON', 1);
-define('T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES', 2);
-define('T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT', 3);
+define('T_SETUP_GLOBAL_VARS__COMMON',               1);
+define('T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES',    2);
+define('T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT',  3);
 define('T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS', 4);
 
 function setupGlobalVars($type, $opts = array()) {
-
     global $coach, $lng, $leagues, $divisions, $tours, $settings, $rules, $admin_menu;
-
     switch ($type) {
-    
         case T_SETUP_GLOBAL_VARS__COMMON:
             $coach = (isset($_SESSION['logged_in'])) ? new Coach($_SESSION['coach_id']) : null; # Create global coach object.
             list($leagues,$divisions,$tours) = Coach::allowedNodeAccess(Coach::NODE_STRUCT__FLAT, is_object($coach) ? $coach->coach_id : false, $extraFields = array(T_NODE_TOURNAMENT => array('locked' => 'locked', 'type' => 'type', 'f_did' => 'f_did'), T_NODE_DIVISION => array('f_lid' => 'f_lid'), T_NODE_LEAGUE => array('tie_teams' => 'tie_teams')));
@@ -75,16 +47,13 @@ function setupGlobalVars($type, $opts = array()) {
             $_LANGUAGE = (is_object($coach) && isset($coach->settings['lang'])) ? $coach->settings['lang'] : $settings['lang'];
             if (!is_object($lng)) {
                 $lng = new Translations($_LANGUAGE);
-            }
-            else {
+            } else {
                 $lng->setLanguage($_LANGUAGE);
             }
             break;
-            
         case T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES:
             $admin_menu = is_object($coach) ? $coach->getAdminMenu() : array();
             break;
-            
         case T_SETUP_GLOBAL_VARS__LOAD_LEAGUE_SETTINGS:
             // Local league settings exist?
             $file = "localsettings/settings_ID.php";
@@ -100,20 +69,16 @@ function setupGlobalVars($type, $opts = array()) {
             // Defaults
             else if (is_object($coach) && isset($coach->settings['home_lid'])) {
                 $id = $coach->settings['home_lid'];
-            }
-            else {
+            } else {
                 $id = isset($settings['default_visitor_league']) ? $settings['default_visitor_league'] : '';
             }
-
             $settingsFile = str_replace("ID", $id, $file);
             if ($localsettings = file_exists($settingsFile) ? $settingsFile : false) {
                 include($localsettings);
-            }
-            else {
+            } else {
                 include(str_replace("ID", 'none', $file)); # Empty settings file.
             }
             break;
-            
         case T_SETUP_GLOBAL_VARS__POST_COACH_LOGINOUT:
             setupGlobalVars(T_SETUP_GLOBAL_VARS__COMMON);
             setupGlobalVars(T_SETUP_GLOBAL_VARS__POST_LOAD_MODULES);
@@ -151,34 +116,26 @@ function array_strpack_assoc($str, array $arr, $implode_delimiter = false, $key 
 
 // Returns what sort rule is to be used for different stats-table types.
 function sort_rule($w) {
-
     # - Summable values from the MV tables must always be referenced by using the "mv_" prefix.
     # - Non-summable values (ie. steaks, win pct's etc.) are referenced by the "rg_" prefix.
     # - Static and dynamic properties (ie. name, treasury, skills etc.) need no prefix.
-    
     $rules = array(
         T_OBJ_RACE   => array('-rg_win_pct', '+name'), // "All races"-table
         T_OBJ_COACH  => array('-rg_win_pct', '-wt_cnt', '-mv_cas', '+name'), // "All coaches"-table
         T_OBJ_TEAM   => array('-mv_won', '-mv_draw', '+mv_lost', '-mv_sdiff', '-mv_cas', '+name'), // "All teams"-table
         T_OBJ_PLAYER => array('-value', '-mv_td', '-mv_cas', '-mv_spp', '+name'), // "All players"-table
         T_OBJ_STAR   => array('-mv_played', '+name'), // Stars table.
-        
-        'match'     => array('-date_played'), // Games played tables.
-        'player'    => array('+nr', '+name'), // For team roaster player list.
-        'race_page' => array('+cost', '+position'), // Race's players table.
-        'star_HH'   => array('-date_played'), // Stars hire history table.
+        'match'      => array('-date_played'), // Games played tables.
+        'player'     => array('+nr', '+name'), // For team roaster player list.
+        'race_page'  => array('+cost', '+position'), // Race's players table.
+        'star_HH'    => array('-date_played'), // Stars hire history table.
     );
-
     return array_key_exists($w, $rules) ? $rules[$w] : array();
 }
 
-
-function rule_dict(array $sortRule) {
-    
+function rule_dict(array $sortRule) {    
     /* Translates sort rules. */
-    
     $sortRule = preg_replace('/(mv\_|rg\_)/', '', $sortRule);
-    
     $ruleDict = array(
         'win_pct'     => 'WIN%',
         'date_played' => 'date played',
@@ -190,14 +147,12 @@ function rule_dict(array $sortRule) {
         'slost'       => 'SL',
         'sdraw'       => 'SD',
     );
-    
     foreach ($sortRule as &$r) {
         $idx = substr($r,1);
         if (array_key_exists($idx, $ruleDict)) {
             $r = substr($r,0,1).$ruleDict[$idx];
         }
     }
-    
     return $sortRule;
 }
 
@@ -228,8 +183,7 @@ function status($status, $msg = '') {
     if ($status) { # Status == success
         echo "<div class=\"messageContainer green\">";
         echo "Request succeeded";
-    } 
-    else { # Status == failure
+    } else { # Status == failure
         echo "<div class=\"messageContainer red\">";
         echo "Request failed";
     }
@@ -238,48 +192,43 @@ function status($status, $msg = '') {
 }
 
 function textdate($mysqldate, $noTime = false, $setSeconds = true) {
-  global $lng;
-
-  $days = array(
-    $lng->getTrn('daysofweek/sunday'),
-    $lng->getTrn('daysofweek/monday'),
-    $lng->getTrn('daysofweek/tuesday'),
-    $lng->getTrn('daysofweek/wednesday'),
-    $lng->getTrn('daysofweek/thursday'),
-    $lng->getTrn('daysofweek/friday'),
-    $lng->getTrn('daysofweek/saturday'),
+    global $lng;
+    $days = array(
+        $lng->getTrn('daysofweek/sunday'),
+        $lng->getTrn('daysofweek/monday'),
+        $lng->getTrn('daysofweek/tuesday'),
+        $lng->getTrn('daysofweek/wednesday'),
+        $lng->getTrn('daysofweek/thusday'),
+        $lng->getTrn('daysofweek/friday'),
+        $lng->getTrn('daysofweek/saturday'),
     );
-  $months = array("",
-    $lng->getTrn('months/january'),
-    $lng->getTrn('months/february'),
-    $lng->getTrn('months/march'),
-    $lng->getTrn('months/april'),
-    $lng->getTrn('months/may'),
-    $lng->getTrn('months/june'),
-    $lng->getTrn('months/july'),
-    $lng->getTrn('months/august'),
-    $lng->getTrn('months/september'),
-    $lng->getTrn('months/october'),
-    $lng->getTrn('months/november'),
-    $lng->getTrn('months/december'),
-  );
-
-  $the_time = strtotime($mysqldate);
-
-  switch($lng->getLanguage())
-  {
-      case 'fr-FR':
-        return $days[date("w", $the_time)]." ".date("j", $the_time)." ".$months[date("n", $the_time)]." ".date("Y ".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), $the_time);
-        break;
-
-      default:
-        return date("D M j Y".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), strtotime($mysqldate));
-        // If you want full words dates (days of week and months) enable the line below and disable the line above
-        //return $days[date("w", $the_time)]." ".$months[date("n", $the_time)]." ".date("j", $the_time)." ".date("Y ".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), $the_time);
+    $months = array("",
+        $lng->getTrn('months/january'),
+        $lng->getTrn('months/february'),
+        $lng->getTrn('months/march'),
+        $lng->getTrn('months/april'),
+        $lng->getTrn('months/may'),
+        $lng->getTrn('months/june'),
+        $lng->getTrn('months/july'),
+        $lng->getTrn('months/august'),
+        $lng->getTrn('months/september'),
+        $lng->getTrn('months/october'),
+        $lng->getTrn('months/november'),
+        $lng->getTrn('months/december'),
+    );
+    $the_time = strtotime($mysqldate);
+    switch($lng->getLanguage()) {
+        case 'fr-FR':
+            return $days[date("w", $the_time)]." ".date("j", $the_time)." ".$months[date("n", $the_time)]." ".date("Y ".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), $the_time);
+            break;
+        default:
+            return date("D M j Y".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), strtotime($mysqldate));
+            // If you want full words dates (days of week and months) enable the line below and disable the line above
+            //return $days[date("w", $the_time)]." ".$months[date("n", $the_time)]." ".date("j", $the_time)." ".date("Y ".(($noTime) ? '' : (' G:i'.(($setSeconds) ? ':s' : ''))), $the_time);
     }
 }
 
-# Micro Time Stamp.
+// Micro Time Stamp.
 function MTS($str) {
     global $time_start;
     echo "\n<!-- $str: ".(microtime(true)-$time_start)." -->\n";
@@ -326,22 +275,18 @@ function inlineform($fields, $formName, $buttonText, $myFormElements = array()) 
           "<a href='javascript:void(0);' onClick='document.$formName.submit();'>$buttonText</a></form>";
 }
 
-function getESGroups($appendFields = false, $useAbbrevs = false)
-{
+function getESGroups($appendFields = false, $useAbbrevs = false) {
     global $ES_fields;
     $grps = array();
     if ($appendFields) {
         foreach ($ES_fields as $k => $f) {
             $grps[$f['group']][] = $useAbbrevs ? $f['short'] : $k;
         }
-    }
-    else {
+    } else {
         foreach ($ES_fields as $k => $f) {
             if (!in_array($f['group'], $grps))
                 $grps[] = $f['group'];
         }
     }
-    
     return $grps;
 }
-

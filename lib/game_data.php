@@ -5,29 +5,28 @@
     Whenever the values og this file are changed you must run the 
     "Synchronise the PHP-stored BB game data" under "DB maintenance" from the "Admin -> Core panel" menu.
 */
-
 // Race defs
-define('T_RACE_AMAZON', 0);
-define('T_RACE_CHAOS', 1);
-define('T_RACE_CHAOS_DWARF', 2);
-define('T_RACE_DARK_ELF', 3);
-define('T_RACE_DWARF', 4);
-define('T_RACE_ELF', 5);
-define('T_RACE_GOBLIN', 6);
-define('T_RACE_HALFLING', 7);
-define('T_RACE_HIGH_ELF', 8);
-define('T_RACE_HUMAN', 9);
-define('T_RACE_KHEMRI', 10);
-define('T_RACE_LIZARDMAN', 11);
-define('T_RACE_ORC', 12);
+define('T_RACE_AMAZON',       0);
+define('T_RACE_CHAOS',        1);
+define('T_RACE_CHAOS_DWARF',  2);
+define('T_RACE_DARK_ELF',     3);
+define('T_RACE_DWARF',        4);
+define('T_RACE_ELF',          5);
+define('T_RACE_GOBLIN',       6);
+define('T_RACE_HALFLING',     7);
+define('T_RACE_HIGH_ELF',     8);
+define('T_RACE_HUMAN',        9);
+define('T_RACE_KHEMRI',      10);
+define('T_RACE_LIZARDMAN',   11);
+define('T_RACE_ORC',         12);
 define('T_RACE_NECROMANTIC', 13);
-define('T_RACE_NORSE', 14);
-define('T_RACE_NURGLE', 15);
-define('T_RACE_OGRE', 16);
-define('T_RACE_UNDEAD', 17);
-define('T_RACE_VAMPIRE', 18);
-define('T_RACE_SKAVEN', 19);
-define('T_RACE_WOOD_ELF', 20);
+define('T_RACE_NORSE',       14);
+define('T_RACE_NURGLE',      15);
+define('T_RACE_OGRE',        16);
+define('T_RACE_UNDEAD',      17);
+define('T_RACE_VAMPIRE',     18);
+define('T_RACE_SKAVEN',      19);
+define('T_RACE_WOOD_ELF',    20);
 
 $DEA = array (
 	'Amazon'	=> array (
@@ -538,9 +537,7 @@ $DEA = array (
 			)
 		)
 	),
-	
-	
-	
+
 	'High Elf'	=> array (
 		'other'	=> array (
 			'rr_cost' => 50000,
@@ -1134,8 +1131,7 @@ $DEA = array (
 				'cost'			=> 140000,
 				'icon'			=> 'ogre1',
 			    'pos_id'        => 161,
-			)
-			
+			)		
 		)
 	),	
 	
@@ -1213,8 +1209,7 @@ $DEA = array (
 			)
 		)
 	),	
-	
-		
+
 	'Vampire'	=> array (
 		'other'	=> array (
 			'rr_cost' => 70000,
@@ -1250,8 +1245,7 @@ $DEA = array (
 			)
 		)
 	),
-		
-		
+
 	'Skaven'	=> array (
 		'other'	=> array (
 			'rr_cost' => 60000,
@@ -1409,13 +1403,11 @@ foreach (array_keys($DEA) as $race) {
     $raceididx[$DEA[$race]['other']['race_id']] = $race;
 }
 
-$stars = array(
-
    /*
        Note: The numbering of star ids must begin at the value specified in ID_STARS_BEGIN from the header file
-       Note: Do never change star ids after using stars in OBBLM.
+       Note: Never change star ids after using stars in OBBLM.
    */
-
+$stars = array(
    'Barik Farblast' => array (
        'id'            => -5,
        'ma'            => 6,
@@ -1888,17 +1880,14 @@ $sparray = array (
 	'Experienced'	=> array (
 		'SPP'	=> 6,
 		'SPR'	=> 1
-			
 	),
 	'Veteran'	=> array (
 		'SPP'	=> 16,
 		'SPR'	=> 2
-
 	),
 	'Emerging Star'	=> array (
 		'SPP'	=> 31,
 		'SPR'	=> 3	
-
 	),
 	'Star'	=> array (
 		'SPP'	=> 51,
@@ -2016,7 +2005,7 @@ foreach ($skillarray as $grp => $skills) {
 $IllegalSkillCombinations = array(
     /*
         Syntax:
-        "If player has this skill" => array("player may not have this skill", "or this skills", ...),
+        "If player has this skill" => array("player may not have this skill", "or these skills", ...),
     */
     5   => array(51),
     51  => array(5),
@@ -2024,7 +2013,7 @@ $IllegalSkillCombinations = array(
 );
 
 // Instead of purchasing an Apothecary, Necromantic and Undead teams use the services of a Necromancer. 
-// This means these teams may also recieve free zombies.
+// This means these teams may also receive free zombies.
 $racesHasNecromancer = array(T_RACE_NECROMANTIC, T_RACE_UNDEAD);
 // Khemri, Necromantic, Nurgle and Undead teams may not purchase or use an Apothecary.
 $racesNoApothecary = array_merge($racesHasNecromancer, array(T_RACE_NURGLE, T_RACE_KHEMRI));
@@ -2093,4 +2082,3 @@ $rules['value_reduction_ma'] = 0; // Default is 0.
 $rules['value_reduction_av'] = 0; // Default is 0.
 $rules['value_reduction_ag'] = 0; // Default is 0.
 $rules['value_reduction_st'] = 0; // Default is 0.
-
