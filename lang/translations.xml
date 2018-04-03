@@ -846,7 +846,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <previous>Anterior</previous>
     <name>Nombre</name>
     <status>Estado</status>
-    <desc>Descripci󮼯desc>
+    <desc>Descripción</desc>
     <upload>Subir</upload>
     <all>Todo</all>
     <select>Seleccionar</select>
@@ -1412,7 +1412,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <goblinrenegade>Renegado Goblin</goblinrenegade>
     <skavenrenegade>Renegado Skaven</skavenrenegade>
     <darkelfrenegade>Renegado Elfo Oscuro</darkelfrenegade>
-    <orcrenegade>Renegado Orco</darkelfrenegade>
+    <orcrenegade>Renegado Orco</orcrenegade>
     <chaostroll>Troll del Caos</chaostroll>
     <chaosogre>Ogre del Caos</chaosogre>
     <!-- Underworld -->
