@@ -913,7 +913,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <played>Jugados</played>
     <playedtours>Torneos jugados</playedtours>
     <wontours>Torneos ganados</wontours>
-    <<ma>Mo</ma>
+    <ma>Mo</ma>
     <st>Fu</st>
     <ag>Ag</ag>
     <av>Ar</av>
