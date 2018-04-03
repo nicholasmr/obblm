@@ -859,11 +859,11 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <retired>Retirado</retired>
     <skills>Habilidades</skills>
     <skill>Habilidad</skill>
-    <!-- <normal> -->
-    <!-- <double> -->
+    <normal>Normal</normal>
+    <double>Doble</double>
     <injs>Heridas</injs>
     <pos>Posición</pos>
-    <!-- <maxqty> -->
+    <maxqty>Cnt Máx</maxqty>
     <price>Precio</price>
     <number>Número</number>
     <opponent>Oponente</opponent>
@@ -904,8 +904,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <races>Razas</races>
     <star>Estrella</star>
     <stars>Estrellas</stars>
-    <!-- <roster> -->
-    <!-- <availablestarplayers> -->
+    <roster>Lista de Equipo</roster>
+    <availablestarplayers>Jugadores Estrella Disponibles</availablestarplayers>
     <won>Ganados</won>
     <lost>Perdidos</lost>
     <draw>Empates</draw>
@@ -913,10 +913,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <played>Jugados</played>
     <playedtours>Torneos jugados</playedtours>
     <wontours>Torneos ganados</wontours>
-    <!-- <ma> -->
-    <!-- <st> -->
-    <!-- <ag> -->
-    <!-- <av> -->
+    <<ma>Mo</ma>
+    <st>Fu</st>
+    <ag>Ag</ag>
+    <av>Ar</av>
     <ready>Listo</ready>
     <dead>Muerto</dead>
     <sold>Vendido</sold>
@@ -950,11 +950,11 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <stat>Estadística</stat>
     <!-- use "all-time" string from nodeSelect() translation -->
     <matchavg><![CDATA[Media&nbsp;por partido.]]></matchavg> <!-- "Match avg." -->
-    <!-- <english> -->
-    <!-- <spanish> -->
-    <!-- <german> -->
-    <!-- <french> -->
-    <!-- <italian> -->
+    <english>Inglés</english>
+    <spanish>Español</spanish>
+    <german>Alemán</german>
+    <french>Francés</french>
+    <italian>Italiano</italian>
 </common>
 
 <!-- Link names for menu elements -->
@@ -970,7 +970,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <tours>Torneos</tours>
         <recent>Partidos recientes</recent>
         <upcoming>Próximos partidos</upcoming>
-        <!-- <usersched> -->
+        <usersched>Progamar partido</usersched>
     </matches_menu>
     <statistics_menu>
         <name>Estadísticas</name> <!-- top level button text -->
@@ -1140,7 +1140,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
             <extra_skills>Gestionar habilidades extra</extra_skills>
             <ach_skills>Eliminar habilidades</ach_skills>
             <ff>Gestionar FH</ff>
-            <!-- <removeNiggle> -->
+            <removeNiggle>Eliminar lesión permanente</removeNiggle>
 
             <desc>
                 <unhire_journeyman> <![CDATA[ Deshacer la contratación permanente de un independiente.<br> Esto solo funciona con jugadores de la posición que permite 0-16 jugadores de tu lista de equipo. ]]> </unhire_journeyman>
@@ -1153,7 +1153,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
                 <extra_skills> <![CDATA[ Gestionar las habilidades extra de un jugador. ]]> </extra_skills>
                 <ach_skills> <![CDATA[ Borrar habilidades adquiridas por un jugador. Esto permite volver a seleccionar habilidades. ]]> </ach_skills>
                 <ff> <![CDATA[ Gestionar FH del equipo .]]> </ff>
-                <!-- <removeNiggle> -->
+                <removeNiggle> <![CDATA[ Eliminar la lesión permanente de uno de los jugadores. ]]> </removeNiggle>
             </desc>
         </box_admin>
     </team>
@@ -1245,7 +1245,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
         <may_buy_new_skill>Nueva habilidad</may_buy_new_skill>
         <management>Gestión</management>
         <desktop_site>Página del escritorio</desktop_site>
-        <!-- <noteams> -->
+        <noteams>¡No tienes ningún equipo! Esta página no es suficientemente sofisticada para ayudarte. Tendrás que usar &lt;a href="index.php"&gt;desktop site&lt;/a&gt;.</noteams>
     </team>
     <matches>
         <match>
@@ -1286,8 +1286,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     
     <nodes>
         <errors>
-            <!-- <league_already_exists> -->
-            <!-- <settings_file_copy_failed> -->
+            <league_already_exists>Ya hay una liga con ese nombre.</league_already_exists>
+            <settings_file_copy_failed>Se ha creado la liga, pero el archivo de ajustes no se ha copiado correctamente.</settings_file_copy_failed>
         </errors>
     </nodes>
 </admin>
@@ -1340,7 +1340,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <hobgoblin>Hobgoblin</hobgoblin>
     <chaosdwarfblocker>Defensa Enano del Caos</chaosdwarfblocker>
     <bullcentaur>Centauro Toro</bullcentaur>
-    <!-- <enslavedminotaur> -->
+    <enslavedminotaur>Minotauro Esclavizado</enslavedminotaur>
     <!-- Dark Elf -->
     <assassin>Asesino</assassin>
     <witchelf>Elfa Bruja</witchelf>
@@ -1354,8 +1354,8 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <looney>Chiflado</looney>
     <fanatic>Fanático</fanatic>
     <troll>Troll</troll>
-    <!-- <doomdiver> -->
-    <!-- <ooligan> -->
+    <doomdiver>Chalado con alas</doomdiver>
+    <ooligan>Gamberro</ooligan>
     <!-- Halfling -->
     <halfling>Halfling</halfling>
     <treeman>Hombre Árbol</treeman>
@@ -1510,7 +1510,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <stab>Puñal</stab>
     <stakes>Estacas</stakes>
     <stunty>Escurridizo</stunty>
-    <!-- <swoop> -->
+    <swoop>Bajar en picado</swoop>
     <takeroot>Echar Raíces</takeroot>
     <throwteammate>Lanzar Compañero de Equipo</throwteammate>
     <timmmber>rbol va!</timmmber>
@@ -1590,10 +1590,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <!-- <lucienswiftvalenswift> -->
     <!-- <valenswiftincludedwithlucienswift> -->
     <!-- <kreekrustgouger> -->
-    <!-- <bogallante> -->
-    <!-- <karlavonkill> -->
-    <!-- <madcapmiggs> -->
-    <!-- <karicoldsteel> -->
+    <bogallante>Bo Galante</bogallante>
+    <karlavonkill>Karla von Muerte</karlavonkill>
+    <madcapmiggs>Miggs Sombreroloco</madcapmiggs>
+    <karicoldsteel>Kari Acerofrío</karicoldsteel>
 </starplayer>
 
 <daysofweek>
