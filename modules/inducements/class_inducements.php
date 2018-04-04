@@ -23,9 +23,7 @@
 
 /* 
 
-    Known bugs:
-        Choose a star 1. Chose star 2. Change star 1 to same as star 2 and both will be the same.
-        Does not work for paired stars other than Brick Far'th and Grotty   
+    Known bug: Chose a star 1. Chose star 2. Change star 1 to same as star 2 and both will be the same.
     
  */
 
@@ -61,7 +59,7 @@ class IndcPage implements ModuleInterface
         if (!get_alt_col('teams', 'team_id', $team_id, 'team_id'))
             fatal("Invalid team ID.");
 
-        global $stars, $DEA, $rules, $skillarray, $inducements, $racesNoApothecary;
+        global $stars, $DEA, $rules, $skillarray, $inducements, $racesNoApothecary, $starpairs;
 
         // Move these constants to header.php?
         define('MAX_STARS', 2);
@@ -75,7 +73,10 @@ class IndcPage implements ModuleInterface
 
         $star_list[0] = '      <option value="0">-No Induced Stars-</option>' . "\n";
         foreach ($stars as $s => $d) {
-            $star_list[0] .= "      <option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
+            if (in_array($d['id'], $starpairs)) // Hide Child Stars
+                $star_list[0] .= "      <option ".((in_array($t->f_race_id, $d['races'])) ? 'style="display: none; background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
+            else
+                $star_list[0] .= "      <option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
         }
 
 ?>
@@ -86,8 +87,9 @@ class IndcPage implements ModuleInterface
 <link type="text/css" href="css/stylesheet1.css" rel="stylesheet">
 -->
 <style type="text/css">
+th { background-color: #EEEEEE; color: #000000; font: bold 12px Tahoma; }
+th.left { text-align: left; }
 td { background-color: #EEEEEE; color: #000000; font: 13px Tahoma; }
-td.indtitle { background-color: #EEEEEE; color: #000000; font: bold 12px Tahoma; }
 td.boxie { background-color: #EEEEEE; color: #000000; }
 td.cent { text-align: center; }
 td.cent2 { text-align: center; background-color: #EEEEEE; color: #000000; }
@@ -111,72 +113,70 @@ function SendToPDF()
 -->
 <?php title('Inducements try-out');?>
 <form action="" method="post" name="InduceForm">
-
 <table> <!-- Star Players -->
     <tr>
-        <td class="indtitle">Star Name</td>
-        <td class="indtitle">Cost</td>
-        <td class="indtitle">MA</td>
-        <td class="indtitle">ST</td>
-        <td class="indtitle">AG</td>
-        <td class="indtitle">AV</td>
-        <td class="indtitle">Skills</td> <!-- <td>Cp</td><td>Td</td><td>Int</td><td>Cas</td><td>BH</td><td>Si</td><td>Ki</td><td>MVP</td><td>SPP</td> -->
+        <th class="left">Star Name</th>
+        <th>Cost</th>
+        <th>MA</th>
+        <th>ST</th>
+        <th>AG</th>
+        <th>AV</th>
+        <th class="left">Skills</th> <!-- <td>Cp</td><td>Td</td><td>Int</td><td>Cas</td><td>BH</td><td>Si</td><td>Ki</td><td>MVP</td><td>SPP</td> -->
     </tr>
 <?php
-        $brick_n_grotty = false;
         $i=1;
+        $starcnt = 1;
         while ($i <= MAX_STARS) {
             print "  <tr>\n";
-            if (array_key_exists("Star$i", $_POST)) {
-                $sid=$_POST["Star$i"];
+            if (array_key_exists("Star$starcnt", $_POST)) {
+                $sid=$_POST["Star$starcnt"];
                 if ($sid != 0) {
                     $s = new Star($sid);
-                    $star_list[$i] = $star_list[0];
-                    if ($sid == "-6" || $sid == "-7") { // Select Brick as selected and add row for Grotty later
-                        $brick_n_grotty = true;
-                        $star_list[$i] = str_replace('option value="-6"','option selected value="-6"',$star_list[$i]);  // Hardcoded Brick
-                        $star_list[$i] = str_replace('option style="background-color: '.COLOR_HTML_READY.';" value="-6"', 'option selected style="background-color: '.COLOR_HTML_READY.';" value="-6"', $star_list[$i]);
-                        $sid = -6;
-                        $s = new Star($sid); // Making sure to switch from Grotty to Brick
-                        $star_list[0] = str_replace('      <option value="-6">Brick Far\'th (+ Grotty)</option>'."\n",'',$star_list[0]); // Removing Brick from second row
-                        $star_list[0] = str_replace('      <option style="background-color: '.COLOR_HTML_READY.';" value="-6">Brick Far\'th (+ Grotty)</option>'."\n", '', $star_list[0]);
-                        $star_list[0] = str_replace('      <option value="-7">Grotty (included in Brick Far\'th)</option>'."\n",'',$star_list[0]); // Removing Grotty from second row
-                        $star_list[0] = str_replace('      <option style="background-color: '.COLOR_HTML_READY.';" value="-7">Grotty (included in Brick Far\'th)</option>'."\n", '', $star_list[0]);
-                    } else {
-                        $star_list[$i] = str_replace('option value="'.$sid.'"','option selected value="'.$sid.'"',$star_list[$i]);
-                        $star_list[$i] = str_replace('option style="background-color: '.COLOR_HTML_READY.';" value="'.$sid.'"', 'option selected style="background-color: '.COLOR_HTML_READY.';" value="' . $sid.'"', $star_list[$i]);
+                    $star_list[$starcnt] = $star_list[0];
+                    // Update display of selected Star
+                    // Ignore if Child Star, will be handled by parent entry
+                    if (!(in_array($sid, $starpairs))) {
+                        $star_list[$starcnt] = str_replace('option value="'.$sid.'"','option selected value="'.$sid.'"',$star_list[$starcnt]);
+                        $star_list[$starcnt] = str_replace('option style="background-color: '.COLOR_HTML_READY.';" value="'.$sid.'"', 'option selected style="background-color: '.COLOR_HTML_READY.';" value="' . $sid.'"', $star_list[$starcnt]);
+                        // Remove selected player from default list
                         $star_list[0] = str_replace('<option value="'.$sid.'">'.$s->name."</option>\n",'',$star_list[0]);
                         $star_list[0] = str_replace('option style="background-color: '.COLOR_HTML_READY.';" value="'.$sid.'">'.$s->name."</option>\n", '', $star_list[0]);
+                        // Display Star entry
+                        print '    <td class="boxie"><SELECT name="Star' . $starcnt . '" onChange="this.form.submit()">' . "\n";
+                        print $star_list[$starcnt];
+                        print '    </SELECT></td>' . "\n";
+                        print '<td class="cent">'.str_replace('000','',$s->cost)."k</td>\n<td class=\"cent\">".
+                            $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".skillsTrans($s->skills)."</small></td>\n";
+                        print "</tr>\n";
+                        $ind_cost+=$s->cost;
                     }
-                    print '    <td class="boxie"><SELECT name="Star' . $i . '" onChange="this.form.submit()">' . "\n";
-                    print $star_list[$i];
-                    print '    </SELECT></td>' . "\n";
-                    print '<td class="cent">'.str_replace('000','',$s->cost)."k</td>\n<td class=\"cent\">".
-                        $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".skillsTrans($s->skills)."</small></td>\n";
-                    print "</tr>\n";
-                    $ind_cost+=$s->cost;
+                    // Check for child
+                    if (array_key_exists($sid, $starpairs)) {
+                        // Parent Star selected
+                        $starcnt++;
+                        $sid = $starpairs[$sid];
+                        $s = new Star($sid);
+                        // Display Child
+                        print '    <td class="boxie"><SELECT disabled name="Star' . $starcnt . '">' . "\n";
+                        print '    <option value="'.$sid.'">'.$s->name.'</option>' . "\n";
+                        print '    </SELECT></td>' . "\n";
+                        print '<td class="cent">'.str_replace('000','',$s->cost)."k</td>\n<td class=\"cent\">".
+                            $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".skillsTrans($s->skills)."</small></td>\n";
+                        print "</tr>\n";
+                    } 
                     $i++;
+                    $starcnt++;
+                    // Back to start of while
                     continue;
                 }
             }
-        print '    <td class="boxie"><SELECT name="Star' . $i . '" onChange="this.form.submit()">' . "\n";
+        print '    <td class="boxie"><SELECT name="Star' . $starcnt . '" onChange="this.form.submit()">' . "\n";
         print $star_list[0];
         print '    </SELECT>' . "\n";
         print '</tr>' . "\n";
         $i++;
+        $starcnt++;
         break;
-        }
-        // Print Grotty and add hidden input field
-        // Needs to be expanded to handle other twinned players
-        if ($brick_n_grotty) { 
-            $sid = -7;  // ID for Grotty hardcoded :-P
-            $s = new Star($sid);
-            echo '<tr>';
-            $grotty_nr = MAX_STARS + 1;
-            echo '<td>'.$s->name.'<input type="hidden" name="Star' . $grotty_nr . '" value="-7"></td>';
-            print "<td class=\"cent\">".str_replace('000','',$s->cost)."k</td>\n<td class=\"cent\">".
-                $s->ma."</td>\n<td class=\"cent\">".$s->st."</td>\n<td class=\"cent\">".$s->ag."</td>\n<td class=\"cent\">".$s->av."</td>\n<td>\n<small>".skillsTrans($s->skills)."</small></td>\n";
-            print "</tr>\n";
         }
 ?>
 </table> <!-- End of Star Player Table -->
