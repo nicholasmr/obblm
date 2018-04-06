@@ -1540,7 +1540,7 @@ $DEA = array (
                 'doub'                => array ('S', 'P'),
                 'qty'                => 1,
                 'cost'                => 50000,
-                'icon'                => 'orc1',
+                'icon'                => 'olineman1',
                 'pos_id'            => 217
             ),
         )
