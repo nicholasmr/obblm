@@ -2454,6 +2454,29 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(0, 4, 9, 14),
     ),
+    // Added in BB2016 Spike! #1
+    'Gobbler Grimlich' => array (
+        'id'    => -74,
+        'ma'    => 5,
+        'st'    => 4,
+        'ag'    => 2,
+        'av'    => 9,
+        'def'   => array (99, 70, 72, 25, 114, 103, 77, 79),
+        'cost'  => 230000,
+        'icon'  => 'star',
+        'races' => array(1, 21, 23),
+    ),
+    'Scyla Anfingrimm' => array (
+        'id'    => -75,
+        'ma'    => 5,
+        'st'    => 5,
+        'ag'    => 1,
+        'av'    => 9,
+        'def'   => array (99, 112, 71, 5, 76, 59),
+        'cost'  => 250000,
+        'icon'  => 'star',
+        'races' => array(1, 14),
+    ),
 );
 /*  Paired Stars  ***************************************************************************************** */
 $starpairs = array (
