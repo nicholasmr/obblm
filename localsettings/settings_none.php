@@ -32,6 +32,35 @@ $rules['max_fan_factor']        = 9;
 $rules['max_ass_coaches']       = -1;
 $rules['max_cheerleaders']      = -1;
 
+$rules['initial_team_treasury'] = array(	//	0			=>	1000000,	// Amazon
+											//	1			=>	1000000,	// Chaos
+											//	2			=>	1000000,	// Chaos Dwarf
+											//	3			=>	1000000,	// Dark Elf
+											//	4			=>	1000000,	// Dwarf
+											//	5			=>	1000000,	// Elf
+											//	6			=>	1000000,	// Goblin
+											//	7			=>	1000000,	// Halfling
+											//	8			=>	1000000,	// High Elf
+											//	9			=>	1000000,	// Human
+											//	10			=>	1000000,	// Khemri
+											//	11			=>	1000000,	// Lizardman
+											//	12			=>	1000000,	// Orc
+											//	13			=>	1000000,	// Necromantic
+											//	14			=>	1000000,	// Norse
+											//	15			=>	1000000,	// Nurgle
+											//	16			=>	1000000,	// Ogre
+											//	17			=>	1000000,	// undead
+											//	18			=>	1000000,	// Vampire
+											//	19			=>	1000000,	// Skaven
+											//	20			=>	1000000,	// Wood Elf
+											//	21			=>	1000000,	// Chaos Pact
+											//	22			=>	1000000,	// Slann
+											//	23			=>	1000000,	// Underworld
+											//	24			=>	1000000,	// Bretonnia
+											//	25			=>	1000000,	// Daemons of Khorne
+											//	26			=>	1000000,	// Apes of Wrath
+										);
+
 $settings['standings']['length_players'] = 30;
 $settings['standings']['length_teams']   = 30;
 $settings['standings']['length_coaches'] = 30;
