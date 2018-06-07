@@ -2430,7 +2430,7 @@ $stars = array(
         'def'   => array (99, 1, 23, 2, 24),
         'cost'  => 220000,
         'icon'  => 'star',
-        'races' => array(0, 4, 9, 14),
+        'races' => array(0, 7, 9, 14),
     ),
     'Madcap Miggs' => array (
         'id'    => -72,
