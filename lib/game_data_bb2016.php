@@ -2242,16 +2242,16 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(13, 17, 18)
     ),
-    'Lewdgrip Whiparm' => array (
+    'Lewdgrip Whiparm' => array (   // Updated in BB2016 Spike! #1
         'id'    => -55,
         'ma'    => 6,
         'st'    => 3,
         'ag'    => 3,
         'av'    => 9,
-        'def'   => array (99, 45, 58, 12, 77),
-        'cost'  => 150000,
+        'def'   => array (99, 23, 45, 58, 12, 77),
+        'cost'  => 160000,
         'icon'  => 'star',
-        'races' => array(1, 15, 21)
+        'races' => array(T_RACE_CHAOS, T_RACE_NURGLE, T_RACE_CHAOS_PACT)
     ),
     'Lottabottol' => array (
         'id'    => -56,
@@ -2354,16 +2354,16 @@ $stars = array(
         'races' => array(15, 1),
     ),
     // Added in BB2016 DZ1
-    'Guffle Pusmaw' => array (
+    'Guffle Pusmaw' => array (  // Updated in BB2016 Spike! #1
         'id'    => -65,
         'ma'    => 5,
         'st'    => 3,
         'ag'    => 4,
         'av'    => 9,
         'def'   => array (99, 74, 101, 114),
-        'cost'  => 220000,
+        'cost'  => 210000,
         'icon'  => 'star',
-        'races' => array(15),
+        'races' => array(T_RACE_CHAOS, T_RACE_NURGLE, T_RACE_CHAOS_PACT),
     ),
     // Added in BB2016 DZ2
     'Glart Smashrip Sr' => array (
@@ -2375,7 +2375,7 @@ $stars = array(
         'def'   => array (99, 1, 71, 51, 53, 57),
         'cost'  => 190000,
         'icon'  => 'star',
-        'races' => array(19, 23),
+        'races' => array(T_RACE_SKAVEN, T_RACE_UNDERWORLD),
     ),
     'Lucien Swift (+ Valen Swift)' => array (
         'id'    => -67,
@@ -2386,7 +2386,7 @@ $stars = array(
         'def'   => array (99, 1, 54, 13),
         'cost'  => 390000,
         'icon'  => 'star',
-        'races' => array(5, 8, 20),
+        'races' => array(T_RACE_ELF, T_RACE_HIGH_ELF, T_RACE_WOOD_ELF),
     ),
     'Valen Swift (included with Lucien Swift)' => array (
         'id'    => -68,
@@ -2397,7 +2397,7 @@ $stars = array(
         'def'   => array (99, 40, 44, 45, 46, 12),
         'cost'  => 0,
         'icon'  => 'star',
-        'races' => array(5, 8, 20),
+        'races' => array(T_RACE_ELF, T_RACE_HIGH_ELF, T_RACE_WOOD_ELF),
     ),
     'Kreek Rustgouger' => array (
         'id'    => -69,
@@ -2408,7 +2408,7 @@ $stars = array(
         'def'   => array (99, 91, 54, 100, 76, 105),
         'cost'  => 130000,
         'icon'  => 'star',
-        'races' => array(19, 23),
+        'races' => array(T_RACE_SKAVEN, T_RACE_UNDERWORLD),
     ),
     'Bo Gallante' => array (
         'id'    => -70,
@@ -2419,7 +2419,7 @@ $stars = array(
         'def'   => array (99, 23, 26, 28, 29),
         'cost'  => 160000,
         'icon'  => 'star',
-        'races' => array(8),
+        'races' => array(T_RACE_HIGH_ELF),
     ),
     'Karla von Kill' => array (
         'id'    => -71,
@@ -2430,7 +2430,7 @@ $stars = array(
         'def'   => array (99, 1, 23, 2, 24),
         'cost'  => 220000,
         'icon'  => 'star',
-        'races' => array(0, 7, 9, 14),
+        'races' => array(T_RACE_AMAZON, T_RACE_HALFLING, T_RACE_HUMAN, T_RACE_NORSE),
     ),
     'Madcap Miggs' => array (
         'id'    => -72,
@@ -2441,7 +2441,7 @@ $stars = array(
         'def'   => array (99, 50, 71, 25, 100, 79, 112),
         'cost'  => 170000,
         'icon'  => 'star',
-        'races' => array(6, 23),
+        'races' => array(T_RACE_GOBLIN, T_RACE_UNDERWORLD),
     ),
     'Kari Coldsteel' => array (
         'id'    => -73,
@@ -2452,11 +2452,22 @@ $stars = array(
         'def'   => array (99, 1, 2, 5),
         'cost'  => 50000,
         'icon'  => 'star',
-        'races' => array(0, 4, 9, 14),
+        'races' => array(T_RACE_AMAZON, T_RACE_DWARF, T_RACE_HUMAN, T_RACE_NORSE),
     ),
     // Added in BB2016 Spike! #1
-    'Gobbler Grimlich' => array (
+    'Withergrasp Doubledrool' => array (
         'id'    => -74,
+        'ma'    => 6,
+        'st'    => 3,
+        'ag'    => 3,
+        'av'    => 8,
+        'def'   => array (99, 76, 13, 77, 78, 14),
+        'cost'  => 170000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_CHAOS, T_RACE_CHAOS_PACT, T_RACE_NURGLE),
+    ),
+    'Gobbler Grimlich' => array (
+        'id'    => -75,
         'ma'    => 5,
         'st'    => 4,
         'ag'    => 2,
@@ -2464,10 +2475,10 @@ $stars = array(
         'def'   => array (99, 70, 72, 25, 114, 103, 77, 79),
         'cost'  => 230000,
         'icon'  => 'star',
-        'races' => array(1, 21, 23),
+        'races' => array(T_RACE_CHAOS, T_RACE_CHAOS_PACT, T_RACE_UNDERWORLD),
     ),
     'Scyla Anfingrimm' => array (
-        'id'    => -75,
+        'id'    => -76,
         'ma'    => 5,
         'st'    => 5,
         'ag'    => 1,
@@ -2475,7 +2486,7 @@ $stars = array(
         'def'   => array (99, 112, 71, 5, 76, 59),
         'cost'  => 250000,
         'icon'  => 'star',
-        'races' => array(1, 14),
+        'races' => array(T_RACE_CHAOS, T_RACE_NORSE),
     ),
 );
 /*  Paired Stars  ***************************************************************************************** */
@@ -2651,7 +2662,7 @@ $inducements = array (
         'cost' => 100000,
         'max'  => 3,
         'reduced_cost' => 50000,
-        'reduced_cost_races' => array(6),
+        'reduced_cost_races' => array(T_RACE_GOBLIN),
     ),
     'Extra Training' => array (
         'cost' => 100000,
@@ -2663,7 +2674,7 @@ $inducements = array (
         'cost' => 300000,
         'max'  => 1,
         'reduced_cost' => 100000,
-        'reduced_cost_races' => array(7), # Halflings
+        'reduced_cost_races' => array(T_RACE_HALFLING),
     ),
     'Wandering Apothecaries' => array (
         'cost' => 100000,
@@ -2695,25 +2706,32 @@ $inducements = array (
         'cost' => 0,
         'max'  => 1,
         'reduced_cost' => 50000,
-        'reduced_cost_races' => array(6, 16, 12, 23), # Goblins, Ogres, Orcs, Underworld
+        'reduced_cost_races' => array(T_RACE_GOBLIN, T_RACE_OGRE, T_RACE_ORC, T_RACE_UNDERWORLD),
     ),
     'Papa Skullbones' => array (
         'cost' => 0,
         'max'  => 1,
         'reduced_cost' => 80000,
-        'reduced_cost_races' => array(1, 15, 21), 
+        'reduced_cost_races' => array(T_RACE_CHAOS, T_RACE_NURGLE, T_RACE_CHAOS_PACT), 
     ),
     'Galandril Silverwater' => array (
         'cost' => 0,
         'max'  => 1,
         'reduced_cost' => 50000,
-        'reduced_cost_races' => array(5, 8, 20),
+        'reduced_cost_races' => array(T_RACE_ELF, T_RACE_HIGH_ELF, T_RACE_WOOD_ELF),
     ),
     'Krot Shockwhisker' => array (
         'cost' => 0,
         'max'  => 1,
         'reduced_cost' => 80000,
-        'reduced_cost_races' => array(6, 23),
+        'reduced_cost_races' => array(T_RACE_GOBLIN, T_RACE_UNDERWORLD),
+    ),
+    // Added in BB2016 Spike! #1
+    'Chaos Sorcerer' => array (
+        'cost' => 0,
+        'max'  => 1,
+        'reduced_cost' => 150000,
+        'reduced_cost_races' => array(T_RACE_CHAOS, T_RACE_CHAOS_PACT, T_RACE_CHAOS_DWARF, T_RACE_NURGLE),
     ),
 );
 /* ******************************************************************************************************** **
