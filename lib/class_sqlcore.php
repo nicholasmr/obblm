@@ -769,57 +769,59 @@ class SQLCore
 				CONTAINS SQL
 			BEGIN
 				DECLARE ret INT;
-				DECLARE done INT DEFAULT 0;
-				DECLARE pid '.$CT_cols[T_OBJ_PLAYER].';
-				DECLARE tid '.$CT_cols[T_OBJ_TEAM].';
-				DECLARE cid '.$CT_cols[T_OBJ_COACH].';
-				DECLARE rid '.$CT_cols[T_OBJ_RACE].';
-				DECLARE trid '.$CT_cols[T_NODE_TOURNAMENT].';
-				DECLARE cur_p CURSOR FOR SELECT f_player_id,f_tour_id FROM match_data GROUP BY f_player_id,f_tour_id;
-				DECLARE cur_t CURSOR FOR SELECT f_team_id,  f_tour_id FROM match_data GROUP BY f_team_id,  f_tour_id;
-				DECLARE cur_c CURSOR FOR SELECT f_coach_id, f_tour_id FROM match_data GROUP BY f_coach_id, f_tour_id;
-				DECLARE cur_r CURSOR FOR SELECT f_race_id,  f_tour_id FROM match_data WHERE f_race_id IS NOT NULL GROUP BY f_race_id, f_tour_id;
-				DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+                DECLARE done INT DEFAULT 0;
+                DECLARE pid MEDIUMINT SIGNED;
+                DECLARE tid MEDIUMINT UNSIGNED;
+                DECLARE cid MEDIUMINT UNSIGNED;
+                DECLARE rid TINYINT UNSIGNED;
+                DECLARE trid MEDIUMINT UNSIGNED;
+                DECLARE cur_p CURSOR FOR SELECT f_player_id,f_tour_id FROM match_data GROUP BY f_player_id,f_tour_id;
+                DECLARE cur_t CURSOR FOR SELECT team1_id AS f_team_id, f_tour_id FROM matches GROUP BY team1_id,  f_tour_id
+                                            UNION DISTINCT
+                                         SELECT team2_id, f_tour_id FROM matches GROUP BY team2_id,  f_tour_id;
+                DECLARE cur_c CURSOR FOR SELECT f_coach_id, f_tour_id FROM match_data GROUP BY f_coach_id, f_tour_id;
+                DECLARE cur_r CURSOR FOR SELECT f_race_id,  f_tour_id FROM match_data WHERE f_race_id IS NOT NULL GROUP BY f_race_id, f_tour_id;
+                DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
 				OPEN cur_p;
-				REPEAT
-					FETCH cur_p INTO pid, trid;
-					IF NOT done THEN
-						SET ret = syncMVplayer(pid,trid);
-					END IF;
-				UNTIL done END REPEAT;
-				CLOSE cur_p;
-				SET done = 0;
+                REPEAT
+                    FETCH cur_p INTO pid, trid;
+                    IF NOT done THEN
+                        SET ret = syncMVplayer(pid,trid);
+                    END IF;
+                UNTIL done END REPEAT;
+                CLOSE cur_p;
+                SET done = 0;
 
-				OPEN cur_t;
-				REPEAT
-					FETCH cur_t INTO tid, trid;
-					IF NOT done THEN
-						SET ret = syncMVteam(tid,trid);
-					END IF;
-				UNTIL done END REPEAT;
-				CLOSE cur_t;
-				SET done = 0;
+                OPEN cur_t;
+                REPEAT
+                    FETCH cur_t INTO tid, trid;
+                    IF NOT done THEN
+                        SET ret = syncMVteam(tid,trid);
+                    END IF;
+                UNTIL done END REPEAT;
+                CLOSE cur_t;
+                SET done = 0;
 
-				OPEN cur_c;
-				REPEAT
-					FETCH cur_c INTO cid, trid;
-					IF NOT done THEN
-						SET ret = syncMVcoach(cid,trid);
-					END IF;
-				UNTIL done END REPEAT;
-				CLOSE cur_c;
-				SET done = 0;
+                OPEN cur_c;
+                REPEAT
+                    FETCH cur_c INTO cid, trid;
+                    IF NOT done THEN
+                        SET ret = syncMVcoach(cid,trid);
+                    END IF;
+                UNTIL done END REPEAT;
+                CLOSE cur_c;
+                SET done = 0;
 
-				OPEN cur_r;
-				REPEAT
-					FETCH cur_r INTO rid, trid;
-					IF NOT done THEN
-						SET ret = syncMVrace(rid,trid);
-					END IF;
-				UNTIL done END REPEAT;
-				CLOSE cur_r;
-				SET done = 0;
+                OPEN cur_r;
+                REPEAT
+                    FETCH cur_r INTO rid, trid;
+                    IF NOT done THEN
+                        SET ret = syncMVrace(rid,trid);
+                    END IF;
+                UNTIL done END REPEAT;
+                CLOSE cur_r;
+                SET done = 0;
 
 			END',
 
