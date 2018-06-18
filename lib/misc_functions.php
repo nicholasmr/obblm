@@ -198,7 +198,7 @@ function textdate($mysqldate, $noTime = false, $setSeconds = true) {
         $lng->getTrn('daysofweek/monday'),
         $lng->getTrn('daysofweek/tuesday'),
         $lng->getTrn('daysofweek/wednesday'),
-        $lng->getTrn('daysofweek/thusday'),
+        $lng->getTrn('daysofweek/thursday'),
         $lng->getTrn('daysofweek/friday'),
         $lng->getTrn('daysofweek/saturday'),
     );
