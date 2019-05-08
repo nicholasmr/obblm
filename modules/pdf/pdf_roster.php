@@ -457,7 +457,7 @@ $bribe_cost = $inducements['Bribes'][(($r == 'Goblin') ? 'reduced_cost' : 'cost'
 
 if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; }
 else $ind_babes = '__';
-if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$inducements['Bribes']['cost']; }
+if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$bribe_cost; } # Not $inducements['Bribes']['cost']; }
 else $ind_bribes = '__';
 if (isset($ind_card)) { $ind_cost += $ind_card; }
 else $ind_card = '__';
