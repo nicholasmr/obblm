@@ -2568,7 +2568,7 @@ $stars = array(
         'races' => array(T_RACE_NURGLE),	
 	),	
 	// Added in BB2016 Spike! #4
-    'G Ral Blodschuker' => array (
+    'G\'Ral Blodschuker' => array (
         'id'    => -84,
         'ma'    => 7,
         'st'    => 3,
@@ -2579,7 +2579,7 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_NECROMANTIC, T_RACE_UNDEAD, T_RACE_VAMPIRE),	
 	),
-    'Bryce The Slice Cambuel' => array (
+    'Bryce \'The Slice\' Cambuel' => array (
         'id'    => -85,
         'ma'    => 5,
         'st'    => 3,
@@ -2590,7 +2590,7 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_UNDEAD, T_RACE_KHEMRI),	
 	),
-    'Ivan The Animal Deathshroud' => array (
+    'Ivan \'The Animal\' Deathshroud' => array (
         'id'    => -86,
         'ma'    => 6,
         'st'    => 4,
@@ -2612,7 +2612,7 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_UNDEAD, T_RACE_KHEMRI),	
 	),
-    'Rotten Rick Bupkeis' => array (
+    '\'Rotten\' Rick Bupkeis' => array (
         'id'    => -88,
         'ma'    => 4,
         'st'    => 3,
@@ -2623,7 +2623,7 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_NECROMANTIC, T_RACE_UNDEAD),	
 	),
-    'Throttlesnot The Implaer' => array (
+    'Throttlesnot \'The Implaer\'' => array (
         'id'    => -89,
         'ma'    => 6,
         'st'    => 2,
@@ -2634,7 +2634,7 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_NECROMANTIC, T_RACE_UNDEAD),	
 	),
-    'Gretchen Wachter The Blood Bowl Widow' => array (
+    'Gretchen Wachter \'The Blood Bowl Widow\'' => array (
         'id'    => -90,
         'ma'    => 7,
         'st'    => 3,
