@@ -460,9 +460,9 @@ else {
   }
   else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Wandering Apothecaries']['cost']; }
 }
-// Checking LRB6 cheaper Chef for Halfling
+// Checking game data if cheaper Chef for Halfling
 $chef_cost = $inducements['Halfling Master Chef'][(($r == 'Halfling') ? 'reduced_cost' : 'cost')];
-// Checking LRB6 cheaper bribes for Goblin
+// Checking game data if cheaper bribes for Goblin
 $bribe_cost = $inducements['Bribes'][(($r == 'Goblin') ? 'reduced_cost' : 'cost')];
 
 if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; }
