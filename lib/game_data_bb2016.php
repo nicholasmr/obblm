@@ -246,6 +246,7 @@ $DEA = array (
                 'icon'            => 'derunner1',
                 'pos_id'        => 31,
             ),
+			//fixed Assassin icon
             'Assassin'    => array (
                 'ma'            => 6,
                  'st'            => 3,
@@ -256,7 +257,7 @@ $DEA = array (
                  'doub'        => array ('S', 'P'),
                  'qty'            => 2,
                 'cost'            => 90000,
-                'icon'            => 'delineman1',
+                'icon'            => 'deassassin1',
                 'pos_id'        => 32,
             ),
             'Blitzer'    => array (
