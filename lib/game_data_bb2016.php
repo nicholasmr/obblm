@@ -2387,7 +2387,7 @@ $stars = array(
         'def'   => array (99, 1, 54, 13),
         'cost'  => 390000,
         'icon'  => 'star',
-        'races' => array(T_RACE_ELF, T_RACE_HIGH_ELF, T_RACE_WOOD_ELF),
+        'races' => array(5, 8, 20),
     ),
     'Valen Swift (included with Lucien Swift)' => array (
         'id'    => -68,
@@ -2398,7 +2398,7 @@ $stars = array(
         'def'   => array (99, 40, 44, 45, 46, 12),
         'cost'  => 0,
         'icon'  => 'star',
-        'races' => array(T_RACE_ELF, T_RACE_HIGH_ELF, T_RACE_WOOD_ELF),
+        'races' => array(5, 8, 20),
     ),
     'Kreek Rustgouger' => array (
         'id'    => -69,
