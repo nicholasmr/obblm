@@ -778,8 +778,7 @@ function sec_about() {
     <br>
     <p>
         <b>OBBLM version <?php echo OBBLM_VERSION; ?></b><br><br>
-        Online Blood Bowl League Manager is an online game management system for Game Workshop's board game Blood Bowl.<br>
-        <br>
+        Online Blood Bowl League Manager is an online game management system for Game Workshop's board game Blood Bowl.<br><br>    
         The authors of this program are
         <ul>
             <li> <a href="mailto:nicholas.rathmann@gmail.com">Nicholas Mossor Rathmann</a>
@@ -797,6 +796,12 @@ function sec_about() {
         </ul>
         <br><br>With special thanks to Scott Bartel, Tom "Hutchinsfairy" and Michael Franchetti.
         <br><br>
+
+	This build of software picked together by David Byrne using NAFLM v1.0 on 16th May 2019<br>
+	Updated game data was sourced and was current from Blood Bowl 2016, DeathZone 1 and 2, Spike Mazgine 1, 2, 3 and 4.<br>
+	<br>
+	Repository can be found at <a href="https://github.com/byrnesvictim/naflm/releases">https://github.com/byrnesvictim/naflm/releases</a><br><br>
+
         OBBLM consists of valid HTML 4.01 transitional document type pages.
         <br><br>
         <img src="http://www.w3.org/Icons/valid-html401" alt="Valid HTML 4.01 Transitional" height="31" width="88">
