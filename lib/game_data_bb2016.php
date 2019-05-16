@@ -6,7 +6,7 @@
         game_data_lrb6.php
         game_data_bb16.php
     IMPORTANT!
-    Whenever the values og this file are changed you must run the 
+    Whenever the values of this file are changed you must run the 
     "Synchronise the PHP-stored BB game data" under "DB maintenance" from the "Admin -> Core panel" menu.
 ** ******************************************************************************************************** */
 /*  Races  **************************************************************************************************/
@@ -2848,7 +2848,7 @@ $inducements = array (
         'reduced_cost' => 100000,
         'reduced_cost_races' => array(),
     ),
-	// Ammended name to Spike Magazine #1
+    // Ammended name to Spike Magazine #1
     'Hireling Sports-Wizard' => array (    
         'cost' => 150000,
         'max'  => 1,
