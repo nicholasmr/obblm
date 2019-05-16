@@ -76,7 +76,7 @@ require_once('lib/settings_default.php'); 			# Defaults
 require_once('settings.php');             			# Overrides
 require_once('localsettings/settings_none.php'); 	# Defaults. Overrides are league dependant and are not loaded here - see setupGlobalVars()
 # Load game data --- Module settings might depend on game data, so we include it first
-require_once('lib/game_data_bb2016.php'); # LRB6 MUST be loaded.
+require_once('lib/game_data_bb2016.php'); # GAME_DATA_BB2016 MUST be loaded.
 if ($settings['custom_races']['Bretonnia'])         {require_once('lib/game_data_bretonnia.php');}
 if ($settings['custom_races']['Daemons of khorne']) {require_once('lib/game_data_daemonsofkhorne.php');}
 if ($settings['custom_races']['Apes of wrath'])     {require_once('lib/game_data_apesofwrath.php');}
