@@ -721,7 +721,8 @@ class Match_HTMLOUT extends Match
 						<select id="stars_<?php echo $id;?>" <?php echo $DIS; ?>>
 							<?php
 							foreach ($stars as $s => $d) {
-								echo "<option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';"' : '')." value='$d[id]'>$s</option>\n";
+                                if(in_array($t->f_race_id, $d['races']))
+                                    echo "<option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';"' : '')." value='$d[id]'>$s</option>\n";
 							}
 							?>
 						</select>
