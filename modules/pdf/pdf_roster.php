@@ -60,6 +60,7 @@ global $DEA;
 global $skillarray;
 global $rules;
 global $inducements;
+global $starpairs;
 
 define("MARGINX", 20);
 define("MARGINY", 20);
@@ -382,6 +383,15 @@ if ($_POST) {
             'cp'=>$s->mv_cp, 'td'=>$s->mv_td, 'int'=>$s->mv_intcpt, 'cas'=>$s->mv_cas, 'mvp'=>$s->mv_mvp, 'spp'=>$s->mv_spp, 'value'=>$pdf->Mf($s->cost));
       $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
       $ind_cost += $s->cost;
+      if (array_key_exists($sid, $starpairs)) {
+          // Parent Star selected
+          $sid = $starpairs[$sid];
+          $s = new Star($sid);
+          $s->setSkills(true);
+          $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>utf8_decode($s->skills),
+          'cp'=>$s->mv_cp, 'td'=>$s->mv_td, 'int'=>$s->mv_intcpt, 'cas'=>$s->mv_cas, 'mvp'=>$s->mv_mvp, 'spp'=>$s->mv_spp, 'value'=>$pdf->Mf($s->cost));
+          $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
+      }
     }
   }
 
@@ -457,7 +467,7 @@ $bribe_cost = $inducements['Bribes'][(($r == 'Goblin') ? 'reduced_cost' : 'cost'
 
 if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; }
 else $ind_babes = '__';
-if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$inducements['Bribes']['cost']; }
+if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$bribe_cost; } # Not $inducements['Bribes']['cost']; }
 else $ind_bribes = '__';
 if (isset($ind_card)) { $ind_cost += $ind_card; }
 else $ind_card = '__';
