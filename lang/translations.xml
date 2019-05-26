@@ -551,8 +551,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <doomdiver>Doom Diver</doomdiver>
     <ooligan>'Ooligan</ooligan>
     <!-- Halfling -->
-    <halfling>Halfling</halfling>
+    <halflinghopeful>Halfling Hopeful</halflinghopeful>
     <treeman>Treeman</treeman>
+    <halflingcatcher>Halfling Catcher</halflingcatcher>
+    <halflinghefty>Halfling Hefty</halflinghefty>
     <!-- Human -->
     <ogre>Ogre</ogre>
     <!-- Khemri -->
