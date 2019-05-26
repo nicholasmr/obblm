@@ -548,7 +548,7 @@ $DEA = array (
             'race_id' => T_RACE_HALFLING, # (Halfling)
         ),
         'players'    => array (
-            'Halfling'    => array (
+            'Halfling Hopeful'    => array (
                 'ma'            => 5,
                  'st'            => 2,
                  'ag'            => 3,
@@ -573,7 +573,33 @@ $DEA = array (
                 'cost'            => 120000,
                 'icon'            => 'treeman1',
                 'pos_id'        => 71,
-            )
+            ),
+            'Halfling Catcher'    => array (
+                'ma'            => 5,
+                 'st'            => 2,
+                 'ag'            => 3,
+                 'av'            => 6,
+                 'def'        => array (20, 23, 104, 28, 108),
+                 'norm'        => array ('A'),
+                 'doub'        => array ('G', 'S', 'P'),
+                 'qty'            => 2,
+                'cost'            => 50000,
+                'icon'            => 'halfling1',
+                'pos_id'        => 72,
+            ),
+            'Halfling Hefty'    => array (
+                'ma'            => 5,
+                 'st'            => 2,
+                 'ag'            => 3,
+                 'av'            => 7,
+                 'def'        => array (23, 4, 108),
+                 'norm'        => array ('A', 'P'),
+                 'doub'        => array ('G', 'S'),
+                 'qty'            => 2,
+                'cost'            => 50000,
+                'icon'            => 'halfling1',
+                'pos_id'        => 73,
+            ),		
         )
     ),
     'High Elf'    => array (
