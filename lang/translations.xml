@@ -551,9 +551,11 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <doomdiver>Doom Diver</doomdiver>
     <ooligan>'Ooligan</ooligan>
     <!-- Halfling -->
-    <halfling>Halfling</halfling>
+    <halflinghopeful>Halfling Hopeful</halflinghopeful>
     <treeman>Treeman</treeman>
-    <!-- Human -->
+    <halflingcatcher>Halfling Catcher</halflingcatcher>
+    <halflinghefty>Halfling Hefty</halflinghefty>
+	<!-- Human -->
     <ogre>Ogre</ogre>
     <!-- Khemri -->
     <skeleton>Skeleton</skeleton>
@@ -793,7 +795,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <scylaanfingrimm>Scyla Anfingrimm</scylaanfingrimm>
     <withergraspdoubledrool>Withergrasp Doubledrool</withergraspdoubledrool>
     <!-- Added BB2016 Spike! #2 -->
-	<asperonthorn>Asperon Thorn</asperonthorn>
+    <asperonthorn>Asperon Thorn</asperonthorn>
 	<elijahdoom>Elijah Doom</elijahdoom>
 	<kirothkrakeneye>Kiroth Krakeneye</kirothkrakeneye>
 	<mordrixhex>Mordrix Hex</mordrixhex>
@@ -809,7 +811,12 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 	<rottenrickbupkeis>'Rotten' Rick Bupkeis</rottenrickbupkeis>
 	<throttlesnottheimplaer>Throttlesnot 'The Implaer'</throttlesnottheimplaer>
 	<gretchenwachterthebloodbowlwidow>Gretchen Wachter 'The Blood Bowl Widow'</gretchenwachterthebloodbowlwidow>
-	<!-- Added BB2016 Spike! #5 PLACEHOLDER -->
+	<!-- Added BB2016 Spike! #5 -->
+    <neddleyverruca>Neddley Verruca</neddleyverruca>
+    <cindypewhistle>Cindy Pewhistle</cindypewhistle>
+    <rumbelowsheepskin>Rumbelow Sheepskin</rumbelowsheepskin>
+    <bigjobohairyfoot>Big Jobo Hairyfoot</bigjobohairyfoot>
+    <captaincolander>Captain Colander</captaincolander>
 </starplayer>
 
 <daysofweek>
