@@ -1790,7 +1790,7 @@ $stars = array(
        'st'     => 7,
        'ag'     => 1,
        'av'     => 10,
-       'def'    => array (99, 1, 54, 57, 58, 59, 110),
+       'def'    => array (99, 1, 54, 57, 58, 59, 110, 115), //Added Timmm-ber
        'cost'   => 300000,
        'icon'   => 'star',
        'races'  => array(7),
@@ -2672,7 +2672,62 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_NECROMANTIC, T_RACE_UNDEAD, T_RACE_VAMPIRE),	
 	),	
-	// Added in BB2016 Spike! #5 PLACEHOLDER    
+	// Added in BB2016 Spike! #5 PLACEHOLDER
+    'Neddley Verruca' => array (
+        'id'    => -91,
+        'ma'    => 5,
+        'st'    => 2,
+        'ag'    => 3,
+        'av'    => 6,
+        'def'   => array (99, 23, 105, 106, 108, 25, 79),
+        'cost'  => 70000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_HALFLING),	
+	),
+    'Cindy Pewhistle' => array (
+        'id'    => -92,
+        'ma'    => 5,
+        'st'    => 2,
+        'ag'    => 3,
+        'av'    => 6,
+        'def'   => array (99, 40, 93, 23, 105, 108),
+        'cost'  => 50000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_HALFLING),	
+	),	
+    'Rumbelow Sheepskin' => array (
+        'id'    => -93,
+        'ma'    => 6,
+        'st'    => 3,
+        'ag'    => 3,
+        'av'    => 7,
+        'def'   => array (99, 1, 75, 53, 100, 13, 59),
+        'cost'  => 170000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_HALFLING),	
+	),
+    'Big Jobo Hairyfoot' => array (
+        'id'    => -94,
+        'ma'    => 4,
+        'st'    => 3,
+        'ag'    => 2,
+        'av'    => 8,
+        'def'   => array (99, 3, 108, 13, 59, 14),
+        'cost'  => 120000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_HALFLING, T_RACE_OGRE),	
+	),	
+    'Captain Colander' => array (
+        'id'    => -95,
+        'ma'    => 6,
+        'st'    => 2,
+        'ag'    => 3,
+        'av'    => 7,
+        'def'   => array (99, 20, 72, 23, 4, 24, 103, 104, 108, 26),
+        'cost'  => 100000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_HALFLING),	
+	),
 );
 /*  Paired Stars  ***************************************************************************************** */
 $starpairs = array (
@@ -2976,7 +3031,19 @@ $inducements = array (
         'reduced_cost' => 150000,
         'reduced_cost_races' => array(T_RACE_UNDEAD, T_RACE_NECROMANTIC, T_RACE_KHEMRI, T_RACE_VAMPIRE),
     ),	
-    // Added in BB2016 Spike! #5 PLACEHOLDER
+    // Added in BB2016 Spike! #5
+    'Halfling Hot-Pot' => array (
+        'cost' => 0,
+        'max'  => 1,
+        'reduced_cost' => 60000,
+        'reduced_cost_races' => array(T_RACE_HALFLING, T_RACE_OGRE),
+    ),
+    'Bottle of Heady Brew' => array (
+        'cost' => 0,
+        'max'  => 3,
+        'reduced_cost' => 40000,
+        'reduced_cost_races' => array(T_RACE_HALFLING, T_RACE_OGRE),
+    ),
 );
 /* ******************************************************************************************************** **
     IMPORTANT!
