@@ -552,10 +552,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <ooligan>'Ooligan</ooligan>
     <!-- Halfling -->
     <halflinghopeful>Halfling Hopeful</halflinghopeful>
+    <treeman>Treeman</treeman>
     <halflingcatcher>Halfling Catcher</halflingcatcher>
     <halflinghefty>Halfling Hefty</halflinghefty>
-    <treeman>Treeman</treeman>
-    <!-- Human -->
+	<!-- Human -->
     <ogre>Ogre</ogre>
     <!-- Khemri -->
     <skeleton>Skeleton</skeleton>
