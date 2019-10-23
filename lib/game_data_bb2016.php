@@ -2797,12 +2797,58 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_WOOD_ELF),	
 	),
+    // Added in BB2016 Spike! #7
+    'Anqi Panqi' => array (
+        'id'    => -101,
+        'ma'    => 7,
+        'st'    => 4,
+        'ag'    => 1,
+        'av'    => 9,
+        'def'   => array (99, 1, 51, 57),
+        'cost'  => 210000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_LIZARDMAN),	
+	),
+    'Drull (+Dribl)' => array (
+        'id'    => -101,
+        'ma'    => 8,
+        'st'    => 2,
+        'ag'    => 3,
+        'av'    => 7,
+        'def'   => array (99, 23, 26, 106, 108),
+        'cost'  => 190000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_LIZARDMAN),	
+	),
+    'Dribl (included with Drull)' => array (
+        'id'    => -102,
+        'ma'    => 8,
+        'st'    => 2,
+        'ag'    => 3,
+        'av'    => 7,
+        'def'   => array (99, 3, 23, 26, 27, 108),
+        'cost'  => 0,
+        'icon'  => 'star',
+        'races' => array(T_RACE_LIZARDMAN),	
+	),
+    'Glotl Stop' => array (
+        'id'    => -103,
+        'ma'    => 6,
+        'st'    => 6,
+        'ag'    => 1,
+        'av'    => 9,
+        'def'   => array (99, 5, 54, 56, 76, 59, 112),
+        'cost'  => 360000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_LIZARDMAN, T_RACE_AMAZON),	
+	),	
 );
 /*  Paired Stars  ***************************************************************************************** */
 $starpairs = array (
     // Parent => Child
     -6  => -7,
     -67 => -68
+    -101 => -102	
 );
 /*  SPP  ************************************************************************************************** */
 $sparray = array (    
@@ -3113,6 +3159,13 @@ $inducements = array (
         'reduced_cost' => 40000,
         'reduced_cost_races' => array(T_RACE_HALFLING, T_RACE_OGRE),
     ),
+    // Added in BB2016 Spike! #7
+    'Slann Mage-Priest' => array (
+        'cost' => 0,
+        'max'  => 1,
+        'reduced_cost' => 150000,
+        'reduced_cost_races' => array(T_RACE_LIZARDMAN, T_RACE_AMAZON),
+    ),	
 );
 /* ******************************************************************************************************** **
     IMPORTANT!
