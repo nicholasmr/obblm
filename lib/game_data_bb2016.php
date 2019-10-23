@@ -2784,7 +2784,7 @@ $stars = array(
         'def'   => array (99, 72, 53, 54, 76, 103, 29),
         'cost'  => 280000,
         'icon'  => 'star',
-        'races' => array(T_RACE_Amazon, T_RACE_LIZARDMAN, T_RACE_WOOD_ELF),	
+        'races' => array(T_RACE_AMAZON, T_RACE_LIZARDMAN, T_RACE_WOOD_ELF),	
 	),
     'Curnoth Darkwold' => array (
         'id'    => -100,
@@ -2810,7 +2810,7 @@ $stars = array(
         'races' => array(T_RACE_LIZARDMAN),	
 	),
     'Drull (+Dribl)' => array (
-        'id'    => -101,
+        'id'    => -102,
         'ma'    => 8,
         'st'    => 2,
         'ag'    => 3,
@@ -2821,7 +2821,7 @@ $stars = array(
         'races' => array(T_RACE_LIZARDMAN),	
 	),
     'Dribl (included with Drull)' => array (
-        'id'    => -102,
+        'id'    => -103,
         'ma'    => 8,
         'st'    => 2,
         'ag'    => 3,
@@ -2832,7 +2832,7 @@ $stars = array(
         'races' => array(T_RACE_LIZARDMAN),	
 	),
     'Glotl Stop' => array (
-        'id'    => -103,
+        'id'    => -104,
         'ma'    => 6,
         'st'    => 6,
         'ag'    => 1,
@@ -2848,7 +2848,7 @@ $starpairs = array (
     // Parent => Child
     -6  => -7,
     -67 => -68,
-    -101 => -102	
+    -102 => -103	
 );
 /*  SPP  ************************************************************************************************** */
 $sparray = array (    
