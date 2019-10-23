@@ -568,6 +568,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <skink>Skink</skink>
     <saurus>Saurus</saurus>
     <kroxigor>Kroxigor</kroxigor>
+    <chameleonskink>Chameleon Skink</chameleonskink>
     <!-- Necromantic -->
     <zombie>Zombie</zombie>
     <ghoul>Ghoul</ghoul>
@@ -796,22 +797,22 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <withergraspdoubledrool>Withergrasp Doubledrool</withergraspdoubledrool>
     <!-- Added BB2016 Spike! #2 -->
     <asperonthorn>Asperon Thorn</asperonthorn>
-	<elijahdoom>Elijah Doom</elijahdoom>
-	<kirothkrakeneye>Kiroth Krakeneye</kirothkrakeneye>
-	<mordrixhex>Mordrix Hex</mordrixhex>
-	<jeremiahkool>Jeremiah Kool</jeremiahkool>
-	<!-- Added BB2016 Spike! #3 -->
-	<bullashardhorn>Bulla Shardhorn</bullashardhorn>
-	<tollyglocklinger>Tolly Glocklinger</tollyglocklinger>
-	<!-- Added BB2016 Spike! #4 -->
-	<gralblodschuker>G'Ral Blodschuker</gralblodschuker>
-	<brycetheslicecambuel>Bryce 'The Slice' Cambuel</brycetheslicecambuel>
-	<ivantheanimaldeathshroud>Ivan 'The Animal' Deathshroud</ivantheanimaldeathshroud>
-	<skrullhalfheight>Skrull Halfheight</skrullhalfheight>
-	<rottenrickbupkeis>'Rotten' Rick Bupkeis</rottenrickbupkeis>
-	<throttlesnottheimplaer>Throttlesnot 'The Implaer'</throttlesnottheimplaer>
-	<gretchenwachterthebloodbowlwidow>Gretchen Wachter 'The Blood Bowl Widow'</gretchenwachterthebloodbowlwidow>
-	<!-- Added BB2016 Spike! #5 -->
+    <elijahdoom>Elijah Doom</elijahdoom>
+    <kirothkrakeneye>Kiroth Krakeneye</kirothkrakeneye>
+    <mordrixhex>Mordrix Hex</mordrixhex>
+    <jeremiahkool>Jeremiah Kool</jeremiahkool>
+    <!-- Added BB2016 Spike! #3 -->
+    <bullashardhorn>Bulla Shardhorn</bullashardhorn>
+    <tollyglocklinger>Tolly Glocklinger</tollyglocklinger>
+    <!-- Added BB2016 Spike! #4 -->
+    <gralblodschuker>G'Ral Blodschuker</gralblodschuker>
+    <brycetheslicecambuel>Bryce 'The Slice' Cambuel</brycetheslicecambuel>
+    <ivantheanimaldeathshroud>Ivan 'The Animal' Deathshroud</ivantheanimaldeathshroud>
+    <skrullhalfheight>Skrull Halfheight</skrullhalfheight>
+    <rottenrickbupkeis>'Rotten' Rick Bupkeis</rottenrickbupkeis>
+    <throttlesnottheimplaer>Throttlesnot 'The Implaer'</throttlesnottheimplaer>
+    <gretchenwachterthebloodbowlwidow>Gretchen Wachter 'The Blood Bowl Widow'</gretchenwachterthebloodbowlwidow>
+    <!-- Added BB2016 Spike! #5 -->
     <neddleyverruca>Neddley Verruca</neddleyverruca>
     <cindypewhistle>Cindy Pewhistle</cindypewhistle>
     <rumbelowsheepskin>Rumbelow Sheepskin</rumbelowsheepskin>
@@ -823,8 +824,13 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <maplehighgrove>Maple Highgrove</maplehighgrove>
     <zolcaththezoat>Zolcath the Zoat</zolcaththezoat>
     <curnothdarkwold>Curnoth Darkwold</curnothdarkwold>
+    <!-- Added BB2016 Spike! #7 -->
+    <anqipanqi>Anqi Panqi</anqipanqi>
+    <drulldribl>Drull (&amp; Dribl)</drulldribl>
+    <driblincludedwithdrull>Dribl (included with Drull)</driblincludedwithdrull>
+    <glotlstop>Glotl Stop</glotlstop>
 </starplayer>
-
+	
 <daysofweek>
   <monday>Monday</monday>
   <tuesday>Tuesday</tuesday>
