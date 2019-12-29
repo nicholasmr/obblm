@@ -72,6 +72,7 @@ foreach (array(	'Brick Far\'th (+ Grotty)',
 				'Morg \'n\' Thorg',
 				'Lord Borak the Despoiler',
 				'Max Spleenripper',
+				'Bob Bifford',
 				) as $s) {
     array_push($stars[$s]['races'], T_RACE_DKHORNE);
 }
