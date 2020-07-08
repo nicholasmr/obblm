@@ -720,6 +720,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <!-- Added BB2016 Spike! #8 -->
     <disposable>Disposable</disposable>
     <kickteammate>Kick Team-Mate</kickteammate>
+	<sportinggiant>Sporting Giant</sportinggiant>
 </skill>
 
 <starplayer>
@@ -837,6 +838,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <glotlstop>Glotl Stop</glotlstop>
     <!-- Added BB2016 Spike! #8 -->
     <bobbifford>Bob Bifford</bobbifford>
+	<slavegiant>Slave Giant</slavegiant>
 </starplayer>
 	
 <daysofweek>
