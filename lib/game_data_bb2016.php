@@ -1188,7 +1188,7 @@ $DEA = array (
                  'st'            => 1,
                  'ag'            => 3,
                  'av'            => 5,
-                 'def'        => array (23, 104, 26, 108, 111),
+                 'def'        => array (23, 104, 26, 108, 111, 118),
                  'norm'        => array ('A'),
                  'doub'        => array ('G', 'S', 'P'),
                  'qty'            => 16,
@@ -1204,11 +1204,24 @@ $DEA = array (
                  'def'        => array (94, 54, 59, 110),
                  'norm'        => array ('S'),
                  'doub'        => array ('G','A', 'P'),
-                 'qty'            => 6,
+                 'qty'            => 5,
                 'cost'            => 140000,
                 'icon'            => 'ogre1',
                 'pos_id'        => 161,
-            )        
+            ),
+            'Runt Punter'    => array (
+                'ma'           => 5,
+                'st'           => 5,
+                'ag'           => 2,
+                'av'           => 9,
+                'def'          => array (94, 54, 59, 119),
+                'norm'         => array ('S', 'P'),
+                'doub'         => array ('G', 'A'),
+                'qty'          => 1,
+                'cost'         => 150000,
+                'icon'         => 'ogre1',
+                'pos_id'       => 162,
+            ),
         )
     ),    
     
@@ -2842,6 +2855,18 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_LIZARDMAN, T_RACE_AMAZON),	
 	),	
+    // Added in BB2016 Spike! #8
+    'Bob Bifford' => array (
+        'id'    => -105,
+        'ma'    => 5,
+        'st'    => 6,
+        'ag'    => 2,
+        'av'    => 10,
+        'def'   => array (99, 1, 50, 53, 54, 55, 59, 110),
+        'cost'  => 380000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_AMAZON, T_RACE_CHAOS, T_RACE_CHAOS_DWARF, T_RACE_DARK_ELF, T_RACE_DWARF, T_RACE_ELF, T_RACE_GOBLIN, T_RACE_HALFLING, T_RACE_HIGH_ELF, T_RACE_HUMAN, T_RACE_KHEMRI, T_RACE_LIZARDMAN, T_RACE_ORC, T_RACE_NECROMANTIC, T_RACE_NORSE, T_RACE_NURGLE, T_RACE_OGRE, T_RACE_UNDEAD, T_RACE_VAMPIRE, T_RACE_SKAVEN, T_RACE_WOOD_ELF, T_RACE_CHAOS_PACT, T_RACE_SLANN, T_RACE_UNDERWORLD),
+	),
 );
 /*  Paired Stars  ***************************************************************************************** */
 $starpairs = array (
@@ -2980,6 +3005,9 @@ $skillarray    = array (
         116 => 'Weeping Blades',
         // Added in BB2016 DZ2
         117 => 'Swoop',
+        // Added in BB2016 Spike! #8
+        118 => 'Disposable',
+        119 => 'Kick Team-Mate',
     ),
 );
 // Create skill ID index (key:val = id:skill_name).
@@ -3166,6 +3194,19 @@ $inducements = array (
         'reduced_cost' => 150000,
         'reduced_cost_races' => array(T_RACE_LIZARDMAN, T_RACE_AMAZON),
     ),	
+    // Added in BB2016 Spike! #8
+    'Riotous Rookies' => array (
+        'cost' => 0,
+        'max'  => 1,
+        'reduced_cost' => 100000,
+        'reduced_cost_races' => array(T_RACE_OGRE),
+    ),
+    'Firebelly' => array (
+        'cost' => 0,
+        'max'  => 1,
+        'reduced_cost' => 150000,
+        'reduced_cost_races' => array(T_RACE_OGRE, T_RACE_CHAOS_PACT),
+    ),
 );
 /* ******************************************************************************************************** **
     IMPORTANT!

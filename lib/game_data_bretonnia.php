@@ -53,6 +53,6 @@ $DEA['Bretonnia'] = array (
 );
 
 // Stars allowed
-foreach (array('Dolfar Longstride', 'Griff Oberwald', 'Mighty Zug', 'Morg \'n\' Thorg', 'Willow Rosebark', 'Zara the Slayer') as $s) {
+foreach (array('Dolfar Longstride', 'Griff Oberwald', 'Mighty Zug', 'Morg \'n\' Thorg', 'Willow Rosebark', 'Zara the Slayer', 'Bob Bifford') as $s) {
     array_push($stars[$s]['races'], T_RACE_BRETONNIA);
 }
