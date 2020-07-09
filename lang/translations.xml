@@ -514,6 +514,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <bretonnia>Bretonnia</bretonnia>
     <daemonsofkhorne>Daemons of Khorne</daemonsofkhorne>
     <simyin>Simyin</simyin>
+	<oldworldalliance>Old World Alliance</oldworldalliance>
 </race>
 
 <position>
@@ -629,6 +630,15 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <gorilla>Gorilla</gorilla>
     <chimpanzee>Chimpanzee</chimpanzee>
     <silverback>Silverback</silverback>
+	<!-- Old World Alliance -->
+	<humanlineman>Human Lineman</humanlineman>
+	<humanthrower>Human Thrower</humanthrower>
+	<humancatcher>Human Catcher</humancatcher>
+	<humanblitzer>Human Blitzer</humanblitzer>
+	<dwarfblocker>Dwarf Blocker</dwarfblocker>
+	<dwarfrunner>Dwarf Runner</dwarfrunner>
+	<dwarfblitzer>Dwarf Blitzer</dwarfblitzer>
+	<dwarftrollslayer>Dwarf Troll Slayer</dwarftrollslayer>
 </position>
 
 <skill>
@@ -716,7 +726,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <timmmber>Timmm-ber!</timmmber>
     <titchy>Titchy</titchy>
     <wildanimal>Wild Animal</wildanimal>
-    <weepingblades>Weeping Dagger</weepingblades>
+    <weepingdagger>Weeping Dagger</weepingdagger>
     <!-- Added BB2016 Spike! #8 -->
     <disposable>Disposable</disposable>
     <kickteammate>Kick Team-Mate</kickteammate>
