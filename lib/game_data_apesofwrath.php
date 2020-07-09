@@ -84,6 +84,7 @@ foreach (array(	'Bertha Bigfist',
 				'Willow Rosebark',
 				'Zara the Slayer',
 				'Bob Bifford',
+				'Slave Giant',
 				) as $s) {
     array_push($stars[$s]['races'], T_RACE_APESOFWRATH);
 }

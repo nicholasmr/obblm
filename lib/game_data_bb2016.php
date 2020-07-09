@@ -739,7 +739,7 @@ $DEA = array (
         )
     ),
     
-    'Khemri Tomb Kings'    => array (
+    'Tomb Kings'    => array (
         'other'    => array (
             'rr_cost' => 70000,
             'icon' => 'khemri.png',
