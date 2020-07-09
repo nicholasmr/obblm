@@ -21,12 +21,6 @@
  *
  */
 
-/* 
-
-    Known bug: Chose a star 1. Chose star 2. Change star 1 to same as star 2 and both will be the same.
-    
- */
-
 class IndcPage implements ModuleInterface
 {
 

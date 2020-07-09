@@ -2496,6 +2496,7 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_GOBLIN, T_RACE_UNDERWORLD),
     ),
+	//Moved to inducements
     'Kari Coldsteel' => array (
         'id'    => -73,
         'ma'    => 6,
@@ -2505,7 +2506,7 @@ $stars = array(
         'def'   => array (99, 1, 2, 5),
         'cost'  => 50000,
         'icon'  => 'star',
-        'races' => array(T_RACE_AMAZON, T_RACE_DWARF, T_RACE_HUMAN, T_RACE_NORSE),
+        'races' => array(),
     ),
     // Added in BB2016 Spike! #1
     'Withergrasp Doubledrool' => array (
@@ -2867,6 +2868,17 @@ $stars = array(
         'icon'  => 'star',
         'races' => array(T_RACE_AMAZON, T_RACE_CHAOS, T_RACE_CHAOS_DWARF, T_RACE_DARK_ELF, T_RACE_DWARF, T_RACE_ELF, T_RACE_GOBLIN, T_RACE_HALFLING, T_RACE_HIGH_ELF, T_RACE_HUMAN, T_RACE_KHEMRI, T_RACE_LIZARDMAN, T_RACE_ORC, T_RACE_NECROMANTIC, T_RACE_NORSE, T_RACE_NURGLE, T_RACE_OGRE, T_RACE_UNDEAD, T_RACE_VAMPIRE, T_RACE_SKAVEN, T_RACE_WOOD_ELF, T_RACE_CHAOS_PACT, T_RACE_SLANN, T_RACE_UNDERWORLD),
 	),
+    'Slave Giant' => array (
+        'id'    => -106,
+        'ma'    => 5,
+        'st'    => 6,
+        'ag'    => 2,
+        'av'    => 10,
+        'def'   => array (99, 90, 94, 53, 54, 55, 120, 57, 110),
+        'cost'  => 400000,
+        'icon'  => 'star',
+        'races' => array(T_RACE_AMAZON, T_RACE_CHAOS, T_RACE_CHAOS_DWARF, T_RACE_DARK_ELF, T_RACE_DWARF, T_RACE_ELF, T_RACE_GOBLIN, T_RACE_HALFLING, T_RACE_HIGH_ELF, T_RACE_HUMAN, T_RACE_KHEMRI, T_RACE_LIZARDMAN, T_RACE_ORC, T_RACE_NECROMANTIC, T_RACE_NORSE, T_RACE_NURGLE, T_RACE_OGRE, T_RACE_UNDEAD, T_RACE_VAMPIRE, T_RACE_SKAVEN, T_RACE_WOOD_ELF, T_RACE_CHAOS_PACT, T_RACE_SLANN, T_RACE_UNDERWORLD),
+	),
 );
 /*  Paired Stars  ***************************************************************************************** */
 $starpairs = array (
@@ -3008,6 +3020,7 @@ $skillarray    = array (
         // Added in BB2016 Spike! #8
         118 => 'Disposable',
         119 => 'Kick Team-Mate',
+		120 => 'Sporting Giant',
     ),
 );
 // Create skill ID index (key:val = id:skill_name).
@@ -3109,6 +3122,12 @@ $inducements = array (
         'max'  => 1,
         'reduced_cost' => 80000,
         'reduced_cost_races' => array(T_RACE_SKAVEN, T_RACE_UNDERWORLD),
+    ),
+    'Kari Coldsteel' => array (
+        'cost' => 0,
+        'max'  => 1,
+        'reduced_cost' => 50000,
+        'reduced_cost_races' => array(T_RACE_AMAZON, T_RACE_DWARF, T_RACE_HUMAN, T_RACE_NORSE),
     ),
     // Added in BB2016 Spike! #1
     'Chaos Sorcerer' => array (
