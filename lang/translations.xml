@@ -497,7 +497,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <halfling>Halfling</halfling>
     <highelf>High Elf</highelf>
     <human>Human</human>
-    <khemritombkings>Khemri Tomb Kings</khemritombkings>
+    <tombkings>Tomb Kings</tombkings>
     <lizardman>Lizardman</lizardman>
     <necromantichorror>Necromantic Horror</necromantichorror>
     <norse>Norse</norse>
@@ -560,7 +560,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <halflinghefty>Halfling Hefty</halflinghefty>
 	<!-- Human -->
     <ogre>Ogre</ogre>
-    <!-- Khemri Tomb Kings -->
+    <!-- Tomb Kings -->
     <skeletonlineman>Skeleton Lineman</skeletonlineman>
     <anointedthrower>Anointed Thrower</anointedthrower>
     <anointedblitzer>Anointed Blitzer</anointedblitzer>
@@ -1354,7 +1354,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <halfling>Halflings</halfling>
     <highelf>Altos Elfos</highelf>
     <human>Humanos</human>
-    <khemritombkings>Khemri Tomb Kings</khemritombkings>
+    <tombkings>Tomb Kings</tombkings>
     <lizardman>Hombres Lagarto</lizardman>
     <necromantichorror>Nigromantes</necromantichorror>
     <norse>Nórdicos</norse>
@@ -1414,7 +1414,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <halflinghefty>Halfling Hefty</halflinghefty>
     <!-- Human -->
     <ogre>Ogro</ogre>
-    <!-- Khemri Tomb Kings -->
+    <!-- Tomb Kings -->
     <skeletonlineman>Esqueleto</skeletonlineman>
     <tombguardian>Guardián de la Tumba</tombguardian>
     <!-- Lizardman -->
@@ -2966,7 +2966,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <halfling>Halfling</halfling>
     <highelf>Haut Elfe</highelf>
     <human>Humain</human>
-    <khemritombkings>Khemri Tomb Kings</khemritombkings>
+    <tombkings>Tomb Kings</tombkings>
     <lizardman>Homme Lézard</lizardman>
     <necromantichorror>Nécromancien</necromantichorror>
     <norse>Nordique</norse>
@@ -3026,7 +3026,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <halflinghefty>Halfling Hefty</halflinghefty>
     <!-- Human -->
     <ogre>Ogre</ogre>
-    <!-- Khemri Tomb Kings -->
+    <!-- Tomb Kings -->
     <skeletonlineman>Squelette</skeletonlineman>
     <tombguardian>Gardien des tombes</tombguardian>
     <!-- Lizardman -->
@@ -4108,7 +4108,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <halfling>Halfling</halfling>
     <highelf>High Elf</highelf>
     <human>Human</human>
-    <khemritombkings>Khemri Tomb Kings</khemritombkings>
+    <tombkings>Tomb Kings</tombkings>
     <lizardman>Lizardman</lizardman>
     <necromantichorror>Necromantic Horror</necromantichorror>
     <norse>Norse</norse>
@@ -4171,7 +4171,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <halflinghefty>Halfling Hefty</halflinghefty>
     <!-- Human -->
     <ogre>Ogre</ogre>
-    <!-- Khemri Tomb Kings -->
+    <!-- Tomb Kings -->
     <skeletonlineman>Skeleton Lineman</skeletonlineman>
     <thro-ra>Anointed Thrower</thro-ra>
     <blitz-ra>Anointed Blitzer</blitz-ra>
