@@ -35,8 +35,10 @@ define('T_RACE_WOOD_ELF',    20);
 define('T_RACE_CHAOS_PACT',  21);
 define('T_RACE_SLANN',       22);
 define('T_RACE_UNDERWORLD',  23);
+define('T_RACE_OLDWORLD',    27);
 // Optional Races
-// These races are defined in their own game data files. Included here just for reference to avoid duplicate IDs.
+// These races are defined in their own game data files. 
+// Included here just for reference to avoid duplicate IDs.
 // define('T_RACE_BRETONNIA',   24);
 // define('T_RACE_DKHORNE',     25);
 // define('T_RACE_APESOFWRATH', 26);
@@ -1687,7 +1689,7 @@ $DEA = array (
                 'def'               => array (113),
                 'norm'              => array ('G', 'M'),
                 'doub'              => array ('A', 'S', 'P'),
-                'qty'               => 2,
+                'qty'               => 3,
                 'cost'              => 50000,
                 'icon'              => 'sklineman1',
                 'pos_id'            => 231,
@@ -1700,7 +1702,7 @@ $DEA = array (
                 'def'               => array (113, 45, 12),
                 'norm'              => array ('G', 'P', 'M'),
                 'doub'              => array ('A', 'S'),
-                'qty'               => 2,
+                'qty'               => 1,
                 'cost'              => 70000,
                 'icon'              => 'skthrower1',
                 'pos_id'            => 232,
@@ -1713,7 +1715,7 @@ $DEA = array (
                 'def'               => array (113, 1),
                 'norm'              => array ('G', 'S', 'M'),
                 'doub'              => array ('A', 'P'),
-                'qty'               => 2,
+                'qty'               => 1,
                 'cost'              => 90000,
                 'icon'              => 'skstorm1',
                 'pos_id'            => 233,
@@ -1730,6 +1732,159 @@ $DEA = array (
                 'cost'              => 110000,
                 'icon'              => 'warptroll1',
                 'pos_id'            => 234,
+            ),
+			// Had to skip pos_id 235-237 as they caused the player not to show
+            'Gutter Runner'    => array (
+                'ma'            	=> 9,
+                'st'            	=> 2,
+                'ag'            	=> 4,
+                'av'            	=> 7,
+                'def'        		=> array (113, 23, 116),
+                'norm'        		=> array ('G', 'A'),
+                'doub'        		=> array ('S', 'P', 'M'),
+                'qty'           	=> 1,
+                'cost'          	=> 80000,
+                'icon'          	=> 'skrunner1',
+                'pos_id'        	=> 238,
+            )
+        )
+    ),
+    'Old World Alliance' 	=> array (
+        'other'     		=> array (
+            'rr_cost'   	=> 70000,
+            'icon'      	=> 'oldworld.png',
+            'race_id'   	=> T_RACE_OLDWORLD, # (Old World Alliance)
+        ),
+        'players'    => array (
+            'Human Lineman'    => array (
+                'ma'            => 6,
+                'st'            => 3,
+                'ag'            => 3,
+                'av'            => 8,
+                'def'        	=> array (113),
+                'norm'        	=> array ('G'),
+                'doub'        	=> array ('A', 'S', 'P'),
+                'qty'           => 12,
+                'cost'          => 50000,
+                'icon'          => 'hlineman1',
+                'pos_id'        => 240,
+            ),
+			'Human Thrower'    => array (
+                'ma'            => 6,
+                'st'            => 3,
+                'ag'            => 3,
+                'av'            => 8,
+                'def'        	=> array (113, 12, 45),
+                'norm'        	=> array ('G', 'P'),
+                'doub'        	=> array ('A', 'S'),
+                'qty'           => 1,
+                'cost'          => 70000,
+                'icon'          => 'hthrower1',
+                'pos_id'        => 241,
+            ),
+            'Human Catcher'    => array (
+                'ma'            => 8,
+                'st'            => 2,
+                'ag'            => 3,
+                'av'            => 7,
+                'def'        	=> array (113, 20, 23),
+                'norm'       	=> array ('G', 'A'),
+                'doub'        	=> array ('S', 'P'),
+                'qty'           => 1,
+                'cost'          => 60000,
+                'icon'          => 'hcatcher1',
+                'pos_id'        => 242,
+            ),
+            'Human Blitzer'    => array (
+                'ma'            => 7,
+                'st'            => 3,
+                'ag'            => 3,
+                'av'            => 8,
+                'def'        	=> array (113, 1),
+                'norm'        	=> array ('G', 'S'),
+                'doub'        	=> array ('A', 'P'),
+                'qty'           => 1,
+                'cost'          => 90000,
+                'icon'          => 'hblitzer1',
+                'pos_id'        => 243,
+            ),
+			'Dwarf Blocker'    => array (
+                'ma'            => 4,
+                'st'            => 3,
+                'ag'            => 2,
+                'av'            => 9,
+                'def'        	=> array (99, 1, 13, 59),
+                'norm'        	=> array ('G', 'S'),
+                'doub'        	=> array ('A', 'P'),
+                'qty'           => 2,
+                'cost'          => 70000,
+                'icon'          => 'dlongbeard1',
+                'pos_id'        => 244,
+            ),
+            'Dwarf Runner'    => array (
+                'ma'            => 6,
+                'st'            => 3,
+                'ag'            => 3,
+                'av'            => 8,
+                'def'        	=> array (99, 12, 59),
+                'norm'        	=> array ('G', 'P'),
+                'doub'        	=> array ('A', 'S'),
+                'qty'           => 1,
+                'cost'          => 80000,
+                'icon'          => 'drunner1',
+                'pos_id'        => 245,
+            ),
+            'Dwarf Blitzer'    => array (
+                'ma'            => 5,
+                'st'            => 3,
+                'ag'            => 3,
+                'av'            => 9,
+                'def'        	=> array (99, 1, 59),
+                'norm'        	=> array ('G', 'S'),
+                'doub'        	=> array ('A', 'P'),
+                'qty'           => 1,
+                'cost'          => 80000,
+                'icon'          => 'dblitzer1',
+                'pos_id'        => 246,
+            ),
+            'Troll Slayer'    => array (
+                'ma'            => 5,
+                'st'            => 3,
+                'ag'            => 2,
+                'av'            => 8,
+                'def'        	=> array (99, 1, 2, 5, 59),
+                'norm'        	=> array ('G', 'S'),
+                'doub'        	=> array ('A', 'P'),
+                'qty'           => 1,
+                'cost'          => 90000,
+                'icon'          => 'dslayer1',
+                'pos_id'        => 247,
+            ),
+			'Halfling Hopeful' => array (
+                'ma'            => 5,
+                'st'            => 2,
+                'ag'            => 3,
+                'av'            => 6,
+                'def'        	=> array (99, 23, 104, 108),
+                'norm'        	=> array ('A'),
+                'doub'        	=> array ('G', 'S', 'P'),
+                'qty'           => 2,
+                'cost'          => 30000,
+                'icon'          => 'halfling1',
+                'pos_id'        => 248,
+            ),
+            'Ogre'    => array (
+                'ma'            => 5,
+                'st'            => 5,
+                'ag'            => 2,
+                'av'            => 9,
+                'def'        	=> array (99, 94, 54, 59, 110),
+                'norm'        	=> array ('S'),
+                'doub'        	=> array ('G','A', 'P'),
+                'qty'           => 1,
+                'cost'          => 140000,
+                'icon'          => 'ogre1',
+                'pos_id'        => 249,
             )
         )
     ),
@@ -1753,7 +1908,7 @@ $stars = array(
        'def'    => array (99, 42, 45, 105, 58, 12, 59),
        'cost'   => 60000,
        'icon'   => 'star',
-       'races'  => array(4),
+       'races'  => array(4, 27),
    ),
    'Brick Far\'th (+ Grotty)' => array (
        'id'     => -6,
@@ -1841,7 +1996,7 @@ $stars = array(
        'def'    => array (99, 1, 95, 105, 59),
        'cost'   => 130000,
        'icon'   => 'star',
-       'races'  => array(4),
+       'races'  => array(4, 27),
    ),
    'Fungus the Loon' => array (
        'id'     => -14,
@@ -1874,7 +2029,7 @@ $stars = array(
        'def'    => array (99, 1, 23, 4, 28, 29),
        'cost'   => 320000,
        'icon'   => 'star',
-       'races'  => array(9),
+       'races'  => array(9, 27),
    ),
    'Grim Ironjaw' => array (
        'id'     => -17,
@@ -1885,7 +2040,7 @@ $stars = array(
        'def'    => array (99, 1, 2, 5, 55, 59),
        'cost'   => 220000,
        'icon'   => 'star',
-       'races'  => array(4),
+       'races'  => array(4, 27),
    ),
    'Hack Enslash' => array (
        'id'     => -18,
@@ -1929,7 +2084,7 @@ $stars = array(
        'def'    => array (99, 95, 105, 57),
        'cost'   => 110000,
        'icon'   => 'star',
-       'races'  => array(0, 9, 11, 14, 18, 22),
+       'races'  => array(0, 9, 11, 14, 18, 22, 27),
    ),
    'Hemlock' => array (
        'id'     => -22,
@@ -2028,7 +2183,7 @@ $stars = array(
        'def'    => array (99, 1, 54),
        'cost'   => 260000,
        'icon'   => 'star',
-       'races'  => array(9),
+       'races'  => array(9, 27),
    ),
    'Morg \'n\' Thorg' => array (
        'id'     => -31,
@@ -2039,7 +2194,7 @@ $stars = array(
        'def'    => array (99, 1, 54, 59, 110),
        'cost'   => 430000,
        'icon'   => 'star',
-       'races'  => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23),
+       'races'  => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 27),
    ),
    'Nobbla Blackwart' => array (
        'id'     => -32,
@@ -2072,7 +2227,7 @@ $stars = array(
        'def'    => array (99, 1, 23, 44, 104, 108),
        'cost'   => 140000,
        'icon'   => 'star',
-       'races'  => array(7, 9),
+       'races'  => array(7, 9, 27),
    ),
    'Ramtut III' => array (
        'id'     => -35,
@@ -2483,7 +2638,7 @@ $stars = array(
         'def'   => array (99, 1, 23, 2, 24),
         'cost'  => 220000,
         'icon'  => 'star',
-        'races' => array(T_RACE_AMAZON, T_RACE_HALFLING, T_RACE_HUMAN, T_RACE_NORSE),
+        'races' => array(T_RACE_AMAZON, T_RACE_HALFLING, T_RACE_HUMAN, T_RACE_NORSE, T_RACE_OLDWORLD),
     ),
     'Madcap Miggz' => array (
         'id'    => -72,
@@ -2866,7 +3021,7 @@ $stars = array(
         'def'   => array (99, 1, 50, 53, 54, 55, 59, 110),
         'cost'  => 380000,
         'icon'  => 'star',
-        'races' => array(T_RACE_AMAZON, T_RACE_CHAOS, T_RACE_CHAOS_DWARF, T_RACE_DARK_ELF, T_RACE_DWARF, T_RACE_ELF, T_RACE_GOBLIN, T_RACE_HALFLING, T_RACE_HIGH_ELF, T_RACE_HUMAN, T_RACE_KHEMRI, T_RACE_LIZARDMAN, T_RACE_ORC, T_RACE_NECROMANTIC, T_RACE_NORSE, T_RACE_NURGLE, T_RACE_OGRE, T_RACE_UNDEAD, T_RACE_VAMPIRE, T_RACE_SKAVEN, T_RACE_WOOD_ELF, T_RACE_CHAOS_PACT, T_RACE_SLANN, T_RACE_UNDERWORLD),
+        'races' => array(T_RACE_AMAZON, T_RACE_CHAOS, T_RACE_CHAOS_DWARF, T_RACE_DARK_ELF, T_RACE_DWARF, T_RACE_ELF, T_RACE_GOBLIN, T_RACE_HALFLING, T_RACE_HIGH_ELF, T_RACE_HUMAN, T_RACE_KHEMRI, T_RACE_LIZARDMAN, T_RACE_ORC, T_RACE_NECROMANTIC, T_RACE_NORSE, T_RACE_NURGLE, T_RACE_OGRE, T_RACE_UNDEAD, T_RACE_VAMPIRE, T_RACE_SKAVEN, T_RACE_WOOD_ELF, T_RACE_CHAOS_PACT, T_RACE_SLANN, T_RACE_UNDERWORLD, T_RACE_OLDWORLD),
 	),
     'Slave Giant' => array (
         'id'    => -106,
@@ -3014,7 +3169,7 @@ $skillarray    = array (
         // Added in BB2016 DZ1
         114 => 'Monstrous Mouth',
         115 => 'Timmm-ber',
-        116 => 'Weeping Blades',
+        116 => 'Weeping Dagger',
         // Added in BB2016 DZ2
         117 => 'Swoop',
         // Added in BB2016 Spike! #8

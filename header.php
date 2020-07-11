@@ -29,6 +29,15 @@ $credits = array(	'Pierluigi Masia',
 					'Goiz Ruiz de Gopegui',
 					'Ryan Williams',
 					'Ian Williams');
+define('NAFLM_VERSION', 'Spike 9.0');
+define('NAFLM_BUILD_DATE', '11th of July 2020');
+define('CURRENT_CONTENTS', 'Blood Bowl 2016 including Deathzone 1 and 2 and Spike 1 through 9');
+$naflmcredits = array(	'Steve Arthurs',
+						'Craig Fleming',
+						'Anthony Baez',
+						'David Byrne',
+						'Danny Richardson',
+						'Derek Hall');
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcoming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
 define('DOC_URL', 'http://www.nicholasmr.dk/obblmwiki');

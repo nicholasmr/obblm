@@ -769,15 +769,19 @@ function sec_rules() {
 /*************************
  *  About
  *************************/
+ 
+ /*
+ All about page variables located in header.php e.g. OBBLM_VERSION, NAFLM_VERSION, NAFLM_BUILD_DATE, CURRENT_CONTENTS and Credits
+ */
 
 function sec_about() {
-    global $lng, $credits;
+    global $lng, $credits, $naflmcredits;
     title("About OBBLM");
     HTMLOUT::dnt();
     ?>
     <br>
     <p>
-        <b>OBBLM version <?php echo OBBLM_VERSION; ?></b><br><br>
+        <b><h1>OBBLM version <?php echo OBBLM_VERSION; ?></h1></b>
         Online Blood Bowl League Manager is an online game management system for Game Workshop's board game Blood Bowl.<br><br>    
         The authors of this program are
         <ul>
@@ -785,24 +789,23 @@ function sec_about() {
             <li> <a href="http://www.mercuryvps.com">William Leonard</a>
             <li> Niels Orsleff Justesen</a>
         </ul>
-         <br>
+        <br>
         With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
         Bugs reports and suggestions are welcome.
         <br><br>
-        Further development carried out under the <a href="https://github.com/TheNAF/naflm">NAFLM fork</a> by
-        <ul>
-            <li> Steve Arthurs</a>
-            <li> Craig Fleming</a>
-        </ul>
-        <br><br>With special thanks to Scott Bartel, Tom "Hutchinsfairy" and Michael Franchetti.
+		<b><h1>NAFLM version <?php echo NAFLM_VERSION; ?></h1></b>
+		This build of software is from various contributors, last released on the <?php echo NAFLM_BUILD_DATE; ?>.<br><br>
+		Updated game data was sourced and was current from <?php echo CURRENT_CONTENTS; ?>.
+		<br><br>
+        Further development carried out under the <a href="https://github.com/TheNAF/naflm">NAFLM fork</a> by <br>
+		<?php $lc = array_pop($naflmcredits); echo implode(', ', $naflmcredits)." and $lc"; ?>.
+		<br><br>With special thanks to Scott Bartel, Tom "Hutchinsfairy" and Michael Franchetti.
         <br><br>
 
-	This build of software is from various contributors, using NAFLM v1.0 on 9th of July 2020<br>
-	Updated game data was sourced and was current from Blood Bowl 2016, DeathZone 1 and 2, Spike Mazgine 1 through 8.<br>
 	<br>
-	Repository can be found at <a href="https://github.com/byrnesvictim/naflm/releases">https://github.com/byrnesvictim/naflm/releases</a><br><br>
 	<br>
-	Thanks to Anthony Baez for the Spike 6 stars and Derek Hall for the Spike 8 content
+	Latest version can be found at <a href="https://github.com/TheNAF/naflm/releases">https://github.com/TheNAF/naflm/releases</a><br><br>
+	<br>
 	<br>
         OBBLM consists of valid HTML 4.01 transitional document type pages.
         <br><br>
@@ -835,7 +838,7 @@ function sec_about() {
         <b>This web site is completely unofficial and in no way endorsed by Games Workshop Limited.</b>
         <br><br>
         Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, 
-        and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either ®, TM and/or © Games Workshop Ltd 2000-2006, 
+        and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either ®, TM and/or © Games Workshop Ltd 2000-2020, 
         variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
         <br><br>
         Fumbbl icons are used with permission.  Credits: harvestmouse, garion, christer, whatball.
