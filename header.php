@@ -29,7 +29,7 @@ $credits = array(	'Pierluigi Masia',
 					'Goiz Ruiz de Gopegui',
 					'Ryan Williams',
 					'Ian Williams');
-define('NAFLM_VERSION', 'Spike 9.0');
+define('NAFLM_VERSION', 'Spike 9.1');
 define('NAFLM_BUILD_DATE', '11th of July 2020');
 define('CURRENT_CONTENTS', 'Blood Bowl 2016 including Deathzone 1 and 2 and Spike 1 through 9');
 $naflmcredits = array(	'Steve Arthurs',
