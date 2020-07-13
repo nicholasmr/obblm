@@ -1097,7 +1097,8 @@ class SQLCore
 					- inj_ma * '.$rules['value_reduction_ma'].'
 					- inj_av * '.$rules['value_reduction_av'].'
 					- inj_ag * '.$rules['value_reduction_ag'].'
-					- inj_st * '.$rules['value_reduction_st'].';
+					- inj_st * '.$rules['value_reduction_st'].'
+					- (SELECT IF(INSTR(skills, "118"), 1, 0) * cost FROM game_data_players WHERE game_data_players.pos_id = f_pos_id);
 
 
 				SELECT

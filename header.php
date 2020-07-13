@@ -29,11 +29,35 @@ $credits = array(	'Pierluigi Masia',
 					'Goiz Ruiz de Gopegui',
 					'Ryan Williams',
 					'Ian Williams');
+define('NAFLM_VERSION', '1.1');
+define('NAFLM_BUILD_DATE', '13th of July 2020');
+define('CONTENT_VERSION', 'Spike 9.0');
+define('CONTENT_DETAIL', 'Blood Bowl 2016, including Deathzone 1 and 2 and Spike 1 through 9');
+define('CONTENT_DATE', '13th of July 2020');
+$naflmcredits = array(	
+						'Anthony Baez',
+						'byrnesvictim',
+						'Craig Fleming',
+						'dannyuk1982',
+						'Derek Hall',
+						'doubleskulls',
+						'drd0dger',	
+						'hutchinsfary',
+						'juergen69',
+						'kossy',
+						'mfranchetti',
+						'rythos42',
+						'Shteve0',
+						'snotlingorc',
+						'thefloppy1',
+						'vanhu42',
+						'williamleonard (funnyfingers)'
+					  );
 define('MAX_RECENT_GAMES', 15); // This limits the number of rows shown in the "recent/upcoming games" tables.
 define('MAX_TNEWS', 3); // This number of entries are shown on the team news board.
-define('DOC_URL', 'http://www.nicholasmr.dk/obblmwiki');
-define('DOC_URL_GUIDE', 'http://www.nicholasmr.dk/obblmwiki/index.php?title=User_guide');
-define('DOC_URL_CUSTOM', 'http://www.nicholasmr.dk/obblmwiki/index.php?title=Customization');
+define('DOC_URL', 'http://github.com/nicholasmr/obblm/wiki');
+define('DOC_URL_GUIDE', 'http://github.com/nicholasmr/obblm/wiki/User-guide');
+define('DOC_URL_CUSTOM', 'http://github.com/nicholasmr/obblm/wiki/Customization');
 
 /*********************
  *   Node and object types.
@@ -76,7 +100,7 @@ require_once('lib/settings_default.php'); 			# Defaults
 require_once('settings.php');             			# Overrides
 require_once('localsettings/settings_none.php'); 	# Defaults. Overrides are league dependant and are not loaded here - see setupGlobalVars()
 # Load game data --- Module settings might depend on game data, so we include it first
-require_once('lib/game_data_bb2016.php'); # LRB6 MUST be loaded.
+require_once('lib/game_data_bb2016.php'); # GAME_DATA_BB2016 MUST be loaded.
 if ($settings['custom_races']['Bretonnia'])         {require_once('lib/game_data_bretonnia.php');}
 if ($settings['custom_races']['Daemons of khorne']) {require_once('lib/game_data_daemonsofkhorne.php');}
 if ($settings['custom_races']['Apes of wrath'])     {require_once('lib/game_data_apesofwrath.php');}

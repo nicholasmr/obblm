@@ -488,32 +488,33 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 
 <race>
     <amazon>Amazon</amazon>
-    <chaos>Chaos</chaos>
+    <chaoschosen>Chaos Chosen</chaoschosen>
     <chaosdwarf>Chaos Dwarf</chaosdwarf>
     <darkelf>Dark Elf</darkelf>
     <dwarf>Dwarf</dwarf>
-    <elf>Elf</elf>
+    <elvenunion>Elven Union</elvenunion>
     <goblin>Goblin</goblin>
     <halfling>Halfling</halfling>
     <highelf>High Elf</highelf>
     <human>Human</human>
-    <khemri>Khemri</khemri>
+    <tombkings>Tomb Kings</tombkings>
     <lizardman>Lizardman</lizardman>
-    <necromantic>Necromantic</necromantic>
+    <necromantichorror>Necromantic Horror</necromantichorror>
     <norse>Norse</norse>
     <nurgle>Nurgle</nurgle>
     <ogre>Ogre</ogre>
     <orc>Orc</orc>
-    <undead>Undead</undead>
+    <shamblingundead>Shambling Undead</shamblingundead>
     <vampire>Vampire</vampire>
     <skaven>Skaven</skaven>
     <woodelf>Wood Elf</woodelf>
-    <chaospact>Chaos Pact</chaospact>
-    <underworld>Underworld</underworld>
+    <chaosrenegades>Chaos Renegades</chaosrenegades>
+    <underworlddenizens>Underworld Denizens</underworlddenizens>
     <slann>Slann</slann>
     <bretonnia>Bretonnia</bretonnia>
     <daemonsofkhorne>Daemons of Khorne</daemonsofkhorne>
     <simyin>Simyin</simyin>
+	<oldworldalliance>Old World Alliance</oldworldalliance>
 </race>
 
 <position>
@@ -525,25 +526,28 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <thrower>Thrower</thrower>
     <runner>Runner</runner>
     <!-- Amazon -->
-    <linewoman>Linewoman</linewoman>
-    <!-- Chaos -->
-    <beastman>Beastman</beastman>
-    <chaoswarrior>Chaos Warrior</chaoswarrior>
+    <triballinewoman>Tribal Linewoman</triballinewoman>
+	<eaglewarriorthrower>Eagle Warrior Thrower</eaglewarriorthrower>
+	<piranhawarriorcatcher>Piranha Warrior Catcher</piranhawarriorcatcher>
+	<kokakalimblitzer>Koka Kalim Blitzers</kokakalimblitzer>
+    <!-- Chaos Chosen -->
+    <beastmanrunner>Beastman Runner</beastmanrunner>
+    <chosenblocker>Chosen Blocker</chosenblocker>
     <minotaur>Minotaur</minotaur>
     <!-- Chaos Dwarf -->
-    <hobgoblin>Hobgoblin</hobgoblin>
+    <hobgoblinrunner>Hobgoblin Runner</hobgoblinrunner>
     <chaosdwarfblocker>Chaos Dwarf Blocker</chaosdwarfblocker>
-    <bullcentaur>Bull Centaur</bullcentaur>
+    <bullcentaurblitzer>Bull Centaur Blitzer</bullcentaurblitzer>
     <enslavedminotaur>Enslaved Minotaur</enslavedminotaur>
     <!-- Dark Elf -->
     <assassin>Assassin</assassin>
-    <witchelf>Witchelf</witchelf>
+    <witchelf>Witch Elf</witchelf>
     <!-- Dwarf -->
     <trollslayer>Troll Slayer</trollslayer>
     <deathroller>Deathroller</deathroller>
     <!-- Goblin -->
     <goblin>Goblin</goblin>
-    <bombardier>Bombardier</bombardier>
+    <bomma>Bomma</bomma>
     <pogoer>Pogoer</pogoer>
     <looney>Looney</looney>
     <fanatic>Fanatic</fanatic>
@@ -551,41 +555,47 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <doomdiver>Doom Diver</doomdiver>
     <ooligan>'Ooligan</ooligan>
     <!-- Halfling -->
-    <halfling>Halfling</halfling>
+    <halflinghopeful>Halfling Hopeful</halflinghopeful>
     <treeman>Treeman</treeman>
-    <!-- Human -->
+    <halflingcatcher>Halfling Catcher</halflingcatcher>
+    <halflinghefty>Halfling Hefty</halflinghefty>
+	<!-- Human -->
     <ogre>Ogre</ogre>
-    <!-- Khemri -->
-    <skeleton>Skeleton</skeleton>
-    <thro-ra>Thro-Ra</thro-ra>      <!-- Deprecated -->
-    <blitz-ra>Blitz-Ra</blitz-ra>   <!-- Deprecated -->
-    <throra>Thro-Ra</throra>
-    <blitzra>Blitz-Ra</blitzra>
+    <!-- Tomb Kings -->
+    <skeletonlineman>Skeleton Lineman</skeletonlineman>
+    <anointedthrower>Anointed Thrower</anointedthrower>
+    <anointedblitzer>Anointed Blitzer</anointedblitzer>
     <tombguardian>Tomb Guardian</tombguardian>
     <!-- Lizardman -->
-    <skink>Skink</skink>
-    <saurus>Saurus</saurus>
+    <skinkrunner>Skink Runner</skinkrunner>
+    <saurusblocker>Saurus Blocker</saurusblocker>
     <kroxigor>Kroxigor</kroxigor>
-    <!-- Necromantic -->
+    <chameleonskink>Chameleon Skink</chameleonskink>
+    <!-- Necromantic Horror -->
     <zombie>Zombie</zombie>
+	<ghoulrunner>Ghoul Runner</ghoulrunner>
     <ghoul>Ghoul</ghoul>
+	<wightblitzer>Wight Blitzer</wightblitzer>
     <wight>Wight</wight>
     <fleshgolem>Flesh Golem</fleshgolem>
     <werewolf>Werewolf</werewolf>
     <necromanticwerewolf>Necromantic Werewolf</necromanticwerewolf>
     <!-- Norse -->
-    <norsewerewolf>Norse Werewolf</norsewerewolf>
+	<norselineman>Norse Lineman</norselineman>
+	<norsethrower>Norse Thrower</norsethrower>
+	<norserunner>Norse Runner</norserunner>
+    <norseberserker>Norse Berserker</norseberserker>
+	<ulfwerenar>Ulfwerenar</ulfwerenar>
     <yhetee>Yhetee</yhetee>
-    <berserker>Berserker</berserker>
-    <ulfwerener>Ulfwerener</ulfwerener>
-    <snowtroll>Snow Troll</snowtroll>
+    <norseberserker>Norse Berserker</norseberserker>
     <!-- Nurgle -->
     <rotter>Rotter</rotter>
     <pestigor>Pestigor</pestigor>
-    <nurglewarrior>Nurgle Warrior</nurglewarrior>
-    <beastofnurgle>Beast of Nurgle</beastofnurgle>
+    <bloater>Bloater</bloater>
+    <rotspawn>Rotspawn</rotspawn>
     <!-- Orge -->
-    <snotling>Snotling</snotling>
+    <gnoblar>Gnoblar</gnoblar>
+    <runtpunter>Runt Punter</runtpunter>
     <!-- Orc -->
     <blackorcblocker>Black Orc Blocker</blackorcblocker>
     <!-- Skaven -->
@@ -594,24 +604,21 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <skavenblitzer>Skaven Blitzer</skavenblitzer>
     <gutterrunner>Gutter Runner</gutterrunner>
     <ratogre>Rat Ogre</ratogre>
-    <!-- Undead -->
+    <!-- Shambling Undead -->
+	<skeleton>Skeleton</skeleton>
     <mummy>Mummy</mummy>
     <!-- Vampire -->
-    <thrall>Thrall</thrall>
-    <vampire>Vampire</vampire>
+    <thralllineman>Thrall Lineman</thralllineman>
+    <vampireblitzer>Vampire Blitzer</vampireblitzer>
     <!-- Wood Elf -->
     <wardancer>War Dancer</wardancer>
-    <!-- Chaos Pact -->
-    <marauder>Marauder</marauder>
-    <goblinrenegade>Goblin Renegade</goblinrenegade>
-    <skavenrenegade>Skaven Renegade</skavenrenegade>
-    <darkelfrenegade>Dark Elf Renegade</darkelfrenegade>
-    <orcrenegade>Orc Renegade</orcrenegade>
-    <chaostroll>Chaos Troll</chaostroll>
-    <chaosogre>Chaos Ogre</chaosogre>
-    <!-- Underworld -->
-    <underworldgoblin>Underworld Goblin</underworldgoblin>
-    <warpstonetroll>Warp Stone Troll</warpstonetroll>
+    <!-- Chaos Renegades -->
+    <renegadehumanlineman>Renegade Human Lineman</renegadehumanlineman>
+    <renegadegoblin>Renegade Goblin</renegadegoblin>
+    <renegadeskavenlineman>Renegade Skaven Lineman</renegadeskavenlineman>
+    <renegadedarkelflineman>Renegade Dark Elf Lineman</renegadedarkelflineman>
+    <renegadeorclineman>Renegade Orc Lineman</renegadeorclineman>
+    <!-- Underworld Denizens -->
     <!-- Khorne -->
     <pitfighter>Pit Fighter</pitfighter>
     <bloodletterdaemon>Bloodletter Daemon</bloodletterdaemon>
@@ -623,6 +630,15 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <gorilla>Gorilla</gorilla>
     <chimpanzee>Chimpanzee</chimpanzee>
     <silverback>Silverback</silverback>
+	<!-- Old World Alliance -->
+	<humanlineman>Human Lineman</humanlineman>
+	<humanthrower>Human Thrower</humanthrower>
+	<humancatcher>Human Catcher</humancatcher>
+	<humanblitzer>Human Blitzer</humanblitzer>
+	<dwarfblocker>Dwarf Blocker</dwarfblocker>
+	<dwarfrunner>Dwarf Runner</dwarfrunner>
+	<dwarfblitzer>Dwarf Blitzer</dwarfblitzer>
+	<dwarftrollslayer>Dwarf Troll Slayer</dwarftrollslayer>
 </position>
 
 <skill>
@@ -687,7 +703,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <animosity>Animosity</animosity>
     <ballchain>Ball and Chain</ballchain>
     <bloodlust>Blood Lust</bloodlust>
-    <bombardier>Bombardier</bombardier>
+    <bomma>Bomma</bomma>
     <bonehead>Bone Head</bonehead>
     <chainsaw>Chainsaw</chainsaw>
     <decay>Decay</decay>
@@ -710,13 +726,17 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <timmmber>Timmm-ber!</timmmber>
     <titchy>Titchy</titchy>
     <wildanimal>Wild Animal</wildanimal>
-    <weepingblades>Weeping Dagger</weepingblades>
+    <weepingdagger>Weeping Dagger</weepingdagger>
+    <!-- Added BB2016 Spike! #8 -->
+    <disposable>Disposable</disposable>
+    <kickteammate>Kick Team-Mate</kickteammate>
+	<sportinggiant>Sporting Giant</sportinggiant>
 </skill>
 
 <starplayer>
     <barikfarblast>Barik Farblast</barikfarblast>
     <bomberdribblesnot>Bomber Dribblesnot</bomberdribblesnot>
-    <boomereziasson>Boomer Eziasson</boomereziasson>
+    <boomer>Boomer</boomer>
     <brickfarthgrotty>Brick Far'th and Grotty</brickfarthgrotty>
     <grottyincludedinbrickfarth>Grotty (included in Brick Far'th)</grottyincludedinbrickfarth>
     <countluthorvondrakenborg>Count Luthor Von Drakenborg</countluthorvondrakenborg>
@@ -746,7 +766,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <puggybaconbreath>Puggy Baconbreath</puggybaconbreath>
     <ramtutiii>Ramtut III</ramtutiii>
     <rashnakbackstabber>Rashnak Backstabber</rashnakbackstabber>
-    <ripper>Ripper</ripper>
+    <ripperbolgrot>Ripper Bolgrot</ripperbolgrot>
     <scrappasorehead>Scrappa Sorehead</scrappasorehead>
     <setekh>Setekh</setekh>
     <silibili>Silibili</silibili>   <!-- Deprecated -->
@@ -786,14 +806,51 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <kreekrustgouger>Kreek Rustgouger</kreekrustgouger>
     <bogallante>Bo Gallante</bogallante>
     <karlavonkill>Karla von Kill</karlavonkill>
-    <madcapmiggs>Madcap Miggs</madcapmiggs>
+    <madcapmiggz>Madcap Miggz</madcapmiggz>
     <karicoldsteel>Kari Coldsteel</karicoldsteel>
     <!-- Added BB2016 Spike! #1 -->
     <gobblergrimlich>Gobbler Grimlich</gobblergrimlich>
     <scylaanfingrimm>Scyla Anfingrimm</scylaanfingrimm>
     <withergraspdoubledrool>Withergrasp Doubledrool</withergraspdoubledrool>
+    <!-- Added BB2016 Spike! #2 -->
+    <asperonthorn>Asperon Thorn</asperonthorn>
+    <elijahdoom>Elijah Doom</elijahdoom>
+    <kirothkrakeneye>Kiroth Krakeneye</kirothkrakeneye>
+    <mordrixhex>Mordrix Hex</mordrixhex>
+    <jeremiahkool>Jeremiah Kool</jeremiahkool>
+    <!-- Added BB2016 Spike! #3 -->
+    <bullashardhorn>Bulla Shardhorn</bullashardhorn>
+    <tollyglocklinger>Tolly Glocklinger</tollyglocklinger>
+    <!-- Added BB2016 Spike! #4 -->
+    <gralblodschuker>G'Ral Blodschuker</gralblodschuker>
+    <brycetheslicecambuel>Bryce 'The Slice' Cambuel</brycetheslicecambuel>
+    <ivantheanimaldeathshroud>Ivan 'The Animal' Deathshroud</ivantheanimaldeathshroud>
+    <skrullhalfheight>Skrull Halfheight</skrullhalfheight>
+    <rottenrickbupkeis>'Rotten' Rick Bupkeis</rottenrickbupkeis>
+    <throttlesnottheimplaer>Throttlesnot 'The Implaer'</throttlesnottheimplaer>
+    <gretchenwachterthebloodbowlwidow>Gretchen Wachter 'The Blood Bowl Widow'</gretchenwachterthebloodbowlwidow>
+    <!-- Added BB2016 Spike! #5 -->
+    <neddleyverruca>Neddley Verruca</neddleyverruca>
+    <cindypewhistle>Cindy Pewhistle</cindypewhistle>
+    <rumbelowsheepskin>Rumbelow Sheepskin</rumbelowsheepskin>
+    <bigjobohairyfoot>Big Jobo Hairyfoot</bigjobohairyfoot>
+    <captaincolander>Captain Colander</captaincolander>
+    <!-- Added BB2016 Spike! #6 -->
+    <glorielsummerbloom>Gloriel Summerbloom</glorielsummerbloom>
+    <swiftvineglimmershard>Swiftvine Glimmershard</swiftvineglimmershard>
+    <maplehighgrove>Maple Highgrove</maplehighgrove>
+    <zolcaththezoat>Zolcath the Zoat</zolcaththezoat>
+    <curnothdarkwold>Curnoth Darkwold</curnothdarkwold>
+    <!-- Added BB2016 Spike! #7 -->
+    <anqipanqi>Anqi Panqi</anqipanqi>
+    <drulldribl>Drull (&amp; Dribl)</drulldribl>
+    <driblincludedwithdrull>Dribl (included with Drull)</driblincludedwithdrull>
+    <glotlstop>Glotl Stop</glotlstop>
+    <!-- Added BB2016 Spike! #8 -->
+    <bobbifford>Bob Bifford</bobbifford>
+	<slavegiant>Slave Giant</slavegiant>
 </starplayer>
-
+	
 <daysofweek>
   <monday>Monday</monday>
   <tuesday>Tuesday</tuesday>
@@ -1298,28 +1355,28 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 
 <race>
     <amazon>Amazonas</amazon>
-    <chaos>Caos</chaos>
+    <chaoschosen>Caos</chaoschosen>
     <chaosdwarf>Enanos del Caos</chaosdwarf>
     <darkelf>Elfos Oscuros</darkelf>
     <dwarf>Enanos</dwarf>
-    <elf>Elfos</elf>
+    <elvenunion>Elfos</elvenunion>
     <goblin>Goblins</goblin>
     <halfling>Halflings</halfling>
     <highelf>Altos Elfos</highelf>
     <human>Humanos</human>
-    <khemri>Khemri</khemri>
+    <tombkings>Tomb Kings</tombkings>
     <lizardman>Hombres Lagarto</lizardman>
-    <necromantic>Nigromantes</necromantic>
+    <necromantichorror>Nigromantes</necromantichorror>
     <norse>Nórdicos</norse>
     <nurgle>Nurgle</nurgle>
     <ogre>Ogros</ogre>
     <orc>Orcos</orc>
-    <undead>No Muertos</undead>
+    <shamblingundead>No Muertos</shamblingundead>
     <vampire>Vampiros</vampire>
     <skaven>Skaven</skaven>
     <woodelf>Elfos Silvanos</woodelf>
-    <chaospact>Pacto del Caos</chaospact>
-    <underworld>Inframundo</underworld>
+    <chaosrenegades>Pacto del Caos</chaosrenegades>
+    <underworlddenizens>Inframundo</underworlddenizens>
     <slann>Slann</slann>
     <bretonnia>Bretonianos</bretonnia>
     <daemonsofkhorne>Demonios de Khorne</daemonsofkhorne>
@@ -1335,15 +1392,15 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <lineman>Línea</lineman>
     <runner>Corredor</runner>
     <!-- Amazon -->  
-    <linewoman>Línea</linewoman>
-    <!-- Chaos -->    
-    <beastman>Hombre Bestia</beastman>
-    <chaoswarrior>Guerrero del Caos</chaoswarrior>
+    <triballinewoman>Línea</triballinewoman>
+    <!-- Chaos Chosen -->    
+    <beastmanrunner>Hombre Bestia</beastmanrunner>
+    <chosenblocker>Guerrero del Caos</chosenblocker>
     <minotaur>Minotauro</minotaur>
     <!-- Chaos Dwarf -->
-    <hobgoblin>Hobgoblin</hobgoblin>
+    <hobgoblinrunner>Hobgoblin Runner</hobgoblinrunner>
     <chaosdwarfblocker>Defensa Enano del Caos</chaosdwarfblocker>
-    <bullcentaur>Centauro Toro</bullcentaur>
+    <bullcentaurblitzer>Centauro Toro</bullcentaurblitzer>
     <enslavedminotaur>Minotauro Esclavizado</enslavedminotaur>
     <!-- Dark Elf -->
     <assassin>Asesino</assassin>
@@ -1353,7 +1410,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <deathroller>Apisonadora</deathroller>
     <!-- Goblin -->
     <goblin>Goblin</goblin>
-    <bombardier>Bombardero</bombardier>
+    <bomma>Bombardero</bomma>
     <pogoer>Pogo</pogoer>
     <looney>Chiflado</looney>
     <fanatic>Fanático</fanatic>
@@ -1361,22 +1418,20 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <doomdiver>Chalado con alas</doomdiver>
     <ooligan>Gamberro</ooligan>
     <!-- Halfling -->
-    <halfling>Halfling</halfling>
+    <halflinghopeful>Halfling</halflinghopeful>
     <treeman>Hombre Árbol</treeman>
+	<halflingcatcher>Halfling Catcher</halflingcatcher>
+    <halflinghefty>Halfling Hefty</halflinghefty>
     <!-- Human -->
     <ogre>Ogro</ogre>
-    <!-- Khemri -->
-    <skeleton>Esqueleto</skeleton>
-    <thro-ra>Thro-Ra</thro-ra>
-    <blitz-ra>Blitz-Ra</blitz-ra>
-    <throra>Thro-Ra</throra>
-    <blitzra>Blitz-Ra</blitzra>
+    <!-- Tomb Kings -->
+    <skeletonlineman>Esqueleto</skeletonlineman>
     <tombguardian>Guardián de la Tumba</tombguardian>
     <!-- Lizardman -->
-    <skink>Eslizón</skink>
-    <saurus>Saurio</saurus>
+    <skinkrunner>Eslizón</skinkrunner>
+    <saurusblocker>Saurio</saurusblocker>
     <kroxigor>Króxigor</kroxigor>
-    <!-- Necromantic -->
+    <!-- Necromantic Horror -->
     <zombie>Zombi</zombie>
     <ghoul>Necrófago</ghoul>
     <wight>Tumulario</wight>
@@ -1392,10 +1447,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <!-- Nurgle -->
     <rotter>Putrefactos</rotter>
     <pestigor>Pestigor</pestigor>
-    <nurglewarrior>Guerreros de Nurgle</nurglewarrior>
-    <beastofnurgle>Bestia de Nurgle</beastofnurgle>
+    <bloater>Guerreros de Nurgle</bloater>
+    <rotspawn>Bestia de Nurgle</rotspawn>
     <!-- Orge -->
-    <snotling>Snotling</snotling>
+    <gnoblar>Gnoblar</gnoblar>
     <!-- Orc -->
     <blackorcblocker>Defensa Orco Negro</blackorcblocker>
     <!-- Skaven -->
@@ -1404,24 +1459,22 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <skavenblitzer>Blitzer Skaven</skavenblitzer>
     <gutterrunner>Corredor de Alcantarillas</gutterrunner>
     <ratogre>Rata Ogro</ratogre>
-    <!-- Undead -->
+    <!-- Shambling Undead -->
     <mummy>Momia</mummy>
     <!-- Vampire -->
-    <thrall>Siervo</thrall>
-    <vampire>Vampiro</vampire>
+    <thralllineman>Siervo</thralllineman>
+    <vampireblitzer>Vampiro</vampireblitzer>
     <!-- Wood Elf -->
     <wardancer>Bailar?Guerrero</wardancer>
-    <!-- Chaos Pact -->
-    <marauder>Bárbaro</marauder>
-    <goblinrenegade>Renegado Goblin</goblinrenegade>
-    <skavenrenegade>Renegado Skaven</skavenrenegade>
-    <darkelfrenegade>Renegado Elfo Oscuro</darkelfrenegade>
-    <orcrenegade>Renegado Orco</orcrenegade>
+    <!-- Chaos Renegades -->
+    <renegadehumanlineman>Bárbaro</renegadehumanlineman>
+    <renegadegoblin>Renegado Goblin</renegadegoblin>
+    <renegadeskavenlineman>Renegado Skaven</renegadeskavenlineman>
+    <renegadedarkelflineman>Renegado Elfo Oscuro</renegadedarkelflineman>
+    <renegadeorclineman>Renegado Orco</renegadeorclineman>
     <chaostroll>Troll del Caos</chaostroll>
     <chaosogre>Ogre del Caos</chaosogre>
-    <!-- Underworld -->
-    <underworldgoblin>Goblin del Inframundo</underworldgoblin>
-    <warpstonetroll>Troll de Piedra Bruja</warpstonetroll>
+    <!-- Underworld Denizens -->
     <!-- Khorne -->
     <pitfighter>Luchador del Pozo</pitfighter>
     <bloodletterdaemon>Desangradador</bloodletterdaemon>
@@ -1497,7 +1550,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <animosity>Animosidad</animosity>
     <ballchain>Bola con Cadena</ballchain>
     <bloodlust>Sed de Sangre</bloodlust>
-    <bombardier>Bombardero</bombardier>
+    <bomma>Bombardero</bomma>
     <bonehead>Cabeza Hueca</bonehead>
     <chainsaw>Sierra Mecánica</chainsaw>
     <decay>Degenerar</decay>
@@ -1526,7 +1579,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 <starplayer>
     <barikfarblast>Barik Tirolargo</barikfarblast>
     <bomberdribblesnot>Bomber Regateasnotlings</bomberdribblesnot>
-    <boomereziasson>Boomer Eziasson</boomereziasson>
+    <boomer>Boomer</boomer>
     <brickfarthgrotty>Brick Far'th y Grotty</brickfarthgrotty>
     <grottyincludedinbrickfarth>Grotty (junto con Brick Far'th)</grottyincludedinbrickfarth>
     <countluthorvondrakenborg>Count Luthor Von Drakenborg</countluthorvondrakenborg>
@@ -1556,7 +1609,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <puggybaconbreath>Puggy Alientodebacon</puggybaconbreath>
     <ramtutiii>Ramtut III</ramtutiii>
     <rashnakbackstabber>Rashnak Puñaladaatraición</rashnakbackstabber>
-    <ripper>Ripper</ripper>
+    <ripperbolgrot>Ripper Bolgrot</ripperbolgrot>
     <scrappasorehead>Scrappa Cabezadolorida</scrappasorehead>
     <setekh>Setekh</setekh>
     <silibili>Silibili</silibili>
@@ -1596,7 +1649,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <!-- <kreekrustgouger> -->
     <bogallante>Bo Galante</bogallante>
     <karlavonkill>Karla von Muerte</karlavonkill>
-    <madcapmiggs>Miggs Sombreroloco</madcapmiggs>
+    <madcapmiggz>Miggs Sombreroloco</madcapmiggz>
     <karicoldsteel>Kari Acerofrío</karicoldsteel>
     <!-- Added BB2016 Spike! #1 -->
     <gobblergrimlich>Gobbler Grimlich</gobblergrimlich>
@@ -2914,28 +2967,28 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 
 <race>
     <amazon>Amazone</amazon>
-    <chaos>Chaos</chaos>
+    <chaoschosen>Chaos Chosen</chaoschosen>
     <chaosdwarf>Nain du Chaos</chaosdwarf>
     <darkelf>Elfe noir</darkelf>
     <dwarf>Nain</dwarf>
-    <elf>Elfe Pro</elf>
+    <elvenunion>Elfe Pro</elvenunion>
     <goblin>Gobelin</goblin>
     <halfling>Halfling</halfling>
     <highelf>Haut Elfe</highelf>
     <human>Humain</human>
-    <khemri>Khemri</khemri>
+    <tombkings>Tomb Kings</tombkings>
     <lizardman>Homme Lézard</lizardman>
-    <necromantic>Nécromancien</necromantic>
+    <necromantichorror>Nécromancien</necromantichorror>
     <norse>Nordique</norse>
     <nurgle>Nurgle</nurgle>
     <ogre>Ogre</ogre>
     <orc>Orque</orc>
-    <undead>Mort-vivant</undead>
-    <vampire>Vampire</vampire>
+    <shamblingundead>Mort-vivant</shamblingundead>
+    <vampire>Vampire Blitzer</vampire>
     <skaven>Skaven</skaven>
     <woodelf>Elfe Sylvain</woodelf>
-    <chaospact>Pacte du Chaos</chaospact>
-    <underworld>Bas fond</underworld>
+    <chaosrenegades>Pacte du Chaos</chaosrenegades>
+    <underworlddenizens>Bas fond</underworlddenizens>
     <slann>Slann</slann>
     <bretonnia>Bretonnien</bretonnia>
     <daemonsofkhorne>Démons de Khorne</daemonsofkhorne>
@@ -2951,15 +3004,15 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <thrower>Passeur</thrower>
     <runner>Coureur</runner>
     <!-- Amazon -->
-    <linewoman>Trois-quart</linewoman>
-    <!-- Chaos -->
-    <beastman>Homme-bête</beastman>
-    <chaoswarrior>Guerrier du Chaos</chaoswarrior>
+    <triballinewoman>Trois-quart</triballinewoman>
+    <!-- Chaos Chosen -->
+    <beastmanrunner>Homme-bête</beastmanrunner>
+    <chosenblocker>Guerrier du Chaos</chosenblocker>
     <minotaur>Minotaure</minotaur>
     <!-- Chaos Dwarf -->
-    <hobgoblin>Hobgobelin</hobgoblin>
+    <hobgoblinrunner>Hobgobelin</hobgoblinrunner>
     <chaosdwarfblocker>Bloqueur nain du Chaos</chaosdwarfblocker>
-    <bullcentaur>Centaure Taureau</bullcentaur>
+    <bullcentaurblitzer>Centaure Taureau</bullcentaurblitzer>
     <!-- <enslavedminotaur> -->
     <!-- Dark Elf -->
     <assassin>Assassin</assassin>
@@ -2969,7 +3022,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <deathroller>Roule-mort</deathroller>
     <!-- Goblin -->
     <goblin>Gobelin</goblin>
-    <bombardier>Bombardier</bombardier>
+    <bomma>Bomma</bomma>
     <pogoer>Bâton à ressort</pogoer>
     <looney>Barjot</looney>
     <fanatic>Fanatique</fanatic>
@@ -2977,22 +3030,20 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <doomdiver>Plongeur de la mort</doomdiver>
     <ooligan>'Ooligan</ooligan>
     <!-- Halfling -->
-    <halfling>Halfling</halfling>
+    <halflinghopeful>Halfling</halflinghopeful>
     <treeman>Homme-arbre</treeman>
+	<halflingcatcher>Halfling Catcher</halflingcatcher>
+    <halflinghefty>Halfling Hefty</halflinghefty>
     <!-- Human -->
     <ogre>Ogre</ogre>
-    <!-- Khemri -->
-    <skeleton>Squelette</skeleton>
-    
-    
-    <throra>Thro-ra</throra>
-    <blitzra>Blitz-ra</blitzra>
+    <!-- Tomb Kings -->
+    <skeletonlineman>Squelette</skeletonlineman>
     <tombguardian>Gardien des tombes</tombguardian>
     <!-- Lizardman -->
-    <skink>Skink</skink>
-    <saurus>Saurus</saurus>
+    <skinkrunner>Skink Runner</skinkrunner>
+    <saurusblocker>Saurus Blocker</saurusblocker>
     <kroxigor>Kroxigor</kroxigor>
-    <!-- Necromantic -->
+    <!-- Necromantic Horror -->
     <zombie>Zombie</zombie>
     <ghoul>Goule</ghoul>
     <wight>Revenant</wight>
@@ -3008,10 +3059,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <!-- Nurgle -->
     <rotter>Pourri</rotter>
     <pestigor>Pestigor</pestigor>
-    <nurglewarrior>Guerrier de Nurgle</nurglewarrior>
-    <beastofnurgle>Bête de Nurgle</beastofnurgle>
+    <bloater>Guerrier de Nurgle</bloater>
+    <rotspawn>Bête de Nurgle</rotspawn>
     <!-- Orge -->
-    <snotling>Snotling</snotling>
+    <gnoblar>Gnoblar</gnoblar>
     <!-- Orc -->
     <blackorcblocker>Bloqueur Orque Noir</blackorcblocker>
     <!-- Skaven -->
@@ -3020,24 +3071,22 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <skavenblitzer>Blitzeur Skaven</skavenblitzer>
     <gutterrunner>Coureur d'égout</gutterrunner>
     <ratogre>Rat Ogre</ratogre>
-    <!-- Undead -->
+    <!-- Shambling Undead -->
     <mummy>Momie</mummy>
     <!-- Vampire -->
-    <thrall>Serviteur</thrall>
-    <vampire>Vampire</vampire>
+    <thralllineman>Serviteur</thralllineman>
+    <vampireblitzer>Vampire Blitzer</vampireblitzer>
     <!-- Wood Elf -->
     <wardancer>Danseur de guerre</wardancer>
-    <!-- Chaos Pact -->
-    <marauder>Maraudeur</marauder>
-    <goblinrenegade>Renégat Gobelin</goblinrenegade>
-    <skavenrenegade>Renégat Skaven</skavenrenegade>
-    <darkelfrenegade>Renégat Elfe Noir</darkelfrenegade>
-    <orcrenegade>Renégat Orc</orcrenegade>
+    <!-- Chaos Renegades -->
+    <renegadehumanlineman>Maraudeur</renegadehumanlineman>
+    <renegadegoblin>Renégat Gobelin</renegadegoblin>
+    <renegadeskavenlineman>Renégat Skaven</renegadeskavenlineman>
+    <renegadedarkelflineman>Renégat Elfe Noir</renegadedarkelflineman>
+    <renegadeorclineman>Renégat Orc</renegadeorclineman>
     <chaostroll>Troll du Chaos</chaostroll>
     <chaosogre>Ogre du Chaos</chaosogre>
-    <!-- Underworld -->
-    <underworldgoblin>Gobelin</underworldgoblin>
-    <warpstonetroll>Troll de Malepierre</warpstonetroll>
+    <!-- Underworld Denizens -->
     <!-- Khorne -->
     <!-- <pitfighter> -->
     <!-- <bloodletterdaemon> -->
@@ -3113,7 +3162,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <animosity>Animosité</animosity>
     <ballchain>Chaîne et Boulet</ballchain>
     <bloodlust>Soif de Sang</bloodlust>
-    <bombardier>Bombardier</bombardier>
+    <bomma>Bomma</bomma>
     <bonehead>Cerveau Lent</bonehead>
     <chainsaw>Tronçonneuse</chainsaw>
     <decay>Décomposition</decay>
@@ -3142,7 +3191,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 <starplayer>
     <barikfarblast>Barik Tirloin</barikfarblast>
     <bomberdribblesnot>Boomer Morvonez</bomberdribblesnot>
-    <boomereziasson>Blam’ Eziasson</boomereziasson>
+    <boomer>Blam’</boomer>
     <brickfarthgrotty>Pèt’Brik et Minab’</brickfarthgrotty>
     <!-- <grottyincludedinbrickfarth> -->
     <countluthorvondrakenborg>Comte Luthor Von Drakenborg</countluthorvondrakenborg>
@@ -3172,7 +3221,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <puggybaconbreath>Puggy Haleinedebacon</puggybaconbreath>
     <ramtutiii>Ramtut III</ramtutiii>
     <rashnakbackstabber>Rashnak Lamedansledos</rashnakbackstabber>
-    <ripper>Bolgrot l'Écrabouilleur</ripper>
+    <ripperbolgrot>Bolgrot l'Écrabouilleur</ripperbolgrot>
     <scrappasorehead>Scappa Malocrane</scrappasorehead>
     <setekh>Setekh</setekh>
     <silibili>Silibili</silibili>   <!-- Deprecated -->
@@ -3212,7 +3261,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <!-- <kreekrustgouger> -->
     <!-- <bogallante> -->
     <!-- <karlavonkill> -->
-    <!-- <madcapmiggs> -->
+    <!-- <madcapmiggz> -->
     <!-- <karicoldsteel> -->
     <!-- Added BB2016 Spike! #1 -->
     <gobblergrimlich>Gobbler Grimlich</gobblergrimlich>
@@ -4060,28 +4109,28 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
 <!-- Race and position names only -->
 <race>
     <amazon>Amazon</amazon>
-    <chaos>Chaos Chosen</chaos>
+    <chaoschosen>Chaos Chosen</chaoschosen>
     <chaosdwarf>Chaos Dwarf</chaosdwarf>
     <darkelf>Dark Elf</darkelf>
     <dwarf>Dwarf</dwarf>
-    <elf>Elven Union</elf>
+    <elvenunion>Elven Union</elvenunion>
     <goblin>Goblin</goblin>
     <halfling>Halfling</halfling>
     <highelf>High Elf</highelf>
     <human>Human</human>
-    <khemri>Khemri Tomb Kings</khemri>
+    <tombkings>Tomb Kings</tombkings>
     <lizardman>Lizardman</lizardman>
-    <necromantic>Necromantic Horror</necromantic>
+    <necromantichorror>Necromantic Horror</necromantichorror>
     <norse>Norse</norse>
     <nurgle>Nurgle</nurgle>
     <ogre>Ogre</ogre>
     <orc>Orc</orc>
-    <undead>Shambling Undead</undead>
-    <vampire>Vampire</vampire>
+    <shamblingundead>Shambling Undead</shamblingundead>
+    <vampire>Vampire Blitzer</vampire>
     <skaven>Skaven</skaven>
     <woodelf>Wood Elf</woodelf>
-    <chaospact>Chaos Pact</chaospact>
-    <underworld>Underworld Denizens</underworld>
+    <chaosrenegades>Chaos Renegades</chaosrenegades>
+    <underworlddenizens>Underworld Denizens</underworlddenizens>
     <slann>Slann</slann>
     <bretonnia>Bretonnia</bretonnia>
     <daemonsofkhorne>Daemons of Khorne</daemonsofkhorne>
@@ -4097,18 +4146,18 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <thrower>Thrower</thrower>
     <runner>Runner</runner>
     <!-- Amazon -->
-    <linewoman>Tribal Linewoman</linewoman>
-    <eaglewarrior>Eagle Warrior Thrower</eaglewarrior>
+    <triballinewoman>Tribal Linewoman</triballinewoman>
+    <eaglewarriorthrower>Eagle Warrior Thrower</eaglewarriorthrower>
     <piranhawarrior>Piranha Warrior Catcher</piranhawarrior>
-    <kokokalim>Koka Kalim Blitzer</kokokalim>
-    <!-- Chaos -->
-    <beastman>Beastman Runner</beastman>
-    <chaoswarrior>Chosen Blocker</chaoswarrior>
+    <kokakalimblitzer>Koka Kalim Blitzer</kokakalimblitzer>
+    <!-- Chaos Chosen -->
+    <beastmanrunner>Beastman Runner</beastmanrunner>
+    <chosenblocker>Chosen Blocker</chosenblocker>
     <minotaur>Minotaur</minotaur>
     <!-- Chaos Dwarf -->
-    <hobgoblin>Hobgoblin Runner</hobgoblin>
+    <hobgoblinrunner>Hobgoblin Runner</hobgoblinrunner>
     <chaosdwarfblocker>Chaos Dwarf Blocker</chaosdwarfblocker>
-    <bullcentaur>Bull Centaur</bullcentaur> 
+    <bullcentaurblitzer>Bull Centaur Blitzer</bullcentaurblitzer> 
     <enslavedminotaur>Enslaved Minotaur</enslavedminotaur>
     <!-- Dark Elf -->
     <assassin>Assassin</assassin>
@@ -4118,7 +4167,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <deathroller>Deathroller</deathroller>
     <!-- Goblin -->
     <goblin>Goblin</goblin>
-    <bombardier>Bommma</bombardier>
+    <bomma>Bommma</bomma>
     <pogoer>Pogoer</pogoer>
     <looney>Looney</looney>
     <fanatic>Fanatic</fanatic>
@@ -4126,22 +4175,24 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <ooligan>'Ooligan</ooligan>
     <doomdiver>Doom Diver</doomdiver>
     <!-- Halfling -->
-    <halfling>Halfling Hopeful</halfling>
+    <halflinghopeful>Halfling Hopeful</halflinghopeful>
     <treeman>Treeman</treeman>
+	<halflingcatcher>Halfling Catcher</halflingcatcher>
+    <halflinghefty>Halfling Hefty</halflinghefty>
     <!-- Human -->
     <ogre>Ogre</ogre>
-    <!-- Khemri -->
-    <skeleton>Skeleton Lineman</skeleton>
+    <!-- Tomb Kings -->
+    <skeletonlineman>Skeleton Lineman</skeletonlineman>
     <thro-ra>Anointed Thrower</thro-ra>
     <blitz-ra>Anointed Blitzer</blitz-ra>
     <throra>Anointed Thrower</throra>
     <blitzra>Anointed Blitzer</blitzra>
     <tombguardian>Tomb Guardian</tombguardian>
     <!-- Lizardman -->
-    <skink>Skink Runner</skink>
-    <saurus>Saurus Blocker</saurus>
+    <skinkrunner>Skink Runner</skinkrunner>
+    <saurusblocker>Saurus Blocker</saurusblocker>
     <kroxigor>Kroxigor</kroxigor>
-    <!-- Necromantic -->    
+    <!-- Necromantic Horror -->    
     <zombie>Zombie</zombie>
     <ghoul>Ghoul Runner</ghoul>
     <wight>Wight Blitzer</wight>
@@ -4161,10 +4212,10 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <!-- Nurgle -->
     <rotter>Rotter</rotter>
     <pestigor>Pestigor</pestigor>
-    <nurglewarrior>Bloater</nurglewarrior>
-    <beastofnurgle>Rotspawn</beastofnurgle>
+    <bloater>Bloater</bloater>
+    <rotspawn>Rotspawn</rotspawn>
     <!-- Orge -->
-    <snotling>Runt</snotling>
+    <gnoblar>Runt</gnoblar>
     <!-- Orc -->
     <blackorcblocker>Black Orc Blocker</blackorcblocker>
     <!-- Skaven -->
@@ -4173,24 +4224,22 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
     <skavenblitzer>Skaven Blitzer</skavenblitzer>
     <gutterrunner>Gutter Runner</gutterrunner>
     <ratogre>Rat Ogre</ratogre>
-    <!-- Undead -->
+    <!-- Shambling Undead -->
     <mummy>Mummy</mummy>
     <!-- Vampire -->
-    <thrall>Thrall Lineman</thrall>
-    <vampire>Vampire Blitzer</vampire>
+    <thralllineman>Thrall Lineman</thralllineman>
+    <vampireblitzer>Vampire Blitzer</vampireblitzer>
     <!-- Wood Elf -->
     <wardancer>War Dancer</wardancer>
-    <!-- Chaos Pact -->
-    <marauder>Renegade Human Lineman</marauder>
-    <goblinrenegade>Renegade Goblin</goblinrenegade>
-    <skavenrenegade>Renegade Skaven Lineman</skavenrenegade>
-    <darkelfrenegade>Renegade Dark Elf Lineman</darkelfrenegade>
-    <orcrenegade>Renegade Orc Lineman</orcrenegade>
+    <!-- Chaos Renegades -->
+    <renegadehumanlineman>Renegade Human Lineman</renegadehumanlineman>
+    <renegadegoblin>Renegade Goblin</renegadegoblin>
+    <renegadeskavenlineman>Renegade Skaven Lineman</renegadeskavenlineman>
+    <renegadedarkelflineman>Renegade Dark Elf Lineman</renegadedarkelflineman>
+    <renegadeorclineman>Renegade Orc Lineman</renegadeorclineman>
     <chaostroll>Troll</chaostroll>
     <chaosogre>Ogre</chaosogre>
-    <!-- Underworld -->
-    <underworldgoblin>Goblin</underworldgoblin>
-    <warpstonetroll>Troll</warpstonetroll>
+    <!-- Underworld Denizens -->
     <!-- Khorne -->
     <pitfighter>Pit Fighter</pitfighter>
     <bloodletterdaemon>Bloodletter Daemon</bloodletterdaemon>

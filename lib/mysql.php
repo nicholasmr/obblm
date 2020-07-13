@@ -1010,8 +1010,8 @@ function setup_database() {
     Message::create(array(
         'f_coach_id' => 1,
         'f_lid'      => Message::T_BROADCAST,
-        'title'      => 'OBBLM installed!',
-        'msg'        => 'Congratulations! You have successfully installed Online Blood Bowl League Manager. See "About" and "Introduction" for more information.'));
+        'title'      => 'NAFLM installed!',
+        'msg'        => 'Congratulations! You have successfully installed the NAF League Manager. See "About" for more information. Ensure you change the root account password immediately.'));
     // Done!
     mysql_close($conn);
     return true;
@@ -1042,8 +1042,9 @@ function upgrade_database($version, $opts, $upgradeSQLs) {
             # Migrating position IDs correctly requires having loaded the correct LRB used in the v0.75 league.
             global $DEA, $stars, $skillarray; # Make global so that below include(s) will overwrite their values.
             switch ($opts['lrb']) {
-                case '5':  require('lib/game_data.php'); break; # Load LRB5
-                case '6x': require('lib/game_data_lrb6x.php'); break; # Load LRB6x
+                # No longer calls to check if LRB5 or LRB6x are required.
+		# case '5':  require('lib/game_data.php'); break; # Load LRB5
+                # case '6x': require('lib/game_data_lrb6x.php'); break; # Load LRB6x
                 default: break; # LRB6 already loaded by default.
             }
             break;
@@ -1100,9 +1101,9 @@ function upgrade_database($version, $opts, $upgradeSQLs) {
     }
     switch ($version) {
         case '075-080':
-            # Convert league to LRB6.
+            #This section no longer points to LRB6 game data as it created an issue with the install routine that required admins tasks to correct		    
             global $DEA, $stars, $skillarray; # Make global so that below include(s) will overwrite their values.
-            require('lib/game_data_lrb6.php'); # Load LRB6.
+            require('lib/game_data_bb2016.php'); # Load BB2016 data.
             SQLCore::syncGameData();
         default:
             break;

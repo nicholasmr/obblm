@@ -22,4 +22,4 @@ Additional Files:
 ./lib/game_data_apesofwrath.php    Copyright (c) Shteve0 <no email> 2012. All Rights Reserved.
 ./lib/game_data_bretonnia.php      Copyright (c) Ian Williams <no email> 2011-2012. All Rights Reserved.
 ./lib/game_data_lrb6.php           Copyright (c) Daniel Straalman <no email> 2009-2012. All Rights Reserved.
-./lib/game_data_bb16.php           Copyright (c) Daniel Straalman <no email> 2009-2012. All Rights Reserved.
+./lib/game_data_bb16.php REMOVED   Copyright (c) Daniel Straalman <no email> 2009-2012. All Rights Reserved.

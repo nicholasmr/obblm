@@ -21,12 +21,6 @@
  *
  */
 
-/* 
-
-    Known bug: Chose a star 1. Chose star 2. Change star 1 to same as star 2 and both will be the same.
-    
- */
-
 class IndcPage implements ModuleInterface
 {
 
@@ -73,10 +67,12 @@ class IndcPage implements ModuleInterface
 
         $star_list[0] = '      <option value="0">-No Induced Stars-</option>' . "\n";
         foreach ($stars as $s => $d) {
-            if (in_array($d['id'], $starpairs)) // Hide Child Stars
-                $star_list[0] .= "      <option ".((in_array($t->f_race_id, $d['races'])) ? 'style="display: none; background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
-            else
-                $star_list[0] .= "      <option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
+            if (in_array($t->f_race_id, $d['races'])) { // Only display available Stars
+                if (in_array($d['id'], $starpairs)) // Hide Child Stars
+                    $star_list[0] .= "      <option ".((in_array($t->f_race_id, $d['races'])) ? 'style="display: none; background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
+                else
+                    $star_list[0] .= "      <option ".((in_array($t->f_race_id, $d['races'])) ? 'style="background-color: '.COLOR_HTML_READY.';" ' : '')."value=\"$d[id]\">$s</option>\n";
+            }
         }
 
 ?>
