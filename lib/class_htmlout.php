@@ -974,7 +974,7 @@ class HTMLOUT
 					echo '<li><a href="http://www.thenaf.net/leagues/leagues-locator/" >TheNAF.net League Locator</a></li>';
 					echo '<li><a href="index.php?SLS_lid=1" >League Hosting Home</a></li>';
 				} ?>
-				<li><a href="index.php?section=about">About OBBLM</a></li>
+				<li><a href="index.php?section=about">About NAFLM</a></li>
 			</ul>
 		</li>
 		<?php
@@ -1334,7 +1334,7 @@ class HTMLOUT
 	public static function dnt() {
 		?>
 		<!-- Following HTML from ./lib/class_htmlout.php dnt -->
-		If you enjoy this software please support the further development of it by donating.<br>
+		If you enjoy this software please consider donating to the team who developed the original OBBLM software.<br>
 		<br>
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 		<input type="hidden" name="cmd" value="_s-xclick">

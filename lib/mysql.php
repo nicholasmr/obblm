@@ -1010,8 +1010,8 @@ function setup_database() {
     Message::create(array(
         'f_coach_id' => 1,
         'f_lid'      => Message::T_BROADCAST,
-        'title'      => 'OBBLM installed!',
-        'msg'        => 'Congratulations! You have successfully installed Online Blood Bowl League Manager. See "About" and "Introduction" for more information.'));
+        'title'      => 'NAFLM installed!',
+        'msg'        => 'Congratulations! You have successfully installed the NAF League Manager. See "About" for more information. Ensure you change the root account password immediately.'));
     // Done!
     mysql_close($conn);
     return true;
