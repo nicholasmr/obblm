@@ -526,8 +526,8 @@ if ($settings['enable_pdf_logos']) {
     $img = new ImageSubSys(IMGTYPE_TEAMLOGO,$team->team_id);
     $pdf->Image($img->getPath(),346,436,128,128,'','',false,0);
 
-    // OBBLM text lower left corner as a pic
-    $pdf->Image('modules/pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
+    // OBBLM text lower left corner as a pic - removed due issues with it appearing multiple places
+    // $pdf->Image('modules/pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
 }
 
 // Color legends
