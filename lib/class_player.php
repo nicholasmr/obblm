@@ -613,7 +613,7 @@ class Player
         $query = "SELECT getPlayerStatus($player_id,$match_id) AS 'inj'";
         // Determine what status is.
         $result = mysql_query($query);
-        if (is_resource($result) && mysql_num_rows($result) > 0) {
+        if (mysql_num_rows($result) > 0) {
             $row = mysql_fetch_assoc($result);
             switch ($row['inj']) {
                 case NONE: return NONE;
