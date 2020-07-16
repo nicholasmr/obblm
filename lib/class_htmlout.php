@@ -879,13 +879,16 @@ class HTMLOUT
 			<script type="text/javascript" src="js/app/ViewModel/Common/RegistrationViewModel.js"></script>
 			<script type="text/javascript" src="js/app/ViewModel/Common/PageViewModel.js"></script>
 			<script type="text/javascript" src="js/app/CustomBinders/EditableCustomBinder.js"></script>
-			
+
+			<?php if( basename($_SERVER["SCRIPT_FILENAME"], '.php') !== 'install' ): ?>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					var leaguesJson = <?php echo json_encode(League::getLeaguesWithLocation()); ?>;
 					ko.applyBindings(new PageViewModel(leaguesJson));
 				});
 			</script>
+			<?php endif; ?>
+			
 		</head>
 		<body>
 			<div class="everything">
