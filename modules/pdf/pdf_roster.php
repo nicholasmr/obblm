@@ -370,7 +370,7 @@ if ($_POST) {
     elseif ($key == 'Halfling Master Chef') { $ind_chef = (int) $val; continue; }
     elseif ($key == 'Igor') { $ind_igor = (int) $val; continue; }
     elseif ($key == 'Wandering Apothecaries') { $ind_apo = (int) $val; continue; }
-    elseif ($key == 'Wizard') { $ind_wiz = (int) $val; continue; }
+    elseif ($key == 'Hireling Sports-Wizard') { $ind_wiz = (int) $val; continue; }
   }
 
   // Printing stars first
