@@ -478,10 +478,6 @@ else $ind_chef = '__';
 if (isset($ind_wiz)) { $ind_cost += $ind_wiz*$inducements['Hireling Sports-Wizard']['cost']; }
 else $ind_wiz = '__';
 
-echo "here";
-echo var_dump($inducements);
-
-
 // print_inducements($x, $y, $h, $bgcol, $linecol, $fontsize, $ind_name, $ind_amount, $ind_value)
 $pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bloodweiser Babes (0-2):', $ind_babes, $pdf->Mf($inducements['Bloodweiser Babes']['cost']));
 $pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bribes (0-3):', $ind_bribes, $pdf->Mf($bribe_cost));
