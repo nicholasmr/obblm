@@ -128,7 +128,7 @@ class Stats
 			$LIMIT";
 
 		$ret = array();
-		if (($result = mysql_query($query)) && is_resource($result) && mysql_num_rows($result) > 0) {
+		if (($result = mysql_query($query)) && mysql_num_rows($result) > 0) {
 			while ($r = mysql_fetch_assoc($result)) {
 				array_push($ret, $r);
 			}
@@ -183,7 +183,7 @@ class Stats
 				AND ".implode(' AND ', $where)." 
 			ORDER BY $ORDERBY_RND date_played DESC $LIMIT";
 		$result = mysql_query($query);
-		if (is_resource($result) && mysql_num_rows($result) > 0) {
+		if (mysql_num_rows($result) > 0) {
 			while ($r = mysql_fetch_assoc($result)) {
 				if ($mkObjs) {
 					$m = new Match($r['match_id']);

@@ -13,6 +13,9 @@ if (!defined('T_NO_STARTUP') && file_exists('install.php'))
 error_reporting((E_ALL | E_STRICT) & ~E_DEPRECATED);
 session_start();
 
+// MySQL wrapper to use mysqli for PHP7 support
+require_once('lib/mysqli_wrapper.php');
+
 /*********************
  *   General
  *********************/
