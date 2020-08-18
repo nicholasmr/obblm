@@ -1,6 +1,5 @@
 README
 ------
+Please see the project Wiki for install instructions.
 
-Please read the disclaimer in the "OBBLM" link before using OBBLM.
-
-For help see the help.html file.
+Lastest public build is found under releases and requires PHP 5.6 to run
