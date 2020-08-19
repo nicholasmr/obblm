@@ -1,0 +1,25 @@
+OBBLM License
+
+OBBLM is copyright (c)
+    Niels Orsleff Justesen   <njustesen@gmail.com>
+  & Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com>
+2007-2010. All Rights Reserved.
+
+OBBLM is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+OBBLM is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Additional Files:
+./lib/game_data_apesofwrath.php    Copyright (c) Shteve0 <no email> 2012. All Rights Reserved.
+./lib/game_data_bretonnia.php      Copyright (c) Ian Williams <no email> 2011-2012. All Rights Reserved.
+./lib/game_data_lrb6.php           Copyright (c) Daniel Straalman <no email> 2009-2012. All Rights Reserved.
+./lib/game_data_bb16.php REMOVED   Copyright (c) Daniel Straalman <no email> 2009-2012. All Rights Reserved.

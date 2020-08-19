@@ -5,8 +5,7 @@ if (isset($_POST['type'])) {
     if (!is_numeric($id = get_alt_col($IS_COACH ? 'coaches' : 'teams', 'name', $_POST['name'], ($IS_COACH ? 'coach' : 'team').'_id'))) {
         status(false, 'Invalid name. Check spelling?');
         $_POST['type'] = 'QUIT';
-    }
-    else {
+    } else {
         $o = $IS_COACH ? new Coach($id) : new Team($id);
         if (!$coach->mayManageObj($IS_COACH ? T_OBJ_COACH : T_OBJ_TEAM, $IS_COACH ? $o->coach_id : $id)) {
             status(false, 'You do not have permissions to manage the selected coach or team.');
@@ -18,12 +17,10 @@ if (isset($_POST['type'])) {
     {
         case 'QUIT':
             break;
-            
         case 'rt':
         case 'rc':
             status($o->setRetired(!(isset($_POST['unretire']) && $_POST['unretire'])));
             break;
-
         case 'dt':
         case 'dc':
             status($o->delete());
@@ -32,6 +29,7 @@ if (isset($_POST['type'])) {
 }
 title($lng->getTrn('menu/admin_menu/ct_man'));
 ?>
+<!-- Following HTML from ./admin/admin_ct_man.php -->
 <script>
     $(document).ready(function(){
         var options, a1,a2,a3,a4;
@@ -114,4 +112,3 @@ title($lng->getTrn('menu/admin_menu/ct_man'));
         </td>
     </tr>
 </table>
-<?php

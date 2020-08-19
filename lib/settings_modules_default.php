@@ -14,4 +14,3 @@ $settings['leegmgr_cyanide_edition'] = 2;
 $settings['leegmgr_botocs'] = true;
 
 $settings['enable_pdf_logos'] = true;
-

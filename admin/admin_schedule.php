@@ -3,22 +3,17 @@
 $addMatchToFFA = false; # Must declare here since we use it later to set default FFA tour selection.
 
 if (isset($_POST['button'])) {
-
     /*
         Input validation.
     */
-
     // Teams
     $team_ids = explode(',', $_POST['teams']);
     $teamsCount = count($team_ids);
-
     // Shortcut booleans:
     $mkNewFFA       = ($_POST['type'] == 'FFA_TOUR');
     $addMatchToFFA  = ($_POST['type'] == 'FFA_SINGLE');
     $nameSet        = (isset($_POST['name']) && !empty($_POST['name']) && !ctype_space($_POST['name']));
-
     /* Error condition definitions. */
-
     /*
         Here we test for illegal pair-ups due to league and division relations.
         Normally Match::create() does this too, but we don't want to end up creating a long list of matches first, but
@@ -67,7 +62,6 @@ if (isset($_POST['button'])) {
     /*
         Input modification.
     */
-
     if ($nameSet && get_magic_quotes_gpc()) {
         $_POST['name'] = stripslashes($_POST['name']);
     }
@@ -109,8 +103,8 @@ if (isset($_POST['button'])) {
 
 title($lng->getTrn('menu/admin_menu/schedule'));
 ?>
+<!-- Following HTML from ./admin/admin_schedule.php -->
 <script language="JavaScript" type="text/javascript">
-
     function chTour(t)
     {
         /*
@@ -144,7 +138,6 @@ title($lng->getTrn('menu/admin_menu/schedule'));
     /*
         Team list related.
     */
-
     var TID = false;
     var TNAME = false;
 
@@ -200,7 +193,6 @@ title($lng->getTrn('menu/admin_menu/schedule'));
         SL.size--;
         TEAMS.value = TEAMS.value.substr(0, TEAMS.value.lastIndexOf(','));
     }
-
 </script>
 
 <?php
@@ -209,7 +201,9 @@ if (count($leagues) < 0 || count($divisions) < 0) {
 }
 echo "<b><a TARGET='_blank' href='".DOC_URL_GUIDE."'>".$lng->getTrn('common/needhelp')."</a></b><br>";
 $commonStyle = "float:left; width:45%; height:300px; margin:10px;";
-?><br>
+?>
+<!-- Following HTML from ./admin/admin_cpanel.php -->
+<br>
 <form method="POST" name="tourForm">
 
     <div style='margin:7px;'>
