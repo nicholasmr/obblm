@@ -168,9 +168,9 @@ $core_tables = array(
         'rs'            => 'TINYINT UNSIGNED DEFAULT 1',
         'locked'        => 'BOOLEAN NOT NULL DEFAULT 0',
         // Dynamic properties (DPROPS)
-        'empty'         => 'BOOLEAN DEFAULT TRUE',
-        'begun'         => 'BOOLEAN DEFAULT FALSE',
-        'finished'      => 'BOOLEAN DEFAULT FALSE',
+        'is_empty'         => 'BOOLEAN DEFAULT TRUE',
+        'is_begun'         => 'BOOLEAN DEFAULT FALSE',
+        'is_finished'      => 'BOOLEAN DEFAULT FALSE',
         'winner'        => $CT_cols[T_OBJ_TEAM],
         'allow_sched'   => 'BOOLEAN DEFAULT FALSE',
     ),
