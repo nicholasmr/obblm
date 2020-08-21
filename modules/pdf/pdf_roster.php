@@ -464,6 +464,7 @@ else {
 $chef_cost = $inducements['Halfling Master Chef'][(($r == 'Halfling') ? 'reduced_cost' : 'cost')];
 // Checking game data if cheaper bribes for Goblin
 $bribe_cost = $inducements['Bribes'][(($r == 'Goblin') ? 'reduced_cost' : 'cost')];
+$bribe_cost = $inducements['Bribes'][(($r == 'Snotling') ? 'reduced_cost' : 'cost')];
 
 if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; }
 else $ind_babes = '__';
