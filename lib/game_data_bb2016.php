@@ -3309,7 +3309,7 @@ $inducements = array (
         'cost' => 100000,
         'max'  => 3,
         'reduced_cost' => 50000,
-        'reduced_cost_races' => array(T_RACE_GOBLIN),
+        'reduced_cost_races' => array(T_RACE_GOBLIN, T_RACE_SNOTLING),
     ),
     'Extra Training' => array (
         'cost' => 100000,
