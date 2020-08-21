@@ -482,6 +482,7 @@ else {
 $chef_cost = $inducements['Halfling Master Chef'][(($r == 'Halfling') ? 'reduced_cost' : 'cost')];
 // Checking game data if cheaper bribes for Goblin
 $bribe_cost = $inducements['Bribes'][(($r == 'Goblin') ? 'reduced_cost' : 'cost')];
+$bribe_cost = $inducements['Bribes'][(($r == 'Snotling') ? 'reduced_cost' : 'cost')];
 
 //calculate inducement costs
 if (isset($ind_igor)) { $ind_cost += $ind_igor*$inducements['Igor']['cost']; $ind_count += 1; }
