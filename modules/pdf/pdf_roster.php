@@ -480,7 +480,7 @@ else {
 }
 // Checking game data if cheaper Chef for Halfling
 $chef_cost = $inducements['Halfling Master Chef'][(($r == 'Halfling') ? 'reduced_cost' : 'cost')];
-// Checking game data if cheaper bribes for Goblin
+// Checking game data if cheaper bribes for Goblin and Snotling
 $bribe_cost = $inducements['Bribes'][(($r == 'Goblin') ? 'reduced_cost' : 'cost')];
 $bribe_cost = $inducements['Bribes'][(($r == 'Snotling') ? 'reduced_cost' : 'cost')];
 
@@ -520,9 +520,11 @@ if (isset($ind_fbl)) { $ind_cost += $ind_fbl*$inducements['Firebelly']['reduced_
 //print_box($x, $y, $w, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth=1, $borderstyle, $fontsize, $font, $bold=false, $align, $text)
 $h = 13; // Height of cells
 
+if ($ind_count > 0 ) {
   $pdf->print_box($currentx, $currenty, 170, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Inducements ');
   $pdf->print_box(($currentx += 170), $currenty, 120, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'L', '(for next match)');
   $pdf->print_box(($currentx = 630), $currenty, 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Team Goods'); // 156 to margin
+}
 
 $currentx = MARGINX;
 $currenty = 435;

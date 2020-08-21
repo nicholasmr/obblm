@@ -2156,7 +2156,7 @@ $stars = array(
        'def'    => array (99, 23, 73, 76, 78),
        'cost'   => 200000,
        'icon'   => 'star',
-       'races'  => array(19),
+       'races'  => array(19, T_RACE_SNOTLING),
    ),
    'Headsplitter' => array (
        'id'     => -20,
@@ -2178,7 +2178,7 @@ $stars = array(
        'def'    => array (99, 95, 105, 57),
        'cost'   => 110000,
        'icon'   => 'star',
-       'races'  => array(0, 9, 11, 14, 18, 22, 27),
+       'races'  => array(0, 9, 11, 14, 18, 22, 27, T_RACE_SNOTLING),
    ),
    'Hemlock' => array (
        'id'     => -22,
@@ -2288,7 +2288,7 @@ $stars = array(
        'def'    => array (99, 1, 54, 59, 110),
        'cost'   => 430000,
        'icon'   => 'star',
-       'races'  => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 27),
+       'races'  => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 27, T_RACE_SNOTLING),
    ),
    'Nobbla Blackwart' => array (
        'id'     => -32,
@@ -2420,7 +2420,7 @@ $stars = array(
        'def'    => array (99, 1, 24, 54, 59),
        'cost'   => 290000,
        'icon'   => 'star',
-       'races'  => array(12),
+       'races'  => array(12, T_RACE_SNOTLING),
    ),
    'Wilhelm Chaney' => array (
        'id'     => -44,
@@ -2677,7 +2677,7 @@ $stars = array(
         'def'   => array (99, 1, 71, 51, 53, 57),
         'cost'  => 190000,
         'icon'  => 'star',
-        'races' => array(T_RACE_SKAVEN, T_RACE_UNDERWORLD),
+        'races' => array(T_RACE_SKAVEN, T_RACE_UNDERWORLD, T_RACE_SNOTLING),
     ),
     'Lucien Swift (+ Valen Swift)' => array (
         'id'    => -67,
