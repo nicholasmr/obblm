@@ -454,6 +454,7 @@ $h = 13;
 // Printing lower part of roster
 $currentx = MARGINX;
 $currenty = 435;
+$ind_count = 0;
 
 // Checking if Wandering Apothecary should be replaced with Igor
 $r=$team->f_rname;
