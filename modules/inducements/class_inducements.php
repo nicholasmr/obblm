@@ -313,7 +313,7 @@ function SendToPDF()
             }
         }
         if ($cardb != '') {
-            $card_cost = str_replace('k','',$cardb);
+            $card_cost = intval(str_replace('k','',$cardb));
             $ind_cost += $card_cost * 1000;
         } else {
             $cardb = '0k';
