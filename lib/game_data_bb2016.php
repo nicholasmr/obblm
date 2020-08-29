@@ -2035,7 +2035,7 @@ $stars = array(
        'def'    => array (99, 40, 93, 23, 104, 105, 108),
        'cost'   => 60000,
        'icon'   => 'star',
-       'races'  => array(6, 12, 16, 21, 23),
+       'races'  => array(6, 12, 16, 21, 23, 28),
    ),
    'Boomer' => array (
        'id'     => -9,
@@ -2101,7 +2101,7 @@ $stars = array(
        'def'    => array (99, 91, 54, 100, 105, 108),
        'cost'   => 80000,
        'icon'   => 'star',
-       'races'  => array(6),
+       'races'  => array(6, 28),
    ),
    'Grashnak Blackhoof' => array (
        'id'     => -15,
@@ -2178,7 +2178,7 @@ $stars = array(
        'def'    => array (99, 95, 105, 57),
        'cost'   => 110000,
        'icon'   => 'star',
-       'races'  => array(0, 9, 11, 14, 18, 22, 27, T_RACE_SNOTLING),
+       'races'  => array(0, 9, 11, 14, 18, 22, 27, 28),
    ),
    'Hemlock' => array (
        'id'     => -22,
@@ -2288,7 +2288,7 @@ $stars = array(
        'def'    => array (99, 1, 54, 59, 110),
        'cost'   => 430000,
        'icon'   => 'star',
-       'races'  => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 27, T_RACE_SNOTLING),
+       'races'  => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 27, 28),
    ),
    'Nobbla Blackwart' => array (
        'id'     => -32,
@@ -2299,7 +2299,7 @@ $stars = array(
        'def'    => array (99, 1, 23, 95, 105, 108),
        'cost'   => 130000,
        'icon'   => 'star',
-       'races'  => array(2, 6, 16, 23),
+       'races'  => array(2, 6, 16, 23, 28),
    ),
    'Prince Moranion' => array (
        'id'     => -33,
@@ -2354,7 +2354,7 @@ $stars = array(
        'def'    => array (99, 51, 54, 103, 110),
        'cost'   => 270000,
        'icon'   => 'star',
-       'races'  => array(6, 12),
+       'races'  => array(6, 12, 28),
    ),
    'Scrappa Sorehead' => array (
        'id'     => -38,
@@ -2365,7 +2365,7 @@ $stars = array(
        'def'    => array (99, 3, 23, 25, 104, 28, 108, 29, 79),
        'cost'   => 150000,
        'icon'   => 'star',
-       'races'  => array(6, 16, 12),
+       'races'  => array(6, 16, 12, 28),
    ),
    'Setekh' => array (
        'id'     => -39,
@@ -2409,7 +2409,7 @@ $stars = array(
        'def'    => array (99, 95, 105),
        'cost'   => 100000,
        'icon'   => 'star',
-       'races'  => array(12, 21),
+       'races'  => array(12, 21, 28),
    ),
    'Varag Ghoul-Chewer' => array (
        'id'     => -43,
@@ -2420,7 +2420,7 @@ $stars = array(
        'def'    => array (99, 1, 24, 54, 59),
        'cost'   => 290000,
        'icon'   => 'star',
-       'races'  => array(12, T_RACE_SNOTLING),
+       'races'  => array(12),
    ),
    'Wilhelm Chaney' => array (
        'id'     => -44,
@@ -2677,7 +2677,7 @@ $stars = array(
         'def'   => array (99, 1, 71, 51, 53, 57),
         'cost'  => 190000,
         'icon'  => 'star',
-        'races' => array(T_RACE_SKAVEN, T_RACE_UNDERWORLD, T_RACE_SNOTLING),
+        'races' => array(T_RACE_SKAVEN, T_RACE_UNDERWORLD),
     ),
     'Lucien Swift (+ Valen Swift)' => array (
         'id'    => -67,
@@ -2743,7 +2743,7 @@ $stars = array(
         'def'   => array (99, 50, 71, 25, 100, 79, 112),
         'cost'  => 170000,
         'icon'  => 'star',
-        'races' => array(T_RACE_GOBLIN, T_RACE_UNDERWORLD),
+        'races' => array(T_RACE_GOBLIN, T_RACE_UNDERWORLD, 28),
     ),
 	//Moved to inducements
     'Kari Coldsteel' => array (
@@ -3476,6 +3476,12 @@ $inducements = array (
         'max'  => 1,
         'reduced_cost' => 150000,
         'reduced_cost_races' => array(T_RACE_OGRE, T_RACE_CHAOS_PACT),
+    ),
+    'Night Goblin Sports Shaman' => array (
+        'cost' => 0,
+        'max' => 1,
+        'reduced_cost' => 150000,
+        'reduced_cost_races' => array(T_RACE_SNOTLING, T_RACE_GOBLIN),
     ),
 );
 /* ******************************************************************************************************** **

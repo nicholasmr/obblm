@@ -372,7 +372,7 @@ if ($_POST) {
     elseif ($key == 'Wandering Apothecaries') { $ind_apo = (int) $val; continue; }
     elseif ($key == 'Hireling Sports-Wizard') { $ind_wiz = (int) $val; continue; }
     //	elseif ($key == '###') { $ind_### = (int) $val; continue; }
-    //  added BB2016 - Spike 9 inducements	
+    //  added BB2016 - Spike inducements	
     elseif ($key == 'Horatio X Schottenheim') { $ind_hxs = (int) $val; continue; }
     elseif ($key == 'Fink Da Fixer') { $ind_fdf = (int) $val; continue; }
     elseif ($key == 'Papa Skullbones') { $ind_psb = (int) $val; continue; }
@@ -394,6 +394,7 @@ if ($_POST) {
     elseif ($key == 'Slann Mage-Priest') { $ind_smp = (int) $val; continue; }
     elseif ($key == 'Riotous Rookies') { $ind_rok = (int) $val; continue; }
     elseif ($key == 'Firebelly') { $ind_fbl = (int) $val; continue; }
+    elseif ($key == 'Night Goblin Sports Shaman') { $ind_ngs = (int) $val; continue; }
   }
 
   // Printing stars first
@@ -493,7 +494,7 @@ if (isset($ind_card)) { $ind_cost += $ind_card; $ind_count += 1; }
 if (isset($ind_rr)) { $ind_cost += $ind_rr*$inducements['Extra Training']['cost']; $ind_count += 1; }
 if (isset($ind_chef)) { $ind_cost += $ind_chef*$chef_cost; $ind_count += 1;}
 if (isset($ind_wiz)) { $ind_cost += $ind_wiz*$inducements['Hireling Sports-Wizard']['cost']; $ind_count += 1; }
-//	added BB2016 - Spike 9 inducements
+//	added BB2016 - Spike inducements
 //if (isset($ind_###)) { $ind_cost += $ind_###*$inducements['#######']['cost']; }
 if (isset($ind_hxs)) { $ind_cost += $ind_hxs*$inducements['Horatio X Schottenheim']['cost']; $ind_count += 1; }
 if (isset($ind_fdf)) { $ind_cost += $ind_fdf*$inducements['Fink Da Fixer']['reduced_cost']; $ind_count += 1; }
@@ -516,6 +517,7 @@ if (isset($ind_bhb)) { $ind_cost += $ind_bhb*$inducements['Bottle of Heady Brew'
 if (isset($ind_smp)) { $ind_cost += $ind_smp*$inducements['Slann Mage-Priest']['reduced_cost']; $ind_count += 1; }
 if (isset($ind_rok)) { $ind_cost += $ind_rok*$inducements['Riotous Rookies']['reduced_cost']; $ind_count += 1; }
 if (isset($ind_fbl)) { $ind_cost += $ind_fbl*$inducements['Firebelly']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_ngs)) { $ind_cost += $ind_ngs*$inducements['Night Goblin Sports Shaman']['reduced_cost']; $ind_count += 1; }
 
 //print_box($x, $y, $w, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth=1, $borderstyle, $fontsize, $font, $bold=false, $align, $text)
 $h = 13; // Height of cells
@@ -549,7 +551,7 @@ $ind_display_counter = 0;
   if (isset($ind_wiz)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Hireling Sports-Wizard (0-1):', $ind_wiz, $pdf->Mf($inducements['Hireling Sports-Wizard']['cost']));}
   if (isset($ind_wiz)) { $ind_display_counter += 1;}
   if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
-  //	added BB2016 - Spike 9 inducements
+  //	added BB2016 - Spike inducements
   if (isset($ind_hxs)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Horatio X Schottenheim (0-1):', $ind_hxs, $pdf->Mf($inducements['Horatio X Schottenheim']['cost']));}
   if (isset($ind_hxs)) { $ind_display_counter += 1;}
   if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
@@ -613,7 +615,10 @@ $ind_display_counter = 0;
   if (isset($ind_fbl)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Firebelly (0-1):', $ind_fbl, $pdf->Mf($inducements['Firebelly']['reduced_cost']));}
   if (isset($ind_fbl)) { $ind_display_counter += 1;}
   if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
-  //  end of BB2016 - Spike 9 inducements
+  if (isset($ind_ngs)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Night Goblin Sports Shaman (0-1):', $ind_ngs, $pdf->Mf($inducements['Night Goblin Sports Shaman']['reduced_cost']));}
+  if (isset($$ind_ngs)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  //  end of BB2016 - Spike inducements
   if (isset($ind_card)) { $pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Card budget:', ' ', $pdf->Mf($ind_card));}
   if (isset($ind_card)) { $ind_display_counter += 1;}
   if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
@@ -701,4 +706,3 @@ $pdf->Output(utf8_decode($team->name) . date(' Y-m-d') . '.pdf', 'I');
 
 }
 }
-

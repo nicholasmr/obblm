@@ -143,7 +143,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
             <sgrp>Stats group</sgrp>
             <having>Having</having>
 
-            <!-- ES -->
+            <!-- Extra Stats -->
             <extrastats>Extra stats</extrastats>
             <stat>Stat</stat>
             <!-- use "all-time" string from nodeSelect() translation -->
