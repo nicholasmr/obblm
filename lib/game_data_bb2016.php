@@ -35,13 +35,17 @@ define('T_RACE_WOOD_ELF',    20);
 define('T_RACE_CHAOS_PACT',  21);
 define('T_RACE_SLANN',       22);
 define('T_RACE_UNDERWORLD',  23);
+//Added in BB2016 Spike! #9
 define('T_RACE_OLDWORLD',    27);
+//Added in BB2016 Spike! #10
+define('T_RACE_SNOTLING',   28);
 // Optional Races
 // These races are defined in their own game data files. 
 // Included here just for reference to avoid duplicate IDs.
 // define('T_RACE_BRETONNIA',   24);
 // define('T_RACE_DKHORNE',     25);
 // define('T_RACE_APESOFWRATH', 26);
+
 // Race structure
 $DEA = array (
     'Amazon'    => array (
@@ -560,7 +564,7 @@ $DEA = array (
                 'doub'        	=> array ('G', 'S', 'P'),
                 'qty'           => 16,
                 'cost'          => 30000,
-                'icon'          => 'halfling1',
+                'icon'          => 'hopeful',
                 'pos_id'        => 70,
             ),
             'Treeman'    => array (
@@ -586,7 +590,7 @@ $DEA = array (
                 'doub'        	=> array ('G', 'S', 'P'),
                 'qty'           => 2,
                 'cost'          => 50000,
-                'icon'          => 'halfling1',
+                'icon'          => 'catcher',
                 'pos_id'        => 72,
             ),
             'Halfling Hefty'    => array (
@@ -599,7 +603,7 @@ $DEA = array (
                 'doub'        	=> array ('G', 'S'),
                 'qty'           => 2,
                 'cost'          => 50000,
-                'icon'          => 'halfling1',
+                'icon'          => 'hefty',
                 'pos_id'        => 73,
             ),		
         )
@@ -1733,7 +1737,7 @@ $DEA = array (
                 'icon'              => 'warptroll1',
                 'pos_id'            => 234,
             ),
-			// Had to skip pos_id 235-237 as they caused the player not to show
+			// Had to skip pos_id 235-237 as they used by T_RACE_BRETONNIA
             'Gutter Runner'    => array (
                 'ma'            	=> 9,
                 'st'            	=> 2,
@@ -1870,7 +1874,7 @@ $DEA = array (
                 'doub'        	=> array ('G', 'S', 'P'),
                 'qty'           => 2,
                 'cost'          => 30000,
-                'icon'          => 'halfling1',
+                'icon'          => 'hopeful',
                 'pos_id'        => 248,
             ),
             'Ogre'    => array (
@@ -1888,6 +1892,96 @@ $DEA = array (
             )
         )
     ),
+    //pos_id 250-253 T_RACE_DKHORNE
+    //pos_id 260-265 T_RACE_APESOFWRATH
+    //Added in BB2016 Spike! #10
+    'Snotling'    => array (
+        'other'    => array (
+            'rr_cost' => 60000,
+            'icon' => 'ogres.png',
+            'race_id' => T_RACE_SNOTLING, # (Snotlings)
+        ),
+        'players'    => array (
+            'Snotling'    => array (
+                'ma'            => 5,
+                'st'            => 1,
+                'ag'            => 3,
+                'av'            => 5,
+                'def'        	=> array (118, 23, 104, 26, 108, 121, 111),
+                'norm'        	=> array ('A'),
+                'doub'        	=> array ('G', 'S', 'P'),
+                'qty'           => 16,
+                'cost'          => 20000,
+                'icon'          => 'Snotling1',
+                'pos_id'        => 270,
+            ),
+            'Fungas Flinga'    => array (
+                'ma'            => 5,
+                'st'            => 1,
+                'ag'            => 3,
+                'av'            => 5,
+                'def'        	=> array (93, 23, 104, 105, 26, 108),
+                'norm'        	=> array ('A', 'P'),
+                'doub'        	=> array ('G', 'S'),
+                'qty'           => 2,
+                'cost'          => 30000,
+                'icon'          => 'zend_sickstench',
+                'pos_id'        => 271,
+            ),
+            'Fun-hoppa'    => array (
+                'ma'            => 6,
+                'st'            => 1,
+                'ag'            => 3,
+                'av'            => 5,
+                'def'        	=> array (23, 25, 79, 104, 26, 108),
+                'norm'        	=> array ('A'),
+                'doub'        	=> array ('G', 'S', 'P'),
+                'qty'           => 2,
+                'cost'          => 20000,
+                'icon'          => 'snotling_hero1',
+                'pos_id'        => 272,
+            ),
+            'Stilty Runna'    => array (
+                'ma'            => 6,
+                'st'            => 1,
+                'ag'            => 3,
+                'av'            => 5,
+                'def'        	=> array (23, 104, 26, 28, 108),
+                'norm'        	=> array ('A'),
+                'doub'        	=> array ('G', 'S', 'P'),
+                'qty'           => 2,
+                'cost'          => 20000,
+                'icon'          => 'nezogt',
+                'pos_id'        => 273,
+            ),
+            'Pump Wagon'    => array (
+                'ma'            => 4,
+                'st'            => 5,
+                'ag'            => 1,
+                'av'            => 9,
+                'def'        	=> array (3, 53, 54, 102, 105, 57),
+                'norm'        	=> array ('S'),
+                'doub'        	=> array ('A', 'G', 'P'),
+                'qty'           => 2,
+                'cost'          => 110000,
+                'icon'          => 'snotling_pumpwagon1',
+                'pos_id'        => 274,
+            ),
+            'Troll'    => array (
+                'ma'            => 4,
+                'st'            => 5,
+                'ag'            => 1,
+                'av'            => 9,
+                'def'        	=> array (90, 99, 54, 102, 103, 110),
+                'norm'        	=> array ('S'),
+                'doub'        	=> array ('A', 'G', 'P'),
+                'qty'           => 2,
+                'cost'          => 110000,
+                'icon'          => 'troll1',
+                'pos_id'        => 275,
+            )                                                            
+        )
+    ),    
 );
 // Create race ID index (key:val = id:race_name).
 $raceididx = array();
@@ -1941,7 +2035,7 @@ $stars = array(
        'def'    => array (99, 40, 93, 23, 104, 105, 108),
        'cost'   => 60000,
        'icon'   => 'star',
-       'races'  => array(6, 12, 16, 21, 23),
+       'races'  => array(6, 12, 16, 21, 23, 28),
    ),
    'Boomer' => array (
        'id'     => -9,
@@ -2007,7 +2101,7 @@ $stars = array(
        'def'    => array (99, 91, 54, 100, 105, 108),
        'cost'   => 80000,
        'icon'   => 'star',
-       'races'  => array(6),
+       'races'  => array(6, 28),
    ),
    'Grashnak Blackhoof' => array (
        'id'     => -15,
@@ -2062,7 +2156,7 @@ $stars = array(
        'def'    => array (99, 23, 73, 76, 78),
        'cost'   => 200000,
        'icon'   => 'star',
-       'races'  => array(19),
+       'races'  => array(19, T_RACE_SNOTLING),
    ),
    'Headsplitter' => array (
        'id'     => -20,
@@ -2084,7 +2178,7 @@ $stars = array(
        'def'    => array (99, 95, 105, 57),
        'cost'   => 110000,
        'icon'   => 'star',
-       'races'  => array(0, 9, 11, 14, 18, 22, 27),
+       'races'  => array(0, 9, 11, 14, 18, 22, 27, 28),
    ),
    'Hemlock' => array (
        'id'     => -22,
@@ -2194,7 +2288,7 @@ $stars = array(
        'def'    => array (99, 1, 54, 59, 110),
        'cost'   => 430000,
        'icon'   => 'star',
-       'races'  => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 27),
+       'races'  => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 27, 28),
    ),
    'Nobbla Blackwart' => array (
        'id'     => -32,
@@ -2205,7 +2299,7 @@ $stars = array(
        'def'    => array (99, 1, 23, 95, 105, 108),
        'cost'   => 130000,
        'icon'   => 'star',
-       'races'  => array(2, 6, 16, 23),
+       'races'  => array(2, 6, 16, 23, 28),
    ),
    'Prince Moranion' => array (
        'id'     => -33,
@@ -2260,7 +2354,7 @@ $stars = array(
        'def'    => array (99, 51, 54, 103, 110),
        'cost'   => 270000,
        'icon'   => 'star',
-       'races'  => array(6, 12),
+       'races'  => array(6, 12, 28),
    ),
    'Scrappa Sorehead' => array (
        'id'     => -38,
@@ -2271,7 +2365,7 @@ $stars = array(
        'def'    => array (99, 3, 23, 25, 104, 28, 108, 29, 79),
        'cost'   => 150000,
        'icon'   => 'star',
-       'races'  => array(6, 16, 12),
+       'races'  => array(6, 16, 12, 28),
    ),
    'Setekh' => array (
        'id'     => -39,
@@ -2315,7 +2409,7 @@ $stars = array(
        'def'    => array (99, 95, 105),
        'cost'   => 100000,
        'icon'   => 'star',
-       'races'  => array(12, 21),
+       'races'  => array(12, 21, 28),
    ),
    'Varag Ghoul-Chewer' => array (
        'id'     => -43,
@@ -2649,7 +2743,7 @@ $stars = array(
         'def'   => array (99, 50, 71, 25, 100, 79, 112),
         'cost'  => 170000,
         'icon'  => 'star',
-        'races' => array(T_RACE_GOBLIN, T_RACE_UNDERWORLD),
+        'races' => array(T_RACE_GOBLIN, T_RACE_UNDERWORLD, 28),
     ),
 	//Moved to inducements
     'Kari Coldsteel' => array (
@@ -3175,7 +3269,9 @@ $skillarray    = array (
         // Added in BB2016 Spike! #8
         118 => 'Disposable',
         119 => 'Kick Team-Mate',
-		120 => 'Sporting Giant',
+        120 => 'Sporting Giant',
+        // Added in BB2016 Spike! #10
+        121 => 'Swarming'
     ),
 );
 // Create skill ID index (key:val = id:skill_name).
@@ -3213,7 +3309,7 @@ $inducements = array (
         'cost' => 100000,
         'max'  => 3,
         'reduced_cost' => 50000,
-        'reduced_cost_races' => array(T_RACE_GOBLIN),
+        'reduced_cost_races' => array(T_RACE_GOBLIN, T_RACE_SNOTLING),
     ),
     'Extra Training' => array (
         'cost' => 100000,
@@ -3373,13 +3469,19 @@ $inducements = array (
         'cost' => 0,
         'max'  => 1,
         'reduced_cost' => 100000,
-        'reduced_cost_races' => array(T_RACE_OGRE),
+        'reduced_cost_races' => array(T_RACE_OGRE, T_RACE_SNOTLING),
     ),
     'Firebelly' => array (
         'cost' => 0,
         'max'  => 1,
         'reduced_cost' => 150000,
         'reduced_cost_races' => array(T_RACE_OGRE, T_RACE_CHAOS_PACT),
+    ),
+    'Night Goblin Sports Shaman' => array (
+        'cost' => 0,
+        'max' => 1,
+        'reduced_cost' => 150000,
+        'reduced_cost_races' => array(T_RACE_SNOTLING, T_RACE_GOBLIN),
     ),
 );
 /* ******************************************************************************************************** **
