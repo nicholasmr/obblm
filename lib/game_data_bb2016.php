@@ -3295,7 +3295,7 @@ $IllegalSkillCombinations = array(
     race) with the skill "Nurgle's Rot".
 ** ******************************************************************************************************** */
 $racesHasNecromancer = array(T_RACE_NECROMANTIC, T_RACE_UNDEAD);
-$racesNoApothecary = array_merge($racesHasNecromancer, array(T_RACE_KHEMRI,T_RACE_NURGLE));
+$racesNoApothecary = array_merge($racesHasNecromancer, array(T_RACE_KHEMRI, T_RACE_NURGLE));
 $racesMayRaiseRotters = array(T_RACE_NURGLE);
 /*  Inducements  ****************************************************************************************** */
 $inducements = array (
