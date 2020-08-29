@@ -3477,6 +3477,7 @@ $inducements = array (
         'reduced_cost' => 150000,
         'reduced_cost_races' => array(T_RACE_OGRE, T_RACE_CHAOS_PACT),
     ),
+    // Added in BB2016 Spike! #10
     'Night Goblin Sports Shaman' => array (
         'cost' => 0,
         'max' => 1,
