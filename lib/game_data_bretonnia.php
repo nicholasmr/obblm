@@ -6,7 +6,7 @@ define('T_RACE_BRETONNIA', 24);
 $DEA['Bretonnia'] = array (
     'other'    => array (
         'rr_cost' => 70000,
-        'icon'    => 'bretonnian.jpg',
+        'icon'    => 'bretonnian.png',
         'race_id' => T_RACE_BRETONNIA, # (Bretonnia)
     ),
     'players'    => array (

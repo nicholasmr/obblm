@@ -1057,19 +1057,9 @@ class HTMLOUT
 		</ul>
 	</li>
 			
-	<li class="topmenu"><a rel="nofollow" href="#">Statistics</a>
-		<ul>
-			<li class="subfirst"><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/team_stn');?></a></li>
-			<li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/player_stn');?></a></li>
-			<li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_COACH,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/coach_stn');?></a></li>
-			<li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_RACE,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/race_stn');?></a></li>
-			<li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
-		</ul>
-	</li>
-			
 	<li class="topmenu"><a rel="nofollow" href="#">Game Rules</a>
 		<ul> 
-			<li class="subfirst"><a rel="nofollow" href="#">CRP Rosters ></a>
+			<li class="subfirst"><a rel="nofollow" href="#">Team Rosters ></a>
 				<ul>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=0" style="height:10px;line-height:10px;">Amazon</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=1" style="height:10px;line-height:10px;">Chaos Chosen</a></li>
@@ -1099,11 +1089,19 @@ class HTMLOUT
 			</ul></li>
 			<li class="subfirst"><a rel="nofollow" href="#">(Optional) Community Rosters ></a>
 				<ul><li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=24" style="height:10px;line-height:10px;">Bretonnian</a></li>
-				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=25" style="height:10px;line-height:10px;">Khorne</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=25" style="height:10px;line-height:10px;">Daemons of Khorne</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=26" style="height:10px;line-height:10px;">Simyin</a></li>
 			</ul></li>
-			<li><a href="http://www.thenaf.net/wp-content/uploads/2013/06/CRP1.pdf" target="_blank">The CRP (Full Blood Bowl Rules)</a></li>
-			<li><a href="http://the-outcast.com/bloodbowl/blood%20bowl%20crp%20lite.pdf" target="_blank">A5 Rules Summary</a></li>  
+		</ul>
+	</li>
+				
+	<li class="topmenu"><a rel="nofollow" href="#">Statistics</a>
+		<ul>
+			<li class="subfirst"><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_TEAM,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/team_stn');?></a></li>
+			<li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_PLAYER,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/player_stn');?></a></li>
+			<li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_COACH,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/coach_stn');?></a></li>
+			<li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_RACE,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/race_stn');?></a></li>
+			<li><a rel="nofollow" href="<?php echo urlcompile(T_URL_STANDINGS,T_OBJ_STAR,false,false,false);?>"><?php echo $lng->getTrn('menu/statistics_menu/star_stn');?></a></li>
 		</ul>
 	</li>  
 

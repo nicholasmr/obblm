@@ -5,7 +5,7 @@ define('T_RACE_APESOFWRATH', 26);
 $DEA['Simyin']  = array (
     'other'          => array (
         'rr_cost'       => 60000,
-        'icon'          => 'apesofwrath.png',
+        'icon'          => 'naf.png',
         'race_id'       => T_RACE_APESOFWRATH, # (Apes of Wrath)
     ),
     'players'   => array (

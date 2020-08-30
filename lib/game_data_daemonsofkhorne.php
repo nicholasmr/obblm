@@ -5,7 +5,7 @@ define('T_RACE_DKHORNE', 25);
 $DEA['Daemons of Khorne'] = array (
     'other'     => array (
         'rr_cost'   => 70000,
-        'icon'      => 'dkhorne.png',
+        'icon'      => 'naf.png',
         'race_id'   => T_RACE_DKHORNE, # (Daemons of Khorne)
     ),
     'players'    => array (
