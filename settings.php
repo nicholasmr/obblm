@@ -34,12 +34,15 @@ $rules['force_IR'] = false; // Default is false. Setting this to true will remov
     Game data - additional races
         This build of NAFLM uses Blood Bowl 2016 Rules by default (located in game_data_bb2016.php).
         In addition you can include the custom races below. Simply change the keywords "false" to "true" (without apostrophes).
+        
+        If any of the custom races below are used, be sure to run all Admin->OBBLM Core Panel tasks. 
+        This is required even on new OBBLM installs.
 */
 
 $settings['custom_races'] = array(
-    'Bretonnia'         => true,
-    'Daemons of khorne' => true,
-    'Apes of wrath'     => true,
+    'Bretonnia'         => false,
+    'Daemons of khorne' => false,
+    'Apes of wrath'     => false,
 );
 
 
