@@ -1070,40 +1070,40 @@ class HTMLOUT
 	<li class="topmenu"><a rel="nofollow" href="#">Game Rules</a>
 		<ul> 
 			<li class="subfirst"><a rel="nofollow" href="#">CRP Rosters ></a>
-				<ul><li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=0" style="height:10px;line-height:10px;">Amazon</a></li>
-				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=1" style="height:10px;line-height:10px;">Chaos</a></li>
+				<ul>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=0" style="height:10px;line-height:10px;">Amazon</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=1" style="height:10px;line-height:10px;">Chaos Chosen</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=2" style="height:10px;line-height:10px;">Chaos Dwarf</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=21" style="height:10px;line-height:10px;">Chaos Renegades</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=3" style="height:10px;line-height:10px;">Dark Elf</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=4" style="height:10px;line-height:10px;">Dwarf</a></li>
-				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=5" style="height:10px;line-height:10px;">Elf</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=5" style="height:10px;line-height:10px;">Elven Union</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=6" style="height:10px;line-height:10px;">Goblin</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=7" style="height:10px;line-height:10px;">Halfling</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=8" style="height:10px;line-height:10px;">High Elf</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=9" style="height:10px;line-height:10px;">Human</a></li>
-				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=10" style="height:10px;line-height:10px;">Khemri</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=11" style="height:10px;line-height:10px;">Lizardman</a></li>
-			   <li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=13" style="height:10px;line-height:10px;">Necromantic</a></li>
+			   <li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=13" style="height:10px;line-height:10px;">Necromantic Horror</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=14" style="height:10px;line-height:10px;">Norse</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=15" style="height:10px;line-height:10px;">Nurgle</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=16" style="height:10px;line-height:10px;">Ogre</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=27" style="height:10px;line-height:10px;">Old World Alliance</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=12" style="height:10px;line-height:10px;">Orc</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=19" style="height:10px;line-height:10px;">Skaven</a></li>
-				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=17" style="height:10px;line-height:10px;">Undead</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=17" style="height:10px;line-height:10px;">Shambling Undead</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=28" style="height:10px;line-height:10px;">Snotlings</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=10" style="height:10px;line-height:10px;">Tomb Kings</a></li>
+				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=23" style="height:10px;line-height:10px;">Underworld Denizens</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=18" style="height:10px;line-height:10px;">Vampire</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=20" style="height:10px;line-height:10px;">Wood Elf</a></li>
-			</ul></li>
-			<li class="subfirst"><a rel="nofollow" href="#">LRB6 Rosters ></a>
-				<ul><li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=21" style="height:10px;line-height:10px;">Chaos Pact</a></li>
-				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=22" style="height:10px;line-height:10px;">Slann</a></li>
-				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=23" style="height:10px;line-height:10px;">Underworld</a></li>
 			</ul></li>
 			<li class="subfirst"><a rel="nofollow" href="#">(Optional) Community Rosters ></a>
 				<ul><li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=24" style="height:10px;line-height:10px;">Bretonnian</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=25" style="height:10px;line-height:10px;">Khorne</a></li>
 				<li><a href="index.php?section=objhandler&type=1&obj=4&obj_id=26" style="height:10px;line-height:10px;">Simyin</a></li>
 			</ul></li>
-			<li><a href="http://www.thenaf.net/wp-content/uploads/2013/06/CRP1.pdf">The CRP (Full Blood Bowl Rules)</a></li>
-			<li><a href="http://the-outcast.com/bloodbowl/blood%20bowl%20crp%20lite.pdf">A5 Rules Summary</a></li>  
+			<li><a href="http://www.thenaf.net/wp-content/uploads/2013/06/CRP1.pdf" target="_blank">The CRP (Full Blood Bowl Rules)</a></li>
+			<li><a href="http://the-outcast.com/bloodbowl/blood%20bowl%20crp%20lite.pdf" target="_blank">A5 Rules Summary</a></li>  
 		</ul>
 	</li>  
 
