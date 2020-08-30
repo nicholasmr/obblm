@@ -33,10 +33,10 @@ $credits = array(	'Pierluigi Masia',
 					'Ryan Williams',
 					'Ian Williams');
 define('NAFLM_VERSION', '2.0');
-define('NAFLM_BUILD_DATE', '29th of August 2020');
+define('NAFLM_BUILD_DATE', '30th of August 2020');
 define('CONTENT_VERSION', 'Spike 10.0');
 define('CONTENT_DETAIL', 'Blood Bowl 2016, including Deathzone 1 and 2 and Spike 1 through 10');
-define('CONTENT_DATE', '29th of August 2020');
+define('CONTENT_DATE', '30th of August 2020');
 $naflmcredits = array(	
 						'Anthony Baez',
 						'byrnesvictim',

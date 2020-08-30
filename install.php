@@ -43,7 +43,7 @@ It seems OBBLM is already installed.<br>You can safely delete the file <i>instal
 EOL;
 	} else {
 		?>
-		Please, <b>before starting the installation process</b>, make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>When ready, press the button below:<br><br>
+		Please, before starting the installation process, make sure that the MySQL user and database you have specified in <i>settings.php</i> exist and are valid.<br><br>Please ensure the following MySQL User Permissions have been set for the database user; ALTER, ALTER ROUTINE, CREATE, CREATE ROUTINE, DELETE, DROP, INDEX, INSERT, SELECT, UPDATE<br><br>When ready, press the button below:<br><br>
 		<form method="POST">
 			<input type="submit" name="setup" value="Setup DB for OBBLM">
 		</form>
