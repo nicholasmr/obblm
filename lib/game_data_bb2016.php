@@ -1494,7 +1494,7 @@ $DEA = array (
     'Chaos Renegades' => array (
         'other'     => array (
             'rr_cost'   => 70000,
-            'icon'      => 'chaos.png',
+            'icon'      => 'chaospact.png',
             'race_id'   => T_RACE_CHAOS_PACT, # (Chaos Pact)
         ),
         'players'   => array (
