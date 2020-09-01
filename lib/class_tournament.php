@@ -24,9 +24,9 @@ class Tour {
     public $allow_sched     = false;
     // Other
     public $winner          = null; # Team ID.
-    public $is_finished     = false; # Final match has been played OR, if Round Robin, all matches have been played.
-    public $is_empty        = false; # Tournament has no matches assigned with it.
-    public $is_begun        = false; # Tournament contains played matches?
+    public $finished     = false; # Final match has been played OR, if Round Robin, all matches have been played.
+    public $empty        = false; # Tournament has no matches assigned with it.
+    public $begun        = false; # Tournament contains played matches?
 
     /***************
      * Methods
@@ -40,9 +40,9 @@ class Tour {
             $this->$col = ($val) ? $val : 0;
         }
         $this->locked = (bool) $this->locked;
-        $this->is_empty = $this->empty;
-        $this->is_begun = $this->begun;
-        $this->is_finished = $this->finished;
+        $this->empty = $this->empty;
+        $this->begun = $this->begun;
+        $this->finished = $this->finished;
     }
 
     public function getMatches() {
@@ -111,7 +111,7 @@ class Tour {
             }
             return $status;
         }
-        elseif ($this->is_empty) {
+        elseif ($this->empty) {
             $query = "DELETE FROM tours WHERE tour_id = $this->tour_id";
             if (mysql_query($query))
                 return true;

@@ -159,9 +159,9 @@ class Match_HTMLOUT extends Match
 				foreach ($tours as $trid => $desc) {
 					if ($trid == 'desc') continue;
 					$tourObjs[$trid] = new Tour($trid);
-					if ($ENABLE_TOUR_HIDING && $tourObjs[$trid]->is_finished) $flist_JShides[] = "trid_$trid";
-					$HIDE_DIV   &= $tourObjs[$trid]->is_finished;
-					$FOLDUP_DIV &= $tourObjs[$trid]->is_finished;
+					if ($ENABLE_TOUR_HIDING && $tourObjs[$trid]->finished) $flist_JShides[] = "trid_$trid";
+					$HIDE_DIV   &= $tourObjs[$trid]->finished;
+					$FOLDUP_DIV &= $tourObjs[$trid]->finished;
 				}
 				if ($HIDE_DIV) $flist_JShides[] = "did_$did";
 				if ($FOLDUP_DIV) $divsToFoldUp[] = $did;
@@ -211,7 +211,7 @@ class Match_HTMLOUT extends Match
 			echo "<div class='tours'><a href='index.php?section=matches&amp;type=tourmatches&amp;trid=$trid'>".$flist[$lid][$did][$trid]['desc']['tname']."</a>";
 			$tr = $tourObjs[$trid]; # We already have loaded these - reuse them!
 			$suffix = '';
-			if ($tr->is_finished) { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/finished').'</i>&nbsp;&nbsp;';}
+			if ($tr->finished) { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/finished').'</i>&nbsp;&nbsp;';}
 			if ($tr->locked)      { $suffix .= '-&nbsp;&nbsp;<i>'.$lng->getTrn('common/locked').'</i>&nbsp;&nbsp;';}
 			if (!empty($suffix)) { echo '&nbsp;&nbsp;'.$suffix;}
 			echo "</div>\n"; # tour title container
