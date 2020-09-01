@@ -3231,7 +3231,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
             <hobgoblinrunner>Hobgobelin</hobgoblinrunner>
             <chaosdwarfblocker>Bloqueur nain du Chaos</chaosdwarfblocker>
             <bullcentaurblitzer>Centaure Taureau</bullcentaurblitzer>
-	    <enslavedminotaur>Minotaure</enslavedminotaur>
+            <enslavedminotaur>Minotaure</enslavedminotaur>
             <!-- Dark Elf -->
             <assassin>Assassin</assassin>
             <witchelf>Furie</witchelf>
@@ -3263,7 +3263,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
             <skinkrunner>Coureur Skink</skinkrunner>
             <saurusblocker>Bloqueur Saurus</saurusblocker>
             <kroxigor>Kroxigor</kroxigor>
-	    <chameleonskink>Skink Caméléon</chameleonskink>
+            <chameleonskink>Skink Caméléon</chameleonskink>
             <!-- Necromantic Horror -->
             <zombie>Zombie</zombie>
             <ghoulrunner>Ghoule</ghoulrunner>
@@ -3328,7 +3328,7 @@ For example, english is in <en-GB>, french in <fr-FR>, .......
             <!-- <chimpanzee> -->
             <!-- <silverback> -->
             <!-- Old World Alliance -->
-	    <humanlineman>Trois-quart Humain</humanlineman>
+            <humanlineman>Trois-quart Humain</humanlineman>
             <humanthrower>Lanceur Humain</humanthrower>
             <humancatcher>Receveur humain</humancatcher>
             <humanblitzer>Blitzeur Humain</humanblitzer>
