@@ -45,8 +45,8 @@ title("OBBLM Troubleshooting");
         <th>Locked</th>
         <th>Allow Scheduling</th>
         <th>Winner</th>
-        <th>Finished? ('is_finished')</th>
-        <th>Empty? ('is_empty')</th>
+        <th>Finished? ('finished')</th>
+        <th>Empty? ('empty')</th>
         <th>Begun? ('is_begin')</th>
         <th>Empty? ('empty')</th>
         <th>Begun? ('begun')</th>
@@ -66,9 +66,9 @@ title("OBBLM Troubleshooting");
                 <td><?php echo $tour->locked; ?></td>
                 <td><?php echo $tour->allow_sched; ?></td>
                 <td><?php echo $tour->winner; ?></td>
-                <td><?php echo $tour->is_finished; ?></td>
-                <td><?php echo $tour->is_empty; ?></td>
-                <td><?php echo $tour->is_begun; ?></td>
+                <td><?php echo $tour->finished; ?></td>
+                <td><?php echo $tour->empty; ?></td>
+                <td><?php echo $tour->begun; ?></td>
                 <td><?php echo $tour->empty; ?></td>
                 <td><?php echo $tour->begun; ?></td>
                 <td><?php echo $tour->finished; ?></td>
