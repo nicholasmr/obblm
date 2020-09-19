@@ -60,6 +60,7 @@ global $DEA;
 global $skillarray;
 global $rules;
 global $inducements;
+global $starpairs;
 
 define("MARGINX", 20);
 define("MARGINY", 20);
@@ -251,7 +252,7 @@ foreach ($players as $p) {
       elseif ($sub <= -1) $p->{"${chr}_color"} = COLOR_ROSTER_CHR_LTM1;
   }
 
-  $pp = array('nr'=>$p->nr, 'name'=>utf8_decode($p->name), 'pos'=>$p->position, 'ma'=>$p->ma, 'st'=>$p->st, 'ag'=>$p->ag, 'av'=>$p->av, 'skills'=>$skills_injuries, 'inj'=>$inj,
+  $pp = array('nr'=>$p->nr, 'name'=>utf8_decode($p->name), 'pos'=>$p->position, 'ma'=>$p->ma, 'st'=>$p->st, 'ag'=>$p->ag, 'av'=>$p->av, 'skills'=>utf8_decode($skills_injuries), 'inj'=>$inj,
      'cp'=>$p->mv_cp, 'td'=>$p->mv_td, 'int'=>$p->mv_intcpt, 'cas'=>$p->mv_cas, 'mvp'=>$p->mv_mvp, 'spp'=>$p->mv_spp, 'value'=>$pdf->Mf($p->value));
   $sum_spp+=$p->mv_spp;
   $sum_pvalue+=$p->value;
@@ -369,7 +370,31 @@ if ($_POST) {
     elseif ($key == 'Halfling Master Chef') { $ind_chef = (int) $val; continue; }
     elseif ($key == 'Igor') { $ind_igor = (int) $val; continue; }
     elseif ($key == 'Wandering Apothecaries') { $ind_apo = (int) $val; continue; }
-    elseif ($key == 'Wizard') { $ind_wiz = (int) $val; continue; }
+    elseif ($key == 'Hireling Sports-Wizard') { $ind_wiz = (int) $val; continue; }
+    //	elseif ($key == '###') { $ind_### = (int) $val; continue; }
+    //  added BB2016 - Spike inducements	
+    elseif ($key == 'Horatio X Schottenheim') { $ind_hxs = (int) $val; continue; }
+    elseif ($key == 'Fink Da Fixer') { $ind_fdf = (int) $val; continue; }
+    elseif ($key == 'Papa Skullbones') { $ind_psb = (int) $val; continue; }
+    elseif ($key == 'Galandril Silverwater') { $ind_gsw = (int) $val; continue; }
+    elseif ($key == 'Krot Shockwhisker') { $ind_ksw = (int) $val; continue; }
+    elseif ($key == 'Kari Coldsteel') { $ind_kcs = (int) $val; continue; }
+    elseif ($key == 'Chaos Sorcerer') { $ind_csr = (int) $val; continue; }
+    elseif ($key == 'Specialist Assisstant Coaches') { $ind_sac = (int) $val; continue; }
+    elseif ($key == 'Temp Agency Cheerleaders') { $ind_tem = (int) $val; continue; }
+    elseif ($key == 'Weather Mage') { $ind_wxm = (int) $val; continue; }
+    elseif ($key == 'Druchii Sports Sorceress') { $ind_dss = (int) $val; continue; }
+    elseif ($key == 'Plague Doctors') { $ind_pdr = (int) $val; continue; }
+    elseif ($key == 'Cavorting Nurglings') { $ind_cvn = (int) $val; continue; }
+    elseif ($key == 'Plague Horticulturalist of Nurgle') { $ind_phn = (int) $val; continue; }
+    elseif ($key == 'Joseph Bugman, Dwarf Master Brewer') { $ind_dmb = (int) $val; continue; }
+    elseif ($key == 'Sports Necrotheurge') { $ind_spn = (int) $val; continue; }
+    elseif ($key == 'Halfling Hot-Pot') { $ind_hhp = (int) $val; continue; }
+    elseif ($key == 'Bottle of Heady Brew') { $ind_bhb = (int) $val; continue; }
+    elseif ($key == 'Slann Mage-Priest') { $ind_smp = (int) $val; continue; }
+    elseif ($key == 'Riotous Rookies') { $ind_rok = (int) $val; continue; }
+    elseif ($key == 'Firebelly') { $ind_fbl = (int) $val; continue; }
+    elseif ($key == 'Night Goblin Sports Shaman') { $ind_ngs = (int) $val; continue; }
   }
 
   // Printing stars first
@@ -378,10 +403,19 @@ if ($_POST) {
     foreach ($star_array_tmp as $sid) {
       $s = new Star($sid);
       $s->setSkills(true);
-      $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>$s->skills,
+      $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>utf8_decode($s->skills),
             'cp'=>$s->mv_cp, 'td'=>$s->mv_td, 'int'=>$s->mv_intcpt, 'cas'=>$s->mv_cas, 'mvp'=>$s->mv_mvp, 'spp'=>$s->mv_spp, 'value'=>$pdf->Mf($s->cost));
       $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
       $ind_cost += $s->cost;
+      if (array_key_exists($sid, $starpairs)) {
+          // Parent Star selected
+          $sid = $starpairs[$sid];
+          $s = new Star($sid);
+          $s->setSkills(true);
+          $ss = array('name'=>utf8_decode($s->name), 'ma'=>$s->ma, 'st'=>$s->st, 'ag'=>$s->ag, 'av'=>$s->av, 'skills'=>utf8_decode($s->skills),
+          'cp'=>$s->mv_cp, 'td'=>$s->mv_td, 'int'=>$s->mv_intcpt, 'cas'=>$s->mv_cas, 'mvp'=>$s->mv_mvp, 'spp'=>$s->mv_spp, 'value'=>$pdf->Mf($s->cost));
+          $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
+      }
     }
   }
 
@@ -409,7 +443,7 @@ if ($_POST) {
         if ($m['skills'] == '') $m['skills'] = $m['extra']; 
         else $m['skills'] = $m['skills'] . ', ' . $m['extra'];
       }
-      $ss = array('name'=>utf8_decode($m['name']), 'ma'=>$m['ma'], 'st'=>$m['st'], 'ag'=>$m['ag'], 'av'=>$m['av'], 'skills'=>$m['skills'],
+      $ss = array('name'=>utf8_decode($m['name']), 'ma'=>$m['ma'], 'st'=>$m['st'], 'ag'=>$m['ag'], 'av'=>$m['av'], 'skills'=>utf8_decode($m['skills']),
             'cp'=>' ', 'td'=>' ', 'int'=>' ', 'cas'=>' ', 'mvp'=>' ', 'spp'=>' ', 'value'=>$pdf->Mf($m['cost']));
       $currenty+=$pdf->print_srow($ss, $currentx, $currenty, $h, $bgc, DEFLINECOLOR, 0.5, 8);
       $ind_cost += $m['cost'];
@@ -421,12 +455,7 @@ $h = 13;
 // Printing lower part of roster
 $currentx = MARGINX;
 $currenty = 435;
-
-//print_box($x, $y, $w, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth=1, $borderstyle, $fontsize, $font, $bold=false, $align, $text)
-$h = 13; // Height of cells
-$pdf->print_box($currentx, $currenty, 170, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Inducements ');
-$pdf->print_box(($currentx += 170), $currenty, 120, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'L', '(for next match)');
-$pdf->print_box(($currentx = 630), $currenty, 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Team Goods'); // 156 to margin
+$ind_count = 0;
 
 // Checking if Wandering Apothecary should be replaced with Igor
 $r=$team->f_rname;
@@ -435,7 +464,7 @@ if (($r == 'Nurgle') || ($r == 'Khemri') || ($r == 'Necromantic') || ($r == 'Und
   unset($inducements['Wandering Apothecaries']);
   if (isset($ind_igor)) { 
     $ind_apo_igor_cost = $ind_igor*$inducements['Igor']['cost'];
-    $ind_cost += $ind_igor*$ind_apo_igor_cost; 
+    // $ind_cost += $ind_igor*$ind_apo_igor_cost; CAN REMOVE
     $ind_apo_igor = $ind_igor;
   }
   else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Igor']['cost']; }
@@ -445,39 +474,154 @@ else {
   unset($inducements['Igor']);
   if (isset($ind_apo)) { 
     $ind_apo_igor_cost = $inducements['Wandering Apothecaries']['cost'];
-    $ind_cost += $ind_apo*$ind_apo_igor_cost; 
+    // $ind_cost += $ind_apo*$ind_apo_igor_cost; CAN REMOVE
     $ind_apo_igor = $ind_apo;
   }
   else { $ind_apo_igor = '__'; $ind_apo_igor_cost = $inducements['Wandering Apothecaries']['cost']; }
 }
-// Checking LRB6 cheaper Chef for Halfling
+// Checking game data if cheaper Chef for Halfling
 $chef_cost = $inducements['Halfling Master Chef'][(($r == 'Halfling') ? 'reduced_cost' : 'cost')];
-// Checking LRB6 cheaper bribes for Goblin
+// Checking game data if cheaper bribes for Goblin and Snotling
 $bribe_cost = $inducements['Bribes'][(($r == 'Goblin') ? 'reduced_cost' : 'cost')];
+$bribe_cost = $inducements['Bribes'][(($r == 'Snotling') ? 'reduced_cost' : 'cost')];
 
-if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; }
-else $ind_babes = '__';
-if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$inducements['Bribes']['cost']; }
-else $ind_bribes = '__';
-if (isset($ind_card)) { $ind_cost += $ind_card; }
-else $ind_card = '__';
-if (isset($ind_rr)) { $ind_cost += $ind_rr*$inducements['Extra Training']['cost']; }
-else $ind_rr = '__';
-if (isset($ind_chef)) { $ind_cost += $ind_chef*$chef_cost;} #Not $inducements['Halfling Master Chef']['cost']; }
-else $ind_chef = '__';
-if (isset($ind_wiz)) { $ind_cost += $ind_wiz*$inducements['Wizard']['cost']; }
-else $ind_wiz = '__';
+//calculate inducement costs
+if (isset($ind_igor)) { $ind_cost += $ind_igor*$inducements['Igor']['cost']; $ind_count += 1; }
+if (isset($ind_apo)) { $ind_cost += $ind_apo*$inducements['Wandering Apothecaries']['cost']; $ind_count += 1; }
+if (isset($ind_babes)) { $ind_cost += $ind_babes*$inducements['Bloodweiser Babes']['cost']; $ind_count += 1; }
+if (isset($ind_bribes)) { $ind_cost += $ind_bribes*$bribe_cost; $ind_count += 1; }
+if (isset($ind_card)) { $ind_cost += $ind_card; $ind_count += 1; }
+if (isset($ind_rr)) { $ind_cost += $ind_rr*$inducements['Extra Training']['cost']; $ind_count += 1; }
+if (isset($ind_chef)) { $ind_cost += $ind_chef*$chef_cost; $ind_count += 1;}
+if (isset($ind_wiz)) { $ind_cost += $ind_wiz*$inducements['Hireling Sports-Wizard']['cost']; $ind_count += 1; }
+//	added BB2016 - Spike inducements
+//if (isset($ind_###)) { $ind_cost += $ind_###*$inducements['#######']['cost']; }
+if (isset($ind_hxs)) { $ind_cost += $ind_hxs*$inducements['Horatio X Schottenheim']['cost']; $ind_count += 1; }
+if (isset($ind_fdf)) { $ind_cost += $ind_fdf*$inducements['Fink Da Fixer']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_psb)) { $ind_cost += $ind_psb*$inducements['Papa Skullbones']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_gsw)) { $ind_cost += $ind_gsw*$inducements['Galandril Silverwater']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_ksw)) { $ind_cost += $ind_ksw*$inducements['Krot Shockwhisker']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_kcs)) { $ind_cost += $ind_kcs*$inducements['Kari Coldsteel']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_csr)) { $ind_cost += $ind_csr*$inducements['Chaos Sorcerer']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_sac)) { $ind_cost += $ind_sac*$inducements['Specialist Assisstant Coaches']['cost']; $ind_count += 1; }
+if (isset($ind_tem)) { $ind_cost += $ind_tem*$inducements['Temp Agency Cheerleaders']['cost']; $ind_count += 1; }
+if (isset($ind_wxm)) { $ind_cost += $ind_wxm*$inducements['Weather Mage']['cost']; $ind_count += 1; }
+if (isset($ind_dss)) { $ind_cost += $ind_dss*$inducements['Druchii Sports Sorceress']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_pdr)) { $ind_cost += $ind_pdr*$inducements['Plague Doctors']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_cvn)) { $ind_cost += $ind_cvn*$inducements['Cavorting Nurglings']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_phn)) { $ind_cost += $ind_phn*$inducements['Plague Horticulturalist of Nurgle']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_dmb)) { $ind_cost += $ind_dmb*$inducements['Joseph Bugman, Dwarf Master Brewer']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_spn)) { $ind_cost += $ind_spn*$inducements['Sports Necrotheurge']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_hhp)) { $ind_cost += $ind_hhp*$inducements['Halfling Hot-Pot']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_bhb)) { $ind_cost += $ind_bhb*$inducements['Bottle of Heady Brew']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_smp)) { $ind_cost += $ind_smp*$inducements['Slann Mage-Priest']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_rok)) { $ind_cost += $ind_rok*$inducements['Riotous Rookies']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_fbl)) { $ind_cost += $ind_fbl*$inducements['Firebelly']['reduced_cost']; $ind_count += 1; }
+if (isset($ind_ngs)) { $ind_cost += $ind_ngs*$inducements['Night Goblin Sports Shaman']['reduced_cost']; $ind_count += 1; }
 
-// print_inducements($x, $y, $h, $bgcol, $linecol, $fontsize, $ind_name, $ind_amount, $ind_value)
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bloodweiser Babes (0-2):', $ind_babes, $pdf->Mf($inducements['Bloodweiser Babes']['cost']));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bribes (0-3):', $ind_bribes, $pdf->Mf($bribe_cost));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Extra Training (0-4):', $ind_rr, $pdf->Mf($inducements['Extra Training']['cost']));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Halfling Master Chef (0-1):', $ind_chef, $pdf->Mf($chef_cost));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, $apo_igor, $ind_apo_igor, $pdf->Mf($ind_apo_igor_cost));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Wizard (0-1):', $ind_wiz, $pdf->Mf($inducements['Wizard']['cost']));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Card budget:', ' ', $pdf->Mf($ind_card));
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Gate:', null, '');
-$pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'FAME:', null, '');
+//print_box($x, $y, $w, $h, $bgcolor='#FFFFFF', $bordercolor='#000000', $linewidth=1, $borderstyle, $fontsize, $font, $bold=false, $align, $text)
+$h = 13; // Height of cells
+
+if ($ind_count > 0 ) {
+  $pdf->print_box($currentx, $currenty, 170, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Inducements ');
+  $pdf->print_box(($currentx += 170), $currenty, 120, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', false, 'L', '(for next match)');
+  $pdf->print_box(($currentx = 630), $currenty, 40, $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 0, 0, 8, 'Tahoma', true, 'R', 'Team Goods'); // 156 to margin
+}
+
+$currentx = MARGINX;
+$currenty = 435;
+$ind_display_counter = 0;
+
+  // print_inducements($x, $y, $h, $bgcol, $linecol, $fontsize, $ind_name, $ind_amount, $ind_value)
+  if (isset($ind_babes)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bloodweiser Babes (0-2):', $ind_babes, $pdf->Mf($inducements['Bloodweiser Babes']['cost']));}
+  if (isset($ind_babes)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;} 
+  if (isset($ind_bribes)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bribes (0-3):', $ind_bribes, $pdf->Mf($bribe_cost));}
+  if (isset($ind_bribes)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;} 
+  if (isset($ind_rr)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Extra Training (0-4):', $ind_rr, $pdf->Mf($inducements['Extra Training']['cost']));}
+  if (isset($ind_rr)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;} 
+  if (isset($ind_chef)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Halfling Master Chef (0-1):', $ind_chef, $pdf->Mf($chef_cost));}
+  if (isset($ind_chef)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_igor) or isset($ind_apo)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, $apo_igor, $ind_apo_igor, $pdf->Mf($ind_apo_igor_cost));}
+  if (isset($ind_igor) or isset($ind_apo)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_wiz)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Hireling Sports-Wizard (0-1):', $ind_wiz, $pdf->Mf($inducements['Hireling Sports-Wizard']['cost']));}
+  if (isset($ind_wiz)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  //	added BB2016 - Spike inducements
+  if (isset($ind_hxs)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Horatio X Schottenheim (0-1):', $ind_hxs, $pdf->Mf($inducements['Horatio X Schottenheim']['cost']));}
+  if (isset($ind_hxs)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_fdf)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Fink Da Fixer (0-1):', $ind_fdf, $pdf->Mf($inducements['Fink Da Fixer']['reduced_cost']));}
+  if (isset($ind_fdf)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_psb)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Papa Skullbones (0-1):', $ind_rr, $pdf->Mf($inducements['Papa Skullbones']['reduced_cost']));}
+  if (isset($ind_psb)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_gsw)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Galandril Silverwater (0-1):', $ind_psb, $pdf->Mf($inducements['Galandril Silverwater']['reduced_cost']));}
+  if (isset($ind_gsw)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_ksw)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Krot Shockwhisker (0-1):', $ind_ksw, $pdf->Mf($inducements['Krot Shockwhisker']['reduced_cost']));}
+  if (isset($ind_ksw)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_kcs)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Kari Coldsteel (0-1):', $ind_kcs, $pdf->Mf($inducements['Kari Coldsteel']['reduced_cost']));}
+  if (isset($ind_kcs)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_csr)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Chaos Sorcerer (0-1):', $ind_csr, $pdf->Mf($inducements['Chaos Sorcerer']['reduced_cost']));}
+  if (isset($ind_csr)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_sac)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Specialist Assisstant Coaches (0-20):', $ind_sac, $pdf->Mf($inducements['Specialist Assisstant Coaches']['cost']));}
+  if (isset($ind_sac)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_tem)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Temp Agency Cheerleaders (0-20):', $ind_tem, $pdf->Mf($inducements['Temp Agency Cheerleaders']['cost']));}
+  if (isset($ind_tem)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_wxm)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Weather Mage (0-1):', $ind_wxm, $pdf->Mf($inducements['Weather Mage']['cost']));}
+  if (isset($ind_wxm)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_dss)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Druchii Sports Sorceress (0-1):', $ind_dss, $pdf->Mf($inducements['Druchii Sports Sorceress']['reduced_cost']));}
+  if (isset($ind_dss)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_pdr)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Plague Doctors (0-1):', $ind_pdr, $pdf->Mf($inducements['Plague Doctors']['reduced_cost']));}
+  if (isset($ind_pdr)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_cvn)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Cavorting Nurglings (0-1):', $ind_cvn, $pdf->Mf($inducements['Cavorting Nurglings']['reduced_cost']));}
+  if (isset($ind_cvn)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_phn)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Plague Horticulturalist of Nurgle (0-1):', $ind_phn, $pdf->Mf($inducements['Plague Horticulturalist of Nurgle']['reduced_cost']));}
+  if (isset($ind_phn)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_dmb)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Joseph Bugman, Dwarf Master Brewer (0-1):', $ind_dmb, $pdf->Mf($inducements['Joseph Bugman, Dwarf Master Brewer']['reduced_cost']));}
+  if (isset($ind_dmb)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_spn)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Sports Necrotheurge (0-1):', $ind_spn, $pdf->Mf($inducements['Sports Necrotheurge']['reduced_cost']));}
+  if (isset($ind_spn)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_hhp)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Halfling Hot-Pot (0-1):', $ind_hhp, $pdf->Mf($inducements['Halfling Hot-Pot']['reduced_cost']));}
+  if (isset($ind_hhp)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_bhb)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Bottle of Heady Brew (0-3):', $ind_bhb, $pdf->Mf($inducements['Bottle of Heady Brew']['reduced_cost']));}
+  if (isset($ind_bhb)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_smp)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Slann Mage-Priest (0-1):', $ind_smp, $pdf->Mf($inducements['Slann Mage-Priest']['reduced_cost']));}
+  if (isset($ind_smp)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_rok)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Riotous Rookies (0-1):', $ind_rok, $pdf->Mf($inducements['Riotous Rookies']['reduced_cost']));}
+  if (isset($ind_rok)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_fbl)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Firebelly (0-1):', $ind_fbl, $pdf->Mf($inducements['Firebelly']['reduced_cost']));}
+  if (isset($ind_fbl)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  if (isset($ind_ngs)) { $pdf->print_inducements($currentx, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Night Goblin Sports Shaman (0-1):', $ind_ngs, $pdf->Mf($inducements['Night Goblin Sports Shaman']['reduced_cost']));}
+  if (isset($$ind_ngs)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
+  //  end of BB2016 - Spike inducements
+  if (isset($ind_card)) { $pdf->print_inducements(MARGINX, ($currenty+=$h), $h, COLOR_ROSTER_NORMAL, DEFLINECOLOR, 8, 'Card budget:', ' ', $pdf->Mf($ind_card));}
+  if (isset($ind_card)) { $ind_display_counter += 1;}
+  if ($ind_display_counter == 9 ) {$currentx += 250; $currenty = 435;}
 
 $currenty=435;
 $currentx=630;
@@ -513,11 +657,12 @@ if ($settings['enable_pdf_logos']) {
     // Team logo
     // Comment out if you dont have GD 2.x installed, or if you dont want the logo in roster.
     // Not tested with anything except PNG images that comes with OBBLM.
+    if ($ind_count < 10) {
     $img = new ImageSubSys(IMGTYPE_TEAMLOGO,$team->team_id);
     $pdf->Image($img->getPath(),346,436,128,128,'','',false,0);
-
-    // OBBLM text lower left corner as a pic
-    $pdf->Image('modules/pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
+    }
+    // OBBLM text lower left corner as a pic - removed due issues with it appearing multiple places
+    // $pdf->Image('modules/pdf/OBBLM_pdf_logo.png', MARGINX+12, 534, 60, 28, '', '', false, 0);
 }
 
 // Color legends
@@ -561,4 +706,3 @@ $pdf->Output(utf8_decode($team->name) . date(' Y-m-d') . '.pdf', 'I');
 
 }
 }
-

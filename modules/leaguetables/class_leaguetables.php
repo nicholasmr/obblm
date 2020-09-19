@@ -119,24 +119,8 @@ function __construct($conf_id)
 {
 }
 
-public static function styles() {
-echo<<< EOQ
-	<style type="text/css">
-		.boxTitleConf {
-			background-color: #679EC9;
-			padding: 6px;
-			font-size: 13px;
-			font-weight: bold;
-			margin-top: 0px;
-			margin-bottom: 5px;
-		}
-	</style>
-EOQ;
-}
-
 /* This function is the primary one to display a league table */
 public static function showTables() {
-	self::styles();
     global $lng, $tours;
     title($lng->getTrn('name', 'LeagueTables'));
 
@@ -162,6 +146,16 @@ public static function showTables() {
 						}
 						echo "<option value='$trid'" . ($trid==$tour_id ? 'SELECTED' : '') . " >$desc[tname]</option>\n";
 					}
+                    /*Replace the prior foreach with this once lid is known.
+                    foreach ($rTours as $trif => $desc) {
+                      if($firstTour == 0 && $lid == $_SESSION["NS_node_id"]) {
+                        $firstTour = $trid;
+                      }
+                      if($lid == $_SESSION["NS_node_id"]) {
+                        echo "<option value='$trid'" . ($trid==$tour_id ? 'SELECTED' : '') . " >$desc[tname]</option>\n";
+                      }
+                    }
+                    */
 					?>
 				</select>
 				<input type="submit" value="OK">
@@ -178,10 +172,11 @@ public static function showTables() {
 	$SR = array_map(create_function('$val', 'return $val[0]."mv_".substr($val,1);'), $tour->getRSSortRule());
 
 	// load all the teams according to the sorting rule
-    list($teams, ) = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour_id), 1000, $SR, false);
+    list($teams, ) = Stats::getRaw(T_OBJ_TEAM, array(T_NODE_TOURNAMENT => $tour_id), array(1,1000), $SR, false);
 
     // Dump all the raw info for the first team as debug so I can work out the fields
-    /*
+
+/*
 	echo "<!--\n";
 	foreach (array_keys($teams[0]) as $field) {
 		echo $field. "=" . $teams[0][$field] . "\n";
@@ -373,6 +368,6 @@ public static function getUnplayedTeamsForTournament($tour_id) {
 	return $teams;
 
 }
-
 }
+
 ?>

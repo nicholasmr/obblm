@@ -1,0 +1,6 @@
+localsettings/settings_*.php
+install.php
+install.php.rename
+settings.php
+.DS_Store
+code-review.csv

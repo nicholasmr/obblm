@@ -1,6 +1,19 @@
 README
-------
+-----------------
+Lastest public build is found under releases.
+https://github.com/TheNAF/naflm/releases
 
-Please read the disclaimer in the "OBBLM" link before using OBBLM.
+CHANGES
+-----------------
+Latest change log can be found in the Wiki.
+https://github.com/TheNAF/naflm/wiki/Change-Log
 
-For help see the help.html file.
+INSTALL / UPGRADE
+-----------------
+Please see the project Wiki for install instructions.
+https://github.com/TheNAF/naflm/wiki
+
+PHP
+-----------------
+PHP 7.4 is supported in NAFLM 2.0 and later.
+PHP 5.6 has been tested with the current build, but we recommend upgrading as soon as possible.

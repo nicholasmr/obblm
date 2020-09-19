@@ -5,7 +5,6 @@ $league_ids = array_keys($leagues); # Shortcut.
 $c = null;
 
 if (isset($_POST['type'])) {
-
     /* 
         Commonly used coach object. 
         $c is the coach referred to in the "Coach name" HTML fields.
@@ -17,19 +16,15 @@ if (isset($_POST['type'])) {
                 status(false, 'You do not have permissions to manage the selected coach.');
                 $_POST['type'] = 'QUIT';
             }
-        }
-        else {
+        } else {
             status(false, 'No such coach exists. Please check your spelling.');
             $_POST['type'] = 'QUIT';
         }
     }
-
     switch ($_POST['type']) {
-
         case 'QUIT':
             $c = null;
             break;
-
         case 'mk_coach':
             if (get_magic_quotes_gpc()) {
                 $_POST['name']      = stripslashes($_POST['name']);
@@ -61,7 +56,6 @@ if (isset($_POST['type'])) {
             )));
             $c = new Coach($cid);
             break;
-
         case 'ch_ring_global':
             $errors = array(
                 'You only global admins may change global access levels.' => !$IS_GLOBAL_ADMIN,
@@ -71,7 +65,6 @@ if (isset($_POST['type'])) {
             }
             status($c->setRing(Coach::T_RING_GROUP_GLOBAL, (int) $_POST['ring']));
             break;
-
         case 'ch_ring_local':
             $errors = array(
                 'You do not have access to the chosen league.' => ($CANT_VIEW = !array_key_exists($_POST['lid'], $leagues)), # Not amongst allowed viewable leagues?
@@ -100,7 +93,6 @@ if (isset($_POST['type'])) {
                 status(true, "Changed $changed local access levels");
             }
             break;
-
         case 'ch_passwd':
             $errors = array(
                 'Please use a password of at least 5 characters.' => strlen($_POST['passwd']) < 5,
@@ -109,14 +101,12 @@ if (isset($_POST['type'])) {
                 if ($halt) { status(false,$msg); break 2; }
             }
             status($c->setPasswd($_POST['passwd']));
-            break;
-            
+            break;      
         case 'disp_access_levels':
             status(true); # Display the access levels in box below.
             $_SHOW_ACCESS_LEVELS = true;
             break;
     }
-
     // Reload manage state.
     $coach = new Coach($coach->coach_id); # Re-load in case of we changed our OWN (logged on coach) settings.
 }
@@ -124,15 +114,16 @@ if (isset($_POST['type'])) {
 title($lng->getTrn('menu/admin_menu/usr_man'));
 
 $T_GLOBAL_RINGS = array(
-    Coach::T_RING_GLOBAL_ADMIN => 'Global commisoner (site admin)',
+    Coach::T_RING_GLOBAL_ADMIN => 'Global commissioner (site admin)',
     Coach::T_RING_GLOBAL_NONE  => 'No global rights (regular coach)',
 );
 $T_LOCAL_RINGS = array(
-    Coach::T_RING_LOCAL_ADMIN   => 'Local commisioner',
+    Coach::T_RING_LOCAL_ADMIN   => 'Local commissioner',
     Coach::T_RING_LOCAL_REGULAR => 'Regular coach',
 );
 
 ?>
+<!-- Following HTML from ./admin/admin_usr_man.php -->
 <script>
     $(document).ready(function(){
         var options, a1,a2,a3,a4;
@@ -274,6 +265,44 @@ $T_LOCAL_RINGS = array(
     </div>
 </div>
 
+<?php if (Module::isRegistered('Registration') && $settings['allow_registration']) { ?>
+    <div class="boxCommon">
+        <div class="boxTitle<?php echo T_HTMLBOX_ADMIN; ?>">
+            Activate Users
+        </div>
+        <div class="boxBody">
+            <?php
+                $retiredCoaches = Coach::getCoaches('retired = 2');
+                    
+                if(empty($retiredCoaches)) {
+                    echo 'No coaches to activate!';
+                } else { ?>
+                    <table>
+                        <?php 
+                            foreach($retiredCoaches as $retiredCoach) { 
+                                if($coach->mayManageObj(T_OBJ_COACH, $retiredCoach->coach_id)) {
+                                ?>
+                                    <tr>
+                                        <td><?php echo $retiredCoach->name; ?></td>
+                                        <td><?php echo join(', ', $retiredCoach->getLeagues()); ?></td>
+                                        <td>
+                                            <form method="POST" action="handler.php?type=registration&form=activate">
+                                                <input type="hidden" name="activate_name" value="<?php echo $retiredCoach->name; ?>" />
+                                                <button>Activate</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php 
+                                }
+                            } ?>
+                    </table>
+                    <br />
+                    <em>Admin:</em> Avoid activating users from other leagues.
+                <?php } ?>
+        </div>
+    </div>
+<?php } ?>
+    
 </div> <!-- END row 1 -->
 <div class="row"> <!-- Intter row 2 -->
 
@@ -326,4 +355,3 @@ $T_LOCAL_RINGS = array(
 </div> <!-- END row 2 -->
 </div> <!-- END Outer -->
 </div> <!-- END ALL -->
-<?php

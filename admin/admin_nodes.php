@@ -1,4 +1,5 @@
 <?php
+
 $_SHOW = array(T_NODE_LEAGUE, T_NODE_DIVISION, T_NODE_TOURNAMENT);
 if (isset($_GET['node']) && in_array($_GET['node'], $_SHOW)) {
     $_SHOW = array($_GET['node']);
@@ -16,8 +17,7 @@ if (isset($_POST['type'])) {
        ) {
         status(false, 'You do not have permissions to administrate the chosen node');
         $_POST['type'] = 'QUIT';
-    }
-    else {
+    } else {
         $l = (isset($_POST['lid'])) ? new League($_POST['lid']) : null;
         $d = (isset($_POST['did'])) ? new Division($_POST['did']) : null;
         $t = (isset($_POST['trid'])) ? new Tour($_POST['trid']) : null;
@@ -26,7 +26,10 @@ if (isset($_POST['type'])) {
     switch ($_POST['type'])
     {
         case 'QUIT': break;
-        case 'new_league':      status($IS_GLOBAL_ADMIN && League::create($_POST['name'], $_POST['location'], isset($_POST['tie_teams']) && $_POST['tie_teams'])); break;
+        case 'new_league':      
+            $create_league_failure_message = League::create($_POST['name'], $_POST['location'], isset($_POST['tie_teams']) && $_POST['tie_teams']);
+            status($IS_GLOBAL_ADMIN && !$create_league_failure_message, $create_league_failure_message); 
+            break;
         case 'new_division':    status(Division::create($_POST['lid'], $_POST['name'])); break;
         case 'mod_league':      status($l->setName($_POST['name']) && $l->setLocation($_POST['location']) && $l->setTeamDivisionTies(isset($_POST['tie_teams']) && $_POST['tie_teams'])); break;
         case 'mod_division':    status($d->setName($_POST['name'])); break;
@@ -45,8 +48,7 @@ if (isset($_POST['type'])) {
 			$lid = $divisions[$input['did']]['f_lid'];
 			if (strlen($input['name']) == 0) {
 		        status(false, 'You must enter a name for the tournament.');
-            }
-            else {
+            } else {
 				status(Tour::create($input));
 				if (isset($_POST['locked'])) {
 				    // N/A, locked for new_toursnament type
@@ -77,6 +79,7 @@ if (isset($_POST['type'])) {
 title($lng->getTrn('menu/admin_menu/nodes'));
 
 ?>
+<!-- Following HTML from ./admin/admin_nodes.php -->
 <b>Please note:</b> When deleting any node (i.e. tournaments, divisions or leagues) a "syncAll()" re-synchronisation should be run afterwards from the <a href='index.php?section=admin&amp;subsec=cpanel'>OBBLM core panel</a>.
 <table>
     <?php
@@ -287,7 +290,7 @@ title($lng->getTrn('menu/admin_menu/nodes'));
             Location<br>
             <input type="text" name="location" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
             Tie teams to divisions?
-            <input type="checkbox" CHECKED name="tie_teams" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
+            <input type="checkbox" name="tie_teams" <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>><br><br>
             <?php echo $ONLY_FOR_GLOBAL_ADMIN;?><br><br>
             <input type='submit' value='Create' <?php echo $IS_GLOBAL_ADMIN ? '' : 'DISABLED';?>>
             <input type='hidden' name='type' value='new_league'>
@@ -341,4 +344,3 @@ title($lng->getTrn('menu/admin_menu/nodes'));
     }
     ?>
 </table>
-<?php

@@ -49,7 +49,7 @@ public static function main($argv) # argv = argument vector (array).
 		
 	?>
 	<div class="module_schedule">
-	<?
+	<?php 
 	self::inlineCSS();
 	
 	$step = 1;
@@ -67,7 +67,7 @@ public static function main($argv) # argv = argument vector (array).
 	
 	?>
 	</div>
-	<?
+	<?php 
 	return true;
 }
 
@@ -285,7 +285,7 @@ public static function inlineCSS() {
 	font-weight: bold;
   }
 </style>
-<?
+<?php 
 }
 
 /**
@@ -298,7 +298,7 @@ public static function step1() {
 	global $lng;
 	
 	?><div class="step1">
-	<h1><?php echo $lng->getTrn('scheduler_info', __CLASS__);?></h1><?
+	<h1><?php echo $lng->getTrn('scheduler_info', __CLASS__);?></h1><?php 
 	// Get all Leagues, div, tours 
 	$query = "SELECT leagues.lid,leagues.name as leaguename,leagues.tie_teams,divisions.did,divisions.name AS divisionsname,tours.tour_id,tours.name as toursname
 			FROM
@@ -365,31 +365,31 @@ public static function step1() {
 		
     }
 	
-	?></div><?
+	?></div><?php 
 }
 
 public static function openLeagueTag($id,$name) {
 	?>
-		<div class="league boxWide" id="lid_<? echo $id; ?>">
-			<div class="boxTitle1"><? echo $name; ?></div>
+		<div class="league boxWide" id="lid_<?php echo $id; ?>">
+			<div class="boxTitle1"><?php echo $name; ?></div>
 		<div class="boxBody">
-	<?
+	<?php 
 }
 
 public static function openDivisionTag($id,$name) {
 	?>
-		<div class="division boxWide" id="did_<? echo $id; ?>">
-			<div class="boxTitle3"><? echo $name; ?></div>
+		<div class="division boxWide" id="did_<?php echo $id; ?>">
+			<div class="boxTitle3"><?php echo $name; ?></div>
 			<div class="boxBody">
-	<?
+	<?php 
 }
 
 public static function openToursTag($id,$name) {
 	?>
-		<div class="tour boxWide" id="tour_<? echo $id; ?>">
-			<div class="tour_content boxTitle2"><h3><? echo $name; ?></h3></div>
+		<div class="tour boxWide" id="tour_<?php echo $id; ?>">
+			<div class="tour_content boxTitle2"><h3><?php echo $name; ?></h3></div>
 			<div class="boxBody">
-	<?
+	<?php 
 }
 
 public static function selectLink($tourid, $divid, $leagueid, $tie_teams) {
@@ -397,22 +397,22 @@ public static function selectLink($tourid, $divid, $leagueid, $tie_teams) {
 	
 	?>
 		<form method="post">
-			<input type="hidden" name="trid" value="<? echo $tourid ?>" />
-			<input type="hidden" name="did" value="<? echo $divid ?>" />
-			<input type="hidden" name="lid" value="<? echo $leagueid ?>" />
-			<input type="hidden" name="tie_teams" value="<? echo $tie_teams ?>" />
+			<input type="hidden" name="trid" value="<?php echo $tourid ?>" />
+			<input type="hidden" name="did" value="<?php echo $divid ?>" />
+			<input type="hidden" name="lid" value="<?php echo $leagueid ?>" />
+			<input type="hidden" name="tie_teams" value="<?php echo $tie_teams ?>" />
 			
 			<input type="hidden" name="step" value="2" />
 			<input type="submit" name="select" value="<?php echo $lng->getTrn('select', __CLASS__);?>" />
 		</form>
 	
-	<?
+	<?php 
 }
 
 public static function closeDiv() {
 	?>
 		</div>
-	<?
+	<?php 
 }
 
 public static function showTeamPoolForLeague($id, $showScheduleLink = false, $step) {
@@ -421,19 +421,19 @@ public static function showTeamPoolForLeague($id, $showScheduleLink = false, $st
 	?>
 		<div class="boxWide">
 			<div class="boxTitle4">
-				<h3><? echo $lng->getTrn('teampool', __CLASS__);?></h3>
+				<h3><?php echo $lng->getTrn('teampool', __CLASS__);?></h3>
 			</div>
 		<div class="boxBody">
 		
-		<? if ($step == 1) { ?>
-			<p><? echo $lng->getTrn('teampool_desc_step1_league', __CLASS__);?></p>
+		<?php if ($step == 1) { ?>
+			<p><?php echo $lng->getTrn('teampool_desc_step1_league', __CLASS__);?></p>
 			<div class="clear"></div>
-		<? } else if ($step==2) { ?>
-			<p><? echo $lng->getTrn('teampool_desc', __CLASS__);?></p>
+		<?php } else if ($step==2) { ?>
+			<p><?php echo $lng->getTrn('teampool_desc', __CLASS__);?></p>
 			<div class="clear"></div>
-		<? } 
+		<?php } 
 		
-		?><div class="teamPool"><?
+		?><div class="teamPool"><?php 
 			$query = "SELECT team_id from teams where f_lid = $id and f_did = 0";
 			
 			$result = mysql_query($query) or die(mysql_error());
@@ -446,7 +446,7 @@ public static function showTeamPoolForLeague($id, $showScheduleLink = false, $st
 					if ($seperator == 5) {
 						$seperator = 0;
 						?></div>
-						<div class="teamPool"><?
+						<div class="teamPool"><?php 
 					}
 				}
 			}
@@ -456,14 +456,14 @@ public static function showTeamPoolForLeague($id, $showScheduleLink = false, $st
 		
 		</div></div>
 		
-		<?
+		<?php 
 			if ($showScheduleLink) {
 				self::showScheduleTypeSelection();
 			}
 		?>
 
 
-	<?
+	<?php 
 }
 
 public static function showTeamPoolForDivision($id, $showScheduleLink = false, $step) {
@@ -471,18 +471,18 @@ public static function showTeamPoolForDivision($id, $showScheduleLink = false, $
 	?>
 		<div class="boxWide">
 			<div class="boxTitle4">
-				<h3><? echo $lng->getTrn('teampool', __CLASS__);?></h3>
+				<h3><?php echo $lng->getTrn('teampool', __CLASS__);?></h3>
 			</div>
 		<div class="boxBody">
 		
-		<? if ($step == 1) { ?>
-			<p><? echo $lng->getTrn('teampool_desc_step1_division', __CLASS__);?></p>
+		<?php if ($step == 1) { ?>
+			<p><?php echo $lng->getTrn('teampool_desc_step1_division', __CLASS__);?></p>
 			<div class="clear"></div>
-		<? } else if ($step==2) { ?>
-			<p><? echo $lng->getTrn('teampool_desc', __CLASS__);?></p>
+		<?php } else if ($step==2) { ?>
+			<p><?php echo $lng->getTrn('teampool_desc', __CLASS__);?></p>
 			<div class="clear"></div>
-		<? } 
-		?><div class="teamPool"><?
+		<?php } 
+		?><div class="teamPool"><?php 
 			$query = "SELECT team_id FROM teams WHERE f_did = " . $id . " ORDER by name";
 			
 			$result = mysql_query($query) or die(mysql_error());
@@ -495,7 +495,7 @@ public static function showTeamPoolForDivision($id, $showScheduleLink = false, $
 					if ($seperator == 5) {
 						$seperator = 0;
 						?></div>
-						<div class="teamPool"><?
+						<div class="teamPool"><?php 
 					}
 				}
 			}
@@ -504,12 +504,12 @@ public static function showTeamPoolForDivision($id, $showScheduleLink = false, $
 		<div class="clear"></div>
 		
 		</div></div>
-		<?
+		<?php 
 			if ($showScheduleLink) {
 				self::showScheduleTypeSelection();
 			}
 		?>
-	<?
+	<?php 
 }
 
 /**
@@ -532,11 +532,11 @@ public static function showTeam($id, $selectable = true, $dragable = false) {
 		$selectClass = "draggable";
 	}
 	?>
-	<div id="pool<?echo $id; ?>" class="team <? echo $selectClass; ?>">
+	<div id="pool<?echo $id; ?>" class="team <?php echo $selectClass; ?>">
 		<img border='0px' height='30' width='30' title='<?php echo $team->name;?>' alt='<?php echo $team->name;?>' src='<?php echo $teamLogo->getPath();?>'>
 		<span class="teamname"><?php echo $team->name;?></span>
 	</div>	
-	<?
+	<?php 
 }
 
 /**
@@ -547,21 +547,21 @@ public static function showScheduleTypeSelection() {
 	global $lng;
 ?>
 	<div class="boxWide">
-		<div class="boxTitle5"><? echo $lng->getTrn('available_schedulers', __CLASS__);?></h2></div>
+		<div class="boxTitle5"><?php echo $lng->getTrn('available_schedulers', __CLASS__);?></h2></div>
 		<div class="boxBody">
 			<div id="apaauto" class="schedulebutton">
-				<? echo $lng->getTrn('all_play_all_auto', __CLASS__);?>
+				<?php echo $lng->getTrn('all_play_all_auto', __CLASS__);?>
 			</div>
 			<div id="apamanual" class="schedulebutton">
-				<? echo $lng->getTrn('all_play_all_manual', __CLASS__);?>
+				<?php echo $lng->getTrn('all_play_all_manual', __CLASS__);?>
 			</div>
 			<div id="custom" class="schedulebutton">
-				<? echo $lng->getTrn('custom_schedule', __CLASS__);?>
+				<?php echo $lng->getTrn('custom_schedule', __CLASS__);?>
 			</div>
 			<div class="clear"></div>
 		</div>
 	</div>
-<?
+<?php 
 }
 
 /**
@@ -592,7 +592,7 @@ public static function apa_generate_draw() {
 	global $lng;
 	
 	?><div id="draw" class="boxWide">
-	<div class="boxTitle1"><? echo $lng->getTrn('draw', __CLASS__);?></div><?	
+	<div class="boxTitle1"><?php echo $lng->getTrn('draw', __CLASS__);?></div><?php 
 	$teams = json_decode($_POST['teams']);
 
 	$draw = array();
@@ -603,19 +603,19 @@ public static function apa_generate_draw() {
 	shuffle($draw);
 	?>
 	<div class="boxBody">
-	<?
+	<?php 
 	foreach($draw as $k => $v) {
 		?><div class="draw">
-		<?
+		<?php 
 		?><div class="slot">
 			<?echo chr(65 + $k);
-		?></div><?
+		?></div><?php 
 		self::showTeam($v, false);
-		?></div><?
-		?><div class="clear"></div><?
+		?></div><?php 
+		?><div class="clear"></div><?php 
 	}
 	
-	?></div></div><?
+	?></div></div><?php 
 	self::apa_generate_schedule($draw);
 }
 
@@ -634,19 +634,19 @@ public static function show_manual_draw() {
 	self::showTeamPoolForTeams($teamsClean);
 	
 	?><div id="draw" class="boxWide">
-	<div class="boxTitle1"><? echo $lng->getTrn('draw', __CLASS__);?></div><?	
+	<div class="boxTitle1"><?php echo $lng->getTrn('draw', __CLASS__);?></div><?php 
 	?>
 	<div class="boxBody">
-	<?
+	<?php 
 	foreach($teamsClean as $k => $v) {
 		?>
-		<div class="draw slot<? echo 65 + $k ?>">
+		<div class="draw slot<?php echo 65 + $k ?>">
 			<div class="slot">
 				<?echo chr(65 + $k);
-			?></div><?
-		?><div class="draw team droppable">Drag 'n' drop team here</div><?
-		?></div><?
-		?><div class="clear"></div><?
+			?></div><?php 
+		?><div class="draw team droppable">Drag 'n' drop team here</div><?php 
+		?></div><?php 
+		?><div class="clear"></div><?php 
 	}
 	
 	?>
@@ -654,7 +654,7 @@ public static function show_manual_draw() {
 	</div>
 	
 	
-	</div><?
+	</div><?php 
 
 }
 
@@ -674,29 +674,29 @@ public static function show_custom_draw() {
 	
 	?>
 	<div id="roundselection" class="boxWide">
-		<div class="boxTitle1"><? echo $lng->getTrn('roundselection', __CLASS__);?></div>
+		<div class="boxTitle1"><?php echo $lng->getTrn('roundselection', __CLASS__);?></div>
 		<div class="boxBody">
-	<?
+	<?php 
 	foreach (array(RT_FINAL => 'Final', RT_3RD_PLAYOFF => '3rd play-off', RT_SEMI => 'Semi final', RT_QUARTER => 'Quarter final', RT_ROUND16 => 'Round of 16 match') as $r => $d) {
-		?><div id="round_<? echo $r; ?>" class="roundPool notselected onoffsingletoggle"><?
+		?><div id="round_<?php echo $r; ?>" class="roundPool notselected onoffsingletoggle"><?php 
 		echo $d;
-		?></div><?
+		?></div><?php 
     }
 	
 	$pure_rounds = array(); 
 	
 	for ($i=1;$i<30;$i++) $pure_rounds[$i] = "Round #$i match";
 	foreach ($pure_rounds as $r => $d) {
-		?><div id="round_<? echo $r; ?>" class="roundPool notselected onoffsingletoggle"><?
+		?><div id="round_<?php echo $r; ?>" class="roundPool notselected onoffsingletoggle"><?php 
 		echo $d;
-		?></div><?
+		?></div><?php 
 	}
 
-	?><div class="clear"></div></div></div><?
+	?><div class="clear"></div></div></div><?php 
 	
 		?>
 	<div id="schedule" class="boxWide">
-		<div class="boxTitle1"><? echo $lng->getTrn('schedule', __CLASS__);?></div>
+		<div class="boxTitle1"><?php echo $lng->getTrn('schedule', __CLASS__);?></div>
 		<div class="boxBody">
 			<div id="selectedRound"></div>
 			<div id="hometeam">
@@ -706,15 +706,15 @@ public static function show_custom_draw() {
 			<div id="awayteam">
 				<div class="team awayteam">Click another team from the teampool as AWAY team</div>
 			</div>
-	<?
-	?><div class="clear"></div></div><?
+	<?php 
+	?><div class="clear"></div></div><?php 
 	
 	?><div id="log" class="boxWide">
-		<div class="boxTitle1"><? echo $lng->getTrn('log', __CLASS__);?></div>
+		<div class="boxTitle1"><?php echo $lng->getTrn('log', __CLASS__);?></div>
 		<div class="boxBody">
 			
-	<?
-	?><div class="clear"></div></div><?
+	<?php 
+	?><div class="clear"></div></div><?php 
 
 }
 
@@ -723,10 +723,10 @@ public static function showTeamPoolForTeams($teams) {
 	?>
 		<div class="boxWide">
 			<div class="boxTitle4">
-				<h3><? echo $lng->getTrn('teampool', __CLASS__);?></h3>
+				<h3><?php echo $lng->getTrn('teampool', __CLASS__);?></h3>
 			</div>
 		<div class="boxBody">
-		<div class="teamPool"><?
+		<div class="teamPool"><?php 
 			if(is_array($teams)) {
 				$seperator = 0;
 				foreach($teams as $teamid) {
@@ -737,7 +737,7 @@ public static function showTeamPoolForTeams($teams) {
 					if ($seperator == 4) {
 						$seperator = 0;
 						?></div>
-						<div class="teamPool"><?
+						<div class="teamPool"><?php 
 					}
 				}
 			}
@@ -746,7 +746,7 @@ public static function showTeamPoolForTeams($teams) {
 		<div class="clear"></div>
 		
 		</div></div>
-	<?
+	<?php 
 }
 
 /**
@@ -758,8 +758,8 @@ public static function apa_generate_schedule($draw) {
 	
 	?>
 	<div id="schedule" class="boxWide">
-		<div class="boxTitle1"><? echo $lng->getTrn('schedule', __CLASS__);?></div>
-	<?
+		<div class="boxTitle1"><?php echo $lng->getTrn('schedule', __CLASS__);?></div>
+	<?php 
 
 	$filename = './modules/scheduler/templates/apa_' . count($draw) . '.txt';
 
@@ -783,7 +783,7 @@ public static function apa_generate_schedule($draw) {
 	$cols = '4';
 	?>
 	<div class="boxBody">
-	<?
+	<?php 
 	echo "<table class='tours'>\n";
 	foreach($schedule as $rnd => $value) {
         $round = '';
@@ -812,7 +812,7 @@ public static function apa_generate_schedule($draw) {
             <td class="match" style="text-align: center;">-</td>
             <td class="match" style="text-align: left;"><?php echo $t2->name;?></td>
 
-			<?
+			<?php 
 				list($exitStatus, $mid) = Match::create(
 					array(
 						'team1_id' => $t1->team_id, 
@@ -822,7 +822,7 @@ public static function apa_generate_schedule($draw) {
 					)
 				);
 			?>
-				<? 
+				<?php 
 					if ($exitStatus == '') {
 						echo "<td class=\"success\">" . $lng->getTrn('schedule_successfull', __CLASS__). "</td>";
 					} else {
@@ -830,11 +830,11 @@ public static function apa_generate_schedule($draw) {
 					}
 				?>
 			</tr>
-			<?
+			<?php 
 		}
 	}
 	?></table>
-	</div></div><?
+	</div></div><?php 
 }
 
 public static function schedule_custom_game() {
@@ -876,10 +876,10 @@ public static function schedule_custom_game() {
 	}
 	
 	?>
-	<div class="<? echo $htmlclass; ?>">
-		<? echo $round ?> - <? echo $t1->name; ?> vs. <? echo $t2->name; ?> - <? echo $status; ?>
+	<div class="<?php echo $htmlclass; ?>">
+		<?php echo $round ?> - <?php echo $t1->name; ?> vs. <?php echo $t2->name; ?> - <?php echo $status; ?>
 	</div>
-	<?
+	<?php 
 	
 	
 }
@@ -1168,11 +1168,11 @@ $.fn.extend({
 		});
 	});
 </script>
-<? $t = (isset($_POST['trid'])) ? new Tour($_POST['trid']) : null; ?>
+<?php $t = (isset($_POST['trid'])) ? new Tour($_POST['trid']) : null; ?>
 
-<h1><?php echo $lng->getTrn('create_schedule', __CLASS__);?> <i><? echo $t->name; ?></i></h1>
+<h1><?php echo $lng->getTrn('create_schedule', __CLASS__);?> <i><?php echo $t->name; ?></i></h1>
 <div id="teamPool">
-<?
+<?php 
 	if ($_POST['tie_teams'] == 1) {
 		self::showTeamPoolForDivision($_POST['did'], true, 2);
 	} else if ($_POST['tie_teams'] == 0) {
@@ -1183,7 +1183,7 @@ $.fn.extend({
 	<div id="drawsched" style="display:none;">
 	</div>
 	
-	<?
+	<?php 
 }
 
 /*
@@ -1222,18 +1222,7 @@ public static function getModuleTables()
 
 public static function getModuleUpgradeSQL()
 {
-    return array(
-        '075-080' => array(
-            'SQL CODE #1',
-            'SQL CODE #2',
-            'SQL CODE #N',
-        ),
-        '070-075' => array(
-            'SQL CODE #1',
-            'SQL CODE #2',
-            'SQL CODE #N',
-        ),
-    );
+    return array();
 }
 
 public static function triggerHandler($type, $argv){

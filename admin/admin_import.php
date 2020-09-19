@@ -5,12 +5,10 @@ $T_INJS_REV = array_flip($T_INJS);
 
 // Input sent?
 if (isset($_FILES['xmlfile'])) {
-
     $file = $_FILES['xmlfile']['tmp_name'];
     $xml = new DOMDocument();
     $xml->load($file); 
     $xmlteams = $xml->schemaValidate('xml/import.xsd') ? simplexml_load_file($file) : (object) array('team' => array());
-
     $map = array(
         # Team::$createEXPECTED => XML import schema field name
         # If field is the same do not define entry!
@@ -27,7 +25,6 @@ if (isset($_FILES['xmlfile'])) {
         'gf_0' => 'gf',
         'ga_0' => 'ga',
     );
-
     foreach ($xmlteams->team as $t) {
         # Corrections
         $t->played_0 = $t->won+$t->lost+$t->draw;
@@ -89,6 +86,7 @@ if (isset($_FILES['xmlfile'])) {
 
 title($lng->getTrn('menu/admin_menu/import'));
 ?>
+<!-- Following HTML from ./admin/admin_import.php -->
 This page allows you to create a customized team for an existing coach.<br> 
 This is useful if you and your league wish to avoid starting from scratch in order to use OBBLM.<br>
 <br>
@@ -127,5 +125,3 @@ foreach ($divisions as $did => $desc) {
 }
 ?>
 </table>
-
-

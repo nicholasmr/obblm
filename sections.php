@@ -1,36 +1,15 @@
 <?php
 
-/*
- *  Copyright (c) Niels Orsleff Justesen <njustesen@gmail.com> and Nicholas Mossor Rathmann <nicholas.rathmann@gmail.com> 2007-2011. All Rights Reserved.
- *
- *
- *  This file is part of OBBLM.
- *
- *  OBBLM is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  OBBLM is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
 /*************************
- *
  *  Login
- *
  *************************/
-
+function getFormAction($params) {
+    $mobilePrefix =(strpos($params, '?') !== FALSE) ? '&' : '?';    
+    return 'index.php' . $params . (Mobile::isMobile() ? ($mobilePrefix . 'mobile=1') : '');
+}
+ 
 function sec_login() {
-
     global $lng, $settings;
-    
     $_URL_forgotpass = "index.php?section=login&amp;forgotpass=1";
     if (isset($_GET['forgotpass'])) {
         if (!isset($_POST['_retry'])) {
@@ -52,16 +31,14 @@ function sec_login() {
                 $c->requestPasswdReset();
                 echo "<br><br>";
                 echo $lng->getTrn('login/resetpasswdmail').'.';
-            }
-            else {
+            } else {
                 // Return to same page.
                 unset($_POST['coach']);
                 unset($_POST['email']);
                 $_POST['_retry'] = true;
                 sec_login();
             }
-        }
-        else {
+        } else {
             ?>
             <div class='boxCommon'>
                 <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('login/forgotpass');?></h3>
@@ -79,16 +56,20 @@ function sec_login() {
             </div>
             <?php 
         }       
-    }
-    else {
+    } else {
         title($lng->getTrn('menu/login'));
         ?>
+        <script lang="text/javascript">
+            $(document).ready(function() {
+                $('#coach').focus();
+            });
+        </script>
         <div class='boxCommon'>
             <h3 class='boxTitle<?php echo T_HTMLBOX_COACH;?>'><?php echo $lng->getTrn('menu/login');?></h3>
             <div class='boxBody'>
-            <form method="POST" action="index.php">
+            <form method="POST" action="<?php echo getFormAction(''); ?>">
                 <?php echo $lng->getTrn('login/loginname');?><br>
-                <input type="text" name="coach" size="20" maxlength="50"><br><br>
+                <input type="text" id="coach" name="coach" size="20" maxlength="50"><br><br>
                 <?php echo $lng->getTrn('login/passwd');?><br>
                 <input type="password" name="passwd" size="20" maxlength="50">
                 <div style='display: none;'><input type='text' name='hackForHittingEnterToLogin' size='1'></div>
@@ -100,11 +81,13 @@ function sec_login() {
             </form>
             <br><br>
             <?php
-            if (Module::isRegistered('Registration') && $settings['allow_registration']) {
-                echo "<a href='handler.php?type=registration'><b>Register</b></a>";
-            }  
-            echo "<br><br>";
-            echo "<a href='$_URL_forgotpass'><b>".$lng->getTrn('login/forgotpass').'</b></a>';
+            if(!Mobile::isMobile()) {
+                if (Module::isRegistered('Registration') && $settings['allow_registration']) {
+                    echo "<a href='handler.php?type=registration'><b>Register</b></a>";
+                }  
+                echo "<br><br>";
+                echo "<a href='$_URL_forgotpass'><b>".$lng->getTrn('login/forgotpass').'</b></a>';
+            }
             ?>
             </div>
         </div>
@@ -113,17 +96,11 @@ function sec_login() {
 }
 
 /*************************
- *
- *  MAIN
- *
+ *  Main
  *************************/
-
 function sec_main() {
-
     global $settings, $rules, $coach, $lng, $leagues;
-    
     MTS('Main start');
-
     list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
     $IS_GLOBAL_ADMIN = (is_object($coach) && $coach->ring == Coach::T_RING_GLOBAL_ADMIN);
     
@@ -160,6 +137,7 @@ function sec_main() {
 
     ?>
     <div class="main_head"><?php echo $settings['league_name']; ?></div>
+    <div class="flex_container">
     <div class='main_leftColumn'>
         <div class="main_leftColumn_head">
             <?php
@@ -168,7 +146,7 @@ function sec_main() {
             echo "</div>\n";
             echo "<div class='main_leftColumn_left'>\n";
             if(count($leagues) > 1)
-              echo $HTML_LeagueSelector;
+				echo $HTML_LeagueSelector;
             echo "</div>\n";
             echo "<div class='main_leftColumn_right'>\n";
             if (is_object($coach) && $coach->isNodeCommish(T_NODE_LEAGUE, $sel_lid)) {
@@ -353,21 +331,23 @@ function sec_main() {
                         }
                         echo "</tr>\n";
                         foreach ($teams as $t) {
-                            echo "<tr>\n";
-                            foreach ($box['fields'] as $title => $f) {
-                                if (in_array($f, $_MV_COLS)) {
-                                    $f = 'mv_'.$f;
+                            if (!$t['retired']) {
+                                echo "<tr>\n";
+                                foreach ($box['fields'] as $title => $f) {
+                                    if (in_array($f, $_MV_COLS)) {
+                                        $f = 'mv_'.$f;
+                                    }
+                                    echo "<td>";
+                                    if ($settings['fp_links'] && $f == 'name')
+                                        echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t['team_id'],false,false)."'>$t[name]</a>";
+                                    elseif (is_numeric($t[$f]) && !ctype_digit(($t[$f][0] == '-') ? substr($t[$f],1) : $t[$f]))
+                                        echo sprintf('%1.2f', $t[$f]);
+                                    else
+                                        echo in_array($f, array('tv')) ? $t[$f]/1000 : $t[$f];
+                                    echo "</td>\n";
                                 }
-                                echo "<td>";
-                                if ($settings['fp_links'] && $f == 'name')
-                                    echo "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$t['team_id'],false,false)."'>$t[name]</a>";
-                                elseif (is_numeric($t[$f]) && !ctype_digit(($t[$f][0] == '-') ? substr($t[$f],1) : $t[$f]))
-                                    echo sprintf('%1.2f', $t[$f]);
-                                else
-                                    echo in_array($f, array('tv')) ? $t[$f]/1000 : $t[$f];
-                                echo "</td>\n";
+                                echo "</tr>\n";
                             }
-                            echo "</tr>\n";
                         }
                         ?>
                     </table>
@@ -388,32 +368,41 @@ function sec_main() {
             if ($box['length'] <= 0) {
                 break;
             }
-            ?>
-            <div class="boxWide">
-                <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
-                <div class='boxBody'>
-                    <table class="boxTable">
-                        <tr>
-                            <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td>
-                            <td> </td>
-                            <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
-                            <td><i><?php echo $lng->getTrn('common/date');?></i></td>
-                            <td> </td>
-                        </tr>
+            $upcoming = isset($box['upcoming']) ? $box['upcoming'] : false;  
+           ?>
+          <div class="boxWide">
+              <h3 class='boxTitle<?php echo T_HTMLBOX_MATCH;?>'><?php echo $box['title'];?></h3>
+              <div class='boxBody'>
+                  <table class="boxTable">
+                      <tr>
+                          <td style="text-align: right;" width="50%"><i><?php echo $lng->getTrn('common/home');?></i></td>
+                          <td> </td>
+                          <td style="text-align: left;" width="50%"><i><?php echo $lng->getTrn('common/away');?></i></td>
+                          <?php if (!$upcoming) { ?>
+                              <td><i><?php echo $lng->getTrn('common/date');?></i></td>
+                          <?php } ?>
+                          <td> </td>
+                      </tr>
                         <?php
-                        list($matches,$pages) = Match::getMatches(array(1, $box['length']), $box['type'], $box['id'], false);
+                        list($matches,$pages) = Match::getMatches(array(1, $box['length']), $box['type'], $box['id'], $upcoming); 
                         foreach ($matches as $m) {
                             echo "<tr valign='top'>\n";
                             $t1name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team1_id,false,false)."'>$m->team1_name</a>" : $m->team1_name;
                             $t2name = ($settings['fp_links']) ? "<a href='".urlcompile(T_URL_PROFILE,T_OBJ_TEAM,$m->team2_id,false,false)."'>$m->team2_name</a>" : $m->team2_name;
                             echo "<td style='text-align: right;'>$t1name</td>\n";
-                            echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
+                            if ($upcoming) {
+                                echo "<td>&mdash;</td>\n";
+                            } else {
+                                echo "<td><nobr>$m->team1_score&mdash;$m->team2_score</nobr></td>\n";
+                            }
                             echo "<td style='text-align: left;'>$t2name</td>\n";
-                            echo "<td>".str_replace(' ', '&nbsp;', textdate($m->date_played,true))."</td>";
+                            if (!$upcoming) {
+                                echo "<td>" . str_replace(' ', '&nbsp;', textdate($m->date_played,true)) . "</td>";
+                            }
                             echo "<td><a href='index.php?section=matches&amp;type=report&amp;mid=$m->match_id'>Show</a></td>";
                             echo "</tr>";
                         }
-                        ?>
+                        ?>  
                     </table>
                 </div>
             </div>
@@ -515,15 +504,18 @@ function sec_main() {
     }
     ?>
     </div>
+    </div>
     <div class="main_foot">
         <?php
         HTMLOUT::dnt();
         ?>
         <br>
-        <a TARGET="_blank" href="http://nicholasmr.dk/index.php?sec=obblm">OBBLM official website</a><br><br>
+        <a TARGET="_blank" href="https://github.com/TheNAF/naflm">NAFLM official website</a> <br><br>
         This web site is completely unofficial and in no way endorsed by Games Workshop Limited.
         <br>
-        Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either (R), TM and/or (C) Games Workshop Ltd 2000-2006, variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
+        Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either (R), TM and/or (C) Games Workshop Ltd 2000-2020, variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
+        <br>
+        FUMBBL icons are used with permission.  See 'about NAFLM' for credits.
     </div>
     <?php
 }
@@ -577,7 +569,7 @@ function _infocus($teams) {
         }
 
         #inFocusBox<?php echo $_INFOCUSCNT;?> .teamLogo {
-            float: left;
+            float: right;
             margin: 0 36px 0 20px;
         }
 
@@ -587,8 +579,9 @@ function _infocus($teams) {
 
         #inFocusContent<?php echo $_INFOCUSCNT;?> {
             position:relative;
-            left: 160px;
+            left: 0px;
             height: 80px;
+            max-width: 50%;
         }
 
         #inFocusContent<?php echo $_INFOCUSCNT;?> P {
@@ -614,7 +607,8 @@ function _infocus($teams) {
         }
 
         #inFocusContent<?php echo $_INFOCUSCNT;?> DIV.last-inFocus {
-            z-index:9;redeclare compare_spp
+            /* THIS LINE IS INCOMPLETE, NEED TO ASSESS WHAT IT DOES AND HOW TO FIX */
+            /* z-index:9;redeclare compare_spp  */
         }
     </style>
     <div id="inFocusBox<?php echo $_INFOCUSCNT;?>" >
@@ -646,10 +640,8 @@ function _infocus($teams) {
     </div>
     <script>
     /* 
-     * This script creates a slideshow of all <div>s in the "inFocusContent" div
-     * 
+     * This script creates a slideshow of all <div>s in the "inFocusContent" div 
      * Based on an example by Jon Raasch:
-     *
      * http://jonraasch.com/blog/a-simple-jquery-slideshow
      */
     function nextContent<?php echo $_INFOCUSCNT;?>() {
@@ -753,50 +745,66 @@ function sec_objhandler() {
 }
 
 /*************************
- *
- *  RULES
- *
+ *  Rules
  *************************/
-
 function sec_rules() {
-
     global $lng, $settings, $leagues;
     title($lng->getTrn('menu/rules'));
-    if(count($leagues) > 1)
-    {
-      list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
-      echo $HTML_LeagueSelector;
-    }
-    echo "<br><br>";
-    echo $settings['rules'];
+    ?>
+    <div class="boxWide">
+        <?php
+            if(count($leagues) > 1)
+            {
+                echo '<div class="boxTitle4">';
+                list($sel_lid, $HTML_LeagueSelector) = HTMLOUT::simpleLeagueSelector();
+                echo $HTML_LeagueSelector;
+                echo '</div>';
+            }
+        ?>
+        <div class="boxBody">
+            <div>
+                <?php echo $settings['rules']; ?>
+            </div>
+        </div>
+    </div>
+    <?php
 }
 
 /*************************
- *
- *  ABOUT
- *
+ *  About
  *************************/
+ 
+ /*
+ All about page variables located in header.php e.g. OBBLM_VERSION and Credits
+ */
 
 function sec_about() {
-
-    global $lng, $credits;
-    title("About OBBLM");
+    global $lng, $credits, $naflmcredits;
+    title("About NAFLM");
     HTMLOUT::dnt();
     ?>
     <br>
     <p>
-        <b>OBBLM version <?php echo OBBLM_VERSION; ?></b><br><br>
-        Online Blood Bowl League Manager is an online game management system for Game Workshop's board game Blood Bowl.<br>
-        <br>
-        The authors of this program are
+        <b><h1>NAFLM version <?php echo NAFLM_VERSION; ?> / Content version <?php echo CONTENT_VERSION; ?></h1></b>
+		This version of NAFLM last released on the <?php echo NAFLM_BUILD_DATE; ?>.<br><br>
+		Updated game data was sourced from <?php echo CONTENT_DETAIL; ?> and was current at <?php echo CONTENT_DATE; ?>.
+		<br><br>
+        This software was based on the OBBLM software, and was developed under <a href="https://github.com/TheNAF/naflm">TheNAF/naflm fork</a> by <?php $lc = array_pop($naflmcredits); echo implode(', ', $naflmcredits)." and $lc"; ?>.
+        <br><br>
+		Latest version can be found at <a href="https://github.com/TheNAF/naflm/releases">https://github.com/TheNAF/naflm/releases</a><br><br>
+		<h1>OBBLM</h1>
+		<b>This NAFLM build is based on OBBLM version <?php echo OBBLM_VERSION; ?></b>
+        Online Blood Bowl League Manager is an online game management system for Game Workshop's board game Blood Bowl.<br><br>    
+        The authors of the OBBLM program are
         <ul>
-            <li> <a href="mailto:nicholas.rathmann@gmail.com">Nicholas Mossor Rathmann</a>
+            <li> <a href="http://www.nicholasmr.dk/">Nicholas Mossor Rathmann</a>
             <li> <a href="http://www.mercuryvps.com">William Leonard</a>
             <li> Niels Orsleff Justesen</a>
         </ul>
-        With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
-        Bugs reports and suggestions are welcome.
         <br>
+        With special thanks to <?php $lc = array_pop($credits); echo implode(', ', $credits)." and $lc"; ?>.<br><br>
+		<br>
+		<br>
         OBBLM consists of valid HTML 4.01 transitional document type pages.
         <br><br>
         <img src="http://www.w3.org/Icons/valid-html401" alt="Valid HTML 4.01 Transitional" height="31" width="88">
@@ -813,9 +821,9 @@ function sec_about() {
     </p>
 
     <?php 
-	title("OBBLM Hosting");
-	echo 'Please visit <a href="http://www.mercuryvps.com">Mercury VPS</a> and click on the OBBLM tab to get started.';
-	
+    title("OBBLM Hosting");
+    echo 'Please visit <a href="http://www.mercuryvps.com">Mercury VPS</a> and click on the OBBLM tab to get started.';
+    
     title("Documentation");
     echo "See the <a TARGET='_blank' href='".DOC_URL."'>OBBLM documentation wiki</a>";
     
@@ -828,13 +836,15 @@ function sec_about() {
         <b>This web site is completely unofficial and in no way endorsed by Games Workshop Limited.</b>
         <br><br>
         Bloodquest, Blood Bowl, the Blood Bowl logo, The Blood Bowl Spike Device, Chaos, the Chaos device, the Chaos logo, Games Workshop, Games Workshop logo, Nurgle, the Nurgle device, Skaven, Tomb Kings, 
-        and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either ®, TM and/or © Games Workshop Ltd 2000-2006, 
+        and all associated marks, names, races, race insignia, characters, vehicles, locations, units, illustrations and images from the Blood Bowl game, the Warhammer world are either ®, TM and/or © Games Workshop Ltd 2000-2020, 
         variably registered in the UK and other countries around the world. Used without permission. No challenge to their status intended. All Rights Reserved to their respective owners.
+        <br><br>
+        Fumbbl icons are used with permission.  Credits: harvestmouse, garion, christer, whatball.
     </p>
 
     <?php title("License");?>
     <p>
-        Copyright (c) Niels Orsleff Justesen and Nicholas Mossor Rathmann 2007-2011. All Rights Reserved.
+        Copyright (c) Niels Orsleff Justesen and Nicholas Mossor Rathmann 2007-2020 All Rights Reserved.
         <br><br>
         OBBLM is free software; you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
@@ -846,9 +856,68 @@ function sec_about() {
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
         GNU General Public License for more details.
         <br><br>
+        NAFLM is a fork of the original OBBLM programme and inherits all license and copyrights of the original.
+        <br><br>
         You should have received a copy of the GNU General Public License
         along with this program.  If not, see http://www.gnu.org/licenses/.
     </p>
     <?php
 }
 
+function sec_requestleague() {
+    global $coach, $settings, $db_user, $db_passwd;
+    
+    title("Request League");
+    
+    if (!isset($_SESSION['logged_in'])) {
+        echo 'You must <a href="handler.php?type=registration"><b>register</b></a> as a League Commissioner before you can request a league.';
+        return;
+    }
+    
+    if(isset($_POST['requesting_league'])) {
+        $to = Email::getAdministratorEmails();
+        echo 'asdf' . $to . 'qwer';
+        $subject = 'Request to create a league on TheNAF OBBLM.';
+        $message = 'Commissioner Username: ' . $coach->name .
+            '\n Full League Name: ' . $_POST['full_league_name'] .
+            '\n Short League Name: ' . $_POST['short_league_name'] .
+            '\n League City, State, Province: ' . $_POST['league_city_state_province'] .
+            '\n League Country: ' . $_POST['league_country'];
+        $headers = 'From: '.$_POST['email']. "\r\n" .
+                   'Reply-To: '.$_POST['email']. "\r\n" .
+                   'X-Mailer: PHP/' . phpversion();
+
+        if (!mail($to, $subject, $message, $headers)) {
+            ?>
+            <div class="boxWide">
+                <div class="boxTitle3">There was an error sending your message!</div>
+                <div class="boxBody">
+                    So you should try your favourite e-mail client instead.
+                    <div class="quote">
+                        <div><strong>To: </strong><?php echo $to; ?></div>
+                        <div><strong>Subject: </strong><?php echo $subject; ?></div>
+                        <div><strong>Body: </strong><?php echo $message; ?></div>
+                    </div>
+                </div>
+            <?php
+        } else {
+            ?>
+            Your message was sent successfully. An administrator will get back to you soon!
+            <?php
+        }
+    }
+    else {
+        ?>
+        <form method="POST" id="RequestLeagueForm">
+            <input type="hidden" name="section" value="requestleague" />
+            <input type="hidden" name="requesting_league" value="true" />
+            <div class="input-item"><label>Your e-mail: </label><input type="text" name="email" /></div>
+            <div class="input-item"><label>Full League Name: </label><input type="text" name="full_league_name" /></div>
+            <div class="input-item"><label>Short League Name: </label><input type="text" name="short_league_name" /></div>
+            <div class="input-item"><label>League City, State, Province: </label><input type="text" name="league_city_state_province" /></div>
+            <div class="input-item"><label>League Country: </label><input type="text" name="league_country" /></div>
+            <input type="submit" value="Send" />
+        </form>
+        <?php
+    }
+}
